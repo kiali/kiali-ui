@@ -1,0 +1,105 @@
+{
+  elements: {
+    nodes: [
+      {
+        data: {
+          id: "productpage.istio-system.svc.cluster.local (v1)",
+          name: "productpage (v1)",
+          link_prom_graph: "http://172.17.0.7:9090/graph?g0.range_input=1h&g0.tab=0&g0.expr=istio_request_count%7Bdestination_service%3D%22productpage.istio-system.svc.cluster.local%22%2Cdestination_version%3D%22v1%22%7D"
+        }
+      },
+      {
+        data: {
+          id: "reviews.istio-system.svc.cluster.local (v3)",
+          name: "reviews (v3)",
+          link_prom_graph: "http://172.17.0.7:9090/graph?g0.range_input=1h&g0.tab=0&g0.expr=istio_request_count%7Bdestination_service%3D%22reviews.istio-system.svc.cluster.local%22%2Cdestination_version%3D%22v3%22%7D"
+        }
+      },
+      {
+        data: {
+          id: "ratings.istio-system.svc.cluster.local (v1)",
+          name: "ratings (v1)",
+          link_prom_graph: "http://172.17.0.7:9090/graph?g0.range_input=1h&g0.tab=0&g0.expr=istio_request_count%7Bdestination_service%3D%22ratings.istio-system.svc.cluster.local%22%2Cdestination_version%3D%22v1%22%7D"
+        }
+      },
+      {
+        data: {
+          id: "details.istio-system.svc.cluster.local (v1)",
+          name: "details (v1)",
+          link_prom_graph: "http://172.17.0.7:9090/graph?g0.range_input=1h&g0.tab=0&g0.expr=istio_request_count%7Bdestination_service%3D%22details.istio-system.svc.cluster.local%22%2Cdestination_version%3D%22v1%22%7D"
+        }
+      },
+      {
+        data: {
+          id: "reviews.istio-system.svc.cluster.local (v1)",
+          name: "reviews (v1)",
+          link_prom_graph: "http://172.17.0.7:9090/graph?g0.range_input=1h&g0.tab=0&g0.expr=istio_request_count%7Bdestination_service%3D%22reviews.istio-system.svc.cluster.local%22%2Cdestination_version%3D%22v1%22%7D"
+        }
+      },
+      {
+        data: {
+          id: "reviews.istio-system.svc.cluster.local (v2)",
+          name: "reviews (v2)",
+          link_prom_graph: "http://172.17.0.7:9090/graph?g0.range_input=1h&g0.tab=0&g0.expr=istio_request_count%7Bdestination_service%3D%22reviews.istio-system.svc.cluster.local%22%2Cdestination_version%3D%22v2%22%7D"
+        }
+      },
+      {
+        data: {
+          id: "ratings.istio-system.svc.cluster.local (v1)",
+          name: "ratings (v1)",
+          link_prom_graph: "http://172.17.0.7:9090/graph?g0.range_input=1h&g0.tab=0&g0.expr=istio_request_count%7Bdestination_service%3D%22ratings.istio-system.svc.cluster.local%22%2Cdestination_version%3D%22v1%22%7D"
+        }
+      }
+    ],
+    edges: [
+      {
+        data: {
+          id: "0",
+          source: "productpage.istio-system.svc.cluster.local (v1)",
+          target: "reviews.istio-system.svc.cluster.local (v3)",
+          req_per_min_2XX: "14.39"
+        }
+      },
+      {
+        data: {
+          id: "1",
+          source: "reviews.istio-system.svc.cluster.local (v3)",
+          target: "ratings.istio-system.svc.cluster.local (v1)",
+          req_per_min_2XX: "14.39"
+        }
+      },
+      {
+        data: {
+          id: "2",
+          source: "productpage.istio-system.svc.cluster.local (v1)",
+          target: "details.istio-system.svc.cluster.local (v1)",
+          req_per_min_2XX: "35.97"
+        }
+      },
+      {
+        data: {
+          id: "3",
+          source: "productpage.istio-system.svc.cluster.local (v1)",
+          target: "reviews.istio-system.svc.cluster.local (v1)",
+          req_per_min_2XX: "9.59"
+        }
+      },
+      {
+        data: {
+          id: "4",
+          source: "productpage.istio-system.svc.cluster.local (v1)",
+          target: "reviews.istio-system.svc.cluster.local (v2)",
+          req_per_min_2XX: "14.39"
+        }
+      },
+      {
+        data: {
+          id: "5",
+          source: "reviews.istio-system.svc.cluster.local (v2)",
+          target: "ratings.istio-system.svc.cluster.local (v1)",
+          req_per_min_2XX: "14.39"
+        }
+      }
+    ]
+  }
+}
