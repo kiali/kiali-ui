@@ -33,7 +33,7 @@
         "no-arg": true,
         "no-bitwise": true,
         "no-console": [
-            true,
+            false,
             "log",
             "error",
             "debug",
@@ -75,7 +75,7 @@
             "property-declaration"
         ],
         "typedef-whitespace": [
-            true,
+            false,
             {
                 "call-signature": "nospace",
                 "index-signature": "nospace",
@@ -86,7 +86,7 @@
         ],
         "variable-name": [true, "ban-keywords", "check-format", "allow-leading-underscore", "allow-pascal-case"],
         "whitespace": [
-            true,
+            false,
             "check-branch",
             "check-decl",
             "check-module",
