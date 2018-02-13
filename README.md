@@ -21,10 +21,10 @@ Use `npm run build` which will bundle the build artifacts using webpack into the
 
 `src` : Source and test code
 `src/assets` : Images and other assets
-`src/components` : Stateless components
+`src/components` : Stateless pure components
 `src/containers` : Stateful smart components
-`src/routes` : Routes
-`src/hoc` : High order Components
+`src/types` : Typescript types
+`src/hoc` : High order components
 `src/pages` : Top level pages 
 `stories`: Storybook files
 `build`: Production build output
