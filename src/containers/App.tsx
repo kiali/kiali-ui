@@ -3,8 +3,8 @@ import './App.css';
 
 import {BrowserRouter, Route, Switch, Redirect} from 'react-router-dom';
 
-import ServiceGraphPage from '../pages/ServiceGraphPage';
-import HomePage from '../pages/HomePage';
+import ServiceGraphPage from '../pages/ServiceGraph/ServiceGraphPage';
+import HomePage from '../pages/Home/HomePage';
 
 const MainLayout = () => (
     <div className="primary-layout">
