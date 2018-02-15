@@ -1,6 +1,7 @@
 {
     "extends": ["tslint-react"],
     "rules": {
+        "no-unsafe-any": false,
         "align": [
             true,
             "parameters",
@@ -29,11 +30,11 @@
             "static-before-instance",
             "variables-before-functions"
         ],
-        "no-any": true,
-        "no-arg": true,
+        "no-any": false,
+        "no-arg": false,
         "no-bitwise": true,
         "no-console": [
-            true,
+            false,
             "log",
             "error",
             "debug",
@@ -55,7 +56,7 @@
         "no-unused-expression": true,
         "no-use-before-declare": true,
         "one-line": [
-            true,
+            false,
             "check-catch",
             "check-else",
             "check-open-brace",
@@ -70,12 +71,12 @@
 
         "triple-equals": [ true, "allow-null-check" ],
         "typedef": [
-            true,
+            false,
             "parameter",
             "property-declaration"
         ],
         "typedef-whitespace": [
-            true,
+            false,
             {
                 "call-signature": "nospace",
                 "index-signature": "nospace",
@@ -86,7 +87,7 @@
         ],
         "variable-name": [true, "ban-keywords", "check-format", "allow-leading-underscore", "allow-pascal-case"],
         "whitespace": [
-            true,
+            false,
             "check-branch",
             "check-decl",
             "check-module",
