@@ -9,7 +9,6 @@ var auth = (user: string, pass: string) => {
 };
 
 var newRequest = (method: string, url: string, queryParams: any, data: any) => {
-  console.log(url);
   return new Promise((resolve, reject) => {
     axios({
       method: method,
@@ -30,4 +29,8 @@ var newRequest = (method: string, url: string, queryParams: any, data: any) => {
 
 export const GetServiceMetrics = (namespace: String, service: String, params: any) => {
   return newRequest('get', `/api/namespaces/${namespace}/services/${service}/metrics`, params, {});
+};
+
+export const GetServiceDetail = (namespace: String, service: String) => {
+  return newRequest('get', `/api/namespaces/${namespace}/services/${service}`, {}, {});
 };
