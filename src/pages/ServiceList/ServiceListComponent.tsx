@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ListView, ListViewItem, ListViewIcon, Button } from 'patternfly-react';
+import { ListView, ListViewItem, ListViewIcon } from 'patternfly-react';
 import { Link } from 'react-router-dom';
 
 class ServiceListComponent extends React.Component {
@@ -7,24 +7,18 @@ class ServiceListComponent extends React.Component {
     return (
       <div>
         <ListView>
+          <Link to={'/namespaces/istio-system/services/ProductPage'} style={{ color: 'black' }}>
           <ListViewItem
             key="Product Page"
-            leftContent={<ListViewIcon name="plane" />}
+            leftContent={<ListViewIcon type="pf" name="service" />}
             heading={
               <span>
                 Product Page
                 <small>Feb 23, 2015 12:32 am</small>
               </span>
             }
-            actions={
-              <div>
-                <Link to={'/namespaces/istio-system/services/ProductPage'}>
-                  <Button>Details</Button>
-                </Link>
-              </div>
-            }
-            description={<span />}
           />
+          </Link>
         </ListView>
       </div>
     );
