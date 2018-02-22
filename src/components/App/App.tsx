@@ -1,9 +1,9 @@
 import * as React from 'react';
-import './css/App.css';
-import Navigation from './components/Nav/Navigation';
+import '../../css/App.css';
 import { BrowserRouter } from 'react-router-dom';
-import MastHead from './components/Nav/MastHead';
-import Routes from './components/Nav/Routes';
+import Navigation from '../Nav/Navigation';
+import MastHead from '../Nav/MastHead';
+import Routes from '../Nav/Routes';
 
 class App extends React.Component {
   render() {
