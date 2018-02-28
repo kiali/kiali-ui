@@ -4,12 +4,12 @@ import { render, mount } from 'enzyme';
 
 import Navigation from '../Navigation';
 
-const BROWSING_HISTORY = ['/services', '/service-graph', '/foo/bar'];
+const BROWSING_HISTORY = ['/services', '/service-graph/default', '/foo/bar'];
 
 jest.mock('react-cytoscape');
 
 describe('Test suite Navigation', () => {
-  it('should render default (Home) view', function() {
+  it('should render default (Home) view', () => {
     const app = render(
       <MemoryRouter>
         <Navigation />
@@ -18,7 +18,7 @@ describe('Test suite Navigation', () => {
     expect(app.text()).toMatch('Welcome to SWS UI');
   });
 
-  it('should render Graph view', function() {
+  it('should render Graph view', () => {
     const wrapper = mount(
       <MemoryRouter initialEntries={BROWSING_HISTORY} initialIndex={1}>
         <Navigation />
@@ -27,12 +27,12 @@ describe('Test suite Navigation', () => {
     expect(wrapper.text()).toMatch('Services Graph');
   });
 
-  it('should render Services view', function() {
-    const wrapper = render(
+  it('should render Services view', () => {
+    const wrapper = mount(
       <MemoryRouter initialEntries={BROWSING_HISTORY} initialIndex={0}>
         <Navigation />
       </MemoryRouter>
     );
-    expect(wrapper.text()).toMatch('Services');
+    expect(wrapper.text()).toMatch('Namespace');
   });
 });
