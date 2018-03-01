@@ -21,7 +21,8 @@ export default class CytoscapeLayout extends React.Component<CytoscapeLayoutProp
     console.log('Starting ServiceGraphPage for namespace ' + this.props.namespace);
 
     this.state = {
-      elements: {}
+      // We need to set the node to empty, otherwise it wont render an empty set properly
+      elements: { nodes: [] }
     };
   }
 
@@ -43,9 +44,24 @@ export default class CytoscapeLayout extends React.Component<CytoscapeLayoutProp
         const elements: { [key: string]: any } = response['data'];
         console.log(elements);
         this.setState(elements);
+
+        let canvasWrapper = document.getElementById('cytoscape-container')!;
+        if (canvasWrapper != null) {
+          canvasWrapper.style.display = null;
+        }
+        let messageWrapper = document.getElementById('empty-graph')!;
+        if (messageWrapper != null) {
+          messageWrapper.style.display = 'none';
+        }
       })
       .catch(error => {
         this.setState({});
+
+        let messageWrapper = document.getElementById('empty-graph')!;
+        if (messageWrapper != null) {
+          messageWrapper.innerHTML = 'Error Fetching Service Graph';
+        }
+
         console.error(error);
       });
   }
@@ -60,22 +76,25 @@ export default class CytoscapeLayout extends React.Component<CytoscapeLayoutProp
 
   render() {
     return (
-      <div id="cytoscape-container">
-        <ReactCytoscape
-          containerID="cy"
-          cyRef={cy => {
-            this.cyRef(cy);
-          }}
-          elements={this.state.elements}
-          style={CytoscapeConfig.getStyles()}
-          cytoscapeOptions={{ wheelSensitivity: 0.1, autounselectify: false }}
-          layout={{
-            name: 'breadthfirst',
-            directed: 'true',
-            maximalAdjustments: 2,
-            spacingFactor: 1
-          }}
-        />
+      <div>
+        <div id="cytoscape-container" style={{ display: 'none' }}>
+          <ReactCytoscape
+            containerID="cy"
+            cyRef={cy => {
+              this.cyRef(cy);
+            }}
+            elements={this.state.elements}
+            style={CytoscapeConfig.getStyles()}
+            cytoscapeOptions={{ wheelSensitivity: 0.1, autounselectify: false }}
+            layout={{
+              name: 'breadthfirst',
+              directed: 'true',
+              maximalAdjustments: 2,
+              spacingFactor: 1
+            }}
+          />
+        </div>
+        <div id="empty-graph">Fetching Service Graph...</div>
       </div>
     );
   }
