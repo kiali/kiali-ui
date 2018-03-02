@@ -2,6 +2,7 @@ import * as React from 'react';
 import ServiceId from '../../types/ServiceId';
 import { MetricHistogram, MetricValue } from '../../types/Metrics';
 import * as API from '../../services/Api';
+import { SparklineChart } from 'patternfly-react';
 
 interface GrafanaInfo {
   url: string;
@@ -84,10 +85,13 @@ class ServiceMetrics extends React.Component<ServiceId, ServiceMetricsState> {
                 <div className="card-pf-title">
                   <span className="fa fa-heart"/>
                   Health</div>
-                <div className="card-pf-body">{this.health()}</div>
+                <div className="card-pf-body">
+                  <span className={this.healthIcon()}/><span className="">{this.health()}</span>
+                </div>
+
               </div>
             </div>
-            <div className="col-xs-4">
+            <div className="col-md-4">
               <div className="card-pf-accented card-pf-aggregate-status">
                 <h3 className="card-pf-title">
                   <span className="fa fa-bar-chart"/>
@@ -98,10 +102,20 @@ class ServiceMetrics extends React.Component<ServiceId, ServiceMetricsState> {
                   <li>Request duration: {this.histogram(this.state.requestDurationIn)}</li>
                   <li>Response size: {this.histogram(this.state.responseSizeIn)}</li>
                 </ul>
+
+                <SparklineChart
+                  id="line-chart-2"
+                  data={{
+                    columns: [ this._createRow(this.state.requestDurationIn)],
+                    type: 'area'
+                  }}
+                  size={{width: '200', height: '40'}}
+                />
+
                 {this.renderGrafanaLink(false)}
               </div>
             </div>
-            <div className="col-xs-4">
+            <div className="col-md-4">
               <div className="card-pf-accented card-pf-aggregate-status">
                 <h3 className="card-pf-title">
                   <span className="fa fa-bar-chart"/>
@@ -112,6 +126,15 @@ class ServiceMetrics extends React.Component<ServiceId, ServiceMetricsState> {
                   <li>Request duration: {this.histogram(this.state.requestDurationOut)}</li>
                   <li>Response size: {this.histogram(this.state.responseSizeOut)}</li>
                 </ul>
+
+                <SparklineChart
+                  id="line-chart-2"
+                  data={{
+                    columns: [ this._createRow(this.state.requestDurationOut)],
+                    type: 'area'
+                  }}
+                  size={{width: '200', height: '40'}}
+                />
                 {this.renderGrafanaLink(true)}
               </div>
             </div>
@@ -119,6 +142,14 @@ class ServiceMetrics extends React.Component<ServiceId, ServiceMetricsState> {
         </div>
       );
     }
+  }
+
+  _createRow(what: MetricHistogram|undefined) {
+    let column: any = [];
+    if (what) {
+      column.push('data1', what.average, what.median, what.percentile99);
+    }
+    return column;
   }
 
   renderGrafanaLink(isSource: boolean) {
@@ -177,6 +208,13 @@ class ServiceMetrics extends React.Component<ServiceId, ServiceMetricsState> {
       return this.round(100 * this.state.healthyReplicas.value / this.state.totalReplicas.value) + ' %';
     }
     return 'n/a';
+  }
+
+  healthIcon() {
+    if (this.state.healthyReplicas && this.state.totalReplicas) {
+      return (this.state.healthyReplicas.value / this.state.totalReplicas.value === 1) ? 'fa pficon-ok' : 'fa pficon-warning';
+    }
+    return 'fa pficon-unknown';
   }
 
   scalar(val?: MetricValue) {
