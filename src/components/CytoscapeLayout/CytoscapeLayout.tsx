@@ -14,6 +14,7 @@ type CytoscapeLayoutProps = {
 
 export default class CytoscapeLayout extends React.Component<CytoscapeLayoutProps, CytoscapeLayoutState> {
   cy: any;
+  dimensions: [number, number];
 
   constructor(props: CytoscapeLayoutProps) {
     super(props);
@@ -37,6 +38,7 @@ export default class CytoscapeLayout extends React.Component<CytoscapeLayoutProp
   componentDidMount() {
     window.addEventListener('resize', this.resizeWindow);
     this.resizeWindow();
+
     if (this.props.namespace.length !== 0) {
       this.updateGraphElements(this.props.namespace);
     }
@@ -50,9 +52,14 @@ export default class CytoscapeLayout extends React.Component<CytoscapeLayoutProp
 
   cyRef(cy: any) {
     this.cy = cy;
+
     cy.on('tap', 'node', (evt: any) => {
       let node = evt.target;
       console.log('clicked on: ' + node.id());
+    });
+
+    cy.on('resize', (evt: any) => {
+            this.cy.fit();
     });
   }
 
