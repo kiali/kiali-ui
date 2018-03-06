@@ -7,6 +7,7 @@ import HelpDropdown from './HelpDropdown';
 import ServiceDetailsPage from '../../pages/ServiceDetails/ServiceDetailsPage';
 import ServiceGraphPage from '../../pages/ServiceGraph/ServiceGraphPage';
 import ServiceListPage from '../../pages/ServiceList/ServiceListPage';
+import DivlessWrapper from '../DivlessWrapper/DivlessWrapper';
 
 const serviceGraphPath = '/service-graph/istio-system';
 const serviceGraphTitle = 'Graph';
@@ -36,7 +37,7 @@ class Navigation extends React.Component {
 
   render() {
     return (
-      <div>
+      <DivlessWrapper>
         <VerticalNav>
           <VerticalNav.Masthead title="Swift Sunshine">
             <VerticalNav.Brand iconImg={pfLogo} titleImg={pfBrand} />
@@ -58,7 +59,7 @@ class Navigation extends React.Component {
           <Route path="/namespaces/:namespace/services/:service" component={ServiceDetailsPage} />
           <Redirect to={serviceGraphPath} />
         </Switch>
-      </div>
+      </DivlessWrapper>
     );
   }
 }
