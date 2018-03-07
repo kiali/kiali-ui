@@ -34,17 +34,30 @@ class ServiceMetrics extends React.Component<ServiceId, ServiceMetricsState> {
     this.state = {
       range: '5m',
       loading: false,
-      delayedLoading: false
+      delayedLoading: false,
+      requestCountIn: undefined,
+      requestCountOut: undefined,
+      requestSizeIn: undefined,
+      requestSizeOut: undefined,
+      requestDurationIn: undefined,
+      requestDurationOut: undefined,
+      responseSizeIn: undefined,
+      responseSizeOut: undefined,
+      healthyReplicas: undefined,
+      totalReplicas: undefined
     };
     this.onRangeChanged = this.onRangeChanged.bind(this);
-    this.fetchMetrics();
-    this.getGrafanaInfo();
   }
 
   onRangeChanged(event: React.FormEvent<HTMLSelectElement>) {
     this.setState({ range: event.currentTarget.value }, () => {
       this.fetchMetrics();
     });
+  }
+
+  componentDidMount() {
+    this.fetchMetrics();
+    this.getGrafanaInfo();
   }
 
   render() {
