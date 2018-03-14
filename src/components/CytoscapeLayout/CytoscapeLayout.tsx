@@ -27,7 +27,7 @@ export default class CytoscapeLayout extends React.Component<CytoscapeLayoutProp
   constructor(props: CytoscapeLayoutProps) {
     super(props);
 
-    console.log('Starting ServiceGraphPage for namespace ' + this.props.namespace);
+    console.log('Starting ServiceGraphPage for namespace: ' + this.props.namespace);
 
     this.state = {
       elements: {}
