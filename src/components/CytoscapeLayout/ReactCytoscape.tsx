@@ -4,11 +4,17 @@ import cycola from 'cytoscape-cola';
 import dagre from 'cytoscape-dagre';
 import coseBilkent from 'cytoscape-cose-bilkent';
 import klay from 'cytoscape-klay';
+import jquery from 'jquery';
+// it is a node module not ES6 module
+const expandCollapse = require('cytoscape-expand-collapse');
 
 cytoscape.use(cycola);
 cytoscape.use(dagre);
 cytoscape.use(coseBilkent);
 cytoscape.use(klay);
+
+// allow expand/contract buttons on compound nodes for CoseBilkent graph
+expandCollapse(cytoscape, jquery);
 
 /**
  * A React Cytoscape wrapper.
