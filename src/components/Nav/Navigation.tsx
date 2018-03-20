@@ -38,7 +38,7 @@ class Navigation extends React.Component {
     return (
       <div>
         <VerticalNav>
-          <VerticalNav.Masthead title="Swift Sunshine">
+          <VerticalNav.Masthead title="Kiala">
             <VerticalNav.Brand iconImg={pfLogo} titleImg={pfBrand} />
             <VerticalNav.IconBar>
               <HelpDropdown />

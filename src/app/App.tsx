@@ -7,9 +7,7 @@ class App extends React.Component {
   render() {
     return (
       <BrowserRouter basename="/console">
-        <div>
-          <Navigation />
-        </div>
+        <Navigation />
       </BrowserRouter>
     );
   }
