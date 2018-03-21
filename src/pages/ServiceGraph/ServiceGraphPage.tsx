@@ -69,6 +69,13 @@ export default class ServiceGraphPage extends React.Component<RouteComponentProp
     this.setState({ summaryData: data });
   };
 
+  shouldComponentUpdate(nextProps: any, nextState: any) {
+    if (this.state.summaryData.summaryType !== nextState.summaryData.summaryType) {
+      return true;
+    }
+    return false;
+  }
+
   render() {
     let alertsDiv = <div />;
     if (this.state.alertVisible) {
