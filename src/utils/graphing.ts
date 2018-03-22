@@ -3,8 +3,7 @@ import * as M from '../types/Metrics';
 export default {
   toC3Columns(matrix: M.TimeSeries[], title?: string): [string, number][] {
     if (matrix.length === 0) {
-      let ret: any = [['x'], [title]];
-      return ret;
+      return [];
     }
 
     return matrix
