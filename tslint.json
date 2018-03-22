@@ -47,6 +47,7 @@
         "no-duplicate-variable": true,
         "no-empty": true,
         "no-eval": true,
+        "no-null-keyword": true,
         "no-shadowed-variable": true,
         "no-string-literal": false,
         "no-switch-case-fall-through": true,
