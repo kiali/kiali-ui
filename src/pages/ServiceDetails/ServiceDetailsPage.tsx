@@ -16,7 +16,9 @@ const ServiceDetails = (routeProps: RouteComponentProps<ServiceId>) => {
     };
     NamespaceFilterSelected.setSelected([activeFilter]);
   };
-
+  const tracesJaeger = `http://jaeger-query-istio-system.127.0.0.1.nip.io/search?service=${
+    routeProps.match.params.service
+  }`;
   return (
     <div className="container-fluid container-pf-nav-pf-vertical">
       <div className="page-header">
@@ -37,6 +39,11 @@ const ServiceDetails = (routeProps: RouteComponentProps<ServiceId>) => {
             <NavItem eventKey={2}>
               <div dangerouslySetInnerHTML={{ __html: 'Metrics' }} />
             </NavItem>
+            <li role="presentation">
+              <a href={tracesJaeger} target="_blank">
+                <div dangerouslySetInnerHTML={{ __html: 'Traces' }} />
+              </a>
+            </li>
           </Nav>
           <TabContent>
             <TabPane eventKey={1}>
