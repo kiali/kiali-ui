@@ -13,11 +13,12 @@ export class GraphStyles {
           },
           color: '#030303', // pf-black
           'background-color': '#f9d67a', // pf-gold-200
+          'background-opacity': '0.8',
           'border-width': '1px',
           'border-color': '#030303', // pf-black
-          'font-size': '10px',
-          'text-valign': 'bottom',
-          'text-halign': 'right'
+          'font-size': '8px',
+          'text-valign': 'center',
+          'text-halign': 'center'
         }
       },
       {
@@ -31,11 +32,11 @@ export class GraphStyles {
         // version group boxes
         selector: '$node > node',
         css: {
-          'padding-top': '10px',
+          'padding-top': '20px',
           'padding-left': '20px',
-          'padding-bottom': '10px',
+          'padding-bottom': '8px',
           'padding-right': '20px',
-          'text-valign': 'top',
+          'text-valign': 'bottom',
           'text-halign': 'center',
           'background-color': '#fbeabc' // pf-gold-100
         }

@@ -10,6 +10,7 @@ import { BreadthFirstGraph } from '../../components/CytoscapeLayout/graphs/Bread
 import { DurationButtonGroup } from './DurationButtonGroup';
 import { LayoutButtonGroup } from './LayoutButtonGroup';
 import { KlayGraph } from '../CytoscapeLayout/graphs/KlayGraph';
+import LabelFilter from './LabelFilter';
 
 export namespace GraphFilters {
   const graphQueryOptionsPerDuration = {
@@ -130,7 +131,7 @@ export class GraphFilter extends React.Component<GraphFilterProps, GraphFilterSt
 
   render() {
     return (
-      <div>
+      <>
         <ButtonToolbar>
           <ButtonGroup>
             <DropdownButton id="namespace-selector" title={this.state.graphNamespace} onSelect={this.updateNamespace}>
@@ -143,9 +144,10 @@ export class GraphFilter extends React.Component<GraphFilterProps, GraphFilterSt
           </ButtonGroup>
           <DurationButtonGroup onClick={this.updateDuration} initialDuration={GraphFilters.getGraphDuration()} />
           <LayoutButtonGroup onClick={this.updateLayout} initialLayout={GraphFilters.getGraphLayoutName()} />
+          <LabelFilter showEdgeLabels={false} showNodeLabels={true} />
         </ButtonToolbar>
         <Toolbar />
-      </div>
+      </>
     );
   }
 }
