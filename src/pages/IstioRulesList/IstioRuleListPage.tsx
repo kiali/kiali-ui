@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Alert } from 'patternfly-react';
 import IstioRuleListComponent from './IstioRuleListComponent';
+import { bindMethods } from '../../utils/helpers';
 
 type IstioRuleListState = {
   alertVisible: boolean;
@@ -15,9 +16,7 @@ class IstioRuleListPage extends React.Component<IstioRuleListProps, IstioRuleLis
   constructor(props: IstioRuleListProps) {
     super(props);
     console.log('Starting IstioRuleListPage');
-
-    this.dismissAlert = this.dismissAlert.bind(this);
-    this.handleError = this.handleError.bind(this);
+    bindMethods(this, ['dismissAlert', 'handleError']);
     this.state = {
       alertVisible: false,
       alertDetails: ''

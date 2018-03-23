@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { bindMethods } from '../../../utils/helpers';
 
 interface BadgeProps {
   scale: number;
@@ -22,7 +23,7 @@ class ServiceInfoBadge extends React.Component<BadgeProps, ServiceBadgeState> {
       leftWidth: 0,
       rightWidth: 0
     };
-    this.updateTextLength = this.updateTextLength.bind(this);
+    bindMethods(this, ['updateTextLength']);
   }
   componentDidMount() {
     this.updateTextLength();

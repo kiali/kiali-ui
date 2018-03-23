@@ -10,6 +10,7 @@ import { BreadthFirstGraph } from '../../components/CytoscapeLayout/graphs/Bread
 import { DurationButtonGroup } from './DurationButtonGroup';
 import { LayoutButtonGroup } from './LayoutButtonGroup';
 import { KlayGraph } from '../CytoscapeLayout/graphs/KlayGraph';
+import { bindMethods } from '../../utils/helpers';
 
 export namespace GraphFilters {
   const graphQueryOptionsPerDuration = {
@@ -85,10 +86,7 @@ export class GraphFilter extends React.Component<GraphFilterProps, GraphFilterSt
   constructor(props: GraphFilterProps) {
     super(props);
 
-    this.setNamespaces = this.setNamespaces.bind(this);
-    this.updateDuration = this.updateDuration.bind(this);
-    this.updateLayout = this.updateLayout.bind(this);
-    this.updateNamespace = this.updateNamespace.bind(this);
+    bindMethods(this, ['setNamespaces', 'updateDuration', 'updateLayout', 'updateNamespace']);
 
     this.state = {
       graphDuration: GraphFilters.getGraphDuration(),

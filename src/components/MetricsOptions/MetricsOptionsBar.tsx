@@ -3,6 +3,7 @@ import { Toolbar, DropdownButton, MenuItem } from 'patternfly-react';
 
 import ValueSelectHelper from './ValueSelectHelper';
 import MetricsOptions from '../../types/MetricsOptions';
+import { bindMethods } from '../../utils/helpers';
 
 interface Props {
   onOptionsChanged: (opts: MetricsOptions) => void;
@@ -63,11 +64,7 @@ export class MetricsOptionsBar extends React.Component<Props, MetricsOptionsStat
 
   constructor(props: Props) {
     super(props);
-
-    this.onRateIntervalChanged = this.onRateIntervalChanged.bind(this);
-    this.onDurationChanged = this.onDurationChanged.bind(this);
-    this.onTicksChanged = this.onTicksChanged.bind(this);
-    this.changedGroupByLabel = this.changedGroupByLabel.bind(this);
+    bindMethods(this, ['onRateIntervalChanged', 'onDurationChanged', 'onTicksChanged', 'changedGroupByLabel']);
 
     this.groupByLabelsHelper = new ValueSelectHelper({
       items: Object.keys(MetricsOptionsBar.GroupByLabelOptions),

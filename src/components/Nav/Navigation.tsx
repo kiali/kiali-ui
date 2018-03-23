@@ -10,6 +10,8 @@ import ServiceDetailsPage from '../../pages/ServiceDetails/ServiceDetailsPage';
 import ServiceGraphPage from '../../pages/ServiceGraph/ServiceGraphPage';
 import ServiceListPage from '../../pages/ServiceList/ServiceListPage';
 
+import { bindMethods } from '../../utils/helpers';
+
 const istioRulesPath = '/rules';
 export const istioRulesTitle = 'Istio Mixer';
 const serviceGraphPath = '/service-graph/istio-system';
@@ -35,7 +37,8 @@ class Navigation extends React.Component<PropsType, StateType> {
 
   constructor(props: any) {
     super(props);
-    this.navigateTo = this.navigateTo.bind(this);
+
+    bindMethods(this, ['navigateTo']);
 
     // handle initial path from the browser
     const selected = this.parseInitialPath(props.location.pathname);

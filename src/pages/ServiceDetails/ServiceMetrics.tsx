@@ -7,6 +7,7 @@ import * as API from '../../services/Api';
 import MetricsOptionsBar from '../../components/MetricsOptions/MetricsOptionsBar';
 import MetricsOptions from '../../types/MetricsOptions';
 import graphUtils from '../../utils/graphing';
+import { bindMethods } from '../../utils/helpers';
 
 interface GrafanaInfo {
   url: string;
@@ -37,8 +38,7 @@ class ServiceMetrics extends React.Component<ServiceId, ServiceMetricsState> {
     this.state = {
       loading: false
     };
-    this.onOptionsChanged = this.onOptionsChanged.bind(this);
-    this.dismissAlert = this.dismissAlert.bind(this);
+    bindMethods(this, ['onOptionsChanged', 'dismissAlert']);
   }
 
   componentDidMount() {

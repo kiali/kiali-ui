@@ -6,6 +6,7 @@ import * as API from '../../services/Api';
 import { GraphStyles } from './graphs/GraphStyles';
 import { GraphHighlighter } from './graphs/GraphHighlighter';
 import ReactCytoscape from './ReactCytoscape';
+import { bindMethods } from '../../utils/helpers';
 
 type CytoscapeLayoutProps = {
   namespace: string;
@@ -45,10 +46,7 @@ export default class CytoscapeLayout extends React.Component<CytoscapeLayoutProp
       elements: [],
       loading: false
     };
-    this.updateGraphElements = this.updateGraphElements.bind(this);
-    this.handleTap = this.handleTap.bind(this);
-    this.handleMouseIn = this.handleMouseIn.bind(this);
-    this.handleMouseOut = this.handleMouseOut.bind(this);
+    bindMethods(this, ['updateGraphElements', 'handleTap', 'handleMouseIn', 'handleMouseOut']);
   }
 
   resizeWindow() {

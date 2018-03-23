@@ -9,6 +9,7 @@ import {
 } from '../../types/NamespaceFilter';
 import * as API from '../../services/Api';
 import { Namespace } from '../../types/Namespace';
+import { bindMethods } from '../../utils/helpers';
 
 export namespace NamespaceFilterSelected {
   let selectedFilters: ActiveFilter[] = [];
@@ -26,12 +27,14 @@ export class NamespaceFilter extends React.Component<NamespaceFilterProps, Names
   constructor(props: NamespaceFilterProps) {
     super(props);
 
-    this.updateCurrentValue = this.updateCurrentValue.bind(this);
-    this.onValueKeyPress = this.onValueKeyPress.bind(this);
-    this.selectFilterType = this.selectFilterType.bind(this);
-    this.filterValueSelected = this.filterValueSelected.bind(this);
-    this.removeFilter = this.removeFilter.bind(this);
-    this.clearFilters = this.clearFilters.bind(this);
+    bindMethods(this, [
+      'updateCurrentValue',
+      'onValueKeyPress',
+      'selectFilterType',
+      'filterValueSelected',
+      'removeFilter',
+      'clearFilters'
+    ]);
 
     let namespaceFilter = {
       id: 'namespace',
