@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Alert } from 'patternfly-react';
 import ServiceListComponent from './ServiceListComponent';
+import { bindMethods } from '../../utils/helpers';
 
 type ServiceListState = {
   alertVisible: boolean;
@@ -15,9 +16,7 @@ class ServiceListPage extends React.Component<ServiceListProps, ServiceListState
   constructor(props: ServiceListProps) {
     super(props);
     console.log('Starting ServiceListPage');
-
-    this.dismissAlert = this.dismissAlert.bind(this);
-    this.handleError = this.handleError.bind(this);
+    bindMethods(this, ['dismissAlert', 'handleError']);
     this.state = {
       alertVisible: false,
       alertDetails: ''

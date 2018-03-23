@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Filter } from 'patternfly-react';
+import { bindMethods } from '../../utils/helpers';
 
 interface Props {
   dropdownTitle: string;
@@ -21,9 +22,7 @@ export class ValueSelectHelper {
 
   constructor(props: Props) {
     this.props = props;
-    this.add = this.add.bind(this);
-    this.remove = this.remove.bind(this);
-    this.clear = this.clear.bind(this);
+    bindMethods(this, ['add', 'remove', 'clear']);
 
     this.items = props.items.map(name => ({ name: name, selected: false }));
     this.computeState();

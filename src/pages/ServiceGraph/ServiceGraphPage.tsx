@@ -8,6 +8,7 @@ import SummaryPanel from './SummaryPanel';
 import { GraphFilter, GraphFilters } from '../../components/GraphFilter/GraphFilter';
 import PfContainerNavVertical from '../../components/Pf/PfContainerNavVertical';
 import PfHeader from '../../components/Pf/PfHeader';
+import { bindMethods } from '../../utils/helpers';
 
 const URLSearchParams = require('url-search-params');
 
@@ -35,9 +36,7 @@ export default class ServiceGraphPage extends React.Component<RouteComponentProp
       updateTime: new Date().toLocaleString()
     };
 
-    this.filterChange = this.filterChange.bind(this);
-    this.handleGraphClick = this.handleGraphClick.bind(this);
-    this.handleError = this.handleError.bind(this);
+    bindMethods(this, ['filterChange', 'handleGraphClick', 'handleError']);
 
     const search = routeProps.location.search;
     const params = new URLSearchParams(search);

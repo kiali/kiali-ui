@@ -9,6 +9,7 @@ import { Namespace } from '../../types/Namespace';
 import { Pagination } from '../../types/Pagination';
 import { RuleItem, RuleList } from '../../types/IstioRuleListComponent';
 import PropTypes from 'prop-types';
+import { bindMethods } from '../../utils/helpers';
 
 type SortField = {
   id: string;
@@ -54,12 +55,16 @@ const perPageOptions: number[] = [5, 10, 15];
 class IstioRuleListComponent extends React.Component<IstioRuleListComponentProps, IstioRuleListComponentState> {
   constructor(props: IstioRuleListComponentProps) {
     super(props);
-    this.filterChange = this.filterChange.bind(this);
-    this.handleError = this.handleError.bind(this);
-    this.pageSet = this.pageSet.bind(this);
-    this.pageSelect = this.pageSelect.bind(this);
-    this.updateSortField = this.updateSortField.bind(this);
-    this.updateSortDirection = this.updateSortDirection.bind(this);
+
+    bindMethods(this, [
+      'filterChange',
+      'handleError',
+      'pageSet',
+      'pageSelect',
+      'updateSortField',
+      'updateSortDirection'
+    ]);
+
     this.state = {
       loading: true,
       rules: [],

@@ -6,6 +6,7 @@ import ServiceInfoBadge from '../../pages/ServiceDetails/ServiceInfo/ServiceInfo
 import { InOutRateTable } from '../../components/SummaryPanel/InOutRateTable';
 import { RpsChart } from '../../components/SummaryPanel/RpsChart';
 import { SummaryPanelPropType } from '../../types/Graph';
+import { bindMethods } from '../../utils/helpers';
 
 type SummaryPanelStateType = {
   loading: boolean;
@@ -30,7 +31,7 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
 
   constructor(props: SummaryPanelPropType) {
     super(props);
-    this.showRequestCountMetrics = this.showRequestCountMetrics.bind(this);
+    bindMethods(this, ['showRequestCountMetrics']);
 
     this.state = {
       loading: true,
