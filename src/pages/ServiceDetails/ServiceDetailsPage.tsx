@@ -3,20 +3,32 @@ import { Link, RouteComponentProps } from 'react-router-dom';
 import ServiceInfo from './ServiceInfo';
 import ServiceMetrics from './ServiceMetrics';
 import ServiceId from '../../types/ServiceId';
-import { Nav, NavItem, TabContainer, TabContent, TabPane } from 'patternfly-react';
+import {
+  ToastNotification,
+  ToastNotificationList,
+  Nav,
+  NavItem,
+  TabContainer,
+  TabContent,
+  TabPane
+} from 'patternfly-react';
 import { NamespaceFilterSelected } from '../../components/NamespaceFilter/NamespaceFilter';
 import { ActiveFilter } from '../../types/NamespaceFilter';
 import * as API from '../../services/Api';
 
 type ServiceDetailsState = {
   jaegerUri: string;
+  error: boolean;
+  errorMessage: string;
 };
 
 class ServiceDetails extends React.Component<RouteComponentProps<ServiceId>, ServiceDetailsState> {
   constructor(props: RouteComponentProps<ServiceId>) {
     super(props);
     this.state = {
-      jaegerUri: ''
+      jaegerUri: '',
+      error: false,
+      errorMessage: ''
     };
   }
   updateFilter = () => {
@@ -28,15 +40,34 @@ class ServiceDetails extends React.Component<RouteComponentProps<ServiceId>, Ser
     NamespaceFilterSelected.setSelected([activeFilter]);
   };
   componentWillMount() {
-    API.getJaegerInfo().then(response => {
-      this.setState({
-        jaegerUri: `${response['data'].url}/search?service=${this.props.match.params.service}`
+    API.getJaegerInfo()
+      .then(response => {
+        this.setState({
+          jaegerUri: `${response['data'].url}/search?service=${this.props.match.params.service}`
+        });
+      })
+      .catch(error => {
+        this.setState({
+          error: true,
+          errorMessage: 'Could not connect to server'
+        });
+        console.log(error);
       });
-    });
   }
+
   render() {
     return (
       <div className="container-fluid container-pf-nav-pf-vertical">
+        {this.state.error ? (
+          <ToastNotificationList>
+            <ToastNotification type="danger">
+              <span>
+                <strong>Error </strong>
+                {this.state.errorMessage}
+              </span>
+            </ToastNotification>
+          </ToastNotificationList>
+        ) : null}
         <div className="page-header">
           <h2>
             Service{' '}
