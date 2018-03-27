@@ -36,13 +36,23 @@ export class GraphStyles {
         // version group boxes
         selector: '$node > node',
         css: {
-          'padding-top': '10px',
-          'padding-left': '20px',
-          'padding-bottom': '10px',
-          'padding-right': '20px',
+          'padding-top': '5px',
+          'padding-left': '5px',
+          'padding-bottom': '5px',
+          'padding-right': '5px',
           'text-valign': 'top',
           'text-halign': 'center',
-          'background-color': '#fbeabc' // pf-gold-100
+          'background-color': '#fbeabc', // pf-gold-100
+          'border-color': '#b58100', // pf-gold-500
+          'border-width': '2px'
+        }
+      },
+      {
+        // versioned node in a group
+        selector: 'node > $node',
+        css: {
+          'border-color': '#b58100', // pf-gold-500
+          'border-width': '2px'
         }
       },
       {
