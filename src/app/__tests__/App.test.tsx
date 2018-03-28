@@ -3,6 +3,8 @@ import * as ReactDOM from 'react-dom';
 import App from '../App';
 import 'jest-canvas-mock';
 
+jest.mock('../../services/Api');
+
 const axios = require('axios');
 const MockAdapter = require('axios-mock-adapter');
 

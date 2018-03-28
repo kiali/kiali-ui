@@ -14,6 +14,8 @@
     "lodash": "~4.17.5",
     "patternfly": "~3.42.0",
     "patternfly-react": "~1.16.4",
+    "mobx": "^4.1.0",
+    "mobx-react": "^5.0.0",
     "react": "~16.2.0",
     "react-bootstrap": "~0.32.1",
     "react-dom": "~16.2.0",

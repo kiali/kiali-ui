@@ -1,12 +1,14 @@
+import { TEST_LIST } from '../__mockData__/getNamespaces';
+
 jest.mock('../Api');
 
 const API = require('../Api');
 
 describe('#GetNamespaces using Promises', () => {
   it('should load namespaces', () => {
-    return API.GetNamespaces().then(data => {
-      expect(data).toBeDefined();
+    return API.GetNamespaces().then(({ data }) => {
       expect(data).toBeInstanceOf(Array);
+      expect(data).toEqual(TEST_LIST); // compare with expected data
     });
   });
 });
