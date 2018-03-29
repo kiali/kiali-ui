@@ -1,29 +1,48 @@
 import * as React from 'react';
+import { observer } from 'mobx-react';
 import { ButtonGroup, DropdownButton, MenuItem, Toolbar } from 'patternfly-react';
 import { ButtonToolbar } from 'react-bootstrap';
 
 import { GraphFilterProps, GraphFilterState } from '../../types/GraphFilter';
-import * as API from '../../services/Api';
+import Namespace from '../../types/Namespace';
 import { DurationButtonGroup } from './DurationButtonGroup';
 import { LayoutButtonGroup } from './LayoutButtonGroup';
+import { namespaceStore } from '../../model/Namespace';
 
+type DropdownListType = {
+  list: Namespace[];
+  current: Namespace;
+  onSelect: Function;
+};
+
+export class DropdownList extends React.PureComponent<DropdownListType, {}> {
+  render() {
+    return this.props.list.map(ns => (
+      <MenuItem
+        key={ns.name}
+        active={ns.name === this.props.current.name}
+        eventKey={ns.name}
+        onSelect={this.props.onSelect}
+      >
+        {ns.name}
+      </MenuItem>
+    ));
+  }
+}
+
+@observer
 export class GraphFilter extends React.Component<GraphFilterProps, GraphFilterState> {
   constructor(props: GraphFilterProps) {
     super(props);
-    this.state = {
-      availableNamespaces: []
-    };
   }
 
   componentDidMount() {
-    // TODO: [KIALI-436] API.GetNamespaces() is also called in Services component.
-    // We should consolidate them into one.
-    API.GetNamespaces()
-      .then(this.setNamespaces)
-      .catch(error => {
-        this.props.onError(error);
-      });
+    this.reloadData();
   }
+
+  reloadData = () => {
+    namespaceStore.fetchNamespacesFromBackend();
+  };
 
   setNamespaces = (response: any) => {
     this.setState({ availableNamespaces: response['data'] });
@@ -55,16 +74,12 @@ export class GraphFilter extends React.Component<GraphFilterProps, GraphFilterSt
       <div>
         <ButtonToolbar>
           <ButtonGroup>
-            <DropdownButton
-              id="namespace-selector"
-              title={this.props.activeNamespace.name}
-              onSelect={this.updateNamespace}
-            >
-              {this.state.availableNamespaces.map(ns => (
-                <MenuItem key={ns.name} active={ns.name === this.props.activeNamespace.name} eventKey={ns.name}>
-                  {ns.name}
-                </MenuItem>
-              ))}
+            <DropdownButton id="namespace-selector" title={this.props.activeNamespace.name} onClick={this.reloadData}>
+              <DropdownList
+                list={namespaceStore.namespaceList}
+                current={this.props.activeNamespace}
+                onSelect={this.updateNamespace}
+              />
             </DropdownButton>
           </ButtonGroup>
           <DurationButtonGroup onClick={this.updateDuration} initialDuration={this.props.activeDuration.value} />

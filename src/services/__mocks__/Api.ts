@@ -1,19 +1,9 @@
 import * as GraphData from '../__mockData__/getGraphElements';
+import * as NamespaceData from '../__mockData__/getNamespaces';
 
 const fs = require('fs');
 
-export const GetNamespaces = () => {
-  return new Promise((resolve, reject) => {
-    fs.readFile(`./src/services/__mockData__/getNamespaces.json`, 'utf8', (err, data) => {
-      if (err) {
-        reject(err);
-      } else {
-        // Parse the data as JSON and put in the key entity (just like the request library does)
-        resolve(JSON.parse(data));
-      }
-    });
-  });
-};
+export const GetNamespaces = () => Promise.resolve({ data: NamespaceData.TEST_LIST });
 
 export const GetServices = (namespace: String) => {
   return new Promise((resolve, reject) => {
