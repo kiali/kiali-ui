@@ -28,6 +28,7 @@
     "coverage",
     "webpack",
     "jest",
-    "src/setupTests.ts"
+    "src/setupTests.ts",
+    "**/*.stories.tsx"
   ]
 }
