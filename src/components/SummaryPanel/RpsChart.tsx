@@ -34,12 +34,8 @@ export class RpsChart extends React.Component<RpsChartTypeProp, {}> {
       type: 'area-spline'
     };
 
-    let dataRps: any = [],
-      dataErrors: any = [];
-    if (this.props.dataRps.length > 0) {
-      dataRps = (this.props.dataRps as [string, number][])[1];
-      dataErrors = (this.props.dataErrors as [string, number][])[1];
-    }
+    let dataRps: any = this.props.dataRps.length > 0 ? (this.props.dataRps as [string, number][])[1] : [];
+    let dataErrors: any = this.props.dataErrors.length > 0 ? (this.props.dataErrors as [string, number][])[1] : [];
 
     let len: number = dataRps.length;
     let sum = 0;

@@ -70,8 +70,6 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
         this.setState({ loading: false });
         console.error(error);
       });
-
-    this.setState({ loading: true });
   }
 
   showRequestCountMetrics(xhrRequest: any) {
