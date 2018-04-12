@@ -330,7 +330,7 @@ class ServiceListComponent extends React.Component<ServiceListComponentProps, Se
           <tr>
             <td>
               <strong>Health: </strong>
-              <HealthIndicator health={serviceItem.health} mode={DisplayMode.SMALL} />
+              <HealthIndicator id={serviceItem.servicename} health={serviceItem.health} mode={DisplayMode.SMALL} />
             </td>
             <td>
               <strong>Error rate: </strong>
