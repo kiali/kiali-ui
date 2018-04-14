@@ -10,6 +10,8 @@ import RouteRuleHTTPFaultInjection from './ServiceInfoRouteRules/RouteRuleHTTPFa
 import RouteRuleL4FaultInjection from './ServiceInfoRouteRules/RouteRuleL4FaultInjection';
 import RouteRuleIstioService from './ServiceInfoRouteRules/RouteRuleIstioService';
 import RouteRuleCorsPolicy from './ServiceInfoRouteRules/RouteRuleCorsPolicy';
+import ViewSourceModal from './ViewSourceModal';
+import { Icon } from 'patternfly-react';
 
 interface ServiceInfoRouteRulesProps {
   routeRules?: RouteRule[];
@@ -31,9 +33,20 @@ class ServiceInfoRouteRules extends React.Component<ServiceInfoRouteRulesProps> 
             <div>
               <strong>Name</strong>: {rule.name}
             </div>
+            {rule.name.endsWith('_synth') ? (
+              <div className="warning">
+                <Icon type="pf" name="warning-triangle-o" style={{ marginRight: '5px' }} />
+                <strong>Synthetic</strong>
+              </div>
+            ) : null}
             <div>
               <strong>Precedence</strong>: {rule.precedence}
             </div>
+            {rule.destination && rule.destination.name ? (
+              <div>
+                <strong>Destination</strong>: {rule.destination.name}
+              </div>
+            ) : null}
             {rule.match ? <RouteRuleMatch match={rule.match} /> : null}
             {rule.route ? <RouteRuleRoute route={rule.route} /> : null}
             {rule.redirect ? <RouteRuleRedirect redirect={rule.redirect} /> : null}
@@ -48,6 +61,8 @@ class ServiceInfoRouteRules extends React.Component<ServiceInfoRouteRulesProps> 
             {rule.l4Fault ? <RouteRuleL4FaultInjection l4Fault={rule.l4Fault} /> : null}
             {rule.mirror ? <RouteRuleIstioService name="Mirror" service={rule.mirror} /> : null}
             {rule.corsPolicy ? <RouteRuleCorsPolicy corsPolicy={rule.corsPolicy} /> : null}
+
+            <ViewSourceModal rule={rule} />
             <hr />
           </div>
         ))}
