@@ -57,7 +57,7 @@ export default class GraphFilter extends React.Component<GraphFilterProps, Graph
   };
 
   render() {
-    let intervalDurations = [
+    const intervalDurations = [
       [60, '1 minute'],
       [600, '10 minutes'],
       [1800, '30 minutes'],
@@ -68,7 +68,7 @@ export default class GraphFilter extends React.Component<GraphFilterProps, Graph
       [604800, '7 days'],
       [2592000, '30 days']
     ];
-    let graphsTypes = [
+    const graphsTypes = [
       ['breadthfirst', 'Breadthfirst'],
       ['cola', 'Cola'],
       ['cose', 'Cose'],
