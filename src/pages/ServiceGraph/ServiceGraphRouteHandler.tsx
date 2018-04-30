@@ -5,6 +5,7 @@ import { PropTypes } from 'prop-types';
 import { GraphParamsType } from '../../types/Graph';
 import * as LayoutDictionary from '../../components/CytoscapeLayout/graphs/LayoutDictionary';
 import ServiceGraphPage from './ServiceGraphPage';
+import WithMessageCenterHandler from '../../hoc/WithMessageCenterHandler';
 
 const URLSearchParams = require('url-search-params');
 
@@ -98,6 +99,7 @@ export class ServiceGraphRouteHandler extends React.Component<
   };
 
   render() {
-    return <ServiceGraphPage {...this.state} onParamsChange={this.onParamsChange} />;
+    const ServiceGraphPageWithMessageCenterHandler = WithMessageCenterHandler(ServiceGraphPage);
+    return <ServiceGraphPageWithMessageCenterHandler {...this.state} onParamsChange={this.onParamsChange} />;
   }
 }
