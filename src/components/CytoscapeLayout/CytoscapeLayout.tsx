@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Spinner } from 'patternfly-react';
 import PropTypes from 'prop-types';
 
 import { GraphStyles } from './graphs/GraphStyles';
@@ -21,7 +20,7 @@ type CytoscapeLayoutType = {
   showEdgeLabels: boolean;
   showNodeLabels: boolean;
   isReady?: boolean;
-  refresh: any;
+  onRefresh: any;
 };
 
 type CytoscapeLayoutProps = CytoscapeLayoutType & GraphParamsType;
@@ -29,8 +28,8 @@ type CytoscapeLayoutProps = CytoscapeLayoutType & GraphParamsType;
 type CytoscapeLayoutState = {};
 
 interface CytoscapeBaseEvent {
-  summaryType: string;
-  summaryTarget: any;
+  summaryType: string; // What the summary panel should show. One of: graph, node, edge, or group
+  summaryTarget: any; // The cytoscape element that was the target of the event
 }
 
 export interface CytoscapeClickEvent extends CytoscapeBaseEvent {}
@@ -49,7 +48,6 @@ export class CytoscapeLayout extends React.Component<CytoscapeLayoutProps, Cytos
 
   constructor(props: CytoscapeLayoutProps) {
     super(props);
-
     console.log(`Starting ServiceGraphPage for namespace: ${this.props.namespace.name}`);
   }
 
@@ -83,7 +81,9 @@ export class CytoscapeLayout extends React.Component<CytoscapeLayoutProps, Cytos
     }
   };
 
-  cyRef(cy: any) {
+  // This is called by the component that creates the cy graph object itself.
+  // This callback allows us to perform additional initialization on the cy graph.
+  cyInitialized(cy: any) {
     this.cy = cy;
     this.graphHighlighter = new GraphHighlighter(cy);
 
@@ -112,28 +112,6 @@ export class CytoscapeLayout extends React.Component<CytoscapeLayoutProps, Cytos
       }
     });
 
-    // when the graph is fully populated and ready, we need to add appropriate badges to the nodes
-    this.cy.ready((evt: any) => {
-      if (this.props.badgeStatus.hideCBs && this.props.badgeStatus.hideRRs) {
-        return;
-      }
-
-      evt.cy.nodes().forEach(ele => {
-        if (!this.props.badgeStatus.hideCBs && ele.data('hasCB') === 'true') {
-          new GraphBadge.CircuitBreakerBadge(ele).buildBadge();
-        }
-        if (!this.props.badgeStatus.hideRRs && ele.data('hasRR') === 'true') {
-          new GraphBadge.RouteRuleBadge(ele).buildBadge();
-        }
-      });
-
-      // Don't allow a large zoom if the graph has a few nodes (nodes would look too big).
-      if (this.cy.zoom() > 2.5) {
-        this.cy.zoom(2.5);
-        this.cy.center();
-      }
-    });
-
     this.cy.on('mouseover', 'node,edge', (evt: any) => {
       const cytoscapeEvent = getCytoscapeBaseEvent(evt);
       if (cytoscapeEvent) {
@@ -146,11 +124,45 @@ export class CytoscapeLayout extends React.Component<CytoscapeLayoutProps, Cytos
         this.handleMouseOut(cytoscapeEvent);
       }
     });
+
+    // when the graph is fully populated and ready, we need to perform additional things
     this.cy.ready((evt: any) => {
       if (!this.props.isReady) {
+        // Don't allow a large zoom if the graph has a few nodes (nodes would look too big).
+        if (this.cy.zoom() > 2.5) {
+          this.cy.zoom(2.5);
+          this.cy.center();
+        }
+
+        this.processGraphUpdate();
         this.props.onReady(evt.cy);
       }
     });
+  }
+
+  // Perform additional processing on the graph to do things like decorating it with badges
+  processGraphUpdate() {
+    console.log('CY: graph was updated and needs to be processed further');
+
+    // TODO: refactor the GraphBadge.XXX classes so the constructor doesn't take an
+    //       element. Pass ele to the buildBadge and destroyBadge funcs so we don't have to
+    //       create so many objects - we should just create one object per badge type
+    //       and let it build/destroy multiple badges.
+    this.cy.startBatch();
+    this.cy.nodes().forEach(ele => {
+      if (!this.props.badgeStatus.hideCBs && ele.data('hasCB')) {
+        new GraphBadge.CircuitBreakerBadge(ele).buildBadge();
+      } else {
+        new GraphBadge.CircuitBreakerBadge(ele).destroyBadge();
+      }
+
+      if (!this.props.badgeStatus.hideRRs && ele.data('hasRR')) {
+        new GraphBadge.RouteRuleBadge(ele).buildBadge();
+      } else {
+        new GraphBadge.RouteRuleBadge(ele).destroyBadge();
+      }
+    });
+    this.cy.endBatch();
   }
 
   render() {
@@ -161,24 +173,25 @@ export class CytoscapeLayout extends React.Component<CytoscapeLayoutProps, Cytos
 
     return (
       <div id="cytoscape-container" style={{ marginRight: '25em', height: '100%' }}>
-        <Spinner loading={this.props.isLoading}>
-          <EmptyGraphLayout
+        <EmptyGraphLayout
+          elements={this.props.elements}
+          namespace={this.props.namespace.name}
+          action={this.props.onRefresh}
+        >
+          <ReactCytoscape
+            containerID="cy"
             elements={this.props.elements}
-            namespace={this.props.namespace.name}
-            action={this.props.refresh}
-          >
-            <ReactCytoscape
-              containerID="cy"
-              cyRef={cy => {
-                this.cyRef(cy);
-              }}
-              elements={this.props.elements}
-              style={GraphStyles.styles()}
-              cytoscapeOptions={GraphStyles.options()}
-              layout={layout}
-            />
-          </EmptyGraphLayout>
-        </Spinner>
+            style={GraphStyles.styles()}
+            cytoscapeOptions={GraphStyles.options()}
+            layout={layout}
+            cyInitializedFn={cy => {
+              this.cyInitialized(cy);
+            }}
+            processGraphFn={() => {
+              this.processGraphUpdate();
+            }}
+          />
+        </EmptyGraphLayout>
       </div>
     );
   }

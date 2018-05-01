@@ -60,6 +60,9 @@ export default class ServiceGraphPage extends React.Component<ServiceGraphPagePr
     const namespaceHasChanged = nextNamespace.name !== this.props.namespace.name;
     const durationHasChanged = nextDuration.value !== this.props.graphDuration.value;
 
+    // If either namespace was changed or the time duration was changed, that means the graph
+    // will need to be updated to show the information based on the new namespace and/or
+    // duration. When this happens, we must request the new data from the server.
     if (namespaceHasChanged || durationHasChanged) {
       this.loadGraphDataFromBackend(nextNamespace, nextDuration);
     }
@@ -123,7 +126,7 @@ export default class ServiceGraphPage extends React.Component<ServiceGraphPagePr
             elements={this.state.graphData}
             onClick={this.handleGraphClick}
             onReady={this.handleReady}
-            refresh={this.handleRefreshClick}
+            onRefresh={this.handleRefreshClick}
           />
           {this.state.summaryData ? (
             <SummaryPanel
@@ -179,7 +182,6 @@ export default class ServiceGraphPage extends React.Component<ServiceGraphPagePr
     this.props.onParamsChange(newParams);
   };
 
-  /** Fetch graph data */
   loadGraphDataFromBackend = (namespace?: Namespace, graphDuration?: Duration) => {
     this.setState({ isLoading: true, isReady: false });
     namespace = namespace ? namespace : this.props.namespace;
@@ -197,7 +199,6 @@ export default class ServiceGraphPage extends React.Component<ServiceGraphPagePr
         this.setState({
           graphData: elements,
           graphTimestamp: timestamp,
-          summaryData: null,
           isLoading: false
         });
       })
@@ -209,7 +210,6 @@ export default class ServiceGraphPage extends React.Component<ServiceGraphPagePr
         this.setState({
           graphData: EMPTY_GRAPH_DATA,
           graphTimestamp: new Date().toLocaleString(),
-          summaryData: null,
           isLoading: false,
           alertVisible: true,
           alertDetails: { ...this.state.alertDetails, graphLoadAlert: error }

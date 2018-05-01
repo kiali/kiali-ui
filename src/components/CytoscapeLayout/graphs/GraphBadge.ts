@@ -4,6 +4,13 @@ import { PfColors } from '../../../components/Pf/PfColors';
 const FLASH_BADGE: string = 'fa fa-bolt';
 const ROUTE_BADGE: string = 'fa fa-code-fork';
 
+// Each node that has a badge will have custom data associated with it.
+// Each entry in the custom data is keyed on the badge type; an entry is itself
+// a map with the references to the parent div and the popper itself (used so
+// we can destroy them later if we need to).
+// This supports being able to show any combination of multiple badges.
+const CUSTOM_DATA_NAMESPACE = '_kiali_badges';
+
 class GraphBadge {
   node: Element;
   badgeType: string;
@@ -18,6 +25,14 @@ class GraphBadge {
   }
 
   buildBadge() {
+    let badgesMap: any = this.node.scratch(CUSTOM_DATA_NAMESPACE);
+    if (!badgesMap) {
+      badgesMap = this.node.scratch(CUSTOM_DATA_NAMESPACE, {});
+    }
+    if (badgesMap[this.badgeType]) {
+      return; // the node already has this badge
+    }
+
     const div = document.createElement('div');
     div.className = this.badgeType;
     div.style.color = this.badgeColor;
@@ -64,6 +79,10 @@ class GraphBadge {
       }
     });
 
+    // add some custom data to the cy node data map indicating it has the badge
+    badgesMap[this.badgeType] = { popper: popper, div: div };
+    this.node.scratch(CUSTOM_DATA_NAMESPACE, badgesMap);
+
     let update = event => {
       popper.scheduleUpdate();
     };
@@ -83,6 +102,20 @@ class GraphBadge {
     this.node.cy().on('pan zoom resize', update);
     this.node.cy().on('destroy', destroy);
   }
+
+  destroyBadge() {
+    let badgesMap: any = this.node.scratch(CUSTOM_DATA_NAMESPACE) || {};
+    if (badgesMap[this.badgeType]) {
+      // if the node has the badge...
+      badgesMap[this.badgeType].popper.destroy();
+      let div = badgesMap[this.badgeType].div;
+      while (div.firstChild) {
+        div.removeChild(div.firstChild);
+      }
+      div.remove();
+      delete badgesMap[this.badgeType];
+    }
+  }
 }
 
 export class CircuitBreakerBadge extends GraphBadge {
@@ -96,3 +129,12 @@ export class RouteRuleBadge extends GraphBadge {
     super(node, ROUTE_BADGE, PfColors.Purple300, 'top');
   }
 }
+
+export const destroyAllBadges = (cy: any): void => {
+  if (cy) {
+    cy.nodes().forEach(node => {
+      new CircuitBreakerBadge(node).destroyBadge();
+      new RouteRuleBadge(node).destroyBadge();
+    });
+  }
+};
