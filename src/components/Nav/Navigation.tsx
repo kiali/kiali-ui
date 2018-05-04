@@ -112,13 +112,13 @@ class Navigation extends React.Component<PropsType, StateType> {
               <MessageCenter.Trigger />
               <HelpDropdown />
             </VerticalNav.IconBar>
+            <MessageCenter drawerTitle="Message Center" />
           </VerticalNav.Masthead>
           <VerticalNav.Item title={serviceGraphTitle} iconClass="fa pficon-topology" onClick={this.navigateTo} />
           <VerticalNav.Item title={servicesTitle} iconClass="fa pficon-service" onClick={this.navigateTo} />
           <VerticalNav.Item title={istioRulesTitle} iconClass="fa pficon-migration" onClick={this.navigateTo} />
           <VerticalNav.Item title={servicesJaeger} iconClass="fa fa-paw" onClick={this.navigateTo} />
         </VerticalNav>
-        <MessageCenter drawerTitle="Message Center" />
         <SwitchErrorBoundary
           fallBackComponent={() => (
             <PfContainerNavVertical>
