@@ -10,6 +10,7 @@ import GraphFilter from '../../components/GraphFilter/GraphFilter';
 import PfContainerNavVertical from '../../components/Pf/PfContainerNavVertical';
 import * as API from '../../services/Api';
 import { computePrometheusQueryInterval } from '../../services/Prometheus';
+import * as MessageCenter from '../../utils/MessageCenter';
 
 type ServiceGraphPageState = {
   summaryData?: SummaryData | null;
@@ -21,7 +22,6 @@ type ServiceGraphPageState = {
 
 type ServiceGraphPageProps = GraphParamsType & {
   onParamsChange: (params: GraphParamsType) => void;
-  messageHandler?: (message: string) => void;
 };
 const EMPTY_GRAPH_DATA = { nodes: [], edges: [] };
 const NUMBER_OF_DATAPOINTS = 30;
@@ -195,9 +195,7 @@ export default class ServiceGraphPage extends React.Component<ServiceGraphPagePr
           console.log('ServiceGraphPage: Ignore fetch error, component not mounted.');
           return;
         }
-        if (this.props.messageHandler) {
-          this.props.messageHandler(this.getGraphErrorAsString(error));
-        }
+        MessageCenter.add(this.getGraphErrorAsString(error));
         this.setState({
           graphData: EMPTY_GRAPH_DATA,
           graphTimestamp: new Date().toLocaleString(),
