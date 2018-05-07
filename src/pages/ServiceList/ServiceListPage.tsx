@@ -14,11 +14,9 @@ class ServiceListPage extends React.Component<ServiceListProps, ServiceListState
   };
 
   render() {
-    let alertsDiv = <div />;
     return (
       <div className="container-fluid container-pf-nav-pf-vertical">
         <h2>Services</h2>
-        {alertsDiv}
         <ServiceListComponent onError={this.handleError} />
       </div>
     );

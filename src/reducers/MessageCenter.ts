@@ -16,9 +16,7 @@ const INITIAL_STATE: MessageCenterState = {
   expandedGroupId: 'default'
 };
 
-const mergeToState = (prevState, toMerge) => {
-  return Object.assign({}, prevState, toMerge);
-};
+const mergeToState = (prevState, toMerge) => ({ ...prevState, ...toMerge });
 
 const createMessage = (id: number, content: string, type: MessageType) => {
   return {

@@ -66,7 +66,6 @@ export const MessageCenterActions = {
     return (dispatch, getState) => {
       const state = getState();
       const foundGroup = state.messageCenter.groups.find(group => group.id === groupId);
-      console.log(foundGroup);
       if (foundGroup) {
         dispatch(MessageCenterActions.markAsRead(foundGroup.messages.map(message => message.id)));
       }
