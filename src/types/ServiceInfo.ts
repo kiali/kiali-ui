@@ -363,6 +363,19 @@ export interface ServiceDetailsInfo {
   health?: Health;
 }
 
+export interface ObjectValidation {
+  name: string;
+  objectType: string;
+  valid: boolean;
+  checks?: ObjectCheck[];
+}
+
+export interface ObjectCheck {
+  message: string;
+  severity: string;
+  path: string;
+}
+
 export interface EditorLink {
   editorLink: string;
 }
