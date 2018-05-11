@@ -5,7 +5,7 @@ import { GraphParamsType, SummaryData } from '../../types/Graph';
 import { Duration, Layout } from '../../types/GraphFilter';
 
 import SummaryPanel from './SummaryPanel';
-import CytoscapeGraph from '../../components/CytoscapeLayout/CytoscapeGraph';
+import CytoscapeGraph from '../../components/CytoscapeGraph/CytoscapeGraph';
 import GraphFilter from '../../components/GraphFilter/GraphFilter';
 import PfContainerNavVertical from '../../components/Pf/PfContainerNavVertical';
 import { computePrometheusQueryInterval } from '../../services/Prometheus';
