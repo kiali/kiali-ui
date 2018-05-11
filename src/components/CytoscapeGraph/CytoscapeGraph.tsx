@@ -4,6 +4,7 @@ import { Spinner } from 'patternfly-react';
 import PropTypes from 'prop-types';
 
 import { GraphHighlighter } from './graphs/GraphHighlighter';
+import * as LayoutDictionary from './graphs/LayoutDictionary';
 import EmptyGraphLayout from './EmptyGraphLayout';
 import CytoscapeReactWrapper from './CytoscapeReactWrapper';
 
@@ -46,12 +47,15 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
 
   private graphHighlighter: GraphHighlighter;
   private cytoscapeReactWrapperRef: any;
+  private newLayout: any;
 
   constructor(props: CytoscapeGraphProps) {
     super(props);
+    this.newLayout = '';
   }
 
   shouldComponentUpdate(nextProps: any, nextState: any) {
+    this.newLayout = this.props.graphLayout !== nextProps.graphLayout ? nextProps.graphLayout : '';
     return (
       this.props.isLoading !== nextProps.isLoading ||
       this.props.graphLayout !== nextProps.graphLayout ||
@@ -59,7 +63,8 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
       this.props.showNodeLabels !== nextProps.showNodeLabels ||
       this.props.showCircuitBreakers !== nextProps.showCircuitBreakers ||
       this.props.showRouteRules !== nextProps.showRouteRules ||
-      this.props.elements !== nextProps.elements
+      this.props.elements !== nextProps.elements ||
+      this.props.graphLayout !== nextProps.graphLayout
     );
   }
 
@@ -189,7 +194,11 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
     // update the entire set of nodes and edges to keep the graph up-to-date
     cy.json({ elements: this.props.elements });
 
-    // TODO update the layout if it changed
+    // update the layout if it changed
+    if (this.newLayout) {
+      cy.layout(LayoutDictionary.getLayout(this.newLayout)).run();
+      this.newLayout = '';
+    }
 
     // Create and destroy labels
     this.turnEdgeLabelsTo(this.props.showEdgeLabels);
