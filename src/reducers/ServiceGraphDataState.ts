@@ -1,14 +1,16 @@
 import { ServiceGraphDataState } from '../store/Store';
 import { ServiceGraphDataActionKeys } from '../actions/ServiceGraphDataActions';
 
-const INITIAL_STATE: ServiceGraphDataState = {
+export const SERVICE_GRAPH_DATA_INITIAL_STATE: ServiceGraphDataState = {
   isLoading: false,
   timestamp: 0,
+  graphType: 'cola',
+  duration: 60,
   graphData: {}
 };
 
 // This Reducer allows changes to the 'serviceGraphDataState' portion of Redux Store
-const serviceGraphDataState = (state: ServiceGraphDataState = INITIAL_STATE, action) => {
+const serviceGraphDataState = (state: ServiceGraphDataState = SERVICE_GRAPH_DATA_INITIAL_STATE, action) => {
   switch (action.type) {
     case ServiceGraphDataActionKeys.GET_GRAPH_DATA_START:
       console.log('ServiceGraphDataState reducer: graph data is loading...');
@@ -30,6 +32,20 @@ const serviceGraphDataState = (state: ServiceGraphDataState = INITIAL_STATE, act
         ...state,
         isLoading: false,
         error: action.error
+      };
+    case ServiceGraphDataActionKeys.CHANGE_GRAPH_LAYOUT:
+      console.debug(`ServiceGraphDataState reducer: Change graph layout to $action.graphType`);
+      return {
+        ...state,
+        isLoading: false,
+        graphType: action.graphType
+      };
+    case ServiceGraphDataActionKeys.CHANGE_DURATION:
+      console.debug(`ServiceGraphDataState reducer: Change duration to $action.duration`);
+      return {
+        ...state,
+        isLoading: false,
+        duration: action.duration
       };
     default:
       return state;

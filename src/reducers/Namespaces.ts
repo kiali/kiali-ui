@@ -1,12 +1,13 @@
 import { NamespaceActionKeys } from '../actions/NamespaceAction';
+import { NamespaceState } from '../store/Store';
 
-const INITIAL_STATE = {
+const INITIAL_STATE: NamespaceState = {
   isFetching: false,
   didInvalidate: false,
   items: []
 };
 
-const namespaces = (state = INITIAL_STATE, action) => {
+const namespaces = (state: NamespaceState = INITIAL_STATE, action) => {
   switch (action.type) {
     case NamespaceActionKeys.NAMESPACE_RELOAD:
       return Object.assign({}, state, {

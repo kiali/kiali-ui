@@ -6,7 +6,6 @@ import { serviceGraphFilterActions } from '../actions/ServiceGraphFilterActions'
 import { KialiAppState, ServiceGraphFilterState } from '../store/Store';
 
 interface ServiceGraphDispatch {
-  // Dispatch methods
   toggleGraphEdgeLabels(): void;
   toggleGraphNodeLabels(): void;
   toggleGraphCircuitBreakers(): void;
@@ -42,7 +41,6 @@ interface VisibilityLayersType {
 }
 
 // Show/Hide Graph Visibility Layers -- there will be many
-// Right now it is a toolbar with Switch Buttons -- this will change once with UXD input
 export const GraphLayers: React.SFC<GraphLayersProps> = props => {
   // map our attributes from redux
   const { showCircuitBreakers, showRouteRules, showEdgeLabels, showNodeLabels } = props;
@@ -79,15 +77,15 @@ export const GraphLayers: React.SFC<GraphLayersProps> = props => {
   const toggleItems = visibilityLayers.map((item: VisibilityLayersType) => (
     <div id={item.id}>
       <label>
-        <input name="isGoing" type="checkbox" checked={item.value} onChange={() => item.onChange()} />
+        <input type="checkbox" checked={item.value} onChange={() => item.onChange()} />
         {item.labelText}
       </label>
     </div>
   ));
-  const popover = <Popover>{toggleItems}</Popover>;
+  const popover = <Popover id={'graphFilterPopover'}>{toggleItems}</Popover>;
 
   return (
-    <OverlayTrigger overlay={popover} placement="bottom" trigger={['click']} rootClose={'true'}>
+    <OverlayTrigger overlay={popover} placement="bottom" trigger={['click']} rootClose={true}>
       <Button>
         <Icon name="filter" />
       </Button>

@@ -3,13 +3,17 @@ import Namespace from '../types/Namespace';
 import { Duration } from '../types/GraphFilter';
 import * as API from '../services/Api';
 import * as MessageCenter from '../utils/MessageCenter';
+import { GraphType } from '../components/CytoscapeGraph/graphs/GraphType';
 
 const EMPTY_GRAPH_DATA = { nodes: [], edges: [] };
 
 export enum ServiceGraphDataActionKeys {
   GET_GRAPH_DATA_START = 'GET_GRAPH_DATA_START',
   GET_GRAPH_DATA_SUCCESS = 'GET_GRAPH_DATA_SUCCESS',
-  GET_GRAPH_DATA_FAILURE = 'GET_GRAPH_DATA_FAILURE'
+  GET_GRAPH_DATA_FAILURE = 'GET_GRAPH_DATA_FAILURE',
+  CHANGE_GRAPH_LAYOUT = 'CHANGE_GRAPH_LAYOUT',
+  CHANGE_DURATION = 'CHANGE_DURATION',
+  REFRESH_SERVICE_GRAPH = 'REFRESH_SERVICE_GRAPH'
 }
 
 // synchronous action creators
@@ -27,6 +31,15 @@ export const ServiceGraphDataActions = {
     type: ServiceGraphDataActionKeys.GET_GRAPH_DATA_FAILURE,
     error: error
   })),
+  changeGraphLayout: createAction(ServiceGraphDataActionKeys.CHANGE_GRAPH_LAYOUT, (graphType: GraphType) => ({
+    type: ServiceGraphDataActionKeys.CHANGE_GRAPH_LAYOUT,
+    graphType: graphType
+  })),
+  changeDuration: createAction(ServiceGraphDataActionKeys.CHANGE_DURATION, (duration: number) => ({
+    type: ServiceGraphDataActionKeys.CHANGE_DURATION,
+    duration: duration
+  })),
+  refresh: createAction(ServiceGraphDataActionKeys.REFRESH_SERVICE_GRAPH),
 
   // action creator that performs the async request
   fetchGraphData: (namespace: Namespace, graphDuration: Duration) => {
