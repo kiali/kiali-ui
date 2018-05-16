@@ -379,7 +379,8 @@ export interface ObjectCheck {
 const IconSeverityMap = new Map<string, string>([
   ['error', 'error-circle-o'],
   ['warning', 'warning-triangle-o'],
-  ['improvement', 'info']
+  ['improvement', 'info'],
+  ['correct', 'ok']
 ]);
 
 export const severityToIconName = (severity: string): string => {
@@ -391,20 +392,34 @@ export const severityToIconName = (severity: string): string => {
   return iconName;
 };
 
-export const checkForPath = (object: ObjectValidation, path: string): ObjectCheck | null => {
-  if (!object.checks) {
-    return null;
+export const validationToIconName = (object: ObjectValidation): string => {
+  let severity = 'correct';
+
+  if (object) {
+    if (!object.valid) {
+      severity = 'error';
+    } else if (object.checks) {
+      severity = 'warning';
+    }
   }
 
-  let check = object.checks.find(item => {
+  return severityToIconName(severity);
+};
+
+export const checkForPath = (object: ObjectValidation, path: string): ObjectCheck[] => {
+  if (!object || !object.checks) {
+    return [];
+  }
+
+  let check = object.checks.filter(item => {
     return item.path === path;
   });
 
-  if (typeof check === 'undefined') {
-    return null;
-  }
-
   return check;
+};
+
+export const globalChecks = (object: ObjectValidation): ObjectCheck[] => {
+  return checkForPath(object, '');
 };
 
 export interface EditorLink {

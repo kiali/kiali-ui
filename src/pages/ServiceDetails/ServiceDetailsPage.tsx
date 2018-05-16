@@ -180,7 +180,6 @@ class ServiceDetails extends React.Component<RouteComponentProps<ServiceId>, Ser
       })
       .catch(error => {
         MessageCenter.add(API.getErrorMsg('Cannot fetch Jaeger info.', error));
-        console.log(error);
       });
     API.getServiceDetail(this.props.match.params.namespace, this.props.match.params.service)
       .then(response => {
@@ -191,7 +190,6 @@ class ServiceDetails extends React.Component<RouteComponentProps<ServiceId>, Ser
       })
       .catch(error => {
         MessageCenter.add(API.getErrorMsg('Could not fetch Service Details.', error));
-        console.log(error);
       });
     API.getServiceValidations(this.props.match.params.namespace, this.props.match.params.service)
       .then(response => {
@@ -201,7 +199,6 @@ class ServiceDetails extends React.Component<RouteComponentProps<ServiceId>, Ser
       })
       .catch(error => {
         MessageCenter.add(API.getErrorMsg('Could not fetch Service Validations.', error));
-        console.log(error);
       });
   }
 

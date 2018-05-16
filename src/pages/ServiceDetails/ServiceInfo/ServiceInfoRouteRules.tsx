@@ -1,6 +1,12 @@
 import * as React from 'react';
-import { Col, Row } from 'patternfly-react';
-import { EditorLink, ObjectValidation, RouteRule } from '../../../types/ServiceInfo';
+import { Col, Icon, Row, OverlayTrigger, Popover } from 'patternfly-react';
+import {
+  EditorLink,
+  globalChecks,
+  ObjectValidation,
+  RouteRule,
+  validationToIconName
+} from '../../../types/ServiceInfo';
 import LocalTime from '../../../components/Time/LocalTime';
 import RouteRuleRoute from './ServiceInfoRouteRules/RouteRuleRoute';
 import DetailObject from '../../../components/Details/DetailObject';
@@ -19,9 +25,10 @@ class ServiceInfoRouteRules extends React.Component<ServiceInfoRouteRulesProps> 
   rawConfig(rule: RouteRule, i: number) {
     return (
       <div className="card-pf-body" key={'ruleconfig' + i}>
-        <h3>
-          <Link to={this.props.editorLink + '?routerule=' + rule.name}>{rule.name}</Link>
-        </h3>
+        <div>
+          <strong>Name</strong>: <Link to={this.props.editorLink + '?routerule=' + rule.name}>{rule.name}</Link>{' '}
+          {this.globalStatus(rule)}
+        </div>
         <div>
           <strong>Created at</strong>: <LocalTime time={rule.created_at} />
         </div>
@@ -54,6 +61,34 @@ class ServiceInfoRouteRules extends React.Component<ServiceInfoRouteRulesProps> 
     ) : null;
   }
 
+  validation(rule: RouteRule): ObjectValidation {
+    return this.props.validations[rule.name];
+  }
+
+  globalStatus(rule: RouteRule) {
+    let checks = globalChecks(this.validation(rule));
+    let iconName = validationToIconName(this.validation(rule));
+    let message = checks.map(check => check.message).join(',');
+    if (!message.length) {
+      message = 'All checks passed!';
+    }
+
+    return (
+      <OverlayTrigger
+        placement={'right'}
+        overlay={this.infotipContent(rule.name, message)}
+        trigger={['hover', 'focus']}
+        rootClose={false}
+      >
+        <Icon type="pf" name={iconName} />
+      </OverlayTrigger>
+    );
+  }
+
+  infotipContent(name: string, message: string) {
+    return <Popover id={name + '-global-tooltip'}>{message}</Popover>;
+  }
+
   render() {
     return (
       <div className="card-pf">
@@ -67,7 +102,6 @@ class ServiceInfoRouteRules extends React.Component<ServiceInfoRouteRulesProps> 
                 <Col xs={12} sm={12} md={5} lg={5}>
                   {this.weights(rule)}
                 </Col>
-                <hr />
               </Row>
             ))}
           </Col>

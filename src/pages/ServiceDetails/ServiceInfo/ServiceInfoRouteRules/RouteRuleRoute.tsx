@@ -5,6 +5,8 @@ import { Table, Icon, OverlayTrigger, Popover } from 'patternfly-react';
 import Badge from '../../../../components/Badge/Badge';
 import { PfColors } from '../../../../components/Pf/PfColors';
 
+import './RouteRuleRoute.css';
+
 interface RouteRuleRouteProps {
   name: string;
   route: DestinationWeight[];
@@ -12,7 +14,7 @@ interface RouteRuleRouteProps {
 }
 
 class RouteRuleRoute extends React.Component<RouteRuleRouteProps> {
-  headerFormat = value => <Table.Heading>{value}</Table.Heading>;
+  headerFormat = value => <Table.Heading className={value}>{value}</Table.Heading>;
   cellFormat = value => <Table.Cell>{value}</Table.Cell>;
 
   constructor(props: RouteRuleRouteProps) {
@@ -26,12 +28,7 @@ class RouteRuleRoute extends React.Component<RouteRuleRouteProps> {
           property: 'status',
           header: {
             label: 'status',
-            formatters: [this.headerFormat],
-            props: {
-              index: 0,
-              rowSpan: 1,
-              colSpan: 1
-            }
+            formatters: [this.headerFormat]
           },
           cell: {
             formatters: [this.cellFormat]
@@ -41,12 +38,7 @@ class RouteRuleRoute extends React.Component<RouteRuleRouteProps> {
           property: 'labels',
           header: {
             label: 'labels',
-            formatters: [this.headerFormat],
-            props: {
-              index: 1,
-              rowSpan: 1,
-              colSpan: 1
-            }
+            formatters: [this.headerFormat]
           },
           cell: {
             formatters: [this.cellFormat]
@@ -56,12 +48,7 @@ class RouteRuleRoute extends React.Component<RouteRuleRouteProps> {
           property: 'weight',
           header: {
             label: 'weights',
-            formatters: [this.headerFormat],
-            props: {
-              index: 2,
-              rowSpan: 1,
-              colSpan: 1
-            }
+            formatters: [this.headerFormat]
           },
           cell: {
             formatters: [this.cellFormat]
@@ -74,27 +61,35 @@ class RouteRuleRoute extends React.Component<RouteRuleRouteProps> {
   rows() {
     return (this.props.route || []).map((routeItem, u) => ({
       id: u,
-      status: this.statusFrom(this.props.validations[this.props.name], routeItem),
+      status: this.statusFrom(this.validation(), routeItem),
       weight: routeItem.weight ? routeItem.weight : '-',
       labels: this.labelsFrom(routeItem.labels)
     }));
   }
 
+  validation(): ObjectValidation {
+    return this.props.validations[this.props.name];
+  }
+
   statusFrom(validation: ObjectValidation, routeItem: DestinationWeight) {
-    let check = checkForPath(validation, 'spec/route/weight/' + routeItem.weight);
+    let check = checkForPath(validation, 'spec/route/weight/' + routeItem.weight)[0];
     let iconName = check ? severityToIconName(check.severity) : 'ok';
     let message = check ? check.message : 'All checks passed!';
 
-    return (
-      <OverlayTrigger
-        placement={'right'}
-        overlay={this.infotipContent(message)}
-        trigger={['hover', 'focus']}
-        rootClose={false}
-      >
-        <Icon type="pf" name={iconName} />
-      </OverlayTrigger>
-    );
+    if (iconName !== 'ok') {
+      return (
+        <OverlayTrigger
+          placement={'right'}
+          overlay={this.infotipContent(message)}
+          trigger={['hover', 'focus']}
+          rootClose={false}
+        >
+          <Icon type="pf" name={iconName} />
+        </OverlayTrigger>
+      );
+    } else {
+      return '';
+    }
   }
 
   infotipContent(message: string) {
@@ -115,8 +110,7 @@ class RouteRuleRoute extends React.Component<RouteRuleRouteProps> {
 
   render() {
     return (
-      <div>
-        <h5>weights:</h5>
+      <div style={{ marginTop: '30px' }}>
         <Table.PfProvider striped={true} bordered={true} hover={true} dataTable={true} columns={this.columns().columns}>
           <Table.Header headerRows={resolve.headerRows(this.columns())} />
           <Table.Body rows={this.rows()} />
