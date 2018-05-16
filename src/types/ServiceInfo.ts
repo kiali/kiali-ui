@@ -376,6 +376,37 @@ export interface ObjectCheck {
   path: string;
 }
 
+const IconSeverityMap = new Map<string, string>([
+  ['error', 'error-circle-o'],
+  ['warning', 'warning-triangle-o'],
+  ['improvement', 'info']
+]);
+
+export const severityToIconName = (severity: string): string => {
+  let iconName = IconSeverityMap.get(severity);
+  if (!iconName) {
+    iconName = 'ok';
+  }
+
+  return iconName;
+};
+
+export const checkForPath = (object: ObjectValidation, path: string): ObjectCheck | null => {
+  if (!object.checks) {
+    return null;
+  }
+
+  let check = object.checks.find(item => {
+    return item.path === path;
+  });
+
+  if (typeof check === 'undefined') {
+    return null;
+  }
+
+  return check;
+};
+
 export interface EditorLink {
   editorLink: string;
 }

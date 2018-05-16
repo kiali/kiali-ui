@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as resolve from 'table-resolver';
-import { DestinationWeight, ObjectValidation } from '../../../../types/ServiceInfo';
-import { Table, Icon } from 'patternfly-react';
+import { checkForPath, DestinationWeight, ObjectValidation, severityToIconName } from '../../../../types/ServiceInfo';
+import { Table, Icon, OverlayTrigger, Popover } from 'patternfly-react';
 import Badge from '../../../../components/Badge/Badge';
 import { PfColors } from '../../../../components/Pf/PfColors';
 
@@ -74,20 +74,31 @@ class RouteRuleRoute extends React.Component<RouteRuleRouteProps> {
   rows() {
     return (this.props.route || []).map((routeItem, u) => ({
       id: u,
-      status: this.statusFrom(this.props.validations[this.props.name]),
+      status: this.statusFrom(this.props.validations[this.props.name], routeItem),
       weight: routeItem.weight ? routeItem.weight : '-',
       labels: this.labelsFrom(routeItem.labels)
     }));
   }
 
-  statusFrom(validation: ObjectValidation) {
-    let valid = validation.valid;
-    let iconName = valid ? 'ok' : 'error-circle-o';
+  statusFrom(validation: ObjectValidation, routeItem: DestinationWeight) {
+    let check = checkForPath(validation, 'spec/route/weight/' + routeItem.weight);
+    let iconName = check ? severityToIconName(check.severity) : 'ok';
+    let message = check ? check.message : 'All checks passed!';
 
-    console.log('Should stay or should I go?');
-    console.log(valid);
-    console.log(iconName);
-    return <Icon type="pf" name={iconName} />;
+    return (
+      <OverlayTrigger
+        placement={'right'}
+        overlay={this.infotipContent(message)}
+        trigger={['hover', 'focus']}
+        rootClose={false}
+      >
+        <Icon type="pf" name={iconName} />
+      </OverlayTrigger>
+    );
+  }
+
+  infotipContent(message: string) {
+    return <Popover id={this.props.name + '-weight-tooltip'}>{message}</Popover>;
   }
 
   labelsFrom(routeLabels: Map<String, String>) {
