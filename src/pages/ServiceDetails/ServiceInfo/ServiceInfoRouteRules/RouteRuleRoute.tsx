@@ -14,7 +14,7 @@ interface RouteRuleRouteProps {
 }
 
 class RouteRuleRoute extends React.Component<RouteRuleRouteProps> {
-  headerFormat = value => <Table.Heading className={value}>{value}</Table.Heading>;
+  headerFormat = (label, { column }) => <Table.Heading className={column.property}>{label}</Table.Heading>;
   cellFormat = value => <Table.Cell>{value}</Table.Cell>;
 
   constructor(props: RouteRuleRouteProps) {
@@ -27,7 +27,7 @@ class RouteRuleRoute extends React.Component<RouteRuleRouteProps> {
         {
           property: 'status',
           header: {
-            label: 'status',
+            label: 'Status',
             formatters: [this.headerFormat]
           },
           cell: {
@@ -37,7 +37,7 @@ class RouteRuleRoute extends React.Component<RouteRuleRouteProps> {
         {
           property: 'labels',
           header: {
-            label: 'labels',
+            label: 'Labels',
             formatters: [this.headerFormat]
           },
           cell: {
@@ -47,7 +47,7 @@ class RouteRuleRoute extends React.Component<RouteRuleRouteProps> {
         {
           property: 'weight',
           header: {
-            label: 'weights',
+            label: 'Weights',
             formatters: [this.headerFormat]
           },
           cell: {

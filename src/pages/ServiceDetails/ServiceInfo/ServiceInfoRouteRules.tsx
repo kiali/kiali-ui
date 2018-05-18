@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Col, Icon, Row, OverlayTrigger, Popover } from 'patternfly-react';
+import { Col, Icon, Row } from 'patternfly-react';
 import {
   EditorLink,
   globalChecks,
@@ -25,10 +25,10 @@ class ServiceInfoRouteRules extends React.Component<ServiceInfoRouteRulesProps> 
   rawConfig(rule: RouteRule, i: number) {
     return (
       <div className="card-pf-body" key={'ruleconfig' + i}>
-        <div>
-          <strong>Name</strong>: <Link to={this.props.editorLink + '?routerule=' + rule.name}>{rule.name}</Link>{' '}
-          {this.globalStatus(rule)}
-        </div>
+        <h3>
+          <Link to={this.props.editorLink + '?routerule=' + rule.name}>{rule.name}</Link>
+        </h3>
+        {this.globalStatus(rule)}
         <div>
           <strong>Created at</strong>: <LocalTime time={rule.created_at} />
         </div>
@@ -66,27 +66,30 @@ class ServiceInfoRouteRules extends React.Component<ServiceInfoRouteRulesProps> 
   }
 
   globalStatus(rule: RouteRule) {
+    let validation = this.validation(rule);
     let checks = globalChecks(this.validation(rule));
     let iconName = validationToIconName(this.validation(rule));
     let message = checks.map(check => check.message).join(',');
+
     if (!message.length) {
-      message = 'All checks passed!';
+      if (validation.valid) {
+        message = '';
+      } else {
+        message = 'Not all checks passed!';
+      }
     }
 
-    return (
-      <OverlayTrigger
-        placement={'right'}
-        overlay={this.infotipContent(rule.name, message)}
-        trigger={['hover', 'focus']}
-        rootClose={false}
-      >
-        <Icon type="pf" name={iconName} />
-      </OverlayTrigger>
-    );
-  }
-
-  infotipContent(name: string, message: string) {
-    return <Popover id={name + '-global-tooltip'}>{message}</Popover>;
+    if (message.length) {
+      return (
+        <div>
+          <p style={{ color: 'red' }}>
+            <Icon type="pf" name={iconName} /> {message}
+          </p>
+        </div>
+      );
+    } else {
+      return '';
+    }
   }
 
   render() {
