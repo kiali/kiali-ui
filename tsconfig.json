@@ -27,6 +27,7 @@
     "coverage",
     "webpack",
     "jest",
-    "src/setupTests.ts"
+    "src/setupTests.ts",
+    "src/components/Nav/__tests__/Navigation.test.tsx"
   ]
 }
