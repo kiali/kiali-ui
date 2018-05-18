@@ -87,44 +87,15 @@ ShallowWrapper {
               <div
                 className="card-pf-body"
               >
-                <div>
-                  <strong>
-                    Name
-                  </strong>
-                  : 
+                <h3>
                   <Link
                     replace={false}
                     to="/namespaces/test_namespace/services/test_services?routerule=reviews-default"
                   >
                     reviews-default
                   </Link>
-                   
-                  <OverlayTrigger
-                    defaultOverlayShown={false}
-                    overlay={
-                      <Popover
-                        bsClass="popover"
-                        id="reviews-default-global-tooltip"
-                        placement="right"
-                      >
-                        All checks passed!
-                      </Popover>
-                    }
-                    placement="right"
-                    rootClose={false}
-                    trigger={
-                      Array [
-                        "hover",
-                        "focus",
-                      ]
-                    }
-                  >
-                    <Icon
-                      name="ok"
-                      type="pf"
-                    />
-                  </OverlayTrigger>
-                </div>
+                </h3>
+                
                 <div>
                   <strong>
                     Created at
@@ -189,44 +160,15 @@ ShallowWrapper {
               <div
                 className="card-pf-body"
               >
-                <div>
-                  <strong>
-                    Name
-                  </strong>
-                  : 
+                <h3>
                   <Link
                     replace={false}
                     to="/namespaces/test_namespace/services/test_services?routerule=reviews-test-v2"
                   >
                     reviews-test-v2
                   </Link>
-                   
-                  <OverlayTrigger
-                    defaultOverlayShown={false}
-                    overlay={
-                      <Popover
-                        bsClass="popover"
-                        id="reviews-test-v2-global-tooltip"
-                        placement="right"
-                      >
-                        All checks passed!
-                      </Popover>
-                    }
-                    placement="right"
-                    rootClose={false}
-                    trigger={
-                      Array [
-                        "hover",
-                        "focus",
-                      ]
-                    }
-                  >
-                    <Icon
-                      name="ok"
-                      type="pf"
-                    />
-                  </OverlayTrigger>
-                </div>
+                </h3>
+                
                 <div>
                   <strong>
                     Created at
@@ -310,44 +252,15 @@ ShallowWrapper {
               <div
                 className="card-pf-body"
               >
-                <div>
-                  <strong>
-                    Name
-                  </strong>
-                  : 
+                <h3>
                   <Link
                     replace={false}
                     to="/namespaces/test_namespace/services/test_services?routerule=reviews-default"
                   >
                     reviews-default
                   </Link>
-                   
-                  <OverlayTrigger
-                    defaultOverlayShown={false}
-                    overlay={
-                      <Popover
-                        bsClass="popover"
-                        id="reviews-default-global-tooltip"
-                        placement="right"
-                      >
-                        All checks passed!
-                      </Popover>
-                    }
-                    placement="right"
-                    rootClose={false}
-                    trigger={
-                      Array [
-                        "hover",
-                        "focus",
-                      ]
-                    }
-                  >
-                    <Icon
-                      name="ok"
-                      type="pf"
-                    />
-                  </OverlayTrigger>
-                </div>
+                </h3>
+                
                 <div>
                   <strong>
                     Created at
@@ -412,44 +325,15 @@ ShallowWrapper {
               <div
                 className="card-pf-body"
               >
-                <div>
-                  <strong>
-                    Name
-                  </strong>
-                  : 
+                <h3>
                   <Link
                     replace={false}
                     to="/namespaces/test_namespace/services/test_services?routerule=reviews-test-v2"
                   >
                     reviews-test-v2
                   </Link>
-                   
-                  <OverlayTrigger
-                    defaultOverlayShown={false}
-                    overlay={
-                      <Popover
-                        bsClass="popover"
-                        id="reviews-test-v2-global-tooltip"
-                        placement="right"
-                      >
-                        All checks passed!
-                      </Popover>
-                    }
-                    placement="right"
-                    rootClose={false}
-                    trigger={
-                      Array [
-                        "hover",
-                        "focus",
-                      ]
-                    }
-                  >
-                    <Icon
-                      name="ok"
-                      type="pf"
-                    />
-                  </OverlayTrigger>
-                </div>
+                </h3>
+                
                 <div>
                   <strong>
                     Created at
@@ -526,44 +410,15 @@ ShallowWrapper {
                 <div
                   className="card-pf-body"
                 >
-                  <div>
-                    <strong>
-                      Name
-                    </strong>
-                    : 
+                  <h3>
                     <Link
                       replace={false}
                       to="/namespaces/test_namespace/services/test_services?routerule=reviews-default"
                     >
                       reviews-default
                     </Link>
-                     
-                    <OverlayTrigger
-                      defaultOverlayShown={false}
-                      overlay={
-                        <Popover
-                          bsClass="popover"
-                          id="reviews-default-global-tooltip"
-                          placement="right"
-                        >
-                          All checks passed!
-                        </Popover>
-                      }
-                      placement="right"
-                      rootClose={false}
-                      trigger={
-                        Array [
-                          "hover",
-                          "focus",
-                        ]
-                      }
-                    >
-                      <Icon
-                        name="ok"
-                        type="pf"
-                      />
-                    </OverlayTrigger>
-                  </div>
+                  </h3>
+                  
                   <div>
                     <strong>
                       Created at
@@ -628,44 +483,15 @@ ShallowWrapper {
                 <div
                   className="card-pf-body"
                 >
-                  <div>
-                    <strong>
-                      Name
-                    </strong>
-                    : 
+                  <h3>
                     <Link
                       replace={false}
                       to="/namespaces/test_namespace/services/test_services?routerule=reviews-test-v2"
                     >
                       reviews-test-v2
                     </Link>
-                     
-                    <OverlayTrigger
-                      defaultOverlayShown={false}
-                      overlay={
-                        <Popover
-                          bsClass="popover"
-                          id="reviews-test-v2-global-tooltip"
-                          placement="right"
-                        >
-                          All checks passed!
-                        </Popover>
-                      }
-                      placement="right"
-                      rootClose={false}
-                      trigger={
-                        Array [
-                          "hover",
-                          "focus",
-                        ]
-                      }
-                    >
-                      <Icon
-                        name="ok"
-                        type="pf"
-                      />
-                    </OverlayTrigger>
-                  </div>
+                  </h3>
+                  
                   <div>
                     <strong>
                       Created at
@@ -741,44 +567,15 @@ ShallowWrapper {
                   <div
                     className="card-pf-body"
                   >
-                    <div>
-                      <strong>
-                        Name
-                      </strong>
-                      : 
+                    <h3>
                       <Link
                         replace={false}
                         to="/namespaces/test_namespace/services/test_services?routerule=reviews-default"
                       >
                         reviews-default
                       </Link>
-                       
-                      <OverlayTrigger
-                        defaultOverlayShown={false}
-                        overlay={
-                          <Popover
-                            bsClass="popover"
-                            id="reviews-default-global-tooltip"
-                            placement="right"
-                          >
-                            All checks passed!
-                          </Popover>
-                        }
-                        placement="right"
-                        rootClose={false}
-                        trigger={
-                          Array [
-                            "hover",
-                            "focus",
-                          ]
-                        }
-                      >
-                        <Icon
-                          name="ok"
-                          type="pf"
-                        />
-                      </OverlayTrigger>
-                    </div>
+                    </h3>
+                    
                     <div>
                       <strong>
                         Created at
@@ -841,44 +638,15 @@ ShallowWrapper {
                   "children": <div
                     className="card-pf-body"
                   >
-                    <div>
-                      <strong>
-                        Name
-                      </strong>
-                      : 
+                    <h3>
                       <Link
                         replace={false}
                         to="/namespaces/test_namespace/services/test_services?routerule=reviews-default"
                       >
                         reviews-default
                       </Link>
-                       
-                      <OverlayTrigger
-                        defaultOverlayShown={false}
-                        overlay={
-                          <Popover
-                            bsClass="popover"
-                            id="reviews-default-global-tooltip"
-                            placement="right"
-                          >
-                            All checks passed!
-                          </Popover>
-                        }
-                        placement="right"
-                        rootClose={false}
-                        trigger={
-                          Array [
-                            "hover",
-                            "focus",
-                          ]
-                        }
-                      >
-                        <Icon
-                          name="ok"
-                          type="pf"
-                        />
-                      </OverlayTrigger>
-                    </div>
+                    </h3>
+                    
                     <div>
                       <strong>
                         Created at
@@ -916,44 +684,15 @@ ShallowWrapper {
                   "nodeType": "host",
                   "props": Object {
                     "children": Array [
-                      <div>
-                        <strong>
-                          Name
-                        </strong>
-                        : 
+                      <h3>
                         <Link
                           replace={false}
                           to="/namespaces/test_namespace/services/test_services?routerule=reviews-default"
                         >
                           reviews-default
                         </Link>
-                         
-                        <OverlayTrigger
-                          defaultOverlayShown={false}
-                          overlay={
-                            <Popover
-                              bsClass="popover"
-                              id="reviews-default-global-tooltip"
-                              placement="right"
-                            >
-                              All checks passed!
-                            </Popover>
-                          }
-                          placement="right"
-                          rootClose={false}
-                          trigger={
-                            Array [
-                              "hover",
-                              "focus",
-                            ]
-                          }
-                        >
-                          <Icon
-                            name="ok"
-                            type="pf"
-                          />
-                        </OverlayTrigger>
-                      </div>,
+                      </h3>,
+                      "",
                       <div>
                         <strong>
                           Created at
@@ -996,115 +735,30 @@ ShallowWrapper {
                       "key": undefined,
                       "nodeType": "host",
                       "props": Object {
-                        "children": Array [
-                          <strong>
-                            Name
-                          </strong>,
-                          ": ",
-                          <Link
-                            replace={false}
-                            to="/namespaces/test_namespace/services/test_services?routerule=reviews-default"
-                          >
-                            reviews-default
-                          </Link>,
-                          " ",
-                          <OverlayTrigger
-                            defaultOverlayShown={false}
-                            overlay={
-                              <Popover
-                                bsClass="popover"
-                                id="reviews-default-global-tooltip"
-                                placement="right"
-                              >
-                                All checks passed!
-                              </Popover>
-                            }
-                            placement="right"
-                            rootClose={false}
-                            trigger={
-                              Array [
-                                "hover",
-                                "focus",
-                              ]
-                            }
-                          >
-                            <Icon
-                              name="ok"
-                              type="pf"
-                            />
-                          </OverlayTrigger>,
-                        ],
+                        "children": <Link
+                          replace={false}
+                          to="/namespaces/test_namespace/services/test_services?routerule=reviews-default"
+                        >
+                          reviews-default
+                        </Link>,
                       },
                       "ref": null,
-                      "rendered": Array [
-                        Object {
-                          "instance": null,
-                          "key": undefined,
-                          "nodeType": "host",
-                          "props": Object {
-                            "children": "Name",
-                          },
-                          "ref": null,
-                          "rendered": "Name",
-                          "type": "strong",
+                      "rendered": Object {
+                        "instance": null,
+                        "key": undefined,
+                        "nodeType": "class",
+                        "props": Object {
+                          "children": "reviews-default",
+                          "replace": false,
+                          "to": "/namespaces/test_namespace/services/test_services?routerule=reviews-default",
                         },
-                        ": ",
-                        Object {
-                          "instance": null,
-                          "key": undefined,
-                          "nodeType": "class",
-                          "props": Object {
-                            "children": "reviews-default",
-                            "replace": false,
-                            "to": "/namespaces/test_namespace/services/test_services?routerule=reviews-default",
-                          },
-                          "ref": null,
-                          "rendered": "reviews-default",
-                          "type": [Function],
-                        },
-                        " ",
-                        Object {
-                          "instance": null,
-                          "key": undefined,
-                          "nodeType": "class",
-                          "props": Object {
-                            "children": <Icon
-                              name="ok"
-                              type="pf"
-                            />,
-                            "defaultOverlayShown": false,
-                            "overlay": <Popover
-                              bsClass="popover"
-                              id="reviews-default-global-tooltip"
-                              placement="right"
-                            >
-                              All checks passed!
-                            </Popover>,
-                            "placement": "right",
-                            "rootClose": false,
-                            "trigger": Array [
-                              "hover",
-                              "focus",
-                            ],
-                          },
-                          "ref": null,
-                          "rendered": Object {
-                            "instance": null,
-                            "key": undefined,
-                            "nodeType": "function",
-                            "props": Object {
-                              "name": "ok",
-                              "type": "pf",
-                            },
-                            "ref": null,
-                            "rendered": null,
-                            "type": [Function],
-                          },
-                          "type": [Function],
-                        },
-                      ],
-                      "type": "div",
+                        "ref": null,
+                        "rendered": "reviews-default",
+                        "type": [Function],
+                      },
+                      "type": "h3",
                     },
+                    "",
                     Object {
                       "instance": null,
                       "key": undefined,
@@ -1292,44 +946,15 @@ ShallowWrapper {
                   <div
                     className="card-pf-body"
                   >
-                    <div>
-                      <strong>
-                        Name
-                      </strong>
-                      : 
+                    <h3>
                       <Link
                         replace={false}
                         to="/namespaces/test_namespace/services/test_services?routerule=reviews-test-v2"
                       >
                         reviews-test-v2
                       </Link>
-                       
-                      <OverlayTrigger
-                        defaultOverlayShown={false}
-                        overlay={
-                          <Popover
-                            bsClass="popover"
-                            id="reviews-test-v2-global-tooltip"
-                            placement="right"
-                          >
-                            All checks passed!
-                          </Popover>
-                        }
-                        placement="right"
-                        rootClose={false}
-                        trigger={
-                          Array [
-                            "hover",
-                            "focus",
-                          ]
-                        }
-                      >
-                        <Icon
-                          name="ok"
-                          type="pf"
-                        />
-                      </OverlayTrigger>
-                    </div>
+                    </h3>
+                    
                     <div>
                       <strong>
                         Created at
@@ -1392,44 +1017,15 @@ ShallowWrapper {
                   "children": <div
                     className="card-pf-body"
                   >
-                    <div>
-                      <strong>
-                        Name
-                      </strong>
-                      : 
+                    <h3>
                       <Link
                         replace={false}
                         to="/namespaces/test_namespace/services/test_services?routerule=reviews-test-v2"
                       >
                         reviews-test-v2
                       </Link>
-                       
-                      <OverlayTrigger
-                        defaultOverlayShown={false}
-                        overlay={
-                          <Popover
-                            bsClass="popover"
-                            id="reviews-test-v2-global-tooltip"
-                            placement="right"
-                          >
-                            All checks passed!
-                          </Popover>
-                        }
-                        placement="right"
-                        rootClose={false}
-                        trigger={
-                          Array [
-                            "hover",
-                            "focus",
-                          ]
-                        }
-                      >
-                        <Icon
-                          name="ok"
-                          type="pf"
-                        />
-                      </OverlayTrigger>
-                    </div>
+                    </h3>
+                    
                     <div>
                       <strong>
                         Created at
@@ -1467,44 +1063,15 @@ ShallowWrapper {
                   "nodeType": "host",
                   "props": Object {
                     "children": Array [
-                      <div>
-                        <strong>
-                          Name
-                        </strong>
-                        : 
+                      <h3>
                         <Link
                           replace={false}
                           to="/namespaces/test_namespace/services/test_services?routerule=reviews-test-v2"
                         >
                           reviews-test-v2
                         </Link>
-                         
-                        <OverlayTrigger
-                          defaultOverlayShown={false}
-                          overlay={
-                            <Popover
-                              bsClass="popover"
-                              id="reviews-test-v2-global-tooltip"
-                              placement="right"
-                            >
-                              All checks passed!
-                            </Popover>
-                          }
-                          placement="right"
-                          rootClose={false}
-                          trigger={
-                            Array [
-                              "hover",
-                              "focus",
-                            ]
-                          }
-                        >
-                          <Icon
-                            name="ok"
-                            type="pf"
-                          />
-                        </OverlayTrigger>
-                      </div>,
+                      </h3>,
+                      "",
                       <div>
                         <strong>
                           Created at
@@ -1547,115 +1114,30 @@ ShallowWrapper {
                       "key": undefined,
                       "nodeType": "host",
                       "props": Object {
-                        "children": Array [
-                          <strong>
-                            Name
-                          </strong>,
-                          ": ",
-                          <Link
-                            replace={false}
-                            to="/namespaces/test_namespace/services/test_services?routerule=reviews-test-v2"
-                          >
-                            reviews-test-v2
-                          </Link>,
-                          " ",
-                          <OverlayTrigger
-                            defaultOverlayShown={false}
-                            overlay={
-                              <Popover
-                                bsClass="popover"
-                                id="reviews-test-v2-global-tooltip"
-                                placement="right"
-                              >
-                                All checks passed!
-                              </Popover>
-                            }
-                            placement="right"
-                            rootClose={false}
-                            trigger={
-                              Array [
-                                "hover",
-                                "focus",
-                              ]
-                            }
-                          >
-                            <Icon
-                              name="ok"
-                              type="pf"
-                            />
-                          </OverlayTrigger>,
-                        ],
+                        "children": <Link
+                          replace={false}
+                          to="/namespaces/test_namespace/services/test_services?routerule=reviews-test-v2"
+                        >
+                          reviews-test-v2
+                        </Link>,
                       },
                       "ref": null,
-                      "rendered": Array [
-                        Object {
-                          "instance": null,
-                          "key": undefined,
-                          "nodeType": "host",
-                          "props": Object {
-                            "children": "Name",
-                          },
-                          "ref": null,
-                          "rendered": "Name",
-                          "type": "strong",
+                      "rendered": Object {
+                        "instance": null,
+                        "key": undefined,
+                        "nodeType": "class",
+                        "props": Object {
+                          "children": "reviews-test-v2",
+                          "replace": false,
+                          "to": "/namespaces/test_namespace/services/test_services?routerule=reviews-test-v2",
                         },
-                        ": ",
-                        Object {
-                          "instance": null,
-                          "key": undefined,
-                          "nodeType": "class",
-                          "props": Object {
-                            "children": "reviews-test-v2",
-                            "replace": false,
-                            "to": "/namespaces/test_namespace/services/test_services?routerule=reviews-test-v2",
-                          },
-                          "ref": null,
-                          "rendered": "reviews-test-v2",
-                          "type": [Function],
-                        },
-                        " ",
-                        Object {
-                          "instance": null,
-                          "key": undefined,
-                          "nodeType": "class",
-                          "props": Object {
-                            "children": <Icon
-                              name="ok"
-                              type="pf"
-                            />,
-                            "defaultOverlayShown": false,
-                            "overlay": <Popover
-                              bsClass="popover"
-                              id="reviews-test-v2-global-tooltip"
-                              placement="right"
-                            >
-                              All checks passed!
-                            </Popover>,
-                            "placement": "right",
-                            "rootClose": false,
-                            "trigger": Array [
-                              "hover",
-                              "focus",
-                            ],
-                          },
-                          "ref": null,
-                          "rendered": Object {
-                            "instance": null,
-                            "key": undefined,
-                            "nodeType": "function",
-                            "props": Object {
-                              "name": "ok",
-                              "type": "pf",
-                            },
-                            "ref": null,
-                            "rendered": null,
-                            "type": [Function],
-                          },
-                          "type": [Function],
-                        },
-                      ],
-                      "type": "div",
+                        "ref": null,
+                        "rendered": "reviews-test-v2",
+                        "type": [Function],
+                      },
+                      "type": "h3",
                     },
+                    "",
                     Object {
                       "instance": null,
                       "key": undefined,
@@ -1867,44 +1349,15 @@ ShallowWrapper {
                 <div
                   className="card-pf-body"
                 >
-                  <div>
-                    <strong>
-                      Name
-                    </strong>
-                    : 
+                  <h3>
                     <Link
                       replace={false}
                       to="/namespaces/test_namespace/services/test_services?routerule=reviews-default"
                     >
                       reviews-default
                     </Link>
-                     
-                    <OverlayTrigger
-                      defaultOverlayShown={false}
-                      overlay={
-                        <Popover
-                          bsClass="popover"
-                          id="reviews-default-global-tooltip"
-                          placement="right"
-                        >
-                          All checks passed!
-                        </Popover>
-                      }
-                      placement="right"
-                      rootClose={false}
-                      trigger={
-                        Array [
-                          "hover",
-                          "focus",
-                        ]
-                      }
-                    >
-                      <Icon
-                        name="ok"
-                        type="pf"
-                      />
-                    </OverlayTrigger>
-                  </div>
+                  </h3>
+                  
                   <div>
                     <strong>
                       Created at
@@ -1969,44 +1422,15 @@ ShallowWrapper {
                 <div
                   className="card-pf-body"
                 >
-                  <div>
-                    <strong>
-                      Name
-                    </strong>
-                    : 
+                  <h3>
                     <Link
                       replace={false}
                       to="/namespaces/test_namespace/services/test_services?routerule=reviews-test-v2"
                     >
                       reviews-test-v2
                     </Link>
-                     
-                    <OverlayTrigger
-                      defaultOverlayShown={false}
-                      overlay={
-                        <Popover
-                          bsClass="popover"
-                          id="reviews-test-v2-global-tooltip"
-                          placement="right"
-                        >
-                          All checks passed!
-                        </Popover>
-                      }
-                      placement="right"
-                      rootClose={false}
-                      trigger={
-                        Array [
-                          "hover",
-                          "focus",
-                        ]
-                      }
-                    >
-                      <Icon
-                        name="ok"
-                        type="pf"
-                      />
-                    </OverlayTrigger>
-                  </div>
+                  </h3>
+                  
                   <div>
                     <strong>
                       Created at
@@ -2090,44 +1514,15 @@ ShallowWrapper {
                 <div
                   className="card-pf-body"
                 >
-                  <div>
-                    <strong>
-                      Name
-                    </strong>
-                    : 
+                  <h3>
                     <Link
                       replace={false}
                       to="/namespaces/test_namespace/services/test_services?routerule=reviews-default"
                     >
                       reviews-default
                     </Link>
-                     
-                    <OverlayTrigger
-                      defaultOverlayShown={false}
-                      overlay={
-                        <Popover
-                          bsClass="popover"
-                          id="reviews-default-global-tooltip"
-                          placement="right"
-                        >
-                          All checks passed!
-                        </Popover>
-                      }
-                      placement="right"
-                      rootClose={false}
-                      trigger={
-                        Array [
-                          "hover",
-                          "focus",
-                        ]
-                      }
-                    >
-                      <Icon
-                        name="ok"
-                        type="pf"
-                      />
-                    </OverlayTrigger>
-                  </div>
+                  </h3>
+                  
                   <div>
                     <strong>
                       Created at
@@ -2192,44 +1587,15 @@ ShallowWrapper {
                 <div
                   className="card-pf-body"
                 >
-                  <div>
-                    <strong>
-                      Name
-                    </strong>
-                    : 
+                  <h3>
                     <Link
                       replace={false}
                       to="/namespaces/test_namespace/services/test_services?routerule=reviews-test-v2"
                     >
                       reviews-test-v2
                     </Link>
-                     
-                    <OverlayTrigger
-                      defaultOverlayShown={false}
-                      overlay={
-                        <Popover
-                          bsClass="popover"
-                          id="reviews-test-v2-global-tooltip"
-                          placement="right"
-                        >
-                          All checks passed!
-                        </Popover>
-                      }
-                      placement="right"
-                      rootClose={false}
-                      trigger={
-                        Array [
-                          "hover",
-                          "focus",
-                        ]
-                      }
-                    >
-                      <Icon
-                        name="ok"
-                        type="pf"
-                      />
-                    </OverlayTrigger>
-                  </div>
+                  </h3>
+                  
                   <div>
                     <strong>
                       Created at
@@ -2306,44 +1672,15 @@ ShallowWrapper {
                   <div
                     className="card-pf-body"
                   >
-                    <div>
-                      <strong>
-                        Name
-                      </strong>
-                      : 
+                    <h3>
                       <Link
                         replace={false}
                         to="/namespaces/test_namespace/services/test_services?routerule=reviews-default"
                       >
                         reviews-default
                       </Link>
-                       
-                      <OverlayTrigger
-                        defaultOverlayShown={false}
-                        overlay={
-                          <Popover
-                            bsClass="popover"
-                            id="reviews-default-global-tooltip"
-                            placement="right"
-                          >
-                            All checks passed!
-                          </Popover>
-                        }
-                        placement="right"
-                        rootClose={false}
-                        trigger={
-                          Array [
-                            "hover",
-                            "focus",
-                          ]
-                        }
-                      >
-                        <Icon
-                          name="ok"
-                          type="pf"
-                        />
-                      </OverlayTrigger>
-                    </div>
+                    </h3>
+                    
                     <div>
                       <strong>
                         Created at
@@ -2408,44 +1745,15 @@ ShallowWrapper {
                   <div
                     className="card-pf-body"
                   >
-                    <div>
-                      <strong>
-                        Name
-                      </strong>
-                      : 
+                    <h3>
                       <Link
                         replace={false}
                         to="/namespaces/test_namespace/services/test_services?routerule=reviews-test-v2"
                       >
                         reviews-test-v2
                       </Link>
-                       
-                      <OverlayTrigger
-                        defaultOverlayShown={false}
-                        overlay={
-                          <Popover
-                            bsClass="popover"
-                            id="reviews-test-v2-global-tooltip"
-                            placement="right"
-                          >
-                            All checks passed!
-                          </Popover>
-                        }
-                        placement="right"
-                        rootClose={false}
-                        trigger={
-                          Array [
-                            "hover",
-                            "focus",
-                          ]
-                        }
-                      >
-                        <Icon
-                          name="ok"
-                          type="pf"
-                        />
-                      </OverlayTrigger>
-                    </div>
+                    </h3>
+                    
                     <div>
                       <strong>
                         Created at
@@ -2521,44 +1829,15 @@ ShallowWrapper {
                     <div
                       className="card-pf-body"
                     >
-                      <div>
-                        <strong>
-                          Name
-                        </strong>
-                        : 
+                      <h3>
                         <Link
                           replace={false}
                           to="/namespaces/test_namespace/services/test_services?routerule=reviews-default"
                         >
                           reviews-default
                         </Link>
-                         
-                        <OverlayTrigger
-                          defaultOverlayShown={false}
-                          overlay={
-                            <Popover
-                              bsClass="popover"
-                              id="reviews-default-global-tooltip"
-                              placement="right"
-                            >
-                              All checks passed!
-                            </Popover>
-                          }
-                          placement="right"
-                          rootClose={false}
-                          trigger={
-                            Array [
-                              "hover",
-                              "focus",
-                            ]
-                          }
-                        >
-                          <Icon
-                            name="ok"
-                            type="pf"
-                          />
-                        </OverlayTrigger>
-                      </div>
+                      </h3>
+                      
                       <div>
                         <strong>
                           Created at
@@ -2621,44 +1900,15 @@ ShallowWrapper {
                     "children": <div
                       className="card-pf-body"
                     >
-                      <div>
-                        <strong>
-                          Name
-                        </strong>
-                        : 
+                      <h3>
                         <Link
                           replace={false}
                           to="/namespaces/test_namespace/services/test_services?routerule=reviews-default"
                         >
                           reviews-default
                         </Link>
-                         
-                        <OverlayTrigger
-                          defaultOverlayShown={false}
-                          overlay={
-                            <Popover
-                              bsClass="popover"
-                              id="reviews-default-global-tooltip"
-                              placement="right"
-                            >
-                              All checks passed!
-                            </Popover>
-                          }
-                          placement="right"
-                          rootClose={false}
-                          trigger={
-                            Array [
-                              "hover",
-                              "focus",
-                            ]
-                          }
-                        >
-                          <Icon
-                            name="ok"
-                            type="pf"
-                          />
-                        </OverlayTrigger>
-                      </div>
+                      </h3>
+                      
                       <div>
                         <strong>
                           Created at
@@ -2696,44 +1946,15 @@ ShallowWrapper {
                     "nodeType": "host",
                     "props": Object {
                       "children": Array [
-                        <div>
-                          <strong>
-                            Name
-                          </strong>
-                          : 
+                        <h3>
                           <Link
                             replace={false}
                             to="/namespaces/test_namespace/services/test_services?routerule=reviews-default"
                           >
                             reviews-default
                           </Link>
-                           
-                          <OverlayTrigger
-                            defaultOverlayShown={false}
-                            overlay={
-                              <Popover
-                                bsClass="popover"
-                                id="reviews-default-global-tooltip"
-                                placement="right"
-                              >
-                                All checks passed!
-                              </Popover>
-                            }
-                            placement="right"
-                            rootClose={false}
-                            trigger={
-                              Array [
-                                "hover",
-                                "focus",
-                              ]
-                            }
-                          >
-                            <Icon
-                              name="ok"
-                              type="pf"
-                            />
-                          </OverlayTrigger>
-                        </div>,
+                        </h3>,
+                        "",
                         <div>
                           <strong>
                             Created at
@@ -2776,115 +1997,30 @@ ShallowWrapper {
                         "key": undefined,
                         "nodeType": "host",
                         "props": Object {
-                          "children": Array [
-                            <strong>
-                              Name
-                            </strong>,
-                            ": ",
-                            <Link
-                              replace={false}
-                              to="/namespaces/test_namespace/services/test_services?routerule=reviews-default"
-                            >
-                              reviews-default
-                            </Link>,
-                            " ",
-                            <OverlayTrigger
-                              defaultOverlayShown={false}
-                              overlay={
-                                <Popover
-                                  bsClass="popover"
-                                  id="reviews-default-global-tooltip"
-                                  placement="right"
-                                >
-                                  All checks passed!
-                                </Popover>
-                              }
-                              placement="right"
-                              rootClose={false}
-                              trigger={
-                                Array [
-                                  "hover",
-                                  "focus",
-                                ]
-                              }
-                            >
-                              <Icon
-                                name="ok"
-                                type="pf"
-                              />
-                            </OverlayTrigger>,
-                          ],
+                          "children": <Link
+                            replace={false}
+                            to="/namespaces/test_namespace/services/test_services?routerule=reviews-default"
+                          >
+                            reviews-default
+                          </Link>,
                         },
                         "ref": null,
-                        "rendered": Array [
-                          Object {
-                            "instance": null,
-                            "key": undefined,
-                            "nodeType": "host",
-                            "props": Object {
-                              "children": "Name",
-                            },
-                            "ref": null,
-                            "rendered": "Name",
-                            "type": "strong",
+                        "rendered": Object {
+                          "instance": null,
+                          "key": undefined,
+                          "nodeType": "class",
+                          "props": Object {
+                            "children": "reviews-default",
+                            "replace": false,
+                            "to": "/namespaces/test_namespace/services/test_services?routerule=reviews-default",
                           },
-                          ": ",
-                          Object {
-                            "instance": null,
-                            "key": undefined,
-                            "nodeType": "class",
-                            "props": Object {
-                              "children": "reviews-default",
-                              "replace": false,
-                              "to": "/namespaces/test_namespace/services/test_services?routerule=reviews-default",
-                            },
-                            "ref": null,
-                            "rendered": "reviews-default",
-                            "type": [Function],
-                          },
-                          " ",
-                          Object {
-                            "instance": null,
-                            "key": undefined,
-                            "nodeType": "class",
-                            "props": Object {
-                              "children": <Icon
-                                name="ok"
-                                type="pf"
-                              />,
-                              "defaultOverlayShown": false,
-                              "overlay": <Popover
-                                bsClass="popover"
-                                id="reviews-default-global-tooltip"
-                                placement="right"
-                              >
-                                All checks passed!
-                              </Popover>,
-                              "placement": "right",
-                              "rootClose": false,
-                              "trigger": Array [
-                                "hover",
-                                "focus",
-                              ],
-                            },
-                            "ref": null,
-                            "rendered": Object {
-                              "instance": null,
-                              "key": undefined,
-                              "nodeType": "function",
-                              "props": Object {
-                                "name": "ok",
-                                "type": "pf",
-                              },
-                              "ref": null,
-                              "rendered": null,
-                              "type": [Function],
-                            },
-                            "type": [Function],
-                          },
-                        ],
-                        "type": "div",
+                          "ref": null,
+                          "rendered": "reviews-default",
+                          "type": [Function],
+                        },
+                        "type": "h3",
                       },
+                      "",
                       Object {
                         "instance": null,
                         "key": undefined,
@@ -3072,44 +2208,15 @@ ShallowWrapper {
                     <div
                       className="card-pf-body"
                     >
-                      <div>
-                        <strong>
-                          Name
-                        </strong>
-                        : 
+                      <h3>
                         <Link
                           replace={false}
                           to="/namespaces/test_namespace/services/test_services?routerule=reviews-test-v2"
                         >
                           reviews-test-v2
                         </Link>
-                         
-                        <OverlayTrigger
-                          defaultOverlayShown={false}
-                          overlay={
-                            <Popover
-                              bsClass="popover"
-                              id="reviews-test-v2-global-tooltip"
-                              placement="right"
-                            >
-                              All checks passed!
-                            </Popover>
-                          }
-                          placement="right"
-                          rootClose={false}
-                          trigger={
-                            Array [
-                              "hover",
-                              "focus",
-                            ]
-                          }
-                        >
-                          <Icon
-                            name="ok"
-                            type="pf"
-                          />
-                        </OverlayTrigger>
-                      </div>
+                      </h3>
+                      
                       <div>
                         <strong>
                           Created at
@@ -3172,44 +2279,15 @@ ShallowWrapper {
                     "children": <div
                       className="card-pf-body"
                     >
-                      <div>
-                        <strong>
-                          Name
-                        </strong>
-                        : 
+                      <h3>
                         <Link
                           replace={false}
                           to="/namespaces/test_namespace/services/test_services?routerule=reviews-test-v2"
                         >
                           reviews-test-v2
                         </Link>
-                         
-                        <OverlayTrigger
-                          defaultOverlayShown={false}
-                          overlay={
-                            <Popover
-                              bsClass="popover"
-                              id="reviews-test-v2-global-tooltip"
-                              placement="right"
-                            >
-                              All checks passed!
-                            </Popover>
-                          }
-                          placement="right"
-                          rootClose={false}
-                          trigger={
-                            Array [
-                              "hover",
-                              "focus",
-                            ]
-                          }
-                        >
-                          <Icon
-                            name="ok"
-                            type="pf"
-                          />
-                        </OverlayTrigger>
-                      </div>
+                      </h3>
+                      
                       <div>
                         <strong>
                           Created at
@@ -3247,44 +2325,15 @@ ShallowWrapper {
                     "nodeType": "host",
                     "props": Object {
                       "children": Array [
-                        <div>
-                          <strong>
-                            Name
-                          </strong>
-                          : 
+                        <h3>
                           <Link
                             replace={false}
                             to="/namespaces/test_namespace/services/test_services?routerule=reviews-test-v2"
                           >
                             reviews-test-v2
                           </Link>
-                           
-                          <OverlayTrigger
-                            defaultOverlayShown={false}
-                            overlay={
-                              <Popover
-                                bsClass="popover"
-                                id="reviews-test-v2-global-tooltip"
-                                placement="right"
-                              >
-                                All checks passed!
-                              </Popover>
-                            }
-                            placement="right"
-                            rootClose={false}
-                            trigger={
-                              Array [
-                                "hover",
-                                "focus",
-                              ]
-                            }
-                          >
-                            <Icon
-                              name="ok"
-                              type="pf"
-                            />
-                          </OverlayTrigger>
-                        </div>,
+                        </h3>,
+                        "",
                         <div>
                           <strong>
                             Created at
@@ -3327,115 +2376,30 @@ ShallowWrapper {
                         "key": undefined,
                         "nodeType": "host",
                         "props": Object {
-                          "children": Array [
-                            <strong>
-                              Name
-                            </strong>,
-                            ": ",
-                            <Link
-                              replace={false}
-                              to="/namespaces/test_namespace/services/test_services?routerule=reviews-test-v2"
-                            >
-                              reviews-test-v2
-                            </Link>,
-                            " ",
-                            <OverlayTrigger
-                              defaultOverlayShown={false}
-                              overlay={
-                                <Popover
-                                  bsClass="popover"
-                                  id="reviews-test-v2-global-tooltip"
-                                  placement="right"
-                                >
-                                  All checks passed!
-                                </Popover>
-                              }
-                              placement="right"
-                              rootClose={false}
-                              trigger={
-                                Array [
-                                  "hover",
-                                  "focus",
-                                ]
-                              }
-                            >
-                              <Icon
-                                name="ok"
-                                type="pf"
-                              />
-                            </OverlayTrigger>,
-                          ],
+                          "children": <Link
+                            replace={false}
+                            to="/namespaces/test_namespace/services/test_services?routerule=reviews-test-v2"
+                          >
+                            reviews-test-v2
+                          </Link>,
                         },
                         "ref": null,
-                        "rendered": Array [
-                          Object {
-                            "instance": null,
-                            "key": undefined,
-                            "nodeType": "host",
-                            "props": Object {
-                              "children": "Name",
-                            },
-                            "ref": null,
-                            "rendered": "Name",
-                            "type": "strong",
+                        "rendered": Object {
+                          "instance": null,
+                          "key": undefined,
+                          "nodeType": "class",
+                          "props": Object {
+                            "children": "reviews-test-v2",
+                            "replace": false,
+                            "to": "/namespaces/test_namespace/services/test_services?routerule=reviews-test-v2",
                           },
-                          ": ",
-                          Object {
-                            "instance": null,
-                            "key": undefined,
-                            "nodeType": "class",
-                            "props": Object {
-                              "children": "reviews-test-v2",
-                              "replace": false,
-                              "to": "/namespaces/test_namespace/services/test_services?routerule=reviews-test-v2",
-                            },
-                            "ref": null,
-                            "rendered": "reviews-test-v2",
-                            "type": [Function],
-                          },
-                          " ",
-                          Object {
-                            "instance": null,
-                            "key": undefined,
-                            "nodeType": "class",
-                            "props": Object {
-                              "children": <Icon
-                                name="ok"
-                                type="pf"
-                              />,
-                              "defaultOverlayShown": false,
-                              "overlay": <Popover
-                                bsClass="popover"
-                                id="reviews-test-v2-global-tooltip"
-                                placement="right"
-                              >
-                                All checks passed!
-                              </Popover>,
-                              "placement": "right",
-                              "rootClose": false,
-                              "trigger": Array [
-                                "hover",
-                                "focus",
-                              ],
-                            },
-                            "ref": null,
-                            "rendered": Object {
-                              "instance": null,
-                              "key": undefined,
-                              "nodeType": "function",
-                              "props": Object {
-                                "name": "ok",
-                                "type": "pf",
-                              },
-                              "ref": null,
-                              "rendered": null,
-                              "type": [Function],
-                            },
-                            "type": [Function],
-                          },
-                        ],
-                        "type": "div",
+                          "ref": null,
+                          "rendered": "reviews-test-v2",
+                          "type": [Function],
+                        },
+                        "type": "h3",
                       },
+                      "",
                       Object {
                         "instance": null,
                         "key": undefined,

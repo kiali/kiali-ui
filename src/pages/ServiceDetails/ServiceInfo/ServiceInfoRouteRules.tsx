@@ -72,9 +72,7 @@ class ServiceInfoRouteRules extends React.Component<ServiceInfoRouteRulesProps> 
     let message = checks.map(check => check.message).join(',');
 
     if (!message.length) {
-      if (validation.valid) {
-        message = '';
-      } else {
+      if (validation && !validation.valid) {
         message = 'Not all checks passed!';
       }
     }
