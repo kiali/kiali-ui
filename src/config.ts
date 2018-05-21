@@ -3,10 +3,6 @@ import deepFreeze from 'deep-freeze';
 export const config = () => {
   return deepFreeze({
     version: '0.1',
-    backend: {
-      user: 'admin',
-      password: 'admin'
-    },
     toolbar: {
       defaultDuration: 60,
       intervalDuration: {
@@ -41,3 +37,19 @@ export const config = () => {
     }
   });
 };
+
+export const userConstants = {
+  LOGIN_REQUEST: 'USERS_LOGIN_REQUEST',
+  LOGIN_SUCCESS: 'USERS_LOGIN_SUCCESS',
+  LOGIN_FAILURE: 'USERS_LOGIN_FAILURE',
+
+  LOGOUT: 'USERS_LOGOUT'
+};
+
+export const alertConstants = {
+  SUCCESS: 'ALERT_SUCCESS',
+  ERROR: 'ALERT_ERROR',
+  CLEAR: 'ALERT_CLEAR'
+};
+
+export const KEY_CODES = { TAB_KEY: 9, ENTER_KEY: 13, ESCAPE_KEY: 27 };
