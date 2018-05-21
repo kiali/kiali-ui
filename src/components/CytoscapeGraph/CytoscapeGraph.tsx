@@ -12,6 +12,7 @@ import { GraphParamsType } from '../../types/Graph';
 import { EdgeLabelMode } from '../../types/GraphFilter';
 import { KialiAppState } from '../../store/Store';
 import * as GraphBadge from './graphs/GraphBadge';
+import TrafficRender from './graphs/TrafficRenderer';
 
 type CytoscapeGraphType = {
   elements?: any;
@@ -47,8 +48,10 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
   };
 
   private graphHighlighter: GraphHighlighter;
+  private trafficRenderer: TrafficRender;
   private cytoscapeReactWrapperRef: any;
   private newLayout: any;
+  private cy: any;
 
   constructor(props: CytoscapeGraphProps) {
     super(props);
@@ -141,11 +144,14 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
     // this would add duplicate callbacks and would screw up the graph highlighter. If, however,
     // we are being asked to initialize a different cy instance, we assume the current one is now obsolete
     // so we do want to initialize the new cy instance.
-    if (this.graphHighlighter && this.graphHighlighter.cy === cy) {
+    if (this.cy === cy) {
       return;
     }
+    this.cy = cy;
 
     this.graphHighlighter = new GraphHighlighter(cy);
+    this.trafficRenderer = new TrafficRender(cy, cy.edges());
+    this.trafficRenderer.start();
 
     const getCytoscapeBaseEvent = (event: any): CytoscapeBaseEvent | null => {
       const target = event.target;
@@ -188,6 +194,64 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
       this.props.onReady(evt.cy);
       this.processGraphUpdate(cy);
     });
+
+    cy.on('viewport resize', (evt: any) => {
+      this.trafficRenderer.clear();
+    });
+    /*
+    const MIN_TRAFFIC_DOT_COUNT = 1;
+    const MAX_TRAFFIC_DOT_COUNT = 50;
+    const TRAFFIC_DOT_COUNT_RATE_FACTOR = 2; // 0.5
+    const layer = cy.cyCanvas();
+    const canvas = layer.getCanvas();
+    const ctx = canvas.getContext('2d');
+    const startTime = new Date().getTime();
+
+    cy.edges().forEach(edge => {
+      let animCount = Math.ceil(edge.data('rate') * TRAFFIC_DOT_COUNT_RATE_FACTOR);
+      if (isNaN(animCount)) {
+        animCount = MIN_TRAFFIC_DOT_COUNT;
+      }
+      animCount = Math.min(animCount, MAX_TRAFFIC_DOT_COUNT);
+
+      let animSpeed = edge.latency;
+      if (isNaN(animSpeed) || animSpeed < 1) {
+        animSpeed = 1;
+      }
+      animSpeed *= 2000;
+      const animElements = Array.apply(null, Array(animCount)).map((val, index) => {
+        return {
+          offset: animSpeed / animCount * index + Math.random() * 100
+        };
+      });
+      edge.data('anim-speed', animSpeed);
+      edge.data('anim-count', animCount);
+      edge.data('anim-elements', animElements);
+    });
+
+    window.setInterval(() => {
+      layer.clear(ctx);
+      layer.setTransform(ctx);
+      const currentTime = new Date().getTime();
+      const diffTime = currentTime - startTime;
+      cy.edges().forEach(edge => {
+        edge.data('anim-elements').forEach(el => {
+          let k = (diffTime + el.offset) / edge.data('anim-speed');
+          k = k - Math.floor(k);
+          const source = edge.source().position();
+          const target = edge.target().position();
+          const x = source.x + (target.x - source.x) * k;
+          const y = source.y + (target.y - source.y) * k;
+          // Rectangle
+          // ctx.strokeRect(x - 2, y - 2, 3, 3);
+          // Circle
+          ctx.beginPath();
+          ctx.arc(x, y, 2, 0, 2 * Math.PI, true);
+          ctx.fill();
+        });
+      });
+    }, 40);
+    */
   }
 
   private processGraphUpdate(cy: any) {
