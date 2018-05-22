@@ -1,5 +1,25 @@
 import { clamp } from '../../../utils/MathUtils';
 
+// Min and max values to clamp the request per second rate
+const TIMER_REQUEST_PER_SECOND_MIN = 0;
+const TIMER_REQUEST_PER_SECOND_MAX = 2000;
+
+// Range of time to use between spawning a new dot.
+// At higher request per second rate, faster dot spawning.
+const TIMER_TIME_BETWEEN_DOTS_MIN = 20;
+const TIMER_TIME_BETWEEN_DOTS_MAX = 4000;
+
+// Clamp latency from min to max
+const LATENCY_TIME_MIN = 0;
+const LATENCY_TIME_MAX = 10;
+
+// Speed to pass trough an edge, is the ms that takes to walk fixed distance (see: Todo: add refrence)
+const LATENCY_SPEED_MIN = 800;
+const LATENCY_SPEED_MAX = 400;
+
+// How often paint a frame
+const FRAME_RATE = 1 / 30;
+
 /**
  * Traffic Point, it defines in an edge
  * speed - defines how fast the point is going to travel from the start to the end
@@ -24,8 +44,7 @@ class TrafficPointGenerator {
   private timerForNextPoint?: number;
   private speed: number;
 
-  // initialize values, if timer is undefined, no point is going to be generated
-  // There is no traffic.
+  // If timer is undefined, no point is going to be generated, ideal when traffic is zero
   constructor(speed: number, timer: number | undefined) {
     this.speed = speed;
     this.timer = timer;
@@ -33,8 +52,8 @@ class TrafficPointGenerator {
   }
 
   /**
-   * Process a step, decrements the timerForNextPoint and returns a new point
-   * if it reaches zero or is close.
+   * Process a render step for the generator, decrements the timerForNextPoint and
+   * returns a new point if it reaches zero (or is close).
    * This method adds some randomness to avoid the "flat" look that all the points
    * are syncronized.
    */
@@ -77,6 +96,11 @@ class TrafficEdge {
     this.edge = edge;
   }
 
+  /**
+   * Process a step for the Traffic Edge, increments the delta of the points
+   * by step / speed and clamps to (-inf, 1)
+   * In charge of calling the `processStep` for the generator and adding a new point if any.
+   */
   processStep(step: number) {
     this.points = this.points.map(p => {
       p.delta += step / p.speed;
@@ -101,6 +125,9 @@ class TrafficEdge {
     this.generator.setTimer(timer);
   }
 
+  /**
+   * When a point is 1 or over it, is time to discard it.
+   */
   removeFinishedPoints() {
     this.points = this.points.filter(p => p.delta < 1);
   }
@@ -118,8 +145,11 @@ type TrafficEdgeHash = {
   [edgeId: string]: TrafficEdge;
 };
 
+let test = 0;
+
 /**
- * Renders the traffic going from edges using the edge information
+ * Renders the traffic going from edges using the edge information to compute
+ * their rate and speed
  */
 export default class TrafficRenderer {
   private animationTimer;
@@ -128,46 +158,60 @@ export default class TrafficRenderer {
 
   private layer;
   private canvas;
-  private ctx;
-
-  // private readonly TIMER_FOR_RATE_FACTOR = 100;
-  private readonly TIMER_FOR_RATE_MIN = 20;
-  private readonly TIMER_FOR_RATE_MAX = 1000;
+  private context;
+  private test;
 
   constructor(cy: any, edges: any) {
     this.layer = cy.cyCanvas();
     this.canvas = this.layer.getCanvas();
-    this.ctx = this.canvas.getContext('2d');
+    this.context = this.canvas.getContext('2d');
     this.setEdges(edges);
+    this.test = test++;
   }
 
-  start = () => {
+  /**
+   * Starts the rendering loop, discards any other rendering loop that was started
+   */
+  start() {
+    this.stop();
+    console.log('Remove: Starting animation');
+    this.animationTimer = window.setInterval(this.processStep, FRAME_RATE * 1000);
+  }
+
+  /**
+   * Stops the rendering loop if any
+   */
+  stop() {
+    console.log('Remove: Might stop the animation (if any)');
     if (this.animationTimer) {
-      this.stop();
+      console.log('Remove: Stopping the animation');
+      window.clearInterval(this.animationTimer);
+      this.animationTimer = undefined;
+      this.clear();
     }
-    this.animationTimer = window.setInterval(this.processStep, 50);
-  };
+  }
 
-  stop = () => {
-    window.clearInterval(this.animationTimer);
-  };
-
-  setEdges = (edges: any) => {
+  setEdges(edges: any) {
     this.trafficEdges = this.processEdges(edges);
-  };
+  }
 
-  clear = () => {
-    this.layer.clear(this.ctx);
-  };
+  clear() {
+    this.layer.clear(this.context);
+  }
 
+  /**
+   * Process a step, clears the canvas, sets the graph transformation to render
+   * every dot.
+   */
   processStep = () => {
+    console.log('Hello from Renderer:', this.test);
     if (this.previousTimestamp === undefined) {
       this.previousTimestamp = Date.now();
     }
     const nextTimestamp = Date.now();
     const step = this.currentStep();
-    this.layer.clear(this.ctx);
-    this.layer.setTransform(this.ctx);
+    this.layer.clear(this.context);
+    this.layer.setTransform(this.context);
     Object.keys(this.trafficEdges).forEach(edgeId => {
       const trafficEdge = this.trafficEdges[edgeId];
       trafficEdge.processStep(step);
@@ -178,6 +222,10 @@ export default class TrafficRenderer {
     this.previousTimestamp = nextTimestamp;
   };
 
+  /**
+   * Renders the points inside the TrafficEdge (unless is dimmed)
+   *
+   */
   private render(trafficEdge: TrafficEdge) {
     const edge = trafficEdge.getEdge();
     if (edge.hasClass('mousedim')) {
@@ -189,9 +237,10 @@ export default class TrafficRenderer {
       const target = edge.target().position();
       const x = source.x + (target.x - source.x) * point.delta;
       const y = source.y + (target.y - source.y) * point.delta;
-      this.ctx.beginPath();
-      this.ctx.arc(x, y, 2, 0, 2 * Math.PI, true);
-      this.ctx.fill();
+      this.context.beginPath();
+      this.context.arc(x, y, 2, 0, 2 * Math.PI, true);
+      this.context.fillStyle = '#000000ff';
+      this.context.fill(); // or stroke if we only want the outer ring
     });
   }
 
@@ -200,39 +249,44 @@ export default class TrafficRenderer {
   }
 
   private processEdges(edges: any): TrafficEdgeHash {
-    return edges.map(edge => {
+    return edges.reduce((trafficEdges: TrafficEdgeHash, edge: any) => {
       const edgeId = edge.data('id');
-      const timer = this.timerForRate(edge.data('rate'));
-      const speed = this.speedForLatency(edge.data('latency'));
+      const timer = this.timerFromRate(edge.data('rate'));
+      const speed = this.speedFromLatency(edge.data('latency'));
       if (edgeId in this.trafficEdges) {
         const trafficEdge = this.trafficEdges[edgeId];
         trafficEdge.setTimer(timer);
         trafficEdge.setSpeed(speed);
         trafficEdge.setEdge(edge);
+        trafficEdges[edgeId] = trafficEdge;
       } else {
-        this.trafficEdges[edgeId] = new TrafficEdge(speed, timer, edge);
+        trafficEdges[edgeId] = new TrafficEdge(speed, timer, edge);
       }
-      return this.trafficEdges[edgeId];
-    });
+      return trafficEdges;
+    }, {});
   }
 
-  private timerForRate(rate: number) {
+  // see for easing functions https://gist.github.com/gre/1650294
+  private timerFromRate(rate: number) {
     if (isNaN(rate) || rate === 0) {
       return undefined;
     }
-    // Normalize from 0 rps to 1000 rps
-    const delta = clamp(rate, 0, 400) / 400;
-    // Invert and scale to (TIMER_FOR_RATE_MIN, TIMER_FOR_RATE_MAX)
-    return this.TIMER_FOR_RATE_MIN + (1 - delta) * (this.TIMER_FOR_RATE_MAX - this.TIMER_FOR_RATE_MIN);
+    // Normalize requests per second within a range
+    const delta =
+      clamp(rate, TIMER_REQUEST_PER_SECOND_MIN, TIMER_REQUEST_PER_SECOND_MAX) / TIMER_REQUEST_PER_SECOND_MAX;
+
+    // Invert and scale
+    return TIMER_TIME_BETWEEN_DOTS_MIN + (1 - delta) * (TIMER_TIME_BETWEEN_DOTS_MAX - TIMER_TIME_BETWEEN_DOTS_MIN);
   }
 
-  private speedForLatency(latency: number) {
+  private speedFromLatency(latency: number) {
+    // Consider NaN latency as "everything is going as fast as possible"
     if (isNaN(latency)) {
-      return 800;
+      return LATENCY_SPEED_MIN;
     }
-    // Normalize from 0 to 10 seconds
-    const delta = clamp(latency, 0, 10);
-    // Scale from (800 to 8000)
-    return 800 + delta * (8000 - 800);
+    // Normalize
+    const delta = clamp(latency, LATENCY_TIME_MIN, LATENCY_TIME_MAX) / LATENCY_TIME_MAX;
+    // Scale
+    return LATENCY_SPEED_MIN + delta * (LATENCY_SPEED_MAX - LATENCY_SPEED_MIN);
   }
 }

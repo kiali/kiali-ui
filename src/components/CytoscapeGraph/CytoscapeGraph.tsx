@@ -22,6 +22,7 @@ type CytoscapeGraphType = {
   showCircuitBreakers: boolean;
   showRouteRules: boolean;
   showMissingSidecars: boolean;
+  showTrafficAnimation: boolean;
   onClick: (event: CytoscapeClickEvent) => void;
   onReady: (event: CytoscapeBaseEvent) => void;
   refresh: any;
@@ -69,7 +70,8 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
       this.props.showRouteRules !== nextProps.showRouteRules ||
       this.props.showMissingSidecars !== nextProps.showMissingSidecars ||
       this.props.elements !== nextProps.elements ||
-      this.props.graphLayout !== nextProps.graphLayout
+      this.props.graphLayout !== nextProps.graphLayout ||
+      this.props.showTrafficAnimation !== nextProps.showTrafficAnimation
     );
   }
 
@@ -151,7 +153,6 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
 
     this.graphHighlighter = new GraphHighlighter(cy);
     this.trafficRenderer = new TrafficRender(cy, cy.edges());
-    this.trafficRenderer.start();
 
     const getCytoscapeBaseEvent = (event: any): CytoscapeBaseEvent | null => {
       const target = event.target;
@@ -198,60 +199,10 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
     cy.on('viewport resize', (evt: any) => {
       this.trafficRenderer.clear();
     });
-    /*
-    const MIN_TRAFFIC_DOT_COUNT = 1;
-    const MAX_TRAFFIC_DOT_COUNT = 50;
-    const TRAFFIC_DOT_COUNT_RATE_FACTOR = 2; // 0.5
-    const layer = cy.cyCanvas();
-    const canvas = layer.getCanvas();
-    const ctx = canvas.getContext('2d');
-    const startTime = new Date().getTime();
 
-    cy.edges().forEach(edge => {
-      let animCount = Math.ceil(edge.data('rate') * TRAFFIC_DOT_COUNT_RATE_FACTOR);
-      if (isNaN(animCount)) {
-        animCount = MIN_TRAFFIC_DOT_COUNT;
-      }
-      animCount = Math.min(animCount, MAX_TRAFFIC_DOT_COUNT);
-
-      let animSpeed = edge.latency;
-      if (isNaN(animSpeed) || animSpeed < 1) {
-        animSpeed = 1;
-      }
-      animSpeed *= 2000;
-      const animElements = Array.apply(null, Array(animCount)).map((val, index) => {
-        return {
-          offset: animSpeed / animCount * index + Math.random() * 100
-        };
-      });
-      edge.data('anim-speed', animSpeed);
-      edge.data('anim-count', animCount);
-      edge.data('anim-elements', animElements);
+    cy.on('destroy', (evt: any) => {
+      this.trafficRenderer.stop();
     });
-
-    window.setInterval(() => {
-      layer.clear(ctx);
-      layer.setTransform(ctx);
-      const currentTime = new Date().getTime();
-      const diffTime = currentTime - startTime;
-      cy.edges().forEach(edge => {
-        edge.data('anim-elements').forEach(el => {
-          let k = (diffTime + el.offset) / edge.data('anim-speed');
-          k = k - Math.floor(k);
-          const source = edge.source().position();
-          const target = edge.target().position();
-          const x = source.x + (target.x - source.x) * k;
-          const y = source.y + (target.y - source.y) * k;
-          // Rectangle
-          // ctx.strokeRect(x - 2, y - 2, 3, 3);
-          // Circle
-          ctx.beginPath();
-          ctx.arc(x, y, 2, 0, 2 * Math.PI, true);
-          ctx.fill();
-        });
-      });
-    }, 40);
-    */
   }
 
   private processGraphUpdate(cy: any) {
@@ -260,6 +211,8 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
     }
 
     console.log('CY: graph is being updated');
+
+    this.trafficRenderer.stop();
 
     cy.startBatch();
 
@@ -311,6 +264,12 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
     }
 
     cy.endBatch();
+
+    // Update TrafficRenderer
+    this.trafficRenderer.setEdges(cy.edges());
+    if (this.props.showTrafficAnimation) {
+      this.trafficRenderer.start();
+    }
   }
 
   private handleTap = (event: CytoscapeClickEvent) => {
@@ -332,6 +291,7 @@ const mapStateToProps = (state: KialiAppState) => ({
   showCircuitBreakers: state.serviceGraphFilterState.showCircuitBreakers,
   showRouteRules: state.serviceGraphFilterState.showRouteRules,
   showMissingSidecars: state.serviceGraphFilterState.showMissingSidecars,
+  showTrafficAnimation: state.serviceGraphFilterState.showTrafficAnimation,
   elements: state.serviceGraphDataState.graphData
 });
 
