@@ -18,7 +18,7 @@ before_install:
 script:
   - yarn prettier --list-different &&
     yarn build &&
-    yarn test --coverage
+    yarn test --coverage --debug --verbose
   - ./run_itest.sh
 after_success:
   - cat ./coverage/lcov.info | coveralls
