@@ -196,10 +196,6 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
       this.processGraphUpdate(cy);
     });
 
-    cy.on('viewport resize', (evt: any) => {
-      this.trafficRenderer.clear();
-    });
-
     cy.on('destroy', (evt: any) => {
       this.trafficRenderer.stop();
       this.cy = undefined;

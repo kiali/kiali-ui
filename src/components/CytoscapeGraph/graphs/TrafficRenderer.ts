@@ -20,7 +20,7 @@ const SPEED_RATE_MIN = 0.1;
 const SPEED_RATE_MAX = 2.0;
 
 // How often paint a frame
-const FRAME_RATE = 1 / 30;
+const FRAME_RATE = 1 / 60;
 
 /**
  * Traffic Point, it defines in an edge
@@ -52,7 +52,7 @@ class TrafficPointGenerator {
   constructor(speed: number, timer: number | undefined) {
     this.speed = speed;
     this.timer = timer;
-    this.timerForNextPoint = timer;
+    this.timerForNextPoint = 0; // Start as soon as posible
   }
 
   /**
@@ -62,7 +62,7 @@ class TrafficPointGenerator {
    * are syncronized.
    */
   processStep(step: number): TrafficPoint | undefined {
-    if (this.timerForNextPoint) {
+    if (this.timerForNextPoint !== undefined) {
       this.timerForNextPoint -= step;
       // Add some random-ness to make it less "flat"
       if (this.timerForNextPoint <= Math.random() * 200) {
@@ -75,7 +75,9 @@ class TrafficPointGenerator {
 
   setTimer(timer: number | undefined) {
     this.timer = timer;
-    this.timerForNextPoint = timer;
+    if (this.timerForNextPoint === undefined) {
+      this.timerForNextPoint = timer;
+    }
   }
 
   setSpeed(speed: number) {
