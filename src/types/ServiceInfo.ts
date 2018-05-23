@@ -17,10 +17,19 @@ export interface Port {
   name: string;
 }
 
+export interface Pod {
+  name: string;
+  annotations?: { [key: string]: string };
+  labels?: { [key: string]: string };
+  created_at: string;
+  k8sCreatedBy?: any;
+  istioSideCar?: any;
+}
+
 export interface Deployment {
   name: string;
-  template_annotations?: any;
-  labels?: Map<string, string>;
+  template_annotations?: { [key: string]: string };
+  labels?: { [key: string]: string };
   created_at: string;
   resource_version: string;
   replicas: number;
@@ -31,7 +40,7 @@ export interface Deployment {
 
 export interface Autoscaler {
   name: string;
-  labels?: Map<string, string>;
+  labels?: { [key: string]: string };
   min_replicas: number;
   max_replicas: number;
   target_cpu_utilization_percentage: number;
@@ -66,7 +75,7 @@ export interface IstioService {
   namespace?: string;
   domain?: string;
   service?: string;
-  labels?: Map<String, String>;
+  labels?: { [key: string]: string };
 }
 
 export interface MatchCondition {
@@ -92,7 +101,7 @@ export interface StringMatch {
 }
 
 export interface DestinationWeight {
-  labels: Map<string, string>;
+  labels: { [key: string]: string };
   weight?: number;
 }
 
@@ -332,20 +341,18 @@ export interface DestinationRule {
 
 // Istio Sidecar
 
-export const hasIstioSidecar = (deployments: Deployment[]) => {
-  if (deployments && deployments.length > 0) {
-    for (let i = 0; i < deployments.length; i++) {
-      let annotations = deployments[i].template_annotations;
-      if (annotations && annotations['sidecar.istio.io/status']) {
-        return true;
-      }
-    }
+export const hasIstioSidecar = (pods?: Pod[]) => {
+  if (pods) {
+    const hasAny = pods.find(
+      pod => pod.annotations !== undefined && pod.annotations.hasOwnProperty('sidecar.istio.io/status')
+    );
+    return hasAny !== undefined;
   }
   return false;
 };
 
 export interface ServiceDetailsInfo {
-  labels?: Map<string, string>;
+  labels?: { [key: string]: string };
   type: string;
   name: string;
   created_at: string;
@@ -354,11 +361,33 @@ export interface ServiceDetailsInfo {
   ports?: Port[];
   endpoints?: Endpoints[];
   istio_sidecar: boolean;
+  pods?: Pod[];
   deployments?: Deployment[];
   routeRules?: RouteRule[];
   destinationPolicies?: DestinationPolicy[];
   virtualServices?: VirtualService[];
   destinationRules?: DestinationRule[];
+  dependencies?: Map<string, string[]>;
+  health?: Health;
+}
+
+// Temporary interface due to tiny differences between the model from REST API and the ServiceDetailsInfo used above.
+//  They should be cleaned & merged asap
+export interface ServiceDetailsInfoFromAPI {
+  labels?: { [key: string]: string };
+  type: string;
+  name: string;
+  created_at: string;
+  resource_version: string;
+  ip: string;
+  ports?: Port[];
+  endpoints?: Endpoints[];
+  pods?: Pod[];
+  deployments?: Deployment[];
+  route_rules?: RouteRule[];
+  destination_policies?: DestinationPolicy[];
+  virtual_services?: VirtualService[];
+  destination_rules?: DestinationRule[];
   dependencies?: Map<string, string[]>;
   health?: Health;
 }
