@@ -1,4 +1,6 @@
 import { clamp } from '../../../utils/MathUtils';
+import { DimClass } from './GraphStyles';
+import { PfColors } from '../../../components/Pf/PfColors';
 
 // Min and max values to clamp the request per second rate
 const TIMER_REQUEST_PER_SECOND_MIN = 0;
@@ -10,12 +12,12 @@ const TIMER_TIME_BETWEEN_DOTS_MIN = 20;
 const TIMER_TIME_BETWEEN_DOTS_MAX = 4000;
 
 // Clamp latency from min to max
-const LATENCY_TIME_MIN = 0;
-const LATENCY_TIME_MAX = 10;
+const SPEED_LATENCY_MIN = 0;
+const SPEED_LATENCY_MAX = 10;
 
-// Speed to pass trough an edge, is the ms that takes to walk fixed distance (see: Todo: add refrence)
-const LATENCY_SPEED_MIN = 800;
-const LATENCY_SPEED_MAX = 400;
+// Speed to travel trough an edge
+const SPEED_RATE_MIN = 0.1;
+const SPEED_RATE_MAX = 2.0;
 
 // How often paint a frame
 const FRAME_RATE = 1 / 30;
@@ -23,7 +25,9 @@ const FRAME_RATE = 1 / 30;
 /**
  * Traffic Point, it defines in an edge
  * speed - defines how fast the point is going to travel from the start to the end
- *  of the edge a speed o 1000 travels the edge in about 1 second.
+ *  of the edge. Is a rate of the edge length traveled by second.
+ *  1 means that the edge is traveled in exactly 1 second.
+ *  0.5 is 2 seconds, 2 is half a second, etc.
  * delta - defines in what part of the edge is the point,  is a normalized number
  *  from 0 to 1, 0 means at the start of the path, and 1 is the end. The position
  *  is interpolated.
@@ -98,13 +102,11 @@ class TrafficEdge {
 
   /**
    * Process a step for the Traffic Edge, increments the delta of the points
-   * by step / speed and clamps to (-inf, 1)
-   * In charge of calling the `processStep` for the generator and adding a new point if any.
+   * Calls `processStep` for the generator and adds a new point if any.
    */
   processStep(step: number) {
     this.points = this.points.map(p => {
-      p.delta += step / p.speed;
-      p.delta = Math.min(p.delta, 1);
+      p.delta += step * p.speed / 1000;
       return p;
     });
     const point = this.generator.processStep(step);
@@ -129,7 +131,7 @@ class TrafficEdge {
    * When a point is 1 or over it, is time to discard it.
    */
   removeFinishedPoints() {
-    this.points = this.points.filter(p => p.delta < 1);
+    this.points = this.points.filter(p => p.delta <= 1);
   }
 
   setSpeed(speed: number) {
@@ -145,8 +147,6 @@ type TrafficEdgeHash = {
   [edgeId: string]: TrafficEdge;
 };
 
-let test = 0;
-
 /**
  * Renders the traffic going from edges using the edge information to compute
  * their rate and speed
@@ -159,14 +159,12 @@ export default class TrafficRenderer {
   private layer;
   private canvas;
   private context;
-  private test;
 
   constructor(cy: any, edges: any) {
     this.layer = cy.cyCanvas();
     this.canvas = this.layer.getCanvas();
     this.context = this.canvas.getContext('2d');
     this.setEdges(edges);
-    this.test = test++;
   }
 
   /**
@@ -174,7 +172,6 @@ export default class TrafficRenderer {
    */
   start() {
     this.stop();
-    console.log('Remove: Starting animation');
     this.animationTimer = window.setInterval(this.processStep, FRAME_RATE * 1000);
   }
 
@@ -182,9 +179,7 @@ export default class TrafficRenderer {
    * Stops the rendering loop if any
    */
   stop() {
-    console.log('Remove: Might stop the animation (if any)');
     if (this.animationTimer) {
-      console.log('Remove: Stopping the animation');
       window.clearInterval(this.animationTimer);
       this.animationTimer = undefined;
       this.clear();
@@ -204,22 +199,27 @@ export default class TrafficRenderer {
    * every dot.
    */
   processStep = () => {
-    console.log('Hello from Renderer:', this.test);
-    if (this.previousTimestamp === undefined) {
-      this.previousTimestamp = Date.now();
+    try {
+      if (this.previousTimestamp === undefined) {
+        this.previousTimestamp = Date.now();
+      }
+      const nextTimestamp = Date.now();
+      const step = this.currentStep(nextTimestamp);
+      this.layer.clear(this.context);
+      this.layer.setTransform(this.context);
+      Object.keys(this.trafficEdges).forEach(edgeId => {
+        const trafficEdge = this.trafficEdges[edgeId];
+        trafficEdge.processStep(step);
+        trafficEdge.removeFinishedPoints();
+        this.render(trafficEdge);
+      });
+      this.previousTimestamp = nextTimestamp;
+    } catch (exception) {
+      // If a step failed, the next step is likely to fail.
+      // Stop the rendering and throw the exception
+      this.stop();
+      throw exception;
     }
-    const nextTimestamp = Date.now();
-    const step = this.currentStep();
-    this.layer.clear(this.context);
-    this.layer.setTransform(this.context);
-    Object.keys(this.trafficEdges).forEach(edgeId => {
-      const trafficEdge = this.trafficEdges[edgeId];
-      trafficEdge.processStep(step);
-      this.render(trafficEdge);
-      trafficEdge.removeFinishedPoints();
-    });
-
-    this.previousTimestamp = nextTimestamp;
   };
 
   /**
@@ -228,24 +228,26 @@ export default class TrafficRenderer {
    */
   private render(trafficEdge: TrafficEdge) {
     const edge = trafficEdge.getEdge();
-    if (edge.hasClass('mousedim')) {
-      // Probably need to move this somewhere else
+    if (edge.hasClass(DimClass)) {
       return;
     }
     trafficEdge.getPoints().forEach((point: TrafficPoint) => {
-      const source = edge.source().position();
-      const target = edge.target().position();
+      // If there are curved edges, we will need to use edge.controlPoints or
+      // edge.segmentPoints to compute the path
+      const source = edge.sourceEndpoint();
+      const target = edge.targetEndpoint();
       const x = source.x + (target.x - source.x) * point.delta;
       const y = source.y + (target.y - source.y) * point.delta;
       this.context.beginPath();
       this.context.arc(x, y, 2, 0, 2 * Math.PI, true);
-      this.context.fillStyle = '#000000ff';
+      this.context.fillStyle = PfColors.Black;
       this.context.fill(); // or stroke if we only want the outer ring
     });
   }
 
-  private currentStep(): number {
-    return Date.now() - this.previousTimestamp;
+  private currentStep(currentTime: number): number {
+    const step = currentTime - this.previousTimestamp;
+    return step === 0 ? FRAME_RATE * 1000 : step;
   }
 
   private processEdges(edges: any): TrafficEdgeHash {
@@ -282,11 +284,11 @@ export default class TrafficRenderer {
   private speedFromLatency(latency: number) {
     // Consider NaN latency as "everything is going as fast as possible"
     if (isNaN(latency)) {
-      return LATENCY_SPEED_MIN;
+      return SPEED_RATE_MIN;
     }
     // Normalize
-    const delta = clamp(latency, LATENCY_TIME_MIN, LATENCY_TIME_MAX) / LATENCY_TIME_MAX;
+    const delta = clamp(latency, SPEED_LATENCY_MIN, SPEED_LATENCY_MAX) / SPEED_LATENCY_MAX;
     // Scale
-    return LATENCY_SPEED_MIN + delta * (LATENCY_SPEED_MAX - LATENCY_SPEED_MIN);
+    return SPEED_RATE_MIN + (1 - delta) * (SPEED_RATE_MAX - SPEED_RATE_MIN);
   }
 }
