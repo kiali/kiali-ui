@@ -19,11 +19,21 @@ export interface Port {
 
 export interface Pod {
   name: string;
-  annotations?: { [key: string]: string };
   labels?: { [key: string]: string };
-  created_at: string;
-  k8sCreatedBy?: any;
-  istioSideCar?: any;
+  createdAt: string;
+  createdBy?: Reference;
+  istioContainers?: ContainerInfo[];
+  istioInitContainers?: ContainerInfo[];
+}
+
+export interface Reference {
+  name: string;
+  kind: string;
+}
+
+export interface ContainerInfo {
+  name: string;
+  image: string;
 }
 
 export interface Deployment {
@@ -343,10 +353,7 @@ export interface DestinationRule {
 
 export const hasIstioSidecar = (pods?: Pod[]) => {
   if (pods) {
-    const hasAny = pods.find(
-      pod => pod.annotations !== undefined && pod.annotations.hasOwnProperty('sidecar.istio.io/status')
-    );
-    return hasAny !== undefined;
+    return pods.find(pod => pod.istioContainers != null) !== undefined;
   }
   return false;
 };

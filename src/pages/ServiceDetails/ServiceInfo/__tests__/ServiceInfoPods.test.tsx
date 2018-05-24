@@ -7,17 +7,17 @@ const pods: Pod[] = [
   {
     name: 'reviews-v2-1234',
     labels: { app: 'reviews', version: 'v2' },
-    created_at: '2018-03-14T10:17:52Z'
+    createdAt: '2018-03-14T10:17:52Z'
   },
   {
     name: 'reviews-v3-1234',
     labels: { app: 'reviews', version: 'v3' },
-    created_at: '2018-03-14T10:17:52Z'
+    createdAt: '2018-03-14T10:17:52Z'
   },
   {
     name: 'reviews-v1-1234',
     labels: { app: 'reviews', version: 'v1' },
-    created_at: '2018-03-14T10:17:52Z'
+    createdAt: '2018-03-14T10:17:52Z'
   }
 ];
 

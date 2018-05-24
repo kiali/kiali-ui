@@ -12,16 +12,6 @@ interface Props {
 class ServiceInfoPods extends React.Component<Props> {
   constructor(props: Props) {
     super(props);
-    if (props.pods) {
-      props.pods.forEach(pod => {
-        if (pod.annotations && pod.annotations.hasOwnProperty('kubernetes.io/created-by')) {
-          pod.k8sCreatedBy = JSON.parse(pod.annotations['kubernetes.io/created-by']);
-        }
-        if (pod.annotations && pod.annotations.hasOwnProperty('sidecar.istio.io/status')) {
-          pod.istioSideCar = JSON.parse(pod.annotations['sidecar.istio.io/status']);
-        }
-      });
-    }
   }
 
   render() {
@@ -47,30 +37,30 @@ class ServiceInfoPods extends React.Component<Props> {
                 <div>
                   <span>
                     <strong>Created at: </strong>
-                    <LocalTime time={pod.created_at} />
+                    <LocalTime time={pod.createdAt} />
                   </span>
                 </div>
-                {pod.k8sCreatedBy && (
+                {pod.createdBy && (
                   <div>
                     <span>
                       <strong>Created by: </strong>
-                      {pod.k8sCreatedBy.reference.name + ' (' + pod.k8sCreatedBy.reference.kind + ')'}
+                      {pod.createdBy.name + ' (' + pod.createdBy.kind + ')'}
                     </span>
                   </div>
                 )}
-                {pod.istioSideCar && (
+                {pod.istioInitContainers && (
                   <div>
                     <span>
                       <strong>Istio init containers: </strong>
-                      {pod.istioSideCar.initContainers.join(', ')}
+                      {pod.istioInitContainers.map(c => `${c.name} [${c.image}]`).join(', ')}
                     </span>
                   </div>
                 )}
-                {pod.istioSideCar && (
+                {pod.istioContainers && (
                   <div>
                     <span>
                       <strong>Istio containers: </strong>
-                      {pod.istioSideCar.containers.join(', ')}
+                      {pod.istioContainers.map(c => `${c.name} [${c.image}]`).join(', ')}
                     </span>
                   </div>
                 )}
