@@ -80,14 +80,16 @@ export default class GraphFilter extends React.PureComponent<GraphFilterProps> {
     return (
       <>
         <Toolbar>
-          <FormGroup className={zeroPaddingLeft}>
-            <label className={labelPaddingRight}>Namespace:</label>
-            <NamespaceDropdownContainer
-              disabled={this.props.disabled}
-              activeNamespace={this.props.namespace}
-              onSelect={this.props.onNamespaceChange}
-            />
-          </FormGroup>
+          {this.props.namespace.name !== '' ? (
+            <FormGroup className={zeroPaddingLeft}>
+              <label className={labelPaddingRight}>Namespace:</label>
+              <NamespaceDropdownContainer
+                disabled={this.props.disabled}
+                activeNamespace={this.props.namespace}
+                onSelect={this.props.onNamespaceChange}
+              />
+            </FormGroup>
+          ) : null}
           <ToolbarDropdown
             id={'graph_filter_interval_duration'}
             disabled={this.props.disabled}
