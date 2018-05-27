@@ -17,7 +17,22 @@
     "strictNullChecks": true,
     "suppressImplicitAnyIndexErrors": true,
     "noUnusedLocals": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": "src",
+    "paths": {
+      "actions/*": ["actions/*"],
+      "assets/*": ["assets/*"],
+      "components/*": ["components/*"],
+      "config": ["config"],
+      "containers/*": ["containers/*"],
+      "img/*": ["img/*"],
+      "pages/*": ["pages/*"],
+      "PfColors": ["components/Pf/PfColors"],
+      "services/*": [ "services/*"],
+      "store/*": ["store/*"],
+      "types/*": [ "types/*" ],
+      "utils/*": ["utils/*"]
+    }
   },
   "exclude": [
     "node_modules",

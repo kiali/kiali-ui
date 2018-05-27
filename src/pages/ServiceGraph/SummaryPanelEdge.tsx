@@ -1,14 +1,14 @@
 import * as React from 'react';
-import Badge from '../../components/Badge/Badge';
-import RateTable from '../../components/SummaryPanel/RateTable';
-import RpsChart from '../../components/SummaryPanel/RpsChart';
-import LatencyChart from '../../components/SummaryPanel/LatencyChart';
-import { SummaryPanelPropType } from '../../types/Graph';
-import * as API from '../../services/Api';
-import * as M from '../../types/Metrics';
-import graphUtils from '../../utils/Graphing';
-import MetricsOptions from '../../types/MetricsOptions';
-import { PfColors } from '../../components/Pf/PfColors';
+import Badge from 'components/Badge/Badge';
+import RateTable from 'components/SummaryPanel/RateTable';
+import RpsChart from 'components/SummaryPanel/RpsChart';
+import LatencyChart from 'components/SummaryPanel/LatencyChart';
+import { SummaryPanelPropType } from 'types/Graph';
+import * as API from 'services/Api';
+import * as M from 'types/Metrics';
+import graphUtils from 'utils/Graphing';
+import MetricsOptions from 'types/MetricsOptions';
+import { PfColors } from 'PfColors';
 
 type SummaryPanelEdgeState = {
   loading: boolean;

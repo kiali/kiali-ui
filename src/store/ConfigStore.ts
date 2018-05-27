@@ -1,6 +1,6 @@
 import { createStore, applyMiddleware, compose } from 'redux';
 import { KialiAppState } from './Store';
-import rootReducer from '../reducers';
+import rootReducer from 'reducers';
 import logger from 'redux-logger';
 import thunk from 'redux-thunk';
 

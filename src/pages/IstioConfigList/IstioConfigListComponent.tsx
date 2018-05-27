@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { ListView, ListViewItem, ListViewIcon, Sort } from 'patternfly-react';
-import { NamespaceFilter, NamespaceFilterSelected } from '../../components/NamespaceFilter/NamespaceFilter';
+import { NamespaceFilter, NamespaceFilterSelected } from 'components/NamespaceFilter/NamespaceFilter';
 import { Paginator } from 'patternfly-react';
-import { ActiveFilter, FilterType } from '../../types/NamespaceFilter';
-import * as API from '../../services/Api';
-import Namespace from '../../types/Namespace';
-import { Pagination } from '../../types/Pagination';
+import { ActiveFilter, FilterType } from 'types/NamespaceFilter';
+import * as API from 'services/Api';
+import Namespace from 'types/Namespace';
+import { Pagination } from 'types/Pagination';
 import {
   dicIstioType,
   filterByName,
@@ -14,12 +14,12 @@ import {
   SortField,
   sortIstioItems,
   toIstioItems
-} from '../../types/IstioConfigListComponent';
+} from 'types/IstioConfigListComponent';
 import PropTypes from 'prop-types';
 // import IstioRuleListDescription from './IstioRuleListDescription';
 import { Link } from 'react-router-dom';
-import { PfColors } from '../../components/Pf/PfColors';
-import PfSpinner from '../../components/Pf/PfSpinner';
+import { PfColors } from 'PfColors';
+import PfSpinner from 'components/Pf/PfSpinner';
 
 const sortFields: SortField[] = [
   {

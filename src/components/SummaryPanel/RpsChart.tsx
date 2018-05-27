@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { AreaChart } from 'patternfly-react';
-import { PfColors } from '../../components/Pf/PfColors';
+import { PfColors } from 'PfColors';
 
 type RpsChartTypeProp = {
   label: string;

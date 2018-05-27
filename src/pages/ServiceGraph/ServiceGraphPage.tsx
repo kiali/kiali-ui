@@ -1,17 +1,17 @@
 import * as React from 'react';
 
-import Namespace from '../../types/Namespace';
-import { GraphParamsType, SummaryData } from '../../types/Graph';
-import { Duration } from '../../types/GraphFilter';
+import Namespace from 'types/Namespace';
+import { GraphParamsType, SummaryData } from 'types/Graph';
+import { Duration } from 'types/GraphFilter';
 
 import SummaryPanel from './SummaryPanel';
-import CytoscapeGraph from '../../components/CytoscapeGraph/CytoscapeGraph';
-import GraphFilterToolbar from '../../components/GraphFilter/GraphFilterToolbar';
-import PfContainerNavVertical from '../../components/Pf/PfContainerNavVertical';
-import { computePrometheusQueryInterval } from '../../services/Prometheus';
+import CytoscapeGraph from 'components/CytoscapeGraph/CytoscapeGraph';
+import GraphFilterToolbar from 'components/GraphFilter/GraphFilterToolbar';
+import PfContainerNavVertical from 'components/Pf/PfContainerNavVertical';
+import { computePrometheusQueryInterval } from 'services/Prometheus';
 import { style } from 'typestyle';
 
-import GraphLegend from '../../components/GraphFilter/GraphLegend';
+import GraphLegend from 'components/GraphFilter/GraphLegend';
 
 type ServiceGraphPageState = {
   // stateless

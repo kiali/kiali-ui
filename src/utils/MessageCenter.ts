@@ -1,6 +1,6 @@
-import store from '../store/ConfigStore';
-import { MessageType } from '../types/MessageCenter';
-import { MessageCenterActions } from '../actions/MessageCenterActions';
+import store from 'store/ConfigStore';
+import { MessageType } from 'types/MessageCenter';
+import { MessageCenterActions } from 'actions/MessageCenterActions';
 
 const DEFAULT_GROUP_ID = 'default';
 const DEFAULT_MESSAGE_TYPE = MessageType.ERROR;

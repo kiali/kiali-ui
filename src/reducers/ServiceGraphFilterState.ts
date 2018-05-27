@@ -1,7 +1,7 @@
-import { ServiceGraphFilterState } from '../store/Store';
-import { ServiceGraphFilterActionKeys } from '../actions/ServiceGraphFilterActions';
-import { updateState } from '../utils/Reducer';
-import { EdgeLabelMode } from '../types/GraphFilter';
+import { ServiceGraphFilterState } from 'store/Store';
+import { ServiceGraphFilterActionKeys } from 'actions/ServiceGraphFilterActions';
+import { updateState } from 'utils/Reducer';
+import { EdgeLabelMode } from 'types/GraphFilter';
 
 const INITIAL_STATE: ServiceGraphFilterState = {
   showNodeLabels: true,

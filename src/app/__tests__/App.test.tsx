@@ -17,15 +17,15 @@ window.getComputedStyle = jest.fn().mockImplementation(element => {
   return computedStyle;
 });
 
-jest.mock('../../services/Api');
+jest.mock('services/Api');
 
 process.env.REACT_APP_NAME = 'kiali-ui-test';
 process.env.REACT_APP_VERSION = '1.0.1';
 process.env.REACT_APP_GIT_HASH = '89323';
 
 // TODO: properly handle SVG and D3 in the following 2 components
-jest.mock('../../components/Badge/Badge');
-jest.mock('../../components/SummaryPanel/RpsChart');
+jest.mock('components/Badge/Badge');
+jest.mock('components/SummaryPanel/RpsChart');
 
 it('renders full App without crashing', () => {
   const div = document.createElement('div');

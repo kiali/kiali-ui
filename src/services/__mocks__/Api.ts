@@ -1,6 +1,6 @@
 import * as GraphData from '../__mockData__/getGraphElements';
 import { AxiosError } from 'axios';
-import ServiceListOptions from '../../types/ServiceListOptions';
+import ServiceListOptions from 'types/ServiceListOptions';
 
 const fs = require('fs');
 

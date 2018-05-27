@@ -2,8 +2,8 @@ import * as React from 'react';
 import { Button, Icon, OverlayTrigger, Popover } from 'patternfly-react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { serviceGraphFilterActions } from '../actions/ServiceGraphFilterActions';
-import { KialiAppState, ServiceGraphFilterState } from '../store/Store';
+import { serviceGraphFilterActions } from 'actions/ServiceGraphFilterActions';
+import { KialiAppState, ServiceGraphFilterState } from 'store/Store';
 
 interface ServiceGraphDispatch {
   // Dispatch methods

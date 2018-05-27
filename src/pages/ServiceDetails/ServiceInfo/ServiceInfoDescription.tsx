@@ -1,16 +1,16 @@
 import * as React from 'react';
 import { Col, Row } from 'patternfly-react';
 
-import Badge from '../../../components/Badge/Badge';
-import LocalTime from '../../../components/Time/LocalTime';
-import { HealthIndicator, DisplayMode } from '../../../components/ServiceHealth/HealthIndicator';
-import { Health } from '../../../types/Health';
-import { Endpoints, Port } from '../../../types/ServiceInfo';
-import PfInfoCard from '../../../components/Pf/PfInfoCard';
-import { PfColors } from '../../../components/Pf/PfColors';
+import Badge from 'components/Badge/Badge';
+import LocalTime from 'components/Time/LocalTime';
+import { HealthIndicator, DisplayMode } from 'components/ServiceHealth/HealthIndicator';
+import { Health } from 'types/Health';
+import { Endpoints, Port } from 'types/ServiceInfo';
+import PfInfoCard from 'components/Pf/PfInfoCard';
+import { PfColors } from 'PfColors';
 
 import './ServiceInfoDescription.css';
-import { IstioLogo } from '../../../types/ServiceListComponent';
+import { IstioLogo } from 'types/ServiceListComponent';
 
 interface ServiceInfoDescriptionProps {
   name: string;

@@ -2,12 +2,12 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import { PropTypes } from 'prop-types';
 
-import { GraphParamsType } from '../../types/Graph';
-import { EdgeLabelMode } from '../../types/GraphFilter';
-import * as LayoutDictionary from '../../components/CytoscapeGraph/graphs/LayoutDictionary';
-import ServiceGraphPage from '../../containers/ServiceGraphPageContainer';
-import { makeURLFromParams } from '../../components/Nav/NavUtils';
-import { config } from '../../config';
+import { GraphParamsType } from 'types/Graph';
+import { EdgeLabelMode } from 'types/GraphFilter';
+import * as LayoutDictionary from 'components/CytoscapeGraph/graphs/LayoutDictionary';
+import ServiceGraphPage from 'containers/ServiceGraphPageContainer';
+import { makeURLFromParams } from 'components/Nav/NavUtils';
+import { config } from 'config';
 
 const URLSearchParams = require('url-search-params');
 

@@ -1,5 +1,5 @@
-import { PfColors } from '../../../components/Pf/PfColors';
-import { EdgeLabelMode } from '../../../types/GraphFilter';
+import { PfColors } from 'PfColors';
+import { EdgeLabelMode } from 'types/GraphFilter';
 
 export const DimClass = 'mousedim';
 

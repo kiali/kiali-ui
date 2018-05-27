@@ -1,6 +1,6 @@
 import serviceGraphFilterState from '../ServiceGraphFilterState';
-import { ServiceGraphFilterActionKeys } from '../../actions/ServiceGraphFilterActions';
-import { EdgeLabelMode } from '../../types/GraphFilter';
+import { ServiceGraphFilterActionKeys } from 'actions/ServiceGraphFilterActions';
+import { EdgeLabelMode } from 'types/GraphFilter';
 
 describe('ServiceGraphFilterState reducer', () => {
   it('should return the initial state', () => {

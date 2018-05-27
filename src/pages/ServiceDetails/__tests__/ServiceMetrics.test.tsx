@@ -2,7 +2,7 @@ import * as React from 'react';
 import { mount, shallow, ReactWrapper } from 'enzyme';
 
 import ServiceMetrics from '../ServiceMetrics';
-import * as API from '../../../services/Api';
+import * as API from 'services/Api';
 
 window['SVGPathElement'] = a => a;
 let mounted: ReactWrapper<any, any> | null;

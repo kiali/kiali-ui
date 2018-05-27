@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import Badge from '../Badge';
-import { PfColors } from '../../../components/Pf/PfColors';
+import { PfColors } from 'PfColors';
 
 const mockBadge = (
   leftText = 'my_key',

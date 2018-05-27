@@ -5,7 +5,7 @@ import AceEditor from 'react-ace';
 import 'brace/mode/yaml';
 import 'brace/theme/eclipse';
 import './IstioRuleInfo.css';
-import { aceOptions, IstioRuleDetails, safeDumpOptions } from '../../types/IstioConfigDetails';
+import { aceOptions, IstioRuleDetails, safeDumpOptions } from 'types/IstioConfigDetails';
 
 const yaml = require('js-yaml');
 

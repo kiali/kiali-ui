@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { DropdownButton, MenuItem } from 'patternfly-react';
-import RateIntervals from '../../types/RateIntervals';
+import RateIntervals from 'types/RateIntervals';
 
 type RateIntervalToolbarItemProps = {
   rateIntervalSelected: string;

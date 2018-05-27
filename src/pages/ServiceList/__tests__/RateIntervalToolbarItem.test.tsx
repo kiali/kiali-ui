@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import RateIntervalToolbarItem from '../RateIntervalToolbarItem';
-import RateIntervals from '../../../types/RateIntervals';
+import RateIntervals from 'types/RateIntervals';
 
 describe('RateIntervalToolbarItem', () => {
   it('renders correctly', () => {

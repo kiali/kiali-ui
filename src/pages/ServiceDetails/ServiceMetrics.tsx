@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { Alert, LineChart } from 'patternfly-react';
 
-import ServiceId from '../../types/ServiceId';
-import * as M from '../../types/Metrics';
-import * as API from '../../services/Api';
-import { computePrometheusQueryInterval } from '../../services/Prometheus';
-import MetricsOptionsBar from '../../components/MetricsOptions/MetricsOptionsBar';
-import MetricsOptions from '../../types/MetricsOptions';
-import graphUtils from '../../utils/Graphing';
+import ServiceId from 'types/ServiceId';
+import * as M from 'types/Metrics';
+import * as API from 'services/Api';
+import { computePrometheusQueryInterval } from 'services/Prometheus';
+import MetricsOptionsBar from 'components/MetricsOptions/MetricsOptionsBar';
+import MetricsOptions from 'types/MetricsOptions';
+import graphUtils from 'utils/Graphing';
 
 interface GrafanaInfo {
   url: string;

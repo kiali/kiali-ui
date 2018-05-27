@@ -1,6 +1,6 @@
 import * as React from 'react';
-import Badge from '../Badge/Badge';
-import { PfColors } from '../../components/Pf/PfColors';
+import Badge from 'components/Badge/Badge';
+import { PfColors } from 'PfColors';
 
 interface DetailObjectProps {
   name: string;

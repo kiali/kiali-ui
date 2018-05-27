@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { Col, Row } from 'patternfly-react';
-import LocalTime from '../../../components/Time/LocalTime';
-import Badge from '../../../components/Badge/Badge';
-import { Pod } from '../../../types/ServiceInfo';
-import { PfColors } from '../../../components/Pf/PfColors';
+import LocalTime from 'components/Time/LocalTime';
+import Badge from 'components/Badge/Badge';
+import { Pod } from 'types/ServiceInfo';
+import { PfColors } from 'PfColors';
 
 interface Props {
   pods?: Pod[];

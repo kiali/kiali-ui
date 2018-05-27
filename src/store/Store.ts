@@ -1,5 +1,5 @@
-import { NotificationGroup } from '../types/MessageCenter';
-import { EdgeLabelMode } from '../types/GraphFilter';
+import { NotificationGroup } from 'types/MessageCenter';
+import { EdgeLabelMode } from 'types/GraphFilter';
 // Store is the Redux Data store
 
 // Various pages are described here with their various sections

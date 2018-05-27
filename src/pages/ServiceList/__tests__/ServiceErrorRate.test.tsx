@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import ServiceErrorRate from '../ServiceErrorRate';
-import { RequestHealth } from '../../../types/Health';
+import { RequestHealth } from 'types/Health';
 
 describe('ServiceErrorRate', () => {
   it('should render correctly with basic data', () => {

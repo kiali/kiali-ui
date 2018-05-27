@@ -1,8 +1,8 @@
 import { createAction } from 'typesafe-actions';
-import Namespace from '../types/Namespace';
-import { Duration } from '../types/GraphFilter';
-import * as API from '../services/Api';
-import * as MessageCenter from '../utils/MessageCenter';
+import Namespace from 'types/Namespace';
+import { Duration } from 'types/GraphFilter';
+import * as API from 'services/Api';
+import * as MessageCenter from 'utils/MessageCenter';
 
 const EMPTY_GRAPH_DATA = { nodes: [], edges: [] };
 

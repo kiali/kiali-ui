@@ -1,6 +1,6 @@
 import * as React from 'react';
 import IstioConfigListComponent from './IstioConfigListComponent';
-import * as MessageCenter from '../../utils/MessageCenter';
+import * as MessageCenter from 'utils/MessageCenter';
 
 type IstioConfigListState = {};
 

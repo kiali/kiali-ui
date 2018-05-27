@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { Toolbar, Button, Icon, FormGroup } from 'patternfly-react';
 
-import { Duration, Layout, EdgeLabelMode } from '../../types/GraphFilter';
+import { Duration, Layout, EdgeLabelMode } from 'types/GraphFilter';
 import { ToolbarDropdown } from '../ToolbarDropdown/ToolbarDropdown';
-import NamespaceDropdownContainer from '../../containers/NamespaceDropdownContainer';
-import { config } from '../../config';
-import GraphLayersContainer from '../../containers/GraphLayersContainer';
+import NamespaceDropdownContainer from 'containers/NamespaceDropdownContainer';
+import { config } from 'config';
+import GraphLayersContainer from 'containers/GraphLayersContainer';
 import { style } from 'typestyle';
-import { GraphParamsType } from '../../types/Graph';
-import Namespace from '../../types/Namespace';
+import { GraphParamsType } from 'types/Graph';
+import Namespace from 'types/Namespace';
 
 import * as _ from 'lodash';
 

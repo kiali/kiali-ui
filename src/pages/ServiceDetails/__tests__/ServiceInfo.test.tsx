@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import ServiceInfo from '../ServiceInfo';
-import { hasIstioSidecar, ObjectValidation, ServiceDetailsInfo } from '../../../types/ServiceInfo';
+import { hasIstioSidecar, ObjectValidation, ServiceDetailsInfo } from 'types/ServiceInfo';
 
-jest.mock('../../../services/Api');
+jest.mock('services/Api');
 
-const API = require('../../../services/Api');
+const API = require('services/Api');
 
 describe('#ServiceInfo render correctly with data', () => {
   it('should render serviceInfo with data', () => {

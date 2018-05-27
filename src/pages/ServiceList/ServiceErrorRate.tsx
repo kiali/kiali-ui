@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { getRequestErrorsRatio, getRequestRatioText } from '../../components/ServiceHealth/HealthHelper';
-import { RequestHealth } from '../../types/Health';
+import { getRequestErrorsRatio, getRequestRatioText } from 'components/ServiceHealth/HealthHelper';
+import { RequestHealth } from 'types/Health';
 
 type ServiceErrorRateProps = {
   requestHealth: RequestHealth;

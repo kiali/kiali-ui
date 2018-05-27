@@ -1,6 +1,6 @@
-import { ServiceGraphState } from '../store/Store';
-import { ServiceGraphDataActionKeys } from '../actions/ServiceGraphDataActions';
-import { ServiceGraphActionKeys } from '../actions/ServiceGraphActions';
+import { ServiceGraphState } from 'store/Store';
+import { ServiceGraphDataActionKeys } from 'actions/ServiceGraphDataActions';
+import { ServiceGraphActionKeys } from 'actions/ServiceGraphActions';
 import FilterStateReducer from './ServiceGraphFilterState';
 
 const INITIAL_STATE: any = {

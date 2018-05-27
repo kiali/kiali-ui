@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { DropdownButton, MenuItem } from 'patternfly-react';
 
-import Namespace from '../types/Namespace';
+import Namespace from 'types/Namespace';
 
 interface NamespaceListType {
   disabled: boolean;

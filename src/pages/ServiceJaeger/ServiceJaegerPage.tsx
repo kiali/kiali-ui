@@ -1,8 +1,8 @@
 import * as React from 'react';
 import Iframe from 'react-iframe';
-import * as API from '../../services/Api';
+import * as API from 'services/Api';
 import { EmptyState, EmptyStateTitle, EmptyStateIcon } from 'patternfly-react';
-import * as MessageCenter from '../../utils/MessageCenter';
+import * as MessageCenter from 'utils/MessageCenter';
 
 type ServiceJaegerState = {
   height: string;

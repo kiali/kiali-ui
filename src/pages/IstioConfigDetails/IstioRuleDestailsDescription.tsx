@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { RuleAction } from '../../types/IstioRuleInfo';
+import { RuleAction } from 'types/IstioRuleInfo';
 import { Link } from 'react-router-dom';
 
 interface IstioRuleDetailsDescriptionProps {

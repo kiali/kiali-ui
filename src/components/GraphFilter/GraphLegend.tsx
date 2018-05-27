@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Draggable from 'react-draggable';
 import { Card, Icon } from 'patternfly-react';
-import { PfColors } from '../../components/Pf/PfColors';
+import { PfColors } from 'PfColors';
 import { style } from 'typestyle';
 import { NestedCSSProperties } from 'typestyle/lib/types';
 

@@ -1,9 +1,9 @@
 import * as React from 'react';
 import * as resolve from 'table-resolver';
-import { checkForPath, DestinationWeight, ObjectValidation, severityToIconName } from '../../../../types/ServiceInfo';
+import { checkForPath, DestinationWeight, ObjectValidation, severityToIconName } from 'types/ServiceInfo';
 import { Table, Icon, OverlayTrigger, Popover } from 'patternfly-react';
-import Badge from '../../../../components/Badge/Badge';
-import { PfColors } from '../../../../components/Pf/PfColors';
+import Badge from 'components/Badge/Badge';
+import { PfColors } from 'PfColors';
 
 import './RouteRuleRoute.css';
 

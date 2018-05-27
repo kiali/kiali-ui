@@ -1,10 +1,10 @@
-import { KialiAppState } from '../store/Store';
+import { KialiAppState } from 'store/Store';
 import { connect } from 'react-redux';
-import Namespace from '../types/Namespace';
-import { Duration } from '../types/GraphFilter';
-import ServiceGraphPage from '../pages/ServiceGraph/ServiceGraphPage';
+import Namespace from 'types/Namespace';
+import { Duration } from 'types/GraphFilter';
+import ServiceGraphPage from 'pages/ServiceGraph/ServiceGraphPage';
 
-import { ServiceGraphDataActions } from '../actions/ServiceGraphDataActions';
+import { ServiceGraphDataActions } from 'actions/ServiceGraphDataActions';
 
 const mapStateToProps = (state: KialiAppState) => ({
   graphTimestamp: state.serviceGraph.graphDataTimestamp,

@@ -1,14 +1,14 @@
 import * as React from 'react';
-import Badge from '../../components/Badge/Badge';
-import InOutRateTable from '../../components/SummaryPanel/InOutRateTable';
-import RpsChart from '../../components/SummaryPanel/RpsChart';
-import { SummaryPanelPropType } from '../../types/Graph';
-import * as API from '../../services/Api';
-import * as M from '../../types/Metrics';
-import graphUtils from '../../utils/Graphing';
-import { getAccumulatedTrafficRate } from '../../utils/TrafficRate';
-import MetricsOptions from '../../types/MetricsOptions';
-import { PfColors } from '../../components/Pf/PfColors';
+import Badge from 'components/Badge/Badge';
+import InOutRateTable from 'components/SummaryPanel/InOutRateTable';
+import RpsChart from 'components/SummaryPanel/RpsChart';
+import { SummaryPanelPropType } from 'types/Graph';
+import * as API from 'services/Api';
+import * as M from 'types/Metrics';
+import graphUtils from 'utils/Graphing';
+import { getAccumulatedTrafficRate } from 'utils/TrafficRate';
+import MetricsOptions from 'types/MetricsOptions';
+import { PfColors } from 'PfColors';
 import { Icon } from 'patternfly-react';
 
 type SummaryPanelGroupState = {

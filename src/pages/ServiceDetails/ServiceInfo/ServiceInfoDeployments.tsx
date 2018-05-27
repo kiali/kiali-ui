@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { Col, Row, Icon } from 'patternfly-react';
-import LocalTime from '../../../components/Time/LocalTime';
-import Badge from '../../../components/Badge/Badge';
-import { Deployment } from '../../../types/ServiceInfo';
-import { ratioCheck, Status } from '../../../components/ServiceHealth/HealthHelper';
-import { PfColors } from '../../../components/Pf/PfColors';
+import LocalTime from 'components/Time/LocalTime';
+import Badge from 'components/Badge/Badge';
+import { Deployment } from 'types/ServiceInfo';
+import { ratioCheck, Status } from 'components/ServiceHealth/HealthHelper';
+import { PfColors } from 'PfColors';
 
 interface ServiceInfoDeploymentsProps {
   deployments?: Deployment[];

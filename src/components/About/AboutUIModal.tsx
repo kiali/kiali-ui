@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { AboutModal, Spinner } from 'patternfly-react';
-import * as API from '../../services/Api';
+import * as API from 'services/Api';
 
-const pfLogo = require('../../img/logo-alt.svg');
+const pfLogo = require('img/logo-alt.svg');
 const KIALI_CORE_COMMIT_HASH = 'Kiali core commit hash';
 const KIALI_CORE_VERSION = 'Kiali core version';
 

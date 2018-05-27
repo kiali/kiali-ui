@@ -1,8 +1,8 @@
 import { connect } from 'react-redux';
 
-import { MessageCenterActions } from '../actions/MessageCenterActions';
-import { MessageCenter, MessageCenterTrigger } from '../components/MessageCenter';
-import { MessageType } from '../types/MessageCenter';
+import { MessageCenterActions } from 'actions/MessageCenterActions';
+import { MessageCenter, MessageCenterTrigger } from 'components/MessageCenter';
+import { MessageType } from 'types/MessageCenter';
 
 const mapStateToPropsMessageCenter = state => {
   return {

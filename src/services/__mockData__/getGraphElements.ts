@@ -1,4 +1,4 @@
-import { PfColors } from '../../components/Pf/PfColors';
+import { PfColors } from 'PfColors';
 
 export const TEST = {
   elements: {

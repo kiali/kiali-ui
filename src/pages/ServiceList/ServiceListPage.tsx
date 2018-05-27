@@ -1,6 +1,6 @@
 import * as React from 'react';
 import ServiceListComponent from './ServiceListComponent';
-import * as MessageCenter from '../../utils/MessageCenter';
+import * as MessageCenter from 'utils/MessageCenter';
 
 type ServiceListState = {};
 
