@@ -1,15 +1,9 @@
 import * as React from 'react';
 import { Col, Icon, Row } from 'patternfly-react';
-import {
-  EditorLink,
-  globalChecks,
-  ObjectValidation,
-  RouteRule,
-  validationToIconName
-} from '../../../types/ServiceInfo';
-import LocalTime from '../../../components/Time/LocalTime';
+import { EditorLink, globalChecks, ObjectValidation, RouteRule, validationToIconName } from 'types/ServiceInfo';
+import LocalTime from 'components/Time/LocalTime';
 import RouteRuleRoute from './ServiceInfoRouteRules/RouteRuleRoute';
-import DetailObject from '../../../components/Details/DetailObject';
+import DetailObject from 'components/Details/DetailObject';
 import { Link } from 'react-router-dom';
 
 interface ServiceInfoRouteRulesProps extends EditorLink {

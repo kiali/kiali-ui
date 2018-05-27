@@ -1,5 +1,5 @@
 import Element from 'cytoscape';
-import { PfColors } from '../../../components/Pf/PfColors';
+import { PfColors } from 'PfColors';
 
 const FLASH_BADGE: string = 'fa fa-bolt';
 const ROUTE_BADGE: string = 'fa fa-code-fork';

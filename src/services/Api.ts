@@ -1,8 +1,8 @@
 import axios, { AxiosError } from 'axios';
-import { config } from '../config';
-import Namespace from '../types/Namespace';
-import MetricsOptions from '../types/MetricsOptions';
-import ServiceListOptions from '../types/ServiceListOptions';
+import { config } from 'config';
+import Namespace from 'types/Namespace';
+import MetricsOptions from 'types/MetricsOptions';
+import ServiceListOptions from 'types/ServiceListOptions';
 
 const auth = (user: string, pass: string) => {
   return {

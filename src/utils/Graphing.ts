@@ -1,4 +1,4 @@
-import { TimeSeries } from '../types/Metrics';
+import { TimeSeries } from 'types/Metrics';
 
 export default {
   toC3Columns(matrix: TimeSeries[], title?: string) {

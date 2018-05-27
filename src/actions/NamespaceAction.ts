@@ -1,4 +1,4 @@
-import * as Api from '../services/Api';
+import * as Api from 'services/Api';
 
 export enum NamespaceActionKeys {
   NAMESPACE_RELOAD = 'NAMESPACE_RELOAD',

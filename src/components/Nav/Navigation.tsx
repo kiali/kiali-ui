@@ -24,8 +24,8 @@ const servicesJaegerPath = '/jaeger';
 export const servicesTitle = 'Services';
 export const servicesJaeger = 'Distributed Tracing';
 
-const pfLogo = require('../../img/logo-alt.svg');
-const pfBrand = require('../../assets/img/kiali-title.svg');
+const pfLogo = require('img/logo-alt.svg');
+const pfBrand = require('assets/img/kiali-title.svg');
 
 const servicesRx = /\/namespaces\/(.*)\/services\/(.*)/g;
 const istioConfigRx = /\/namespaces\/(.*)\/istio\/(.*)/g;

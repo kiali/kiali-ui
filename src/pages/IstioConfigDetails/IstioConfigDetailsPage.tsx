@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { Col, Row } from 'patternfly-react';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import { NamespaceFilterSelected } from '../../components/NamespaceFilter/NamespaceFilter';
-import { ActiveFilter } from '../../types/NamespaceFilter';
-import { aceOptions, IstioConfigDetails, IstioConfigId, safeDumpOptions } from '../../types/IstioConfigDetails';
-import { dicIstioType } from '../../types/IstioConfigListComponent';
-import * as MessageCenter from '../../utils/MessageCenter';
-import * as API from '../../services/Api';
+import { NamespaceFilterSelected } from 'components/NamespaceFilter/NamespaceFilter';
+import { ActiveFilter } from 'types/NamespaceFilter';
+import { aceOptions, IstioConfigDetails, IstioConfigId, safeDumpOptions } from 'types/IstioConfigDetails';
+import { dicIstioType } from 'types/IstioConfigListComponent';
+import * as MessageCenter from 'utils/MessageCenter';
+import * as API from 'services/Api';
 import IstioRuleInfo from './IstioRuleInfo';
 import AceEditor from 'react-ace';
 import 'brace/mode/yaml';

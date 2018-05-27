@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Col, Row } from 'patternfly-react';
-import { EditorLink, VirtualService } from '../../../types/ServiceInfo';
-import LocalTime from '../../../components/Time/LocalTime';
-import DetailObject from '../../../components/Details/DetailObject';
+import { EditorLink, VirtualService } from 'types/ServiceInfo';
+import LocalTime from 'components/Time/LocalTime';
+import DetailObject from 'components/Details/DetailObject';
 import { Link } from 'react-router-dom';
 
 interface ServiceInfoVirtualServicesProps extends EditorLink {

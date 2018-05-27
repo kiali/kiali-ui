@@ -1,6 +1,6 @@
 import { clamp } from '../../../utils/MathUtils';
 import { DimClass } from './GraphStyles';
-import { PfColors } from '../../../components/Pf/PfColors';
+import { PfColors } from 'PfColors';
 
 // Min and max values to clamp the request per second rate
 const TIMER_REQUEST_PER_SECOND_MIN = 0;

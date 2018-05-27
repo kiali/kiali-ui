@@ -1,5 +1,5 @@
-import { RequestHealth } from '../../types/Health';
-import { PfColors } from '../../components/Pf/PfColors';
+import { RequestHealth } from 'types/Health';
+import { PfColors } from 'PfColors';
 
 export interface Status {
   name: string;

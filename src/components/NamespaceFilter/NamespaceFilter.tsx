@@ -6,9 +6,9 @@ import {
   FilterValue,
   NamespaceFilterProps,
   NamespaceFilterState
-} from '../../types/NamespaceFilter';
-import * as API from '../../services/Api';
-import Namespace from '../../types/Namespace';
+} from 'types/NamespaceFilter';
+import * as API from 'services/Api';
+import Namespace from 'types/Namespace';
 
 export namespace NamespaceFilterSelected {
   let selectedFilters: ActiveFilter[] = [];

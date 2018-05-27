@@ -1,4 +1,4 @@
-import { MessageType } from '../types/MessageCenter';
+import { MessageType } from 'types/MessageCenter';
 import { createAction } from 'typesafe-actions';
 
 export const enum MessageCenterActionKeys {

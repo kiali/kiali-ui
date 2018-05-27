@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { PfColors } from '../../components/Pf/PfColors';
+import { PfColors } from 'PfColors';
 
 interface BadgeProps {
   scale: number;

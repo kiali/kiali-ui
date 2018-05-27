@@ -8,12 +8,12 @@ import * as LayoutDictionary from './graphs/LayoutDictionary';
 import EmptyGraphLayout from './EmptyGraphLayout';
 import CytoscapeReactWrapper from './CytoscapeReactWrapper';
 
-import { GraphParamsType } from '../../types/Graph';
-import { EdgeLabelMode } from '../../types/GraphFilter';
-import { KialiAppState } from '../../store/Store';
+import { GraphParamsType } from 'types/Graph';
+import { EdgeLabelMode } from 'types/GraphFilter';
+import { KialiAppState } from 'store/Store';
 import * as GraphBadge from './graphs/GraphBadge';
 import TrafficRender from './graphs/TrafficRenderer';
-import { ServiceGraphActions } from '../../actions/ServiceGraphActions';
+import { ServiceGraphActions } from 'actions/ServiceGraphActions';
 
 type CytoscapeGraphType = {
   elements?: any;

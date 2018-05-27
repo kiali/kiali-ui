@@ -3,7 +3,7 @@ import { shallow } from 'enzyme';
 
 import NotificationList from '../NotificationList';
 import MessageCenter from '../MessageCenter';
-import { NotificationGroup, MessageType } from '../../../types/MessageCenter';
+import { NotificationGroup, MessageType } from 'types/MessageCenter';
 
 describe('MessageCenter', () => {
   const groupMessages: NotificationGroup[] = [

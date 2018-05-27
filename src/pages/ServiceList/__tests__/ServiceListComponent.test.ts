@@ -1,6 +1,6 @@
 import { sortFields, sortServices } from '../ServiceListComponent';
-import { ServiceItem } from '../../../types/ServiceListComponent';
-import { RequestHealth } from '../../../types/Health';
+import { ServiceItem } from 'types/ServiceListComponent';
+import { RequestHealth } from 'types/Health';
 
 const makeService = (name: string, reqCount: number, errCount: number): ServiceItem => {
   const reqErrs: RequestHealth = {

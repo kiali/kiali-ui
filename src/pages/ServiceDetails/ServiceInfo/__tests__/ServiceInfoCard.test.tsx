@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
-import Badge from '../../../../components/Badge/Badge';
-import PfInfoCard from '../../../../components/Pf/PfInfoCard';
-import { PfColors } from '../../../../components/Pf/PfColors';
+import Badge from 'components/Badge/Badge';
+import PfInfoCard from 'components/Pf/PfInfoCard';
+import { PfColors } from 'PfColors';
 
 const CardContent = (
   <div key="pod">

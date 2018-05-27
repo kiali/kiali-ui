@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Icon, OverlayTrigger, Popover } from 'patternfly-react';
 
-import { Health } from '../../types/Health';
-import { getName } from '../../types/RateIntervals';
+import { Health } from 'types/Health';
+import { getName } from 'types/RateIntervals';
 import * as H from './HealthHelper';
 
 interface Props {

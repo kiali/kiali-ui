@@ -1,12 +1,12 @@
 import * as React from 'react';
-import ServiceId from '../../types/ServiceId';
+import ServiceId from 'types/ServiceId';
 import ServiceInfoDescription from './ServiceInfo/ServiceInfoDescription';
 import ServiceInfoPods from './ServiceInfo/ServiceInfoPods';
 import ServiceInfoDeployments from './ServiceInfo/ServiceInfoDeployments';
 import ServiceInfoRouteRules from './ServiceInfo/ServiceInfoRouteRules';
 import ServiceInfoRoutes from './ServiceInfo/ServiceInfoRoutes';
 import ServiceInfoDestinationPolicies from './ServiceInfo/ServiceInfoDestinationPolicies';
-import { RouteRule, ServiceDetailsInfo, ObjectValidation } from '../../types/ServiceInfo';
+import { RouteRule, ServiceDetailsInfo, ObjectValidation } from 'types/ServiceInfo';
 import {
   ToastNotification,
   ToastNotificationList,

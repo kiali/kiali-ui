@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Icon } from 'patternfly-react';
 
-import { Health } from '../../types/Health';
+import { Health } from 'types/Health';
 import * as H from './HealthHelper';
 import { HealthDetails } from './HealthDetails';
 

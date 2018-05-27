@@ -1,6 +1,6 @@
 // Action Creators allow us to create typesafe utilities for dispatching actions
 import { createAction } from 'typesafe-actions';
-import { EdgeLabelMode } from '../types/GraphFilter';
+import { EdgeLabelMode } from 'types/GraphFilter';
 
 export enum ServiceGraphFilterActionKeys {
   // Toggle Actions

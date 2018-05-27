@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { SummaryPanelPropType } from '../../types/Graph';
+import { SummaryPanelPropType } from 'types/Graph';
 import SummaryPanelEdge from './SummaryPanelEdge';
 import SummaryPanelGraph from './SummaryPanelGraph';
 import SummaryPanelGroup from './SummaryPanelGroup';

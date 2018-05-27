@@ -3,18 +3,13 @@ import { Link, RouteComponentProps } from 'react-router-dom';
 import { Col, Row } from 'patternfly-react';
 import ServiceInfo from './ServiceInfo';
 import ServiceMetrics from './ServiceMetrics';
-import ServiceId from '../../types/ServiceId';
+import ServiceId from 'types/ServiceId';
 import { Nav, NavItem, TabContainer, TabContent, TabPane } from 'patternfly-react';
-import { NamespaceFilterSelected } from '../../components/NamespaceFilter/NamespaceFilter';
-import { ActiveFilter } from '../../types/NamespaceFilter';
-import * as API from '../../services/Api';
-import * as MessageCenter from '../../utils/MessageCenter';
-import {
-  hasIstioSidecar,
-  ServiceDetailsInfo,
-  ServiceDetailsInfoFromAPI,
-  ObjectValidation
-} from '../../types/ServiceInfo';
+import { NamespaceFilterSelected } from 'components/NamespaceFilter/NamespaceFilter';
+import { ActiveFilter } from 'types/NamespaceFilter';
+import * as API from 'services/Api';
+import * as MessageCenter from 'utils/MessageCenter';
+import { hasIstioSidecar, ServiceDetailsInfo, ServiceDetailsInfoFromAPI, ObjectValidation } from 'types/ServiceInfo';
 import AceEditor, { AceOptions } from 'react-ace';
 import 'brace/mode/yaml';
 import 'brace/theme/eclipse';

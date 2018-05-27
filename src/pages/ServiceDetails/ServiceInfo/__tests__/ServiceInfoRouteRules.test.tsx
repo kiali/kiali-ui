@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import ServiceInfoRouteRules from '../ServiceInfoRouteRules';
-import { ObjectValidation, RouteRule } from '../../../../types/ServiceInfo';
+import { ObjectValidation, RouteRule } from 'types/ServiceInfo';
 
 const rules: RouteRule[] = [
   {

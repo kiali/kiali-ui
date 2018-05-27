@@ -1,22 +1,22 @@
 import * as React from 'react';
 import { ListView, ListViewItem, ListViewIcon, Sort } from 'patternfly-react';
 import { Link } from 'react-router-dom';
-import { NamespaceFilter, NamespaceFilterSelected } from '../../components/NamespaceFilter/NamespaceFilter';
+import { NamespaceFilter, NamespaceFilterSelected } from 'components/NamespaceFilter/NamespaceFilter';
 import { Paginator } from 'patternfly-react';
-import { ActiveFilter, FilterType } from '../../types/NamespaceFilter';
-import * as API from '../../services/Api';
-import Namespace from '../../types/Namespace';
-import { Pagination } from '../../types/Pagination';
-import { IstioLogo, ServiceItem, ServiceList, SortField, overviewToItem } from '../../types/ServiceListComponent';
+import { ActiveFilter, FilterType } from 'types/NamespaceFilter';
+import * as API from 'services/Api';
+import Namespace from 'types/Namespace';
+import { Pagination } from 'types/Pagination';
+import { IstioLogo, ServiceItem, ServiceList, SortField, overviewToItem } from 'types/ServiceListComponent';
 import PropTypes from 'prop-types';
-import { getRequestErrorsRatio } from '../../components/ServiceHealth/HealthHelper';
-import { HealthIndicator, DisplayMode } from '../../components/ServiceHealth/HealthIndicator';
+import { getRequestErrorsRatio } from 'components/ServiceHealth/HealthHelper';
+import { HealthIndicator, DisplayMode } from 'components/ServiceHealth/HealthIndicator';
 import ServiceErrorRate from './ServiceErrorRate';
 import RateIntervalToolbarItem from './RateIntervalToolbarItem';
-import { PfColors } from '../../components/Pf/PfColors';
+import { PfColors } from 'PfColors';
 
 import './ServiceListComponent.css';
-import PfSpinner from '../../components/Pf/PfSpinner';
+import PfSpinner from 'components/Pf/PfSpinner';
 
 // Exported for test
 export const sortFields: SortField[] = [

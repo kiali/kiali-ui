@@ -1,4 +1,4 @@
-import { NamespaceActionKeys } from '../actions/NamespaceAction';
+import { NamespaceActionKeys } from 'actions/NamespaceAction';
 
 const INITIAL_STATE = {
   isFetching: false,

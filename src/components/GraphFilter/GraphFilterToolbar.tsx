@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { PropTypes } from 'prop-types';
 
-import { GraphParamsType } from '../../types/Graph';
-import { Duration, Layout, EdgeLabelMode } from '../../types/GraphFilter';
-import Namespace from '../../types/Namespace';
-import GraphFilterToolbarType from '../../types/GraphFilterToolbar';
+import { GraphParamsType } from 'types/Graph';
+import { Duration, Layout, EdgeLabelMode } from 'types/GraphFilter';
+import Namespace from 'types/Namespace';
+import GraphFilterToolbarType from 'types/GraphFilterToolbar';
 
-import { makeURLFromParams } from '../../components/Nav/NavUtils';
+import { makeURLFromParams } from 'components/Nav/NavUtils';
 
 import GraphFilter from './GraphFilter';
 

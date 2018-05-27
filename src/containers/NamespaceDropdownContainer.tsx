@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 
-import { fetchNamespacesIfNeeded } from '../actions/NamespaceAction';
-import { NamespaceDropdown } from '../components/NamespaceDropdown';
+import { fetchNamespacesIfNeeded } from 'actions/NamespaceAction';
+import { NamespaceDropdown } from 'components/NamespaceDropdown';
 
 const mapStateToProps = state => {
   return {

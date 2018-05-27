@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Toolbar, ToolbarRightContent, Icon, Button } from 'patternfly-react';
-import { config } from '../../config';
+import { config } from 'config';
 import ValueSelectHelper from './ValueSelectHelper';
-import MetricsOptions from '../../types/MetricsOptions';
+import MetricsOptions from 'types/MetricsOptions';
 import { ToolbarDropdown } from '../ToolbarDropdown/ToolbarDropdown';
 
 interface Props {

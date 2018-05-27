@@ -1,6 +1,6 @@
-import { MessageType } from '../types/MessageCenter';
-import { MessageCenterState } from '../store/Store';
-import { MessageCenterActionKeys } from '../actions/MessageCenterActions';
+import { MessageType } from 'types/MessageCenter';
+import { MessageCenterState } from 'store/Store';
+import { MessageCenterActionKeys } from 'actions/MessageCenterActions';
 
 const INITIAL_STATE: MessageCenterState = {
   nextId: 0,

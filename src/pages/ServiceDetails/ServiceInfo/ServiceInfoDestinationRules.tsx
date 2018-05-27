@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { DestinationRule, EditorLink } from '../../../types/ServiceInfo';
+import { DestinationRule, EditorLink } from 'types/ServiceInfo';
 import { Col, Row } from 'patternfly-react';
-import LocalTime from '../../../components/Time/LocalTime';
-import DetailObject from '../../../components/Details/DetailObject';
+import LocalTime from 'components/Time/LocalTime';
+import DetailObject from 'components/Details/DetailObject';
 import { Link } from 'react-router-dom';
 
 interface ServiceInfoDestinationRulesProps extends EditorLink {
