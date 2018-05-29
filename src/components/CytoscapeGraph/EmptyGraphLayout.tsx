@@ -1,11 +1,19 @@
 import * as React from 'react';
-import { Button, EmptyState, EmptyStateTitle, EmptyStateInfo, EmptyStateAction } from 'patternfly-react';
+import {
+  Button,
+  EmptyState,
+  EmptyStateIcon,
+  EmptyStateTitle,
+  EmptyStateInfo,
+  EmptyStateAction
+} from 'patternfly-react';
 import { style } from 'typestyle';
 
 type EmptyGraphLayoutProps = {
   elements: any;
   namespace: string;
   action: any;
+  error: any;
 };
 
 const emptyStateStyle = style({
@@ -19,7 +27,15 @@ type EmptyGraphLayoutState = {};
 
 export default class EmptyGraphLayout extends React.Component<EmptyGraphLayoutProps, EmptyGraphLayoutState> {
   render() {
-    if (
+    if (this.props.error) {
+      return (
+        <EmptyState className={emptyStateStyle}>
+          <EmptyStateIcon name="error-circle-o" />
+          <EmptyStateTitle>Error Fetching Service Graph</EmptyStateTitle>
+          <EmptyStateInfo>{this.props.error}</EmptyStateInfo>
+        </EmptyState>
+      );
+    } else if (
       !this.props.elements ||
       this.props.elements.length < 1 ||
       !this.props.elements.nodes ||

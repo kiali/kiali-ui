@@ -18,6 +18,7 @@ import { ServiceGraphActions } from '../../actions/ServiceGraphActions';
 type CytoscapeGraphType = {
   elements?: any;
   isLoading?: boolean;
+  error?: any;
   edgeLabelMode: EdgeLabelMode;
   showNodeLabels: boolean;
   showCircuitBreakers: boolean;
@@ -64,6 +65,7 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
     this.newLayout = this.props.graphLayout !== nextProps.graphLayout ? nextProps.graphLayout : '';
     return (
       this.props.isLoading !== nextProps.isLoading ||
+      this.props.error !== nextProps.error ||
       this.props.graphLayout !== nextProps.graphLayout ||
       this.props.edgeLabelMode !== nextProps.edgeLabelMode ||
       this.props.showNodeLabels !== nextProps.showNodeLabels ||
@@ -96,6 +98,7 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
             elements={this.props.elements}
             namespace={this.props.namespace.name}
             action={this.props.refresh}
+            error={this.props.error}
           >
             <CytoscapeReactWrapper
               ref={e => {

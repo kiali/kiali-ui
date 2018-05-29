@@ -8,6 +8,7 @@ describe('ServiceGraphDataState', () => {
     expect(serviceGraphDataState(undefined, {})).toEqual({
       filterState: serviceGraphFilterState(undefined, {}),
       isLoading: false,
+      error: null,
       graphDataTimestamp: 0,
       hideLegend: true,
       graphData: {},
