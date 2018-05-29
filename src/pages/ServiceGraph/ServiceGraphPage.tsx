@@ -21,6 +21,7 @@ type ServiceGraphPageProps = GraphParamsType & {
   graphTimestamp: string;
   graphData: any;
   isLoading: boolean;
+  error: any;
   hideLegend: boolean;
   isReady: boolean;
   fetchGraphData: (namespace: Namespace, graphDuration: Duration) => any;
@@ -87,6 +88,7 @@ export default class ServiceGraphPage extends React.Component<ServiceGraphPagePr
           <CytoscapeGraph
             {...graphParams}
             isLoading={this.props.isLoading}
+            error={this.props.error}
             elements={this.props.graphData}
             refresh={this.handleRefreshClick}
           />

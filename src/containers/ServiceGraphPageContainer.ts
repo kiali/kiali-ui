@@ -10,6 +10,7 @@ const mapStateToProps = (state: KialiAppState) => ({
   graphTimestamp: state.serviceGraph.graphDataTimestamp,
   graphData: state.serviceGraph.graphData,
   isLoading: state.serviceGraph.isLoading,
+  error: state.serviceGraph.error,
   summaryData: state.serviceGraph.sidePanelInfo
     ? {
         summaryTarget: state.serviceGraph.sidePanelInfo.graphReference,
