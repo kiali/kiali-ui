@@ -127,8 +127,7 @@ export default class ServiceGraphPage extends React.Component<ServiceGraphPagePr
   }
 
   private scheduleNextTimeout(pollInterval?: number) {
-    const defaultVal = this.props.pollInterval && this.props.pollInterval.value ? this.props.pollInterval.value : 0;
-    pollInterval = pollInterval ? pollInterval : defaultVal;
+    pollInterval = pollInterval ? pollInterval : this.props.pollInterval.value;
     if (pollInterval > 0) {
       this.pollTimeoutRef = window.setTimeout(() => {
         this.loadGraphDataFromBackend().then(() => {
