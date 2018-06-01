@@ -16,7 +16,7 @@ export enum ServiceGraphDataActionKeys {
 
 // When updating the cytoscape graph, the element data expects to have all the changes
 // non provided values are taken as "this didn't change", similar as setState does.
-// Put default values for all fields that are ommited.
+// Put default values for all fields that are omitted.
 const decorateGraphData = (graphData: any) => {
   const elementsDefaults = {
     edges: {
