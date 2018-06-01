@@ -1000,16 +1000,15 @@ ShallowWrapper {
     disabled={false}
     handleSelect={[MockFunction]}
     id="metrics_filter_poll_interval"
-    initialLabel="5 seconds"
-    initialValue={5000}
+    initialLabel="15 seconds"
+    initialValue={15000}
     nameDropdown="metrics_filter_poll_interval"
     options={
       Object {
         "0": "Pause",
-        "10000": "10 seconds",
+        "15000": "15 seconds",
         "30000": "30 seconds",
         "300000": "5 minutes",
-        "5000": "5 seconds",
         "60000": "1 minute",
       }
     }
@@ -1040,7 +1039,7 @@ ShallowWrapper {
         <DropdownButton
           id="metrics_filter_poll_interval"
           onSelect={[Function]}
-          title="5 seconds"
+          title="15 seconds"
         >
           <MenuItem
             active={false}
@@ -1057,20 +1056,10 @@ ShallowWrapper {
             bsClass="dropdown"
             disabled={false}
             divider={false}
-            eventKey="5000"
+            eventKey="15000"
             header={false}
           >
-            5 seconds
-          </MenuItem>
-          <MenuItem
-            active={false}
-            bsClass="dropdown"
-            disabled={false}
-            divider={false}
-            eventKey="10000"
-            header={false}
-          >
-            10 seconds
+            15 seconds
           </MenuItem>
           <MenuItem
             active={false}
@@ -1149,20 +1138,10 @@ ShallowWrapper {
               bsClass="dropdown"
               disabled={false}
               divider={false}
-              eventKey="5000"
+              eventKey="15000"
               header={false}
             >
-              5 seconds
-            </MenuItem>,
-            <MenuItem
-              active={false}
-              bsClass="dropdown"
-              disabled={false}
-              divider={false}
-              eventKey="10000"
-              header={false}
-            >
-              10 seconds
+              15 seconds
             </MenuItem>,
             <MenuItem
               active={false}
@@ -1197,7 +1176,7 @@ ShallowWrapper {
           ],
           "id": "metrics_filter_poll_interval",
           "onSelect": [Function],
-          "title": "5 seconds",
+          "title": "15 seconds",
         },
         "ref": null,
         "rendered": Array [
@@ -1220,36 +1199,19 @@ ShallowWrapper {
           },
           Object {
             "instance": null,
-            "key": "5000",
+            "key": "15000",
             "nodeType": "class",
             "props": Object {
               "active": false,
               "bsClass": "dropdown",
-              "children": "5 seconds",
+              "children": "15 seconds",
               "disabled": false,
               "divider": false,
-              "eventKey": "5000",
+              "eventKey": "15000",
               "header": false,
             },
             "ref": null,
-            "rendered": "5 seconds",
-            "type": [Function],
-          },
-          Object {
-            "instance": null,
-            "key": "10000",
-            "nodeType": "class",
-            "props": Object {
-              "active": false,
-              "bsClass": "dropdown",
-              "children": "10 seconds",
-              "disabled": false,
-              "divider": false,
-              "eventKey": "10000",
-              "header": false,
-            },
-            "ref": null,
-            "rendered": "10 seconds",
+            "rendered": "15 seconds",
             "type": [Function],
           },
           Object {
@@ -1329,7 +1291,7 @@ ShallowWrapper {
           <DropdownButton
             id="metrics_filter_poll_interval"
             onSelect={[Function]}
-            title="5 seconds"
+            title="15 seconds"
           >
             <MenuItem
               active={false}
@@ -1346,20 +1308,10 @@ ShallowWrapper {
               bsClass="dropdown"
               disabled={false}
               divider={false}
-              eventKey="5000"
+              eventKey="15000"
               header={false}
             >
-              5 seconds
-            </MenuItem>
-            <MenuItem
-              active={false}
-              bsClass="dropdown"
-              disabled={false}
-              divider={false}
-              eventKey="10000"
-              header={false}
-            >
-              10 seconds
+              15 seconds
             </MenuItem>
             <MenuItem
               active={false}
@@ -1438,20 +1390,10 @@ ShallowWrapper {
                 bsClass="dropdown"
                 disabled={false}
                 divider={false}
-                eventKey="5000"
+                eventKey="15000"
                 header={false}
               >
-                5 seconds
-              </MenuItem>,
-              <MenuItem
-                active={false}
-                bsClass="dropdown"
-                disabled={false}
-                divider={false}
-                eventKey="10000"
-                header={false}
-              >
-                10 seconds
+                15 seconds
               </MenuItem>,
               <MenuItem
                 active={false}
@@ -1486,7 +1428,7 @@ ShallowWrapper {
             ],
             "id": "metrics_filter_poll_interval",
             "onSelect": [Function],
-            "title": "5 seconds",
+            "title": "15 seconds",
           },
           "ref": null,
           "rendered": Array [
@@ -1509,36 +1451,19 @@ ShallowWrapper {
             },
             Object {
               "instance": null,
-              "key": "5000",
+              "key": "15000",
               "nodeType": "class",
               "props": Object {
                 "active": false,
                 "bsClass": "dropdown",
-                "children": "5 seconds",
+                "children": "15 seconds",
                 "disabled": false,
                 "divider": false,
-                "eventKey": "5000",
+                "eventKey": "15000",
                 "header": false,
               },
               "ref": null,
-              "rendered": "5 seconds",
-              "type": [Function],
-            },
-            Object {
-              "instance": null,
-              "key": "10000",
-              "nodeType": "class",
-              "props": Object {
-                "active": false,
-                "bsClass": "dropdown",
-                "children": "10 seconds",
-                "disabled": false,
-                "divider": false,
-                "eventKey": "10000",
-                "header": false,
-              },
-              "ref": null,
-              "rendered": "10 seconds",
+              "rendered": "15 seconds",
               "type": [Function],
             },
             Object {
