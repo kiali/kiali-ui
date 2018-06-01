@@ -45,12 +45,20 @@ const decorateGraphData = (graphData: any) => {
       hasMissingSidecars: undefined
     }
   };
-  if (graphData && graphData.elements) {
-    if (graphData.elements.nodes) {
-      graphData.elements.nodes = graphData.elements.nodes.map(node => ({ ...elementsDefaults.nodes, ...node }));
+  if (graphData) {
+    if (graphData.nodes) {
+      graphData.nodes = graphData.nodes.map(node => {
+        const decoratedNode = { ...node };
+        decoratedNode.data = { ...elementsDefaults.nodes, ...decoratedNode.data };
+        return decoratedNode;
+      });
     }
-    if (graphData.elements.edges) {
-      graphData.elements.edges = graphData.elements.edges.map(edge => ({ ...elementsDefaults.edges, ...edge }));
+    if (graphData.edges) {
+      graphData.edges = graphData.edges.map(edge => {
+        const decoratedEdge = { ...edge };
+        decoratedEdge.data = { ...elementsDefaults.edges, ...decoratedEdge.data };
+        return decoratedEdge;
+      });
     }
   }
   return graphData;
