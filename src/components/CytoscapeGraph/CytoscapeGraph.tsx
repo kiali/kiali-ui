@@ -114,21 +114,15 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
   }
 
   private turnEdgeLabelsTo = (value: EdgeLabelMode) => {
-    let elements = this.props.elements;
-    if (elements && elements.edges) {
-      elements.edges.forEach(edge => {
-        edge.data.edgeLabelMode = value;
-      });
-    }
+    this.cy.edges().forEach(edge => {
+      edge.data('edgeLabelMode', value);
+    });
   };
 
   private turnNodeLabelsTo = (value: boolean) => {
-    let elements = this.props.elements;
-    if (elements && elements.nodes) {
-      elements.nodes.forEach(node => {
-        node.data.showNodeLabels = value;
-      });
-    }
+    this.cy.nodes().forEach(node => {
+      node.data('showNodeLabels', value);
+    });
   };
 
   private cyInitialization(cy: any) {
