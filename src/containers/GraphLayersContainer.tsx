@@ -1,10 +1,11 @@
 import * as React from 'react';
-import { Button, Icon, OverlayTrigger, Popover } from 'patternfly-react';
+import { Button, DropdownButton, Icon, MenuItem, OverlayTrigger, Popover } from 'patternfly-react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { serviceGraphFilterActions } from '../actions/ServiceGraphFilterActions';
 import { KialiAppState, ServiceGraphFilterState } from '../store/Store';
 import { style } from 'typestyle';
+import GraphFilter from '../components/GraphFilter/GraphFilter';
 
 interface ServiceGraphDispatch {
   // Dispatch methods
@@ -14,6 +15,7 @@ interface ServiceGraphDispatch {
   toggleGraphRouteRules(): void;
   toggleGraphMissingSidecars(): void;
   toggleTrafficAnimation(): void;
+  setGraphEdgeLabelMode(edgeMode: any): void;
 }
 
 // inherit all of our Reducer state section  and Dispatch methods for redux
@@ -23,6 +25,7 @@ type GraphLayersProps = ServiceGraphDispatch & ServiceGraphFilterState;
 const mapStateToProps = (state: KialiAppState) => ({
   showLegend: state.serviceGraph.filterState.showLegend,
   showNodeLabels: state.serviceGraph.filterState.showNodeLabels,
+  edgeLabelMode: state.serviceGraph.filterState.edgeLabelMode,
   showCircuitBreakers: state.serviceGraph.filterState.showCircuitBreakers,
   showRouteRules: state.serviceGraph.filterState.showRouteRules,
   showMissingSidecars: state.serviceGraph.filterState.showMissingSidecars,
@@ -58,6 +61,7 @@ export const GraphLayers: React.SFC<GraphLayersProps> = props => {
     showCircuitBreakers,
     showRouteRules,
     showNodeLabels,
+    edgeLabelMode,
     showMissingSidecars,
     showTrafficAnimation
   } = props;
@@ -67,6 +71,7 @@ export const GraphLayers: React.SFC<GraphLayersProps> = props => {
     toggleGraphCircuitBreakers,
     toggleGraphRouteRules,
     toggleGraphNodeLabels,
+    setGraphEdgeLabelMode,
     toggleGraphMissingSidecars,
     toggleTrafficAnimation
   } = props;
@@ -119,7 +124,35 @@ export const GraphLayers: React.SFC<GraphLayersProps> = props => {
       </label>
     </div>
   ));
-  const popover = <Popover id="layers-popover">{toggleItems}</Popover>;
+
+  const edgeLabelChangeHandler = (key: string) => {
+    setGraphEdgeLabelMode(key);
+  };
+
+  const edgeItems = Object.keys(GraphFilter.EDGE_LABEL_MODES).map((edgeLabelModeKey: any) => (
+    <MenuItem active={edgeLabelModeKey === edgeLabelMode} key={edgeLabelModeKey} eventKey={edgeLabelModeKey}>
+      {GraphFilter.EDGE_LABEL_MODES[edgeLabelModeKey]}
+    </MenuItem>
+  ));
+
+  const popover = (
+    <Popover id="layers-popover" title={'Graph Filters'} style={{ width: '300px' }}>
+      {toggleItems}
+      <div>
+        <label>Edge Labels:</label>
+      </div>
+      <div>
+        <DropdownButton
+          id="graph_filter_edges"
+          bsStyle="default"
+          title={GraphFilter.EDGE_LABEL_MODES[edgeLabelMode]}
+          onSelect={edgeLabelChangeHandler}
+        >
+          {edgeItems}
+        </DropdownButton>
+      </div>
+    </Popover>
+  );
 
   return (
     <OverlayTrigger overlay={popover} placement="bottom" trigger={['click']} rootClose={true}>

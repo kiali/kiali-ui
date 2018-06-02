@@ -19,8 +19,6 @@ export interface GraphFilterProps extends GraphParamsType {
   onNamespaceChange: (newValue: Namespace) => void;
   onEdgeLabelModeChange: (newEdges: EdgeLabelMode) => void;
   onRefresh: () => void;
-  // onLegend: () => void;
-  // hideLegend: boolean;
 }
 
 const zeroPaddingLeft = style({
@@ -105,15 +103,6 @@ export default class GraphFilter extends React.PureComponent<GraphFilterProps> {
             initialValue={this.props.graphLayout.name}
             initialLabel={String(GraphFilter.GRAPH_LAYOUTS[this.props.graphLayout.name])}
             options={GraphFilter.GRAPH_LAYOUTS}
-          />
-          <ToolbarDropdown
-            id={'graph_filter_edges'}
-            disabled={this.props.disabled}
-            handleSelect={this.updateEdges}
-            nameDropdown={'Edge Labels'}
-            initialValue={this.props.edgeLabelMode}
-            initialLabel={GraphFilter.EDGE_LABEL_MODES[this.props.edgeLabelMode]}
-            options={GraphFilter.EDGE_LABEL_MODES}
           />
           <FormGroup className={zeroPaddingLeft}>
             <label className={labelPaddingRight}>Filters:</label>
