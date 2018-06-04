@@ -105,7 +105,7 @@ const parseCheck = (yaml: string, check: ObjectCheck): AceCheck => {
       - spec/destination
       - spec/name (this is used for destination Rules which maps spec/name into destinationName)
       - spec/precedence/<value>
-      - spec/route[<nWeight>/weight/<value>
+      - spec/route[<nWeight>]/weight/<value>
       - spec/route[<nLabel>]/labels
       - spec/hosts
 
