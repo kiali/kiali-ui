@@ -34,6 +34,10 @@ export const config = () => {
         dagre: 'Dagre',
         klay: 'Klay'
       }
+    },
+    threshold: {
+      percentErrorSevere: 2.0,
+      percentErrorWarn: 0.1
     }
   });
 };
