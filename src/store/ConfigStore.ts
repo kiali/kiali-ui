@@ -11,7 +11,8 @@ declare const window;
 
 const persistConfig = {
   key: 'root',
-  storage: storage
+  storage: storage,
+  whitelist: ['authentication']
 };
 
 const composeEnhancers =
