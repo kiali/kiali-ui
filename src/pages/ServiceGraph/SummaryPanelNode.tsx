@@ -14,6 +14,7 @@ import { Icon } from 'patternfly-react';
 import { authentication } from '../../utils/Authentication';
 import { Link } from 'react-router-dom';
 import { shouldRefreshData } from './SummaryPanelCommon';
+import { HealthIndicator, DisplayMode } from '../../components/ServiceHealth/HealthIndicator';
 
 type SummaryPanelStateType = {
   loading: boolean;
@@ -113,16 +114,31 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
     const serviceSplit = node.data('service').split('.');
     const namespace = serviceSplit.length < 2 ? 'unknown' : serviceSplit[1];
     const service = serviceSplit[0];
-    const serviceHotLink = <Link to={`/namespaces/${namespace}/services/${service}`}>{service}</Link>;
+    const serviceLink = <Link to={`/namespaces/${namespace}/services/${service}`}>{service}</Link>;
+    const chartsLink = (
+      <Link to={`/namespaces/${namespace}/services/${service}?tab=metrics&groupings=local+version%2Cresponse+code`}>
+        {' '}
+        detailed charts
+      </Link>
+    );
 
     const incoming = getTrafficRate(node);
     const outgoing = getAccumulatedTrafficRate(this.props.data.summaryTarget.edgesTo('*'));
 
     const isUnknown = service === 'unknown';
+
+    const health = node.data('health');
+
     return (
       <div className="panel panel-default" style={SummaryPanelNode.panelStyle}>
         <div className="panel-heading">
-          Service: {isUnknown ? 'unknown' : serviceHotLink}
+          Service: {isUnknown ? 'unknown' : serviceLink}
+          <p>
+            {health ? (
+              <HealthIndicator id={service} health={health} mode={DisplayMode.SMALL} rateInterval="10m" />
+            ) : null}
+            {isUnknown ? 'unknown' : chartsLink}
+          </p>
           <div style={{ paddingTop: '3px' }}>
             <Badge scale={0.9} style="plastic" leftText="namespace" rightText={namespace} color={PfColors.Green400} />
             <Badge
@@ -136,15 +152,6 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
           {this.renderBadgeSummary(node.data('hasCB'), node.data('hasRR'), node.data('hasMissingSidecars'))}
         </div>
         <div className="panel-body">
-          {!isUnknown && (
-            <p style={{ textAlign: 'right' }}>
-              <Link
-                to={`/namespaces/${namespace}/services/${service}?tab=metrics&groupings=local+version%2Cresponse+code`}
-              >
-                View detailed charts <Icon name="angle-double-right" />
-              </Link>
-            </p>
-          )}
           <InOutRateTable
             title="Request Traffic (requests per second):"
             inRate={incoming.rate}

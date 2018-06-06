@@ -111,6 +111,10 @@ export const getGraphElements = (auth: any, namespace: Namespace, params: any) =
   return newRequest('get', `/api/namespaces/${namespace.name}/graph`, params, {}, auth);
 };
 
+export const getOverviewGraphElements = (auth: any, params: any) => {
+  return newRequest('get', `/api/overview/graph`, params, {}, auth);
+};
+
 export const getServiceDetail = (
   auth: any,
   namespace: String,

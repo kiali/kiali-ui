@@ -1,26 +1,29 @@
 import * as React from 'react';
 
-import Namespace from '../../types/Namespace';
 import { GraphParamsType, SummaryData } from '../../types/Graph';
 import { Duration } from '../../types/GraphFilter';
 
 import SummaryPanel from './SummaryPanel';
 import CytoscapeGraph from '../../components/CytoscapeGraph/CytoscapeGraph';
-import GraphFilterToolbar from '../../components/GraphFilter/GraphFilterToolbar';
+import OverviewGraphFilterToolbar from '../../components/GraphFilter/OverviewGraphFilterToolbar';
 import PfContainerNavVertical from '../../components/Pf/PfContainerNavVertical';
 import { computePrometheusQueryInterval } from '../../services/Prometheus';
 import { style } from 'typestyle';
 
 import GraphLegend from '../../components/GraphFilter/GraphLegend';
 
-type ServiceGraphPageProps = GraphParamsType & {
+type OverviewGraphPageState = {
+  // stateless
+};
+
+type OverviewGraphPageProps = GraphParamsType & {
   graphTimestamp: string;
   graphData: any;
   isLoading: boolean;
   showLegend: boolean;
   toggleLegend: () => void;
   isReady: boolean;
-  fetchGraphData: (namespace: Namespace, graphDuration: Duration) => any;
+  fetchGraphData: (graphDuration: Duration) => any;
   cleanupGraphData: () => any;
   summaryData: SummaryData | null;
 };
@@ -34,8 +37,8 @@ const cytscapeGraphStyle = style({
   left: 220
 });
 
-export default class ServiceGraphPage extends React.PureComponent<ServiceGraphPageProps> {
-  constructor(props: ServiceGraphPageProps) {
+export default class OverviewGraphPage extends React.Component<OverviewGraphPageProps, OverviewGraphPageState> {
+  constructor(props: OverviewGraphPageProps) {
     super(props);
   }
 
@@ -43,15 +46,13 @@ export default class ServiceGraphPage extends React.PureComponent<ServiceGraphPa
     this.loadGraphDataFromBackend();
   }
 
-  componentWillReceiveProps(nextProps: ServiceGraphPageProps) {
-    const nextNamespace = nextProps.namespace;
+  componentWillReceiveProps(nextProps: OverviewGraphPageProps) {
     const nextDuration = nextProps.graphDuration;
 
-    const namespaceHasChanged = nextNamespace.name !== this.props.namespace.name;
     const durationHasChanged = nextDuration.value !== this.props.graphDuration.value;
 
-    if (namespaceHasChanged || durationHasChanged) {
-      this.loadGraphDataFromBackend(nextNamespace, nextDuration);
+    if (durationHasChanged) {
+      this.loadGraphDataFromBackend(nextDuration);
     }
   }
 
@@ -65,22 +66,22 @@ export default class ServiceGraphPage extends React.PureComponent<ServiceGraphPa
 
   render() {
     const graphParams: GraphParamsType = {
-      namespace: this.props.namespace,
+      namespace: { name: '' },
       graphLayout: this.props.graphLayout,
       edgeLabelMode: this.props.edgeLabelMode,
       graphDuration: this.props.graphDuration
     };
     return (
       <PfContainerNavVertical>
-        <h2>Service Graph</h2>
-        <GraphFilterToolbar
+        <h2>Overview</h2>
+        <OverviewGraphFilterToolbar
           isLoading={this.props.isLoading}
           handleRefreshClick={this.handleRefreshClick}
           {...graphParams}
         />
         <div className={cytscapeGraphStyle}>
           <CytoscapeGraph {...graphParams} elements={this.props.graphData} refresh={this.handleRefreshClick} />
-          {this.props.summaryData ? (
+          {this.props.summaryData && this.props.summaryData.summaryType !== 'graph' ? (
             <SummaryPanel
               data={this.props.summaryData}
               namespace={this.props.namespace.name}
@@ -96,9 +97,8 @@ export default class ServiceGraphPage extends React.PureComponent<ServiceGraphPa
   }
 
   /** Fetch graph data */
-  private loadGraphDataFromBackend = (namespace?: Namespace, graphDuration?: Duration) => {
-    namespace = namespace ? namespace : this.props.namespace;
+  loadGraphDataFromBackend = (graphDuration?: Duration) => {
     graphDuration = graphDuration ? graphDuration : this.props.graphDuration;
-    this.props.fetchGraphData(namespace, graphDuration);
+    this.props.fetchGraphData(graphDuration);
   };
 }

@@ -26,7 +26,7 @@ type CytoscapeReactWrapperProps = {
 type CytoscapeReactWrapperState = {};
 
 /**
- * The purpose of this wrapper is very simple and minimal - to provide a long-lived <div> element that can be used
+ * The purpose of this wrapper is minimal; it provides a long-lived <div> element that can be used
  * as the parent container for the cy graph (cy.container). Because cy does not provide the ability to re-parent an
  * existing graph (e.g. there is no API such as "cy.setContainer(div)"), the only way to be able to re-use a
  * graph (without re-creating and re-rendering it all the time) is to have it inside a wrapper like this one
@@ -37,8 +37,8 @@ type CytoscapeReactWrapperState = {};
  * It is the job of the parent component to manipulate and update the cy graph during runtime.
  */
 export class CytoscapeReactWrapper extends React.Component<CytoscapeReactWrapperProps, CytoscapeReactWrapperState> {
-  cy: any;
-  divParentRef: any;
+  private divParentRef: any;
+  private cy: any;
 
   constructor(props: CytoscapeReactWrapperProps) {
     super(props);
@@ -46,7 +46,7 @@ export class CytoscapeReactWrapper extends React.Component<CytoscapeReactWrapper
     this.divParentRef = React.createRef();
   }
 
-  // For other components to be able to maniuplate the cy graph.
+  // For other components to be able to manipulate the cy graph.
   getCy() {
     return this.cy;
   }
@@ -67,7 +67,7 @@ export class CytoscapeReactWrapper extends React.Component<CytoscapeReactWrapper
 
   render() {
     const styleContainer = { height: '100%', width: '100%', display: 'block' };
-    return <div id="cy" className="graph" style={styleContainer} ref={this.divParentRef} />;
+    return <div id="graph" className="graph" style={styleContainer} ref={this.divParentRef} />;
   }
 
   build() {

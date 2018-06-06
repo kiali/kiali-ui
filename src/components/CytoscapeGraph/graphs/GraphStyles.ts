@@ -13,12 +13,11 @@ export class GraphStyles {
       {
         selector: 'node',
         css: {
-          // color: PfColors.Black,
           content: (ele: any) => {
-            const version = ele.data('version');
             if (!ele.data('showNodeLabels')) {
               return '';
             }
+            const version = ele.data('version');
             if (ele.data('parent')) {
               return version;
             }
@@ -52,6 +51,30 @@ export class GraphStyles {
         selector: 'node[isRoot]',
         style: {
           shape: 'diamond'
+        }
+      },
+      {
+        selector: 'node[globalStatus]',
+        style: {
+          content: (ele: any) => {
+            if (!ele.data('showNodeLabels')) {
+              return '';
+            }
+            let version = ele.data('version');
+            if (ele.data('parent')) {
+              return version;
+            }
+            const name = ele.data('service') || ele.data('id');
+            const split = name.split('.');
+            const namespace = split.length > 0 ? '[ ' + split[1] + ' ]\n' : '';
+            const service = split[0] + '\n';
+            version = version === 'unknown' ? '' : version + '\n';
+            const status = ele.data('globalStatus').name;
+            return namespace + service + version + status;
+          },
+          'background-color': (ele: any) => {
+            return ele.data('globalStatus').color;
+          }
         }
       },
       {

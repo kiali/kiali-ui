@@ -84,6 +84,11 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
     this.processGraphUpdate(this.getCy());
   }
 
+  // private getCy() {
+  getCy() {
+    return this.cytoscapeReactWrapperRef ? this.cytoscapeReactWrapperRef.getCy() : null;
+  }
+
   render() {
     return (
       <div id="cytoscape-container" style={{ marginRight: '25em', height: '100%' }}>
@@ -102,10 +107,6 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
         </EmptyGraphLayout>
       </div>
     );
-  }
-
-  private getCy() {
-    return this.cytoscapeReactWrapperRef ? this.cytoscapeReactWrapperRef.getCy() : null;
   }
 
   private setCytoscapeReactWrapperRef(cyRef: any) {

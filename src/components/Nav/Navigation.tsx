@@ -11,6 +11,7 @@ import IstioConfigPage from '../../pages/IstioConfigList/IstioConfigListPage';
 import IstioConfigDetailsPage from '../../pages/IstioConfigDetails/IstioConfigDetailsPage';
 import HelpDropdown from './HelpDropdown';
 import UserDropdown from '../../containers/UserDropdownContainer';
+import OverviewGraphRouteHandler from '../../pages/ServiceGraph/OverviewGraphRouteHandler';
 import ServiceDetailsPage from '../../pages/ServiceDetails/ServiceDetailsPage';
 import ServiceGraphRouteHandler from '../../pages/ServiceGraph/ServiceGraphRouteHandler';
 import ServiceListPage from '../../pages/ServiceList/ServiceListPage';
@@ -23,6 +24,8 @@ const istioConfigPath = '/istio';
 export const istioConfigTitle = 'Istio Config';
 const serviceGraphPath = '/service-graph/all';
 export const serviceGraphTitle = 'Graph';
+const overviewGraphPath = '/overview-graph';
+export const overviewGraphTitle = 'Overview';
 const servicesPath = '/services';
 const servicesJaegerPath = '/jaeger';
 export const servicesTitle = 'Services';
@@ -78,7 +81,7 @@ class Navigation extends React.Component<PropsType, StateType> {
         selected = istioConfigTitle;
       }
     } else {
-      selected = serviceGraphTitle;
+      selected = overviewGraphTitle;
     }
     return selected;
   };
@@ -133,6 +136,7 @@ class Navigation extends React.Component<PropsType, StateType> {
             </VerticalNav.IconBar>
             <MessageCenter drawerTitle="Message Center" />
           </VerticalNav.Masthead>
+          <VerticalNav.Item title={overviewGraphTitle} iconClass="fa fa-dashboard" onClick={this.navigateTo} />
           <VerticalNav.Item title={serviceGraphTitle} iconClass="fa pficon-topology" onClick={this.navigateTo} />
           <VerticalNav.Item title={servicesTitle} iconClass="fa pficon-service" onClick={this.navigateTo} />
           <VerticalNav.Item title={istioConfigTitle} iconClass="fa pficon-template" onClick={this.navigateTo} />
@@ -145,6 +149,7 @@ class Navigation extends React.Component<PropsType, StateType> {
             </PfContainerNavVertical>
           )}
         >
+          <Route path="/overview-graph" component={OverviewGraphRouteHandler} />
           <Route path="/service-graph/:namespace" component={ServiceGraphRouteHandler} />
           <Route path={servicesPath} component={ServiceListPage} />
           <Route path={servicesJaegerPath} component={ServiceJaegerPage} />
@@ -166,8 +171,10 @@ class Navigation extends React.Component<PropsType, StateType> {
       this.context.router.history.push(istioConfigPath);
     } else if (e.title === servicesJaeger) {
       this.context.router.history.push(servicesJaegerPath);
-    } else {
+    } else if (e.title === serviceGraphTitle) {
       this.context.router.history.push(serviceGraphPath);
+    } else {
+      this.context.router.history.push(overviewGraphPath);
     }
   };
 }
