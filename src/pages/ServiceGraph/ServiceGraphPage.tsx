@@ -115,11 +115,13 @@ export default class ServiceGraphPage extends React.PureComponent<ServiceGraphPa
   private scheduleNextPollingIntervalFromProps() {
     if (this.props.pollInterval > 0) {
       this.scheduleNextPollingInterval(this.props.pollInterval);
+    } else {
+      this.removePollingIntervalTimer();
     }
   }
 
   private scheduleNextPollingInterval(pollInterval: number) {
-    // Remove any pending timeout to avoid havint multiple requests at once
+    // Remove any pending timeout to avoid having multiple requests at once
     this.removePollingIntervalTimer();
     // We are using setTimeout instead of setInterval because we have more control over it
     // e.g. If a request takes much time, the next interval will fire up anyway and is
