@@ -92,9 +92,11 @@ ShallowWrapper {
           options={
             Object {
               "0": "Pause",
+              "10000": "10 seconds",
               "15000": "15 seconds",
               "30000": "30 seconds",
               "300000": "5 minutes",
+              "5000": "5 seconds",
               "60000": "1 minute",
             }
           }
@@ -208,9 +210,11 @@ ShallowWrapper {
           "nameDropdown": "Poll Interval",
           "options": Object {
             "0": "Pause",
+            "10000": "10 seconds",
             "15000": "15 seconds",
             "30000": "30 seconds",
             "300000": "5 minutes",
+            "5000": "5 seconds",
             "60000": "1 minute",
           },
         },
@@ -333,9 +337,11 @@ ShallowWrapper {
             options={
               Object {
                 "0": "Pause",
+                "10000": "10 seconds",
                 "15000": "15 seconds",
                 "30000": "30 seconds",
                 "300000": "5 minutes",
+                "5000": "5 seconds",
                 "60000": "1 minute",
               }
             }
@@ -449,9 +455,11 @@ ShallowWrapper {
             "nameDropdown": "Poll Interval",
             "options": Object {
               "0": "Pause",
+              "10000": "10 seconds",
               "15000": "15 seconds",
               "30000": "30 seconds",
               "300000": "5 minutes",
+              "5000": "5 seconds",
               "60000": "1 minute",
             },
           },
