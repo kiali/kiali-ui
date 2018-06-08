@@ -4,15 +4,19 @@ import PropTypes from 'prop-types';
 
 import { GraphHighlighter } from './graphs/GraphHighlighter';
 import * as LayoutDictionary from './graphs/LayoutDictionary';
+import * as GraphBadge from './graphs/GraphBadge';
+import TrafficRender from './graphs/TrafficRenderer';
 import EmptyGraphLayout from './EmptyGraphLayout';
 import CytoscapeReactWrapper from './CytoscapeReactWrapper';
 
+import { ServiceGraphActions } from '../../actions/ServiceGraphActions';
+import * as API from '../../services/Api';
+import { KialiAppState } from '../../store/Store';
 import { GraphParamsType } from '../../types/Graph';
 import { EdgeLabelMode } from '../../types/GraphFilter';
-import { KialiAppState } from '../../store/Store';
-import * as GraphBadge from './graphs/GraphBadge';
-import TrafficRender from './graphs/TrafficRenderer';
-import { ServiceGraphActions } from '../../actions/ServiceGraphActions';
+import { Health } from '../../types/Health';
+import { authentication } from '../../utils/Authentication';
+import * as H from '../../utils/Health';
 
 type CytoscapeGraphType = {
   elements?: any;
@@ -265,6 +269,17 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
     if (this.props.showTrafficAnimation) {
       this.trafficRenderer.start();
     }
+
+    // Asynchronously fetch health
+    cy.nodes().forEach(ele => {
+      const fqService = ele.data('service');
+      if (fqService && (ele.data('isGroup') || !ele.data('parent'))) {
+        const service = fqService.split('.')[0];
+        API.getServiceHealth(authentication(), this.props.namespace.name, service).then(r =>
+          this.updateHealth(r.data, ele)
+        );
+      }
+    });
   }
 
   private handleTap = (event: CytoscapeClickEvent) => {
@@ -312,6 +327,14 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
       .map(e => e.id)
       .sort()
       .every((eId, index) => eId === aIds[index]);
+  }
+
+  private updateHealth(h: Health, ele: any) {
+    const status = H.computeAggregatedHealth(h);
+    ele.removeClass(H.DEGRADED.name + ' ' + H.FAILURE.name);
+    if (status === H.DEGRADED || status === H.FAILURE) {
+      ele.addClass(status.name);
+    }
   }
 }
 
