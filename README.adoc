@@ -1,6 +1,7 @@
 :toc: macro
 :toc-title:
 
+
 toc::[]
 = Kiali UI
 
