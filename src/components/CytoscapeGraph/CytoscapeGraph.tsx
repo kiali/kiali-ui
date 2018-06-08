@@ -330,6 +330,7 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
   }
 
   private updateHealth(h: Health, ele: any) {
+    ele.data('health', h);
     const status = H.computeAggregatedHealth(h);
     ele.removeClass(H.DEGRADED.name + ' ' + H.FAILURE.name);
     if (status === H.DEGRADED || status === H.FAILURE) {
