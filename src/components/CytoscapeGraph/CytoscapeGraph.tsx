@@ -14,7 +14,6 @@ import * as API from '../../services/Api';
 import { KialiAppState } from '../../store/Store';
 import { GraphParamsType } from '../../types/Graph';
 import { EdgeLabelMode } from '../../types/GraphFilter';
-import { Health } from '../../types/Health';
 import { authentication } from '../../utils/Authentication';
 import * as H from '../../utils/Health';
 
@@ -62,7 +61,7 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
     this.updateLayout = false;
   }
 
-  shouldComponentUpdate(nextProps: any, nextState: any) {
+  shouldComponentUpdate(nextProps: CytoscapeGraphProps, nextState: CytoscapeGraphState) {
     this.updateLayout =
       this.props.graphLayout !== nextProps.graphLayout ||
       (this.props.elements !== nextProps.elements &&
@@ -84,8 +83,12 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
     this.cyInitialization(this.getCy());
   }
 
-  componentDidUpdate() {
-    this.processGraphUpdate(this.getCy());
+  componentDidUpdate(prevProps: CytoscapeGraphProps, prevState: CytoscapeGraphState) {
+    const cy = this.getCy();
+    this.processGraphUpdate(cy);
+    if (this.props.elements !== prevProps.elements && this.props.namespace.name !== 'all') {
+      this.updateHealth(cy);
+    }
   }
 
   render() {
@@ -269,17 +272,6 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
     if (this.props.showTrafficAnimation) {
       this.trafficRenderer.start();
     }
-
-    // Asynchronously fetch health
-    cy.nodes().forEach(ele => {
-      const fqService = ele.data('service');
-      if (fqService && (ele.data('isGroup') || !ele.data('parent'))) {
-        const service = fqService.split('.')[0];
-        API.getServiceHealth(authentication(), this.props.namespace.name, service).then(r =>
-          this.updateHealth(r.data, ele)
-        );
-      }
-    });
   }
 
   private handleTap = (event: CytoscapeClickEvent) => {
@@ -329,13 +321,27 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
       .every((eId, index) => eId === aIds[index]);
   }
 
-  private updateHealth(h: Health, ele: any) {
-    ele.data('health', h);
-    const status = H.computeAggregatedHealth(h);
-    ele.removeClass(H.DEGRADED.name + ' ' + H.FAILURE.name);
-    if (status === H.DEGRADED || status === H.FAILURE) {
-      ele.addClass(status.name);
+  private updateHealth(cy: any) {
+    if (!cy) {
+      return;
     }
+    const duration = this.props.graphDuration.value;
+    // Asynchronously fetch health
+    cy.nodes().forEach(ele => {
+      const fqService = ele.data('service');
+      if (fqService && (ele.data('isGroup') || !ele.data('parent'))) {
+        const service = fqService.split('.')[0];
+        API.getServiceHealth(authentication(), this.props.namespace.name, service, duration).then(r => {
+          const health = r.data;
+          ele.data('health', health);
+          const status = H.computeAggregatedHealth(health);
+          ele.removeClass(H.DEGRADED.name + ' ' + H.FAILURE.name);
+          if (status === H.DEGRADED || status === H.FAILURE) {
+            ele.addClass(status.name);
+          }
+        });
+      }
+    });
   }
 }
 

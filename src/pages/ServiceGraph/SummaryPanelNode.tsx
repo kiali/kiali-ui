@@ -130,7 +130,7 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
               mode={DisplayMode.SMALL}
               health={health}
               tooltipPlacement="left"
-              rateInterval="10m"
+              rateInterval={this.props.duration}
             />
           )}
           <span> Service: {isUnknown ? 'unknown' : serviceHotLink}</span>

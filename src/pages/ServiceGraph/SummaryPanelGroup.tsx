@@ -82,7 +82,7 @@ export default class SummaryPanelGroup extends React.Component<SummaryPanelPropT
               mode={DisplayMode.SMALL}
               health={health}
               tooltipPlacement="left"
-              rateInterval="10m"
+              rateInterval={this.props.duration}
             />
           )}
           <span> Versioned Group: {serviceHotLink}</span>
