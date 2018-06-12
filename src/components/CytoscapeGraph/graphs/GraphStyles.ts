@@ -115,6 +115,9 @@ export class GraphStyles {
                 const percentRate = ele.data('percentRate') ? parseFloat(ele.data('percentRate')) : 0;
                 return percentRate > 0 ? percentRate.toFixed(0) + '%' : '';
               }
+              case EdgeLabelMode.MTLS_ENABLED: {
+                return ele.data('enabledmTLS') ? 'mTLS' : '';
+              }
               default:
                 return '';
             }
