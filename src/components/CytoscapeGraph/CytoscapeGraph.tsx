@@ -86,7 +86,7 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
   componentDidUpdate(prevProps: CytoscapeGraphProps, prevState: CytoscapeGraphState) {
     const cy = this.getCy();
     this.processGraphUpdate(cy);
-    if (this.props.elements !== prevProps.elements && this.props.namespace.name !== 'all') {
+    if (this.props.elements !== prevProps.elements) {
       this.updateHealth(cy);
     }
   }
@@ -330,8 +330,10 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
     cy.nodes().forEach(ele => {
       const fqService = ele.data('service');
       if (fqService && (ele.data('isGroup') || !ele.data('parent'))) {
-        const service = fqService.split('.')[0];
-        API.getServiceHealth(authentication(), this.props.namespace.name, service, duration).then(r => {
+        const serviceParts = fqService.split('.');
+        const service = serviceParts[0];
+        const namespace = serviceParts[1];
+        API.getServiceHealth(authentication(), namespace, service, duration).then(r => {
           const health = r.data;
           ele.data('health', health);
           const status = H.computeAggregatedHealth(health);

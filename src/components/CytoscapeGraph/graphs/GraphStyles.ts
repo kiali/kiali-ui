@@ -164,14 +164,14 @@ export class GraphStyles {
         selector: 'node.' + DEGRADED.name,
         style: {
           'border-color': DEGRADED.color,
-          'border-width': '2px'
+          'border-width': '3px'
         }
       },
       {
         selector: 'node.' + FAILURE.name,
         style: {
           'border-color': FAILURE.color,
-          'border-width': '2px'
+          'border-width': '3px'
         }
       },
       {
