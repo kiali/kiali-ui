@@ -37,8 +37,6 @@ class IstioConfigDetailsPage extends React.Component<RouteComponentProps<IstioCo
     };
     activeFilters.push(namespaceFilter);
     if (addObjectTypeFilter) {
-      console.log('TODELETE ' + this.props.match.params.objectType);
-      console.log('TODELETE ' + dicIstioType[this.props.match.params.objectType]);
       let objectTypeFilter: ActiveFilter = {
         label: 'Istio Type: ' + dicIstioType[this.props.match.params.objectType],
         category: 'Istio Type',
