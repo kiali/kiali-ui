@@ -5,6 +5,7 @@ interface DetailObjectProps {
   name: string;
   detail: any;
   labels?: string[];
+  exclude?: string[];
 }
 
 class DetailObject extends React.Component<DetailObjectProps> {
@@ -35,7 +36,15 @@ class DetailObject extends React.Component<DetailObjectProps> {
     return this.props.labels.indexOf(name) > -1;
   }
 
+  canDisplay(name: string) {
+    return this.props.exclude && !this.props.exclude.includes(name);
+  }
+
   buildList(name: string, value: any, isLabel: boolean): any {
+    if (!this.canDisplay(name)) {
+      return '';
+    }
+
     let valueType = typeof value;
     if (valueType === 'string' || valueType === 'number' || valueType === 'boolean') {
       return (
