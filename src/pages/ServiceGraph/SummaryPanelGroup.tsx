@@ -13,6 +13,7 @@ import { Link } from 'react-router-dom';
 import { shouldRefreshData } from './SummaryPanelCommon';
 import { HealthIndicator, DisplayMode } from '../../components/ServiceHealth/HealthIndicator';
 import Label from '../../components/Label/Label';
+import { Health } from '../../types/Health';
 
 type SummaryPanelGroupState = {
   loading: boolean;
@@ -20,6 +21,7 @@ type SummaryPanelGroupState = {
   requestCountOut: [string, number][];
   errorCountIn: [string, number][];
   errorCountOut: [string, number][];
+  health?: Health;
 };
 
 export default class SummaryPanelGroup extends React.Component<SummaryPanelPropType, SummaryPanelGroupState> {
@@ -49,16 +51,25 @@ export default class SummaryPanelGroup extends React.Component<SummaryPanelPropT
   componentDidMount() {
     this._isMounted = true;
     this.updateRpsCharts(this.props);
+    this.updateHealth();
   }
 
   componentDidUpdate(prevProps: SummaryPanelPropType) {
     if (shouldRefreshData(prevProps, this.props)) {
       this.updateRpsCharts(this.props);
+      this.updateHealth();
     }
   }
 
   componentWillUnmount() {
     this._isMounted = false;
+  }
+
+  updateHealth() {
+    const healthPromise = this.props.data.summaryTarget.data('healthPromise');
+    if (healthPromise) {
+      healthPromise.then(h => this.setState({ health: h })).catch(err => this.setState({ health: undefined }));
+    }
   }
 
   render() {
@@ -67,7 +78,6 @@ export default class SummaryPanelGroup extends React.Component<SummaryPanelPropT
     const namespace = group.data('service').split('.')[1];
     const service = group.data('service').split('.')[0];
     const serviceHotLink = <Link to={`/namespaces/${namespace}/services/${service}`}>{service}</Link>;
-    const health = group.data('health');
 
     const incoming = getAccumulatedTrafficRate(group.children());
     const outgoing = getAccumulatedTrafficRate(group.children().edgesTo('*'));
@@ -75,11 +85,11 @@ export default class SummaryPanelGroup extends React.Component<SummaryPanelPropT
     return (
       <div className="panel panel-default" style={SummaryPanelGroup.panelStyle}>
         <div className="panel-heading">
-          {health && (
+          {this.state.health && (
             <HealthIndicator
               id="graph-health-indicator"
               mode={DisplayMode.SMALL}
-              health={health}
+              health={this.state.health}
               tooltipPlacement="left"
               rateInterval={this.props.duration}
             />

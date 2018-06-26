@@ -14,6 +14,7 @@ import { Link } from 'react-router-dom';
 import { shouldRefreshData } from './SummaryPanelCommon';
 import { HealthIndicator, DisplayMode } from '../../components/ServiceHealth/HealthIndicator';
 import Label from '../../components/Label/Label';
+import { Health } from '../../types/Health';
 
 type SummaryPanelStateType = {
   loading: boolean;
@@ -21,6 +22,7 @@ type SummaryPanelStateType = {
   requestCountOut: [string, number][];
   errorCountIn: [string, number][];
   errorCountOut: [string, number][];
+  health?: Health;
 };
 
 export default class SummaryPanelNode extends React.Component<SummaryPanelPropType, SummaryPanelStateType> {
@@ -52,16 +54,25 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
   componentDidMount() {
     this._isMounted = true;
     this.fetchRequestCountMetrics(this.props);
+    this.updateHealth();
   }
 
   componentDidUpdate(prevProps: SummaryPanelPropType) {
     if (shouldRefreshData(prevProps, this.props)) {
       this.fetchRequestCountMetrics(this.props);
+      this.updateHealth();
     }
   }
 
   componentWillUnmount() {
     this._isMounted = false;
+  }
+
+  updateHealth() {
+    const healthPromise = this.props.data.summaryTarget.data('healthPromise');
+    if (healthPromise) {
+      healthPromise.then(h => this.setState({ health: h })).catch(err => this.setState({ health: undefined }));
+    }
   }
 
   fetchRequestCountMetrics(props: SummaryPanelPropType) {
@@ -120,15 +131,14 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
     const outgoing = getAccumulatedTrafficRate(this.props.data.summaryTarget.edgesTo('*'));
 
     const isUnknown = service === 'unknown';
-    const health = node.data('health');
     return (
       <div className="panel panel-default" style={SummaryPanelNode.panelStyle}>
         <div className="panel-heading">
-          {health && (
+          {this.state.health && (
             <HealthIndicator
               id="graph-health-indicator"
               mode={DisplayMode.SMALL}
-              health={health}
+              health={this.state.health}
               tooltipPlacement="left"
               rateInterval={this.props.duration}
             />
