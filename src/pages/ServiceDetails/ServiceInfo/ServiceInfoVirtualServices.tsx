@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Col, Row, Icon } from 'patternfly-react';
-import { EditorLink, VirtualService } from '../../../types/ServiceInfo';
+import { Col, Icon, Row } from 'patternfly-react';
+import { EditorLink, ObjectValidation, VirtualService } from '../../../types/ServiceInfo';
 import LocalTime from '../../../components/Time/LocalTime';
 import DetailObject from '../../../components/Details/DetailObject';
 import { Link } from 'react-router-dom';
@@ -8,6 +8,7 @@ import VirtualServiceRoute from './ServiceInfoVirtualServices/VirtualServiceRout
 
 interface ServiceInfoVirtualServicesProps extends EditorLink {
   virtualServices?: VirtualService[];
+  validations: { [key: string]: ObjectValidation };
 }
 
 class ServiceInfoVirtualServices extends React.Component<ServiceInfoVirtualServicesProps> {
@@ -17,10 +18,8 @@ class ServiceInfoVirtualServices extends React.Component<ServiceInfoVirtualServi
 
   rawConfig(virtualService: VirtualService, i: number) {
     return (
-      <div className="card-pf-body" key={'virtualService' + i}>
-        <div>
-          <h3>{virtualService.name}</h3>
-        </div>
+      <div className="card-pf-body" key={'virtualServiceConfig' + i}>
+        <h3>{virtualService.name}</h3>
         <div>
           <Link to={this.props.editorLink + '?virtualservice=' + virtualService.name}>
             Show Yaml <Icon name="angle-double-right" />
@@ -46,9 +45,9 @@ class ServiceInfoVirtualServices extends React.Component<ServiceInfoVirtualServi
     );
   }
 
-  weights(virtualService: VirtualService) {
+  weights(virtualService: VirtualService, i: number) {
     return (
-      <Row>
+      <Row className="card-pf-body" key={'virtualServiceWeights' + i}>
         <Col>
           {virtualService.http && virtualService.http.length > 0 ? (
             <Row>
@@ -56,14 +55,20 @@ class ServiceInfoVirtualServices extends React.Component<ServiceInfoVirtualServi
                 name={virtualService.name}
                 kind="HTTP"
                 routes={virtualService.http}
-                validations={{}}
-              /> </Row>
+                validations={this.props.validations}
+              />
+            </Row>
           ) : (
             undefined
           )}
           {virtualService.tcp && virtualService.tcp.length > 0 ? (
             <Row>
-              <VirtualServiceRoute name={virtualService.name} kind="TCP" routes={virtualService.tcp} validations={{}} />
+              <VirtualServiceRoute
+                name={virtualService.name}
+                kind="TCP"
+                routes={virtualService.tcp}
+                validations={this.props.validations}
+              />
             </Row>
           ) : (
             undefined
@@ -77,13 +82,15 @@ class ServiceInfoVirtualServices extends React.Component<ServiceInfoVirtualServi
     return (
       <div className="card-pf">
         {(this.props.virtualServices || []).map((virtualService, i) => (
-          <Row key={'virtualservice' + i} className="row-cards-pf">
-            <Col xs={12} sm={12} md={3} lg={3}>
-              {this.rawConfig(virtualService, i)}
-            </Col>
-            <Col xs={12} sm={12} md={9} lg={9}>
-              {this.weights(virtualService)}
-            </Col>
+          <Row className={'row-cards-pf'} key={'virtualservice' + i}>
+            <Row className="row-cards-pf">
+              <Col xs={12} sm={12} md={3} lg={3}>
+                {this.rawConfig(virtualService, i)}
+              </Col>
+              <Col xs={12} sm={12} md={9} lg={9}>
+                {this.weights(virtualService, i)}
+              </Col>
+            </Row>
           </Row>
         ))}
       </div>

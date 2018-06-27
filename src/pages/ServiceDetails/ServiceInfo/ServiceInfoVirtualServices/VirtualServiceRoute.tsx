@@ -4,12 +4,15 @@ import {
   checkForPath,
   Destination,
   DestinationWeight,
+  globalChecks,
   highestSeverity,
   HTTPRoute,
   ObjectCheck,
   ObjectValidation,
   severityToIconName,
-  TCPRoute
+  TCPRoute,
+  validationToIconName,
+  VirtualService
 } from '../../../../types/ServiceInfo';
 import { BulletChart, Col, Icon, OverlayTrigger, Popover, Row, Table, Tooltip } from 'patternfly-react';
 import DetailObject from '../../../../components/Details/DetailObject';
@@ -147,12 +150,12 @@ class VirtualServiceRoute extends React.Component<VirtualServiceRouteProps> {
     };
   }
 
-  rows(route: any) {
-    return (route.route || []).map((routeItem, u) => ({
-      id: u,
-      status: { value: this.statusFrom(this.validation(), routeItem, u) },
+  rows(route: any, routeIndex: number) {
+    return (route.route || []).map((routeItem, destinationIndex) => ({
+      id: destinationIndex,
+      status: { value: this.statusFrom(this.validation(), routeItem, routeIndex, destinationIndex) },
       weight: { value: routeItem.weight ? routeItem.weight : '-' },
-      destination: this.destinationFrom(routeItem, u)
+      destination: this.destinationFrom(routeItem, destinationIndex)
     }));
   }
 
@@ -160,9 +163,25 @@ class VirtualServiceRoute extends React.Component<VirtualServiceRouteProps> {
     return this.props.validations[this.props.name];
   }
 
-  statusFrom(validation: ObjectValidation, routeItem: DestinationWeight, index: number) {
-    let checks = checkForPath(validation, 'spec/route[' + index + ']/weight/' + routeItem.weight);
-    checks.push(...checkForPath(validation, 'spec/route[' + index + ']/labels'));
+  statusFrom(validation: ObjectValidation, routeItem: DestinationWeight, routeIndex: number, destinationIndex: number) {
+    let checks = checkForPath(
+      validation,
+      'spec/' +
+        this.props.kind.toLowerCase() +
+        '[' +
+        routeIndex +
+        ']/route[' +
+        destinationIndex +
+        ']/weight/' +
+        routeItem.weight
+    );
+    checks.push(
+      ...checkForPath(
+        validation,
+        'spec/' + this.props.kind.toLowerCase() + '[' + routeIndex + ']/route[' + destinationIndex + ']/destination'
+      )
+    );
+
     let severity = highestSeverity(checks);
     let iconName = severity ? severityToIconName(severity) : 'ok';
     if (iconName !== 'ok') {
@@ -193,16 +212,16 @@ class VirtualServiceRoute extends React.Component<VirtualServiceRouteProps> {
   infotipContent(checks: ObjectCheck[]) {
     return (
       <Popover id={this.props.name + '-weight-tooltip'}>
-        {checks.map(check => {
-          return this.objectCheckToHtml(check);
+        {checks.map((check, index) => {
+          return this.objectCheckToHtml(check, index);
         })}
       </Popover>
     );
   }
 
-  objectCheckToHtml(object: ObjectCheck) {
+  objectCheckToHtml(object: ObjectCheck, i: number) {
     return (
-      <Row>
+      <Row key={'objectCheck-' + i}>
         <Col xs={1}>
           <Icon type="pf" name={severityToIconName(object.severity)} />
         </Col>
@@ -215,7 +234,7 @@ class VirtualServiceRoute extends React.Component<VirtualServiceRouteProps> {
 
   bulletChartValues(routes: TCPRoute | HTTPRoute) {
     return (routes.route || []).map((destinationWeight, u) => ({
-      value: routes.route.length === 1 ? 100 : destinationWeight.weight,
+      value: routes.route && routes.route.length === 1 ? 100 : destinationWeight.weight,
       title: `${u}_${destinationWeight.weight}`,
       color: PFBlueColors[u % PFBlueColors.length],
       tooltipFunction: () => {
@@ -244,7 +263,7 @@ class VirtualServiceRoute extends React.Component<VirtualServiceRouteProps> {
     const resolvedRows = resolve.resolve({
       columns: resolvedColumns,
       method: resolve.nested
-    })(this.rows(route));
+    })(this.rows(route, i));
 
     return (
       <div key={'bulletchart-wrapper-' + i} style={{ marginTop: '30px' }}>
@@ -267,6 +286,43 @@ class VirtualServiceRoute extends React.Component<VirtualServiceRouteProps> {
     );
   }
 
+  globalStatus(virtualService: VirtualService) {
+    let validation = this.validation();
+    let checks = globalChecks(validation);
+    let iconName = validationToIconName(validation);
+    let message = checks.map(check => check.message).join(',');
+
+    if (!message.length) {
+      if (validation && !validation.valid) {
+        message = 'Not all checks passed!';
+      }
+    }
+
+    if (message.length) {
+      return (
+        <div>
+          <p style={{ color: 'red' }}>
+            <Icon type="pf" name={iconName} /> {message}
+          </p>
+        </div>
+      );
+    } else {
+      return '';
+    }
+  }
+
+  routeStatusMessage(route: HTTPRoute | TCPRoute, routeIndex: number) {
+    let checks = checkForPath(
+      this.validation(),
+      'spec/' + this.props.kind.toLowerCase() + '[' + routeIndex + ']/route'
+    );
+
+    return {
+      message: checks.map(check => check.message).join(','),
+      icon: severityToIconName(highestSeverity(checks))
+    };
+  }
+
   render() {
     return (
       <div>
@@ -274,7 +330,12 @@ class VirtualServiceRoute extends React.Component<VirtualServiceRouteProps> {
           <div key={'virtualservice-rule' + i} className="row-cards-pf">
             <Row>
               <Col xs={12} sm={12} md={3} lg={3}>
-                <DetailObject name={this.props.kind + ' Route'} detail={route} exclude={['route']} />
+                <DetailObject
+                  name={this.props.kind + ' Route'}
+                  detail={route}
+                  exclude={['route']}
+                  validation={this.routeStatusMessage(route, i)}
+                />
               </Col>
               <Col xs={12} sm={12} md={5} lg={5}>
                 {this.renderTable(route, i)}
