@@ -11,7 +11,7 @@ import { Metrics } from '../../types/Metrics';
 import { Icon } from 'patternfly-react';
 import { authentication } from '../../utils/Authentication';
 import { Link } from 'react-router-dom';
-import { shouldRefreshData } from './SummaryPanelCommon';
+import { shouldRefreshData, updateHealth } from './SummaryPanelCommon';
 import { HealthIndicator, DisplayMode } from '../../components/ServiceHealth/HealthIndicator';
 import Label from '../../components/Label/Label';
 import { Health } from '../../types/Health';
@@ -22,6 +22,7 @@ type SummaryPanelStateType = {
   requestCountOut: [string, number][];
   errorCountIn: [string, number][];
   errorCountOut: [string, number][];
+  healthLoading: boolean;
   health?: Health;
 };
 
@@ -47,32 +48,26 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
       requestCountIn: [],
       requestCountOut: [],
       errorCountIn: [],
-      errorCountOut: []
+      errorCountOut: [],
+      healthLoading: false
     };
   }
 
   componentDidMount() {
     this._isMounted = true;
     this.fetchRequestCountMetrics(this.props);
-    this.updateHealth();
+    updateHealth(this.props.data.summaryTarget, this.setState.bind(this));
   }
 
   componentDidUpdate(prevProps: SummaryPanelPropType) {
     if (shouldRefreshData(prevProps, this.props)) {
       this.fetchRequestCountMetrics(this.props);
-      this.updateHealth();
+      updateHealth(this.props.data.summaryTarget, this.setState.bind(this));
     }
   }
 
   componentWillUnmount() {
     this._isMounted = false;
-  }
-
-  updateHealth() {
-    const healthPromise = this.props.data.summaryTarget.data('healthPromise');
-    if (healthPromise) {
-      healthPromise.then(h => this.setState({ health: h })).catch(err => this.setState({ health: undefined }));
-    }
   }
 
   fetchRequestCountMetrics(props: SummaryPanelPropType) {
@@ -134,14 +129,19 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
     return (
       <div className="panel panel-default" style={SummaryPanelNode.panelStyle}>
         <div className="panel-heading">
-          {this.state.health && (
-            <HealthIndicator
-              id="graph-health-indicator"
-              mode={DisplayMode.SMALL}
-              health={this.state.health}
-              tooltipPlacement="left"
-              rateInterval={this.props.duration}
-            />
+          {this.state.healthLoading ? (
+            // Remove glitch while health is being reloaded
+            <span style={{ width: 18, height: 17, display: 'inline-block' }} />
+          ) : (
+            this.state.health && (
+              <HealthIndicator
+                id="graph-health-indicator"
+                mode={DisplayMode.SMALL}
+                health={this.state.health}
+                tooltipPlacement="left"
+                rateInterval={this.props.duration}
+              />
+            )
           )}
           <span> Service: {isUnknown ? 'unknown' : serviceHotLink}</span>
           <div className="label-collection" style={{ paddingTop: '3px' }}>
