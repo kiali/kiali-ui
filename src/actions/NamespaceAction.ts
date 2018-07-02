@@ -3,7 +3,8 @@ import * as Api from '../services/Api';
 export enum NamespaceActionKeys {
   NAMESPACE_RELOAD = 'NAMESPACE_RELOAD',
   NAMESPACE_START = 'NAMESPACE_START',
-  NAMESPACE_SUCCESS = 'NAMESPACE_SUCCESS'
+  NAMESPACE_SUCCESS = 'NAMESPACE_SUCCESS',
+  NAMESPACE_FAILED = 'NAMESPACE_FAILED'
 }
 
 export const reload = () => {
@@ -26,12 +27,19 @@ export const apiReceiveList = newList => {
   };
 };
 
+export const apiRequestFailed = () => {
+  return {
+    type: NamespaceActionKeys.NAMESPACE_FAILED
+  };
+};
+
 export const asyncFetchNamespaces = (auth: any) => {
   return dispatch => {
     dispatch(apiInitiateRequest());
     return Api.getNamespaces(auth)
       .then(response => response['data'])
-      .then(data => dispatch(apiReceiveList(data)));
+      .then(data => dispatch(apiReceiveList(data)))
+      .catch(() => dispatch(apiRequestFailed()));
   };
 };
 

@@ -26,7 +26,11 @@ const namespaces = (state = INITIAL_STATE, action) => {
         items: action.list,
         lastUpdated: action.receivedAt
       });
-
+    case NamespaceActionKeys.NAMESPACE_FAILED:
+      return Object.assign({}, state, {
+        isFetching: false,
+        didInvalidate: true
+      });
     default:
       return state;
   }
