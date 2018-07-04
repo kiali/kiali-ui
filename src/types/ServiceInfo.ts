@@ -1,4 +1,5 @@
 import { Health } from './Health';
+import { PfColors } from '../components/Pf/PfColors';
 
 export interface Endpoints {
   addresses?: EndpointAddress[];
@@ -419,6 +420,13 @@ const IconSeverityMap = new Map<string, string>([
   ['correct', 'ok']
 ]);
 
+const ColorSeverityMap = new Map<string, string>([
+  ['error', PfColors.Red100],
+  ['warning', PfColors.Orange400],
+  ['improvement', PfColors.Blue400],
+  ['correct', PfColors.Green400]
+]);
+
 export const severityToIconName = (severity: string): string => {
   let iconName = IconSeverityMap.get(severity);
   if (!iconName) {
@@ -426,6 +434,15 @@ export const severityToIconName = (severity: string): string => {
   }
 
   return iconName;
+};
+
+export const severityToColor = (severity: string): string => {
+  let color = ColorSeverityMap.get(severity);
+  if (!color) {
+    color = 'black';
+  }
+
+  return color;
 };
 
 export const higherSeverity = (a: string, b: string): boolean => {
@@ -444,7 +461,7 @@ export const highestSeverity = (checks: ObjectCheck[]): string => {
   return severity;
 };
 
-export const validationToIconName = (object: ObjectValidation): string => {
+export const validationToSeverity = (object: ObjectValidation): string => {
   let severity = 'correct';
 
   if (object) {
@@ -455,7 +472,11 @@ export const validationToIconName = (object: ObjectValidation): string => {
     }
   }
 
-  return severityToIconName(severity);
+  return severity;
+};
+
+export const validationToIconName = (object: ObjectValidation): string => {
+  return severityToIconName(validationToSeverity(object));
 };
 
 export const checkForPath = (object: ObjectValidation, path: string): ObjectCheck[] => {
