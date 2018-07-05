@@ -293,6 +293,10 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
 
     // update the layout if needed and reset to default values
     if (this.updateLayout) {
+      // Reset all the nodes positions from previous layouts to avoid the next layout to use these as suggestions
+      cy.nodes().forEach(node => {
+        node.position({ x: 0, y: 0 });
+      });
       cy.layout(LayoutDictionary.getLayout(this.props.graphLayout)).run();
       this.updateLayout = false;
     }
