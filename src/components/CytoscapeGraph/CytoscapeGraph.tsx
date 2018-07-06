@@ -49,7 +49,9 @@ interface CytoscapeBaseEvent {
   summaryTarget: any; // the cytoscape element that was the target of the event
 }
 
-export interface CytoscapeClickEvent extends CytoscapeBaseEvent {}
+export interface CytoscapeClickEvent extends CytoscapeBaseEvent {
+  ctrlKey?: boolean;
+}
 export interface CytoscapeMouseInEvent extends CytoscapeBaseEvent {}
 export interface CytoscapeMouseOutEvent extends CytoscapeBaseEvent {}
 
@@ -184,7 +186,7 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
     this.graphHighlighter = new GraphHighlighter(cy);
     this.trafficRenderer = new TrafficRender(cy, cy.edges());
 
-    const getCytoscapeBaseEvent = (event: any): CytoscapeBaseEvent | null => {
+    const getCytoscapeBaseEvent = (event: any): CytoscapeBaseEvent => {
       const target = event.target;
       if (target === cy) {
         return { summaryType: 'graph', summaryTarget: cy };
@@ -197,8 +199,8 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
       } else if (target.isEdge()) {
         return { summaryType: 'edge', summaryTarget: target };
       } else {
-        console.log(`${event.type} UNHANDLED`);
-        return null;
+        console.error(`${event.type} UNHANDLED`);
+        throw Error(`Unhandlable event: ${event.type}`);
       }
     };
 
@@ -225,7 +227,11 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
     cy.on(
       'tap',
       injectDoubleTap((evt: any) => {
-        const cytoscapeEvent = getCytoscapeBaseEvent(evt);
+        const ctrlKey: boolean = evt.originalEvent ? evt.originalEvent.ctrlKey : false;
+        const cytoscapeEvent: CytoscapeClickEvent = {
+          ...getCytoscapeBaseEvent(evt),
+          ctrlKey: ctrlKey
+        };
 
         if (cytoscapeEvent) {
           this.handleTap(cytoscapeEvent);

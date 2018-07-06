@@ -99,6 +99,7 @@ class GraphBadge {
       // 'mousedim' is the class used by GraphHighlighter.
       // The opacity values are from GraphStyles.
       div.style.opacity = event.target.hasClass('mousedim') ? '0.3' : '1.0';
+      div.style.display = event.target.hasClass('mousehide') ? 'none' : 'inline';
     };
 
     node.on('position', update);

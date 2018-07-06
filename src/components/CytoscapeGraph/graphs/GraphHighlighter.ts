@@ -1,7 +1,8 @@
 import { CytoscapeClickEvent, CytoscapeMouseInEvent, CytoscapeMouseOutEvent } from '../CytoscapeGraph';
-import { DimClass } from './GraphStyles';
+import { DimClass, HideClass } from './GraphStyles';
 
 const DIM_CLASS: string = DimClass;
+const HIDE_CLASS: string = HideClass;
 const HIGHLIGHT_CLASS: string = 'mousehighlight';
 
 export class GraphHighlighter {
@@ -54,6 +55,7 @@ export class GraphHighlighter {
 
   unhighlight = () => {
     this.cy.elements('.' + DIM_CLASS).removeClass(DIM_CLASS);
+    this.cy.elements('.' + HIDE_CLASS).removeClass(HIDE_CLASS);
     this.cy.elements('.' + HIGHLIGHT_CLASS).removeClass(HIGHLIGHT_CLASS);
   };
 
@@ -80,10 +82,18 @@ export class GraphHighlighter {
       })
       .addClass(HIGHLIGHT_CLASS);
 
-    this.cy
-      .elements()
-      .difference(toHighlight)
-      .addClass(DIM_CLASS);
+    if (this.selected.ctrlKey) {
+      this.cy
+        .elements()
+        .difference(toHighlight)
+        .addClass(HIDE_CLASS);
+      this.cy.fit(toHighlight);
+    } else {
+      this.cy
+        .elements()
+        .difference(toHighlight)
+        .addClass(DIM_CLASS);
+    }
   };
 
   // Returns the nodes to highlight depending the selected or hovered summaryType

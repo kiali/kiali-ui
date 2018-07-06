@@ -4,6 +4,7 @@ import { config } from '../../../config';
 import { FAILURE, DEGRADED } from '../../../utils/Health';
 
 export const DimClass = 'mousedim';
+export const HideClass = 'mousehide';
 
 export class GraphStyles {
   static options() {
@@ -189,6 +190,12 @@ export class GraphStyles {
         selector: 'node.' + DimClass,
         style: {
           opacity: '0.6'
+        }
+      },
+      {
+        selector: 'node.' + HideClass,
+        style: {
+          display: 'none'
         }
       },
       {
