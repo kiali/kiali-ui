@@ -1,18 +1,11 @@
 import * as React from 'react';
-import { Col, Icon, OverlayTrigger, Popover, Row, Table } from 'patternfly-react';
+import { Col, Row, Table } from 'patternfly-react';
 import * as resolve from 'table-resolver';
 import { Link } from 'react-router-dom';
-import {
-  EditorLink,
-  globalChecks,
-  ObjectValidation,
-  severityToColor,
-  severityToIconName,
-  validationToSeverity,
-  VirtualService
-} from '../../../types/ServiceInfo';
+import { EditorLink, ObjectValidation, VirtualService } from '../../../types/ServiceInfo';
 import './ServiceInfoVirtualServices.css';
 import LocalTime from '../../../components/Time/LocalTime';
+import { ConfigIndicator } from '../../../components/ConfigValidation/ConfigIndicator';
 
 interface ServiceInfoVirtualServicesProps extends EditorLink {
   virtualServices?: VirtualService[];
@@ -86,42 +79,7 @@ class ServiceInfoVirtualServices extends React.Component<ServiceInfoVirtualServi
     return this.props.validations[virtualService.name];
   }
 
-  globalStatus(vs: VirtualService, idx: number) {
-    let validation = this.validation(vs);
-    let checks = globalChecks(validation);
-    let severity = validationToSeverity(validation);
-    let iconName = severityToIconName(severity);
-    let color = severityToColor(severity);
-    let message = checks.map(check => check.message).join(',');
-    console.log(color);
-
-    if (!message.length) {
-      if (validation && !validation.valid) {
-        message = 'Not all checks passed!';
-      }
-    }
-
-    if (message.length) {
-      return (
-        <OverlayTrigger
-          placement={'right'}
-          overlay={this.infotipContent(message, idx)}
-          trigger={['hover', 'focus']}
-          rootClose={false}
-        >
-          <Icon type="pf" name={iconName} />
-        </OverlayTrigger>
-      );
-    } else {
-      return '';
-    }
-  }
-
-  infotipContent(message: string, idx: number) {
-    return <Popover id={idx + '-weight-tooltip'}>{message}</Popover>;
-  }
-
-  showYaml(virtualService: VirtualService) {
+  showYAML(virtualService: VirtualService) {
     return (
       <Row>
         <Col xs={4}>{virtualService.resourceVersion}</Col>
@@ -135,10 +93,10 @@ class ServiceInfoVirtualServices extends React.Component<ServiceInfoVirtualServi
   rows() {
     return (this.props.virtualServices || []).map((virtualService, vsIdx) => ({
       id: vsIdx,
-      status: this.globalStatus(virtualService, vsIdx),
+      status: <ConfigIndicator id={vsIdx + '-config-validation'} validation={this.validation(virtualService)} />,
       name: virtualService.name,
       createdAt: <LocalTime time={virtualService.createdAt} />,
-      resourceVersion: this.showYaml(virtualService)
+      resourceVersion: this.showYAML(virtualService)
     }));
   }
 

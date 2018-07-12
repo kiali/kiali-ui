@@ -270,7 +270,10 @@ ShallowWrapper {
                       </Link>
                     </Col>
                   </Row>,
-                  "status": "",
+                  "status": <ConfigIndicator
+                    id="0-config-validation"
+                    validation={undefined}
+                  />,
                 },
               ]
             }
@@ -475,7 +478,10 @@ ShallowWrapper {
                       </Link>
                     </Col>
                   </Row>,
-                  "status": "",
+                  "status": <ConfigIndicator
+                    id="0-config-validation"
+                    validation={undefined}
+                  />,
                 },
               ]
             }
@@ -607,7 +613,10 @@ ShallowWrapper {
                         </Link>
                       </Col>
                     </Row>,
-                    "status": "",
+                    "status": <ConfigIndicator
+                      id="0-config-validation"
+                      validation={undefined}
+                    />,
                   },
                 ]
               }
@@ -808,7 +817,10 @@ ShallowWrapper {
                       </Link>
                     </Col>
                   </Row>,
-                  "status": "",
+                  "status": <ConfigIndicator
+                    id="0-config-validation"
+                    validation={undefined}
+                  />,
                 },
               ],
             },
@@ -1023,7 +1035,10 @@ ShallowWrapper {
                         </Link>
                       </Col>
                     </Row>,
-                    "status": "",
+                    "status": <ConfigIndicator
+                      id="0-config-validation"
+                      validation={undefined}
+                    />,
                   },
                 ]
               }
@@ -1228,7 +1243,10 @@ ShallowWrapper {
                         </Link>
                       </Col>
                     </Row>,
-                    "status": "",
+                    "status": <ConfigIndicator
+                      id="0-config-validation"
+                      validation={undefined}
+                    />,
                   },
                 ]
               }
@@ -1360,7 +1378,10 @@ ShallowWrapper {
                           </Link>
                         </Col>
                       </Row>,
-                      "status": "",
+                      "status": <ConfigIndicator
+                        id="0-config-validation"
+                        validation={undefined}
+                      />,
                     },
                   ]
                 }
@@ -1561,7 +1582,10 @@ ShallowWrapper {
                         </Link>
                       </Col>
                     </Row>,
-                    "status": "",
+                    "status": <ConfigIndicator
+                      id="0-config-validation"
+                      validation={undefined}
+                    />,
                   },
                 ],
               },
