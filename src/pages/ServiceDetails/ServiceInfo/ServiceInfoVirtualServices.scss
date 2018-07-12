@@ -1,3 +1,9 @@
-table.table .status {
-  width: 50px;
+table.table {
+  .status {
+    width: 50px;
+  }
+
+  .actions {
+    width: 85px;
+  }
 }

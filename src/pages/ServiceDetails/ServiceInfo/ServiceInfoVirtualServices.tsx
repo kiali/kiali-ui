@@ -70,6 +70,16 @@ class ServiceInfoVirtualServices extends React.Component<ServiceInfoVirtualServi
           cell: {
             formatters: [this.cellFormat]
           }
+        },
+        {
+          property: 'actions',
+          header: {
+            label: 'Actions',
+            formatters: [this.headerFormat]
+          },
+          cell: {
+            formatters: [this.cellFormat]
+          }
         }
       ]
     };
@@ -79,24 +89,22 @@ class ServiceInfoVirtualServices extends React.Component<ServiceInfoVirtualServi
     return this.props.validations[virtualService.name];
   }
 
+  nameLink(virtualService: VirtualService) {
+    return <Link to={this.props.editorLink + '?virtualservice=' + virtualService.name}>{virtualService.name}</Link>;
+  }
+
   showYAML(virtualService: VirtualService) {
-    return (
-      <Row>
-        <Col xs={4}>{virtualService.resourceVersion}</Col>
-        <Col xs={8} className="text-right">
-          <Link to={this.props.editorLink + '?virtualservice=' + virtualService.name}>View YAML</Link>
-        </Col>
-      </Row>
-    );
+    return <Link to={this.props.editorLink + '?virtualservice=' + virtualService.name}>View YAML</Link>;
   }
 
   rows() {
     return (this.props.virtualServices || []).map((virtualService, vsIdx) => ({
       id: vsIdx,
       status: <ConfigIndicator id={vsIdx + '-config-validation'} validation={this.validation(virtualService)} />,
-      name: virtualService.name,
+      name: this.nameLink(virtualService),
       createdAt: <LocalTime time={virtualService.createdAt} />,
-      resourceVersion: this.showYAML(virtualService)
+      resourceVersion: virtualService.resourceVersion,
+      actions: this.showYAML(virtualService)
     }));
   }
 

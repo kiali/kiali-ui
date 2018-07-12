@@ -146,6 +146,20 @@ ShallowWrapper {
                 },
                 "property": "resourceVersion",
               },
+              Object {
+                "cell": Object {
+                  "formatters": Array [
+                    [Function],
+                  ],
+                },
+                "header": Object {
+                  "formatters": Array [
+                    [Function],
+                  ],
+                  "label": "Actions",
+                },
+                "property": "actions",
+              },
             ]
           }
           components={Object {}}
@@ -230,6 +244,23 @@ ShallowWrapper {
                       "rowSpan": 1,
                     },
                   },
+                  Object {
+                    "cell": Object {
+                      "formatters": Array [
+                        [Function],
+                      ],
+                    },
+                    "header": Object {
+                      "formatters": Array [
+                        [Function],
+                      ],
+                      "label": "Actions",
+                    },
+                    "property": "actions",
+                    "props": Object {
+                      "rowSpan": 1,
+                    },
+                  },
                 ],
               ]
             }
@@ -240,36 +271,23 @@ ShallowWrapper {
             rows={
               Array [
                 Object {
+                  "actions": <Link
+                    replace={false}
+                    to="/namespaces/test_namespace/services/test_services?virtualservice=reviews-default"
+                  >
+                    View YAML
+                  </Link>,
                   "createdAt": <LocalTime
                     time="2018-03-14T10:17:52Z"
                   />,
                   "id": 0,
-                  "name": "reviews-default",
-                  "resourceVersion": <Row
-                    bsClass="row"
-                    componentClass="div"
+                  "name": <Link
+                    replace={false}
+                    to="/namespaces/test_namespace/services/test_services?virtualservice=reviews-default"
                   >
-                    <Col
-                      bsClass="col"
-                      componentClass="div"
-                      xs={4}
-                    >
-                      1234
-                    </Col>
-                    <Col
-                      bsClass="col"
-                      className="text-right"
-                      componentClass="div"
-                      xs={8}
-                    >
-                      <Link
-                        replace={false}
-                        to="/namespaces/test_namespace/services/test_services?virtualservice=reviews-default"
-                      >
-                        View YAML
-                      </Link>
-                    </Col>
-                  </Row>,
+                    reviews-default
+                  </Link>,
+                  "resourceVersion": "1234",
                   "status": <ConfigIndicator
                     id="0-config-validation"
                     validation={undefined}
@@ -354,6 +372,20 @@ ShallowWrapper {
                 },
                 "property": "resourceVersion",
               },
+              Object {
+                "cell": Object {
+                  "formatters": Array [
+                    [Function],
+                  ],
+                },
+                "header": Object {
+                  "formatters": Array [
+                    [Function],
+                  ],
+                  "label": "Actions",
+                },
+                "property": "actions",
+              },
             ]
           }
           components={Object {}}
@@ -438,6 +470,23 @@ ShallowWrapper {
                       "rowSpan": 1,
                     },
                   },
+                  Object {
+                    "cell": Object {
+                      "formatters": Array [
+                        [Function],
+                      ],
+                    },
+                    "header": Object {
+                      "formatters": Array [
+                        [Function],
+                      ],
+                      "label": "Actions",
+                    },
+                    "property": "actions",
+                    "props": Object {
+                      "rowSpan": 1,
+                    },
+                  },
                 ],
               ]
             }
@@ -448,36 +497,23 @@ ShallowWrapper {
             rows={
               Array [
                 Object {
+                  "actions": <Link
+                    replace={false}
+                    to="/namespaces/test_namespace/services/test_services?virtualservice=reviews-default"
+                  >
+                    View YAML
+                  </Link>,
                   "createdAt": <LocalTime
                     time="2018-03-14T10:17:52Z"
                   />,
                   "id": 0,
-                  "name": "reviews-default",
-                  "resourceVersion": <Row
-                    bsClass="row"
-                    componentClass="div"
+                  "name": <Link
+                    replace={false}
+                    to="/namespaces/test_namespace/services/test_services?virtualservice=reviews-default"
                   >
-                    <Col
-                      bsClass="col"
-                      componentClass="div"
-                      xs={4}
-                    >
-                      1234
-                    </Col>
-                    <Col
-                      bsClass="col"
-                      className="text-right"
-                      componentClass="div"
-                      xs={8}
-                    >
-                      <Link
-                        replace={false}
-                        to="/namespaces/test_namespace/services/test_services?virtualservice=reviews-default"
-                      >
-                        View YAML
-                      </Link>
-                    </Col>
-                  </Row>,
+                    reviews-default
+                  </Link>,
+                  "resourceVersion": "1234",
                   "status": <ConfigIndicator
                     id="0-config-validation"
                     validation={undefined}
@@ -573,6 +609,23 @@ ShallowWrapper {
                         "rowSpan": 1,
                       },
                     },
+                    Object {
+                      "cell": Object {
+                        "formatters": Array [
+                          [Function],
+                        ],
+                      },
+                      "header": Object {
+                        "formatters": Array [
+                          [Function],
+                        ],
+                        "label": "Actions",
+                      },
+                      "property": "actions",
+                      "props": Object {
+                        "rowSpan": 1,
+                      },
+                    },
                   ],
                 ]
               }
@@ -583,36 +636,23 @@ ShallowWrapper {
               rows={
                 Array [
                   Object {
+                    "actions": <Link
+                      replace={false}
+                      to="/namespaces/test_namespace/services/test_services?virtualservice=reviews-default"
+                    >
+                      View YAML
+                    </Link>,
                     "createdAt": <LocalTime
                       time="2018-03-14T10:17:52Z"
                     />,
                     "id": 0,
-                    "name": "reviews-default",
-                    "resourceVersion": <Row
-                      bsClass="row"
-                      componentClass="div"
+                    "name": <Link
+                      replace={false}
+                      to="/namespaces/test_namespace/services/test_services?virtualservice=reviews-default"
                     >
-                      <Col
-                        bsClass="col"
-                        componentClass="div"
-                        xs={4}
-                      >
-                        1234
-                      </Col>
-                      <Col
-                        bsClass="col"
-                        className="text-right"
-                        componentClass="div"
-                        xs={8}
-                      >
-                        <Link
-                          replace={false}
-                          to="/namespaces/test_namespace/services/test_services?virtualservice=reviews-default"
-                        >
-                          View YAML
-                        </Link>
-                      </Col>
-                    </Row>,
+                      reviews-default
+                    </Link>,
+                    "resourceVersion": "1234",
                     "status": <ConfigIndicator
                       id="0-config-validation"
                       validation={undefined}
@@ -682,6 +722,20 @@ ShallowWrapper {
                 "label": "Resource version",
               },
               "property": "resourceVersion",
+            },
+            Object {
+              "cell": Object {
+                "formatters": Array [
+                  [Function],
+                ],
+              },
+              "header": Object {
+                "formatters": Array [
+                  [Function],
+                ],
+                "label": "Actions",
+              },
+              "property": "actions",
             },
           ],
           "components": Object {},
@@ -771,6 +825,23 @@ ShallowWrapper {
                       "rowSpan": 1,
                     },
                   },
+                  Object {
+                    "cell": Object {
+                      "formatters": Array [
+                        [Function],
+                      ],
+                    },
+                    "header": Object {
+                      "formatters": Array [
+                        [Function],
+                      ],
+                      "label": "Actions",
+                    },
+                    "property": "actions",
+                    "props": Object {
+                      "rowSpan": 1,
+                    },
+                  },
                 ],
               ],
             },
@@ -787,36 +858,23 @@ ShallowWrapper {
               "rowKey": "id",
               "rows": Array [
                 Object {
+                  "actions": <Link
+                    replace={false}
+                    to="/namespaces/test_namespace/services/test_services?virtualservice=reviews-default"
+                  >
+                    View YAML
+                  </Link>,
                   "createdAt": <LocalTime
                     time="2018-03-14T10:17:52Z"
                   />,
                   "id": 0,
-                  "name": "reviews-default",
-                  "resourceVersion": <Row
-                    bsClass="row"
-                    componentClass="div"
+                  "name": <Link
+                    replace={false}
+                    to="/namespaces/test_namespace/services/test_services?virtualservice=reviews-default"
                   >
-                    <Col
-                      bsClass="col"
-                      componentClass="div"
-                      xs={4}
-                    >
-                      1234
-                    </Col>
-                    <Col
-                      bsClass="col"
-                      className="text-right"
-                      componentClass="div"
-                      xs={8}
-                    >
-                      <Link
-                        replace={false}
-                        to="/namespaces/test_namespace/services/test_services?virtualservice=reviews-default"
-                      >
-                        View YAML
-                      </Link>
-                    </Col>
-                  </Row>,
+                    reviews-default
+                  </Link>,
+                  "resourceVersion": "1234",
                   "status": <ConfigIndicator
                     id="0-config-validation"
                     validation={undefined}
@@ -911,6 +969,20 @@ ShallowWrapper {
                   },
                   "property": "resourceVersion",
                 },
+                Object {
+                  "cell": Object {
+                    "formatters": Array [
+                      [Function],
+                    ],
+                  },
+                  "header": Object {
+                    "formatters": Array [
+                      [Function],
+                    ],
+                    "label": "Actions",
+                  },
+                  "property": "actions",
+                },
               ]
             }
             components={Object {}}
@@ -995,6 +1067,23 @@ ShallowWrapper {
                         "rowSpan": 1,
                       },
                     },
+                    Object {
+                      "cell": Object {
+                        "formatters": Array [
+                          [Function],
+                        ],
+                      },
+                      "header": Object {
+                        "formatters": Array [
+                          [Function],
+                        ],
+                        "label": "Actions",
+                      },
+                      "property": "actions",
+                      "props": Object {
+                        "rowSpan": 1,
+                      },
+                    },
                   ],
                 ]
               }
@@ -1005,36 +1094,23 @@ ShallowWrapper {
               rows={
                 Array [
                   Object {
+                    "actions": <Link
+                      replace={false}
+                      to="/namespaces/test_namespace/services/test_services?virtualservice=reviews-default"
+                    >
+                      View YAML
+                    </Link>,
                     "createdAt": <LocalTime
                       time="2018-03-14T10:17:52Z"
                     />,
                     "id": 0,
-                    "name": "reviews-default",
-                    "resourceVersion": <Row
-                      bsClass="row"
-                      componentClass="div"
+                    "name": <Link
+                      replace={false}
+                      to="/namespaces/test_namespace/services/test_services?virtualservice=reviews-default"
                     >
-                      <Col
-                        bsClass="col"
-                        componentClass="div"
-                        xs={4}
-                      >
-                        1234
-                      </Col>
-                      <Col
-                        bsClass="col"
-                        className="text-right"
-                        componentClass="div"
-                        xs={8}
-                      >
-                        <Link
-                          replace={false}
-                          to="/namespaces/test_namespace/services/test_services?virtualservice=reviews-default"
-                        >
-                          View YAML
-                        </Link>
-                      </Col>
-                    </Row>,
+                      reviews-default
+                    </Link>,
+                    "resourceVersion": "1234",
                     "status": <ConfigIndicator
                       id="0-config-validation"
                       validation={undefined}
@@ -1119,6 +1195,20 @@ ShallowWrapper {
                   },
                   "property": "resourceVersion",
                 },
+                Object {
+                  "cell": Object {
+                    "formatters": Array [
+                      [Function],
+                    ],
+                  },
+                  "header": Object {
+                    "formatters": Array [
+                      [Function],
+                    ],
+                    "label": "Actions",
+                  },
+                  "property": "actions",
+                },
               ]
             }
             components={Object {}}
@@ -1203,6 +1293,23 @@ ShallowWrapper {
                         "rowSpan": 1,
                       },
                     },
+                    Object {
+                      "cell": Object {
+                        "formatters": Array [
+                          [Function],
+                        ],
+                      },
+                      "header": Object {
+                        "formatters": Array [
+                          [Function],
+                        ],
+                        "label": "Actions",
+                      },
+                      "property": "actions",
+                      "props": Object {
+                        "rowSpan": 1,
+                      },
+                    },
                   ],
                 ]
               }
@@ -1213,36 +1320,23 @@ ShallowWrapper {
               rows={
                 Array [
                   Object {
+                    "actions": <Link
+                      replace={false}
+                      to="/namespaces/test_namespace/services/test_services?virtualservice=reviews-default"
+                    >
+                      View YAML
+                    </Link>,
                     "createdAt": <LocalTime
                       time="2018-03-14T10:17:52Z"
                     />,
                     "id": 0,
-                    "name": "reviews-default",
-                    "resourceVersion": <Row
-                      bsClass="row"
-                      componentClass="div"
+                    "name": <Link
+                      replace={false}
+                      to="/namespaces/test_namespace/services/test_services?virtualservice=reviews-default"
                     >
-                      <Col
-                        bsClass="col"
-                        componentClass="div"
-                        xs={4}
-                      >
-                        1234
-                      </Col>
-                      <Col
-                        bsClass="col"
-                        className="text-right"
-                        componentClass="div"
-                        xs={8}
-                      >
-                        <Link
-                          replace={false}
-                          to="/namespaces/test_namespace/services/test_services?virtualservice=reviews-default"
-                        >
-                          View YAML
-                        </Link>
-                      </Col>
-                    </Row>,
+                      reviews-default
+                    </Link>,
+                    "resourceVersion": "1234",
                     "status": <ConfigIndicator
                       id="0-config-validation"
                       validation={undefined}
@@ -1338,6 +1432,23 @@ ShallowWrapper {
                           "rowSpan": 1,
                         },
                       },
+                      Object {
+                        "cell": Object {
+                          "formatters": Array [
+                            [Function],
+                          ],
+                        },
+                        "header": Object {
+                          "formatters": Array [
+                            [Function],
+                          ],
+                          "label": "Actions",
+                        },
+                        "property": "actions",
+                        "props": Object {
+                          "rowSpan": 1,
+                        },
+                      },
                     ],
                   ]
                 }
@@ -1348,36 +1459,23 @@ ShallowWrapper {
                 rows={
                   Array [
                     Object {
+                      "actions": <Link
+                        replace={false}
+                        to="/namespaces/test_namespace/services/test_services?virtualservice=reviews-default"
+                      >
+                        View YAML
+                      </Link>,
                       "createdAt": <LocalTime
                         time="2018-03-14T10:17:52Z"
                       />,
                       "id": 0,
-                      "name": "reviews-default",
-                      "resourceVersion": <Row
-                        bsClass="row"
-                        componentClass="div"
+                      "name": <Link
+                        replace={false}
+                        to="/namespaces/test_namespace/services/test_services?virtualservice=reviews-default"
                       >
-                        <Col
-                          bsClass="col"
-                          componentClass="div"
-                          xs={4}
-                        >
-                          1234
-                        </Col>
-                        <Col
-                          bsClass="col"
-                          className="text-right"
-                          componentClass="div"
-                          xs={8}
-                        >
-                          <Link
-                            replace={false}
-                            to="/namespaces/test_namespace/services/test_services?virtualservice=reviews-default"
-                          >
-                            View YAML
-                          </Link>
-                        </Col>
-                      </Row>,
+                        reviews-default
+                      </Link>,
+                      "resourceVersion": "1234",
                       "status": <ConfigIndicator
                         id="0-config-validation"
                         validation={undefined}
@@ -1447,6 +1545,20 @@ ShallowWrapper {
                   "label": "Resource version",
                 },
                 "property": "resourceVersion",
+              },
+              Object {
+                "cell": Object {
+                  "formatters": Array [
+                    [Function],
+                  ],
+                },
+                "header": Object {
+                  "formatters": Array [
+                    [Function],
+                  ],
+                  "label": "Actions",
+                },
+                "property": "actions",
               },
             ],
             "components": Object {},
@@ -1536,6 +1648,23 @@ ShallowWrapper {
                         "rowSpan": 1,
                       },
                     },
+                    Object {
+                      "cell": Object {
+                        "formatters": Array [
+                          [Function],
+                        ],
+                      },
+                      "header": Object {
+                        "formatters": Array [
+                          [Function],
+                        ],
+                        "label": "Actions",
+                      },
+                      "property": "actions",
+                      "props": Object {
+                        "rowSpan": 1,
+                      },
+                    },
                   ],
                 ],
               },
@@ -1552,36 +1681,23 @@ ShallowWrapper {
                 "rowKey": "id",
                 "rows": Array [
                   Object {
+                    "actions": <Link
+                      replace={false}
+                      to="/namespaces/test_namespace/services/test_services?virtualservice=reviews-default"
+                    >
+                      View YAML
+                    </Link>,
                     "createdAt": <LocalTime
                       time="2018-03-14T10:17:52Z"
                     />,
                     "id": 0,
-                    "name": "reviews-default",
-                    "resourceVersion": <Row
-                      bsClass="row"
-                      componentClass="div"
+                    "name": <Link
+                      replace={false}
+                      to="/namespaces/test_namespace/services/test_services?virtualservice=reviews-default"
                     >
-                      <Col
-                        bsClass="col"
-                        componentClass="div"
-                        xs={4}
-                      >
-                        1234
-                      </Col>
-                      <Col
-                        bsClass="col"
-                        className="text-right"
-                        componentClass="div"
-                        xs={8}
-                      >
-                        <Link
-                          replace={false}
-                          to="/namespaces/test_namespace/services/test_services?virtualservice=reviews-default"
-                        >
-                          View YAML
-                        </Link>
-                      </Col>
-                    </Row>,
+                      reviews-default
+                    </Link>,
+                    "resourceVersion": "1234",
                     "status": <ConfigIndicator
                       id="0-config-validation"
                       validation={undefined}
