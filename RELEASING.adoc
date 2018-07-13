@@ -15,8 +15,8 @@ This document also uses 1.0.0 as the new version, just as an example.
 
 == Preparing for a new version
 
-After a release happens, the first step for a new "batch" of modifications is
-to update link:package.json[] with the new version, and creating a PR for it:
+After a release, the first step for a new "batch" of modifications is to update
+link:package.json[] with the new version, and creating a PR for it:
 
 [source, diff]
 ----
@@ -34,7 +34,7 @@ index 7f699b1..08bc0a8 100644
    },
 ----
 
-This is to signalize everyone that everything that goes into master from that
+This is to signal to everyone that everything that goes into master from that
 point forward belongs to that version. Note that this is supposed to be the
 same version that is going to be released for the core, so they are in sync.
 
@@ -43,14 +43,14 @@ link:http://semver.org[semver], but not as strict, given both that we are not
 1.0 yet and that we are the end product, in the sense that nothing should
 depend on us to do anything. For now, and that might change in the future, our
 API is private and we make no guarantees that compatibility is going to be
-mantained.
+maintaned.
 
 For our versioning scheme, the `major` part means a major release, and that's
 decided in advance by the team. The `minor` means new features are included
 with the release, and the `patch` version covers only bugfixes.
 
 The UI and the core might be out of sync in `patch` versions, but they should
-be in sync for `minor`. That means that, if the ui is 0.5.10, then any core
+be in sync for `minor`. That means that, if the UI is 0.5.10, then any core
 version on 0.5.X should work with it, but that are no guarantees that it will
 work with core 0.4.X or core 0.6.X.
 
@@ -62,14 +62,14 @@ might work just fine, we just don't give any guarantees that it will.
 After the work that goes into a new version is done, the next step is to create
 the tag and push it. Everything else will be taken care by Travis.
 
+Note that only tags or branches in the format `v\#.#.#[.Label]` will trigger
+release tag/branch builds.
+
 [source, bash]
 ----
 $ git tag v1.0.0 <hash-of-last-commit-of-release>
 $ git push origin v1.0.0
 ----
-
-And that's it. Note that only tags or branches in the format `v\#.#.#[.Label]`
-will trigger release tag/branch builds.
 
 == Creating a Hotfix
 
