@@ -26,6 +26,7 @@ describe('NamespaceActions', () => {
     };
     expect(NamespaceActions.requestStarted()).toEqual(expectedAction);
   });
+
   it('request is success', () => {
     const currentDate = new Date();
     const expectedAction = {
@@ -35,12 +36,14 @@ describe('NamespaceActions', () => {
     };
     expect(NamespaceActions.receiveList(['a', 'b'], currentDate)).toEqual(expectedAction);
   });
+
   it('request failed', () => {
     const expectedAction = {
       type: NamespaceActionKeys.NAMESPACE_FAILED
     };
     expect(NamespaceActions.requestFailed()).toEqual(expectedAction);
   });
+
   it('should success if api request success', () => {
     const currentDate = new Date();
     mockDate(currentDate);
@@ -62,6 +65,7 @@ describe('NamespaceActions', () => {
       expect(store.getActions()).toEqual(expectedActions);
     });
   });
+
   it('should fail if api request fails', () => {
     const expectedActions = [
       {
@@ -79,11 +83,12 @@ describe('NamespaceActions', () => {
       expect(store.getActions()).toEqual(expectedActions);
     });
   });
+
   it("it won't fetch a namespace if one is loading", () => {
     const expectedActions = [];
     const store = mockStore({
       authentication: { token: { token: 'dummy-token' } },
-      namespaces: {
+      namespaceState: {
         isFetching: true
       }
     });
