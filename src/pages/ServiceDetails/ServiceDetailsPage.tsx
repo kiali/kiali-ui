@@ -38,6 +38,10 @@ class ServiceDetails extends React.Component<RouteComponentProps<ServiceId>, Ser
     };
   }
 
+  servicePageURL() {
+    return '/namespaces/' + this.props.match.params.namespace + '/services/' + this.props.match.params.service;
+  }
+
   cleanFilter = () => {
     NamespaceFilterSelected.setSelected([]);
   };
@@ -169,7 +173,7 @@ class ServiceDetails extends React.Component<RouteComponentProps<ServiceId>, Ser
   renderBreadcrumbs = (parsedSearch: ParsedSearch, showingDetails: boolean) => {
     const urlParams = new URLSearchParams(this.props.location.search);
     const parsedSearchTypeHuman = parsedSearch.type === 'virtualservice' ? 'Virtual Service' : 'Destination Rule';
-    const to = '/namespaces/' + this.props.match.params.namespace + '/services/' + this.props.match.params.service;
+    const to = this.servicePageURL();
     const toDetails = to + '?' + parsedSearch.type + '=' + parsedSearch.name;
     return (
       <Breadcrumb title={true}>
@@ -201,7 +205,7 @@ class ServiceDetails extends React.Component<RouteComponentProps<ServiceId>, Ser
               </Link>
             </Breadcrumb.Item>
             <Breadcrumb.Item active={true}>
-              {parsedSearchTypeHuman} {(urlParams.get('detailTab') || 'overview') === 'overview' ? 'overview' : 'YAML'}
+              {parsedSearchTypeHuman} {(urlParams.get('detail') || 'overview') === 'overview' ? 'Overview' : 'YAML'}
             </Breadcrumb.Item>
           </>
         )}
@@ -222,6 +226,7 @@ class ServiceDetails extends React.Component<RouteComponentProps<ServiceId>, Ser
             validations={this.searchValidation(parsedSearch)}
             onSelectTab={this.tabSelectHandler}
             activeTab={this.activeTab}
+            servicePageURL={this.servicePageURL()}
           />
         ) : (
           <TabContainer id="basic-tabs" activeKey={this.activeTab('tab', 'info')} onSelect={this.mainTabSelectHandler}>

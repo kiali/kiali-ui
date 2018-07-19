@@ -69,7 +69,7 @@ class VirtualServiceDetail extends React.Component<VirtualServiceProps> {
   rawConfig(virtualService: VirtualService) {
     return (
       <div className="card-pf-body" key={'virtualServiceConfig'}>
-        <h3>{virtualService.name}</h3>
+        <h4>VirtualService: {virtualService.name}</h4>
         <div>{this.globalStatus(virtualService)}</div>
         <div>
           <strong>Created at</strong>: <LocalTime time={virtualService.createdAt} />
@@ -100,26 +100,26 @@ class VirtualServiceDetail extends React.Component<VirtualServiceProps> {
       <Row className="card-pf-body" key={'virtualServiceWeights'}>
         <Col>
           {virtualService.http && virtualService.http.length > 0 ? (
-            <Row>
+            <>
               <VirtualServiceRoute
                 name={virtualService.name}
                 kind="HTTP"
                 routes={virtualService.http}
                 validations={this.props.validations}
               />
-            </Row>
+            </>
           ) : (
             undefined
           )}
           {virtualService.tcp && virtualService.tcp.length > 0 ? (
-            <Row>
+            <>
               <VirtualServiceRoute
                 name={virtualService.name}
                 kind="TCP"
                 routes={virtualService.tcp}
                 validations={this.props.validations}
               />
-            </Row>
+            </>
           ) : (
             undefined
           )}

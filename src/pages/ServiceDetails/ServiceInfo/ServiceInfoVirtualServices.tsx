@@ -91,7 +91,7 @@ class ServiceInfoVirtualServices extends React.Component<ServiceInfoVirtualServi
 
   overviewLink(virtualService: VirtualService) {
     return (
-      <Link to={this.props.editorLink + '?virtualservice=' + virtualService.name + '&detailTab=overview'}>
+      <Link to={this.props.editorLink + '?virtualservice=' + virtualService.name + '&detail=overview'}>
         {virtualService.name}
       </Link>
     );
@@ -99,7 +99,7 @@ class ServiceInfoVirtualServices extends React.Component<ServiceInfoVirtualServi
 
   yamlLink(virtualService: VirtualService) {
     return (
-      <Link to={this.props.editorLink + '?virtualservice=' + virtualService.name + '&detailTab=yaml'}>View YAML</Link>
+      <Link to={this.props.editorLink + '?virtualservice=' + virtualService.name + '&detail=yaml'}>View YAML</Link>
     );
   }
 
