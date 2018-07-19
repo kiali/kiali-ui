@@ -139,7 +139,7 @@ export default class IstioObjectDetails extends React.Component<IstioObjectDetai
             <TabContainer
               id="basic-tabs"
               activeKey={this.props.activeTab('detail', 'overview')}
-              onSelect={this.istioDetailTabSelectHandler}
+              onSelect={this.props.onSelectTab('detail')}
             >
               <>
                 {this.renderTabNav()}
@@ -154,8 +154,4 @@ export default class IstioObjectDetails extends React.Component<IstioObjectDetai
       </div>
     );
   }
-
-  private istioDetailTabSelectHandler = (tabKey?: string) => {
-    this.props.onSelectTab('detail', tabKey);
-  };
 }
