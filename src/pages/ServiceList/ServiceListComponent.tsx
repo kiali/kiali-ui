@@ -4,8 +4,8 @@ import {
   Button,
   Icon,
   ListView,
-  ListViewItem,
   ListViewIcon,
+  ListViewItem,
   Paginator,
   Sort,
   ToolbarRightContent
@@ -13,14 +13,18 @@ import {
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
-import { NamespaceFilter, NamespaceFilterSelected } from '../../components/NamespaceFilter/NamespaceFilter';
+import {
+  defaultNamespaceFilter,
+  NamespaceFilter,
+  NamespaceFilterSelected
+} from '../../components/NamespaceFilter/NamespaceFilter';
 import { PfColors } from '../../components/Pf/PfColors';
 import * as API from '../../services/Api';
 import { Health } from '../../types/Health';
 import Namespace from '../../types/Namespace';
 import { ActiveFilter, FilterType } from '../../types/NamespaceFilter';
 import { Pagination } from '../../types/Pagination';
-import { IstioLogo, ServiceItem, ServiceOverview, SortField, overviewToItem } from '../../types/ServiceListComponent';
+import { IstioLogo, overviewToItem, ServiceItem, ServiceOverview, SortField } from '../../types/ServiceListComponent';
 import { authentication } from '../../utils/Authentication';
 import { getRequestErrorsRatio } from '../../utils/Health';
 import { removeDuplicatesArray } from '../../utils/Common';
@@ -35,6 +39,7 @@ export const sortFields: SortField[] = [
   {
     title: 'Namespace',
     isNumeric: false,
+    param: 'ns',
     compare: (a: ServiceItem, b: ServiceItem) => {
       let sortValue = a.namespace.localeCompare(b.namespace);
       if (sortValue === 0) {
@@ -46,11 +51,13 @@ export const sortFields: SortField[] = [
   {
     title: 'Service Name',
     isNumeric: false,
+    param: 'sn',
     compare: (a: ServiceItem, b: ServiceItem) => a.name.localeCompare(b.name)
   },
   {
     title: 'Istio Sidecar',
     isNumeric: false,
+    param: 'is',
     compare: (a: ServiceItem, b: ServiceItem) => {
       if (a.istioSidecar && !b.istioSidecar) {
         return -1;
@@ -64,6 +71,7 @@ export const sortFields: SortField[] = [
   {
     title: 'Error Rate',
     isNumeric: true,
+    param: 'er',
     compare: (a: ServiceItemHealth, b: ServiceItemHealth) => {
       const ratioA = getRequestErrorsRatio(a.health.requests).value;
       const ratioB = getRequestErrorsRatio(b.health.requests).value;
@@ -113,38 +121,108 @@ const istioFilter: FilterType = {
   filterValues: [{ id: 'deployed', title: 'Deployed' }, { id: 'not_deployed', title: 'Not Deployed' }]
 };
 
+const availableFilters: FilterType[] = [serviceNameFilter, istioFilter, defaultNamespaceFilter];
+
 type ServiceListComponentState = {
   services: ServiceItem[];
   pagination: Pagination;
   currentSortField: SortField;
   isSortAscending: boolean;
+  rateInterval: number;
 };
 
 type ServiceListComponentProps = {
   onError: PropTypes.func;
+  onParamChange: PropTypes.func;
+  onParamDelete: PropTypes.func;
+  queryParam: PropTypes.func;
 };
 
 const perPageOptions: number[] = [5, 10, 15];
 const defaultRateInterval = 600;
 
 class ServiceListComponent extends React.Component<ServiceListComponentProps, ServiceListComponentState> {
-  private rateInterval: number;
-
   constructor(props: ServiceListComponentProps) {
     super(props);
-    this.rateInterval = defaultRateInterval;
 
     this.state = {
       services: [],
-      pagination: { page: 1, perPage: 10, perPageOptions: perPageOptions },
-      currentSortField: sortFields[0],
-      isSortAscending: true
+      pagination: this.selectedPagination(),
+      currentSortField: this.selectedSortField(),
+      isSortAscending: this.selectedSortDirection(),
+      rateInterval: this.selectedRateInterval()
     };
   }
 
   componentDidMount() {
     this.updateServices();
   }
+
+  selectedSortField() {
+    const queriedSortedField = this.props.queryParam('sort', [sortFields[0].param]);
+    return (
+      sortFields.find(sortField => {
+        return sortField.param === queriedSortedField[0];
+      }) || sortFields[0]
+    );
+  }
+
+  selectedSortDirection() {
+    return this.props.queryParam('direction', ['asc'])[0] === 'asc' ? true : false;
+  }
+
+  selectedPagination() {
+    return {
+      page: parseInt(this.props.queryParam('page', ['1'])[0], 10),
+      perPage: parseInt(this.props.queryParam('perPage', [perPageOptions[1]])[0], 10),
+      perPageOptions: perPageOptions
+    };
+  }
+
+  selectedRateInterval() {
+    return parseInt(this.props.queryParam('rate', [defaultRateInterval.toString(10)])[0], 10);
+  }
+
+  selectedFilters() {
+    let activeFilters: ActiveFilter[] = [];
+    availableFilters.forEach(filter => {
+      this.props.queryParam(filter.id, []).forEach(value => {
+        activeFilters = activeFilters.concat({
+          label: filter.title + ': ' + value,
+          category: filter.title,
+          value: value
+        });
+      });
+    });
+
+    return activeFilters;
+  }
+
+  onFilterChange = (filters: ActiveFilter[]) => {
+    if (filters.length > 0) {
+      let params = filters.map(activeFilter => {
+        let filterId = (
+          availableFilters.find(filter => {
+            return filter.title === activeFilter.category;
+          }) || availableFilters[2]
+        ).id;
+
+        return {
+          name: filterId,
+          value: activeFilter.value
+        };
+      });
+      this.props.onParamChange(params, 'append');
+    } else {
+      this.props.onParamDelete(
+        availableFilters.map(filter => {
+          return filter.id;
+        })
+      );
+    }
+
+    this.updateServices();
+  };
 
   handleError = (error: string) => {
     this.props.onError(error);
@@ -167,6 +245,8 @@ class ServiceListComponent extends React.Component<ServiceListComponentProps, Se
         }
       };
     });
+
+    this.props.onParamChange([{ name: 'page', value: page }]);
   };
 
   pageSelect = (perPage: number) => {
@@ -180,6 +260,8 @@ class ServiceListComponent extends React.Component<ServiceListComponentProps, Se
         }
       };
     });
+
+    this.props.onParamChange([{ name: 'page', value: 1 }, { name: 'perPage', value: perPage }]);
   };
 
   updateSortField = (sortField: SortField) => {
@@ -188,6 +270,8 @@ class ServiceListComponent extends React.Component<ServiceListComponentProps, Se
         currentSortField: sortField,
         services: sorted
       });
+
+      this.props.onParamChange([{ name: 'sort', value: sortField.param }]);
     });
   };
 
@@ -197,6 +281,8 @@ class ServiceListComponent extends React.Component<ServiceListComponentProps, Se
         isSortAscending: !this.state.isSortAscending,
         services: sorted
       });
+
+      this.props.onParamChange([{ name: 'direction', value: this.state.isSortAscending ? 'asc' : 'desc' }]);
     });
   };
 
@@ -241,9 +327,12 @@ class ServiceListComponent extends React.Component<ServiceListComponentProps, Se
             serviceList = serviceList.filter(service => this.isFiltered(service, servicenameFilters, istioFilters));
           }
           serviceList.forEach(overview => {
-            const healthProm = API.getServiceHealth(authentication(), namespace, overview.name, this.rateInterval).then(
-              r => r.data
-            );
+            const healthProm = API.getServiceHealth(
+              authentication(),
+              namespace,
+              overview.name,
+              this.state.rateInterval
+            ).then(r => r.data);
             updatedServices.push(overviewToItem(overview, namespace, healthProm));
           });
         });
@@ -251,7 +340,7 @@ class ServiceListComponent extends React.Component<ServiceListComponentProps, Se
           this.setState({
             services: sorted,
             pagination: {
-              page: 1,
+              page: this.state.pagination.page,
               perPage: this.state.pagination.perPage,
               perPageOptions: perPageOptions
             }
@@ -329,7 +418,7 @@ class ServiceListComponent extends React.Component<ServiceListComponentProps, Se
             }
             // Prettier makes irrelevant line-breaking clashing with tslint
             // prettier-ignore
-            description={<ItemDescription item={serviceItem} rateInterval={this.rateInterval} />}
+            description={<ItemDescription item={serviceItem} rateInterval={this.state.rateInterval} />}
           />
         </Link>
       );
@@ -338,7 +427,8 @@ class ServiceListComponent extends React.Component<ServiceListComponentProps, Se
       <div>
         <NamespaceFilter
           initialFilters={[serviceNameFilter, istioFilter]}
-          onFilterChange={this.updateServices}
+          initialActiveFilters={this.selectedFilters()}
+          onFilterChange={this.onFilterChange}
           onError={this.handleError}
         >
           <Sort>
@@ -354,7 +444,7 @@ class ServiceListComponent extends React.Component<ServiceListComponentProps, Se
             />
           </Sort>
           <RateIntervalToolbarItem
-            rateIntervalSelected={this.rateInterval}
+            rateIntervalSelected={this.state.rateInterval}
             onRateIntervalChanged={this.rateIntervalChangedHandler}
           />
           <ToolbarRightContent>
@@ -376,7 +466,8 @@ class ServiceListComponent extends React.Component<ServiceListComponentProps, Se
   }
 
   private rateIntervalChangedHandler = (key: number) => {
-    this.rateInterval = key;
+    this.setState({ rateInterval: key });
+    this.props.onParamChange([{ name: 'rate', value: key.toString(10) }]);
     this.updateServices();
   };
 }
