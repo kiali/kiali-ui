@@ -1,11 +1,7 @@
-export const fromValue = <EnumType, EnumValue extends keyof EnumType>(
-  enumType: EnumType,
-  value: any,
-  defaultValue: any
-) => {
-  const found: EnumValue = enumType[value] as EnumValue;
-  if (found !== undefined) {
-    return enumType[found];
+export const fromValue = (enumType: any, value: any, defaultValue: any) => {
+  const enumKey = Object.keys(enumType).find(key => enumType[key] === value);
+  if (enumKey !== undefined) {
+    return enumType[enumKey];
   }
   return defaultValue;
 };
