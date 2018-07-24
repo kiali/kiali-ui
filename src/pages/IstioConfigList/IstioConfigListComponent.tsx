@@ -1,7 +1,11 @@
 import * as React from 'react';
 import { Button, Icon, ListView, ListViewItem, ListViewIcon, Sort, ToolbarRightContent } from 'patternfly-react';
 import { AxiosError } from 'axios';
-import { NamespaceFilter, NamespaceFilterSelected } from '../../components/NamespaceFilter/NamespaceFilter';
+import {
+  defaultNamespaceFilter,
+  NamespaceFilter,
+  NamespaceFilterSelected
+} from '../../components/NamespaceFilter/NamespaceFilter';
 import { Paginator } from 'patternfly-react';
 import { ActiveFilter, FilterType } from '../../types/NamespaceFilter';
 import * as API from '../../services/Api';
@@ -28,22 +32,26 @@ const sortFields: SortField[] = [
   {
     id: 'namespace',
     title: 'Namespace',
-    isNumeric: false
+    isNumeric: false,
+    param: 'ns'
   },
   {
     id: 'istiotype',
     title: 'Istio Type',
-    isNumeric: false
+    isNumeric: false,
+    param: 'it'
   },
   {
     id: 'istioname',
     title: 'Istio Name',
-    isNumeric: false
+    isNumeric: false,
+    param: 'in'
   },
   {
     id: 'configvalidation',
     title: 'Config',
-    isNumeric: false
+    isNumeric: false,
+    param: 'cv'
   }
 ];
 
@@ -117,6 +125,13 @@ const configValidationFilter: FilterType = {
   ]
 };
 
+export const availableFilters: FilterType[] = [
+  istioTypeFilter,
+  istioNameFilter,
+  configValidationFilter,
+  defaultNamespaceFilter
+];
+
 type IstioConfigListComponentState = {
   istioItems: IstioConfigItem[];
   pagination: Pagination;
@@ -126,6 +141,9 @@ type IstioConfigListComponentState = {
 
 type IstioConfigListComponentProps = {
   onError: PropTypes.func;
+  onParamChange: PropTypes.func;
+  onParamDelete: PropTypes.func;
+  queryParam: PropTypes.func;
 };
 
 const perPageOptions: number[] = [5, 10, 15];
@@ -135,15 +153,97 @@ class IstioConfigListComponent extends React.Component<IstioConfigListComponentP
     super(props);
     this.state = {
       istioItems: [],
-      pagination: { page: 1, perPage: 10, perPageOptions: perPageOptions },
-      currentSortField: sortFields[0],
-      isSortAscending: true
+      pagination: this.selectedPagination(),
+      currentSortField: this.selectedSortField(),
+      isSortAscending: this.selectedSortDirection()
     };
+
+    this.setActiveFiltersToURL();
   }
 
   componentDidMount() {
     this.updateIstioConfig();
   }
+
+  setActiveFiltersToURL() {
+    const params = NamespaceFilterSelected.getSelected().map(activeFilter => {
+      let filterId = (
+        availableFilters.find(filter => {
+          return filter.title === activeFilter.category;
+        }) || availableFilters[2]
+      ).id;
+
+      return {
+        name: filterId,
+        value: activeFilter.value
+      };
+    });
+
+    this.props.onParamChange(params, 'append');
+  }
+
+  selectedPagination() {
+    return {
+      page: parseInt(this.props.queryParam('page', ['1'])[0], 10),
+      perPage: parseInt(this.props.queryParam('perPage', [perPageOptions[1]])[0], 10),
+      perPageOptions: perPageOptions
+    };
+  }
+
+  selectedSortField() {
+    const queriedSortedField = this.props.queryParam('sort', [sortFields[0].param]);
+    return (
+      sortFields.find(sortField => {
+        return sortField.param === queriedSortedField[0];
+      }) || sortFields[0]
+    );
+  }
+
+  selectedSortDirection() {
+    return this.props.queryParam('direction', ['asc'])[0] === 'asc' ? true : false;
+  }
+
+  selectedFilters() {
+    let activeFilters: ActiveFilter[] = [];
+    availableFilters.forEach(filter => {
+      this.props.queryParam(filter.id, []).forEach(value => {
+        activeFilters.push({
+          label: filter.title + ': ' + value,
+          category: filter.title,
+          value: value
+        });
+      });
+    });
+
+    return activeFilters;
+  }
+
+  onFilterChange = (filters: ActiveFilter[]) => {
+    if (filters.length > 0) {
+      let params = filters.map(activeFilter => {
+        let filterId = (
+          availableFilters.find(filter => {
+            return filter.title === activeFilter.category;
+          }) || availableFilters[2]
+        ).id;
+
+        return {
+          name: filterId,
+          value: activeFilter.value
+        };
+      });
+
+      this.props.onParamChange(params, 'append');
+    } else {
+      this.props.onParamDelete(
+        availableFilters.map(filter => {
+          return filter.id;
+        })
+      );
+    }
+
+    this.updateIstioConfig();
+  };
 
   handleError = (error: string) => {
     this.props.onError(error);
@@ -166,6 +266,8 @@ class IstioConfigListComponent extends React.Component<IstioConfigListComponentP
         }
       };
     });
+
+    this.props.onParamChange([{ name: 'page', value: page }]);
   };
 
   pageSelect = (perPage: number) => {
@@ -179,6 +281,8 @@ class IstioConfigListComponent extends React.Component<IstioConfigListComponentP
         }
       };
     });
+
+    this.props.onParamChange([{ name: 'page', value: 1 }, { name: 'perPage', value: perPage }]);
   };
 
   updateSortField = (sortField: SortField) => {
@@ -188,6 +292,8 @@ class IstioConfigListComponent extends React.Component<IstioConfigListComponentP
         istioItems: sortIstioItems(prevState.istioItems, sortField, prevState.isSortAscending)
       };
     });
+
+    this.props.onParamChange([{ name: 'sort', value: sortField.param }]);
   };
 
   updateSortDirection = () => {
@@ -197,6 +303,8 @@ class IstioConfigListComponent extends React.Component<IstioConfigListComponentP
         istioItems: sortIstioItems(prevState.istioItems, prevState.currentSortField, !prevState.isSortAscending)
       };
     });
+
+    this.props.onParamChange([{ name: 'direction', value: this.state.isSortAscending ? 'desc' : 'asc' }]);
   };
 
   updateIstioConfig = () => {
@@ -271,7 +379,7 @@ class IstioConfigListComponent extends React.Component<IstioConfigListComponentP
           return {
             istioItems: istioItems,
             pagination: {
-              page: 1,
+              page: this.state.pagination.page,
               perPage: prevState.pagination.perPage,
               perPageOptions: perPageOptions
             }
@@ -386,7 +494,8 @@ class IstioConfigListComponent extends React.Component<IstioConfigListComponentP
       <>
         <NamespaceFilter
           initialFilters={[istioTypeFilter, istioNameFilter, configValidationFilter]}
-          onFilterChange={this.updateIstioConfig}
+          initialActiveFilters={this.selectedFilters()}
+          onFilterChange={this.onFilterChange}
           onError={this.handleError}
         >
           <Sort>

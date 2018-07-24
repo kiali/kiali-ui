@@ -152,10 +152,29 @@ class ServiceListComponent extends React.Component<ServiceListComponentProps, Se
       isSortAscending: this.selectedSortDirection(),
       rateInterval: this.selectedRateInterval()
     };
+
+    this.setActiveFiltersToURL();
   }
 
   componentDidMount() {
     this.updateServices();
+  }
+
+  setActiveFiltersToURL() {
+    const params = NamespaceFilterSelected.getSelected().map(activeFilter => {
+      let filterId = (
+        availableFilters.find(filter => {
+          return filter.title === activeFilter.category;
+        }) || availableFilters[2]
+      ).id;
+
+      return {
+        name: filterId,
+        value: activeFilter.value
+      };
+    });
+
+    this.props.onParamChange(params, 'append');
   }
 
   selectedSortField() {

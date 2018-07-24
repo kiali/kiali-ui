@@ -27,7 +27,9 @@ class ServiceListPage extends React.Component<RouteComponentProps<ServiceListPro
     const urlParams = new URLSearchParams(this.props.location.search);
 
     if (params.length > 0 && action === ACTION_APPEND) {
-      urlParams.delete(params[0].name);
+      params.forEach(param => {
+        urlParams.delete(param.name);
+      });
     }
 
     params.forEach((param: URLParameter) => {
