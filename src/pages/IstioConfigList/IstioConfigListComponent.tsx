@@ -28,7 +28,7 @@ import { NamespaceValidations } from '../../types/ServiceInfo';
 import { ConfigIndicator } from '../../components/ConfigValidation/ConfigIndicator';
 import { removeDuplicatesArray } from '../../utils/Common';
 
-const sortFields: SortField[] = [
+export const sortFields: SortField[] = [
   {
     id: 'namespace',
     title: 'Namespace',
@@ -144,6 +144,9 @@ type IstioConfigListComponentProps = {
   onParamChange: PropTypes.func;
   onParamDelete: PropTypes.func;
   queryParam: PropTypes.func;
+  pagination: Pagination;
+  currentSortField: SortField;
+  isSortAscending: boolean;
 };
 
 const perPageOptions: number[] = [5, 10, 15];
@@ -153,9 +156,9 @@ class IstioConfigListComponent extends React.Component<IstioConfigListComponentP
     super(props);
     this.state = {
       istioItems: [],
-      pagination: this.selectedPagination(),
-      currentSortField: this.selectedSortField(),
-      isSortAscending: this.selectedSortDirection()
+      pagination: this.props.pagination,
+      currentSortField: this.props.currentSortField,
+      isSortAscending: this.props.isSortAscending
     };
 
     this.setActiveFiltersToURL();
@@ -163,6 +166,60 @@ class IstioConfigListComponent extends React.Component<IstioConfigListComponentP
 
   componentDidMount() {
     this.updateIstioConfig();
+  }
+
+  componentDidUpdate(
+    prevProps: IstioConfigListComponentProps,
+    prevState: IstioConfigListComponentState,
+    snapshot: any
+  ) {
+    if (!this.paramsAreSynced(prevProps)) {
+      this.setState({
+        pagination: this.props.pagination,
+        currentSortField: this.props.currentSortField,
+        isSortAscending: this.props.isSortAscending
+      });
+
+      NamespaceFilterSelected.setSelected(this.selectedFilters());
+      this.updateIstioConfig();
+    }
+  }
+
+  paramsAreSynced(prevProps: IstioConfigListComponentProps) {
+    return (
+      prevProps.pagination.page === this.props.pagination.page &&
+      prevProps.pagination.perPage === this.props.pagination.perPage &&
+      prevProps.isSortAscending === this.props.isSortAscending &&
+      prevProps.currentSortField.title === this.props.currentSortField.title &&
+      this.filtersMatch()
+    );
+  }
+
+  filtersMatch() {
+    const selectedFilters: Map<string, string[]> = new Map<string, string[]>();
+
+    NamespaceFilterSelected.getSelected().map(activeFilter => {
+      const existingValue = selectedFilters.get(activeFilter.category) || [];
+      selectedFilters.set(activeFilter.category, existingValue.concat(activeFilter.value));
+    });
+
+    let urlParams: Map<string, string[]> = new Map<string, string[]>();
+    availableFilters.forEach(filter => {
+      const param = this.props.queryParam(filter.id, ['']);
+      if (param[0] !== '') {
+        const existing = urlParams.get(filter.title) || [];
+        urlParams.set(filter.title, existing.concat(param));
+      }
+    });
+
+    let equalFilters = true;
+    selectedFilters.forEach((filterValues, filterName) => {
+      const aux = urlParams.get(filterName) || [];
+      equalFilters =
+        equalFilters && filterValues.every(value => aux.includes(value)) && filterValues.length === aux.length;
+    });
+
+    return selectedFilters.size === urlParams.size && equalFilters;
   }
 
   setActiveFiltersToURL() {
@@ -180,27 +237,6 @@ class IstioConfigListComponent extends React.Component<IstioConfigListComponentP
     });
 
     this.props.onParamChange(params, 'append');
-  }
-
-  selectedPagination() {
-    return {
-      page: parseInt(this.props.queryParam('page', ['1'])[0], 10),
-      perPage: parseInt(this.props.queryParam('perPage', [perPageOptions[1]])[0], 10),
-      perPageOptions: perPageOptions
-    };
-  }
-
-  selectedSortField() {
-    const queriedSortedField = this.props.queryParam('sort', [sortFields[0].param]);
-    return (
-      sortFields.find(sortField => {
-        return sortField.param === queriedSortedField[0];
-      }) || sortFields[0]
-    );
-  }
-
-  selectedSortDirection() {
-    return this.props.queryParam('direction', ['asc'])[0] === 'asc' ? true : false;
   }
 
   selectedFilters() {

@@ -121,7 +121,7 @@ const istioFilter: FilterType = {
   filterValues: [{ id: 'deployed', title: 'Deployed' }, { id: 'not_deployed', title: 'Not Deployed' }]
 };
 
-const availableFilters: FilterType[] = [serviceNameFilter, istioFilter, defaultNamespaceFilter];
+export const availableFilters: FilterType[] = [serviceNameFilter, istioFilter, defaultNamespaceFilter];
 
 type ServiceListComponentState = {
   services: ServiceItem[];
@@ -136,10 +136,14 @@ type ServiceListComponentProps = {
   onParamChange: PropTypes.func;
   onParamDelete: PropTypes.func;
   queryParam: PropTypes.func;
+  pagination: Pagination;
+  currentSortField: SortField;
+  isSortAscending: boolean;
+  rateInterval: number;
 };
 
-const perPageOptions: number[] = [5, 10, 15];
-const defaultRateInterval = 600;
+export const perPageOptions: number[] = [5, 10, 15];
+export const defaultRateInterval = 600;
 
 class ServiceListComponent extends React.Component<ServiceListComponentProps, ServiceListComponentState> {
   constructor(props: ServiceListComponentProps) {
@@ -147,10 +151,10 @@ class ServiceListComponent extends React.Component<ServiceListComponentProps, Se
 
     this.state = {
       services: [],
-      pagination: this.selectedPagination(),
-      currentSortField: this.selectedSortField(),
-      isSortAscending: this.selectedSortDirection(),
-      rateInterval: this.selectedRateInterval()
+      pagination: this.props.pagination,
+      currentSortField: this.props.currentSortField,
+      isSortAscending: this.props.isSortAscending,
+      rateInterval: this.props.rateInterval
     };
 
     this.setActiveFiltersToURL();
@@ -158,6 +162,58 @@ class ServiceListComponent extends React.Component<ServiceListComponentProps, Se
 
   componentDidMount() {
     this.updateServices();
+  }
+
+  componentDidUpdate(prevProps: ServiceListComponentProps, prevState: ServiceListComponentState, snapshot: any) {
+    if (!this.paramsAreSynced(prevProps)) {
+      this.setState({
+        pagination: this.props.pagination,
+        currentSortField: this.props.currentSortField,
+        isSortAscending: this.props.isSortAscending,
+        rateInterval: this.props.rateInterval
+      });
+
+      NamespaceFilterSelected.setSelected(this.selectedFilters());
+      this.updateServices();
+    }
+  }
+
+  paramsAreSynced(prevProps: ServiceListComponentProps) {
+    return (
+      prevProps.pagination.page === this.props.pagination.page &&
+      prevProps.pagination.perPage === this.props.pagination.perPage &&
+      prevProps.rateInterval === this.props.rateInterval &&
+      prevProps.isSortAscending === this.props.isSortAscending &&
+      prevProps.currentSortField.title === this.props.currentSortField.title &&
+      this.filtersMatch()
+    );
+  }
+
+  filtersMatch() {
+    const selectedFilters: Map<string, string[]> = new Map<string, string[]>();
+
+    NamespaceFilterSelected.getSelected().map(activeFilter => {
+      const existingValue = selectedFilters.get(activeFilter.category) || [];
+      selectedFilters.set(activeFilter.category, existingValue.concat(activeFilter.value));
+    });
+
+    let urlParams: Map<string, string[]> = new Map<string, string[]>();
+    availableFilters.forEach(filter => {
+      const param = this.props.queryParam(filter.id, ['']);
+      if (param[0] !== '') {
+        const existing = urlParams.get(filter.title) || [];
+        urlParams.set(filter.title, existing.concat(param));
+      }
+    });
+
+    let equalFilters = true;
+    selectedFilters.forEach((filterValues, filterName) => {
+      const aux = urlParams.get(filterName) || [];
+      equalFilters =
+        equalFilters && filterValues.every(value => aux.includes(value)) && filterValues.length === aux.length;
+    });
+
+    return selectedFilters.size === urlParams.size && equalFilters;
   }
 
   setActiveFiltersToURL() {
@@ -175,31 +231,6 @@ class ServiceListComponent extends React.Component<ServiceListComponentProps, Se
     });
 
     this.props.onParamChange(params, 'append');
-  }
-
-  selectedSortField() {
-    const queriedSortedField = this.props.queryParam('sort', [sortFields[0].param]);
-    return (
-      sortFields.find(sortField => {
-        return sortField.param === queriedSortedField[0];
-      }) || sortFields[0]
-    );
-  }
-
-  selectedSortDirection() {
-    return this.props.queryParam('direction', ['asc'])[0] === 'asc' ? true : false;
-  }
-
-  selectedPagination() {
-    return {
-      page: parseInt(this.props.queryParam('page', ['1'])[0], 10),
-      perPage: parseInt(this.props.queryParam('perPage', [perPageOptions[1]])[0], 10),
-      perPageOptions: perPageOptions
-    };
-  }
-
-  selectedRateInterval() {
-    return parseInt(this.props.queryParam('rate', [defaultRateInterval.toString(10)])[0], 10);
   }
 
   selectedFilters() {

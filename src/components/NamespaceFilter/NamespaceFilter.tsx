@@ -56,6 +56,30 @@ export class NamespaceFilter extends React.Component<NamespaceFilterProps, Names
     this.updateNamespaces();
   }
 
+  componentDidUpdate(prevProps: NamespaceFilterProps, prevState: NamespaceFilterState, snapshot: any) {
+    const filtersExists = (prevProps.initialActiveFilters || []).every(prevFilter => {
+      return (
+        (this.props.initialActiveFilters || []).findIndex(filter => {
+          return (
+            filter.label === prevFilter.label &&
+            filter.category === prevFilter.category &&
+            filter.value === prevFilter.value
+          );
+        }) > -1
+      );
+    });
+
+    if (
+      this.props.initialActiveFilters &&
+      prevProps.initialActiveFilters &&
+      (!filtersExists || prevProps.initialActiveFilters.length !== this.props.initialActiveFilters.length)
+    ) {
+      this.setState({
+        activeFilters: this.props.initialActiveFilters
+      });
+    }
+  }
+
   updateNamespaces() {
     API.getNamespaces(authentication())
       .then(response => {
