@@ -1,13 +1,9 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import * as MessageCenter from '../../utils/MessageCenter';
+import { URLParameter } from '../../types/Parameters';
 
 export namespace ListPage {
-  export interface URLParameter {
-    name: string;
-    value: string;
-  }
-
   const ACTION_APPEND = 'append';
   const ACTION_SET = 'set';
 
