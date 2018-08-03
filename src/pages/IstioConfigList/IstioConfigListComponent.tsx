@@ -223,18 +223,27 @@ class IstioConfigListComponent extends React.Component<IstioConfigListComponentP
   }
 
   setActiveFiltersToURL() {
-    const params = NamespaceFilterSelected.getSelected().map(activeFilter => {
-      let filterId = (
-        availableFilters.find(filter => {
+    const params = NamespaceFilterSelected.getSelected()
+      .map(activeFilter => {
+        const availableFilter = availableFilters.find(filter => {
           return filter.title === activeFilter.category;
-        }) || availableFilters[2]
-      ).id;
+        });
 
-      return {
-        name: filterId,
-        value: activeFilter.value
-      };
-    });
+        if (typeof availableFilter === 'undefined') {
+          NamespaceFilterSelected.setSelected(
+            NamespaceFilterSelected.getSelected().filter(nfs => {
+              return nfs.category === activeFilter.category;
+            })
+          );
+          return null;
+        }
+
+        return {
+          name: availableFilter.id,
+          value: activeFilter.value
+        };
+      })
+      .filter(filter => filter !== null);
 
     this.props.onParamChange(params, 'append');
   }
