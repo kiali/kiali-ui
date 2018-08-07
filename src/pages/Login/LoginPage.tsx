@@ -73,6 +73,22 @@ export default class LoginPage extends React.Component<LoginProps, LoginState> {
                     {this.props.error && <Alert>{this.props.message}</Alert>}
                     <Form onSubmit={e => this.handleSubmit(e)} id={'kiali-login'}>
                       <FormGroup>
+                        <HelpBlock>
+                          <h2>THIS VERSION OF KIALI IS EXPERIMENTAL!</h2>
+                          <p>PLEASE TRY IT OUT.</p>
+                          <p>
+                            IF YOU HAVE ANY ISSUES,{' '}
+                            <a href={`https://github.com/kiali/kiali/issues`}>TELL THE KIALI TEAM.</a>
+                          </p>
+                          <p>FEEL FREE TO PARTICIPATE IN THE KIALI COMMUNITY</p>
+                          <p>FREENODE: #kiali</p>
+                          <p>
+                            GOOGLE GROUPS:{' '}
+                            <a href={`https://groups.google.com/forum/#!forum/kiali-users`}>kiali-users</a>
+                          </p>
+                        </HelpBlock>
+                      </FormGroup>
+                      <FormGroup>
                         <FormControl
                           id="username"
                           type="text"
