@@ -15,8 +15,6 @@ import {
 
 import ServiceId from '../../types/ServiceId';
 import ServiceInfoDescription from './ServiceInfo/ServiceInfoDescription';
-import ServiceInfoPods from './ServiceInfo/ServiceInfoPods';
-import ServiceInfoDeployments from './ServiceInfo/ServiceInfoDeployments';
 import ServiceInfoRoutes from './ServiceInfo/ServiceInfoRoutes';
 import { ServiceDetailsInfo, severityToIconName, validationToSeverity, Validations } from '../../types/ServiceInfo';
 import ServiceInfoVirtualServices from './ServiceInfo/ServiceInfoVirtualServices';
@@ -78,8 +76,6 @@ class ServiceInfo extends React.Component<ServiceDetails, ServiceInfoState> {
   }
 
   render() {
-    const pods = this.props.serviceDetails.pods || [];
-    const deployments = this.props.serviceDetails.deployments || [];
     const dependencies = this.props.serviceDetails.dependencies || {};
     const virtualServices = this.props.serviceDetails.virtualServices || [];
     const destinationRules = this.props.serviceDetails.destinationRules || [];
@@ -122,14 +118,14 @@ class ServiceInfo extends React.Component<ServiceDetails, ServiceInfoState> {
                 <Icon name="refresh" />
               </Button>
               <ServiceInfoDescription
-                name={this.props.serviceDetails.name}
-                createdAt={this.props.serviceDetails.createdAt}
-                resourceVersion={this.props.serviceDetails.resourceVersion}
+                name={this.props.serviceDetails.service.name}
+                createdAt={this.props.serviceDetails.service.createdAt}
+                resourceVersion={this.props.serviceDetails.service.resourceVersion}
                 istio_sidecar={this.props.serviceDetails.istioSidecar}
-                labels={this.props.serviceDetails.labels}
-                ports={this.props.serviceDetails.ports}
-                type={this.props.serviceDetails.type}
-                ip={this.props.serviceDetails.ip}
+                labels={this.props.serviceDetails.service.labels}
+                ports={this.props.serviceDetails.service.ports}
+                type={this.props.serviceDetails.service.type}
+                ip={this.props.serviceDetails.service.ip}
                 endpoints={this.props.serviceDetails.endpoints}
                 health={this.props.serviceDetails.health}
               />
@@ -144,8 +140,6 @@ class ServiceInfo extends React.Component<ServiceDetails, ServiceInfoState> {
               >
                 <div>
                   <Nav bsClass="nav nav-tabs nav-tabs-pf">
-                    <NavItem eventKey={'pods'}>{'Pods (' + pods.length + ')'}</NavItem>
-                    <NavItem eventKey={'deployments'}>{'Deployments (' + deployments.length + ')'}</NavItem>
                     <NavItem eventKey={'sources'}>
                       {'Source Services (' + Object.keys(dependencies).length + ')'}
                     </NavItem>
@@ -169,14 +163,6 @@ class ServiceInfo extends React.Component<ServiceDetails, ServiceInfoState> {
                     </NavItem>
                   </Nav>
                   <TabContent>
-                    <TabPane eventKey={'pods'}>
-                      {(pods.length > 0 || this.props.serviceDetails.istioSidecar) && <ServiceInfoPods pods={pods} />}
-                    </TabPane>
-                    <TabPane eventKey={'deployments'}>
-                      {(deployments.length > 0 || this.props.serviceDetails.istioSidecar) && (
-                        <ServiceInfoDeployments deployments={deployments} />
-                      )}
-                    </TabPane>
                     <TabPane eventKey={'sources'}>
                       {(Object.keys(dependencies).length > 0 || this.props.serviceDetails.istioSidecar) && (
                         <ServiceInfoRoutes dependencies={dependencies} />
