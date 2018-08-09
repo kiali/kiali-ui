@@ -16,9 +16,10 @@ import {
 import ServiceId from '../../types/ServiceId';
 import ServiceInfoDescription from './ServiceInfo/ServiceInfoDescription';
 import ServiceInfoRoutes from './ServiceInfo/ServiceInfoRoutes';
-import { ServiceDetailsInfo, severityToIconName, validationToSeverity, Validations } from '../../types/ServiceInfo';
+import { ServiceDetailsInfo, severityToIconName, Validations, validationToSeverity } from '../../types/ServiceInfo';
 import ServiceInfoVirtualServices from './ServiceInfo/ServiceInfoVirtualServices';
 import ServiceInfoDestinationRules from './ServiceInfo/ServiceInfoDestinationRules';
+import ServiceInfoWorkload from './ServiceInfo/ServiceInfoWorkload';
 
 interface ServiceDetails extends ServiceId {
   serviceDetails: ServiceDetailsInfo;
@@ -76,6 +77,7 @@ class ServiceInfo extends React.Component<ServiceDetails, ServiceInfoState> {
   }
 
   render() {
+    const workloads = this.props.serviceDetails.workloads || [];
     const dependencies = this.props.serviceDetails.dependencies || {};
     const virtualServices = this.props.serviceDetails.virtualServices || [];
     const destinationRules = this.props.serviceDetails.destinationRules || [];
@@ -135,11 +137,12 @@ class ServiceInfo extends React.Component<ServiceDetails, ServiceInfoState> {
             <Col xs={12} sm={12} md={12} lg={12}>
               <TabContainer
                 id="service-tabs"
-                activeKey={this.props.activeTab(tabName, 'pods')}
+                activeKey={this.props.activeTab(tabName, 'workloads')}
                 onSelect={this.props.onSelectTab(tabName)}
               >
                 <div>
                   <Nav bsClass="nav nav-tabs nav-tabs-pf">
+                    <NavItem eventKey={'workloads'}>{'Workloads (' + Object.keys(workloads).length + ')'}</NavItem>
                     <NavItem eventKey={'sources'}>
                       {'Source Services (' + Object.keys(dependencies).length + ')'}
                     </NavItem>
@@ -163,6 +166,11 @@ class ServiceInfo extends React.Component<ServiceDetails, ServiceInfoState> {
                     </NavItem>
                   </Nav>
                   <TabContent>
+                    <TabPane eventKey={'workloads'}>
+                      {(Object.keys(workloads).length > 0 || this.props.serviceDetails.istioSidecar) && (
+                        <ServiceInfoWorkload workloads={workloads} />
+                      )}
+                    </TabPane>
                     <TabPane eventKey={'sources'}>
                       {(Object.keys(dependencies).length > 0 || this.props.serviceDetails.istioSidecar) && (
                         <ServiceInfoRoutes dependencies={dependencies} />

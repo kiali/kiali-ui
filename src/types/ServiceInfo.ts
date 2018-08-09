@@ -1,5 +1,6 @@
 import { ServiceHealth } from './Health';
 import { PfColors } from '../components/Pf/PfColors';
+import Namespace from './Namespace';
 
 export interface Endpoints {
   addresses?: EndpointAddress[];
@@ -10,6 +11,12 @@ interface EndpointAddress {
   ip: string;
   kind?: string;
   name?: string;
+}
+
+export interface WorkloadOverview {
+  name: string;
+  namespace: Namespace;
+  labels?: { [key: string]: string };
 }
 
 export interface Port {
@@ -383,6 +390,7 @@ export interface ServiceDetailsInfo {
   destinationRules?: DestinationRule[];
   dependencies?: { [key: string]: string[] };
   health?: ServiceHealth;
+  workloads?: WorkloadOverview[];
 }
 
 // NamespaceValidations are grouped per 'namespace'
