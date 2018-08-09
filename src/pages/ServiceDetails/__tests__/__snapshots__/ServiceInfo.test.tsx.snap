@@ -282,7 +282,7 @@ ShallowWrapper {
                   }
                 }
                 ip="172.30.196.248"
-                istio_sidecar={false}
+                istioEnabled={false}
                 labels={
                   Object {
                     "app": "reviews",
@@ -563,7 +563,7 @@ ShallowWrapper {
                     }
                   }
                   ip="172.30.196.248"
-                  istio_sidecar={false}
+                  istioEnabled={false}
                   labels={
                     Object {
                       "app": "reviews",
@@ -838,7 +838,7 @@ ShallowWrapper {
                     }
                   }
                   ip="172.30.196.248"
-                  istio_sidecar={false}
+                  istioEnabled={false}
                   labels={
                     Object {
                       "app": "reviews",
@@ -955,7 +955,7 @@ ShallowWrapper {
                       }
                     }
                     ip="172.30.196.248"
-                    istio_sidecar={false}
+                    istioEnabled={false}
                     labels={
                       Object {
                         "app": "reviews",
@@ -1085,7 +1085,7 @@ ShallowWrapper {
                       },
                     },
                     "ip": "172.30.196.248",
-                    "istio_sidecar": false,
+                    "istioEnabled": false,
                     "labels": Object {
                       "app": "reviews",
                     },
@@ -2210,7 +2210,7 @@ ShallowWrapper {
                     }
                   }
                   ip="172.30.196.248"
-                  istio_sidecar={false}
+                  istioEnabled={false}
                   labels={
                     Object {
                       "app": "reviews",
@@ -2491,7 +2491,7 @@ ShallowWrapper {
                       }
                     }
                     ip="172.30.196.248"
-                    istio_sidecar={false}
+                    istioEnabled={false}
                     labels={
                       Object {
                         "app": "reviews",
@@ -2766,7 +2766,7 @@ ShallowWrapper {
                       }
                     }
                     ip="172.30.196.248"
-                    istio_sidecar={false}
+                    istioEnabled={false}
                     labels={
                       Object {
                         "app": "reviews",
@@ -2883,7 +2883,7 @@ ShallowWrapper {
                         }
                       }
                       ip="172.30.196.248"
-                      istio_sidecar={false}
+                      istioEnabled={false}
                       labels={
                         Object {
                           "app": "reviews",
@@ -3013,7 +3013,7 @@ ShallowWrapper {
                         },
                       },
                       "ip": "172.30.196.248",
-                      "istio_sidecar": false,
+                      "istioEnabled": false,
                       "labels": Object {
                         "app": "reviews",
                       },

@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { Col, Icon, Row } from 'patternfly-react';
+import { Col, Row } from 'patternfly-react';
 import { WorkloadOverview } from '../../../types/ServiceInfo';
-import { Status } from '../../../types/Health';
 import Label from '../../../components/Label/Label';
 
 interface ServiceInfoWorkloadProps {
@@ -33,14 +32,6 @@ class ServiceInfoWorkload extends React.Component<ServiceInfoWorkloadProps> {
         </Row>
       </div>
     );
-  }
-
-  renderStatus(status: Status) {
-    if (status.icon) {
-      return <Icon type="pf" name={status.icon} />;
-    } else {
-      return <span style={{ color: status.color }}>{status.text}</span>;
-    }
   }
 }
 

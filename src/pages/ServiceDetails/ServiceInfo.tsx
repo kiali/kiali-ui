@@ -123,7 +123,7 @@ class ServiceInfo extends React.Component<ServiceDetails, ServiceInfoState> {
                 name={this.props.serviceDetails.service.name}
                 createdAt={this.props.serviceDetails.service.createdAt}
                 resourceVersion={this.props.serviceDetails.service.resourceVersion}
-                istio_sidecar={this.props.serviceDetails.istioSidecar}
+                istioEnabled={this.props.serviceDetails.istioSidecar}
                 labels={this.props.serviceDetails.service.labels}
                 ports={this.props.serviceDetails.service.ports}
                 type={this.props.serviceDetails.service.type}
