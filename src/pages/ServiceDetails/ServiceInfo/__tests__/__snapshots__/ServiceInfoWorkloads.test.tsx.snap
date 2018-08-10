@@ -8,34 +8,34 @@ ShallowWrapper {
     workloads={
       Array [
         Object {
+          "createdAt": "2018-03-14T10:17:52Z\\"",
           "labels": Object {
             "app": "reviews",
             "version": "v2",
           },
           "name": "reviews-v2",
-          "namespace": Object {
-            "name": "bookinfo",
-          },
+          "resourceVersion": "081020181987",
+          "type": "Deployment",
         },
         Object {
+          "createdAt": "2018-03-14T10:17:52Z\\"",
           "labels": Object {
             "app": "reviews",
             "version": "v3",
           },
           "name": "reviews-v3",
-          "namespace": Object {
-            "name": "bookinfo",
-          },
+          "resourceVersion": "081020181987",
+          "type": "Deployment",
         },
         Object {
+          "createdAt": "2018-03-14T10:17:52Z\\"",
           "labels": Object {
             "app": "reviews",
             "version": "v1",
           },
           "name": "reviews-v1",
-          "namespace": Object {
-            "name": "bookinfo",
-          },
+          "resourceVersion": "081020181987",
+          "type": "Deployment",
         },
       ]
     }
@@ -50,87 +50,987 @@ ShallowWrapper {
   Symbol(enzyme.__node__): Object {
     "instance": null,
     "key": undefined,
-    "nodeType": "host",
+    "nodeType": "class",
     "props": Object {
-      "children": <Row
-        bsClass="row"
-        className="row-cards-pf"
+      "bsClass": "row",
+      "children": <Col
+        bsClass="col"
         componentClass="div"
+        xs={12}
       >
-        <Col
-          bsClass="col"
-          componentClass="div"
-          lg={12}
-          md={12}
-          sm={12}
-          xs={12}
+        <TablePfProvider
+          bordered={true}
+          className=""
+          columns={
+            Array [
+              Object {
+                "cell": Object {
+                  "formatters": Array [
+                    [Function],
+                  ],
+                },
+                "header": Object {
+                  "formatters": Array [
+                    [Function],
+                  ],
+                  "label": "Name",
+                },
+                "property": "name",
+              },
+              Object {
+                "cell": Object {
+                  "formatters": Array [
+                    [Function],
+                  ],
+                  "props": Object {
+                    "align": "text-center",
+                  },
+                },
+                "header": Object {
+                  "formatters": Array [
+                    [Function],
+                  ],
+                  "label": "Type",
+                },
+                "property": "type",
+              },
+              Object {
+                "cell": Object {
+                  "formatters": Array [
+                    [Function],
+                  ],
+                },
+                "header": Object {
+                  "formatters": Array [
+                    [Function],
+                  ],
+                  "label": "Labels",
+                },
+                "property": "labels",
+              },
+              Object {
+                "cell": Object {
+                  "formatters": Array [
+                    [Function],
+                  ],
+                },
+                "header": Object {
+                  "formatters": Array [
+                    [Function],
+                  ],
+                  "label": "Created at",
+                },
+                "property": "createdAt",
+              },
+              Object {
+                "cell": Object {
+                  "formatters": Array [
+                    [Function],
+                  ],
+                },
+                "header": Object {
+                  "formatters": Array [
+                    [Function],
+                  ],
+                  "label": "Resource version",
+                },
+                "property": "resourceVersion",
+              },
+            ]
+          }
+          components={Object {}}
+          condensed={false}
+          dataTable={true}
+          hover={true}
+          inlineEdit={false}
+          striped={true}
         >
-          <div
-            className="card-pf-body"
-          >
-            <h3>
-              reviews-v2
-            </h3>
-            <div
-              className="label-collection"
-            >
-              <Label
-                name="app"
-                value="reviews"
-              />
-              <Label
-                name="version"
-                value="v2"
-              />
-            </div>
-            <hr />
-          </div>
-          <div
-            className="card-pf-body"
-          >
-            <h3>
-              reviews-v3
-            </h3>
-            <div
-              className="label-collection"
-            >
-              <Label
-                name="app"
-                value="reviews"
-              />
-              <Label
-                name="version"
-                value="v3"
-              />
-            </div>
-            <hr />
-          </div>
-          <div
-            className="card-pf-body"
-          >
-            <h3>
-              reviews-v1
-            </h3>
-            <div
-              className="label-collection"
-            >
-              <Label
-                name="app"
-                value="reviews"
-              />
-              <Label
-                name="version"
-                value="v1"
-              />
-            </div>
-            <hr />
-          </div>
-        </Col>
-      </Row>,
-      "className": "card-pf",
+          <Header
+            headerRows={
+              Array [
+                Array [
+                  Object {
+                    "cell": Object {
+                      "formatters": Array [
+                        [Function],
+                      ],
+                    },
+                    "header": Object {
+                      "formatters": Array [
+                        [Function],
+                      ],
+                      "label": "Name",
+                    },
+                    "property": "name",
+                    "props": Object {
+                      "rowSpan": 1,
+                    },
+                  },
+                  Object {
+                    "cell": Object {
+                      "formatters": Array [
+                        [Function],
+                      ],
+                      "props": Object {
+                        "align": "text-center",
+                      },
+                    },
+                    "header": Object {
+                      "formatters": Array [
+                        [Function],
+                      ],
+                      "label": "Type",
+                    },
+                    "property": "type",
+                    "props": Object {
+                      "rowSpan": 1,
+                    },
+                  },
+                  Object {
+                    "cell": Object {
+                      "formatters": Array [
+                        [Function],
+                      ],
+                    },
+                    "header": Object {
+                      "formatters": Array [
+                        [Function],
+                      ],
+                      "label": "Labels",
+                    },
+                    "property": "labels",
+                    "props": Object {
+                      "rowSpan": 1,
+                    },
+                  },
+                  Object {
+                    "cell": Object {
+                      "formatters": Array [
+                        [Function],
+                      ],
+                    },
+                    "header": Object {
+                      "formatters": Array [
+                        [Function],
+                      ],
+                      "label": "Created at",
+                    },
+                    "property": "createdAt",
+                    "props": Object {
+                      "rowSpan": 1,
+                    },
+                  },
+                  Object {
+                    "cell": Object {
+                      "formatters": Array [
+                        [Function],
+                      ],
+                    },
+                    "header": Object {
+                      "formatters": Array [
+                        [Function],
+                      ],
+                      "label": "Resource version",
+                    },
+                    "property": "resourceVersion",
+                    "props": Object {
+                      "rowSpan": 1,
+                    },
+                  },
+                ],
+              ]
+            }
+          />
+          <Body
+            onRow={[Function]}
+            rowKey="id"
+            rows={
+              Array [
+                Object {
+                  "createdAt": <LocalTime
+                    time="2018-03-14T10:17:52Z\\""
+                  />,
+                  "id": 0,
+                  "labels": <div
+                    className="label-collection"
+                  >
+                    <Label
+                      name="app"
+                      value="reviews"
+                    />
+                    <Label
+                      name="version"
+                      value="v2"
+                    />
+                  </div>,
+                  "name": "reviews-v2",
+                  "resourceVersion": "081020181987",
+                  "type": "Deployment",
+                },
+                Object {
+                  "createdAt": <LocalTime
+                    time="2018-03-14T10:17:52Z\\""
+                  />,
+                  "id": 1,
+                  "labels": <div
+                    className="label-collection"
+                  >
+                    <Label
+                      name="app"
+                      value="reviews"
+                    />
+                    <Label
+                      name="version"
+                      value="v3"
+                    />
+                  </div>,
+                  "name": "reviews-v3",
+                  "resourceVersion": "081020181987",
+                  "type": "Deployment",
+                },
+                Object {
+                  "createdAt": <LocalTime
+                    time="2018-03-14T10:17:52Z\\""
+                  />,
+                  "id": 2,
+                  "labels": <div
+                    className="label-collection"
+                  >
+                    <Label
+                      name="app"
+                      value="reviews"
+                    />
+                    <Label
+                      name="version"
+                      value="v1"
+                    />
+                  </div>,
+                  "name": "reviews-v1",
+                  "resourceVersion": "081020181987",
+                  "type": "Deployment",
+                },
+              ]
+            }
+          />
+        </TablePfProvider>
+      </Col>,
+      "className": "card-pf-body",
+      "componentClass": "div",
     },
     "ref": null,
     "rendered": Object {
+      "instance": null,
+      "key": undefined,
+      "nodeType": "class",
+      "props": Object {
+        "bsClass": "col",
+        "children": <TablePfProvider
+          bordered={true}
+          className=""
+          columns={
+            Array [
+              Object {
+                "cell": Object {
+                  "formatters": Array [
+                    [Function],
+                  ],
+                },
+                "header": Object {
+                  "formatters": Array [
+                    [Function],
+                  ],
+                  "label": "Name",
+                },
+                "property": "name",
+              },
+              Object {
+                "cell": Object {
+                  "formatters": Array [
+                    [Function],
+                  ],
+                  "props": Object {
+                    "align": "text-center",
+                  },
+                },
+                "header": Object {
+                  "formatters": Array [
+                    [Function],
+                  ],
+                  "label": "Type",
+                },
+                "property": "type",
+              },
+              Object {
+                "cell": Object {
+                  "formatters": Array [
+                    [Function],
+                  ],
+                },
+                "header": Object {
+                  "formatters": Array [
+                    [Function],
+                  ],
+                  "label": "Labels",
+                },
+                "property": "labels",
+              },
+              Object {
+                "cell": Object {
+                  "formatters": Array [
+                    [Function],
+                  ],
+                },
+                "header": Object {
+                  "formatters": Array [
+                    [Function],
+                  ],
+                  "label": "Created at",
+                },
+                "property": "createdAt",
+              },
+              Object {
+                "cell": Object {
+                  "formatters": Array [
+                    [Function],
+                  ],
+                },
+                "header": Object {
+                  "formatters": Array [
+                    [Function],
+                  ],
+                  "label": "Resource version",
+                },
+                "property": "resourceVersion",
+              },
+            ]
+          }
+          components={Object {}}
+          condensed={false}
+          dataTable={true}
+          hover={true}
+          inlineEdit={false}
+          striped={true}
+        >
+          <Header
+            headerRows={
+              Array [
+                Array [
+                  Object {
+                    "cell": Object {
+                      "formatters": Array [
+                        [Function],
+                      ],
+                    },
+                    "header": Object {
+                      "formatters": Array [
+                        [Function],
+                      ],
+                      "label": "Name",
+                    },
+                    "property": "name",
+                    "props": Object {
+                      "rowSpan": 1,
+                    },
+                  },
+                  Object {
+                    "cell": Object {
+                      "formatters": Array [
+                        [Function],
+                      ],
+                      "props": Object {
+                        "align": "text-center",
+                      },
+                    },
+                    "header": Object {
+                      "formatters": Array [
+                        [Function],
+                      ],
+                      "label": "Type",
+                    },
+                    "property": "type",
+                    "props": Object {
+                      "rowSpan": 1,
+                    },
+                  },
+                  Object {
+                    "cell": Object {
+                      "formatters": Array [
+                        [Function],
+                      ],
+                    },
+                    "header": Object {
+                      "formatters": Array [
+                        [Function],
+                      ],
+                      "label": "Labels",
+                    },
+                    "property": "labels",
+                    "props": Object {
+                      "rowSpan": 1,
+                    },
+                  },
+                  Object {
+                    "cell": Object {
+                      "formatters": Array [
+                        [Function],
+                      ],
+                    },
+                    "header": Object {
+                      "formatters": Array [
+                        [Function],
+                      ],
+                      "label": "Created at",
+                    },
+                    "property": "createdAt",
+                    "props": Object {
+                      "rowSpan": 1,
+                    },
+                  },
+                  Object {
+                    "cell": Object {
+                      "formatters": Array [
+                        [Function],
+                      ],
+                    },
+                    "header": Object {
+                      "formatters": Array [
+                        [Function],
+                      ],
+                      "label": "Resource version",
+                    },
+                    "property": "resourceVersion",
+                    "props": Object {
+                      "rowSpan": 1,
+                    },
+                  },
+                ],
+              ]
+            }
+          />
+          <Body
+            onRow={[Function]}
+            rowKey="id"
+            rows={
+              Array [
+                Object {
+                  "createdAt": <LocalTime
+                    time="2018-03-14T10:17:52Z\\""
+                  />,
+                  "id": 0,
+                  "labels": <div
+                    className="label-collection"
+                  >
+                    <Label
+                      name="app"
+                      value="reviews"
+                    />
+                    <Label
+                      name="version"
+                      value="v2"
+                    />
+                  </div>,
+                  "name": "reviews-v2",
+                  "resourceVersion": "081020181987",
+                  "type": "Deployment",
+                },
+                Object {
+                  "createdAt": <LocalTime
+                    time="2018-03-14T10:17:52Z\\""
+                  />,
+                  "id": 1,
+                  "labels": <div
+                    className="label-collection"
+                  >
+                    <Label
+                      name="app"
+                      value="reviews"
+                    />
+                    <Label
+                      name="version"
+                      value="v3"
+                    />
+                  </div>,
+                  "name": "reviews-v3",
+                  "resourceVersion": "081020181987",
+                  "type": "Deployment",
+                },
+                Object {
+                  "createdAt": <LocalTime
+                    time="2018-03-14T10:17:52Z\\""
+                  />,
+                  "id": 2,
+                  "labels": <div
+                    className="label-collection"
+                  >
+                    <Label
+                      name="app"
+                      value="reviews"
+                    />
+                    <Label
+                      name="version"
+                      value="v1"
+                    />
+                  </div>,
+                  "name": "reviews-v1",
+                  "resourceVersion": "081020181987",
+                  "type": "Deployment",
+                },
+              ]
+            }
+          />
+        </TablePfProvider>,
+        "componentClass": "div",
+        "xs": 12,
+      },
+      "ref": null,
+      "rendered": Object {
+        "instance": null,
+        "key": undefined,
+        "nodeType": "function",
+        "props": Object {
+          "bordered": true,
+          "children": Array [
+            <Header
+              headerRows={
+                Array [
+                  Array [
+                    Object {
+                      "cell": Object {
+                        "formatters": Array [
+                          [Function],
+                        ],
+                      },
+                      "header": Object {
+                        "formatters": Array [
+                          [Function],
+                        ],
+                        "label": "Name",
+                      },
+                      "property": "name",
+                      "props": Object {
+                        "rowSpan": 1,
+                      },
+                    },
+                    Object {
+                      "cell": Object {
+                        "formatters": Array [
+                          [Function],
+                        ],
+                        "props": Object {
+                          "align": "text-center",
+                        },
+                      },
+                      "header": Object {
+                        "formatters": Array [
+                          [Function],
+                        ],
+                        "label": "Type",
+                      },
+                      "property": "type",
+                      "props": Object {
+                        "rowSpan": 1,
+                      },
+                    },
+                    Object {
+                      "cell": Object {
+                        "formatters": Array [
+                          [Function],
+                        ],
+                      },
+                      "header": Object {
+                        "formatters": Array [
+                          [Function],
+                        ],
+                        "label": "Labels",
+                      },
+                      "property": "labels",
+                      "props": Object {
+                        "rowSpan": 1,
+                      },
+                    },
+                    Object {
+                      "cell": Object {
+                        "formatters": Array [
+                          [Function],
+                        ],
+                      },
+                      "header": Object {
+                        "formatters": Array [
+                          [Function],
+                        ],
+                        "label": "Created at",
+                      },
+                      "property": "createdAt",
+                      "props": Object {
+                        "rowSpan": 1,
+                      },
+                    },
+                    Object {
+                      "cell": Object {
+                        "formatters": Array [
+                          [Function],
+                        ],
+                      },
+                      "header": Object {
+                        "formatters": Array [
+                          [Function],
+                        ],
+                        "label": "Resource version",
+                      },
+                      "property": "resourceVersion",
+                      "props": Object {
+                        "rowSpan": 1,
+                      },
+                    },
+                  ],
+                ]
+              }
+            />,
+            <Body
+              onRow={[Function]}
+              rowKey="id"
+              rows={
+                Array [
+                  Object {
+                    "createdAt": <LocalTime
+                      time="2018-03-14T10:17:52Z\\""
+                    />,
+                    "id": 0,
+                    "labels": <div
+                      className="label-collection"
+                    >
+                      <Label
+                        name="app"
+                        value="reviews"
+                      />
+                      <Label
+                        name="version"
+                        value="v2"
+                      />
+                    </div>,
+                    "name": "reviews-v2",
+                    "resourceVersion": "081020181987",
+                    "type": "Deployment",
+                  },
+                  Object {
+                    "createdAt": <LocalTime
+                      time="2018-03-14T10:17:52Z\\""
+                    />,
+                    "id": 1,
+                    "labels": <div
+                      className="label-collection"
+                    >
+                      <Label
+                        name="app"
+                        value="reviews"
+                      />
+                      <Label
+                        name="version"
+                        value="v3"
+                      />
+                    </div>,
+                    "name": "reviews-v3",
+                    "resourceVersion": "081020181987",
+                    "type": "Deployment",
+                  },
+                  Object {
+                    "createdAt": <LocalTime
+                      time="2018-03-14T10:17:52Z\\""
+                    />,
+                    "id": 2,
+                    "labels": <div
+                      className="label-collection"
+                    >
+                      <Label
+                        name="app"
+                        value="reviews"
+                      />
+                      <Label
+                        name="version"
+                        value="v1"
+                      />
+                    </div>,
+                    "name": "reviews-v1",
+                    "resourceVersion": "081020181987",
+                    "type": "Deployment",
+                  },
+                ]
+              }
+            />,
+          ],
+          "className": "",
+          "columns": Array [
+            Object {
+              "cell": Object {
+                "formatters": Array [
+                  [Function],
+                ],
+              },
+              "header": Object {
+                "formatters": Array [
+                  [Function],
+                ],
+                "label": "Name",
+              },
+              "property": "name",
+            },
+            Object {
+              "cell": Object {
+                "formatters": Array [
+                  [Function],
+                ],
+                "props": Object {
+                  "align": "text-center",
+                },
+              },
+              "header": Object {
+                "formatters": Array [
+                  [Function],
+                ],
+                "label": "Type",
+              },
+              "property": "type",
+            },
+            Object {
+              "cell": Object {
+                "formatters": Array [
+                  [Function],
+                ],
+              },
+              "header": Object {
+                "formatters": Array [
+                  [Function],
+                ],
+                "label": "Labels",
+              },
+              "property": "labels",
+            },
+            Object {
+              "cell": Object {
+                "formatters": Array [
+                  [Function],
+                ],
+              },
+              "header": Object {
+                "formatters": Array [
+                  [Function],
+                ],
+                "label": "Created at",
+              },
+              "property": "createdAt",
+            },
+            Object {
+              "cell": Object {
+                "formatters": Array [
+                  [Function],
+                ],
+              },
+              "header": Object {
+                "formatters": Array [
+                  [Function],
+                ],
+                "label": "Resource version",
+              },
+              "property": "resourceVersion",
+            },
+          ],
+          "components": Object {},
+          "condensed": false,
+          "dataTable": true,
+          "hover": true,
+          "inlineEdit": false,
+          "striped": true,
+        },
+        "ref": null,
+        "rendered": Array [
+          Object {
+            "instance": null,
+            "key": undefined,
+            "nodeType": "class",
+            "props": Object {
+              "headerRows": Array [
+                Array [
+                  Object {
+                    "cell": Object {
+                      "formatters": Array [
+                        [Function],
+                      ],
+                    },
+                    "header": Object {
+                      "formatters": Array [
+                        [Function],
+                      ],
+                      "label": "Name",
+                    },
+                    "property": "name",
+                    "props": Object {
+                      "rowSpan": 1,
+                    },
+                  },
+                  Object {
+                    "cell": Object {
+                      "formatters": Array [
+                        [Function],
+                      ],
+                      "props": Object {
+                        "align": "text-center",
+                      },
+                    },
+                    "header": Object {
+                      "formatters": Array [
+                        [Function],
+                      ],
+                      "label": "Type",
+                    },
+                    "property": "type",
+                    "props": Object {
+                      "rowSpan": 1,
+                    },
+                  },
+                  Object {
+                    "cell": Object {
+                      "formatters": Array [
+                        [Function],
+                      ],
+                    },
+                    "header": Object {
+                      "formatters": Array [
+                        [Function],
+                      ],
+                      "label": "Labels",
+                    },
+                    "property": "labels",
+                    "props": Object {
+                      "rowSpan": 1,
+                    },
+                  },
+                  Object {
+                    "cell": Object {
+                      "formatters": Array [
+                        [Function],
+                      ],
+                    },
+                    "header": Object {
+                      "formatters": Array [
+                        [Function],
+                      ],
+                      "label": "Created at",
+                    },
+                    "property": "createdAt",
+                    "props": Object {
+                      "rowSpan": 1,
+                    },
+                  },
+                  Object {
+                    "cell": Object {
+                      "formatters": Array [
+                        [Function],
+                      ],
+                    },
+                    "header": Object {
+                      "formatters": Array [
+                        [Function],
+                      ],
+                      "label": "Resource version",
+                    },
+                    "property": "resourceVersion",
+                    "props": Object {
+                      "rowSpan": 1,
+                    },
+                  },
+                ],
+              ],
+            },
+            "ref": null,
+            "rendered": null,
+            "type": [Function],
+          },
+          Object {
+            "instance": null,
+            "key": undefined,
+            "nodeType": "class",
+            "props": Object {
+              "onRow": [Function],
+              "rowKey": "id",
+              "rows": Array [
+                Object {
+                  "createdAt": <LocalTime
+                    time="2018-03-14T10:17:52Z\\""
+                  />,
+                  "id": 0,
+                  "labels": <div
+                    className="label-collection"
+                  >
+                    <Label
+                      name="app"
+                      value="reviews"
+                    />
+                    <Label
+                      name="version"
+                      value="v2"
+                    />
+                  </div>,
+                  "name": "reviews-v2",
+                  "resourceVersion": "081020181987",
+                  "type": "Deployment",
+                },
+                Object {
+                  "createdAt": <LocalTime
+                    time="2018-03-14T10:17:52Z\\""
+                  />,
+                  "id": 1,
+                  "labels": <div
+                    className="label-collection"
+                  >
+                    <Label
+                      name="app"
+                      value="reviews"
+                    />
+                    <Label
+                      name="version"
+                      value="v3"
+                    />
+                  </div>,
+                  "name": "reviews-v3",
+                  "resourceVersion": "081020181987",
+                  "type": "Deployment",
+                },
+                Object {
+                  "createdAt": <LocalTime
+                    time="2018-03-14T10:17:52Z\\""
+                  />,
+                  "id": 2,
+                  "labels": <div
+                    className="label-collection"
+                  >
+                    <Label
+                      name="app"
+                      value="reviews"
+                    />
+                    <Label
+                      name="version"
+                      value="v1"
+                    />
+                  </div>,
+                  "name": "reviews-v1",
+                  "resourceVersion": "081020181987",
+                  "type": "Deployment",
+                },
+              ],
+            },
+            "ref": null,
+            "rendered": null,
+            "type": [Function],
+          },
+        ],
+        "type": [Function],
+      },
+      "type": [Function],
+    },
+    "type": [Function],
+  },
+  Symbol(enzyme.__nodes__): Array [
+    Object {
       "instance": null,
       "key": undefined,
       "nodeType": "class",
@@ -139,73 +1039,265 @@ ShallowWrapper {
         "children": <Col
           bsClass="col"
           componentClass="div"
-          lg={12}
-          md={12}
-          sm={12}
           xs={12}
         >
-          <div
-            className="card-pf-body"
+          <TablePfProvider
+            bordered={true}
+            className=""
+            columns={
+              Array [
+                Object {
+                  "cell": Object {
+                    "formatters": Array [
+                      [Function],
+                    ],
+                  },
+                  "header": Object {
+                    "formatters": Array [
+                      [Function],
+                    ],
+                    "label": "Name",
+                  },
+                  "property": "name",
+                },
+                Object {
+                  "cell": Object {
+                    "formatters": Array [
+                      [Function],
+                    ],
+                    "props": Object {
+                      "align": "text-center",
+                    },
+                  },
+                  "header": Object {
+                    "formatters": Array [
+                      [Function],
+                    ],
+                    "label": "Type",
+                  },
+                  "property": "type",
+                },
+                Object {
+                  "cell": Object {
+                    "formatters": Array [
+                      [Function],
+                    ],
+                  },
+                  "header": Object {
+                    "formatters": Array [
+                      [Function],
+                    ],
+                    "label": "Labels",
+                  },
+                  "property": "labels",
+                },
+                Object {
+                  "cell": Object {
+                    "formatters": Array [
+                      [Function],
+                    ],
+                  },
+                  "header": Object {
+                    "formatters": Array [
+                      [Function],
+                    ],
+                    "label": "Created at",
+                  },
+                  "property": "createdAt",
+                },
+                Object {
+                  "cell": Object {
+                    "formatters": Array [
+                      [Function],
+                    ],
+                  },
+                  "header": Object {
+                    "formatters": Array [
+                      [Function],
+                    ],
+                    "label": "Resource version",
+                  },
+                  "property": "resourceVersion",
+                },
+              ]
+            }
+            components={Object {}}
+            condensed={false}
+            dataTable={true}
+            hover={true}
+            inlineEdit={false}
+            striped={true}
           >
-            <h3>
-              reviews-v2
-            </h3>
-            <div
-              className="label-collection"
-            >
-              <Label
-                name="app"
-                value="reviews"
-              />
-              <Label
-                name="version"
-                value="v2"
-              />
-            </div>
-            <hr />
-          </div>
-          <div
-            className="card-pf-body"
-          >
-            <h3>
-              reviews-v3
-            </h3>
-            <div
-              className="label-collection"
-            >
-              <Label
-                name="app"
-                value="reviews"
-              />
-              <Label
-                name="version"
-                value="v3"
-              />
-            </div>
-            <hr />
-          </div>
-          <div
-            className="card-pf-body"
-          >
-            <h3>
-              reviews-v1
-            </h3>
-            <div
-              className="label-collection"
-            >
-              <Label
-                name="app"
-                value="reviews"
-              />
-              <Label
-                name="version"
-                value="v1"
-              />
-            </div>
-            <hr />
-          </div>
+            <Header
+              headerRows={
+                Array [
+                  Array [
+                    Object {
+                      "cell": Object {
+                        "formatters": Array [
+                          [Function],
+                        ],
+                      },
+                      "header": Object {
+                        "formatters": Array [
+                          [Function],
+                        ],
+                        "label": "Name",
+                      },
+                      "property": "name",
+                      "props": Object {
+                        "rowSpan": 1,
+                      },
+                    },
+                    Object {
+                      "cell": Object {
+                        "formatters": Array [
+                          [Function],
+                        ],
+                        "props": Object {
+                          "align": "text-center",
+                        },
+                      },
+                      "header": Object {
+                        "formatters": Array [
+                          [Function],
+                        ],
+                        "label": "Type",
+                      },
+                      "property": "type",
+                      "props": Object {
+                        "rowSpan": 1,
+                      },
+                    },
+                    Object {
+                      "cell": Object {
+                        "formatters": Array [
+                          [Function],
+                        ],
+                      },
+                      "header": Object {
+                        "formatters": Array [
+                          [Function],
+                        ],
+                        "label": "Labels",
+                      },
+                      "property": "labels",
+                      "props": Object {
+                        "rowSpan": 1,
+                      },
+                    },
+                    Object {
+                      "cell": Object {
+                        "formatters": Array [
+                          [Function],
+                        ],
+                      },
+                      "header": Object {
+                        "formatters": Array [
+                          [Function],
+                        ],
+                        "label": "Created at",
+                      },
+                      "property": "createdAt",
+                      "props": Object {
+                        "rowSpan": 1,
+                      },
+                    },
+                    Object {
+                      "cell": Object {
+                        "formatters": Array [
+                          [Function],
+                        ],
+                      },
+                      "header": Object {
+                        "formatters": Array [
+                          [Function],
+                        ],
+                        "label": "Resource version",
+                      },
+                      "property": "resourceVersion",
+                      "props": Object {
+                        "rowSpan": 1,
+                      },
+                    },
+                  ],
+                ]
+              }
+            />
+            <Body
+              onRow={[Function]}
+              rowKey="id"
+              rows={
+                Array [
+                  Object {
+                    "createdAt": <LocalTime
+                      time="2018-03-14T10:17:52Z\\""
+                    />,
+                    "id": 0,
+                    "labels": <div
+                      className="label-collection"
+                    >
+                      <Label
+                        name="app"
+                        value="reviews"
+                      />
+                      <Label
+                        name="version"
+                        value="v2"
+                      />
+                    </div>,
+                    "name": "reviews-v2",
+                    "resourceVersion": "081020181987",
+                    "type": "Deployment",
+                  },
+                  Object {
+                    "createdAt": <LocalTime
+                      time="2018-03-14T10:17:52Z\\""
+                    />,
+                    "id": 1,
+                    "labels": <div
+                      className="label-collection"
+                    >
+                      <Label
+                        name="app"
+                        value="reviews"
+                      />
+                      <Label
+                        name="version"
+                        value="v3"
+                      />
+                    </div>,
+                    "name": "reviews-v3",
+                    "resourceVersion": "081020181987",
+                    "type": "Deployment",
+                  },
+                  Object {
+                    "createdAt": <LocalTime
+                      time="2018-03-14T10:17:52Z\\""
+                    />,
+                    "id": 2,
+                    "labels": <div
+                      className="label-collection"
+                    >
+                      <Label
+                        name="app"
+                        value="reviews"
+                      />
+                      <Label
+                        name="version"
+                        value="v1"
+                      />
+                    </div>,
+                    "name": "reviews-v1",
+                    "resourceVersion": "081020181987",
+                    "type": "Deployment",
+                  },
+                ]
+              }
+            />
+          </TablePfProvider>
         </Col>,
-        "className": "row-cards-pf",
+        "className": "card-pf-body",
         "componentClass": "div",
       },
       "ref": null,
@@ -215,904 +1307,710 @@ ShallowWrapper {
         "nodeType": "class",
         "props": Object {
           "bsClass": "col",
-          "children": Array [
-            <div
-              className="card-pf-body"
-            >
-              <h3>
-                reviews-v2
-              </h3>
-              <div
-                className="label-collection"
-              >
-                <Label
-                  name="app"
-                  value="reviews"
-                />
-                <Label
-                  name="version"
-                  value="v2"
-                />
-              </div>
-              <hr />
-            </div>,
-            <div
-              className="card-pf-body"
-            >
-              <h3>
-                reviews-v3
-              </h3>
-              <div
-                className="label-collection"
-              >
-                <Label
-                  name="app"
-                  value="reviews"
-                />
-                <Label
-                  name="version"
-                  value="v3"
-                />
-              </div>
-              <hr />
-            </div>,
-            <div
-              className="card-pf-body"
-            >
-              <h3>
-                reviews-v1
-              </h3>
-              <div
-                className="label-collection"
-              >
-                <Label
-                  name="app"
-                  value="reviews"
-                />
-                <Label
-                  name="version"
-                  value="v1"
-                />
-              </div>
-              <hr />
-            </div>,
-          ],
+          "children": <TablePfProvider
+            bordered={true}
+            className=""
+            columns={
+              Array [
+                Object {
+                  "cell": Object {
+                    "formatters": Array [
+                      [Function],
+                    ],
+                  },
+                  "header": Object {
+                    "formatters": Array [
+                      [Function],
+                    ],
+                    "label": "Name",
+                  },
+                  "property": "name",
+                },
+                Object {
+                  "cell": Object {
+                    "formatters": Array [
+                      [Function],
+                    ],
+                    "props": Object {
+                      "align": "text-center",
+                    },
+                  },
+                  "header": Object {
+                    "formatters": Array [
+                      [Function],
+                    ],
+                    "label": "Type",
+                  },
+                  "property": "type",
+                },
+                Object {
+                  "cell": Object {
+                    "formatters": Array [
+                      [Function],
+                    ],
+                  },
+                  "header": Object {
+                    "formatters": Array [
+                      [Function],
+                    ],
+                    "label": "Labels",
+                  },
+                  "property": "labels",
+                },
+                Object {
+                  "cell": Object {
+                    "formatters": Array [
+                      [Function],
+                    ],
+                  },
+                  "header": Object {
+                    "formatters": Array [
+                      [Function],
+                    ],
+                    "label": "Created at",
+                  },
+                  "property": "createdAt",
+                },
+                Object {
+                  "cell": Object {
+                    "formatters": Array [
+                      [Function],
+                    ],
+                  },
+                  "header": Object {
+                    "formatters": Array [
+                      [Function],
+                    ],
+                    "label": "Resource version",
+                  },
+                  "property": "resourceVersion",
+                },
+              ]
+            }
+            components={Object {}}
+            condensed={false}
+            dataTable={true}
+            hover={true}
+            inlineEdit={false}
+            striped={true}
+          >
+            <Header
+              headerRows={
+                Array [
+                  Array [
+                    Object {
+                      "cell": Object {
+                        "formatters": Array [
+                          [Function],
+                        ],
+                      },
+                      "header": Object {
+                        "formatters": Array [
+                          [Function],
+                        ],
+                        "label": "Name",
+                      },
+                      "property": "name",
+                      "props": Object {
+                        "rowSpan": 1,
+                      },
+                    },
+                    Object {
+                      "cell": Object {
+                        "formatters": Array [
+                          [Function],
+                        ],
+                        "props": Object {
+                          "align": "text-center",
+                        },
+                      },
+                      "header": Object {
+                        "formatters": Array [
+                          [Function],
+                        ],
+                        "label": "Type",
+                      },
+                      "property": "type",
+                      "props": Object {
+                        "rowSpan": 1,
+                      },
+                    },
+                    Object {
+                      "cell": Object {
+                        "formatters": Array [
+                          [Function],
+                        ],
+                      },
+                      "header": Object {
+                        "formatters": Array [
+                          [Function],
+                        ],
+                        "label": "Labels",
+                      },
+                      "property": "labels",
+                      "props": Object {
+                        "rowSpan": 1,
+                      },
+                    },
+                    Object {
+                      "cell": Object {
+                        "formatters": Array [
+                          [Function],
+                        ],
+                      },
+                      "header": Object {
+                        "formatters": Array [
+                          [Function],
+                        ],
+                        "label": "Created at",
+                      },
+                      "property": "createdAt",
+                      "props": Object {
+                        "rowSpan": 1,
+                      },
+                    },
+                    Object {
+                      "cell": Object {
+                        "formatters": Array [
+                          [Function],
+                        ],
+                      },
+                      "header": Object {
+                        "formatters": Array [
+                          [Function],
+                        ],
+                        "label": "Resource version",
+                      },
+                      "property": "resourceVersion",
+                      "props": Object {
+                        "rowSpan": 1,
+                      },
+                    },
+                  ],
+                ]
+              }
+            />
+            <Body
+              onRow={[Function]}
+              rowKey="id"
+              rows={
+                Array [
+                  Object {
+                    "createdAt": <LocalTime
+                      time="2018-03-14T10:17:52Z\\""
+                    />,
+                    "id": 0,
+                    "labels": <div
+                      className="label-collection"
+                    >
+                      <Label
+                        name="app"
+                        value="reviews"
+                      />
+                      <Label
+                        name="version"
+                        value="v2"
+                      />
+                    </div>,
+                    "name": "reviews-v2",
+                    "resourceVersion": "081020181987",
+                    "type": "Deployment",
+                  },
+                  Object {
+                    "createdAt": <LocalTime
+                      time="2018-03-14T10:17:52Z\\""
+                    />,
+                    "id": 1,
+                    "labels": <div
+                      className="label-collection"
+                    >
+                      <Label
+                        name="app"
+                        value="reviews"
+                      />
+                      <Label
+                        name="version"
+                        value="v3"
+                      />
+                    </div>,
+                    "name": "reviews-v3",
+                    "resourceVersion": "081020181987",
+                    "type": "Deployment",
+                  },
+                  Object {
+                    "createdAt": <LocalTime
+                      time="2018-03-14T10:17:52Z\\""
+                    />,
+                    "id": 2,
+                    "labels": <div
+                      className="label-collection"
+                    >
+                      <Label
+                        name="app"
+                        value="reviews"
+                      />
+                      <Label
+                        name="version"
+                        value="v1"
+                      />
+                    </div>,
+                    "name": "reviews-v1",
+                    "resourceVersion": "081020181987",
+                    "type": "Deployment",
+                  },
+                ]
+              }
+            />
+          </TablePfProvider>,
           "componentClass": "div",
-          "lg": 12,
-          "md": 12,
-          "sm": 12,
           "xs": 12,
-        },
-        "ref": null,
-        "rendered": Array [
-          Object {
-            "instance": null,
-            "key": "workloads_0",
-            "nodeType": "host",
-            "props": Object {
-              "children": Array [
-                <h3>
-                  reviews-v2
-                </h3>,
-                <div
-                  className="label-collection"
-                >
-                  <Label
-                    name="app"
-                    value="reviews"
-                  />
-                  <Label
-                    name="version"
-                    value="v2"
-                  />
-                </div>,
-                <hr />,
-              ],
-              "className": "card-pf-body",
-            },
-            "ref": null,
-            "rendered": Array [
-              Object {
-                "instance": null,
-                "key": undefined,
-                "nodeType": "host",
-                "props": Object {
-                  "children": "reviews-v2",
-                },
-                "ref": null,
-                "rendered": "reviews-v2",
-                "type": "h3",
-              },
-              Object {
-                "instance": null,
-                "key": "labels",
-                "nodeType": "host",
-                "props": Object {
-                  "children": Array [
-                    <Label
-                      name="app"
-                      value="reviews"
-                    />,
-                    <Label
-                      name="version"
-                      value="v2"
-                    />,
-                  ],
-                  "className": "label-collection",
-                },
-                "ref": null,
-                "rendered": Array [
-                  Object {
-                    "instance": null,
-                    "key": "workload_0",
-                    "nodeType": "class",
-                    "props": Object {
-                      "name": "app",
-                      "value": "reviews",
-                    },
-                    "ref": null,
-                    "rendered": null,
-                    "type": [Function],
-                  },
-                  Object {
-                    "instance": null,
-                    "key": "workload_1",
-                    "nodeType": "class",
-                    "props": Object {
-                      "name": "version",
-                      "value": "v2",
-                    },
-                    "ref": null,
-                    "rendered": null,
-                    "type": [Function],
-                  },
-                ],
-                "type": "div",
-              },
-              Object {
-                "instance": null,
-                "key": undefined,
-                "nodeType": "host",
-                "props": Object {},
-                "ref": null,
-                "rendered": null,
-                "type": "hr",
-              },
-            ],
-            "type": "div",
-          },
-          Object {
-            "instance": null,
-            "key": "workloads_1",
-            "nodeType": "host",
-            "props": Object {
-              "children": Array [
-                <h3>
-                  reviews-v3
-                </h3>,
-                <div
-                  className="label-collection"
-                >
-                  <Label
-                    name="app"
-                    value="reviews"
-                  />
-                  <Label
-                    name="version"
-                    value="v3"
-                  />
-                </div>,
-                <hr />,
-              ],
-              "className": "card-pf-body",
-            },
-            "ref": null,
-            "rendered": Array [
-              Object {
-                "instance": null,
-                "key": undefined,
-                "nodeType": "host",
-                "props": Object {
-                  "children": "reviews-v3",
-                },
-                "ref": null,
-                "rendered": "reviews-v3",
-                "type": "h3",
-              },
-              Object {
-                "instance": null,
-                "key": "labels",
-                "nodeType": "host",
-                "props": Object {
-                  "children": Array [
-                    <Label
-                      name="app"
-                      value="reviews"
-                    />,
-                    <Label
-                      name="version"
-                      value="v3"
-                    />,
-                  ],
-                  "className": "label-collection",
-                },
-                "ref": null,
-                "rendered": Array [
-                  Object {
-                    "instance": null,
-                    "key": "workload_0",
-                    "nodeType": "class",
-                    "props": Object {
-                      "name": "app",
-                      "value": "reviews",
-                    },
-                    "ref": null,
-                    "rendered": null,
-                    "type": [Function],
-                  },
-                  Object {
-                    "instance": null,
-                    "key": "workload_1",
-                    "nodeType": "class",
-                    "props": Object {
-                      "name": "version",
-                      "value": "v3",
-                    },
-                    "ref": null,
-                    "rendered": null,
-                    "type": [Function],
-                  },
-                ],
-                "type": "div",
-              },
-              Object {
-                "instance": null,
-                "key": undefined,
-                "nodeType": "host",
-                "props": Object {},
-                "ref": null,
-                "rendered": null,
-                "type": "hr",
-              },
-            ],
-            "type": "div",
-          },
-          Object {
-            "instance": null,
-            "key": "workloads_2",
-            "nodeType": "host",
-            "props": Object {
-              "children": Array [
-                <h3>
-                  reviews-v1
-                </h3>,
-                <div
-                  className="label-collection"
-                >
-                  <Label
-                    name="app"
-                    value="reviews"
-                  />
-                  <Label
-                    name="version"
-                    value="v1"
-                  />
-                </div>,
-                <hr />,
-              ],
-              "className": "card-pf-body",
-            },
-            "ref": null,
-            "rendered": Array [
-              Object {
-                "instance": null,
-                "key": undefined,
-                "nodeType": "host",
-                "props": Object {
-                  "children": "reviews-v1",
-                },
-                "ref": null,
-                "rendered": "reviews-v1",
-                "type": "h3",
-              },
-              Object {
-                "instance": null,
-                "key": "labels",
-                "nodeType": "host",
-                "props": Object {
-                  "children": Array [
-                    <Label
-                      name="app"
-                      value="reviews"
-                    />,
-                    <Label
-                      name="version"
-                      value="v1"
-                    />,
-                  ],
-                  "className": "label-collection",
-                },
-                "ref": null,
-                "rendered": Array [
-                  Object {
-                    "instance": null,
-                    "key": "workload_0",
-                    "nodeType": "class",
-                    "props": Object {
-                      "name": "app",
-                      "value": "reviews",
-                    },
-                    "ref": null,
-                    "rendered": null,
-                    "type": [Function],
-                  },
-                  Object {
-                    "instance": null,
-                    "key": "workload_1",
-                    "nodeType": "class",
-                    "props": Object {
-                      "name": "version",
-                      "value": "v1",
-                    },
-                    "ref": null,
-                    "rendered": null,
-                    "type": [Function],
-                  },
-                ],
-                "type": "div",
-              },
-              Object {
-                "instance": null,
-                "key": undefined,
-                "nodeType": "host",
-                "props": Object {},
-                "ref": null,
-                "rendered": null,
-                "type": "hr",
-              },
-            ],
-            "type": "div",
-          },
-        ],
-        "type": [Function],
-      },
-      "type": [Function],
-    },
-    "type": "div",
-  },
-  Symbol(enzyme.__nodes__): Array [
-    Object {
-      "instance": null,
-      "key": undefined,
-      "nodeType": "host",
-      "props": Object {
-        "children": <Row
-          bsClass="row"
-          className="row-cards-pf"
-          componentClass="div"
-        >
-          <Col
-            bsClass="col"
-            componentClass="div"
-            lg={12}
-            md={12}
-            sm={12}
-            xs={12}
-          >
-            <div
-              className="card-pf-body"
-            >
-              <h3>
-                reviews-v2
-              </h3>
-              <div
-                className="label-collection"
-              >
-                <Label
-                  name="app"
-                  value="reviews"
-                />
-                <Label
-                  name="version"
-                  value="v2"
-                />
-              </div>
-              <hr />
-            </div>
-            <div
-              className="card-pf-body"
-            >
-              <h3>
-                reviews-v3
-              </h3>
-              <div
-                className="label-collection"
-              >
-                <Label
-                  name="app"
-                  value="reviews"
-                />
-                <Label
-                  name="version"
-                  value="v3"
-                />
-              </div>
-              <hr />
-            </div>
-            <div
-              className="card-pf-body"
-            >
-              <h3>
-                reviews-v1
-              </h3>
-              <div
-                className="label-collection"
-              >
-                <Label
-                  name="app"
-                  value="reviews"
-                />
-                <Label
-                  name="version"
-                  value="v1"
-                />
-              </div>
-              <hr />
-            </div>
-          </Col>
-        </Row>,
-        "className": "card-pf",
-      },
-      "ref": null,
-      "rendered": Object {
-        "instance": null,
-        "key": undefined,
-        "nodeType": "class",
-        "props": Object {
-          "bsClass": "row",
-          "children": <Col
-            bsClass="col"
-            componentClass="div"
-            lg={12}
-            md={12}
-            sm={12}
-            xs={12}
-          >
-            <div
-              className="card-pf-body"
-            >
-              <h3>
-                reviews-v2
-              </h3>
-              <div
-                className="label-collection"
-              >
-                <Label
-                  name="app"
-                  value="reviews"
-                />
-                <Label
-                  name="version"
-                  value="v2"
-                />
-              </div>
-              <hr />
-            </div>
-            <div
-              className="card-pf-body"
-            >
-              <h3>
-                reviews-v3
-              </h3>
-              <div
-                className="label-collection"
-              >
-                <Label
-                  name="app"
-                  value="reviews"
-                />
-                <Label
-                  name="version"
-                  value="v3"
-                />
-              </div>
-              <hr />
-            </div>
-            <div
-              className="card-pf-body"
-            >
-              <h3>
-                reviews-v1
-              </h3>
-              <div
-                className="label-collection"
-              >
-                <Label
-                  name="app"
-                  value="reviews"
-                />
-                <Label
-                  name="version"
-                  value="v1"
-                />
-              </div>
-              <hr />
-            </div>
-          </Col>,
-          "className": "row-cards-pf",
-          "componentClass": "div",
         },
         "ref": null,
         "rendered": Object {
           "instance": null,
           "key": undefined,
-          "nodeType": "class",
+          "nodeType": "function",
           "props": Object {
-            "bsClass": "col",
+            "bordered": true,
             "children": Array [
-              <div
-                className="card-pf-body"
-              >
-                <h3>
-                  reviews-v2
-                </h3>
-                <div
-                  className="label-collection"
-                >
-                  <Label
-                    name="app"
-                    value="reviews"
-                  />
-                  <Label
-                    name="version"
-                    value="v2"
-                  />
-                </div>
-                <hr />
-              </div>,
-              <div
-                className="card-pf-body"
-              >
-                <h3>
-                  reviews-v3
-                </h3>
-                <div
-                  className="label-collection"
-                >
-                  <Label
-                    name="app"
-                    value="reviews"
-                  />
-                  <Label
-                    name="version"
-                    value="v3"
-                  />
-                </div>
-                <hr />
-              </div>,
-              <div
-                className="card-pf-body"
-              >
-                <h3>
-                  reviews-v1
-                </h3>
-                <div
-                  className="label-collection"
-                >
-                  <Label
-                    name="app"
-                    value="reviews"
-                  />
-                  <Label
-                    name="version"
-                    value="v1"
-                  />
-                </div>
-                <hr />
-              </div>,
+              <Header
+                headerRows={
+                  Array [
+                    Array [
+                      Object {
+                        "cell": Object {
+                          "formatters": Array [
+                            [Function],
+                          ],
+                        },
+                        "header": Object {
+                          "formatters": Array [
+                            [Function],
+                          ],
+                          "label": "Name",
+                        },
+                        "property": "name",
+                        "props": Object {
+                          "rowSpan": 1,
+                        },
+                      },
+                      Object {
+                        "cell": Object {
+                          "formatters": Array [
+                            [Function],
+                          ],
+                          "props": Object {
+                            "align": "text-center",
+                          },
+                        },
+                        "header": Object {
+                          "formatters": Array [
+                            [Function],
+                          ],
+                          "label": "Type",
+                        },
+                        "property": "type",
+                        "props": Object {
+                          "rowSpan": 1,
+                        },
+                      },
+                      Object {
+                        "cell": Object {
+                          "formatters": Array [
+                            [Function],
+                          ],
+                        },
+                        "header": Object {
+                          "formatters": Array [
+                            [Function],
+                          ],
+                          "label": "Labels",
+                        },
+                        "property": "labels",
+                        "props": Object {
+                          "rowSpan": 1,
+                        },
+                      },
+                      Object {
+                        "cell": Object {
+                          "formatters": Array [
+                            [Function],
+                          ],
+                        },
+                        "header": Object {
+                          "formatters": Array [
+                            [Function],
+                          ],
+                          "label": "Created at",
+                        },
+                        "property": "createdAt",
+                        "props": Object {
+                          "rowSpan": 1,
+                        },
+                      },
+                      Object {
+                        "cell": Object {
+                          "formatters": Array [
+                            [Function],
+                          ],
+                        },
+                        "header": Object {
+                          "formatters": Array [
+                            [Function],
+                          ],
+                          "label": "Resource version",
+                        },
+                        "property": "resourceVersion",
+                        "props": Object {
+                          "rowSpan": 1,
+                        },
+                      },
+                    ],
+                  ]
+                }
+              />,
+              <Body
+                onRow={[Function]}
+                rowKey="id"
+                rows={
+                  Array [
+                    Object {
+                      "createdAt": <LocalTime
+                        time="2018-03-14T10:17:52Z\\""
+                      />,
+                      "id": 0,
+                      "labels": <div
+                        className="label-collection"
+                      >
+                        <Label
+                          name="app"
+                          value="reviews"
+                        />
+                        <Label
+                          name="version"
+                          value="v2"
+                        />
+                      </div>,
+                      "name": "reviews-v2",
+                      "resourceVersion": "081020181987",
+                      "type": "Deployment",
+                    },
+                    Object {
+                      "createdAt": <LocalTime
+                        time="2018-03-14T10:17:52Z\\""
+                      />,
+                      "id": 1,
+                      "labels": <div
+                        className="label-collection"
+                      >
+                        <Label
+                          name="app"
+                          value="reviews"
+                        />
+                        <Label
+                          name="version"
+                          value="v3"
+                        />
+                      </div>,
+                      "name": "reviews-v3",
+                      "resourceVersion": "081020181987",
+                      "type": "Deployment",
+                    },
+                    Object {
+                      "createdAt": <LocalTime
+                        time="2018-03-14T10:17:52Z\\""
+                      />,
+                      "id": 2,
+                      "labels": <div
+                        className="label-collection"
+                      >
+                        <Label
+                          name="app"
+                          value="reviews"
+                        />
+                        <Label
+                          name="version"
+                          value="v1"
+                        />
+                      </div>,
+                      "name": "reviews-v1",
+                      "resourceVersion": "081020181987",
+                      "type": "Deployment",
+                    },
+                  ]
+                }
+              />,
             ],
-            "componentClass": "div",
-            "lg": 12,
-            "md": 12,
-            "sm": 12,
-            "xs": 12,
+            "className": "",
+            "columns": Array [
+              Object {
+                "cell": Object {
+                  "formatters": Array [
+                    [Function],
+                  ],
+                },
+                "header": Object {
+                  "formatters": Array [
+                    [Function],
+                  ],
+                  "label": "Name",
+                },
+                "property": "name",
+              },
+              Object {
+                "cell": Object {
+                  "formatters": Array [
+                    [Function],
+                  ],
+                  "props": Object {
+                    "align": "text-center",
+                  },
+                },
+                "header": Object {
+                  "formatters": Array [
+                    [Function],
+                  ],
+                  "label": "Type",
+                },
+                "property": "type",
+              },
+              Object {
+                "cell": Object {
+                  "formatters": Array [
+                    [Function],
+                  ],
+                },
+                "header": Object {
+                  "formatters": Array [
+                    [Function],
+                  ],
+                  "label": "Labels",
+                },
+                "property": "labels",
+              },
+              Object {
+                "cell": Object {
+                  "formatters": Array [
+                    [Function],
+                  ],
+                },
+                "header": Object {
+                  "formatters": Array [
+                    [Function],
+                  ],
+                  "label": "Created at",
+                },
+                "property": "createdAt",
+              },
+              Object {
+                "cell": Object {
+                  "formatters": Array [
+                    [Function],
+                  ],
+                },
+                "header": Object {
+                  "formatters": Array [
+                    [Function],
+                  ],
+                  "label": "Resource version",
+                },
+                "property": "resourceVersion",
+              },
+            ],
+            "components": Object {},
+            "condensed": false,
+            "dataTable": true,
+            "hover": true,
+            "inlineEdit": false,
+            "striped": true,
           },
           "ref": null,
           "rendered": Array [
             Object {
               "instance": null,
-              "key": "workloads_0",
-              "nodeType": "host",
+              "key": undefined,
+              "nodeType": "class",
               "props": Object {
-                "children": Array [
-                  <h3>
-                    reviews-v2
-                  </h3>,
-                  <div
-                    className="label-collection"
-                  >
-                    <Label
-                      name="app"
-                      value="reviews"
-                    />
-                    <Label
-                      name="version"
-                      value="v2"
-                    />
-                  </div>,
-                  <hr />,
+                "headerRows": Array [
+                  Array [
+                    Object {
+                      "cell": Object {
+                        "formatters": Array [
+                          [Function],
+                        ],
+                      },
+                      "header": Object {
+                        "formatters": Array [
+                          [Function],
+                        ],
+                        "label": "Name",
+                      },
+                      "property": "name",
+                      "props": Object {
+                        "rowSpan": 1,
+                      },
+                    },
+                    Object {
+                      "cell": Object {
+                        "formatters": Array [
+                          [Function],
+                        ],
+                        "props": Object {
+                          "align": "text-center",
+                        },
+                      },
+                      "header": Object {
+                        "formatters": Array [
+                          [Function],
+                        ],
+                        "label": "Type",
+                      },
+                      "property": "type",
+                      "props": Object {
+                        "rowSpan": 1,
+                      },
+                    },
+                    Object {
+                      "cell": Object {
+                        "formatters": Array [
+                          [Function],
+                        ],
+                      },
+                      "header": Object {
+                        "formatters": Array [
+                          [Function],
+                        ],
+                        "label": "Labels",
+                      },
+                      "property": "labels",
+                      "props": Object {
+                        "rowSpan": 1,
+                      },
+                    },
+                    Object {
+                      "cell": Object {
+                        "formatters": Array [
+                          [Function],
+                        ],
+                      },
+                      "header": Object {
+                        "formatters": Array [
+                          [Function],
+                        ],
+                        "label": "Created at",
+                      },
+                      "property": "createdAt",
+                      "props": Object {
+                        "rowSpan": 1,
+                      },
+                    },
+                    Object {
+                      "cell": Object {
+                        "formatters": Array [
+                          [Function],
+                        ],
+                      },
+                      "header": Object {
+                        "formatters": Array [
+                          [Function],
+                        ],
+                        "label": "Resource version",
+                      },
+                      "property": "resourceVersion",
+                      "props": Object {
+                        "rowSpan": 1,
+                      },
+                    },
+                  ],
                 ],
-                "className": "card-pf-body",
               },
               "ref": null,
-              "rendered": Array [
-                Object {
-                  "instance": null,
-                  "key": undefined,
-                  "nodeType": "host",
-                  "props": Object {
-                    "children": "reviews-v2",
-                  },
-                  "ref": null,
-                  "rendered": "reviews-v2",
-                  "type": "h3",
-                },
-                Object {
-                  "instance": null,
-                  "key": "labels",
-                  "nodeType": "host",
-                  "props": Object {
-                    "children": Array [
+              "rendered": null,
+              "type": [Function],
+            },
+            Object {
+              "instance": null,
+              "key": undefined,
+              "nodeType": "class",
+              "props": Object {
+                "onRow": [Function],
+                "rowKey": "id",
+                "rows": Array [
+                  Object {
+                    "createdAt": <LocalTime
+                      time="2018-03-14T10:17:52Z\\""
+                    />,
+                    "id": 0,
+                    "labels": <div
+                      className="label-collection"
+                    >
                       <Label
                         name="app"
                         value="reviews"
-                      />,
+                      />
                       <Label
                         name="version"
                         value="v2"
-                      />,
-                    ],
-                    "className": "label-collection",
+                      />
+                    </div>,
+                    "name": "reviews-v2",
+                    "resourceVersion": "081020181987",
+                    "type": "Deployment",
                   },
-                  "ref": null,
-                  "rendered": Array [
-                    Object {
-                      "instance": null,
-                      "key": "workload_0",
-                      "nodeType": "class",
-                      "props": Object {
-                        "name": "app",
-                        "value": "reviews",
-                      },
-                      "ref": null,
-                      "rendered": null,
-                      "type": [Function],
-                    },
-                    Object {
-                      "instance": null,
-                      "key": "workload_1",
-                      "nodeType": "class",
-                      "props": Object {
-                        "name": "version",
-                        "value": "v2",
-                      },
-                      "ref": null,
-                      "rendered": null,
-                      "type": [Function],
-                    },
-                  ],
-                  "type": "div",
-                },
-                Object {
-                  "instance": null,
-                  "key": undefined,
-                  "nodeType": "host",
-                  "props": Object {},
-                  "ref": null,
-                  "rendered": null,
-                  "type": "hr",
-                },
-              ],
-              "type": "div",
-            },
-            Object {
-              "instance": null,
-              "key": "workloads_1",
-              "nodeType": "host",
-              "props": Object {
-                "children": Array [
-                  <h3>
-                    reviews-v3
-                  </h3>,
-                  <div
-                    className="label-collection"
-                  >
-                    <Label
-                      name="app"
-                      value="reviews"
-                    />
-                    <Label
-                      name="version"
-                      value="v3"
-                    />
-                  </div>,
-                  <hr />,
-                ],
-                "className": "card-pf-body",
-              },
-              "ref": null,
-              "rendered": Array [
-                Object {
-                  "instance": null,
-                  "key": undefined,
-                  "nodeType": "host",
-                  "props": Object {
-                    "children": "reviews-v3",
-                  },
-                  "ref": null,
-                  "rendered": "reviews-v3",
-                  "type": "h3",
-                },
-                Object {
-                  "instance": null,
-                  "key": "labels",
-                  "nodeType": "host",
-                  "props": Object {
-                    "children": Array [
+                  Object {
+                    "createdAt": <LocalTime
+                      time="2018-03-14T10:17:52Z\\""
+                    />,
+                    "id": 1,
+                    "labels": <div
+                      className="label-collection"
+                    >
                       <Label
                         name="app"
                         value="reviews"
-                      />,
+                      />
                       <Label
                         name="version"
                         value="v3"
-                      />,
-                    ],
-                    "className": "label-collection",
+                      />
+                    </div>,
+                    "name": "reviews-v3",
+                    "resourceVersion": "081020181987",
+                    "type": "Deployment",
                   },
-                  "ref": null,
-                  "rendered": Array [
-                    Object {
-                      "instance": null,
-                      "key": "workload_0",
-                      "nodeType": "class",
-                      "props": Object {
-                        "name": "app",
-                        "value": "reviews",
-                      },
-                      "ref": null,
-                      "rendered": null,
-                      "type": [Function],
-                    },
-                    Object {
-                      "instance": null,
-                      "key": "workload_1",
-                      "nodeType": "class",
-                      "props": Object {
-                        "name": "version",
-                        "value": "v3",
-                      },
-                      "ref": null,
-                      "rendered": null,
-                      "type": [Function],
-                    },
-                  ],
-                  "type": "div",
-                },
-                Object {
-                  "instance": null,
-                  "key": undefined,
-                  "nodeType": "host",
-                  "props": Object {},
-                  "ref": null,
-                  "rendered": null,
-                  "type": "hr",
-                },
-              ],
-              "type": "div",
-            },
-            Object {
-              "instance": null,
-              "key": "workloads_2",
-              "nodeType": "host",
-              "props": Object {
-                "children": Array [
-                  <h3>
-                    reviews-v1
-                  </h3>,
-                  <div
-                    className="label-collection"
-                  >
-                    <Label
-                      name="app"
-                      value="reviews"
-                    />
-                    <Label
-                      name="version"
-                      value="v1"
-                    />
-                  </div>,
-                  <hr />,
-                ],
-                "className": "card-pf-body",
-              },
-              "ref": null,
-              "rendered": Array [
-                Object {
-                  "instance": null,
-                  "key": undefined,
-                  "nodeType": "host",
-                  "props": Object {
-                    "children": "reviews-v1",
-                  },
-                  "ref": null,
-                  "rendered": "reviews-v1",
-                  "type": "h3",
-                },
-                Object {
-                  "instance": null,
-                  "key": "labels",
-                  "nodeType": "host",
-                  "props": Object {
-                    "children": Array [
+                  Object {
+                    "createdAt": <LocalTime
+                      time="2018-03-14T10:17:52Z\\""
+                    />,
+                    "id": 2,
+                    "labels": <div
+                      className="label-collection"
+                    >
                       <Label
                         name="app"
                         value="reviews"
-                      />,
+                      />
                       <Label
                         name="version"
                         value="v1"
-                      />,
-                    ],
-                    "className": "label-collection",
+                      />
+                    </div>,
+                    "name": "reviews-v1",
+                    "resourceVersion": "081020181987",
+                    "type": "Deployment",
                   },
-                  "ref": null,
-                  "rendered": Array [
-                    Object {
-                      "instance": null,
-                      "key": "workload_0",
-                      "nodeType": "class",
-                      "props": Object {
-                        "name": "app",
-                        "value": "reviews",
-                      },
-                      "ref": null,
-                      "rendered": null,
-                      "type": [Function],
-                    },
-                    Object {
-                      "instance": null,
-                      "key": "workload_1",
-                      "nodeType": "class",
-                      "props": Object {
-                        "name": "version",
-                        "value": "v1",
-                      },
-                      "ref": null,
-                      "rendered": null,
-                      "type": [Function],
-                    },
-                  ],
-                  "type": "div",
-                },
-                Object {
-                  "instance": null,
-                  "key": undefined,
-                  "nodeType": "host",
-                  "props": Object {},
-                  "ref": null,
-                  "rendered": null,
-                  "type": "hr",
-                },
-              ],
-              "type": "div",
+                ],
+              },
+              "ref": null,
+              "rendered": null,
+              "type": [Function],
             },
           ],
           "type": [Function],
         },
         "type": [Function],
       },
-      "type": "div",
+      "type": [Function],
     },
   ],
   Symbol(enzyme.__options__): Object {
