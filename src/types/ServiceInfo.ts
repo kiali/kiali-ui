@@ -1,6 +1,5 @@
 import { ServiceHealth } from './Health';
 import { PfColors } from '../components/Pf/PfColors';
-import Namespace from './Namespace';
 
 export interface Endpoints {
   addresses?: EndpointAddress[];
@@ -15,8 +14,10 @@ interface EndpointAddress {
 
 export interface WorkloadOverview {
   name: string;
-  namespace: Namespace;
+  type: string;
   labels?: { [key: string]: string };
+  resourceVersion: string;
+  createdAt: string;
 }
 
 export interface Port {

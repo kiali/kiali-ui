@@ -6,24 +6,24 @@ import { WorkloadOverview } from '../../../../types/ServiceInfo';
 const workloads: WorkloadOverview[] = [
   {
     name: 'reviews-v2',
-    labels: { app: 'reviews', version: 'v2' },
-    namespace: {
-      name: 'bookinfo'
-    }
+    type: 'Deployment',
+    resourceVersion: '081020181987',
+    createdAt: '2018-03-14T10:17:52Z"',
+    labels: { app: 'reviews', version: 'v2' }
   },
   {
     name: 'reviews-v3',
-    labels: { app: 'reviews', version: 'v3' },
-    namespace: {
-      name: 'bookinfo'
-    }
+    type: 'Deployment',
+    resourceVersion: '081020181987',
+    createdAt: '2018-03-14T10:17:52Z"',
+    labels: { app: 'reviews', version: 'v3' }
   },
   {
     name: 'reviews-v1',
-    labels: { app: 'reviews', version: 'v1' },
-    namespace: {
-      name: 'bookinfo'
-    }
+    type: 'Deployment',
+    resourceVersion: '081020181987',
+    createdAt: '2018-03-14T10:17:52Z"',
+    labels: { app: 'reviews', version: 'v1' }
   }
 ];
 
