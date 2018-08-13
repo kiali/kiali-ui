@@ -11,11 +11,11 @@ import {
   shouldRefreshData,
   updateHealth,
   nodeData,
-  getNodeMetrics,
+  //  getNodeMetrics,
   getNodeMetricType,
   getServicesLinkList,
-  renderPanelTitle,
-  NodeMetricType
+  renderPanelTitle
+  //  NodeMetricType
 } from './SummaryPanelCommon';
 import { HealthIndicator, DisplayMode } from '../../components/Health/HealthIndicator';
 import Label from '../../components/Label/Label';
@@ -53,7 +53,7 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
       errorCountIn: [],
       errorCountOut: [],
       healthLoading: false,
-      rpsMetrics: true
+      rpsMetrics: false
     };
   }
 
@@ -82,34 +82,37 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
       return;
     }
 
-    const filters = ['request_count', 'request_error_count'];
-    const includeIstio = props.namespace === 'istio-system';
+    // const filters = ['request_count', 'request_error_count'];
+    // const includeIstio = props.namespace === 'istio-system';
 
+    // KIALI-1339 - Temporarily Remove the sparkgraphs
+    this.setState({ loading: false });
+    this.setState({ rpsMetrics: false });
     // For service nodes we need to handle metrics a bit differently
     // The don't have the normal incoming and outgoing metrics, so we don't display them
-    if (nodeMetricType === NodeMetricType.SERVICE) {
-      this.setState({ loading: false });
-      this.setState({ rpsMetrics: false });
-    } else {
-      getNodeMetrics(nodeMetricType, target, props, filters, includeIstio)
-        .then(response => {
-          if (!this._isMounted) {
-            console.log('SummaryPanelNode: Ignore fetch, component not mounted.');
-            return;
-          }
-          this.showRequestCountMetrics(response.data);
-        })
-        .catch(error => {
-          if (!this._isMounted) {
-            console.log('SummaryPanelNode: Ignore fetch error, component not mounted.');
-            return;
-          }
-          this.setState({ loading: false });
-          console.error(error);
-        });
-
-      this.setState({ loading: true });
-    }
+    // if (nodeMetricType === NodeMetricType.SERVICE) {
+    //  this.setState({ loading: false });
+    //  this.setState({ rpsMetrics: false });
+    // } else {
+    //  getNodeMetrics(nodeMetricType, target, props, filters, includeIstio)
+    //    .then(response => {
+    //      if (!this._isMounted) {
+    //        console.log('SummaryPanelNode: Ignore fetch, component not mounted.');
+    //        return;
+    //      }
+    //      this.showRequestCountMetrics(response.data);
+    //    })
+    //    .catch(error => {
+    //      if (!this._isMounted) {
+    //        console.log('SummaryPanelNode: Ignore fetch error, component not mounted.');
+    //        return;
+    //      }
+    //      this.setState({ loading: false });
+    //      console.error(error);
+    //    });
+    //
+    //  this.setState({ loading: true });
+    // }
   }
 
   showRequestCountMetrics(all: Metrics) {
