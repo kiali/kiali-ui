@@ -1,6 +1,6 @@
 import * as React from 'react';
 import InOutRateTable from '../../components/SummaryPanel/InOutRateTable';
-import RpsChart from '../../components/SummaryPanel/RpsChart';
+// import RpsChart from '../../components/SummaryPanel/RpsChart';
 import { SummaryPanelPropType } from '../../types/Graph';
 import * as M from '../../types/Metrics';
 import graphUtils from '../../utils/Graphing';
@@ -117,7 +117,6 @@ export default class SummaryPanelGroup extends React.Component<SummaryPanelPropT
             outRate5xx={outgoing.rate5xx}
           />
           <hr />
-          <div>{this.renderRpsCharts()}</div>
         </div>
       </div>
     );
@@ -185,25 +184,27 @@ export default class SummaryPanelGroup extends React.Component<SummaryPanelPropT
     );
   };
 
-  private renderRpsCharts = () => {
-    if (this.state.loading) {
-      return <strong>loading charts...</strong>;
-    }
-    return (
-      <>
-        <RpsChart
-          label="Incoming Request Traffic"
-          dataRps={this.state.requestCountIn}
-          dataErrors={this.state.errorCountIn}
-        />
-        <RpsChart
-          label="Outgoing Request Traffic"
-          dataRps={this.state.requestCountOut}
-          dataErrors={this.state.errorCountOut}
-        />
-      </>
-    );
-  };
+  // Temporarily remove charts: KIALI-1339
+  //  private renderRpsCharts = () => {
+  //    return;
+  //    if (this.state.loading) {
+  //      return <strong>loading charts...</strong>;
+  //    }
+  //    return (
+  //      <>
+  //        <RpsChart
+  //          label="Incoming Request Traffic"
+  //          dataRps={this.state.requestCountIn}
+  //          dataErrors={this.state.errorCountIn}
+  //        />
+  //        <RpsChart
+  //          label="Outgoing Request Traffic"
+  //          dataRps={this.state.requestCountOut}
+  //          dataErrors={this.state.errorCountOut}
+  //        />
+  //      </>
+  //    );
+  //  };
 
   private renderWorkloadList = (group): any[] => {
     let workloadList: any[] = [];

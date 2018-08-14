@@ -1,7 +1,7 @@
 import * as React from 'react';
 import RateTable from '../../components/SummaryPanel/RateTable';
-import RpsChart from '../../components/SummaryPanel/RpsChart';
-import ResponseTimeChart from '../../components/SummaryPanel/ResponseTimeChart';
+// import RpsChart from '../../components/SummaryPanel/RpsChart';
+// import ResponseTimeChart from '../../components/SummaryPanel/ResponseTimeChart';
 import { SummaryPanelPropType } from '../../types/Graph';
 import * as M from '../../types/Metrics';
 import graphUtils from '../../utils/Graphing';
@@ -221,23 +221,25 @@ export default class SummaryPanelEdge extends React.Component<SummaryPanelPropTy
   );
 
   private renderCharts = () => {
-    if (this.state.loading) {
-      return <strong>loading charts...</strong>;
-    }
-
-    return (
-      <>
-        <RpsChart label="Request Traffic" dataRps={this.state.reqRates} dataErrors={this.state.errRates} />
-        <hr />
-        <ResponseTimeChart
-          label="Request Response Time (ms)"
-          rtAvg={this.state.rtAvg}
-          rtMed={this.state.rtMed}
-          rt95={this.state.rt95}
-          rt99={this.state.rt99}
-        />
-      </>
-    );
+    // Temporarily remove charts: KIALI-1339
+    return;
+    //    if (this.state.loading) {
+    //      return <strong>loading charts...</strong>;
+    //    }
+    //
+    //    return (
+    //      <>
+    //        <RpsChart label="Request Traffic" dataRps={this.state.reqRates} dataErrors={this.state.errRates} />
+    //        <hr />
+    //        <ResponseTimeChart
+    //          label="Request Response Time (ms)"
+    //          rtAvg={this.state.rtAvg}
+    //          rtMed={this.state.rtMed}
+    //          rt95={this.state.rt95}
+    //          rt99={this.state.rt99}
+    //        />
+    //      </>
+    //    );
   };
 
   private getDatapoints = (
