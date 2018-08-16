@@ -17,8 +17,6 @@ script:
     yarn build &&
     yarn test --forceExit --maxWorkers=4
   - ./run_itest.sh
-before_deploy:
-  - yarn set-snapshot-version $TRAVIS_BUILD_NUMBER
 deploy:
   skip_cleanup: true
   provider: npm
