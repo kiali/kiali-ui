@@ -141,7 +141,11 @@ export class NamespaceFilter extends React.Component<NamespaceFilterProps, Names
   filterValueSelected = (filterValue: FilterValue) => {
     const { currentFilterType, currentValue } = this.state;
 
-    if (filterValue && filterValue.id !== currentValue) {
+    if (
+      filterValue &&
+      filterValue.id !== currentValue &&
+      !this.duplicatesFilter(currentFilterType, filterValue.title)
+    ) {
       this.filterAdded(currentFilterType, filterValue);
     }
   };
@@ -153,12 +157,23 @@ export class NamespaceFilter extends React.Component<NamespaceFilterProps, Names
   onValueKeyPress = (keyEvent: any) => {
     const { currentValue, currentFilterType } = this.state;
 
-    if (keyEvent.key === 'Enter' && currentValue && currentValue.length > 0) {
+    if (keyEvent.key === 'Enter') {
+      if (currentValue && currentValue.length > 0 && !this.duplicatesFilter(currentFilterType, currentValue)) {
+        this.filterAdded(currentFilterType, currentValue);
+      }
+
       this.setState({ currentValue: '' });
-      this.filterAdded(currentFilterType, currentValue);
       keyEvent.stopPropagation();
       keyEvent.preventDefault();
     }
+  };
+
+  duplicatesFilter = (filterType: FilterType, filterValue: string): boolean => {
+    const filter = this.state.activeFilters.find(activeFilter => {
+      return filterValue === activeFilter.value && filterType.title === activeFilter.category;
+    });
+
+    return !!filter;
   };
 
   removeFilter = (filter: ActiveFilter) => {
