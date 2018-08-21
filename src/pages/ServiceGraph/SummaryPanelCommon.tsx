@@ -5,6 +5,9 @@ import { Health, healthNotAvailable } from '../../types/Health';
 import MetricsOptions from '../../types/MetricsOptions';
 import * as API from '../../services/Api';
 import { authentication } from '../../utils/Authentication';
+import * as M from '../../types/Metrics';
+import graphUtils from '../../utils/Graphing';
+import { Metric } from '../../types/Metrics';
 
 export interface NodeData {
   namespace: string;
@@ -106,7 +109,8 @@ export const getServicesLinkList = (cyNodes: any) => {
 
 export const getNodeMetricType = (node: any) => {
   const data = nodeData(node);
-  if (data.nodeType === NodeType.WORKLOAD || (data.nodeType === NodeType.APP && data.hasParent)) {
+  if (data.workload) {
+    // note - this also works for NodeType UNKNOWN because workload="unknown"
     return NodeMetricType.WORKLOAD;
   } else if (data.nodeType === NodeType.APP) {
     return NodeMetricType.APP;
@@ -124,9 +128,7 @@ export const getNodeMetrics = (
   includeIstio?: boolean,
   byLabelsIn?: Array<string>
 ) => {
-  // Determine if is by workload or by app
   const data = nodeData(node);
-
   const options: MetricsOptions = {
     queryTime: props.queryTime,
     duration: props.duration,
@@ -140,13 +142,35 @@ export const getNodeMetrics = (
   switch (nodeMetricType) {
     case NodeMetricType.APP:
       return API.getAppMetrics(authentication(), data.namespace, data.app, options);
+    case NodeMetricType.SERVICE:
+      return API.getServiceMetrics(authentication(), data.namespace, data.service, options);
     case NodeMetricType.WORKLOAD:
       return API.getWorkloadMetrics(authentication(), data.namespace, data.workload, options);
     default:
-      // Unreachable code, but tslint disagrees
-      // https://github.com/palantir/tslint/issues/696
       return Promise.reject(new Error(`Unknown NodeMetricType: ${nodeMetricType}`));
   }
+};
+
+export const getDatapoints = (
+  mg: M.MetricGroup,
+  title: string,
+  comparator: (metric: Metric) => boolean
+): [string, number][] => {
+  let series: M.TimeSeries[] = [];
+  if (mg && mg.matrix) {
+    const tsa: M.TimeSeries[] = mg.matrix;
+    if (comparator) {
+      for (let i = 0; i < tsa.length; ++i) {
+        const ts = tsa[i];
+        if (comparator(ts.metric)) {
+          series.push(ts);
+        }
+      }
+    } else {
+      series = mg.matrix;
+    }
+  }
+  return graphUtils.toC3Columns(series, title);
 };
 
 export const renderPanelTitle = node => {
