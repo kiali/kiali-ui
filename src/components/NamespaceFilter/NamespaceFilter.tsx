@@ -2,6 +2,8 @@ import * as React from 'react';
 import { Filter, FormControl, Toolbar } from 'patternfly-react';
 import {
   ActiveFilter,
+  FILTER_ACTION_APPEND,
+  FILTER_ACTION_UPDATE,
   FilterType,
   FilterValue,
   NamespaceFilterProps,
@@ -27,6 +29,7 @@ export const defaultNamespaceFilter = {
   title: 'Namespace',
   placeholder: 'Filter by Namespace',
   filterType: 'select',
+  action: FILTER_ACTION_APPEND,
   filterValues: []
 };
 
@@ -88,6 +91,7 @@ export class NamespaceFilter extends React.Component<NamespaceFilterProps, Names
           title: 'Namespace',
           placeholder: 'Filter by Namespace',
           filterType: 'select',
+          action: FILTER_ACTION_APPEND,
           filterValues: response.data.map(namespace => {
             return { title: namespace.name, id: namespace.name };
           })
@@ -102,7 +106,7 @@ export class NamespaceFilter extends React.Component<NamespaceFilterProps, Names
       });
   }
 
-  filterAdded = (field: any, value: any) => {
+  filterAdded = (field: FilterType, value: string) => {
     let filterText = '';
     const activeFilters = this.state.activeFilters;
     let activeFilter: ActiveFilter = { label: '', category: '', value: '' };
@@ -111,18 +115,23 @@ export class NamespaceFilter extends React.Component<NamespaceFilterProps, Names
       filterText = field.title;
       activeFilter.category = field.title;
     }
-    filterText += ': ';
 
-    if (value.title) {
-      filterText += value.title;
-      activeFilter.value = value.title;
+    filterText += ': ' + value;
+    activeFilter.value = value;
+    activeFilter.label = filterText;
+
+    const typeFilterPresent = activeFilters.filter(filter => filter.category === field.title).length > 0;
+
+    if (field.action === FILTER_ACTION_UPDATE && typeFilterPresent) {
+      activeFilters.forEach(filter => {
+        if (filter.category === field.title) {
+          filter.value = value;
+        }
+      });
     } else {
-      filterText += value;
-      activeFilter.value = value;
+      activeFilters.push(activeFilter);
     }
 
-    activeFilter.label = filterText;
-    activeFilters.push(activeFilter);
     this.setState({ activeFilters: activeFilters });
     NamespaceFilterSelected.setSelected(activeFilters);
     this.props.onFilterChange(activeFilters);
@@ -146,7 +155,7 @@ export class NamespaceFilter extends React.Component<NamespaceFilterProps, Names
       filterValue.id !== currentValue &&
       !this.duplicatesFilter(currentFilterType, filterValue.title)
     ) {
-      this.filterAdded(currentFilterType, filterValue);
+      this.filterAdded(currentFilterType, filterValue.title);
     }
   };
 
