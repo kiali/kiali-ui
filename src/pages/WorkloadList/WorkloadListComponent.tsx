@@ -92,7 +92,7 @@ class WorkloadListComponent extends React.Component<WorkloadListComponentProps, 
         if (typeof availableFilter === 'undefined') {
           NamespaceFilterSelected.setSelected(
             NamespaceFilterSelected.getSelected().filter(nfs => {
-              return nfs.category === activeFilter.category;
+              return nfs.category !== activeFilter.category;
             })
           );
           return null;
