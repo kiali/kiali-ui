@@ -119,7 +119,7 @@ const istioFilter: FilterType = {
   title: 'Istio Sidecar',
   placeholder: 'Filter by Istio Sidecar',
   filterType: 'select',
-  filterValues: [{ id: 'deployed', title: 'Deployed' }, { id: 'not_deployed', title: 'Not Deployed' }]
+  filterValues: [{ id: 'present', title: 'Present' }, { id: 'not_present', title: 'Not Present' }]
 };
 
 export const availableFilters: FilterType[] = [serviceNameFilter, istioFilter, defaultNamespaceFilter];
@@ -438,10 +438,10 @@ class ServiceListComponent extends React.Component<ServiceListComponentProps, Se
 
     let istioFiltered = true;
     if (istioFilters.length === 1) {
-      if (istioFilters[0] === 'Deployed') {
+      if (istioFilters[0] === 'Present') {
         istioFiltered = service.istioSidecar;
       }
-      if (istioFilters[0] === 'Not Deployed') {
+      if (istioFilters[0] === 'Not Present') {
         istioFiltered = !service.istioSidecar;
       }
     }
