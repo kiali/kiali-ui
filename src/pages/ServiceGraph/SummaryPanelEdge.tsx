@@ -3,11 +3,10 @@ import RateTable from '../../components/SummaryPanel/RateTable';
 import RpsChart from '../../components/SummaryPanel/RpsChart';
 import ResponseTimeChart from '../../components/SummaryPanel/ResponseTimeChart';
 import { SummaryPanelPropType } from '../../types/Graph';
-import * as M from '../../types/Metrics';
-import graphUtils from '../../utils/Graphing';
 import {
   shouldRefreshData,
   nodeData,
+  getDatapoints,
   getNodeMetrics,
   NodeMetricType,
   getNodeMetricType,
@@ -106,54 +105,55 @@ export default class SummaryPanelEdge extends React.Component<SummaryPanelPropTy
     );
   }
 
-  private getByLabelsIn = (nodeMetricType: NodeMetricType) => {
-    switch (nodeMetricType) {
-      case NodeMetricType.WORKLOAD:
-        return ['source_workload'];
-      case NodeMetricType.APP:
-        return ['source_app'];
-      default:
-        // Unreachable code, but tslint disagrees
-        // https://github.com/palantir/tslint/issues/696
-        throw new Error(`Unknown NodeMetricType: ${nodeMetricType}`);
+  private getByLabelsIn = (sourceMetricType: NodeMetricType, destMetricType: NodeMetricType) => {
+    let sourceLabel = 'source_workload';
+    if (sourceMetricType === NodeMetricType.APP) {
+      sourceLabel = 'source_app';
     }
+    if (destMetricType === NodeMetricType.SERVICE) {
+      return [sourceLabel, 'destination_workload'];
+    }
+    return [sourceLabel];
   };
 
-  private getNodeDataPoints = (m: MetricGroup, title: string, nodeMetricType: NodeMetricType, node: any) => {
+  private getNodeDataPoints = (
+    m: MetricGroup,
+    title: string,
+    sourceMetricType: NodeMetricType,
+    destMetricType: NodeMetricType,
+    node: any
+  ) => {
     const data = nodeData(node);
-    let comparator;
-    switch (nodeMetricType) {
-      case NodeMetricType.APP:
-        comparator = (metric: Metric) => {
-          return metric['source_app'] === data.app;
-        };
-        break;
-      case NodeMetricType.WORKLOAD:
-        comparator = (metric: Metric) => {
-          return metric['source_workload'] === data.workload;
-        };
-        break;
-      default:
-        // Unreachable code, but tslint disagrees
-        // https://github.com/palantir/tslint/issues/696
-        throw new Error(`Unknown NodeMetricType: ${nodeMetricType}`);
+    let sourceLabel = 'source_workload';
+    let sourceValue = data.workload;
+    if (sourceMetricType === NodeMetricType.APP) {
+      sourceLabel = 'source_app';
+      sourceValue = data.app;
     }
-    return this.getDatapoints(m, title, comparator);
+    let comparator = (metric: Metric) => {
+      if (destMetricType === NodeMetricType.SERVICE) {
+        return metric[sourceLabel] === sourceValue && metric['destination_workload'] === 'unknown';
+      }
+      return metric[sourceLabel] === sourceValue;
+    };
+    return getDatapoints(m, title, comparator);
   };
 
   private updateCharts = (props: SummaryPanelPropType) => {
     const edge = props.data.summaryTarget;
     const source = edge.source();
-    const nodeMetricType = getNodeMetricType(source);
+    const dest = edge.target();
+    const sourceMetricType = getNodeMetricType(source);
+    const destMetricType = getNodeMetricType(dest);
 
-    if (!nodeMetricType) {
+    if (!destMetricType || !sourceMetricType) {
       return;
     }
 
     const filters = ['request_count', 'request_duration', 'request_error_count'];
-    const byLabelsIn = this.getByLabelsIn(nodeMetricType);
+    const byLabelsIn = this.getByLabelsIn(sourceMetricType, destMetricType);
 
-    getNodeMetrics(nodeMetricType, edge.target(), props, filters, undefined, byLabelsIn)
+    getNodeMetrics(destMetricType, dest, props, filters, undefined, byLabelsIn)
       .then(response => {
         if (!this._isMounted) {
           console.log('SummaryPanelEdge: Ignore fetch, component not mounted.');
@@ -161,30 +161,46 @@ export default class SummaryPanelEdge extends React.Component<SummaryPanelPropTy
         }
         const metrics = response.data.metrics;
         const histograms = response.data.histograms;
-        const reqRates = this.getNodeDataPoints(metrics['request_count_in'], 'RPS', nodeMetricType, source);
-        const errRates = this.getNodeDataPoints(metrics['request_error_count_in'], 'Error', nodeMetricType, source);
+        const reqRates = this.getNodeDataPoints(
+          metrics['request_count_in'],
+          'RPS',
+          sourceMetricType,
+          destMetricType,
+          source
+        );
+        const errRates = this.getNodeDataPoints(
+          metrics['request_error_count_in'],
+          'Error',
+          sourceMetricType,
+          destMetricType,
+          source
+        );
         const rtAvg = this.getNodeDataPoints(
           histograms['request_duration_in']['average'],
           'Average',
-          nodeMetricType,
+          sourceMetricType,
+          destMetricType,
           source
         );
         const rtMed = this.getNodeDataPoints(
           histograms['request_duration_in']['median'],
           'Median',
-          nodeMetricType,
+          sourceMetricType,
+          destMetricType,
           source
         );
         const rt95 = this.getNodeDataPoints(
           histograms['request_duration_in']['percentile95'],
           '95th',
-          nodeMetricType,
+          sourceMetricType,
+          destMetricType,
           source
         );
         const rt99 = this.getNodeDataPoints(
           histograms['request_duration_in']['percentile99'],
           '99th',
-          nodeMetricType,
+          sourceMetricType,
+          destMetricType,
           source
         );
 
@@ -238,22 +254,5 @@ export default class SummaryPanelEdge extends React.Component<SummaryPanelPropTy
         />
       </>
     );
-  };
-
-  private getDatapoints = (
-    mg: M.MetricGroup,
-    title: string,
-    comparator: (metric: Metric) => boolean
-  ): [string, number][] => {
-    const tsa: M.TimeSeries[] = mg.matrix;
-    let series: M.TimeSeries[] = [];
-
-    for (let i = 0; i < tsa.length; ++i) {
-      const ts = tsa[i];
-      if (comparator(ts.metric)) {
-        series.push(ts);
-      }
-    }
-    return graphUtils.toC3Columns(series, title);
   };
 }

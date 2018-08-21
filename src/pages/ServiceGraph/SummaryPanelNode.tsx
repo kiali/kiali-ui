@@ -1,20 +1,20 @@
 import * as React from 'react';
-import graphUtils from '../../utils/Graphing';
 import { getTrafficRate, getAccumulatedTrafficRate } from '../../utils/TrafficRate';
 import InOutRateTable from '../../components/SummaryPanel/InOutRateTable';
 import RpsChart from '../../components/SummaryPanel/RpsChart';
 import { NodeType, SummaryPanelPropType } from '../../types/Graph';
-import { Metrics } from '../../types/Metrics';
+import { Metrics, Metric } from '../../types/Metrics';
 import { Icon } from 'patternfly-react';
 import {
   shouldRefreshData,
   updateHealth,
   nodeData,
+  NodeMetricType,
+  getDatapoints,
   getNodeMetrics,
   getNodeMetricType,
   getServicesLinkList,
-  renderPanelTitle,
-  NodeMetricType
+  renderPanelTitle
 } from './SummaryPanelCommon';
 import { HealthIndicator, DisplayMode } from '../../components/Health/HealthIndicator';
 import Label from '../../components/Label/Label';
@@ -83,42 +83,45 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
 
     const filters = ['request_count', 'request_error_count'];
     const includeIstio = props.namespace === 'istio-system';
+    let byLabelsIn = nodeMetricType === NodeMetricType.SERVICE ? ['destination_workload'] : undefined;
+    getNodeMetrics(nodeMetricType, target, props, filters, includeIstio, byLabelsIn)
+      .then(response => {
+        if (!this._isMounted) {
+          console.log('SummaryPanelNode: Ignore fetch, component not mounted.');
+          return;
+        }
+        this.showRequestCountMetrics(response.data, nodeMetricType);
+      })
+      .catch(error => {
+        if (!this._isMounted) {
+          console.log('SummaryPanelNode: Ignore fetch error, component not mounted.');
+          return;
+        }
+        this.setState({ loading: false });
+        console.error(error);
+      });
 
-    // For service nodes we need to handle metrics a bit differently
-    // The don't have the normal incoming and outgoing metrics, so we don't display them
-    if (nodeMetricType === NodeMetricType.SERVICE) {
-      this.setState({ loading: false });
-      this.setState({ rpsMetrics: false });
-    } else {
-      getNodeMetrics(nodeMetricType, target, props, filters, includeIstio)
-        .then(response => {
-          if (!this._isMounted) {
-            console.log('SummaryPanelNode: Ignore fetch, component not mounted.');
-            return;
-          }
-          this.showRequestCountMetrics(response.data);
-        })
-        .catch(error => {
-          if (!this._isMounted) {
-            console.log('SummaryPanelNode: Ignore fetch error, component not mounted.');
-            return;
-          }
-          this.setState({ loading: false });
-          console.error(error);
-        });
-
-      this.setState({ loading: true });
-    }
+    this.setState({ loading: true });
   }
 
-  showRequestCountMetrics(all: Metrics) {
+  showRequestCountMetrics(all: Metrics, nodeMetricType: NodeMetricType) {
+    let comparator;
+    if (nodeMetricType === NodeMetricType.SERVICE) {
+      comparator = (metric: Metric) => {
+        return metric['destination_workload'] === 'unknown';
+      };
+    }
     const metrics = all.metrics;
+    const rcOut = metrics['request_count_out'];
+    const rcIn = metrics['request_count_in'];
+    const ecOut = metrics['request_error_count_out'];
+    const ecIn = metrics['request_error_count_in'];
     this.setState({
       loading: false,
-      requestCountOut: graphUtils.toC3Columns(metrics['request_count_out'].matrix, 'RPS'),
-      requestCountIn: graphUtils.toC3Columns(metrics['request_count_in'].matrix, 'RPS'),
-      errorCountIn: graphUtils.toC3Columns(metrics['request_error_count_in'].matrix, 'Error'),
-      errorCountOut: graphUtils.toC3Columns(metrics['request_error_count_out'].matrix, 'Error')
+      requestCountOut: getDatapoints(rcOut, 'RPS', comparator),
+      errorCountOut: getDatapoints(ecOut, 'Error', comparator),
+      requestCountIn: getDatapoints(rcIn, 'RPS', comparator),
+      errorCountIn: getDatapoints(ecIn, 'Error', comparator)
     });
   }
 
