@@ -109,7 +109,7 @@ export class NamespaceFilter extends React.Component<NamespaceFilterProps, Names
   filterAdded = (field: FilterType, value: string) => {
     let filterText = '';
     const activeFilters = this.state.activeFilters;
-    let activeFilter: ActiveFilter = { label: '', category: '', value: '' };
+    let activeFilter: ActiveFilter = { label: '', category: '', value: '', param: '' };
 
     if (field.title) {
       filterText = field.title;
@@ -119,6 +119,7 @@ export class NamespaceFilter extends React.Component<NamespaceFilterProps, Names
     filterText += ': ' + value;
     activeFilter.value = value;
     activeFilter.label = filterText;
+    activeFilter.param = field.id;
 
     const typeFilterPresent = activeFilters.filter(filter => filter.category === field.title).length > 0;
 

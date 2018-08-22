@@ -178,7 +178,8 @@ export default class SummaryPanelGraph extends React.Component<SummaryPanelPropT
       let activeFilter: ActiveFilter = {
         label: 'Namespace: ' + this.props.namespace,
         category: 'Namespace',
-        value: this.props.namespace.toString()
+        value: this.props.namespace.toString(),
+        param: 'namespace'
       };
       filters = [activeFilter];
     }
