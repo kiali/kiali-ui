@@ -21,6 +21,7 @@ export interface ActiveFilter {
   label: string;
   category: string;
   value: string;
+  param: string;
 }
 
 export interface NamespaceFilterProps {

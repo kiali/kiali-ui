@@ -43,14 +43,16 @@ class IstioConfigDetailsPage extends React.Component<RouteComponentProps<IstioCo
     let namespaceFilter: ActiveFilter = {
       label: 'Namespace: ' + this.props.match.params.namespace,
       category: 'Namespace',
-      value: this.props.match.params.namespace.toString()
+      value: this.props.match.params.namespace.toString(),
+      param: 'namespace'
     };
     activeFilters.push(namespaceFilter);
     if (addObjectTypeFilter) {
       let objectTypeFilter: ActiveFilter = {
         label: 'Istio Type: ' + dicIstioType[this.props.match.params.objectType],
         category: 'Istio Type',
-        value: dicIstioType[this.props.match.params.objectType]
+        value: dicIstioType[this.props.match.params.objectType],
+        param: 'istio'
       };
       activeFilters.push(objectTypeFilter);
     }

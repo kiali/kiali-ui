@@ -226,13 +226,35 @@ class IstioConfigListComponent extends React.Component<IstioConfigListComponentP
     return selectedFilters.size === urlParams.size && equalFilters;
   }
 
+  currentURLParams(): URLParameter[] {
+    let currentURLParams: URLParameter[] = [];
+
+    const selectedFilters = NamespaceFilterSelected.getSelected();
+    const filterParams = selectedFilters
+      .map(filter => filter.param)
+      .filter((param, index, self) => index === self.indexOf(param));
+
+    filterParams.forEach(filterName => {
+      this.props.queryParam(filterName, []).forEach(param => {
+        currentURLParams = currentURLParams.concat({
+          name: filterName,
+          value: param
+        });
+      });
+    });
+
+    return currentURLParams;
+  }
+
   setActiveFiltersToURL() {
-    const params = NamespaceFilterSelected.getSelected()
+    // @ts-ignore
+    const params: URLParameter[] = NamespaceFilterSelected.getSelected()
       .map(activeFilter => {
         const availableFilter = availableFilters.find(filter => {
           return filter.title === activeFilter.category;
         });
 
+        // Remove filter that doesn't apply to the ServiceList
         if (typeof availableFilter === 'undefined') {
           NamespaceFilterSelected.setSelected(
             NamespaceFilterSelected.getSelected().filter(nfs => {
@@ -249,7 +271,19 @@ class IstioConfigListComponent extends React.Component<IstioConfigListComponentP
       })
       .filter(filter => filter !== null);
 
-    this.props.onParamChange(params, 'append');
+    // Only change the url + update browser history in case the URL changes
+    const currentURLParams = this.currentURLParams();
+    let equalParams = currentURLParams.every(currentParam => {
+      return params.some(param => {
+        return param.name === currentParam.name && param.value === currentParam.value;
+      });
+    });
+
+    equalParams = equalParams && currentURLParams.length === NamespaceFilterSelected.getSelected().length;
+
+    if (!equalParams) {
+      this.props.onParamChange(params, 'append');
+    }
   }
 
   selectedFilters() {
@@ -259,7 +293,8 @@ class IstioConfigListComponent extends React.Component<IstioConfigListComponentP
         activeFilters.push({
           label: filter.title + ': ' + value,
           category: filter.title,
-          value: value
+          value: value,
+          param: filter.id
         });
       });
     });
