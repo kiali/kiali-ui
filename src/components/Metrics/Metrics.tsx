@@ -141,11 +141,11 @@ class Metrics extends React.Component<MetricsProps, MetricsState> {
         const charts = this.getChartsDef();
         Object.keys(charts).forEach(k => {
           const chart = charts[k];
-          const histo = response.data.dest.histograms[k];
+          const histo = response.data.source.histograms[k];
           if (histo) {
             chart.metrics = histo;
           } else {
-            chart.metrics = response.data.dest.metrics[k];
+            chart.metrics = response.data.source.metrics[k];
           }
         });
         this.setState({
