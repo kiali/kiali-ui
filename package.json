@@ -48,6 +48,8 @@
   "scripts": {
     "copy-fonts": "cp -r node_modules/patternfly/dist/fonts src/",
     "copy-img": "cp -r node_modules/patternfly/dist/img src/",
+    "remove-rcue": "mv node_modules/patternfly/dist/css/rcue.css node_modules/patternfly/dist/css/rcue.css.copy && touch node_modules/patternfly/dist/css/rcue.css && mv node_modules/patternfly/dist/css/rcue-additions.css node_modules/patternfly/dist/css/rcue-additions.css.copy && touch node_modules/patternfly/dist/css/rcue-additions.css",
+    "restore-rcue": "mv node_modules/patternfly/dist/css/rcue.css.copy node_modules/patternfly/dist/css/rcue.css && mv node_modules/patternfly/dist/css/rcue-additions.css.copy node_modules/patternfly/dist/css/rcue-additions.css",
     "build-css": "node-sass-chokidar src/ --output-style compressed --include-path $npm_package_sassIncludes_src --include-path $npm_package_sassIncludes_patternfly --include-path $npm_package_sassIncludes_patternflyReact --include-path $npm_package_sassIncludes_bootstrap --include-path $npm_package_sassIncludes_fontAwesome -o src/",
     "prettier": "prettier --write \"src/**/*.{js,jsx,ts,tsx,json}\"",
     "lint": "tslint --project ./tsconfig.json",
