@@ -260,7 +260,7 @@ class AppListComponent extends React.Component<AppListComponentProps, AppListCom
         isSortAscending: !this.state.isSortAscending,
         appListItems: sorted
       });
-      this.props.onParamChange([{ name: 'direction', value: this.state.isSortAscending ? 'desc' : 'asc' }]);
+      this.props.onParamChange([{ name: 'direction', value: this.state.isSortAscending ? 'asc' : 'desc' }]);
     });
   };
 

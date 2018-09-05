@@ -279,7 +279,7 @@ class WorkloadListComponent extends React.Component<WorkloadListComponentProps, 
         isSortAscending: !this.state.isSortAscending,
         workloadItems: sorted
       });
-      this.props.onParamChange([{ name: 'direction', value: this.state.isSortAscending ? 'desc' : 'asc' }]);
+      this.props.onParamChange([{ name: 'direction', value: this.state.isSortAscending ? 'asc' : 'desc' }]);
     });
   };
 
