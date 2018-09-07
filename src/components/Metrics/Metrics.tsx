@@ -59,7 +59,11 @@ class Metrics extends React.Component<MetricsProps, MetricsState> {
     super(props);
 
     let metricReporter = 'source';
-    if (this.props.metricsType === 'inbound') {
+
+    const metricReporterParam = HistoryManager.getParam('reporter');
+    if (metricReporterParam != null) {
+      metricReporter = metricReporterParam;
+    } else if (this.props.metricsType === 'inbound') {
       metricReporter = 'destination';
     }
 
