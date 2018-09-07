@@ -10,6 +10,7 @@ import HistogramChart from './HistogramChart';
 import MetricChart from './MetricChart';
 import { Histogram, MetricGroup } from '../../types/Metrics';
 import history from '../../app/History';
+import { HistoryManager } from '../../app/History';
 import { Link } from 'react-router-dom';
 import { style } from 'typestyle';
 
@@ -130,6 +131,7 @@ class Metrics extends React.Component<MetricsProps, MetricsState> {
     options.step = intervalOpts.step;
     options.rateInterval = intervalOpts.rateInterval;
     this.fetchMetrics();
+    HistoryManager.setParam('duration', options.duration!.toString(10));
   };
 
   onPollIntervalChanged = (pollInterval: number) => {
@@ -141,10 +143,12 @@ class Metrics extends React.Component<MetricsProps, MetricsState> {
       newRefInterval = window.setInterval(this.fetchMetrics, pollInterval);
     }
     this.setState({ pollMetrics: newRefInterval });
+    HistoryManager.setParam('pi', pollInterval.toString(10));
   };
 
   onReporterChanged = (reporter: string) => {
     this.setState({ metricReporter: reporter });
+    HistoryManager.setParam('reporter', reporter);
   };
 
   fetchMetrics = () => {
