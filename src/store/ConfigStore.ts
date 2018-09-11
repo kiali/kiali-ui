@@ -3,11 +3,24 @@ import { KialiAppState } from './Store';
 import { persistStore, persistReducer } from 'redux-persist';
 import rootReducer from '../reducers';
 import thunk from 'redux-thunk';
+// import { createLogger } from 'redux-logger';
 
 // defaults to localStorage for web and AsyncStorage for react-native
 import storage from 'redux-persist/lib/storage';
+// import { GlobalActionKeys } from '../actions/GlobalActions';
 
 declare const window;
+
+// const logger = createLogger({
+//   duration: true,
+//   timestamp: false,
+//   collapsed: true,
+//   level: 'log',
+//   diff: true,
+//   predicate: (getState, action) =>
+//     action.type !== GlobalActionKeys.INCREMENT_LOADING_COUNTER ||
+//     action.type !== GlobalActionKeys.DECREMENT_LOADING_COUNTER
+// });
 
 const persistConfig = {
   key: 'root',

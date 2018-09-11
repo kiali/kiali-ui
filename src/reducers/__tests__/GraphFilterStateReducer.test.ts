@@ -9,8 +9,7 @@ describe('GraphFilterState reducer', () => {
       showCircuitBreakers: true,
       showVirtualServices: true,
       showMissingSidecars: true,
-      showTrafficAnimation: false,
-      refreshRate: 15000
+      showTrafficAnimation: false
     });
   });
 
@@ -23,8 +22,7 @@ describe('GraphFilterState reducer', () => {
           showCircuitBreakers: false,
           showVirtualServices: true,
           showMissingSidecars: true,
-          showTrafficAnimation: false,
-          refreshRate: 15000
+          showTrafficAnimation: false
         },
         {
           type: GraphFilterActionKeys.TOGGLE_LEGEND
@@ -36,8 +34,7 @@ describe('GraphFilterState reducer', () => {
       showCircuitBreakers: false,
       showVirtualServices: true,
       showMissingSidecars: true,
-      showTrafficAnimation: false,
-      refreshRate: 15000
+      showTrafficAnimation: false
     });
   });
 
@@ -50,8 +47,7 @@ describe('GraphFilterState reducer', () => {
           showCircuitBreakers: false,
           showVirtualServices: true,
           showMissingSidecars: true,
-          showTrafficAnimation: false,
-          refreshRate: 15000
+          showTrafficAnimation: false
         },
         {
           type: GraphFilterActionKeys.TOGGLE_GRAPH_NODE_LABEL
@@ -63,8 +59,7 @@ describe('GraphFilterState reducer', () => {
       showCircuitBreakers: false,
       showVirtualServices: true,
       showMissingSidecars: true,
-      showTrafficAnimation: false,
-      refreshRate: 15000
+      showTrafficAnimation: false
     });
   });
 
@@ -77,8 +72,7 @@ describe('GraphFilterState reducer', () => {
           showCircuitBreakers: false,
           showVirtualServices: true,
           showMissingSidecars: true,
-          showTrafficAnimation: false,
-          refreshRate: 15000
+          showTrafficAnimation: false
         },
         {
           type: GraphFilterActionKeys.TOGGLE_GRAPH_CIRCUIT_BREAKERS
@@ -90,8 +84,7 @@ describe('GraphFilterState reducer', () => {
       showCircuitBreakers: true,
       showVirtualServices: true,
       showMissingSidecars: true,
-      showTrafficAnimation: false,
-      refreshRate: 15000
+      showTrafficAnimation: false
     });
   });
   it('should handle TOGGLE_GRAPH_VIRTUAL_SERVICES', () => {
@@ -103,8 +96,7 @@ describe('GraphFilterState reducer', () => {
           showCircuitBreakers: false,
           showVirtualServices: true,
           showMissingSidecars: true,
-          showTrafficAnimation: false,
-          refreshRate: 15000
+          showTrafficAnimation: false
         },
         {
           type: GraphFilterActionKeys.TOGGLE_GRAPH_VIRTUAL_SERVICES
@@ -116,8 +108,7 @@ describe('GraphFilterState reducer', () => {
       showCircuitBreakers: false,
       showVirtualServices: false,
       showMissingSidecars: true,
-      showTrafficAnimation: false,
-      refreshRate: 15000
+      showTrafficAnimation: false
     });
   });
   it('should handle TOGGLE_GRAPH_MISSING_SIDECARS', () => {
@@ -129,8 +120,7 @@ describe('GraphFilterState reducer', () => {
           showCircuitBreakers: false,
           showVirtualServices: true,
           showMissingSidecars: true,
-          showTrafficAnimation: false,
-          refreshRate: 15000
+          showTrafficAnimation: false
         },
         {
           type: GraphFilterActionKeys.TOGGLE_GRAPH_MISSING_SIDECARS
@@ -142,8 +132,7 @@ describe('GraphFilterState reducer', () => {
       showCircuitBreakers: false,
       showVirtualServices: true,
       showMissingSidecars: false,
-      showTrafficAnimation: false,
-      refreshRate: 15000
+      showTrafficAnimation: false
     });
   });
   it('should handle TOGGLE_TRAFFIC_ANIMATION', () => {
@@ -155,8 +144,7 @@ describe('GraphFilterState reducer', () => {
           showCircuitBreakers: false,
           showVirtualServices: true,
           showMissingSidecars: true,
-          showTrafficAnimation: false,
-          refreshRate: 15000
+          showTrafficAnimation: false
         },
         {
           type: GraphFilterActionKeys.TOGGLE_TRAFFIC_ANIMATION
@@ -168,35 +156,7 @@ describe('GraphFilterState reducer', () => {
       showCircuitBreakers: false,
       showVirtualServices: true,
       showMissingSidecars: true,
-      showTrafficAnimation: true,
-      refreshRate: 15000
-    });
-  });
-  it('should handle SET_GRAPH_REFRESH_RATE', () => {
-    expect(
-      graphFilterState(
-        {
-          showLegend: false,
-          showNodeLabels: true,
-          showCircuitBreakers: false,
-          showVirtualServices: true,
-          showMissingSidecars: true,
-          showTrafficAnimation: false,
-          refreshRate: 15000
-        },
-        {
-          type: GraphFilterActionKeys.SET_GRAPH_REFRESH_RATE,
-          payload: 10000
-        }
-      )
-    ).toEqual({
-      showLegend: false,
-      showNodeLabels: true,
-      showCircuitBreakers: false,
-      showVirtualServices: true,
-      showMissingSidecars: true,
-      showTrafficAnimation: false,
-      refreshRate: 10000
+      showTrafficAnimation: true
     });
   });
 });

@@ -1,5 +1,4 @@
 import { NotificationGroup } from '../types/MessageCenter';
-import { PollIntervalInMs } from '../types/GraphFilter';
 // Store is the Redux Data store
 
 export interface GlobalState {
@@ -16,7 +15,7 @@ export interface GraphFilterState {
   readonly showVirtualServices: boolean;
   readonly showMissingSidecars: boolean;
   readonly showTrafficAnimation: boolean;
-  readonly refreshRate: PollIntervalInMs;
+  // readonly refreshRate: PollIntervalInMs;
 }
 
 export interface MessageCenterState {
@@ -71,6 +70,8 @@ export interface InterfaceSettings {
 
 export interface UserSettings {
   interface: InterfaceSettings;
+  refreshInterval: number;
+  durationInterval: number;
 }
 // @todo: Add namespaces interface
 

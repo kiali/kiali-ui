@@ -4,7 +4,6 @@ import GrafanaInfo from '../../types/GrafanaInfo';
 import { authentication } from '../../utils/Authentication';
 import * as API from '../../services/Api';
 import { computePrometheusQueryInterval } from '../../services/Prometheus';
-import MetricsOptionsBar from '../../components/MetricsOptions/MetricsOptionsBar';
 import MetricsOptions from '../../types/MetricsOptions';
 import HistogramChart from './HistogramChart';
 import MetricChart from './MetricChart';
@@ -13,6 +12,7 @@ import history from '../../app/History';
 import { HistoryManager } from '../../app/History';
 import { Link } from 'react-router-dom';
 import { style } from 'typestyle';
+import MetricsOptionsBarContainer from '../MetricsOptions/MetricsOptionsBar';
 
 const expandedChartContainerStyle = style({
   height: 'calc(100vh - 248px)'
@@ -135,6 +135,7 @@ class Metrics extends React.Component<MetricsProps, MetricsState> {
     options.step = intervalOpts.step;
     options.rateInterval = intervalOpts.rateInterval;
     this.fetchMetrics();
+    console.dir(options);
     HistoryManager.setParam('duration', options.duration!.toString(10));
   };
 
@@ -236,7 +237,7 @@ class Metrics extends React.Component<MetricsProps, MetricsState> {
           </h3>
         )}
         {this.state.alertDetails && <Alert onDismiss={this.dismissAlert}>{this.state.alertDetails}</Alert>}
-        <MetricsOptionsBar
+        <MetricsOptionsBarContainer
           onOptionsChanged={this.onOptionsChanged}
           onPollIntervalChanged={this.onPollIntervalChanged}
           onReporterChanged={this.onReporterChanged}

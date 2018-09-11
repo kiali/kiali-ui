@@ -26,7 +26,7 @@ ShallowWrapper {
       "children": Array [
         null,
         undefined,
-        <MetricsOptionsBar
+        <Connect(MetricsOptionsBar)
           metricReporter="destination"
           onManualRefresh={[Function]}
           onOptionsChanged={[Function]}
@@ -193,7 +193,7 @@ ShallowWrapper {
         "children": Array [
           null,
           undefined,
-          <MetricsOptionsBar
+          <Connect(MetricsOptionsBar)
             metricReporter="destination"
             onManualRefresh={[Function]}
             onOptionsChanged={[Function]}
@@ -388,7 +388,7 @@ ShallowWrapper {
       "children": Array [
         null,
         undefined,
-        <MetricsOptionsBar
+        <Connect(MetricsOptionsBar)
           metricReporter="destination"
           onManualRefresh={[Function]}
           onOptionsChanged={[Function]}
@@ -555,7 +555,7 @@ ShallowWrapper {
         "children": Array [
           null,
           undefined,
-          <MetricsOptionsBar
+          <Connect(MetricsOptionsBar)
             metricReporter="destination"
             onManualRefresh={[Function]}
             onOptionsChanged={[Function]}
@@ -750,7 +750,7 @@ ShallowWrapper {
       "children": Array [
         null,
         undefined,
-        <MetricsOptionsBar
+        <Connect(MetricsOptionsBar)
           metricReporter="source"
           onManualRefresh={[Function]}
           onOptionsChanged={[Function]}
@@ -917,7 +917,7 @@ ShallowWrapper {
         "children": Array [
           null,
           undefined,
-          <MetricsOptionsBar
+          <Connect(MetricsOptionsBar)
             metricReporter="source"
             onManualRefresh={[Function]}
             onOptionsChanged={[Function]}

@@ -2,7 +2,6 @@ import { GraphState } from '../store/Store';
 import { GraphDataActionKeys } from '../actions/GraphDataActionKeys';
 import { GraphActionKeys } from '../actions/GraphActions';
 import FilterStateReducer from './GraphFilterState';
-import { MILLISECONDS } from '../types/Common';
 
 const INITIAL_STATE: GraphState = {
   isLoading: false,
@@ -17,8 +16,7 @@ const INITIAL_STATE: GraphState = {
     showCircuitBreakers: true,
     showVirtualServices: true,
     showMissingSidecars: true,
-    showTrafficAnimation: false,
-    refreshRate: 15 * MILLISECONDS
+    showTrafficAnimation: false
   }
 };
 

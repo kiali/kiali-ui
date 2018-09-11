@@ -14,7 +14,7 @@ ShallowWrapper {
             Object {
               "byLabelsIn": Array [],
               "byLabelsOut": Array [],
-              "duration": 60,
+              "duration": undefined,
             },
           ],
         ],
@@ -83,8 +83,8 @@ ShallowWrapper {
           disabled={false}
           handleSelect={[Function]}
           id="metrics_filter_interval_duration"
-          initialLabel="Last minute"
-          initialValue={60}
+          initialLabel="undefined"
+          initialValue={undefined}
           nameDropdown="Duration"
           options={
             Object {
@@ -240,8 +240,8 @@ ShallowWrapper {
           "disabled": false,
           "handleSelect": [Function],
           "id": "metrics_filter_interval_duration",
-          "initialLabel": "Last minute",
-          "initialValue": 60,
+          "initialLabel": "undefined",
+          "initialValue": undefined,
           "nameDropdown": "Duration",
           "options": Object {
             "10800": "Last 3 hours",
@@ -390,8 +390,8 @@ ShallowWrapper {
             disabled={false}
             handleSelect={[Function]}
             id="metrics_filter_interval_duration"
-            initialLabel="Last minute"
-            initialValue={60}
+            initialLabel="undefined"
+            initialValue={undefined}
             nameDropdown="Duration"
             options={
               Object {
@@ -547,8 +547,8 @@ ShallowWrapper {
             "disabled": false,
             "handleSelect": [Function],
             "id": "metrics_filter_interval_duration",
-            "initialLabel": "Last minute",
-            "initialValue": 60,
+            "initialLabel": "undefined",
+            "initialValue": undefined,
             "nameDropdown": "Duration",
             "options": Object {
               "10800": "Last 3 hours",

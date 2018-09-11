@@ -1,6 +1,6 @@
 // Action Creators allow us to create typesafe utilities for dispatching actions
 import { createAction } from 'typesafe-actions';
-import { EdgeLabelMode, PollIntervalInMs } from '../types/GraphFilter';
+import { EdgeLabelMode } from '../types/GraphFilter';
 
 export enum GraphFilterActionKeys {
   // Toggle Actions
@@ -12,9 +12,7 @@ export enum GraphFilterActionKeys {
   TOGGLE_TRAFFIC_ANIMATION = 'TOGGLE_TRAFFIC_ANIMATION',
   SET_GRAPH_EDGE_LABEL_MODE = 'SET_GRAPH_EDGE_LABEL_MODE',
   // Disable Actions
-  ENABLE_GRAPH_FILTERS = 'ENABLE_GRAPH_FILTERS',
-  // Refresh Rate
-  SET_GRAPH_REFRESH_RATE = 'SET_GRAPH_REFRESH_RATE'
+  ENABLE_GRAPH_FILTERS = 'ENABLE_GRAPH_FILTERS'
 }
 
 export const graphFilterActions = {
@@ -34,10 +32,6 @@ export const graphFilterActions = {
   toggleTrafficAnimation: createAction(GraphFilterActionKeys.TOGGLE_TRAFFIC_ANIMATION),
   showGraphFilters: createAction(GraphFilterActionKeys.ENABLE_GRAPH_FILTERS, (value: boolean) => ({
     type: GraphFilterActionKeys.ENABLE_GRAPH_FILTERS,
-    payload: value
-  })),
-  setRefreshRate: createAction(GraphFilterActionKeys.SET_GRAPH_REFRESH_RATE, (value: PollIntervalInMs) => ({
-    type: GraphFilterActionKeys.SET_GRAPH_REFRESH_RATE,
     payload: value
   }))
 };

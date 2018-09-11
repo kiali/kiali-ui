@@ -23,7 +23,7 @@ describe('GraphPage test', () => {
     const wrapper = shallow(<GraphFilterToolbar {...PARAMS} isLoading={false} handleRefreshClick={jest.fn()} />);
 
     const toolbar = wrapper.instance() as GraphFilterToolbar;
-    toolbar.handleFilterChange = onParamsChangeMockFn;
+    toolbar.handleUrlFilterChange = onParamsChangeMockFn;
 
     const newDuration: Duration = { value: 1800 };
     toolbar.handleDurationChange(newDuration); // simulate duration change

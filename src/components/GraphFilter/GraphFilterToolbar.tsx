@@ -9,6 +9,8 @@ import GraphFilterToolbarType from '../../types/GraphFilterToolbar';
 import { makeNamespaceGraphUrlFromParams, makeNodeGraphUrlFromParams } from '../Nav/NavUtils';
 
 import GraphFilter from './GraphFilter';
+import { store } from '../../store/ConfigStore';
+import { UserSettingsActions } from '../../actions/UserSettingsActions';
 
 export default class GraphFilterToolbar extends React.PureComponent<GraphFilterToolbarType> {
   static contextTypes = {
@@ -40,14 +42,15 @@ export default class GraphFilterToolbar extends React.PureComponent<GraphFilterT
   }
 
   handleDurationChange = (graphDuration: Duration) => {
-    this.handleFilterChange({
+    this.handleUrlFilterChange({
       ...this.getGraphParams(),
       graphDuration
     });
+    store.dispatch(UserSettingsActions.setDurationInterval(Number(graphDuration)));
   };
 
   handleNamespaceChange = (namespace: Namespace) => {
-    this.handleFilterChange({
+    this.handleUrlFilterChange({
       ...this.getGraphParams(),
       namespace
     });
@@ -60,17 +63,21 @@ export default class GraphFilterToolbar extends React.PureComponent<GraphFilterT
   };
 
   handleGraphTypeChange = (graphType: GraphType) => {
-    this.handleFilterChange({
+    this.handleUrlFilterChange({
       ...this.getGraphParams(),
       graphType
     });
   };
 
-  handleFilterChange = (params: GraphParamsType) => {
+  /**
+   * If we change the graph parameters then change the params in the url
+   * @param graphParams the graph parameters
+   */
+  handleUrlFilterChange = (graphParams: GraphParamsType) => {
     if (this.props.node) {
-      this.context.router.history.push(makeNodeGraphUrlFromParams(this.props.node, params));
+      this.context.router.history.push(makeNodeGraphUrlFromParams(this.props.node, graphParams));
     } else {
-      this.context.router.history.push(makeNamespaceGraphUrlFromParams(params));
+      this.context.router.history.push(makeNamespaceGraphUrlFromParams(graphParams));
     }
   };
 
