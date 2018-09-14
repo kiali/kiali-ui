@@ -14,7 +14,7 @@ const shouldFetchNamespaces = (state: KialiAppState) => {
   if (!state) {
     return true;
   } else {
-    return !state.namespaceState.isFetching;
+    return !state.namespaces.isFetching;
   }
 };
 

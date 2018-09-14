@@ -7,8 +7,8 @@ import { KialiAppState } from '../store/Store';
 
 const mapStateToProps = (state: KialiAppState) => {
   return {
-    items: state.namespaceState.items,
-    activeNamespace: state.namespaceState.activeNamespace
+    items: state.namespaces.items,
+    activeNamespace: state.namespaces.activeNamespace
   };
 };
 

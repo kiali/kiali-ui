@@ -88,7 +88,7 @@ describe('NamespaceActions', () => {
     const expectedActions = [];
     const store = mockStore({
       authentication: { token: { token: 'dummy-token' } },
-      namespaceState: {
+      namespaces: {
         isFetching: true
       }
     });
