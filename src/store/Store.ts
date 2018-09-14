@@ -1,10 +1,18 @@
 import { NotificationGroup } from '../types/MessageCenter';
 import { PollIntervalInMs } from '../types/GraphFilter';
+import Namespace from '../types/Namespace';
 // Store is the Redux Data store
 
 export interface GlobalState {
   readonly loadingCounter: number;
   readonly isPageVisible: boolean;
+}
+
+export interface NamespaceState {
+  readonly activeNamespace: Namespace;
+  readonly items: string[];
+  readonly isFetching: boolean;
+  readonly lastUpdated?: Date;
 }
 
 // Various pages are described here with their various sections
@@ -72,7 +80,6 @@ export interface InterfaceSettings {
 export interface UserSettings {
   interface: InterfaceSettings;
 }
-// @todo: Add namespaces interface
 
 // This defines the Kiali Global Application State
 export interface KialiAppState {
@@ -83,7 +90,7 @@ export interface KialiAppState {
   /** Page Settings */
   authentication: LoginState;
   messageCenter: MessageCenterState;
-  namespaces: any;
+  namespaces: NamespaceState;
   graph: GraphState;
   /** User Settings */
   userSettings: UserSettings;

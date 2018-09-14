@@ -1,29 +1,37 @@
-import Namespace from '../Namespaces';
+// import { NamespaceActionKeys } from '../../actions/NamespaceAction';
+import namespaceState from '../NamespaceState';
 import { NamespaceActionKeys } from '../../actions/NamespaceAction';
 
 describe('Namespaces reducer', () => {
   it('should return the initial state', () => {
-    expect(Namespace(undefined, {})).toEqual({
+    expect(namespaceState(undefined, {})).toEqual({
       isFetching: false,
-      items: []
+      activeNamespace: { name: 'all' },
+      items: ['all']
     });
   });
+
   it('should handle NAMESPACE_REQUEST_STARTED', () => {
     const currentState = {
+      activeNamespace: { name: 'all' },
       isFetching: false,
-      items: []
+      items: [],
+      lastUpdated: undefined
     };
     const requestStartedAction = {
       type: NamespaceActionKeys.NAMESPACE_REQUEST_STARTED
     };
     const expectedState = {
+      activeNamespace: { name: 'all' },
       isFetching: true,
-      items: []
+      items: [],
+      lastUpdated: undefined
     };
-    expect(Namespace(currentState, requestStartedAction)).toEqual(expectedState);
+    expect(namespaceState(currentState, requestStartedAction)).toEqual(expectedState);
   });
   it('should handle NAMESPACE_FAILED', () => {
     const currentState = {
+      activeNamespace: { name: 'all' },
       isFetching: true,
       items: []
     };
@@ -31,16 +39,19 @@ describe('Namespaces reducer', () => {
       type: NamespaceActionKeys.NAMESPACE_FAILED
     };
     const expectedState = {
+      activeNamespace: { name: 'all' },
       isFetching: false,
       items: []
     };
-    expect(Namespace(currentState, requestStartedAction)).toEqual(expectedState);
+    expect(namespaceState(currentState, requestStartedAction)).toEqual(expectedState);
   });
   it('should handle NAMESPACE_SUCCESS', () => {
     const currentDate = new Date();
     const currentState = {
+      activeNamespace: { name: 'all' },
       isFetching: true,
-      items: ['old', 'namespace']
+      items: ['old', 'namespace'],
+      lastUpdated: undefined
     };
     const requestStartedAction = {
       type: NamespaceActionKeys.NAMESPACE_SUCCESS,
@@ -48,10 +59,11 @@ describe('Namespaces reducer', () => {
       receivedAt: currentDate
     };
     const expectedState = {
+      activeNamespace: { name: 'all' },
       isFetching: false,
       items: ['a', 'b', 'c'],
       lastUpdated: currentDate
     };
-    expect(Namespace(currentState, requestStartedAction)).toEqual(expectedState);
+    expect(namespaceState(currentState, requestStartedAction)).toEqual(expectedState);
   });
 });

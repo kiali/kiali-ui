@@ -1,13 +1,16 @@
 import * as Api from '../services/Api';
 import { createAction } from 'typesafe-actions';
+import Namespace from '../types/Namespace';
+import { KialiAppState } from '../store/Store';
 
 export enum NamespaceActionKeys {
   NAMESPACE_REQUEST_STARTED = 'NAMESPACE_REQUEST_STARTED',
   NAMESPACE_SUCCESS = 'NAMESPACE_SUCCESS',
-  NAMESPACE_FAILED = 'NAMESPACE_FAILED'
+  NAMESPACE_FAILED = 'NAMESPACE_FAILED',
+  SET_ACTIVE_NAMESPACE = 'SET_ACTIVE_NAMESPACE'
 }
 
-const shouldFetchNamespaces = state => {
+const shouldFetchNamespaces = (state: KialiAppState) => {
   if (!state) {
     return true;
   } else {
@@ -16,6 +19,10 @@ const shouldFetchNamespaces = state => {
 };
 
 export const NamespaceActions = {
+  setActiveNamespace: createAction(NamespaceActionKeys.SET_ACTIVE_NAMESPACE, (namespace: Namespace) => ({
+    type: NamespaceActionKeys.SET_ACTIVE_NAMESPACE,
+    payload: namespace
+  })),
   requestStarted: createAction(NamespaceActionKeys.NAMESPACE_REQUEST_STARTED),
   requestFailed: createAction(NamespaceActionKeys.NAMESPACE_FAILED),
   receiveList: createAction(NamespaceActionKeys.NAMESPACE_SUCCESS, (newList: any, receivedAt: Date) => ({
