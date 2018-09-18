@@ -185,7 +185,18 @@ export default class ServiceGraphPage extends React.PureComponent<ServiceGraphPa
   }
 
   private loadGraphDataFromBackend = () => {
-    return this.props.fetchGraphData(this.props.namespace, this.props.graphDuration, this.props.graphType);
+    const promise = this.props.fetchGraphData(this.props.namespace, this.props.graphDuration, this.props.graphType);
+    this.pollPromise = makeCancelablePromise(promise);
+
+    this.pollPromise.promise
+      .then(() => {
+        this.scheduleNextPollingIntervalFromProps();
+      })
+      .catch(error => {
+        if (!error.isCanceled) {
+          this.scheduleNextPollingIntervalFromProps();
+        }
+      });
   };
 
   private scheduleNextPollingIntervalFromProps() {
@@ -199,24 +210,15 @@ export default class ServiceGraphPage extends React.PureComponent<ServiceGraphPa
   private scheduleNextPollingInterval(pollInterval: number) {
     // Remove any pending timeout to avoid having multiple requests at once
     this.removePollingIntervalTimer();
-    // We are using setTimeout instead of setInterval because we have more control over it
-    // e.g. If a request takes much time, the next interval will fire up anyway and is
-    // possible that it will take much time as well. Instead wait for it to timeout/error to
-    // try again.
-    this.pollTimeoutRef = window.setTimeout(() => {
-      const promise = this.loadGraphDataFromBackend();
-      this.pollPromise = makeCancelablePromise(promise);
-
-      this.pollPromise.promise
-        .then(() => {
-          this.scheduleNextPollingIntervalFromProps();
-        })
-        .catch(error => {
-          if (!error.isCanceled) {
-            this.scheduleNextPollingIntervalFromProps();
-          }
-        });
-    }, pollInterval);
+    if (pollInterval === 0) {
+      this.loadGraphDataFromBackend();
+    } else {
+      // We are using setTimeout instead of setInterval because we have more control over it
+      // e.g. If a request takes much time, the next interval will fire up anyway and is
+      // possible that it will take much time as well. Instead wait for it to timeout/error to
+      // try again.
+      this.pollTimeoutRef = window.setTimeout(this.loadGraphDataFromBackend, pollInterval);
+    }
   }
 
   private removePollingIntervalTimer() {
