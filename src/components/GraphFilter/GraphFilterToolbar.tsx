@@ -6,9 +6,11 @@ import { Duration } from '../../types/GraphFilter';
 import Namespace from '../../types/Namespace';
 import GraphFilterToolbarType from '../../types/GraphFilterToolbar';
 
+import { store } from '../../store/ConfigStore';
 import { makeServiceGraphUrlFromParams } from '../Nav/NavUtils';
 
 import GraphFilter from './GraphFilter';
+import { ServiceGraphActions } from '../../actions/ServiceGraphActions';
 
 export default class GraphFilterToolbar extends React.PureComponent<GraphFilterToolbarType> {
   static contextTypes = {
@@ -44,6 +46,7 @@ export default class GraphFilterToolbar extends React.PureComponent<GraphFilterT
   };
 
   handleNamespaceChange = (namespace: Namespace) => {
+    store.dispatch(ServiceGraphActions.namespaceChanged(namespace.name));
     this.handleFilterChange({
       ...this.getGraphParams(),
       namespace
