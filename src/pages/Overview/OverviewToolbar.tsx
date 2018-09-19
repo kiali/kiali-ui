@@ -2,8 +2,8 @@ import * as React from 'react';
 import { Sort, ToolbarRightContent } from 'patternfly-react';
 
 import { StatefulFilters } from '../../components/Filters/StatefulFilters';
-import GraphRefresh from '../../components/GraphFilter/GraphRefresh';
 import { ListPage } from '../../components/ListPage/ListPage';
+import Refresh from '../../components/Refresh/Refresh';
 import { ToolbarDropdown } from '../../components/ToolbarDropdown/ToolbarDropdown';
 import { config } from '../../config';
 
@@ -21,26 +21,18 @@ type State = {
   isSortAscending: boolean;
   duration: number;
   pollInterval: number;
-  pollerRef?: number;
 };
 
 class OverviewToolbar extends React.Component<Props, State> {
   static readonly DURATIONS = config().toolbar.intervalDuration;
-  static readonly POLL_INTERVALS = config().toolbar.pollInterval;
 
   constructor(props: Props) {
     super(props);
-    const pollInterval = this.props.pageHooks.currentPollInterval();
-    let pollerRef: number | undefined = undefined;
-    if (pollInterval > 0) {
-      pollerRef = window.setInterval(this.props.onRefresh, pollInterval);
-    }
     this.state = {
       sortField: this.currentSortField(),
       isSortAscending: this.props.pageHooks.isCurrentSortAscending(),
       duration: this.props.pageHooks.currentDuration(),
-      pollInterval: pollInterval,
-      pollerRef: pollerRef
+      pollInterval: this.props.pageHooks.currentPollInterval()
     };
   }
 
@@ -57,12 +49,6 @@ class OverviewToolbar extends React.Component<Props, State> {
         pollInterval: urlPollInterval
       });
       this.props.onRefresh();
-    }
-  }
-
-  componentWillUnmount() {
-    if (this.state.pollerRef) {
-      clearInterval(this.state.pollerRef);
     }
   }
 
@@ -110,14 +96,7 @@ class OverviewToolbar extends React.Component<Props, State> {
 
   updatePollInterval = (pollInterval: number) => {
     this.props.pageHooks.onParamChange([{ name: 'pi', value: String(pollInterval) }]);
-    let newRefInterval: number | undefined = undefined;
-    if (this.state.pollerRef) {
-      clearInterval(this.state.pollerRef);
-    }
-    if (pollInterval > 0) {
-      newRefInterval = window.setInterval(this.props.onRefresh, pollInterval);
-    }
-    this.setState({ pollerRef: newRefInterval, pollInterval: pollInterval });
+    this.setState({ pollInterval: pollInterval });
   };
 
   render() {
@@ -149,12 +128,11 @@ class OverviewToolbar extends React.Component<Props, State> {
           options={OverviewToolbar.DURATIONS}
         />
         <ToolbarRightContent>
-          <GraphRefresh
+          <Refresh
             id="overview-refresh"
             handleRefresh={this.props.onRefresh}
             onSelect={this.updatePollInterval}
-            selected={this.state.pollInterval}
-            options={OverviewToolbar.POLL_INTERVALS}
+            pollInterval={this.state.pollInterval}
           />
         </ToolbarRightContent>
       </StatefulFilters>
