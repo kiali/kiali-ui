@@ -16,9 +16,9 @@ type State = {
   pollerRef?: number;
 };
 
-class Refresh extends React.Component<Props, State> {
-  static readonly POLL_INTERVALS = config().toolbar.pollInterval;
+const POLL_INTERVALS = config().toolbar.pollInterval;
 
+class Refresh extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     let pollerRef: number | undefined = undefined;
@@ -54,8 +54,8 @@ class Refresh extends React.Component<Props, State> {
       return (
         <>
           <label style={{ paddingRight: '0.5em', marginLeft: '1.5em' }}>Refreshing</label>
-          <DropdownButton id={this.props.id} title={Refresh.POLL_INTERVALS[this.state.pollInterval]}>
-            {Object.keys(Refresh.POLL_INTERVALS).map(strKey => {
+          <DropdownButton id={this.props.id} title={POLL_INTERVALS[this.state.pollInterval]}>
+            {Object.keys(POLL_INTERVALS).map(strKey => {
               const key = Number(strKey);
               return (
                 <MenuItem
@@ -64,13 +64,13 @@ class Refresh extends React.Component<Props, State> {
                   active={key === this.state.pollInterval}
                   onSelect={this.updatePollInterval}
                 >
-                  {Refresh.POLL_INTERVALS[key]}
+                  {POLL_INTERVALS[key]}
                 </MenuItem>
               );
             })}
           </DropdownButton>
           <span style={{ paddingLeft: '0.5em' }}>
-            <Button id="refresh_button" onClick={this.props.handleRefresh}>
+            <Button id={this.props.id + '_btn'} onClick={this.props.handleRefresh}>
               <Icon name="refresh" />
             </Button>
           </span>

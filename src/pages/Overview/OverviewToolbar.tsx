@@ -23,9 +23,9 @@ type State = {
   pollInterval: number;
 };
 
-class OverviewToolbar extends React.Component<Props, State> {
-  static readonly DURATIONS = config().toolbar.intervalDuration;
+const DURATIONS = config().toolbar.intervalDuration;
 
+class OverviewToolbar extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -124,8 +124,8 @@ class OverviewToolbar extends React.Component<Props, State> {
           handleSelect={this.updateDuration}
           nameDropdown="Displaying"
           value={this.state.duration}
-          label={OverviewToolbar.DURATIONS[this.state.duration]}
-          options={OverviewToolbar.DURATIONS}
+          label={DURATIONS[this.state.duration]}
+          options={DURATIONS}
         />
         <ToolbarRightContent>
           <Refresh

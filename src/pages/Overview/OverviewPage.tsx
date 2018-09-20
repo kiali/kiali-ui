@@ -18,7 +18,6 @@ import { AxiosError } from 'axios';
 import { FilterSelected } from '../../components/Filters/StatefulFilters';
 import { ListPage } from '../../components/ListPage/ListPage';
 import * as API from '../../services/Api';
-import { ActiveFilter } from '../../types/Filters';
 import { AppHealth, FAILURE, DEGRADED, HEALTHY } from '../../types/Health';
 import Namespace from '../../types/Namespace';
 import { authentication } from '../../utils/Authentication';
@@ -34,29 +33,37 @@ type State = {
 };
 
 class OverviewPage extends ListPage.Component<{}, State> {
-  static isPassingFilters(info: NamespaceInfo): boolean {
-    const activeFilters: ActiveFilter[] = FilterSelected.getSelected();
-    const nameFilters = activeFilters.filter(f => f.category === FiltersAndSorts.nameFilter.title);
-    const nameOK = nameFilters.length === 0 || nameFilters.some(f => info.name.includes(f.value));
-    if (!nameOK) {
-      return false;
+  private static summarizeHealthFilters() {
+    const healthFilters = FilterSelected.getSelected().filter(f => f.category === FiltersAndSorts.healthFilter.title);
+    if (healthFilters.length === 0) {
+      return {
+        showInError: true,
+        showInWarning: true,
+        showInSuccess: true
+      };
     }
-    const healthFilters = activeFilters.filter(f => f.category === FiltersAndSorts.healthFilter.title);
-    const statusOK =
-      healthFilters.length === 0 ||
-      healthFilters.some(f => {
-        switch (f.value) {
-          case FAILURE.name:
-            return info.appsInError.length > 0;
-          case DEGRADED.name:
-            return info.appsInWarning.length > 0;
-          case HEALTHY.name:
-            return info.appsInSuccess.length > 0;
-          default:
-            return false;
-        }
-      });
-    return statusOK;
+    let showInError = false,
+      showInWarning = false,
+      showInSuccess = false;
+    healthFilters.forEach(f => {
+      switch (f.value) {
+        case FAILURE.name:
+          showInError = true;
+          break;
+        case DEGRADED.name:
+          showInWarning = true;
+          break;
+        case HEALTHY.name:
+          showInSuccess = true;
+          break;
+        default:
+      }
+    });
+    return {
+      showInError: showInError,
+      showInWarning: showInWarning,
+      showInSuccess: showInSuccess
+    };
   }
 
   constructor(props: RouteComponentProps<{}>) {
@@ -74,7 +81,10 @@ class OverviewPage extends ListPage.Component<{}, State> {
   load = () => {
     API.getNamespaces(authentication())
       .then(namespacesResponse => {
-        const namespaces: Namespace[] = namespacesResponse['data'];
+        const nameFilters = FilterSelected.getSelected().filter(f => f.category === FiltersAndSorts.nameFilter.title);
+        const namespaces: Namespace[] = namespacesResponse['data'].filter(ns => {
+          return nameFilters.length === 0 || nameFilters.some(f => ns.name.includes(f.value));
+        });
         this.fetchAppsHealth(namespaces.map(namespace => namespace.name), this.currentDuration());
       })
       .catch(namespacesError => this.handleAxiosError('Could not fetch namespace list.', namespacesError));
@@ -96,18 +106,23 @@ class OverviewPage extends ListPage.Component<{}, State> {
           appsInWarning: [],
           appsInSuccess: []
         };
+        const { showInError, showInWarning, showInSuccess } = OverviewPage.summarizeHealthFilters();
+        let show = false;
         Object.keys(response.appHealth).forEach(app => {
           const health: AppHealth = response.appHealth[app];
           const status = health.getGlobalStatus();
           if (status === FAILURE) {
             info.appsInError.push(app);
+            show = show || showInError;
           } else if (status === DEGRADED) {
             info.appsInWarning.push(app);
+            show = show || showInWarning;
           } else if (status === HEALTHY) {
             info.appsInSuccess.push(app);
+            show = show || showInSuccess;
           }
         });
-        if (OverviewPage.isPassingFilters(info)) {
+        if (show) {
           allNamespaces.push(info);
         }
       });

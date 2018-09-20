@@ -5,7 +5,26 @@ ShallowWrapper {
   "length": 1,
   Symbol(enzyme.__root__): [Circular],
   Symbol(enzyme.__unrendered__): <OverviewPage
-    history={[MockFunction]}
+    history={
+      Object {
+        "action": "POP",
+        "block": [Function],
+        "createHref": [Function],
+        "go": [Function],
+        "goBack": [Function],
+        "goForward": [Function],
+        "length": 1,
+        "listen": [Function],
+        "location": Object {
+          "hash": "",
+          "pathname": "/",
+          "search": "",
+          "state": undefined,
+        },
+        "push": [Function],
+        "replace": [Function],
+      }
+    }
     location={[MockFunction]}
     match={[MockFunction]}
     staticContext={[MockFunction]}
@@ -46,7 +65,24 @@ ShallowWrapper {
               "onParamChange": [Function],
               "onParamDelete": [Function],
               "props": Object {
-                "history": [MockFunction],
+                "history": Object {
+                  "action": "POP",
+                  "block": [Function],
+                  "createHref": [Function],
+                  "go": [Function],
+                  "goBack": [Function],
+                  "goForward": [Function],
+                  "length": 1,
+                  "listen": [Function],
+                  "location": Object {
+                    "hash": "",
+                    "pathname": "/",
+                    "search": "",
+                    "state": undefined,
+                  },
+                  "push": [Function],
+                  "replace": [Function],
+                },
                 "location": [MockFunction],
                 "match": [MockFunction],
                 "staticContext": [MockFunction],
@@ -62,7 +98,26 @@ ShallowWrapper {
                 "_renderer": ReactShallowRenderer {
                   "_context": Object {},
                   "_element": <OverviewPage
-                    history={[MockFunction]}
+                    history={
+                      Object {
+                        "action": "POP",
+                        "block": [Function],
+                        "createHref": [Function],
+                        "go": [Function],
+                        "goBack": [Function],
+                        "goForward": [Function],
+                        "length": 1,
+                        "listen": [Function],
+                        "location": Object {
+                          "hash": "",
+                          "pathname": "/",
+                          "search": "",
+                          "state": undefined,
+                        },
+                        "push": [Function],
+                        "replace": [Function],
+                      }
+                    }
                     location={[MockFunction]}
                     match={[MockFunction]}
                     staticContext={[MockFunction]}
@@ -181,7 +236,24 @@ ShallowWrapper {
             "onParamChange": [Function],
             "onParamDelete": [Function],
             "props": Object {
-              "history": [MockFunction],
+              "history": Object {
+                "action": "POP",
+                "block": [Function],
+                "createHref": [Function],
+                "go": [Function],
+                "goBack": [Function],
+                "goForward": [Function],
+                "length": 1,
+                "listen": [Function],
+                "location": Object {
+                  "hash": "",
+                  "pathname": "/",
+                  "search": "",
+                  "state": undefined,
+                },
+                "push": [Function],
+                "replace": [Function],
+              },
               "location": [MockFunction],
               "match": [MockFunction],
               "staticContext": [MockFunction],
@@ -197,7 +269,26 @@ ShallowWrapper {
               "_renderer": ReactShallowRenderer {
                 "_context": Object {},
                 "_element": <OverviewPage
-                  history={[MockFunction]}
+                  history={
+                    Object {
+                      "action": "POP",
+                      "block": [Function],
+                      "createHref": [Function],
+                      "go": [Function],
+                      "goBack": [Function],
+                      "goForward": [Function],
+                      "length": 1,
+                      "listen": [Function],
+                      "location": Object {
+                        "hash": "",
+                        "pathname": "/",
+                        "search": "",
+                        "state": undefined,
+                      },
+                      "push": [Function],
+                      "replace": [Function],
+                    }
+                  }
                   location={[MockFunction]}
                   match={[MockFunction]}
                   staticContext={[MockFunction]}
@@ -348,7 +439,24 @@ ShallowWrapper {
                 "onParamChange": [Function],
                 "onParamDelete": [Function],
                 "props": Object {
-                  "history": [MockFunction],
+                  "history": Object {
+                    "action": "POP",
+                    "block": [Function],
+                    "createHref": [Function],
+                    "go": [Function],
+                    "goBack": [Function],
+                    "goForward": [Function],
+                    "length": 1,
+                    "listen": [Function],
+                    "location": Object {
+                      "hash": "",
+                      "pathname": "/",
+                      "search": "",
+                      "state": undefined,
+                    },
+                    "push": [Function],
+                    "replace": [Function],
+                  },
                   "location": [MockFunction],
                   "match": [MockFunction],
                   "staticContext": [MockFunction],
@@ -364,7 +472,26 @@ ShallowWrapper {
                   "_renderer": ReactShallowRenderer {
                     "_context": Object {},
                     "_element": <OverviewPage
-                      history={[MockFunction]}
+                      history={
+                        Object {
+                          "action": "POP",
+                          "block": [Function],
+                          "createHref": [Function],
+                          "go": [Function],
+                          "goBack": [Function],
+                          "goForward": [Function],
+                          "length": 1,
+                          "listen": [Function],
+                          "location": Object {
+                            "hash": "",
+                            "pathname": "/",
+                            "search": "",
+                            "state": undefined,
+                          },
+                          "push": [Function],
+                          "replace": [Function],
+                        }
+                      }
                       location={[MockFunction]}
                       match={[MockFunction]}
                       staticContext={[MockFunction]}
@@ -483,7 +610,24 @@ ShallowWrapper {
               "onParamChange": [Function],
               "onParamDelete": [Function],
               "props": Object {
-                "history": [MockFunction],
+                "history": Object {
+                  "action": "POP",
+                  "block": [Function],
+                  "createHref": [Function],
+                  "go": [Function],
+                  "goBack": [Function],
+                  "goForward": [Function],
+                  "length": 1,
+                  "listen": [Function],
+                  "location": Object {
+                    "hash": "",
+                    "pathname": "/",
+                    "search": "",
+                    "state": undefined,
+                  },
+                  "push": [Function],
+                  "replace": [Function],
+                },
                 "location": [MockFunction],
                 "match": [MockFunction],
                 "staticContext": [MockFunction],
@@ -499,7 +643,26 @@ ShallowWrapper {
                 "_renderer": ReactShallowRenderer {
                   "_context": Object {},
                   "_element": <OverviewPage
-                    history={[MockFunction]}
+                    history={
+                      Object {
+                        "action": "POP",
+                        "block": [Function],
+                        "createHref": [Function],
+                        "go": [Function],
+                        "goBack": [Function],
+                        "goForward": [Function],
+                        "length": 1,
+                        "listen": [Function],
+                        "location": Object {
+                          "hash": "",
+                          "pathname": "/",
+                          "search": "",
+                          "state": undefined,
+                        },
+                        "push": [Function],
+                        "replace": [Function],
+                      }
+                    }
                     location={[MockFunction]}
                     match={[MockFunction]}
                     staticContext={[MockFunction]}
