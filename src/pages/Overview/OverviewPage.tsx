@@ -26,6 +26,7 @@ import { FiltersAndSorts } from './FiltersAndSorts';
 import OverviewStatus from './OverviewStatus';
 import OverviewToolbar from './OverviewToolbar';
 import NamespaceInfo from './NamespaceInfo';
+import { ListPageLink, TargetPage } from '../../components/ListPage/ListPageLink';
 
 type State = {
   namespaces: NamespaceInfo[];
@@ -162,10 +163,10 @@ class OverviewPage extends ListPage.Component<{}, State> {
                         <Link to={`/graph/namespaces/${encodedName}`}>{ns.name}</Link>
                       </CardTitle>
                       <CardBody>
-                        <Link to={`/applications?namespace=${encodedName}`}>
+                        <ListPageLink target={TargetPage.APPLICATIONS} namespace={ns.name}>
                           {nbApps === 1 && '1 Application'}
                           {nbApps !== 1 && nbApps + ' Applications'}
-                        </Link>
+                        </ListPageLink>
                         <AggregateStatusNotifications>
                           {ns.appsInError.length > 0 && (
                             <OverviewStatus id={ns.name + '-failure'} status={FAILURE} items={ns.appsInError} />
@@ -182,15 +183,15 @@ class OverviewPage extends ListPage.Component<{}, State> {
                           <Link to={`/graph/namespaces/${encodedName}`} title="Graph">
                             <Icon type="pf" name="topology" style={{ paddingLeft: 10, paddingRight: 10 }} />
                           </Link>
-                          <Link to={`/applications?namespace=${encodedName}`} title="Applications list">
+                          <ListPageLink target={TargetPage.APPLICATIONS} namespace={ns.name}>
                             <Icon type="pf" name="applications" style={{ paddingLeft: 10, paddingRight: 10 }} />
-                          </Link>
-                          <Link to={`/workloads?namespace=${encodedName}`} title="Workloads list">
+                          </ListPageLink>
+                          <ListPageLink target={TargetPage.WORKLOADS} namespace={ns.name}>
                             <Icon type="pf" name="bundle" style={{ paddingLeft: 10, paddingRight: 10 }} />
-                          </Link>
-                          <Link to={`/services?namespace=${encodedName}`} title="Services list">
+                          </ListPageLink>
+                          <ListPageLink target={TargetPage.SERVICES} namespace={ns.name}>
                             <Icon type="pf" name="service" style={{ paddingLeft: 10, paddingRight: 10 }} />
-                          </Link>
+                          </ListPageLink>
                         </div>
                       </CardBody>
                     </Card>
