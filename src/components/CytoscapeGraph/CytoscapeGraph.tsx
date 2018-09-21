@@ -72,6 +72,10 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
   static contextTypes = {
     router: PropTypes.object
   };
+  // for dbl-click support
+  static doubleTapMs = 350;
+  static tapTarget: any;
+  static tapTimeout: any;
 
   private graphHighlighter: GraphHighlighter;
   private trafficRenderer: TrafficRender;
@@ -242,45 +246,37 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
       }
     };
 
-    const injectDoubleTap = tapEventCallback => {
-      let lastTap, tapTimeout;
+    cy.on('tap', (event: any) => {
+      let tapped = event.target;
+      if (CytoscapeGraph.tapTimeout) {
+        console.log('TAP cancelTimeout');
+        clearTimeout(CytoscapeGraph.tapTimeout);
+        CytoscapeGraph.tapTimeout = null;
 
-      return (evt: any) => {
-        const currentTap = evt.target;
-
-        tapTimeout = setTimeout(() => (lastTap = undefined), 350);
-
-        if (lastTap && currentTap === lastTap) {
-          clearTimeout(tapTimeout);
-          lastTap = undefined;
-          currentTap.trigger('doubleTap');
-        } else {
-          lastTap = currentTap;
-          tapEventCallback(evt);
+        if (tapped === CytoscapeGraph.tapTarget) {
+          console.log('TAP double!');
+          tapped = null;
+          CytoscapeGraph.tapTarget = null;
+          const cytoscapeEvent = getCytoscapeBaseEvent(event);
+          if (cytoscapeEvent) {
+            this.handleDoubleTap(cytoscapeEvent);
+          }
         }
-      };
-    };
-
-    cy.on(
-      'tap',
-      injectDoubleTap((evt: any) => {
-        const cytoscapeEvent = getCytoscapeBaseEvent(evt);
-
-        if (cytoscapeEvent) {
-          this.handleTap(cytoscapeEvent);
-          this.selectTarget(evt.target);
-        }
-      })
-    );
-
-    cy.on('doubleTap', (evt: any) => {
-      const cytoscapeEvent = getCytoscapeBaseEvent(evt);
-
-      if (cytoscapeEvent) {
-        this.handleDoubleTap(cytoscapeEvent);
+      }
+      if (tapped) {
+        console.log('TAP start timer');
+        CytoscapeGraph.tapTarget = tapped;
+        CytoscapeGraph.tapTimeout = setTimeout(() => {
+          console.log('TAP single!');
+          CytoscapeGraph.tapTarget = null;
+          const cytoscapeEvent = getCytoscapeBaseEvent(event);
+          if (cytoscapeEvent) {
+            this.handleTap(cytoscapeEvent);
+            this.selectTarget(event.target);
+          }
+        }, CytoscapeGraph.doubleTapMs);
       }
     });
-
     cy.on('mouseover', 'node,edge', (evt: any) => {
       const cytoscapeEvent = getCytoscapeBaseEvent(evt);
       if (cytoscapeEvent) {
