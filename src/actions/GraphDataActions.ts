@@ -123,7 +123,31 @@ export const GraphDataActions = {
       console.debug('Fetching graph with appenders: ' + appenders);
 
       if (node) {
-        return API.getNodeGraphElements(authentication(), namespace, node, restParams).then(
+        return API.getNodeGraphElements(authentication(), namespace, node, restParams)
+          .then(
+            response => {
+              const responseData: any = response['data'];
+              const graphData = responseData && responseData.elements ? responseData.elements : EMPTY_GRAPH_DATA;
+              const timestamp = responseData && responseData.timestamp ? responseData.timestamp : 0;
+              dispatch(GraphDataActions.getGraphDataSuccess(timestamp, graphData));
+            },
+            error => {
+              let emsg: string;
+              if (error.response && error.response.data && error.response.data.error) {
+                emsg = 'Cannot load the graph: ' + error.response.data.error;
+              } else {
+                emsg = 'Cannot load the graph: ' + error.toString();
+              }
+              dispatch(MessageCenterActions.addMessage(emsg));
+              dispatch(GraphDataActions.getGraphDataFailure(emsg));
+            }
+          )
+          .catch(err => {
+            console.debug(API.getErrorMsg('Cannot load the graph: ', err));
+          });
+      }
+      return API.getGraphElements(authentication(), namespace, restParams)
+        .then(
           response => {
             const responseData: any = response['data'];
             const graphData = responseData && responseData.elements ? responseData.elements : EMPTY_GRAPH_DATA;
@@ -140,26 +164,10 @@ export const GraphDataActions = {
             dispatch(MessageCenterActions.addMessage(emsg));
             dispatch(GraphDataActions.getGraphDataFailure(emsg));
           }
-        );
-      }
-      return API.getGraphElements(authentication(), namespace, restParams).then(
-        response => {
-          const responseData: any = response['data'];
-          const graphData = responseData && responseData.elements ? responseData.elements : EMPTY_GRAPH_DATA;
-          const timestamp = responseData && responseData.timestamp ? responseData.timestamp : 0;
-          dispatch(GraphDataActions.getGraphDataSuccess(timestamp, graphData));
-        },
-        error => {
-          let emsg: string;
-          if (error.response && error.response.data && error.response.data.error) {
-            emsg = 'Cannot load the graph: ' + error.response.data.error;
-          } else {
-            emsg = 'Cannot load the graph: ' + error.toString();
-          }
-          dispatch(MessageCenterActions.addMessage(emsg));
-          dispatch(GraphDataActions.getGraphDataFailure(emsg));
-        }
-      );
+        )
+        .catch(err => {
+          console.debug(API.getErrorMsg('Cannot load the graph: ', err));
+        });
     };
   }
 };
