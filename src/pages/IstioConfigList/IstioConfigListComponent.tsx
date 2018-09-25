@@ -16,7 +16,7 @@ import {
   SortField,
   sortIstioItems,
   toIstioItems
-} from '../../types/IstioConfigListComponent';
+} from '../../types/IstioConfigList';
 import { Link } from 'react-router-dom';
 import { PfColors } from '../../components/Pf/PfColors';
 import { authentication } from '../../utils/Authentication';

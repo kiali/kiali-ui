@@ -1,19 +1,12 @@
 import { ActiveFilter, FILTER_ACTION_APPEND, FILTER_ACTION_UPDATE, FilterType, FilterValue } from '../../types/Filters';
 import { WorkloadListItem, WorkloadType } from '../../types/Workload';
+import { SortField } from '../../types/ListPage';
 import { removeDuplicatesArray } from '../../utils/Common';
 import { getRequestErrorsRatio, WorkloadHealth } from '../../types/Health';
 
 type WorkloadItemHealth = WorkloadListItem & { health: WorkloadHealth };
 
 export namespace WorkloadListFilters {
-  export interface SortField {
-    id: string;
-    title: string;
-    isNumeric: boolean;
-    param: string;
-    compare: (a: WorkloadListItem, b: WorkloadListItem) => number;
-  }
-
   export const sortFields: SortField[] = [
     {
       id: 'namespace',
@@ -272,7 +265,7 @@ export namespace WorkloadListFilters {
 
   export const sortWorkloadsItems = (
     unsorted: WorkloadListItem[],
-    sortField: WorkloadListFilters.SortField,
+    sortField: SortField,
     isAscending: boolean
   ): Promise<WorkloadListItem[]> => {
     if (sortField.title === 'Error Rate') {

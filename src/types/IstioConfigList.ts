@@ -126,13 +126,6 @@ export interface IstioService {
   labels?: { [key: string]: string };
 }
 
-export interface SortField {
-  id: string;
-  title: string;
-  isNumeric: boolean;
-  param: string;
-}
-
 export const dicIstioType = {
   Gateway: 'gateways',
   VirtualService: 'virtualservices',
@@ -151,6 +144,13 @@ export const dicIstioType = {
   instance: 'Instance',
   handler: 'Handler'
 };
+
+export interface SortField {
+  id: string;
+  title: string;
+  isNumeric: boolean;
+  param: string;
+}
 
 const includeName = (name: string, names: string[]) => {
   for (let i = 0; i < names.length; i++) {

@@ -1,25 +1,19 @@
-import {
-  ActiveFilter,
-  FILTER_ACTION_APPEND,
-  FILTER_ACTION_UPDATE,
-  FilterType,
-  presenceValues
-} from '../../types/Filters';
-import { AppListItem } from '../../types/AppList';
+import { ActiveFilter, FilterType, presenceValues } from '../../types/Filters';
+import { getRequestErrorsRatio, ServiceHealth } from '../../types/Health';
+import { ServiceListItem } from '../../types/ServiceList';
 import { SortField } from '../../types/ListPage';
 import { removeDuplicatesArray } from '../../utils/Common';
-import { AppHealth, getRequestErrorsRatio } from '../../types/Health';
 
-type AppListItemHealth = AppListItem & { health: AppHealth };
+type ServiceItemHealth = ServiceListItem & { health: ServiceHealth };
 
-export namespace AppListFilters {
+export namespace ServiceListFilters {
   export const sortFields: SortField[] = [
     {
       id: 'namespace',
       title: 'Namespace',
       isNumeric: false,
       param: 'ns',
-      compare: (a: AppListItem, b: AppListItem) => {
+      compare: (a: ServiceListItem, b: ServiceListItem) => {
         let sortValue = a.namespace.localeCompare(b.namespace);
         if (sortValue === 0) {
           sortValue = a.name.localeCompare(b.name);
@@ -28,18 +22,18 @@ export namespace AppListFilters {
       }
     },
     {
-      id: 'appname',
-      title: 'App Name',
+      id: 'servicename',
+      title: 'Service Name',
       isNumeric: false,
-      param: 'wn',
-      compare: (a: AppListItem, b: AppListItem) => a.name.localeCompare(b.name)
+      param: 'sn',
+      compare: (a: ServiceListItem, b: ServiceListItem) => a.name.localeCompare(b.name)
     },
     {
       id: 'istiosidecar',
-      title: 'IstioSidecar',
+      title: 'Istio Sidecar',
       isNumeric: false,
       param: 'is',
-      compare: (a: AppListItem, b: AppListItem) => {
+      compare: (a: ServiceListItem, b: ServiceListItem) => {
         if (a.istioSidecar && !b.istioSidecar) {
           return -1;
         } else if (!a.istioSidecar && b.istioSidecar) {
@@ -50,64 +44,59 @@ export namespace AppListFilters {
       }
     },
     {
-      id: 'errorrate',
+      id: 'errorate',
       title: 'Error Rate',
       isNumeric: true,
       param: 'er',
-      compare: (a: AppListItemHealth, b: AppListItemHealth) => {
-        if (a.health && b.health) {
-          const ratioA = getRequestErrorsRatio(a.health.requests).value;
-          const ratioB = getRequestErrorsRatio(b.health.requests).value;
-          return ratioA === ratioB ? a.name.localeCompare(b.name) : ratioA - ratioB;
-        }
-        return 0;
+      compare: (a: ServiceItemHealth, b: ServiceItemHealth) => {
+        const ratioA = getRequestErrorsRatio(a.health.requests).value;
+        const ratioB = getRequestErrorsRatio(b.health.requests).value;
+        return ratioA === ratioB ? a.name.localeCompare(b.name) : ratioA - ratioB;
       }
     }
   ];
 
-  export const appNameFilter: FilterType = {
-    id: 'appname',
-    title: 'App Name',
-    placeholder: 'Filter by App Name',
+  export const serviceNameFilter: FilterType = {
+    id: 'servicename',
+    title: 'Service Name',
+    placeholder: 'Filter by Service Name',
     filterType: 'text',
-    action: FILTER_ACTION_APPEND,
+    action: 'append',
     filterValues: []
   };
 
-  export const istioSidecarFilter: FilterType = {
-    id: 'istiosidecar',
+  export const istioFilter: FilterType = {
+    id: 'istio',
     title: 'Istio Sidecar',
-    placeholder: 'Filter by IstioSidecar Validation',
+    placeholder: 'Filter by Istio Sidecar',
     filterType: 'select',
-    action: FILTER_ACTION_UPDATE,
+    action: 'update',
     filterValues: presenceValues
   };
 
-  /** Filter Method */
+  const filterByIstioSidecar = (items: ServiceListItem[], istioSidecar: boolean): ServiceListItem[] => {
+    return items.filter(item => item.istioSidecar === istioSidecar);
+  };
 
-  const filterByName = (items: AppListItem[], names: string[]): AppListItem[] => {
+  const filterByName = (items: ServiceListItem[], names: string[]): ServiceListItem[] => {
     let result = items;
     result = result.filter(item => {
-      let appNameFiltered = true;
+      let serviceNameFiltered = true;
       if (names.length > 0) {
-        appNameFiltered = false;
+        serviceNameFiltered = false;
         for (let i = 0; i < names.length; i++) {
           if (item.name.includes(names[i])) {
-            appNameFiltered = true;
+            serviceNameFiltered = true;
             break;
           }
         }
       }
-      return appNameFiltered;
+      return serviceNameFiltered;
     });
     return result;
   };
 
-  const filterByIstioSidecar = (items: AppListItem[], istioSidecar: boolean): AppListItem[] => {
-    return items.filter(item => item.istioSidecar === istioSidecar);
-  };
-
-  export const filterBy = (items: AppListItem[], filters: ActiveFilter[]) => {
+  export const filterBy = (items: ServiceListItem[], filters: ActiveFilter[]) => {
     let results = items;
     /** Get AppName filter */
     let appNamesSelected: string[] = filters
@@ -134,17 +123,16 @@ export namespace AppListFilters {
     return results;
   };
 
-  /** Sort Method */
-
-  export const sortAppsItems = (
-    unsorted: AppListItem[],
+  // Exported for test
+  export const sortServices = (
+    services: ServiceListItem[],
     sortField: SortField,
     isAscending: boolean
-  ): Promise<AppListItem[]> => {
+  ): Promise<ServiceListItem[]> => {
     if (sortField.title === 'Error Rate') {
       // In the case of error rate sorting, we may not have all health promises ready yet
       // So we need to get them all before actually sorting
-      const allHealthPromises: Promise<AppListItemHealth>[] = unsorted.map(item => {
+      const allHealthPromises: Promise<ServiceItemHealth>[] = services.map(item => {
         return item.healthPromise.then(health => {
           const withHealth: any = item;
           withHealth.health = health;
@@ -155,7 +143,8 @@ export namespace AppListFilters {
         return arr.sort(isAscending ? sortField.compare : (a, b) => sortField.compare(b, a));
       });
     }
-    const sorted = unsorted.sort(isAscending ? sortField.compare : (a, b) => sortField.compare(b, a));
+    // Default case: sorting is done synchronously
+    const sorted = services.sort(isAscending ? sortField.compare : (a, b) => sortField.compare(b, a));
     return Promise.resolve(sorted);
   };
 }

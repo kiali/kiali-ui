@@ -1,10 +1,4 @@
-import {
-  filterByName,
-  IstioConfigList,
-  SortField,
-  sortIstioItems,
-  toIstioItems
-} from '../../../types/IstioConfigListComponent';
+import { filterByName, IstioConfigList, SortField, sortIstioItems, toIstioItems } from '../../../types/IstioConfigList';
 
 const mockIstioConfigList = (names: string[]): IstioConfigList => {
   let testData: IstioConfigList = {

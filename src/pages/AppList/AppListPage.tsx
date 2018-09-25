@@ -10,13 +10,6 @@ type AppListProps = {
   // none yet
 };
 
-export interface SortField {
-  id: string;
-  title: string;
-  isNumeric: boolean;
-  param: string;
-}
-
 class AppListPage extends ListPage.Component<AppListProps, AppListState> {
   currentSortField() {
     const queriedSortedField = this.getQueryParam('sort') || [AppListFilters.sortFields[0].param];

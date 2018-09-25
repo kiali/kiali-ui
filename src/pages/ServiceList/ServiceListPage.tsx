@@ -1,7 +1,8 @@
 import * as React from 'react';
-import ServiceListComponent, { sortFields } from './ServiceListComponent';
+import ServiceListComponent from './ServiceListComponent';
 import { Breadcrumb } from 'patternfly-react';
 import { ListPage } from '../../components/ListPage/ListPage';
+import { ServiceListFilters } from './FiltersAndSorts';
 
 type ServiceListState = {};
 
@@ -11,11 +12,11 @@ type ServiceListProps = {
 
 class ServiceListPage extends ListPage.Component<ServiceListProps, ServiceListState> {
   currentSortField() {
-    const queriedSortedField = this.getQueryParam('sort') || [sortFields[0].param];
+    const queriedSortedField = this.getQueryParam('sort') || [ServiceListFilters.sortFields[0].param];
     return (
-      sortFields.find(sortField => {
+      ServiceListFilters.sortFields.find(sortField => {
         return sortField.param === queriedSortedField[0];
-      }) || sortFields[0]
+      }) || ServiceListFilters.sortFields[0]
     );
   }
 

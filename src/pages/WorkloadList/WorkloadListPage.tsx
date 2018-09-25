@@ -10,13 +10,6 @@ type WorkloadListProps = {
   // none yet
 };
 
-export interface SortField {
-  id: string;
-  title: string;
-  isNumeric: boolean;
-  param: string;
-}
-
 class WorkloadListPage extends ListPage.Component<WorkloadListProps, WorkloadListState> {
   currentSortField() {
     const queriedSortedField = this.getQueryParam('sort') || [WorkloadListFilters.sortFields[0].param];

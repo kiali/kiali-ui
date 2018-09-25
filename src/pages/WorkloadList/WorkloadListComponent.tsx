@@ -4,14 +4,14 @@ import { authentication } from '../../utils/Authentication';
 import Namespace from '../../types/Namespace';
 import { AxiosError } from 'axios';
 import { WorkloadListItem, WorkloadNamespaceResponse } from '../../types/Workload';
+import { SortField } from '../../types/ListPage';
 import { WorkloadListFilters } from './FiltersAndSorts';
 import { FilterSelected, StatefulFilters } from '../../components/Filters/StatefulFilters';
 import { NamespaceFilter } from '../../components/Filters/NamespaceFilter';
-import { ListView, Sort, Paginator, ToolbarRightContent, Button, Icon } from 'patternfly-react';
+import { Button, Icon, ListView, Paginator, Sort, ToolbarRightContent } from 'patternfly-react';
 import { Pagination } from '../../types/Pagination';
 import { ActiveFilter, FilterType } from '../../types/Filters';
 import { removeDuplicatesArray } from '../../utils/Common';
-import { URLParameter } from '../../types/Parameters';
 import ItemDescription from './ItemDescription';
 import RateIntervalToolbarItem from '../ServiceList/RateIntervalToolbarItem';
 import { ListPage } from '../../components/ListPage/ListPage';
@@ -28,7 +28,7 @@ const availableFilters: FilterType[] = [
 type WorkloadListComponentState = {
   workloadItems: WorkloadListItem[];
   pagination: Pagination;
-  currentSortField: WorkloadListFilters.SortField;
+  currentSortField: SortField;
   isSortAscending: boolean;
   rateInterval: number;
 };
@@ -36,7 +36,7 @@ type WorkloadListComponentState = {
 type WorkloadListComponentProps = {
   pagination: Pagination;
   pageHooks: ListPage.Hooks;
-  currentSortField: WorkloadListFilters.SortField;
+  currentSortField: SortField;
   isSortAscending: boolean;
   rateInterval: number;
 };
@@ -79,6 +79,77 @@ class WorkloadListComponent extends React.Component<WorkloadListComponentProps, 
       prevProps.currentSortField.title === this.props.currentSortField.title
     );
   }
+
+  onFilterChange = () => {
+    // Resetting pagination when filters change
+    this.props.pageHooks.onParamChange([{ name: 'page', value: '' }]);
+    this.updateWorkloads(true);
+  };
+
+  handleError = (error: string) => {
+    this.props.pageHooks.handleError(error);
+  };
+
+  handleAxiosError(message: string, error: AxiosError) {
+    const errMsg = API.getErrorMsg(message, error);
+    console.error(errMsg);
+  }
+
+  pageSet = (page: number) => {
+    this.setState(prevState => {
+      return {
+        workloadItems: prevState.workloadItems,
+        pagination: {
+          page: page,
+          perPage: prevState.pagination.perPage,
+          perPageOptions: ListPage.perPageOptions
+        }
+      };
+    });
+
+    this.props.pageHooks.onParamChange([{ name: 'page', value: String(page) }]);
+  };
+
+  pageSelect = (perPage: number) => {
+    this.setState(prevState => {
+      return {
+        workloadItems: prevState.workloadItems,
+        pagination: {
+          page: 1,
+          perPage: perPage,
+          perPageOptions: ListPage.perPageOptions
+        }
+      };
+    });
+
+    this.props.pageHooks.onParamChange([{ name: 'page', value: '1' }, { name: 'perPage', value: String(perPage) }]);
+  };
+
+  updateSortField = (sortField: SortField) => {
+    WorkloadListFilters.sortWorkloadsItems(this.state.workloadItems, sortField, this.state.isSortAscending).then(
+      sorted => {
+        this.setState({
+          currentSortField: sortField,
+          workloadItems: sorted
+        });
+        this.props.pageHooks.onParamChange([{ name: 'sort', value: sortField.param }]);
+      }
+    );
+  };
+
+  updateSortDirection = () => {
+    WorkloadListFilters.sortWorkloadsItems(
+      this.state.workloadItems,
+      this.state.currentSortField,
+      !this.state.isSortAscending
+    ).then(sorted => {
+      this.setState({
+        isSortAscending: !this.state.isSortAscending,
+        workloadItems: sorted
+      });
+      this.props.pageHooks.onParamChange([{ name: 'direction', value: this.state.isSortAscending ? 'asc' : 'desc' }]);
+    });
+  };
 
   updateWorkloads = (resetPagination?: boolean) => {
     const activeFilters: ActiveFilter[] = FilterSelected.getSelected();
@@ -148,91 +219,6 @@ class WorkloadListComponent extends React.Component<WorkloadListComponentProps, 
       });
     });
   }
-
-  pageSet = (page: number) => {
-    this.setState(prevState => {
-      return {
-        workloadItems: prevState.workloadItems,
-        pagination: {
-          page: page,
-          perPage: prevState.pagination.perPage,
-          perPageOptions: ListPage.perPageOptions
-        }
-      };
-    });
-
-    this.props.pageHooks.onParamChange([{ name: 'page', value: String(page) }]);
-  };
-
-  pageSelect = (perPage: number) => {
-    this.setState(prevState => {
-      return {
-        workloadItems: prevState.workloadItems,
-        pagination: {
-          page: 1,
-          perPage: perPage,
-          perPageOptions: ListPage.perPageOptions
-        }
-      };
-    });
-
-    this.props.pageHooks.onParamChange([{ name: 'page', value: '1' }, { name: 'perPage', value: String(perPage) }]);
-  };
-
-  updateSortField = (sortField: WorkloadListFilters.SortField) => {
-    WorkloadListFilters.sortWorkloadsItems(this.state.workloadItems, sortField, this.state.isSortAscending).then(
-      sorted => {
-        this.setState({
-          currentSortField: sortField,
-          workloadItems: sorted
-        });
-        this.props.pageHooks.onParamChange([{ name: 'sort', value: sortField.param }]);
-      }
-    );
-  };
-
-  updateSortDirection = () => {
-    WorkloadListFilters.sortWorkloadsItems(
-      this.state.workloadItems,
-      this.state.currentSortField,
-      !this.state.isSortAscending
-    ).then(sorted => {
-      this.setState({
-        isSortAscending: !this.state.isSortAscending,
-        workloadItems: sorted
-      });
-      this.props.pageHooks.onParamChange([{ name: 'direction', value: this.state.isSortAscending ? 'asc' : 'desc' }]);
-    });
-  };
-
-  handleAxiosError(message: string, error: AxiosError) {
-    const errMsg = API.getErrorMsg(message, error);
-    console.error(errMsg);
-  }
-
-  updateParams(params: URLParameter[], id: string, value: string) {
-    let newParams = params;
-    const index = newParams.findIndex(param => param.name === id && param.value.length > 0);
-    if (index >= 0) {
-      newParams[index].value = value;
-    } else {
-      newParams.push({
-        name: id,
-        value: value
-      });
-    }
-    return newParams;
-  }
-
-  onFilterChange = () => {
-    // Resetting pagination when filters change
-    this.props.pageHooks.onParamChange([{ name: 'page', value: '' }]);
-    this.updateWorkloads(true);
-  };
-
-  handleError = (error: string) => {
-    this.props.pageHooks.handleError(error);
-  };
 
   render() {
     let workloadList: React.ReactElement<{}>[] = [];
