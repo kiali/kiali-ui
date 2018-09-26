@@ -11,13 +11,8 @@ type WorkloadListProps = {
 };
 
 class WorkloadListPage extends ListPage.Component<WorkloadListProps, WorkloadListState> {
-  currentSortField() {
-    const queriedSortedField = this.getQueryParam('sort') || [WorkloadListFilters.sortFields[0].param];
-    return (
-      WorkloadListFilters.sortFields.find(sortField => {
-        return sortField.param === queriedSortedField[0];
-      }) || WorkloadListFilters.sortFields[0]
-    );
+  sortFields() {
+    return WorkloadListFilters.sortFields;
   }
 
   render() {
@@ -27,8 +22,8 @@ class WorkloadListPage extends ListPage.Component<WorkloadListProps, WorkloadLis
           <Breadcrumb.Item active={true}>Workloads</Breadcrumb.Item>
         </Breadcrumb>
         <WorkloadListComponent
-          pagination={this.currentPagination()}
           pageHooks={this}
+          pagination={this.currentPagination()}
           currentSortField={this.currentSortField()}
           isSortAscending={this.isCurrentSortAscending()}
           rateInterval={this.currentDuration()}

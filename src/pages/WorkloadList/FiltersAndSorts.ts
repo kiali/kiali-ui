@@ -1,6 +1,6 @@
 import { ActiveFilter, FILTER_ACTION_APPEND, FILTER_ACTION_UPDATE, FilterType, FilterValue } from '../../types/Filters';
 import { WorkloadListItem, WorkloadType } from '../../types/Workload';
-import { SortField } from '../../types/ListPage';
+import { SortField } from '../../types/SortFilters';
 import { removeDuplicatesArray } from '../../utils/Common';
 import { getRequestErrorsRatio, WorkloadHealth } from '../../types/Health';
 

@@ -4,7 +4,7 @@ import { authentication } from '../../utils/Authentication';
 import Namespace from '../../types/Namespace';
 import { AxiosError } from 'axios';
 import { WorkloadListItem, WorkloadNamespaceResponse } from '../../types/Workload';
-import { SortField } from '../../types/ListPage';
+import { SortField } from '../../types/SortFilters';
 import { WorkloadListFilters } from './FiltersAndSorts';
 import { FilterSelected, StatefulFilters } from '../../components/Filters/StatefulFilters';
 import { NamespaceFilter } from '../../components/Filters/NamespaceFilter';

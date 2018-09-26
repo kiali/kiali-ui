@@ -6,7 +6,7 @@ import {
   presenceValues
 } from '../../types/Filters';
 import { AppListItem } from '../../types/AppList';
-import { SortField } from '../../types/ListPage';
+import { SortField } from '../../types/SortFilters';
 import { removeDuplicatesArray } from '../../utils/Common';
 import { AppHealth, getRequestErrorsRatio } from '../../types/Health';
 

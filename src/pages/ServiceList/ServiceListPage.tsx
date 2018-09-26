@@ -11,13 +11,8 @@ type ServiceListProps = {
 };
 
 class ServiceListPage extends ListPage.Component<ServiceListProps, ServiceListState> {
-  currentSortField() {
-    const queriedSortedField = this.getQueryParam('sort') || [ServiceListFilters.sortFields[0].param];
-    return (
-      ServiceListFilters.sortFields.find(sortField => {
-        return sortField.param === queriedSortedField[0];
-      }) || ServiceListFilters.sortFields[0]
-    );
+  sortFields() {
+    return ServiceListFilters.sortFields;
   }
 
   render() {

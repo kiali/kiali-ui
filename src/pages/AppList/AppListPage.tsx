@@ -11,13 +11,8 @@ type AppListProps = {
 };
 
 class AppListPage extends ListPage.Component<AppListProps, AppListState> {
-  currentSortField() {
-    const queriedSortedField = this.getQueryParam('sort') || [AppListFilters.sortFields[0].param];
-    return (
-      AppListFilters.sortFields.find(sortField => {
-        return sortField.param === queriedSortedField[0];
-      }) || AppListFilters.sortFields[0]
-    );
+  sortFields() {
+    return AppListFilters.sortFields;
   }
 
   render() {
@@ -27,8 +22,8 @@ class AppListPage extends ListPage.Component<AppListProps, AppListState> {
           <Breadcrumb.Item active={true}>Applications</Breadcrumb.Item>
         </Breadcrumb>
         <AppListComponent
-          pagination={this.currentPagination()}
           pageHooks={this}
+          pagination={this.currentPagination()}
           currentSortField={this.currentSortField()}
           isSortAscending={this.isCurrentSortAscending()}
           rateInterval={this.currentDuration()}

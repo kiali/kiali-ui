@@ -4,7 +4,7 @@ import { authentication } from '../../utils/Authentication';
 import Namespace from '../../types/Namespace';
 import { AxiosError } from 'axios';
 import { AppListItem } from '../../types/AppList';
-import { SortField } from '../../types/ListPage';
+import { SortField } from '../../types/SortFilters';
 import { AppListFilters } from './FiltersAndSorts';
 import { AppListClass } from './AppListClass';
 import { StatefulFilters, FilterSelected } from '../../components/Filters/StatefulFilters';

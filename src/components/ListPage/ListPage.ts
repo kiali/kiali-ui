@@ -5,6 +5,7 @@ import { URLParameter } from '../../types/Parameters';
 import { Pagination } from '../../types/Pagination';
 import { FilterType, ActiveFilter } from '../../types/Filters';
 import { config } from '../../config';
+import { SortField } from '../../types/SortFilters';
 
 export namespace ListPage {
   const ACTION_APPEND = 'append';
@@ -24,6 +25,7 @@ export namespace ListPage {
     getFiltersFromURL: (filterTypes: FilterType[]) => ActiveFilter[];
     setFiltersToURL: (filterTypes: FilterType[], filters: ActiveFilter[]) => ActiveFilter[];
     filtersMatchURL: (filterTypes: FilterType[], filters: ActiveFilter[]) => boolean;
+    sortFields: () => SortField[];
     isCurrentSortAscending: () => boolean;
     currentSortFieldId: () => string | undefined;
     currentDuration: () => number;
@@ -185,6 +187,29 @@ export namespace ListPage {
         return defaultPollInterval;
       }
       return pi;
+    }
+
+    sortFields() {
+      return [
+        {
+          id: 'namespace',
+          title: 'Namespace',
+          isNumeric: false,
+          param: 'ns',
+          compare: (a: any, b: any) => {
+            return a.namespace.localeCompare(b.namespace);
+          }
+        }
+      ];
+    }
+
+    currentSortField() {
+      const queriedSortedField = this.getQueryParam('sort') || [this.sortFields()[0].param];
+      return (
+        this.sortFields().find(sortField => {
+          return sortField.param === queriedSortedField[0];
+        }) || this.sortFields()[0]
+      );
     }
   }
 }

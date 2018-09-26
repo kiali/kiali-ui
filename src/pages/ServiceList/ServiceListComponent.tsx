@@ -26,7 +26,7 @@ import RateIntervalToolbarItem from './RateIntervalToolbarItem';
 import ItemDescription from './ItemDescription';
 import { ListPage } from '../../components/ListPage/ListPage';
 import { ServiceListFilters } from './FiltersAndSorts';
-import { SortField } from '../../types/ListPage';
+import { SortField } from '../../types/SortFilters';
 
 import './ServiceListComponent.css';
 

@@ -1,7 +1,7 @@
 import { ActiveFilter, FilterType, presenceValues } from '../../types/Filters';
 import { getRequestErrorsRatio, ServiceHealth } from '../../types/Health';
 import { ServiceListItem } from '../../types/ServiceList';
-import { SortField } from '../../types/ListPage';
+import { SortField } from '../../types/SortFilters';
 import { removeDuplicatesArray } from '../../utils/Common';
 
 type ServiceItemHealth = ServiceListItem & { health: ServiceHealth };

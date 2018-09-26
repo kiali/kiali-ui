@@ -10,13 +10,8 @@ type IstioConfigListProps = {
 };
 
 class IstioConfigListPage extends ListPage.Component<IstioConfigListProps, IstioConfigListState> {
-  currentSortField() {
-    const queriedSortedField = this.getQueryParam('sort') || [sortFields[0].param];
-    return (
-      sortFields.find(sortField => {
-        return sortField.param === queriedSortedField[0];
-      }) || sortFields[0]
-    );
+  sortFields() {
+    return sortFields;
   }
 
   render() {

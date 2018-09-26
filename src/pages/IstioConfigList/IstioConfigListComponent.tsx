@@ -13,7 +13,6 @@ import {
   filterByConfigValidation,
   filterByName,
   IstioConfigItem,
-  SortField,
   sortIstioItems,
   toIstioItems
 } from '../../types/IstioConfigList';
@@ -24,31 +23,36 @@ import { NamespaceValidations } from '../../types/IstioObjects';
 import { ConfigIndicator } from '../../components/ConfigValidation/ConfigIndicator';
 import { removeDuplicatesArray } from '../../utils/Common';
 import { ListPage } from '../../components/ListPage/ListPage';
+import { SortField } from '../../types/SortFilters';
 
 export const sortFields: SortField[] = [
   {
     id: 'namespace',
     title: 'Namespace',
     isNumeric: false,
-    param: 'ns'
+    param: 'ns',
+    compare: (a: any, b: any) => 1
   },
   {
     id: 'istiotype',
     title: 'Istio Type',
     isNumeric: false,
-    param: 'it'
+    param: 'it',
+    compare: (a: any, b: any) => 1
   },
   {
     id: 'istioname',
     title: 'Istio Name',
     isNumeric: false,
-    param: 'in'
+    param: 'in',
+    compare: (a: any, b: any) => 1
   },
   {
     id: 'configvalidation',
     title: 'Config',
     isNumeric: false,
-    param: 'cv'
+    param: 'cv',
+    compare: (a: any, b: any) => 1
   }
 ];
 
