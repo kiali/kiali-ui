@@ -9,11 +9,12 @@ import { AppListItem } from '../../types/AppList';
 import { SortField } from '../../types/SortFilters';
 import { removeDuplicatesArray } from '../../utils/Common';
 import { AppHealth, getRequestErrorsRatio } from '../../types/Health';
+import NamespaceFilter from '../../components/Filters/NamespaceFilter';
 
 type AppListItemHealth = AppListItem & { health: AppHealth };
 
 export namespace AppListFilters {
-  export const sortFields: SortField[] = [
+  export const sortFields: SortField<AppListItem>[] = [
     {
       id: 'namespace',
       title: 'Namespace',
@@ -65,7 +66,7 @@ export namespace AppListFilters {
     }
   ];
 
-  export const appNameFilter: FilterType = {
+  const appNameFilter: FilterType = {
     id: 'appname',
     title: 'App Name',
     placeholder: 'Filter by App Name',
@@ -74,7 +75,7 @@ export namespace AppListFilters {
     filterValues: []
   };
 
-  export const istioSidecarFilter: FilterType = {
+  const istioSidecarFilter: FilterType = {
     id: 'istiosidecar',
     title: 'Istio Sidecar',
     placeholder: 'Filter by IstioSidecar Validation',
@@ -82,6 +83,8 @@ export namespace AppListFilters {
     action: FILTER_ACTION_UPDATE,
     filterValues: presenceValues
   };
+
+  export const availableFilters: FilterType[] = [NamespaceFilter.create(), appNameFilter, istioSidecarFilter];
 
   /** Filter Method */
 
@@ -138,7 +141,7 @@ export namespace AppListFilters {
 
   export const sortAppsItems = (
     unsorted: AppListItem[],
-    sortField: SortField,
+    sortField: SortField<AppListItem>,
     isAscending: boolean
   ): Promise<AppListItem[]> => {
     if (sortField.title === 'Error Rate') {

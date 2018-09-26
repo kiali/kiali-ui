@@ -1,17 +1,15 @@
 import * as React from 'react';
-import IstioConfigListComponent, { sortFields } from './IstioConfigListComponent';
+import IstioConfigListComponent from './IstioConfigListComponent';
 import { Breadcrumb } from 'patternfly-react';
 import { ListPage } from '../../components/ListPage/ListPage';
+import { IstioConfigListFilters } from './FiltersAndSorts';
 
 type IstioConfigListState = {};
-
-type IstioConfigListProps = {
-  // none yet
-};
+type IstioConfigListProps = {};
 
 class IstioConfigListPage extends ListPage.Component<IstioConfigListProps, IstioConfigListState> {
   sortFields() {
-    return sortFields;
+    return IstioConfigListFilters.sortFields;
   }
 
   render() {

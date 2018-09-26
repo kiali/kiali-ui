@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { AxiosError } from 'axios';
 import {
   Button,
   Icon,
@@ -12,11 +11,10 @@ import {
 } from 'patternfly-react';
 import { Link } from 'react-router-dom';
 import { FilterSelected, StatefulFilters } from '../../components/Filters/StatefulFilters';
-import { NamespaceFilter } from '../../components/Filters/NamespaceFilter';
 import { PfColors } from '../../components/Pf/PfColors';
 import * as API from '../../services/Api';
 import Namespace from '../../types/Namespace';
-import { ActiveFilter, FilterType } from '../../types/Filters';
+import { ActiveFilter } from '../../types/Filters';
 import { Pagination } from '../../types/Pagination';
 import { ServiceList, ServiceListItem } from '../../types/ServiceList';
 import { IstioLogo } from '../../config';
@@ -27,19 +25,14 @@ import ItemDescription from './ItemDescription';
 import { ListPage } from '../../components/ListPage/ListPage';
 import { ServiceListFilters } from './FiltersAndSorts';
 import { SortField } from '../../types/SortFilters';
+import { ListComponent } from '../../components/ListPage/ListComponent';
 
 import './ServiceListComponent.css';
 
-const availableFilters: FilterType[] = [
-  NamespaceFilter.create(),
-  ServiceListFilters.serviceNameFilter,
-  ServiceListFilters.istioFilter
-];
-
 type ServiceListComponentState = {
-  services: ServiceListItem[];
+  listItems: ServiceListItem[];
   pagination: Pagination;
-  currentSortField: SortField;
+  currentSortField: SortField<ServiceListItem>;
   isSortAscending: boolean;
   rateInterval: number;
 };
@@ -47,16 +40,20 @@ type ServiceListComponentState = {
 type ServiceListComponentProps = {
   pageHooks: ListPage.Hooks;
   pagination: Pagination;
-  currentSortField: SortField;
+  currentSortField: SortField<ServiceListItem>;
   isSortAscending: boolean;
   rateInterval: number;
 };
 
-class ServiceListComponent extends React.Component<ServiceListComponentProps, ServiceListComponentState> {
+class ServiceListComponent extends ListComponent.Component<
+  ServiceListComponentProps,
+  ServiceListComponentState,
+  ServiceListItem
+> {
   constructor(props: ServiceListComponentProps) {
     super(props);
     this.state = {
-      services: [],
+      listItems: [],
       pagination: this.props.pagination,
       currentSortField: this.props.currentSortField,
       isSortAscending: this.props.isSortAscending,
@@ -65,7 +62,7 @@ class ServiceListComponent extends React.Component<ServiceListComponentProps, Se
   }
 
   componentDidMount() {
-    this.updateServices();
+    this.updateListItems();
   }
 
   componentDidUpdate(prevProps: ServiceListComponentProps, prevState: ServiceListComponentState, snapshot: any) {
@@ -77,7 +74,7 @@ class ServiceListComponent extends React.Component<ServiceListComponentProps, Se
         rateInterval: this.props.rateInterval
       });
 
-      this.updateServices();
+      this.updateListItems();
     }
   }
 
@@ -91,77 +88,11 @@ class ServiceListComponent extends React.Component<ServiceListComponentProps, Se
     );
   }
 
-  onFilterChange = () => {
-    // Resetting pagination when filters change
-    this.props.pageHooks.onParamChange([{ name: 'page', value: '' }]);
-    this.updateServices(true);
-  };
-
-  handleError = (error: string) => {
-    this.props.pageHooks.handleError(error);
-  };
-
-  handleAxiosError(message: string, error: AxiosError) {
-    const errMsg = API.getErrorMsg(message, error);
-    console.error(errMsg);
-    this.handleError(errMsg);
+  sortItemListMethod() {
+    return ServiceListFilters.sortServices;
   }
 
-  pageSet = (page: number) => {
-    this.setState(prevState => {
-      return {
-        services: prevState.services,
-        pagination: {
-          page: page,
-          perPage: prevState.pagination.perPage,
-          perPageOptions: ListPage.perPageOptions
-        }
-      };
-    });
-
-    this.props.pageHooks.onParamChange([{ name: 'page', value: String(page) }]);
-  };
-
-  perPageSelect = (perPage: number) => {
-    this.setState(prevState => {
-      return {
-        services: prevState.services,
-        pagination: {
-          page: 1,
-          perPage: perPage,
-          perPageOptions: ListPage.perPageOptions
-        }
-      };
-    });
-
-    this.props.pageHooks.onParamChange([{ name: 'page', value: '1' }, { name: 'perPage', value: String(perPage) }]);
-  };
-
-  updateSortField = (sortField: SortField) => {
-    ServiceListFilters.sortServices(this.state.services, sortField, this.state.isSortAscending).then(sorted => {
-      this.setState({
-        currentSortField: sortField,
-        services: sorted
-      });
-
-      this.props.pageHooks.onParamChange([{ name: 'sort', value: sortField.param }]);
-    });
-  };
-
-  updateSortDirection = () => {
-    ServiceListFilters.sortServices(this.state.services, this.state.currentSortField, !this.state.isSortAscending).then(
-      sorted => {
-        this.setState({
-          isSortAscending: !this.state.isSortAscending,
-          services: sorted
-        });
-
-        this.props.pageHooks.onParamChange([{ name: 'direction', value: this.state.isSortAscending ? 'asc' : 'desc' }]);
-      }
-    );
-  };
-
-  updateServices = (resetPagination?: boolean) => {
+  updateListItems(resetPagination?: boolean) {
     const activeFilters: ActiveFilter[] = FilterSelected.getSelected();
     let namespacesSelected: string[] = activeFilters
       .filter(activeFilter => activeFilter.category === 'Namespace')
@@ -185,7 +116,7 @@ class ServiceListComponent extends React.Component<ServiceListComponentProps, Se
     } else {
       this.fetchServices(namespacesSelected, activeFilters, this.state.rateInterval, resetPagination);
     }
-  };
+  }
 
   getServiceItem(data: ServiceList, rateInterval: number): ServiceListItem[] {
     let serviceItems: ServiceListItem[] = [];
@@ -220,7 +151,7 @@ class ServiceListComponent extends React.Component<ServiceListComponentProps, Se
         sorted => {
           this.setState(prevState => {
             return {
-              services: sorted,
+              listItems: sorted,
               pagination: {
                 page: currentPage,
                 perPage: prevState.pagination.perPage,
@@ -237,10 +168,10 @@ class ServiceListComponent extends React.Component<ServiceListComponentProps, Se
     let serviceList: any = [];
     let pageStart = (this.state.pagination.page - 1) * this.state.pagination.perPage;
     let pageEnd = pageStart + this.state.pagination.perPage;
-    pageEnd = pageEnd < this.state.services.length ? pageEnd : this.state.services.length;
+    pageEnd = pageEnd < this.state.listItems.length ? pageEnd : this.state.listItems.length;
 
     for (let i = pageStart; i < pageEnd; i++) {
-      const serviceItem = this.state.services[i];
+      const serviceItem = this.state.listItems[i];
       const to = '/namespaces/' + serviceItem.namespace + '/services/' + serviceItem.name;
 
       serviceList.push(
@@ -268,7 +199,7 @@ class ServiceListComponent extends React.Component<ServiceListComponentProps, Se
     return (
       <div>
         <StatefulFilters
-          initialFilters={availableFilters}
+          initialFilters={ServiceListFilters.availableFilters}
           pageHooks={this.props.pageHooks}
           onFilterChange={this.onFilterChange}
         >
@@ -289,7 +220,7 @@ class ServiceListComponent extends React.Component<ServiceListComponentProps, Se
             onRateIntervalChanged={this.rateIntervalChangedHandler}
           />
           <ToolbarRightContent>
-            <Button onClick={this.updateServices}>
+            <Button onClick={this.updateListItems}>
               <Icon name="refresh" />
             </Button>
           </ToolbarRightContent>
@@ -298,19 +229,13 @@ class ServiceListComponent extends React.Component<ServiceListComponentProps, Se
         <Paginator
           viewType="list"
           pagination={this.state.pagination}
-          itemCount={this.state.services.length}
+          itemCount={this.state.listItems.length}
           onPageSet={this.pageSet}
           onPerPageSelect={this.perPageSelect}
         />
       </div>
     );
   }
-
-  private rateIntervalChangedHandler = (key: number) => {
-    this.setState({ rateInterval: key });
-    this.props.pageHooks.onParamChange([{ name: 'rate', value: String(key) }]);
-    this.updateServices();
-  };
 }
 
 export default ServiceListComponent;

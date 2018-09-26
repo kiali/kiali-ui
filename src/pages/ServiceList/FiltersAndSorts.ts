@@ -3,11 +3,12 @@ import { getRequestErrorsRatio, ServiceHealth } from '../../types/Health';
 import { ServiceListItem } from '../../types/ServiceList';
 import { SortField } from '../../types/SortFilters';
 import { removeDuplicatesArray } from '../../utils/Common';
+import NamespaceFilter from '../../components/Filters/NamespaceFilter';
 
 type ServiceItemHealth = ServiceListItem & { health: ServiceHealth };
 
 export namespace ServiceListFilters {
-  export const sortFields: SortField[] = [
+  export const sortFields: SortField<ServiceListItem>[] = [
     {
       id: 'namespace',
       title: 'Namespace',
@@ -56,7 +57,7 @@ export namespace ServiceListFilters {
     }
   ];
 
-  export const serviceNameFilter: FilterType = {
+  const serviceNameFilter: FilterType = {
     id: 'servicename',
     title: 'Service Name',
     placeholder: 'Filter by Service Name',
@@ -65,7 +66,7 @@ export namespace ServiceListFilters {
     filterValues: []
   };
 
-  export const istioFilter: FilterType = {
+  const istioFilter: FilterType = {
     id: 'istio',
     title: 'Istio Sidecar',
     placeholder: 'Filter by Istio Sidecar',
@@ -73,6 +74,8 @@ export namespace ServiceListFilters {
     action: 'update',
     filterValues: presenceValues
   };
+
+  export const availableFilters: FilterType[] = [NamespaceFilter.create(), serviceNameFilter, istioFilter];
 
   const filterByIstioSidecar = (items: ServiceListItem[], istioSidecar: boolean): ServiceListItem[] => {
     return items.filter(item => item.istioSidecar === istioSidecar);
@@ -126,7 +129,7 @@ export namespace ServiceListFilters {
   // Exported for test
   export const sortServices = (
     services: ServiceListItem[],
-    sortField: SortField,
+    sortField: SortField<ServiceListItem>,
     isAscending: boolean
   ): Promise<ServiceListItem[]> => {
     if (sortField.title === 'Error Rate') {

@@ -2,33 +2,23 @@ import * as React from 'react';
 import * as API from '../../services/Api';
 import { authentication } from '../../utils/Authentication';
 import Namespace from '../../types/Namespace';
-import { AxiosError } from 'axios';
 import { WorkloadListItem, WorkloadNamespaceResponse } from '../../types/Workload';
 import { SortField } from '../../types/SortFilters';
 import { WorkloadListFilters } from './FiltersAndSorts';
 import { FilterSelected, StatefulFilters } from '../../components/Filters/StatefulFilters';
-import { NamespaceFilter } from '../../components/Filters/NamespaceFilter';
 import { Button, Icon, ListView, Paginator, Sort, ToolbarRightContent } from 'patternfly-react';
 import { Pagination } from '../../types/Pagination';
-import { ActiveFilter, FilterType } from '../../types/Filters';
+import { ActiveFilter } from '../../types/Filters';
 import { removeDuplicatesArray } from '../../utils/Common';
 import ItemDescription from './ItemDescription';
 import RateIntervalToolbarItem from '../ServiceList/RateIntervalToolbarItem';
 import { ListPage } from '../../components/ListPage/ListPage';
-
-const availableFilters: FilterType[] = [
-  NamespaceFilter.create(),
-  WorkloadListFilters.workloadNameFilter,
-  WorkloadListFilters.workloadTypeFilter,
-  WorkloadListFilters.istioSidecarFilter,
-  WorkloadListFilters.appLabelFilter,
-  WorkloadListFilters.versionLabelFilter
-];
+import { ListComponent } from '../../components/ListPage/ListComponent';
 
 type WorkloadListComponentState = {
-  workloadItems: WorkloadListItem[];
+  listItems: WorkloadListItem[];
   pagination: Pagination;
-  currentSortField: SortField;
+  currentSortField: SortField<WorkloadListItem>;
   isSortAscending: boolean;
   rateInterval: number;
 };
@@ -36,16 +26,20 @@ type WorkloadListComponentState = {
 type WorkloadListComponentProps = {
   pagination: Pagination;
   pageHooks: ListPage.Hooks;
-  currentSortField: SortField;
+  currentSortField: SortField<WorkloadListItem>;
   isSortAscending: boolean;
   rateInterval: number;
 };
 
-class WorkloadListComponent extends React.Component<WorkloadListComponentProps, WorkloadListComponentState> {
+class WorkloadListComponent extends ListComponent.Component<
+  WorkloadListComponentProps,
+  WorkloadListComponentState,
+  WorkloadListItem
+> {
   constructor(props: WorkloadListComponentProps) {
     super(props);
     this.state = {
-      workloadItems: [],
+      listItems: [],
       pagination: this.props.pagination,
       currentSortField: this.props.currentSortField,
       isSortAscending: this.props.isSortAscending,
@@ -54,7 +48,7 @@ class WorkloadListComponent extends React.Component<WorkloadListComponentProps, 
   }
 
   componentDidMount() {
-    this.updateWorkloads();
+    this.updateListItems();
   }
 
   componentDidUpdate(prevProps: WorkloadListComponentProps, prevState: WorkloadListComponentState, snapshot: any) {
@@ -66,7 +60,7 @@ class WorkloadListComponent extends React.Component<WorkloadListComponentProps, 
         rateInterval: this.props.rateInterval
       });
 
-      this.updateWorkloads();
+      this.updateListItems();
     }
   }
 
@@ -80,78 +74,7 @@ class WorkloadListComponent extends React.Component<WorkloadListComponentProps, 
     );
   }
 
-  onFilterChange = () => {
-    // Resetting pagination when filters change
-    this.props.pageHooks.onParamChange([{ name: 'page', value: '' }]);
-    this.updateWorkloads(true);
-  };
-
-  handleError = (error: string) => {
-    this.props.pageHooks.handleError(error);
-  };
-
-  handleAxiosError(message: string, error: AxiosError) {
-    const errMsg = API.getErrorMsg(message, error);
-    console.error(errMsg);
-  }
-
-  pageSet = (page: number) => {
-    this.setState(prevState => {
-      return {
-        workloadItems: prevState.workloadItems,
-        pagination: {
-          page: page,
-          perPage: prevState.pagination.perPage,
-          perPageOptions: ListPage.perPageOptions
-        }
-      };
-    });
-
-    this.props.pageHooks.onParamChange([{ name: 'page', value: String(page) }]);
-  };
-
-  pageSelect = (perPage: number) => {
-    this.setState(prevState => {
-      return {
-        workloadItems: prevState.workloadItems,
-        pagination: {
-          page: 1,
-          perPage: perPage,
-          perPageOptions: ListPage.perPageOptions
-        }
-      };
-    });
-
-    this.props.pageHooks.onParamChange([{ name: 'page', value: '1' }, { name: 'perPage', value: String(perPage) }]);
-  };
-
-  updateSortField = (sortField: SortField) => {
-    WorkloadListFilters.sortWorkloadsItems(this.state.workloadItems, sortField, this.state.isSortAscending).then(
-      sorted => {
-        this.setState({
-          currentSortField: sortField,
-          workloadItems: sorted
-        });
-        this.props.pageHooks.onParamChange([{ name: 'sort', value: sortField.param }]);
-      }
-    );
-  };
-
-  updateSortDirection = () => {
-    WorkloadListFilters.sortWorkloadsItems(
-      this.state.workloadItems,
-      this.state.currentSortField,
-      !this.state.isSortAscending
-    ).then(sorted => {
-      this.setState({
-        isSortAscending: !this.state.isSortAscending,
-        workloadItems: sorted
-      });
-      this.props.pageHooks.onParamChange([{ name: 'direction', value: this.state.isSortAscending ? 'asc' : 'desc' }]);
-    });
-  };
-
-  updateWorkloads = (resetPagination?: boolean) => {
+  updateListItems(resetPagination?: boolean) {
     const activeFilters: ActiveFilter[] = FilterSelected.getSelected();
     let namespacesSelected: string[] = activeFilters
       .filter(activeFilter => activeFilter.category === 'Namespace')
@@ -170,7 +93,7 @@ class WorkloadListComponent extends React.Component<WorkloadListComponentProps, 
     } else {
       this.fetchWorkloads(namespacesSelected, activeFilters, resetPagination);
     }
-  };
+  }
 
   getDeploymentItems = (data: WorkloadNamespaceResponse): WorkloadListItem[] => {
     let workloadsItems: WorkloadListItem[] = [];
@@ -208,7 +131,7 @@ class WorkloadListComponent extends React.Component<WorkloadListComponentProps, 
       ).then(sorted => {
         this.setState(prevState => {
           return {
-            workloadItems: sorted,
+            listItems: sorted,
             pagination: {
               page: currentPage,
               perPage: prevState.pagination.perPage,
@@ -224,13 +147,13 @@ class WorkloadListComponent extends React.Component<WorkloadListComponentProps, 
     let workloadList: React.ReactElement<{}>[] = [];
     let pageStart = (this.state.pagination.page - 1) * this.state.pagination.perPage;
     let pageEnd = pageStart + this.state.pagination.perPage;
-    pageEnd = pageEnd < this.state.workloadItems.length ? pageEnd : this.state.workloadItems.length;
+    pageEnd = pageEnd < this.state.listItems.length ? pageEnd : this.state.listItems.length;
 
     for (let i = pageStart; i < pageEnd; i++) {
       workloadList.push(
         <ItemDescription
-          workloadItem={this.state.workloadItems[i]}
-          key={`ItemDescription_${this.state.workloadItems[i].workload.name}_${i}`}
+          workloadItem={this.state.listItems[i]}
+          key={`ItemDescription_${this.state.listItems[i].workload.name}_${i}`}
           position={i}
         />
       );
@@ -239,7 +162,7 @@ class WorkloadListComponent extends React.Component<WorkloadListComponentProps, 
     return (
       <>
         <StatefulFilters
-          initialFilters={availableFilters}
+          initialFilters={WorkloadListFilters.availableFilters}
           pageHooks={this.props.pageHooks}
           onFilterChange={this.onFilterChange}
         >
@@ -260,7 +183,7 @@ class WorkloadListComponent extends React.Component<WorkloadListComponentProps, 
             onRateIntervalChanged={this.rateIntervalChangedHandler}
           />
           <ToolbarRightContent>
-            <Button onClick={this.updateWorkloads}>
+            <Button onClick={this.updateListItems}>
               <Icon name="refresh" />
             </Button>
           </ToolbarRightContent>
@@ -269,19 +192,13 @@ class WorkloadListComponent extends React.Component<WorkloadListComponentProps, 
         <Paginator
           viewType="list"
           pagination={this.state.pagination}
-          itemCount={this.state.workloadItems.length}
+          itemCount={this.state.listItems.length}
           onPageSet={this.pageSet}
-          onPerPageSelect={this.pageSelect}
+          onPerPageSelect={this.perPageSelect}
         />
       </>
     );
   }
-
-  private rateIntervalChangedHandler = (key: number) => {
-    this.setState({ rateInterval: key });
-    this.props.pageHooks.onParamChange([{ name: 'rate', value: key.toString(10) }]);
-    this.updateWorkloads();
-  };
 }
 
 export default WorkloadListComponent;

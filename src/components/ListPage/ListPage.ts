@@ -25,7 +25,7 @@ export namespace ListPage {
     getFiltersFromURL: (filterTypes: FilterType[]) => ActiveFilter[];
     setFiltersToURL: (filterTypes: FilterType[], filters: ActiveFilter[]) => ActiveFilter[];
     filtersMatchURL: (filterTypes: FilterType[], filters: ActiveFilter[]) => boolean;
-    sortFields: () => SortField[];
+    sortFields: () => SortField<any>[];
     isCurrentSortAscending: () => boolean;
     currentSortFieldId: () => string | undefined;
     currentDuration: () => number;

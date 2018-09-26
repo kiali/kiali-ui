@@ -1,10 +1,16 @@
 import * as React from 'react';
-import { Button, Icon, ListView, ListViewItem, ListViewIcon, Sort, ToolbarRightContent } from 'patternfly-react';
-import { AxiosError } from 'axios';
+import {
+  Button,
+  Icon,
+  ListView,
+  ListViewIcon,
+  ListViewItem,
+  Paginator,
+  Sort,
+  ToolbarRightContent
+} from 'patternfly-react';
 import { FilterSelected, StatefulFilters } from '../../components/Filters/StatefulFilters';
-import { NamespaceFilter } from '../../components/Filters/NamespaceFilter';
-import { Paginator } from 'patternfly-react';
-import { ActiveFilter, FILTER_ACTION_APPEND, FILTER_ACTION_UPDATE, FilterType } from '../../types/Filters';
+import { ActiveFilter } from '../../types/Filters';
 import * as API from '../../services/Api';
 import Namespace from '../../types/Namespace';
 import { Pagination } from '../../types/Pagination';
@@ -24,137 +30,32 @@ import { ConfigIndicator } from '../../components/ConfigValidation/ConfigIndicat
 import { removeDuplicatesArray } from '../../utils/Common';
 import { ListPage } from '../../components/ListPage/ListPage';
 import { SortField } from '../../types/SortFilters';
-
-export const sortFields: SortField[] = [
-  {
-    id: 'namespace',
-    title: 'Namespace',
-    isNumeric: false,
-    param: 'ns',
-    compare: (a: any, b: any) => 1
-  },
-  {
-    id: 'istiotype',
-    title: 'Istio Type',
-    isNumeric: false,
-    param: 'it',
-    compare: (a: any, b: any) => 1
-  },
-  {
-    id: 'istioname',
-    title: 'Istio Name',
-    isNumeric: false,
-    param: 'in',
-    compare: (a: any, b: any) => 1
-  },
-  {
-    id: 'configvalidation',
-    title: 'Config',
-    isNumeric: false,
-    param: 'cv',
-    compare: (a: any, b: any) => 1
-  }
-];
-
-const istioNameFilter: FilterType = {
-  id: 'istioname',
-  title: 'Istio Name',
-  placeholder: 'Filter by Istio Name',
-  filterType: 'text',
-  action: FILTER_ACTION_UPDATE,
-  filterValues: []
-};
-
-const istioTypeFilter: FilterType = {
-  id: 'istiotype',
-  title: 'Istio Type',
-  placeholder: 'Filter by Istio Type',
-  filterType: 'select',
-  action: FILTER_ACTION_APPEND,
-  filterValues: [
-    {
-      id: 'Gateway',
-      title: 'Gateway'
-    },
-    {
-      id: 'VirtualService',
-      title: 'VirtualService'
-    },
-    {
-      id: 'DestinationRule',
-      title: 'DestinationRule'
-    },
-    {
-      id: 'ServiceEntry',
-      title: 'ServiceEntry'
-    },
-    {
-      id: 'Rule',
-      title: 'Rule'
-    },
-    {
-      id: 'QuotaSpec',
-      title: 'QuotaSpec'
-    },
-    {
-      id: 'QuotaSpecBinding',
-      title: 'QuotaSpecBinding'
-    }
-  ]
-};
-
-const configValidationFilter: FilterType = {
-  id: 'configvalidation',
-  title: 'Config',
-  placeholder: 'Filter by Config Validation',
-  filterType: 'select',
-  action: FILTER_ACTION_APPEND,
-  filterValues: [
-    {
-      id: 'valid',
-      title: 'Valid'
-    },
-    {
-      id: 'warning',
-      title: 'Warning'
-    },
-    {
-      id: 'notvalid',
-      title: 'Not Valid'
-    },
-    {
-      id: 'notvalidated',
-      title: 'Not Validated'
-    }
-  ]
-};
-
-const availableFilters: FilterType[] = [
-  NamespaceFilter.create(),
-  istioTypeFilter,
-  istioNameFilter,
-  configValidationFilter
-];
+import { IstioConfigListFilters } from './FiltersAndSorts';
+import { ListComponent } from '../../components/ListPage/ListComponent';
 
 type IstioConfigListComponentState = {
-  istioItems: IstioConfigItem[];
+  listItems: IstioConfigItem[];
   pagination: Pagination;
-  currentSortField: SortField;
+  currentSortField: SortField<IstioConfigItem>;
   isSortAscending: boolean;
 };
 
 type IstioConfigListComponentProps = {
   pageHooks: ListPage.Hooks;
   pagination: Pagination;
-  currentSortField: SortField;
+  currentSortField: SortField<IstioConfigItem>;
   isSortAscending: boolean;
 };
 
-class IstioConfigListComponent extends React.Component<IstioConfigListComponentProps, IstioConfigListComponentState> {
+class IstioConfigListComponent extends ListComponent.Component<
+  IstioConfigListComponentProps,
+  IstioConfigListComponentState,
+  IstioConfigItem
+> {
   constructor(props: IstioConfigListComponentProps) {
     super(props);
     this.state = {
-      istioItems: [],
+      listItems: [],
       pagination: this.props.pagination,
       currentSortField: this.props.currentSortField,
       isSortAscending: this.props.isSortAscending
@@ -162,7 +63,7 @@ class IstioConfigListComponent extends React.Component<IstioConfigListComponentP
   }
 
   componentDidMount() {
-    this.updateIstioConfig();
+    this.updateListItems();
   }
 
   componentDidUpdate(
@@ -177,7 +78,7 @@ class IstioConfigListComponent extends React.Component<IstioConfigListComponentP
         isSortAscending: this.props.isSortAscending
       });
 
-      this.updateIstioConfig();
+      this.updateListItems();
     }
   }
 
@@ -190,75 +91,7 @@ class IstioConfigListComponent extends React.Component<IstioConfigListComponentP
     );
   }
 
-  onFilterChange = () => {
-    // Resetting pagination when filters change
-    this.props.pageHooks.onParamChange([{ name: 'page', value: '' }]);
-    this.updateIstioConfig(true);
-  };
-
-  handleError = (error: string) => {
-    this.props.pageHooks.handleError(error);
-  };
-
-  handleAxiosError(message: string, error: AxiosError) {
-    const errMsg = API.getErrorMsg(message, error);
-    console.error(errMsg);
-    this.handleError(errMsg);
-  }
-
-  pageSet = (page: number) => {
-    this.setState(prevState => {
-      return {
-        istioItems: prevState.istioItems,
-        pagination: {
-          page: page,
-          perPage: prevState.pagination.perPage,
-          perPageOptions: ListPage.perPageOptions
-        }
-      };
-    });
-
-    this.props.pageHooks.onParamChange([{ name: 'page', value: String(page) }]);
-  };
-
-  pageSelect = (perPage: number) => {
-    this.setState(prevState => {
-      return {
-        istioItems: prevState.istioItems,
-        pagination: {
-          page: 1,
-          perPage: perPage,
-          perPageOptions: ListPage.perPageOptions
-        }
-      };
-    });
-
-    this.props.pageHooks.onParamChange([{ name: 'page', value: '1' }, { name: 'perPage', value: String(perPage) }]);
-  };
-
-  updateSortField = (sortField: SortField) => {
-    this.setState(prevState => {
-      return {
-        currentSortField: sortField,
-        istioItems: sortIstioItems(prevState.istioItems, sortField, prevState.isSortAscending)
-      };
-    });
-
-    this.props.pageHooks.onParamChange([{ name: 'sort', value: sortField.param }]);
-  };
-
-  updateSortDirection = () => {
-    this.setState(prevState => {
-      return {
-        isSortAscending: !prevState.isSortAscending,
-        istioItems: sortIstioItems(prevState.istioItems, prevState.currentSortField, !prevState.isSortAscending)
-      };
-    });
-
-    this.props.pageHooks.onParamChange([{ name: 'direction', value: this.state.isSortAscending ? 'desc' : 'asc' }]);
-  };
-
-  updateIstioConfig = (resetPagination?: boolean) => {
+  updateListItems(resetPagination?: boolean) {
     const activeFilters: ActiveFilter[] = FilterSelected.getSelected();
     let namespacesSelected: string[] = activeFilters
       .filter(activeFilter => activeFilter.category === 'Namespace')
@@ -301,7 +134,7 @@ class IstioConfigListComponent extends React.Component<IstioConfigListComponentP
         resetPagination
       );
     }
-  };
+  }
 
   updateValidation(istioItems: IstioConfigItem[], namespaceValidation: NamespaceValidations): IstioConfigItem[] {
     istioItems.forEach(istioItem => {
@@ -338,7 +171,7 @@ class IstioConfigListComponent extends React.Component<IstioConfigListComponentP
         istioItems = sortIstioItems(istioItems, this.state.currentSortField, this.state.isSortAscending);
         this.setState(prevState => {
           return {
-            istioItems: istioItems,
+            listItems: istioItems,
             pagination: {
               page: currentPage,
               perPage: prevState.pagination.perPage,
@@ -355,8 +188,8 @@ class IstioConfigListComponent extends React.Component<IstioConfigListComponentP
         );
         this.setState(prevState => {
           return {
-            istioItems: filterByConfigValidation(
-              this.updateValidation(prevState.istioItems, namespaceValidations),
+            listItems: filterByConfigValidation(
+              this.updateValidation(prevState.listItems, namespaceValidations),
               configValidationFilters
             )
           };
@@ -444,23 +277,23 @@ class IstioConfigListComponent extends React.Component<IstioConfigListComponentP
     let istioList: any = [];
     let pageStart = (this.state.pagination.page - 1) * this.state.pagination.perPage;
     let pageEnd = pageStart + this.state.pagination.perPage;
-    pageEnd = pageEnd < this.state.istioItems.length ? pageEnd : this.state.istioItems.length;
+    pageEnd = pageEnd < this.state.listItems.length ? pageEnd : this.state.listItems.length;
 
     for (let i = pageStart; i < pageEnd; i++) {
-      istioList.push(this.renderIstioItem(this.state.istioItems[i], i));
+      istioList.push(this.renderIstioItem(this.state.listItems[i], i));
     }
 
     let ruleListComponent;
     ruleListComponent = (
       <>
         <StatefulFilters
-          initialFilters={availableFilters}
+          initialFilters={IstioConfigListFilters.availableFilters}
           pageHooks={this.props.pageHooks}
           onFilterChange={this.onFilterChange}
         >
           <Sort>
             <Sort.TypeSelector
-              sortTypes={sortFields}
+              sortTypes={IstioConfigListFilters.sortFields}
               currentSortType={this.state.currentSortField}
               onSortTypeSelected={this.updateSortField}
             />
@@ -471,7 +304,7 @@ class IstioConfigListComponent extends React.Component<IstioConfigListComponentP
             />
           </Sort>
           <ToolbarRightContent>
-            <Button onClick={this.updateIstioConfig}>
+            <Button onClick={this.updateListItems}>
               <Icon name="refresh" />
             </Button>
           </ToolbarRightContent>
@@ -480,9 +313,9 @@ class IstioConfigListComponent extends React.Component<IstioConfigListComponentP
         <Paginator
           viewType="list"
           pagination={this.state.pagination}
-          itemCount={this.state.istioItems.length}
+          itemCount={this.state.listItems.length}
           onPageSet={this.pageSet}
-          onPerPageSelect={this.pageSelect}
+          onPerPageSelect={this.perPageSelect}
         />
       </>
     );
