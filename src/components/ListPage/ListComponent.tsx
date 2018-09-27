@@ -3,28 +3,34 @@ import { AxiosError } from 'axios';
 import { ListPage } from './ListPage';
 import { SortField } from '../../types/SortFilters';
 import { Pagination } from '../../types/Pagination';
+import * as API from '../../services/Api';
 
 export namespace ListComponent {
-  type ListComponentProps<R> = {
+  export interface Props<R> {
     pageHooks: ListPage.Hooks;
     pagination: Pagination;
     currentSortField: SortField<R>;
     isSortAscending: boolean;
-    rateInterval?: number;
-  };
+  }
 
-  type ListComponentState<R> = {
+  export interface State<R> {
     listItems: R[];
     pagination: Pagination;
     currentSortField: SortField<R>;
     isSortAscending: boolean;
-    rateInterval?: number;
-  };
+  }
 
-  export class Component<P extends ListComponentProps<R>, S extends ListComponentState<R>, R> extends React.Component<
-    P,
-    S
-  > {
+  export abstract class Component<P extends Props<R>, S extends State<R>, R> extends React.Component<P, S> {
+    abstract sortItemList(listItems: R[], sortField: SortField<R>, isAscending: boolean): Promise<R[]>;
+    abstract updateListItems(resetPagination?: boolean): void;
+
+    constructor(props: P) {
+      super(props);
+
+      this.updateListItems = this.updateListItems.bind(this);
+      this.sortItemList = this.sortItemList.bind(this);
+    }
+
     onFilterChange = () => {
       // Resetting pagination when filters change
       this.props.pageHooks.onParamChange([{ name: 'page', value: '' }]);
@@ -72,7 +78,7 @@ export namespace ListComponent {
     };
 
     updateSortField = (sortField: SortField<R>) => {
-      this.sortItemListMethod()(this.state.listItems, sortField, this.state.isSortAscending).then(sorted => {
+      this.sortItemList(this.state.listItems, sortField, this.state.isSortAscending).then(sorted => {
         this.setState({
           currentSortField: sortField,
           listItems: sorted
@@ -83,33 +89,14 @@ export namespace ListComponent {
     };
 
     updateSortDirection = () => {
-      this.sortItemListMethod()(this.state.listItems, this.state.currentSortField, !this.state.isSortAscending).then(
-        sorted => {
-          this.setState({
-            isSortAscending: !this.state.isSortAscending,
-            listItems: sorted
-          });
+      this.sortItemList(this.state.listItems, this.state.currentSortField, !this.state.isSortAscending).then(sorted => {
+        this.setState({
+          isSortAscending: !this.state.isSortAscending,
+          listItems: sorted
+        });
 
-          this.props.pageHooks.onParamChange([
-            { name: 'direction', value: this.state.isSortAscending ? 'asc' : 'desc' }
-          ]);
-        }
-      );
+        this.props.pageHooks.onParamChange([{ name: 'direction', value: this.state.isSortAscending ? 'asc' : 'desc' }]);
+      });
     };
-
-    rateIntervalChangedHandler = (key: number) => {
-      this.setState({ rateInterval: key });
-      this.props.pageHooks.onParamChange([{ name: 'rate', value: String(key) }]);
-      this.updateListItems();
-    };
-
-    sortItemListMethod() {
-      const promises = new Array<R>();
-      return (items: R[], sortField: SortField<R>, isAscending: boolean) => Promise.all(promises);
-    }
-
-    updateListItems(resetPagination?: boolean) {
-      return;
-    }
   }
 }

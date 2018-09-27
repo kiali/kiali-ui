@@ -101,13 +101,13 @@ export namespace ServiceListFilters {
 
   export const filterBy = (items: ServiceListItem[], filters: ActiveFilter[]) => {
     let results = items;
-    /** Get AppName filter */
-    let appNamesSelected: string[] = filters
-      .filter(activeFilter => activeFilter.category === 'App Name')
+    /** Get ServiceName filter */
+    let serviceNamesSelected: string[] = filters
+      .filter(activeFilter => activeFilter.category === 'Service Name')
       .map(activeFilter => activeFilter.value);
 
     /** Remove duplicates  */
-    appNamesSelected = removeDuplicatesArray(appNamesSelected);
+    serviceNamesSelected = removeDuplicatesArray(serviceNamesSelected);
 
     /** Get IstioSidecar filter */
     let istioSidecarValidationFilters: ActiveFilter[] = filters.filter(
@@ -120,8 +120,8 @@ export namespace ServiceListFilters {
       results = filterByIstioSidecar(results, istioSidecar);
     }
 
-    if (appNamesSelected.length > 0) {
-      results = filterByName(results, appNamesSelected);
+    if (serviceNamesSelected.length > 0) {
+      results = filterByName(results, serviceNamesSelected);
     }
     return results;
   };

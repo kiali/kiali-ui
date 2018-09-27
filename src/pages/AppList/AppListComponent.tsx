@@ -3,33 +3,24 @@ import * as API from '../../services/Api';
 import { authentication } from '../../utils/Authentication';
 import Namespace from '../../types/Namespace';
 import { AppListItem } from '../../types/AppList';
-import { SortField } from '../../types/SortFilters';
 import { AppListFilters } from './FiltersAndSorts';
 import { AppListClass } from './AppListClass';
 import { FilterSelected, StatefulFilters } from '../../components/Filters/StatefulFilters';
 import { Button, Icon, ListView, Paginator, Sort, ToolbarRightContent } from 'patternfly-react';
-import { Pagination } from '../../types/Pagination';
 import { ActiveFilter } from '../../types/Filters';
 import { removeDuplicatesArray } from '../../utils/Common';
 import RateIntervalToolbarItem from '../ServiceList/RateIntervalToolbarItem';
 import { ListPage } from '../../components/ListPage/ListPage';
+import { SortField } from '../../types/SortFilters';
 import { ListComponent } from '../../components/ListPage/ListComponent';
 
-type AppListComponentState = {
-  listItems: AppListItem[];
-  pagination: Pagination;
-  currentSortField: SortField<AppListItem>;
-  isSortAscending: boolean;
+interface AppListComponentState extends ListComponent.State<AppListItem> {
   rateInterval: number;
-};
+}
 
-type AppListComponentProps = {
-  pagination: Pagination;
-  pageHooks: ListPage.Hooks;
-  currentSortField: SortField<AppListItem>;
-  isSortAscending: boolean;
+interface AppListComponentProps extends ListComponent.Props<AppListItem> {
   rateInterval: number;
-};
+}
 
 class AppListComponent extends ListComponent.Component<AppListComponentProps, AppListComponentState, AppListItem> {
   constructor(props: AppListComponentProps) {
@@ -67,6 +58,16 @@ class AppListComponent extends ListComponent.Component<AppListComponentProps, Ap
       prevProps.isSortAscending === this.props.isSortAscending &&
       prevProps.currentSortField.title === this.props.currentSortField.title
     );
+  }
+
+  rateIntervalChangedHandler = (key: number) => {
+    this.setState({ rateInterval: key });
+    this.props.pageHooks.onParamChange([{ name: 'rate', value: String(key) }]);
+    this.updateListItems();
+  };
+
+  sortItemList(apps: AppListItem[], sortField: SortField<AppListItem>, isAscending: boolean) {
+    return AppListFilters.sortAppsItems(apps, sortField, isAscending);
   }
 
   updateListItems(resetPagination?: boolean) {

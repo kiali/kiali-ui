@@ -15,7 +15,6 @@ import { PfColors } from '../../components/Pf/PfColors';
 import * as API from '../../services/Api';
 import Namespace from '../../types/Namespace';
 import { ActiveFilter } from '../../types/Filters';
-import { Pagination } from '../../types/Pagination';
 import { ServiceList, ServiceListItem } from '../../types/ServiceList';
 import { IstioLogo } from '../../config';
 import { authentication } from '../../utils/Authentication';
@@ -24,26 +23,18 @@ import RateIntervalToolbarItem from './RateIntervalToolbarItem';
 import ItemDescription from './ItemDescription';
 import { ListPage } from '../../components/ListPage/ListPage';
 import { ServiceListFilters } from './FiltersAndSorts';
+
+import './ServiceListComponent.css';
 import { SortField } from '../../types/SortFilters';
 import { ListComponent } from '../../components/ListPage/ListComponent';
 
-import './ServiceListComponent.css';
-
-type ServiceListComponentState = {
-  listItems: ServiceListItem[];
-  pagination: Pagination;
-  currentSortField: SortField<ServiceListItem>;
-  isSortAscending: boolean;
+interface ServiceListComponentState extends ListComponent.State<ServiceListItem> {
   rateInterval: number;
-};
+}
 
-type ServiceListComponentProps = {
-  pageHooks: ListPage.Hooks;
-  pagination: Pagination;
-  currentSortField: SortField<ServiceListItem>;
-  isSortAscending: boolean;
+interface ServiceListComponentProps extends ListComponent.Props<ServiceListItem> {
   rateInterval: number;
-};
+}
 
 class ServiceListComponent extends ListComponent.Component<
   ServiceListComponentProps,
@@ -52,6 +43,7 @@ class ServiceListComponent extends ListComponent.Component<
 > {
   constructor(props: ServiceListComponentProps) {
     super(props);
+
     this.state = {
       listItems: [],
       pagination: this.props.pagination,
@@ -88,8 +80,14 @@ class ServiceListComponent extends ListComponent.Component<
     );
   }
 
-  sortItemListMethod() {
-    return ServiceListFilters.sortServices;
+  rateIntervalChangedHandler = (key: number) => {
+    this.setState({ rateInterval: key });
+    this.props.pageHooks.onParamChange([{ name: 'rate', value: String(key) }]);
+    this.updateListItems();
+  };
+
+  sortItemList(services: ServiceListItem[], sortField: SortField<ServiceListItem>, isAscending: boolean) {
+    return ServiceListFilters.sortServices(services, sortField, isAscending);
   }
 
   updateListItems(resetPagination?: boolean) {

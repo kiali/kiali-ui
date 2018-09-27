@@ -3,33 +3,24 @@ import * as API from '../../services/Api';
 import { authentication } from '../../utils/Authentication';
 import Namespace from '../../types/Namespace';
 import { WorkloadListItem, WorkloadNamespaceResponse } from '../../types/Workload';
-import { SortField } from '../../types/SortFilters';
 import { WorkloadListFilters } from './FiltersAndSorts';
 import { FilterSelected, StatefulFilters } from '../../components/Filters/StatefulFilters';
 import { Button, Icon, ListView, Paginator, Sort, ToolbarRightContent } from 'patternfly-react';
-import { Pagination } from '../../types/Pagination';
 import { ActiveFilter } from '../../types/Filters';
 import { removeDuplicatesArray } from '../../utils/Common';
 import ItemDescription from './ItemDescription';
 import RateIntervalToolbarItem from '../ServiceList/RateIntervalToolbarItem';
 import { ListPage } from '../../components/ListPage/ListPage';
+import { SortField } from '../../types/SortFilters';
 import { ListComponent } from '../../components/ListPage/ListComponent';
 
-type WorkloadListComponentState = {
-  listItems: WorkloadListItem[];
-  pagination: Pagination;
-  currentSortField: SortField<WorkloadListItem>;
-  isSortAscending: boolean;
+interface WorkloadListComponentState extends ListComponent.State<WorkloadListItem> {
   rateInterval: number;
-};
+}
 
-type WorkloadListComponentProps = {
-  pagination: Pagination;
-  pageHooks: ListPage.Hooks;
-  currentSortField: SortField<WorkloadListItem>;
-  isSortAscending: boolean;
+interface WorkloadListComponentProps extends ListComponent.Props<WorkloadListItem> {
   rateInterval: number;
-};
+}
 
 class WorkloadListComponent extends ListComponent.Component<
   WorkloadListComponentProps,
@@ -72,6 +63,16 @@ class WorkloadListComponent extends ListComponent.Component<
       prevProps.isSortAscending === this.props.isSortAscending &&
       prevProps.currentSortField.title === this.props.currentSortField.title
     );
+  }
+
+  rateIntervalChangedHandler = (key: number) => {
+    this.setState({ rateInterval: key });
+    this.props.pageHooks.onParamChange([{ name: 'rate', value: String(key) }]);
+    this.updateListItems();
+  };
+
+  sortItemList(workloads: WorkloadListItem[], sortField: SortField<WorkloadListItem>, isAscending: boolean) {
+    return WorkloadListFilters.sortWorkloadsItems(workloads, sortField, isAscending);
   }
 
   updateListItems(resetPagination?: boolean) {

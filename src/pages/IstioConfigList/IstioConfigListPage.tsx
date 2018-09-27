@@ -3,11 +3,12 @@ import IstioConfigListComponent from './IstioConfigListComponent';
 import { Breadcrumb } from 'patternfly-react';
 import { ListPage } from '../../components/ListPage/ListPage';
 import { IstioConfigListFilters } from './FiltersAndSorts';
+import { IstioConfigItem } from '../../types/IstioConfigList';
 
 type IstioConfigListState = {};
 type IstioConfigListProps = {};
 
-class IstioConfigListPage extends ListPage.Component<IstioConfigListProps, IstioConfigListState> {
+class IstioConfigListPage extends ListPage.Component<IstioConfigListProps, IstioConfigListState, IstioConfigItem> {
   sortFields() {
     return IstioConfigListFilters.sortFields;
   }

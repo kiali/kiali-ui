@@ -3,14 +3,12 @@ import { Breadcrumb } from 'patternfly-react';
 import { ListPage } from '../../components/ListPage/ListPage';
 import AppListComponent from './AppListComponent';
 import { AppListFilters } from './FiltersAndSorts';
+import { AppListItem } from '../../types/AppList';
 
 type AppListState = {};
+type AppListProps = {};
 
-type AppListProps = {
-  // none yet
-};
-
-class AppListPage extends ListPage.Component<AppListProps, AppListState> {
+class AppListPage extends ListPage.Component<AppListProps, AppListState, AppListItem> {
   sortFields() {
     return AppListFilters.sortFields;
   }

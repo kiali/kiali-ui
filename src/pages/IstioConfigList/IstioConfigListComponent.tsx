@@ -13,13 +13,11 @@ import { FilterSelected, StatefulFilters } from '../../components/Filters/Statef
 import { ActiveFilter } from '../../types/Filters';
 import * as API from '../../services/Api';
 import Namespace from '../../types/Namespace';
-import { Pagination } from '../../types/Pagination';
 import {
   dicIstioType,
   filterByConfigValidation,
   filterByName,
   IstioConfigItem,
-  sortIstioItems,
   toIstioItems
 } from '../../types/IstioConfigList';
 import { Link } from 'react-router-dom';
@@ -29,23 +27,12 @@ import { NamespaceValidations } from '../../types/IstioObjects';
 import { ConfigIndicator } from '../../components/ConfigValidation/ConfigIndicator';
 import { removeDuplicatesArray } from '../../utils/Common';
 import { ListPage } from '../../components/ListPage/ListPage';
-import { SortField } from '../../types/SortFilters';
 import { IstioConfigListFilters } from './FiltersAndSorts';
 import { ListComponent } from '../../components/ListPage/ListComponent';
+import { SortField } from '../../types/SortFilters';
 
-type IstioConfigListComponentState = {
-  listItems: IstioConfigItem[];
-  pagination: Pagination;
-  currentSortField: SortField<IstioConfigItem>;
-  isSortAscending: boolean;
-};
-
-type IstioConfigListComponentProps = {
-  pageHooks: ListPage.Hooks;
-  pagination: Pagination;
-  currentSortField: SortField<IstioConfigItem>;
-  isSortAscending: boolean;
-};
+interface IstioConfigListComponentState extends ListComponent.State<IstioConfigItem> {}
+interface IstioConfigListComponentProps extends ListComponent.Props<IstioConfigItem> {}
 
 class IstioConfigListComponent extends ListComponent.Component<
   IstioConfigListComponentProps,
@@ -89,6 +76,10 @@ class IstioConfigListComponent extends ListComponent.Component<
       prevProps.isSortAscending === this.props.isSortAscending &&
       prevProps.currentSortField.title === this.props.currentSortField.title
     );
+  }
+
+  sortItemList(apps: IstioConfigItem[], sortField: SortField<IstioConfigItem>, isAscending: boolean) {
+    return IstioConfigListFilters.sortIstioItems(apps, sortField, isAscending);
   }
 
   updateListItems(resetPagination?: boolean) {
@@ -159,7 +150,9 @@ class IstioConfigListComponent extends ListComponent.Component<
     const istioConfigPromises = namespaces.map(namespace =>
       API.getIstioConfig(authentication(), namespace, istioTypeFilters)
     );
+
     const validationPromises = namespaces.map(namespace => API.getNamespaceValidations(authentication(), namespace));
+
     Promise.all(istioConfigPromises)
       .then(responses => {
         const currentPage = resetPagination ? 1 : this.state.pagination.page;
@@ -168,17 +161,22 @@ class IstioConfigListComponent extends ListComponent.Component<
         responses.forEach(response => {
           istioItems = istioItems.concat(toIstioItems(filterByName(response.data, istioNameFilters)));
         });
-        istioItems = sortIstioItems(istioItems, this.state.currentSortField, this.state.isSortAscending);
-        this.setState(prevState => {
-          return {
-            listItems: istioItems,
-            pagination: {
-              page: currentPage,
-              perPage: prevState.pagination.perPage,
-              perPageOptions: ListPage.perPageOptions
-            }
-          };
-        });
+
+        IstioConfigListFilters.sortIstioItems(istioItems, this.state.currentSortField, this.state.isSortAscending).then(
+          sortedItems => {
+            this.setState(prevState => {
+              return {
+                listItems: sortedItems,
+                pagination: {
+                  page: currentPage,
+                  perPage: prevState.pagination.perPage,
+                  perPageOptions: ListPage.perPageOptions
+                }
+              };
+            });
+          }
+        );
+
         return Promise.all(validationPromises);
       })
       .then(responses => {

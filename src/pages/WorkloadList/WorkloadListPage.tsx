@@ -3,14 +3,12 @@ import { Breadcrumb } from 'patternfly-react';
 import { ListPage } from '../../components/ListPage/ListPage';
 import WorkloadListComponent from './WorkloadListComponent';
 import { WorkloadListFilters } from './FiltersAndSorts';
+import { WorkloadListItem } from '../../types/Workload';
 
 type WorkloadListState = {};
+type WorkloadListProps = {};
 
-type WorkloadListProps = {
-  // none yet
-};
-
-class WorkloadListPage extends ListPage.Component<WorkloadListProps, WorkloadListState> {
+class WorkloadListPage extends ListPage.Component<WorkloadListProps, WorkloadListState, WorkloadListItem> {
   sortFields() {
     return WorkloadListFilters.sortFields;
   }

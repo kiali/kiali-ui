@@ -25,14 +25,15 @@ export namespace ListPage {
     getFiltersFromURL: (filterTypes: FilterType[]) => ActiveFilter[];
     setFiltersToURL: (filterTypes: FilterType[], filters: ActiveFilter[]) => ActiveFilter[];
     filtersMatchURL: (filterTypes: FilterType[], filters: ActiveFilter[]) => boolean;
-    sortFields: () => SortField<any>[];
     isCurrentSortAscending: () => boolean;
     currentSortFieldId: () => string | undefined;
     currentDuration: () => number;
     currentPollInterval: () => number;
   }
 
-  export class Component<P, S> extends React.Component<RouteComponentProps<P>, S> implements Hooks {
+  export abstract class Component<P, S, T> extends React.Component<RouteComponentProps<P>, S> implements Hooks {
+    abstract sortFields(): SortField<T>[];
+
     handleError = (error: string) => {
       MessageCenter.add(error);
     };
@@ -187,20 +188,6 @@ export namespace ListPage {
         return defaultPollInterval;
       }
       return pi;
-    }
-
-    sortFields() {
-      return [
-        {
-          id: 'namespace',
-          title: 'Namespace',
-          isNumeric: false,
-          param: 'ns',
-          compare: (a: any, b: any) => {
-            return a.namespace.localeCompare(b.namespace);
-          }
-        }
-      ];
     }
 
     currentSortField() {

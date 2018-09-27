@@ -2,8 +2,8 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Link } from 'react-router-dom';
 import {
-  AggregateStatusNotifications,
   AggregateStatusNotification,
+  AggregateStatusNotifications,
   Breadcrumb,
   Card,
   CardBody,
@@ -18,7 +18,7 @@ import { AxiosError } from 'axios';
 import { FilterSelected } from '../../components/Filters/StatefulFilters';
 import { ListPage } from '../../components/ListPage/ListPage';
 import * as API from '../../services/Api';
-import { AppHealth, FAILURE, DEGRADED, HEALTHY } from '../../types/Health';
+import { AppHealth, DEGRADED, FAILURE, HEALTHY } from '../../types/Health';
 import Namespace from '../../types/Namespace';
 import { authentication } from '../../utils/Authentication';
 
@@ -34,7 +34,7 @@ type State = {
   showEmpty: boolean;
 };
 
-class OverviewPage extends ListPage.Component<{}, State> {
+class OverviewPage extends ListPage.Component<{}, State, NamespaceInfo> {
   private static summarizeHealthFilters() {
     const healthFilters = FilterSelected.getSelected().filter(f => f.category === FiltersAndSorts.healthFilter.title);
     if (healthFilters.length === 0) {
@@ -78,6 +78,10 @@ class OverviewPage extends ListPage.Component<{}, State> {
 
   componentDidMount() {
     this.load();
+  }
+
+  sortFields() {
+    return FiltersAndSorts.sortFields;
   }
 
   load = () => {

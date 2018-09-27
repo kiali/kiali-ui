@@ -114,4 +114,56 @@ export namespace IstioConfigListFilters {
     istioNameFilter,
     configValidationFilter
   ];
+
+  export const sortIstioItems = (
+    unsorted: IstioConfigItem[],
+    sortField: SortField<IstioConfigItem>,
+    isAscending: boolean
+  ) => {
+    const sortPromise: Promise<IstioConfigItem[]> = new Promise((resolve, reject) => {
+      resolve(
+        unsorted.sort((a: IstioConfigItem, b: IstioConfigItem) => {
+          let sortValue = -1;
+          if (sortField.id === 'namespace') {
+            sortValue = a.namespace.localeCompare(b.namespace);
+          }
+          if (sortField.id === 'istiotype') {
+            sortValue = a.type.localeCompare(b.type);
+          }
+          if (sortField.id === 'configvalidation') {
+            if (a.validation && !b.validation) {
+              sortValue = -1;
+            }
+            if (!a.validation && b.validation) {
+              sortValue = 1;
+            }
+            if (!a.validation && !b.validation) {
+              sortValue = 0;
+            }
+            if (a.validation && b.validation) {
+              if (a.validation.valid && !b.validation.valid) {
+                sortValue = -1;
+              }
+              if (!a.validation.valid && b.validation.valid) {
+                sortValue = 1;
+              }
+              if (a.validation.valid && b.validation.valid) {
+                sortValue = 0;
+              }
+              if (!a.validation.valid && !b.validation.valid) {
+                sortValue = b.validation.checks.length - a.validation.checks.length;
+              }
+            }
+          }
+          // Istioname at the end to be the default sort when sortValue === 0
+          if (sortField.id === 'istioname' || sortValue === 0) {
+            sortValue = a.name.localeCompare(b.name);
+          }
+          return isAscending ? sortValue : sortValue * -1;
+        })
+      );
+    });
+
+    return sortPromise;
+  };
 }

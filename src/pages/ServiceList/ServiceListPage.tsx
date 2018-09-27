@@ -3,14 +3,12 @@ import ServiceListComponent from './ServiceListComponent';
 import { Breadcrumb } from 'patternfly-react';
 import { ListPage } from '../../components/ListPage/ListPage';
 import { ServiceListFilters } from './FiltersAndSorts';
+import { ServiceListItem } from '../../types/ServiceList';
 
 type ServiceListState = {};
+type ServiceListProps = {};
 
-type ServiceListProps = {
-  // none yet
-};
-
-class ServiceListPage extends ListPage.Component<ServiceListProps, ServiceListState> {
+class ServiceListPage extends ListPage.Component<ServiceListProps, ServiceListState, ServiceListItem> {
   sortFields() {
     return ServiceListFilters.sortFields;
   }
