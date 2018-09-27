@@ -27,6 +27,7 @@ import OverviewStatus from './OverviewStatus';
 import OverviewToolbar from './OverviewToolbar';
 import NamespaceInfo from './NamespaceInfo';
 import { ListPageLink, TargetPage } from '../../components/ListPage/ListPageLink';
+import { SortField } from '../../types/SortFilters';
 
 type State = {
   namespaces: NamespaceInfo[];
@@ -139,7 +140,7 @@ class OverviewPage extends ListPage.Component<{}, State> {
     this.handleError(API.getErrorMsg(message, error));
   }
 
-  sort = (sortField: FiltersAndSorts.SortField, isAscending: boolean) => {
+  sort = (sortField: SortField<NamespaceInfo>, isAscending: boolean) => {
     const sorted = FiltersAndSorts.sortFunc(this.state.namespaces, sortField, isAscending);
     this.setState({ namespaces: sorted });
   };

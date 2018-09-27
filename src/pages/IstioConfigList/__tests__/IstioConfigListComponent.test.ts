@@ -1,4 +1,12 @@
-import { filterByName, IstioConfigList, SortField, sortIstioItems, toIstioItems } from '../../../types/IstioConfigList';
+import {
+  filterByName,
+  IstioConfigItem,
+  IstioConfigList,
+  sortIstioItems,
+  toIstioItems
+} from '../../../types/IstioConfigList';
+import { IstioConfigListFilters } from '../FiltersAndSorts';
+import { SortField } from '../../../types/SortFilters';
 
 const mockIstioConfigList = (names: string[]): IstioConfigList => {
   let testData: IstioConfigList = {
@@ -75,12 +83,7 @@ describe('IstioConfigListComponent#toIstioItems', () => {
 describe('IstioConfigComponent#sortIstioItems', () => {
   it('should sort IstioConfigItems by Istio Name', () => {
     let istioItems = toIstioItems(unfiltered);
-    let sortField: SortField = {
-      id: 'istioname',
-      title: 'Istio Name',
-      isNumeric: false,
-      param: 'in'
-    };
+    let sortField: SortField<IstioConfigItem> = IstioConfigListFilters.sortFields[2];
     let isAscending = true;
     let sorted = sortIstioItems(istioItems, sortField, isAscending);
     expect(sorted).toBeDefined();
@@ -106,12 +109,7 @@ describe('IstioConfigComponent#sortIstioItems', () => {
 
   it('should sort IstioConfigItems by Istio Type', () => {
     let istioItems = toIstioItems(unfiltered);
-    let sortField: SortField = {
-      id: 'istiotype',
-      title: 'Istio Type',
-      isNumeric: false,
-      param: 'it'
-    };
+    let sortField: SortField<IstioConfigItem> = IstioConfigListFilters.sortFields[1];
     let isAscending = true;
     let sorted = sortIstioItems(istioItems, sortField, isAscending);
     expect(sorted).toBeDefined();

@@ -1,6 +1,7 @@
 import Namespace from './Namespace';
 import { DestinationRule, VirtualService } from './ServiceInfo';
 import { ObjectValidation } from './IstioObjects';
+import { SortField } from './SortFilters';
 
 export interface IstioConfigItem {
   namespace: string;
@@ -145,13 +146,6 @@ export const dicIstioType = {
   handler: 'Handler'
 };
 
-export interface SortField {
-  id: string;
-  title: string;
-  isNumeric: boolean;
-  param: string;
-}
-
 const includeName = (name: string, names: string[]) => {
   for (let i = 0; i < names.length; i++) {
     if (name.includes(names[i])) {
@@ -255,7 +249,11 @@ export const toIstioItems = (istioConfigList: IstioConfigList): IstioConfigItem[
   return istioItems;
 };
 
-export const sortIstioItems = (unsorted: IstioConfigItem[], sortField: SortField, isAscending: boolean) => {
+export const sortIstioItems = (
+  unsorted: IstioConfigItem[],
+  sortField: SortField<IstioConfigItem>,
+  isAscending: boolean
+) => {
   let sorted: IstioConfigItem[] = unsorted.sort((a: IstioConfigItem, b: IstioConfigItem) => {
     let sortValue = -1;
     if (sortField.id === 'namespace') {

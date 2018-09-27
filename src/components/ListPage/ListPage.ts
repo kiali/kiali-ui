@@ -3,7 +3,7 @@ import { RouteComponentProps } from 'react-router';
 import * as MessageCenter from '../../utils/MessageCenter';
 import { URLParameter } from '../../types/Parameters';
 import { Pagination } from '../../types/Pagination';
-import { FilterType, ActiveFilter } from '../../types/Filters';
+import { ActiveFilter, FilterType } from '../../types/Filters';
 import { config } from '../../config';
 import { SortField } from '../../types/SortFilters';
 
