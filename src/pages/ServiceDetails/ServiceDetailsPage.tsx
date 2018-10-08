@@ -10,8 +10,10 @@ import { authentication } from '../../utils/Authentication';
 import IstioObjectDetails from './IstioObjectDetails';
 import ServiceMetricsContainer from '../../containers/ServiceMetricsContainer';
 import ServiceInfo from './ServiceInfo';
+import ServiceTraces from './ServiceTraces';
 import { TargetPage, ListPageLink } from '../../components/ListPage/ListPageLink';
 import { MetricsObjectTypes, MetricsDirection } from '../../types/Metrics';
+import { height } from 'csstips';
 
 type ServiceDetailsState = {
   serviceDetailsInfo: ServiceDetailsInfo;
@@ -210,6 +212,7 @@ class ServiceDetails extends React.Component<RouteComponentProps<ServiceId>, Ser
     const parsedSearch = this.parseSearch();
     const istioObject = this.searchObject(parsedSearch);
     const editorVisible = parsedSearch.name && parsedSearch.type;
+
     return (
       <>
         {this.renderBreadcrumbs(parsedSearch, !!(editorVisible && istioObject))}
@@ -235,7 +238,7 @@ class ServiceDetails extends React.Component<RouteComponentProps<ServiceId>, Ser
                 <NavItem eventKey="metrics">
                   <div>Inbound Metrics</div>
                 </NavItem>
-                <NavItem onClick={this.navigateToJaeger}>
+                <NavItem eventKey="traces">
                   <div>Traces</div>
                 </NavItem>
               </Nav>
@@ -257,6 +260,12 @@ class ServiceDetails extends React.Component<RouteComponentProps<ServiceId>, Ser
                     object={this.props.match.params.service}
                     objectType={MetricsObjectTypes.SERVICE}
                     direction={MetricsDirection.INBOUND}
+                  />
+                </TabPane>
+                <TabPane eventKey="traces" style={height('800px')}>
+                  <ServiceTraces
+                    namespace={this.props.match.params.namespace}
+                    service={this.props.match.params.service}
                   />
                 </TabPane>
               </TabContent>
@@ -286,18 +295,6 @@ class ServiceDetails extends React.Component<RouteComponentProps<ServiceId>, Ser
 
       this.props.history.push(this.props.location.pathname + '?' + urlParams.toString());
     };
-  };
-
-  private navigateToJaeger = () => {
-    API.getJaegerInfo(authentication())
-      .then(response => {
-        let data = response['data'];
-        window.open(data.url + `/search?service=${this.props.match.params.service}`, '_blank');
-      })
-      .catch(error => {
-        MessageCenter.add(API.getErrorMsg('Could not fetch Jaeger info', error));
-        console.log(error);
-      });
   };
 }
 

@@ -77,7 +77,7 @@ class Navigation extends React.Component<PropsType> {
       return isRoute;
     });
     return navItems.map(item => {
-      if (item.title === 'Distributed Tracing') {
+      /*if (item.title === 'Distributed Tracing') {
         return (
           <VerticalNav.Item
             key={item.to}
@@ -87,7 +87,7 @@ class Navigation extends React.Component<PropsType> {
             onClick={() => this.goTojaeger()}
           />
         );
-      }
+      }*/
       return (
         <VerticalNav.Item
           key={item.to}
