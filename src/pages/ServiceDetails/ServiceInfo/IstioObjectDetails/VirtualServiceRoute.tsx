@@ -163,22 +163,8 @@ class VirtualServiceRoute extends React.Component<VirtualServiceRouteProps> {
   statusFrom(validation: ObjectValidation, routeItem: DestinationWeight, routeIndex: number, destinationIndex: number) {
     let checks = checkForPath(
       validation,
-      'spec/' +
-        this.props.kind.toLowerCase() +
-        '[' +
-        routeIndex +
-        ']/route[' +
-        destinationIndex +
-        ']/weight/' +
-        routeItem.weight
+      'spec/' + this.props.kind.toLowerCase() + '[' + routeIndex + ']/route[' + destinationIndex + ']/destination'
     );
-    checks.push(
-      ...checkForPath(
-        validation,
-        'spec/' + this.props.kind.toLowerCase() + '[' + routeIndex + ']/route[' + destinationIndex + ']/destination'
-      )
-    );
-
     let severity = highestSeverity(checks);
     let iconName = severity ? severityToIconName(severity) : 'ok';
     if (iconName !== 'ok') {
