@@ -2,6 +2,7 @@ import axios, { AxiosError } from 'axios';
 import Namespace from '../types/Namespace';
 import MetricsOptions from '../types/MetricsOptions';
 import { Metrics } from '../types/Metrics';
+import { OAuthMetadata } from '../types/OAuth';
 import { IstioConfigDetails } from '../types/IstioConfigDetails';
 import { IstioConfigList } from '../types/IstioConfigList';
 import { WorkloadNamespaceResponse } from '../types/Workload';
@@ -73,6 +74,10 @@ export const login = (username: string, password: string) => {
       });
   });
 };
+
+export const getOAuthOptions = async (): Promise<Response<OAuthMetadata>> => {
+  return axios.get('api/oauth_info');
+}
 
 export const getStatus = () => {
   return newRequest('get', 'api/status', {}, {});

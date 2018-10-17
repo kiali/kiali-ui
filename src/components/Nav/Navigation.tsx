@@ -4,8 +4,11 @@ import PropTypes from 'prop-types';
 import { navItems } from '../../routes';
 import RenderPage from './RenderPage';
 import { matchPath } from 'react-router';
+import { Redirect } from 'react-router-dom';
 import _ from 'lodash';
 
+
+import { OAuthMetadata } from '../../types/OAuth';
 import MessageCenter from '../../containers/MessageCenterContainer';
 import * as MsgCenter from '../../utils/MessageCenter';
 import HelpDropdown from '../../containers/HelpDropdownContainer';
@@ -100,30 +103,34 @@ class Navigation extends React.Component<PropsType> {
     });
   }
 
-  render() {
+  async render() {
     store.subscribe(() => {
       document.documentElement.className = this.props.authenticated ? 'layout-pf layout-pf-fixed' : 'login-pf';
     });
-    return this.props.authenticated ? (
-      <>
-        <VerticalNav setControlledState={this.setControlledState} navCollapsed={this.props.navCollapsed}>
-          <VerticalNav.Masthead title="Kiali">
-            <VerticalNav.Brand iconImg={KialiLogo} />
-            <PfSpinnerContainer />
-            <VerticalNav.IconBar>
-              <MessageCenter.Trigger />
-              <HelpDropdown />
-              <UserDropdown />
-            </VerticalNav.IconBar>
-            <MessageCenter drawerTitle="Message Center" />
-          </VerticalNav.Masthead>
-          {this.renderMenuItems()}
-        </VerticalNav>
-        <RenderPage />
-      </>
-    ) : (
-      <LoginPage />
-    );
+
+    if (!this.props.authenticated) {
+      const options = (await API.getOAuthOptions()).data;
+      return(<h1>{JSON.stringify(options)}</h1>);
+    } else {
+      return (
+        <>
+          <VerticalNav setControlledState={this.setControlledState} navCollapsed={this.props.navCollapsed}>
+            <VerticalNav.Masthead title="Kiali">
+              <VerticalNav.Brand iconImg={KialiLogo} />
+              <PfSpinnerContainer />
+              <VerticalNav.IconBar>
+                <MessageCenter.Trigger />
+                <HelpDropdown />
+                <UserDropdown />
+              </VerticalNav.IconBar>
+              <MessageCenter drawerTitle="Message Center" />
+            </VerticalNav.Masthead>
+            {this.renderMenuItems()}
+          </VerticalNav>
+          <RenderPage />
+        </>
+      );
+    }
   }
 }
 
