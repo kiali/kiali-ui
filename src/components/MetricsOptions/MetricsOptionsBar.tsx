@@ -29,7 +29,7 @@ interface MetricsOptionsState {
 }
 
 export class MetricsOptionsBar extends React.Component<Props, MetricsOptionsState> {
-  static PollIntervals = config().toolbar.pollInterval;
+  // static PollIntervals = config().toolbar.pollInterval;
   static DefaultPollInterval = config().toolbar.defaultPollInterval;
 
   static Durations = config().toolbar.intervalDuration;

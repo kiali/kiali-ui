@@ -20,7 +20,7 @@ const mapStateToProps = (state: KialiAppState) => ({
       }
     : null,
   showLegend: state.graph.filterState.showLegend,
-  pollInterval: state.graph.filterState.refreshRate,
+  pollInterval: state.userSettings.refreshInterval,
   isPageVisible: state.globalState.isPageVisible,
   showSecurity: state.graph.filterState.showSecurity,
   showUnusedNodes: state.graph.filterState.showUnusedNodes,
@@ -53,8 +53,8 @@ const mapDispatchToProps = (dispatch: any) => ({
   toggleLegend: bindActionCreators(GraphFilterActions.toggleLegend, dispatch)
 });
 
-const GraphPageConnected = connect(
+const GraphPageContainer = connect(
   mapStateToProps,
   mapDispatchToProps
 )(GraphPage);
-export default GraphPageConnected;
+export default GraphPageContainer;

@@ -21,6 +21,8 @@ export interface GraphFilterProps extends GraphParamsType {
   onRefresh: () => void;
 }
 
+type GraphFilterPropsReadOnly = Readonly<GraphFilterProps>;
+
 const zeroPaddingLeft = style({
   marginLeft: '20px',
   paddingLeft: '0px'
@@ -31,7 +33,7 @@ const namespaceStyle = style({
   marginRight: '5px'
 });
 
-export default class GraphFilter extends React.PureComponent<GraphFilterProps> {
+export default class GraphFilter extends React.PureComponent<GraphFilterPropsReadOnly> {
   // GraphFilter should be minimal and used for assembling those filtering components.
 
   /**
@@ -54,13 +56,14 @@ export default class GraphFilter extends React.PureComponent<GraphFilterProps> {
     super(props);
   }
 
-  updateDuration = (value: number) => {
-    if (this.props.graphDuration.value !== value) {
-      this.props.onDurationChange({ value: value });
+  handleDuration = (duration: number) => {
+    console.warn('Duration Changed: ' + duration);
+    if (this.props.graphDuration.value !== duration) {
+      this.props.onDurationChange({ value: duration });
     }
   };
 
-  handleRefresh = (e: any) => {
+  handleRefresh = () => {
     this.props.onRefresh();
   };
 
@@ -111,7 +114,7 @@ export default class GraphFilter extends React.PureComponent<GraphFilterProps> {
               disabled={this.props.disabled}
               handleRefresh={this.handleRefresh}
               graphDuration={this.props.graphDuration}
-              onUpdateGraphDuration={this.updateDuration}
+              onUpdateGraphDuration={this.handleDuration}
             />
           </Toolbar.RightContent>
         </Toolbar>

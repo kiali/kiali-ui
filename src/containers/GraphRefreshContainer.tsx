@@ -5,13 +5,16 @@ import { GraphFilterActions } from '../actions/GraphFilterActions';
 import { KialiAppState } from '../store/Store';
 import GraphRefresh from '../components/GraphFilter/GraphRefresh';
 import { config } from '../config';
+import { UserSettingsActions } from '../actions/UserSettingsActions';
 
 const mapStateToProps = (state: KialiAppState) => ({
-  pollInterval: state.graph.filterState.refreshRate
+  selected: state.userSettings.refreshInterval,
+  pollInterval: state.userSettings.refreshInterval
 });
 
 const mapDispatchToProps = (dispatch: any) => {
   return {
+    onSelect: bindActionCreators(UserSettingsActions.setRefreshInterval, dispatch),
     // TODO: We still need to reduxify namespace and duration to be able to use this
     // onUpdatePollInterval: bindActionCreators(GraphDataActions.fetchGraphData, dispatch),
     onUpdatePollInterval: bindActionCreators(GraphFilterActions.setRefreshRate, dispatch)
