@@ -68,7 +68,8 @@ export interface LoginState {
 
 export interface Component {
   name: string;
-  version: string;
+  version?: string;
+  url?: string;
 }
 
 export interface StatusState {
