@@ -14,13 +14,7 @@ interface HealthSubItem {
   text: string;
 }
 
-export interface EnvoyHealth {
-  inbound: EnvoyRatio;
-  outbound: EnvoyRatio;
-  service?: string;
-}
-
-export interface EnvoyRatio {
+export interface EnvoyMembershipRatio {
   healthy: number;
   total: number;
 }
@@ -168,35 +162,10 @@ export abstract class Health {
 }
 
 export class ServiceHealth extends Health {
-  public static fromJson = (json: any, rateInterval: number) =>
-    new ServiceHealth(json.envoy, json.requests, rateInterval);
+  public static fromJson = (json: any, rateInterval: number) => new ServiceHealth(json.requests, rateInterval);
 
-  private static computeItems(envoy: EnvoyHealth, requests: RequestHealth, rateInterval: number): HealthItem[] {
+  private static computeItems(requests: RequestHealth, rateInterval: number): HealthItem[] {
     const items: HealthItem[] = [];
-    {
-      // Envoy
-      const inboundStatus = ratioCheck(envoy.inbound.healthy, envoy.inbound.total);
-      const outboundStatus = ratioCheck(envoy.outbound.healthy, envoy.outbound.total);
-      const envoyStatus = mergeStatus(inboundStatus, outboundStatus);
-      const item: HealthItem = {
-        title: 'Envoy Health',
-        status: envoyStatus,
-        children: [
-          {
-            text: 'Inbound: ' + envoy.inbound.healthy + ' / ' + envoy.inbound.total,
-            status: inboundStatus
-          },
-          {
-            text: 'Outbound: ' + envoy.outbound.healthy + ' / ' + envoy.outbound.total,
-            status: outboundStatus
-          }
-        ]
-      };
-      if (envoyStatus === FAILURE || envoyStatus === DEGRADED) {
-        item.report = 'Envoy health ' + envoyStatus.name.toLowerCase();
-      }
-      items.push(item);
-    }
     {
       // Request errors
       const reqErrorsRatio = getRequestErrorsStatus(requests.errorRatio);
@@ -214,8 +183,8 @@ export class ServiceHealth extends Health {
     return items;
   }
 
-  constructor(public envoy: EnvoyHealth, public requests: RequestHealth, public rateInterval: number) {
-    super(ServiceHealth.computeItems(envoy, requests, rateInterval));
+  constructor(public requests: RequestHealth, public rateInterval: number) {
+    super(ServiceHealth.computeItems(requests, rateInterval));
   }
 }
 
@@ -224,7 +193,7 @@ export class AppHealth extends Health {
     new AppHealth(json.envoy, json.workloadStatuses, json.requests, rateInterval);
 
   private static computeItems(
-    envoy: EnvoyHealth[],
+    envoy: EnvoyMembershipRatio,
     workloadStatuses: WorkloadStatus[],
     requests: RequestHealth,
     rateInterval: number
@@ -264,20 +233,11 @@ export class AppHealth extends Health {
     }
     {
       // Envoy
-      const envoyInbound: HealthSubItem[] = envoy.map(e => ({
-        text: e.service + ' (in): ' + e.inbound.healthy + ' / ' + e.inbound.total,
-        status: ratioCheck(e.inbound.healthy, e.inbound.total)
-      }));
-      const envoyOutbound: HealthSubItem[] = envoy.map(e => ({
-        text: e.service + ' (out): ' + e.outbound.healthy + ' / ' + e.outbound.total,
-        status: ratioCheck(e.outbound.healthy, e.outbound.total)
-      }));
-      const children = envoyInbound.concat(envoyOutbound);
-      const envoyStatus = children.map(i => i.status).reduce((prev, cur) => mergeStatus(prev, cur), NA);
+      const envoyStatus = ratioCheck(envoy.healthy, envoy.total);
       const item: HealthItem = {
         title: 'Envoy Health',
         status: envoyStatus,
-        children: children
+        text: envoy.healthy + ' / ' + envoy.total
       };
       if (envoyStatus === FAILURE || envoyStatus === DEGRADED) {
         item.report = 'Envoy health ' + envoyStatus.name.toLowerCase();
@@ -298,14 +258,13 @@ export class AppHealth extends Health {
       if (violations.length > 0) {
         item.report = violations;
       }
-
       items.push(item);
     }
     return items;
   }
 
   constructor(
-    public envoy: EnvoyHealth[],
+    public envoy: EnvoyMembershipRatio,
     public workloadStatuses: WorkloadStatus[],
     public requests: RequestHealth,
     public rateInterval: number
@@ -351,7 +310,6 @@ export class WorkloadHealth extends Health {
       if (violations.length > 0) {
         item.report = violations;
       }
-
       items.push(item);
     }
     return items;
@@ -364,13 +322,7 @@ export class WorkloadHealth extends Health {
 
 export const healthNotAvailable = (): AppHealth => {
   return new AppHealth(
-    [
-      {
-        inbound: { healthy: 0, total: 0 },
-        outbound: { healthy: 0, total: 0 },
-        service: 'n/a'
-      }
-    ],
+    { healthy: 0, total: 0 },
     [],
     { errorRatio: -1, inboundErrorRatio: -1, outboundErrorRatio: -1 },
     60

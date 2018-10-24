@@ -58,7 +58,7 @@ describe('Health', () => {
   });
   it('should aggregate without reporter', () => {
     const health = new H.AppHealth(
-      [{ inbound: { healthy: 0, total: 1 }, outbound: { healthy: 1, total: 1 } }],
+      { healthy: 0, total: 1 },
       [{ available: 0, replicas: 1, name: 'a' }],
       { errorRatio: 1, inboundErrorRatio: 1, outboundErrorRatio: 1 },
       60
@@ -67,7 +67,7 @@ describe('Health', () => {
   });
   it('should aggregate healthy', () => {
     const health = new H.AppHealth(
-      [{ inbound: { healthy: 1, total: 1 }, outbound: { healthy: 1, total: 1 } }],
+      { healthy: 1, total: 1 },
       [{ available: 1, replicas: 1, name: 'a' }, { available: 2, replicas: 2, name: 'b' }],
       { errorRatio: 0, inboundErrorRatio: 0, outboundErrorRatio: 0 },
       60
@@ -77,7 +77,7 @@ describe('Health', () => {
   });
   it('should aggregate degraded workload', () => {
     const health = new H.AppHealth(
-      [{ inbound: { healthy: 1, total: 1 }, outbound: { healthy: 1, total: 1 } }],
+      { healthy: 1, total: 1 },
       [{ available: 1, replicas: 1, name: 'a' }, { available: 1, replicas: 2, name: 'b' }],
       { errorRatio: 0, inboundErrorRatio: 0, outboundErrorRatio: 0 },
       60
@@ -87,7 +87,7 @@ describe('Health', () => {
   });
   it('should aggregate failing envoy', () => {
     const health = new H.AppHealth(
-      [{ inbound: { healthy: 0, total: 1 }, outbound: { healthy: 1, total: 1 } }],
+      { healthy: 0, total: 1 },
       [{ available: 1, replicas: 1, name: 'a' }, { available: 2, replicas: 2, name: 'b' }],
       { errorRatio: 0, inboundErrorRatio: 0, outboundErrorRatio: 0 },
       60
@@ -97,7 +97,7 @@ describe('Health', () => {
   });
   it('should aggregate failing requests', () => {
     const health = new H.AppHealth(
-      [{ inbound: { healthy: 1, total: 1 }, outbound: { healthy: 1, total: 1 } }],
+      { healthy: 1, total: 1 },
       [{ available: 1, replicas: 1, name: 'a' }, { available: 2, replicas: 2, name: 'b' }],
       { errorRatio: 0.2, inboundErrorRatio: 0.3, outboundErrorRatio: 0.1 },
       60
@@ -107,7 +107,7 @@ describe('Health', () => {
   });
   it('should aggregate multiple issues', () => {
     const health = new H.AppHealth(
-      [{ inbound: { healthy: 1, total: 1 }, outbound: { healthy: 1, total: 3 } }],
+      { healthy: 1, total: 3 },
       [{ available: 0, replicas: 0, name: 'a' }, { available: 0, replicas: 0, name: 'b' }],
       { errorRatio: 0.2, inboundErrorRatio: 0.3, outboundErrorRatio: 0.1 },
       60
