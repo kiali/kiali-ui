@@ -1,5 +1,6 @@
 import * as React from 'react';
 import InOutRateChart from './InOutRateChart';
+import { formatTrafficRate } from '../../utils/TrafficRate';
 
 type InOutRateTablePropType = {
   title: string;
@@ -56,13 +57,13 @@ export default class InOutRateTable extends React.Component<InOutRateTablePropTy
           <tbody>
             <tr>
               <td>In</td>
-              <td>{this.props.inRate.toFixed(2)}</td>
+              <td>{formatTrafficRate(this.props.inRate)}</td>
               <td>{percentInSuccess.toFixed(2)}</td>
               <td>{percentInErr.toFixed(2)}</td>
             </tr>
             <tr>
               <td>Out</td>
-              <td>{this.props.outRate.toFixed(2)}</td>
+              <td>{formatTrafficRate(this.props.outRate)}</td>
               <td>{percentOutSuccess.toFixed(2)}</td>
               <td>{percentOutErr.toFixed(2)}</td>
             </tr>

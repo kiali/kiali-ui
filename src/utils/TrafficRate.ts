@@ -33,3 +33,5 @@ export const getAccumulatedTrafficRate = (elements): TrafficRate => {
     { rate: 0, rate3xx: 0, rate4xx: 0, rate5xx: 0 }
   );
 };
+
+export const formatTrafficRate = (rate: number): string => (rate < 1 ? rate.toFixed(3) : rate.toFixed(2));

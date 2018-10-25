@@ -2,6 +2,7 @@ import { PfColors } from '../../../components/Pf/PfColors';
 import { EdgeLabelMode } from '../../../types/GraphFilter';
 import { FAILURE, DEGRADED, REQUESTS_THRESHOLDS } from '../../../types/Health';
 import { GraphType, NodeType, CytoscapeGlobalScratchNamespace, CytoscapeGlobalScratchData } from '../../../types/Graph';
+import { formatTrafficRate } from '../../../utils/TrafficRate';
 
 export const DimClass = 'mousedim';
 
@@ -83,12 +84,13 @@ export class GraphStyles {
             const rate = Number(ele.data('rate'));
             if (rate > 0) {
               const pErr = ele.data('percentErr') ? Number(ele.data('percentErr')) : 0;
-              content = pErr > 0 ? rate.toFixed(2) + ', ' + pErr.toFixed(1) + '%' : rate.toFixed(2);
+              const rateStr = formatTrafficRate(rate);
+              content = pErr > 0 ? rateStr + ', ' + pErr.toFixed(1) + '%' : rateStr;
             }
           } else if (ele.data('tcpSentRate')) {
             const rate = Number(ele.data('tcpSentRate'));
             if (rate > 0) {
-              content = `${rate.toFixed(2)}`;
+              content = `${formatTrafficRate(rate)}`;
             }
           }
           break;
