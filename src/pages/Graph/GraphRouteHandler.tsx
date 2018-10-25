@@ -3,7 +3,7 @@ import { RouteComponentProps } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import { GraphParamsType, GraphType, NodeParamsType, NodeType } from '../../types/Graph';
-import { EdgeLabelMode } from '../../types/GraphFilter';
+import { Duration, EdgeLabelMode } from '../../types/GraphFilter';
 import * as LayoutDictionary from '../../components/CytoscapeGraph/graphs/LayoutDictionary';
 import GraphPage from '../../containers/GraphPageContainer';
 import { makeNamespaceGraphUrlFromParams, makeNodeGraphUrlFromParams } from '../../components/Nav/NavUtils';
@@ -16,6 +16,7 @@ import { JsonString } from '../../types/Common';
 import { activeNamespaceSelector, previousGraphStateSelector } from '../../store/Selectors';
 import { Dispatch } from 'redux';
 import { HistoryManager } from '../../app/History';
+import { UserSettingsActions } from '../../actions/UserSettingsActions';
 
 const URLSearchParams = require('url-search-params');
 
@@ -47,6 +48,9 @@ const mapDispatchToProps = (dispatch: Dispatch<any>) => {
     },
     setPreviousGraphState: (graphState: JsonString) => {
       dispatch(NamespaceActions.setPreviousGraphState(graphState));
+    },
+    setDuration: (duration: Duration) => {
+      dispatch(UserSettingsActions.setDurationInterval(duration.value));
     }
   };
 };
@@ -218,6 +222,10 @@ export class GraphRouteHandler extends React.Component<RouteComponentProps<Graph
   }
 
   private updateGraphUrl() {
+    console.warn('updateGraphUrl');
+    // NOTE: we need to be in a non-static context to get Redux props
+    // @ts-ignore
+    this.props.setDuration(this.state.graphDuration);
     // Note: `history.replace` simply changes the address bar text, not re-navigation
     if (this.state.node) {
       this.context.router.history.replace(makeNodeGraphUrlFromParams(this.state));

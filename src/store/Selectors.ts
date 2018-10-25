@@ -24,3 +24,10 @@ export const namespaceItemsSelector = createSelector(
   namespaceItems,
   x => x // identity function
 );
+
+const refreshInterval = (state: KialiAppState) => state.userSettings.refreshInterval;
+
+export const refreshIntervalSelector = createSelector(
+  refreshInterval,
+  x => x // identity function
+);

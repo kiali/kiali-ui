@@ -8,6 +8,7 @@ import { GraphDataActions } from '../actions/GraphDataActions';
 import { GraphFilterActions } from '../actions/GraphFilterActions';
 import { bindActionCreators } from 'redux';
 import { GraphType, NodeParamsType } from '../types/Graph';
+import { refreshIntervalSelector } from '../store/Selectors';
 
 const mapStateToProps = (state: KialiAppState) => ({
   graphTimestamp: state.graph.graphDataTimestamp,
@@ -20,7 +21,7 @@ const mapStateToProps = (state: KialiAppState) => ({
       }
     : null,
   showLegend: state.graph.filterState.showLegend,
-  pollInterval: state.userSettings.refreshInterval,
+  pollInterval: refreshIntervalSelector(state),
   isPageVisible: state.globalState.isPageVisible,
   showSecurity: state.graph.filterState.showSecurity,
   showUnusedNodes: state.graph.filterState.showUnusedNodes,

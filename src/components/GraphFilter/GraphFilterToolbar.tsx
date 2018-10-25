@@ -6,9 +6,9 @@ import Namespace from '../../types/Namespace';
 import GraphFilterToolbarType from '../../types/GraphFilterToolbar';
 import { store } from '../../store/ConfigStore';
 import { makeNamespaceGraphUrlFromParams, makeNodeGraphUrlFromParams } from '../Nav/NavUtils';
-import GraphFilter from './GraphFilter';
 import { GraphActions } from '../../actions/GraphActions';
 import { GraphDataActions } from '../../actions/GraphDataActions';
+import GraphFilterContainer from '../../containers/GraphFilterContainer';
 
 export default class GraphFilterToolbar extends React.PureComponent<GraphFilterToolbarType> {
   static contextTypes = {
@@ -27,7 +27,7 @@ export default class GraphFilterToolbar extends React.PureComponent<GraphFilterT
     };
 
     return (
-      <GraphFilter
+      <GraphFilterContainer
         disabled={this.props.isLoading}
         onDurationChange={this.handleDurationChange}
         onNamespaceChange={this.handleNamespaceChange}

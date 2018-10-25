@@ -29,7 +29,6 @@ interface MetricsOptionsState {
 }
 
 export class MetricsOptionsBar extends React.Component<Props, MetricsOptionsState> {
-  // static PollIntervals = config().toolbar.pollInterval;
   static DefaultPollInterval = config().toolbar.defaultPollInterval;
 
   static Durations = config().toolbar.intervalDuration;
@@ -100,11 +99,13 @@ export class MetricsOptionsBar extends React.Component<Props, MetricsOptionsStat
   }
 
   onPollIntervalChanged = (key: number) => {
+    console.warn('onPollIntervalChanged in MetricsOptionToolbar');
     HistoryManager.setParam(URLParams.POLL_INTERVAL, String(key));
     this.setState({ pollInterval: key });
   };
 
   onDurationChanged = (key: number) => {
+    console.warn('onDurationChanged in MetricsOptionToolbar');
     sessionStorage.setItem(URLParams.DURATION, String(key));
     HistoryManager.setParam(URLParams.DURATION, String(key));
     this.setState({ duration: key }, () => {

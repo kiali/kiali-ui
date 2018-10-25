@@ -19,6 +19,7 @@ export interface GraphFilterProps extends GraphParamsType {
   onGraphTypeChange: (newType: GraphType) => void;
   onEdgeLabelModeChange: (newEdgeLabelMode: EdgeLabelMode) => void;
   onRefresh: () => void;
+  setDuration: (duration: Duration) => void;
 }
 
 type GraphFilterPropsReadOnly = Readonly<GraphFilterProps>;
@@ -59,6 +60,7 @@ export default class GraphFilter extends React.PureComponent<GraphFilterPropsRea
   handleDuration = (duration: number) => {
     console.warn('Duration Changed: ' + duration);
     if (this.props.graphDuration.value !== duration) {
+      this.props.setDuration({ value: duration });
       this.props.onDurationChange({ value: duration });
     }
   };
@@ -80,7 +82,7 @@ export default class GraphFilter extends React.PureComponent<GraphFilterPropsRea
                 Back To Namespace
               </Button>
             ) : (
-              <label className={namespaceStyle}>Namespace:</label>
+              <label className={namespaceStyle}>Namespace</label>
             )}
             <NamespaceDropdownContainer
               disabled={this.props.node || this.props.disabled}
