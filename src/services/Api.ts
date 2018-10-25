@@ -126,7 +126,7 @@ export const deleteIstioConfigDetail = (
   objectType: string,
   object: string
 ): Promise<Response<string>> => {
-  return newRequest(HTTP_VERBS.DELETE, `api/namespaces/${namespace}/istio/${objectType}/${object}`, {}, {}, auth);
+  return newRequest(HTTP_VERBS.DELETE, urls.istioConfigDetail(namespace, objectType, object), {}, {}, auth);
 };
 
 export const getServices = (auth: AuthToken, namespace: string): Promise<Response<ServiceList>> => {

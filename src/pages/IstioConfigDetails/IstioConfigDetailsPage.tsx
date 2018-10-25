@@ -226,7 +226,7 @@ class IstioConfigDetailsPage extends React.Component<RouteComponentProps<IstioCo
         <Button onClick={this.fetchIstioObjectDetails}>
           <Icon name="refresh" />
         </Button>&nbsp;
-        <DropdownButton title="Actions" onSelect={this.onAction} pullRight={true}>
+        <DropdownButton id="actions" title="Actions" onSelect={this.onAction} pullRight={true}>
           <MenuItem key="delete" eventKey="delete" disabled={!canDelete}>
             Delete
           </MenuItem>
