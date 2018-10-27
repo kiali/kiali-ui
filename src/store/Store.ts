@@ -1,6 +1,6 @@
 import { NotificationGroup } from '../types/MessageCenter';
 import Namespace from '../types/Namespace';
-import { JsonString } from '../types/Common';
+import { DurationIntervalInSeconds, JsonString, PollIntervalInMs } from '../types/Common';
 // Store is the Redux Data store
 
 export interface GlobalState {
@@ -28,6 +28,7 @@ export interface GraphFilterState {
   readonly showServiceNodes: boolean;
   readonly showTrafficAnimation: boolean;
   readonly showUnusedNodes: boolean;
+  readonly graphLayout: string;
 }
 
 export interface MessageCenterState {
@@ -83,8 +84,8 @@ export interface InterfaceSettings {
 
 export interface UserSettings {
   interface: InterfaceSettings;
-  refreshInterval: number;
-  durationInterval: number;
+  refreshInterval: PollIntervalInMs;
+  durationInterval: DurationIntervalInSeconds;
 }
 
 export interface GrafanaInfo {

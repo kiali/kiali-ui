@@ -13,6 +13,14 @@ describe('GraphFilterActions', () => {
     );
   });
 
+  it('should set the graph type', () => {
+    const expectedAction = {
+      type: GraphFilterActionKeys.SET_GRAPH_LAYOUT,
+      payload: 'cose'
+    };
+    expect(GraphFilterActions.setGraph(EdgeLabelMode.RESPONSE_TIME_95TH_PERCENTILE)).toEqual(expectedAction);
+  });
+
   it('should toggle the legend ', () => {
     const expectedAction = {
       type: GraphFilterActionKeys.TOGGLE_LEGEND

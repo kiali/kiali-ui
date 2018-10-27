@@ -6,6 +6,7 @@ ShallowWrapper {
   Symbol(enzyme.__root__): [Circular],
   Symbol(enzyme.__unrendered__): <MetricsOptionsBar
     direction={0}
+    duration={60}
     labelValues={Map {}}
     metricReporter="destination"
     onLabelsFiltersChanged={[MockFunction]}
@@ -30,6 +31,7 @@ ShallowWrapper {
     }
     onRefresh={[MockFunction]}
     onReporterChanged={[MockFunction]}
+    setDuration={[MockFunction]}
   />,
   Symbol(enzyme.__renderer__): Object {
     "batchedUpdates": [Function],

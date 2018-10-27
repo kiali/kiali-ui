@@ -78,6 +78,7 @@ export class GraphRouteHandler extends React.Component<RouteComponentProps<Graph
     const _duration = urlParams.get('duration')
       ? { value: urlParams.get('duration') }
       : GraphRouteHandler.graphParamsDefaults.graphDuration;
+    const _graphLayout = urlParams.get('graphLayout') ? { value: urlParams.get('graphLayout') } : 'dagre';
     const _edgeLabelMode = Enum.fromValue(
       EdgeLabelMode,
       urlParams.get('edges'),

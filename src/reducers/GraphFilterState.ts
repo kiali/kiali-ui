@@ -11,7 +11,8 @@ const INITIAL_STATE: GraphFilterState = {
   showSecurity: false,
   showServiceNodes: false,
   showTrafficAnimation: false,
-  showUnusedNodes: false
+  showUnusedNodes: false,
+  graphLayout: 'dagre'
   // @ todo: add disableLayers back in later
   // disableLayers: false
   // edgeLabelMode: EdgeLabelMode.HIDE,
@@ -42,6 +43,8 @@ const graphFilterState = (state: GraphFilterState = INITIAL_STATE, action) => {
       return updateState(state, { showUnusedNodes: !state.showUnusedNodes });
     case GraphFilterActionKeys.ENABLE_GRAPH_FILTERS:
       return updateState(state, { disableLayers: action.payload });
+    case GraphFilterActionKeys.SET_GRAPH_LAYOUT:
+      return updateState(state, { graphLayout: action.payload });
     default:
       return state;
   }

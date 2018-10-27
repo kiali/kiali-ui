@@ -12,7 +12,8 @@ describe('GraphFilterState reducer', () => {
       showSecurity: false,
       showTrafficAnimation: false,
       showServiceNodes: false,
-      showUnusedNodes: false
+      showUnusedNodes: false,
+      graphLayout: 'dagre'
     });
   });
 
@@ -28,7 +29,8 @@ describe('GraphFilterState reducer', () => {
           showSecurity: false,
           showTrafficAnimation: false,
           showServiceNodes: false,
-          showUnusedNodes: false
+          showUnusedNodes: false,
+          graphLayout: 'dagre'
         },
         {
           type: GraphFilterActionKeys.TOGGLE_LEGEND
@@ -43,7 +45,8 @@ describe('GraphFilterState reducer', () => {
       showSecurity: false,
       showTrafficAnimation: false,
       showServiceNodes: false,
-      showUnusedNodes: false
+      showUnusedNodes: false,
+      graphLayout: 'dagre'
     });
   });
 
@@ -59,7 +62,8 @@ describe('GraphFilterState reducer', () => {
           showSecurity: false,
           showTrafficAnimation: false,
           showServiceNodes: false,
-          showUnusedNodes: false
+          showUnusedNodes: false,
+          graphLayout: 'dagre'
         },
         {
           type: GraphFilterActionKeys.TOGGLE_GRAPH_NODE_LABEL
@@ -74,7 +78,8 @@ describe('GraphFilterState reducer', () => {
       showSecurity: false,
       showTrafficAnimation: false,
       showServiceNodes: false,
-      showUnusedNodes: false
+      showUnusedNodes: false,
+      graphLayout: 'dagre'
     });
   });
 
@@ -90,7 +95,8 @@ describe('GraphFilterState reducer', () => {
           showSecurity: false,
           showTrafficAnimation: false,
           showServiceNodes: false,
-          showUnusedNodes: false
+          showUnusedNodes: false,
+          graphLayout: 'dagre'
         },
         {
           type: GraphFilterActionKeys.TOGGLE_GRAPH_CIRCUIT_BREAKERS
@@ -105,7 +111,8 @@ describe('GraphFilterState reducer', () => {
       showSecurity: false,
       showTrafficAnimation: false,
       showServiceNodes: false,
-      showUnusedNodes: false
+      showUnusedNodes: false,
+      graphLayout: 'dagre'
     });
   });
   it('should handle TOGGLE_GRAPH_VIRTUAL_SERVICES', () => {
@@ -120,7 +127,8 @@ describe('GraphFilterState reducer', () => {
           showSecurity: false,
           showTrafficAnimation: false,
           showServiceNodes: false,
-          showUnusedNodes: false
+          showUnusedNodes: false,
+          graphLayout: 'dagre'
         },
         {
           type: GraphFilterActionKeys.TOGGLE_GRAPH_VIRTUAL_SERVICES
@@ -135,7 +143,8 @@ describe('GraphFilterState reducer', () => {
       showSecurity: false,
       showTrafficAnimation: false,
       showServiceNodes: false,
-      showUnusedNodes: false
+      showUnusedNodes: false,
+      graphLayout: 'dagre'
     });
   });
   it('should handle TOGGLE_GRAPH_MISSING_SIDECARS', () => {
@@ -150,7 +159,8 @@ describe('GraphFilterState reducer', () => {
           showSecurity: false,
           showTrafficAnimation: false,
           showServiceNodes: false,
-          showUnusedNodes: false
+          showUnusedNodes: false,
+          graphLayout: 'dagre'
         },
         {
           type: GraphFilterActionKeys.TOGGLE_GRAPH_MISSING_SIDECARS
@@ -165,7 +175,8 @@ describe('GraphFilterState reducer', () => {
       showSecurity: false,
       showTrafficAnimation: false,
       showServiceNodes: false,
-      showUnusedNodes: false
+      showUnusedNodes: false,
+      graphLayout: 'dagre'
     });
   });
   it('should handle TOGGLE_GRAPH_SECURITY', () => {
@@ -180,7 +191,8 @@ describe('GraphFilterState reducer', () => {
           showSecurity: false,
           showTrafficAnimation: false,
           showServiceNodes: false,
-          showUnusedNodes: false
+          showUnusedNodes: false,
+          graphLayout: 'dagre'
         },
         {
           type: GraphFilterActionKeys.TOGGLE_GRAPH_SECURITY
@@ -195,7 +207,8 @@ describe('GraphFilterState reducer', () => {
       showSecurity: true,
       showTrafficAnimation: false,
       showServiceNodes: false,
-      showUnusedNodes: false
+      showUnusedNodes: false,
+      graphLayout: 'dagre'
     });
   });
   it('should handle TOGGLE_TRAFFIC_ANIMATION', () => {
@@ -210,7 +223,8 @@ describe('GraphFilterState reducer', () => {
           showSecurity: false,
           showTrafficAnimation: false,
           showServiceNodes: false,
-          showUnusedNodes: false
+          showUnusedNodes: false,
+          graphLayout: 'dagre'
         },
         {
           type: GraphFilterActionKeys.TOGGLE_TRAFFIC_ANIMATION
@@ -225,7 +239,8 @@ describe('GraphFilterState reducer', () => {
       showSecurity: false,
       showTrafficAnimation: true,
       showServiceNodes: false,
-      showUnusedNodes: false
+      showUnusedNodes: false,
+      graphLayout: 'dagre'
     });
   });
   it('should handle TOGGLE_SERVICE_NODES', () => {
@@ -240,7 +255,8 @@ describe('GraphFilterState reducer', () => {
           showSecurity: false,
           showTrafficAnimation: false,
           showServiceNodes: false,
-          showUnusedNodes: false
+          showUnusedNodes: false,
+          graphLayout: 'dagre'
         },
         {
           type: GraphFilterActionKeys.TOGGLE_SERVICE_NODES
@@ -255,7 +271,8 @@ describe('GraphFilterState reducer', () => {
       showSecurity: false,
       showTrafficAnimation: false,
       showServiceNodes: true,
-      showUnusedNodes: false
+      showUnusedNodes: false,
+      graphLayout: 'dagre'
     });
   });
   it('should handle TOGGLE_UNUSED_NODES', () => {
@@ -270,7 +287,8 @@ describe('GraphFilterState reducer', () => {
           showSecurity: false,
           showTrafficAnimation: false,
           showServiceNodes: false,
-          showUnusedNodes: false
+          showUnusedNodes: false,
+          graphLayout: 'dagre'
         },
         {
           type: GraphFilterActionKeys.TOGGLE_UNUSED_NODES
@@ -285,7 +303,8 @@ describe('GraphFilterState reducer', () => {
       showSecurity: false,
       showTrafficAnimation: false,
       showServiceNodes: false,
-      showUnusedNodes: true
+      showUnusedNodes: true,
+      graphLayout: 'dagre'
     });
   });
   it('should handle SET_GRAPH_REFRESH_RATE', () => {
@@ -300,7 +319,8 @@ describe('GraphFilterState reducer', () => {
           showSecurity: false,
           showTrafficAnimation: false,
           showServiceNodes: false,
-          showUnusedNodes: false
+          showUnusedNodes: false,
+          graphLayout: 'dagre'
         },
         {
           type: GraphFilterActionKeys.SET_GRAPH_REFRESH_RATE,
@@ -316,7 +336,8 @@ describe('GraphFilterState reducer', () => {
       showSecurity: false,
       showTrafficAnimation: false,
       showServiceNodes: false,
-      showUnusedNodes: false
+      showUnusedNodes: false,
+      graphLayout: 'dagre'
     });
   });
 });

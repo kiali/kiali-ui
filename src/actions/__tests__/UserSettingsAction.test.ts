@@ -16,8 +16,9 @@ describe('UserSettingsActions', () => {
   });
 
   it('should set Nav Collapsed', () => {
-    expect(UserSettingsActions.navCollapse).toEqual({
-      type: UserSettingsActionKeys.NAV_COLLAPSE
+    expect(UserSettingsActions.navCollapse(true)).toEqual({
+      type: UserSettingsActionKeys.NAV_COLLAPSE,
+      collapse: true
     });
   });
 });

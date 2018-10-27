@@ -31,3 +31,17 @@ export const refreshIntervalSelector = createSelector(
   refreshInterval,
   x => x // identity function
 );
+
+const graphType = (state: KialiAppState) => state.graph.filterState.graphLayout;
+
+export const graphTypeSelector = createSelector(
+  graphType,
+  x => x // identity function
+);
+
+const durationInterval = (state: KialiAppState) => state.userSettings.durationInterval;
+
+export const durationIntervalSelector = createSelector(
+  durationInterval,
+  x => x // identity function
+);

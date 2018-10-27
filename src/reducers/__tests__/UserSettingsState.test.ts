@@ -19,7 +19,8 @@ describe('UserSettingsState reducer', () => {
           refreshInterval: 60
         },
         {
-          type: UserSettingsActionKeys.NAV_COLLAPSE
+          type: UserSettingsActionKeys.NAV_COLLAPSE,
+          collapse: true
         }
       )
     ).toEqual({

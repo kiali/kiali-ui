@@ -6,11 +6,12 @@ import { KialiAppState } from '../store/Store';
 import GraphRefresh from '../components/GraphFilter/GraphRefresh';
 import { config } from '../config';
 import { UserSettingsActions } from '../actions/UserSettingsActions';
-import { refreshIntervalSelector } from '../store/Selectors';
+import { durationIntervalSelector, refreshIntervalSelector } from '../store/Selectors';
 
 const mapStateToProps = (state: KialiAppState) => ({
   selected: refreshIntervalSelector(state),
-  pollInterval: refreshIntervalSelector(state)
+  pollInterval: refreshIntervalSelector(state),
+  graphDuration: durationIntervalSelector(state)
 });
 
 const mapDispatchToProps = (dispatch: Dispatch<any>) => {

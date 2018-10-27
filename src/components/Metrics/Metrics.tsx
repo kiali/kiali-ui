@@ -4,7 +4,6 @@ import { Alert, Icon } from 'patternfly-react';
 import { style } from 'typestyle';
 
 import history, { HistoryManager, URLParams } from '../../app/History';
-import MetricsOptionsBar from '../MetricsOptions/MetricsOptionsBar';
 import { MetricsLabels as L } from '../MetricsOptions/MetricsLabels';
 import * as API from '../../services/Api';
 import { computePrometheusQueryInterval } from '../../services/Prometheus';
@@ -15,6 +14,7 @@ import { authentication } from '../../utils/Authentication';
 
 import HistogramChart from './HistogramChart';
 import MetricChart from './MetricChart';
+import MetricsOptionBarContainer from '../../containers/MetricsOptionBarContainer';
 
 const expandedChartContainerStyle = style({
   height: 'calc(100vh - 248px)'
@@ -264,7 +264,7 @@ class Metrics extends React.Component<MetricsProps, MetricsState> {
           </h3>
         )}
         {this.state.alertDetails && <Alert onDismiss={this.dismissAlert}>{this.state.alertDetails}</Alert>}
-        <MetricsOptionsBar
+        <MetricsOptionBarContainer
           onOptionsChanged={this.onOptionsChanged}
           onReporterChanged={this.onReporterChanged}
           onRefresh={this.fetchMetrics}

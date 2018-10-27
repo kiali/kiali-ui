@@ -19,7 +19,7 @@ export interface GraphFilterProps extends GraphParamsType {
   onGraphTypeChange: (newType: GraphType) => void;
   onEdgeLabelModeChange: (newEdgeLabelMode: EdgeLabelMode) => void;
   onRefresh: () => void;
-  setDuration: (duration: Duration) => void;
+  setDuration: (duration: Duration) => void; // set duration via Redux
 }
 
 type GraphFilterPropsReadOnly = Readonly<GraphFilterProps>;
@@ -60,7 +60,7 @@ export default class GraphFilter extends React.PureComponent<GraphFilterPropsRea
   handleDuration = (duration: number) => {
     console.warn('Duration Changed: ' + duration);
     if (this.props.graphDuration.value !== duration) {
-      this.props.setDuration({ value: duration });
+      this.props.setDuration({ value: duration }); // inform Redux of duration change
       this.props.onDurationChange({ value: duration });
     }
   };

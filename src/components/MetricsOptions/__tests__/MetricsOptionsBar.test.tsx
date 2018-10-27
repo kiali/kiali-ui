@@ -3,6 +3,7 @@ import { mount, shallow } from 'enzyme';
 
 import MetricsOptionsBar from '../MetricsOptionsBar';
 import { MetricsDirection } from '../../../types/Metrics';
+import { config } from '../../../config';
 
 const optionsChanged = jest.fn();
 const lastOptionsChanged = () => {
@@ -13,6 +14,8 @@ describe('MetricsOptionsBar', () => {
   it('renders initial layout', () => {
     const wrapper = shallow(
       <MetricsOptionsBar
+        duration={config().toolbar.defaultDuration}
+        setDuration={jest.fn()}
         onOptionsChanged={jest.fn()}
         onRefresh={jest.fn()}
         onReporterChanged={jest.fn()}
@@ -28,6 +31,8 @@ describe('MetricsOptionsBar', () => {
   it('changes trigger parent callback', () => {
     const wrapper = mount(
       <MetricsOptionsBar
+        duration={config().toolbar.defaultDuration}
+        setDuration={jest.fn()}
         onOptionsChanged={optionsChanged}
         onRefresh={jest.fn()}
         onReporterChanged={jest.fn()}
@@ -40,7 +45,7 @@ describe('MetricsOptionsBar', () => {
     expect(optionsChanged).toHaveBeenCalledTimes(1);
     const opts = lastOptionsChanged();
     // Step = duration / ticks
-    expect(opts).toHaveProperty('duration', MetricsOptionsBar.DefaultDuration);
+    expect(opts).toHaveProperty('duration', config().toolbar.defaultDuration);
 
     let elt = wrapper
       .find('#metrics_filter_interval_duration')

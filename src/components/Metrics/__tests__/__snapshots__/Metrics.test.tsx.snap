@@ -37,7 +37,7 @@ ShallowWrapper {
       "children": Array [
         null,
         undefined,
-        <MetricsOptionsBar
+        <Connect(MetricsOptionsBar)
           direction={0}
           labelValues={Map {}}
           metricReporter="destination"
@@ -265,7 +265,7 @@ ShallowWrapper {
         "children": Array [
           null,
           undefined,
-          <MetricsOptionsBar
+          <Connect(MetricsOptionsBar)
             direction={0}
             labelValues={Map {}}
             metricReporter="destination"
@@ -542,7 +542,7 @@ ShallowWrapper {
       "children": Array [
         null,
         undefined,
-        <MetricsOptionsBar
+        <Connect(MetricsOptionsBar)
           direction={0}
           labelValues={Map {}}
           metricReporter="destination"
@@ -770,7 +770,7 @@ ShallowWrapper {
         "children": Array [
           null,
           undefined,
-          <MetricsOptionsBar
+          <Connect(MetricsOptionsBar)
             direction={0}
             labelValues={Map {}}
             metricReporter="destination"
@@ -1047,7 +1047,7 @@ ShallowWrapper {
       "children": Array [
         null,
         undefined,
-        <MetricsOptionsBar
+        <Connect(MetricsOptionsBar)
           direction={0}
           labelValues={Map {}}
           metricReporter="destination"
@@ -1275,7 +1275,7 @@ ShallowWrapper {
         "children": Array [
           null,
           undefined,
-          <MetricsOptionsBar
+          <Connect(MetricsOptionsBar)
             direction={0}
             labelValues={Map {}}
             metricReporter="destination"

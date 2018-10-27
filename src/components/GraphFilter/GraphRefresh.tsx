@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { PollIntervalInMs } from '../../types/Common';
+import { DurationIntervalInSeconds, PollIntervalInMs } from '../../types/Common';
 import { Duration } from '../../types/GraphFilter';
 import { Button, MenuItem, Icon, DropdownButton } from 'patternfly-react';
 import ToolbarDropdown from '../ToolbarDropdown/ToolbarDropdown';
@@ -13,13 +13,13 @@ type GraphRefreshProps = {
   options: {
     [interval: number]: string;
   };
-  graphDuration: Duration;
+  graphDuration: DurationIntervalInSeconds;
   onUpdateGraphDuration: (duration: number) => void;
   disabled: boolean;
 };
 
 const GraphRefresh: React.SFC<GraphRefreshProps> = props => {
-  const INTERVAL_DURATION = config().toolbar.intervalDuration;
+  const INTERVAL_DURATION_LIST = config().toolbar.intervalDuration;
 
   const formatRefreshText = (key, isTitle: boolean = false): string => {
     // Ensure that we have an integer (for comparisons).
@@ -39,9 +39,9 @@ const GraphRefresh: React.SFC<GraphRefreshProps> = props => {
         id={'graph_filter_interval_duration'}
         disabled={props.disabled}
         handleSelect={props.onUpdateGraphDuration}
-        value={props.graphDuration.value}
-        label={String(INTERVAL_DURATION[props.graphDuration.value])}
-        options={INTERVAL_DURATION}
+        value={props.graphDuration}
+        label={String(INTERVAL_DURATION_LIST[props.graphDuration])}
+        options={INTERVAL_DURATION_LIST}
       />
       <DropdownButton
         id="graph_refresh_dropdown"
