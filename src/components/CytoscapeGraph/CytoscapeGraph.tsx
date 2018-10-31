@@ -371,7 +371,12 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
       // overlap, but we need to have them enabled (nodeDimensionsIncludeLabels: true)
       this.turnNodeLabelsTo(cy, true);
       const layoutOptions = LayoutDictionary.getLayout(this.props.graphLayout);
-      cy.layout({ ...layoutOptions, name: 'group-compound-layout', realLayout: this.props.graphLayout.name }).run();
+      if (cy.nodes('$node > node').length > 0) {
+        // if there is any parent node, run the group-compound-layout
+        cy.layout({ ...layoutOptions, name: 'group-compound-layout', realLayout: this.props.graphLayout.name }).run();
+      } else {
+        cy.layout(layoutOptions).run();
+      }
     }
 
     // Create and destroy labels
