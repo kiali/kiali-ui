@@ -25,12 +25,12 @@ const NodeColorBorderDegraded = PfColors.Orange;
 const NodeColorBorderFailure = PfColors.Red;
 const NodeColorBorderHover = PfColors.Blue300;
 const NodeColorBorderSelected = PfColors.Blue300;
-const NodeColorFill = PfColors.White;
+const NodeColorFill = '#F87217';
 const NodeColorFillBox = PfColors.Black100;
-const NodeColorFillHover = PfColors.Blue50;
+const NodeColorFillHover = '#f0911d';
 const NodeColorFillHoverDegraded = '#fdf2e5';
 const NodeColorFillHoverFailure = '#ffe6e6';
-const NodeHeight = '10px';
+const NodeHeight = '25px';
 const NodeIconCB = '\uf0e7 '; // bolt
 const NodeIconMS = '\uf12a '; // exclamation
 const NodeIconVS = '\uf126 '; // code-branch
@@ -45,7 +45,7 @@ const NodeTextFontWeight = 'normal';
 const NodeTextFontWeightBadged = 'normal';
 const NodeTextFontSize = '8px';
 const NodeTextFontSizeHover = '11px';
-const NodeWidth = NodeHeight;
+const NodeWidth = '35px';
 
 export class GraphStyles {
   static options() {
@@ -199,7 +199,7 @@ export class GraphStyles {
       const nodeType = ele.data('nodeType');
       switch (nodeType) {
         case NodeType.APP:
-          return 'square';
+          return 'polygon';
         case NodeType.SERVICE:
           return 'triangle';
         case NodeType.UNKNOWN:
@@ -266,6 +266,8 @@ export class GraphStyles {
           shape: (ele: any) => {
             return getNodeShape(ele);
           },
+          'shape-polygon-points':
+            '-0.055556  -1.000000  -0.055556  -0.714286  -0.222222  -0.857143  -0.333333  -0.857143  -0.555556  -0.714286  -0.666667  -0.571429  -0.777778  -0.285714  -0.777778   0.142857   -0.666667   0.571429  -0.555556   0.714286  -0.333333   0.857143   0.333333   0.857143   0.555556   0.714286   0.666667   0.571429   0.777778   0.285714   0.777778  -0.285714     0.666667  -0.571429   0.555556  -0.714286   0.333333  -0.857143   0.222222  -0.857143   0.055556  -0.714286   0.111111  -1.000000',
           'text-outline-color': NodeTextOutlineColor,
           'text-outline-width': NodeTextOutlineWidth,
           'text-halign': 'center',
