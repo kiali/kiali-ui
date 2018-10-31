@@ -1,11 +1,18 @@
 const NAMESPACE_KEY = '_group_compound_layout';
 const CHILDREN_KEY = 'children';
+const STYLES_KEY = 'styles';
 const PADDING_WIDTH = 5;
 const BETWEEN_NODES_PADDING = 3;
 
 const normalizeToParent = element => {
   return element.isChild() ? element.parent() : element;
 };
+
+interface OverridenStyles {
+  shape: string;
+  width: string;
+  height: string;
+}
 
 class SyntheticEdgeGenerator {
   private nextId = 0;
@@ -19,32 +26,62 @@ class SyntheticEdgeGenerator {
     if (this.generatedMap[key]) {
       return false;
     }
-    return (this.generatedMap[key] = {
+
+    this.generatedMap[key] = true;
+
+    return {
       group: 'edges',
       data: {
         id: 'synthetic-edge-' + this.nextId++,
         source: sourceId,
         target: targetId
       }
-    });
+    };
+  }
+}
+
+interface CompoundLayout {
+  boundingBox(compound: any);
+  layout(compound: any);
+}
+
+class VerticalLayout implements CompoundLayout {
+  boundingBox(compound: any) {
+    return compound.children().reduce(
+      (accBoundingBox, child) => {
+        // This will produce a vertical layout for the compound contents
+        const localBoundingBox = child.boundingBox();
+        accBoundingBox.height += localBoundingBox.h;
+        accBoundingBox.width = Math.max(accBoundingBox.width, localBoundingBox.w + PADDING_WIDTH);
+        return accBoundingBox;
+      },
+      { width: 0, height: 0 }
+    );
   }
 
-  public getGeneratedEdges() {
-    return Object.keys(this.generatedMap).map(key => this.generatedMap[key]);
+  layout(compound: any) {
+    const position = { x: 0, y: 0 };
+    compound.children().each(child => {
+      child.relativePosition(position);
+      const boundingBox = child.boundingBox();
+      position.y += boundingBox.h + BETWEEN_NODES_PADDING;
+    });
   }
 }
 
 export default class GroupCompoundLayout {
-  private options;
-  private cy;
-  private elements;
-  private syntheticEdgeGenerator;
+  readonly options;
+  readonly cy;
+  readonly elements;
+  readonly syntheticEdgeGenerator;
+  readonly compoundLayout;
 
   constructor(options: any) {
     this.options = { ...options };
     this.cy = this.options.cy;
     this.elements = this.options.eles;
     this.syntheticEdgeGenerator = new SyntheticEdgeGenerator();
+    this.compoundLayout = new VerticalLayout();
   }
 
   run() {
@@ -53,21 +90,24 @@ export default class GroupCompoundLayout {
     if (parents.length > 0) {
       // Prepare parents by assigning a width and height
       parents.each(parent => {
-        const boundingBox = parent.children().reduce(
-          (accBoundingBox, child) => {
-            const localBoundingBox = child.boundingBox();
-            accBoundingBox.height += localBoundingBox.h;
-            accBoundingBox.width = Math.max(accBoundingBox.width, localBoundingBox.w + PADDING_WIDTH);
-            return accBoundingBox;
-          },
-          { width: 0, height: 0 }
-        );
-        parent.style('shape', 'rectangle');
-        parent.style('height', `${boundingBox.height}px`);
-        parent.style('width', `${boundingBox.width}px`);
+        const boundingBox = this.compoundLayout.boundingBox(parent);
+        const backupStyles: OverridenStyles = {
+          shape: parent.style('shape'),
+          height: parent.style('height'),
+          width: parent.style('width')
+        };
+
+        const newStyles: OverridenStyles = {
+          shape: 'rectangle',
+          height: `${boundingBox.height}px`,
+          width: `${boundingBox.width}px`
+        };
+        this.setScratch(parent, STYLES_KEY, backupStyles);
+        parent.style(newStyles);
         this.setScratch(parent, CHILDREN_KEY, parent.children().jsons());
       });
-      // Remove the children and its edges, add synthetic edges for every edge that touch a child node.
+
+      // Remove the children and its edges and add synthetic edges for every edge that touches a child node.
       let syntheticEdges = this.cy.collection();
       const elementsToRemove = parents.children().reduce((children, child) => {
         children.push(child);
@@ -75,9 +115,7 @@ export default class GroupCompoundLayout {
           child.connectedEdges().reduce((edges, edge) => {
             const syntheticEdge = this.syntheticEdgeGenerator.getEdge(edge.source(), edge.target());
             if (syntheticEdge) {
-              console.log('Adding synthetic edge:', syntheticEdge);
               syntheticEdges = syntheticEdges.add(this.cy.add(syntheticEdge));
-              console.log(syntheticEdges);
             }
             edges.push(edge);
             return edges;
@@ -85,7 +123,7 @@ export default class GroupCompoundLayout {
         );
       }, []);
       this.cy.remove(this.cy.collection().add(elementsToRemove));
-      console.log('Will use:', realLayout);
+
       const layout = this.cy.layout({
         // Create a new layout
         ...this.options, // Sharing the main options
@@ -93,34 +131,28 @@ export default class GroupCompoundLayout {
         eles: this.cy.elements(), // and the current elements
         realLayout: undefined // We don't want this realLayout stuff in there.
       });
-      layout.pon('layoutstop').then(event => {
-        // Remove synthetic edges and add removed elements
-        console.log('Removing syntheticEdges', syntheticEdges);
+
+      // Add a callback once the layout stops
+      layout.one('layoutstop', event => {
+        // Remove synthetic edges
         this.cy.remove(syntheticEdges);
-        // this.cy.add(this.cy.collection().add(elementsToRemove));
+
+        // Add and position the children nodes according to the layout
         parents.each(parent => {
-          const position = { ...parent.position() };
-          console.log('parent position:', position);
-          const children = this.cy.add(this.getScratch(parent, CHILDREN_KEY)).map(child => {
-            child.position(position);
-            console.log('child position:', child.position());
-            const boundingBox = child.boundingBox();
-            position.y += boundingBox.h + BETWEEN_NODES_PADDING;
-            this.setScratch(parent, CHILDREN_KEY, undefined);
-            return child;
-          });
-          console.log(children);
-          console.log('scratchPad:', parent.scratch());
+          this.cy.add(this.getScratch(parent, CHILDREN_KEY));
+          this.compoundLayout.layout(parent);
+          parent.style(this.getScratch(parent, STYLES_KEY));
+
+          this.setScratch(parent, CHILDREN_KEY, undefined);
+          this.setScratch(parent, STYLES_KEY, undefined);
         });
+        // Add the real edges
         this.cy.add(
           this.cy
             .collection()
             .add(elementsToRemove)
             .edges()
         );
-      });
-      layout.on('layoutstart layoutready layoutstop', event => {
-        (this as any).emit(event);
       });
       layout.run();
     }
