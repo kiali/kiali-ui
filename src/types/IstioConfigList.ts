@@ -215,22 +215,26 @@ export const toIstioItems = (istioConfigList: IstioConfigList): IstioConfigItem[
   istioConfigList.gateways.forEach(gw =>
     istioItems.push({ namespace: istioConfigList.namespace.name, type: 'gateway', name: gw.name, gateway: gw })
   );
-  istioConfigList.virtualServices.items.forEach(vs =>
-    istioItems.push({
-      namespace: istioConfigList.namespace.name,
-      type: 'virtualservice',
-      name: vs.name,
-      virtualService: vs
-    })
-  );
-  istioConfigList.destinationRules.items.forEach(dr =>
-    istioItems.push({
-      namespace: istioConfigList.namespace.name,
-      type: 'destinationrule',
-      name: dr.name,
-      destinationRule: dr
-    })
-  );
+  if (istioConfigList.virtualServices.items) {
+    istioConfigList.virtualServices.items.forEach(vs =>
+      istioItems.push({
+        namespace: istioConfigList.namespace.name,
+        type: 'virtualservice',
+        name: vs.name,
+        virtualService: vs
+      })
+    );
+  }
+  if (istioConfigList.destinationRules.items) {
+    istioConfigList.destinationRules.items.forEach(dr =>
+      istioItems.push({
+        namespace: istioConfigList.namespace.name,
+        type: 'destinationrule',
+        name: dr.name,
+        destinationRule: dr
+      })
+    );
+  }
   istioConfigList.serviceEntries.forEach(se =>
     istioItems.push({
       namespace: istioConfigList.namespace.name,
@@ -239,6 +243,7 @@ export const toIstioItems = (istioConfigList: IstioConfigList): IstioConfigItem[
       serviceEntry: se
     })
   );
+
   istioConfigList.rules.forEach(r =>
     istioItems.push({ namespace: istioConfigList.namespace.name, type: 'rule', name: r.name, rule: r })
   );
