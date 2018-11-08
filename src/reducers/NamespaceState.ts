@@ -3,18 +3,28 @@ import { updateState } from '../utils/Reducer';
 import { NamespaceState } from '../store/Store';
 
 export const INITIAL_NAMESPACE_STATE: NamespaceState = {
-  activeNamespace: { name: 'all' },
+  activeNamespaces: [],
   isFetching: false,
-  items: ['all'],
+  items: [],
   lastUpdated: undefined
 };
 
 const namespaces = (state: NamespaceState = INITIAL_NAMESPACE_STATE, action) => {
   switch (action.type) {
-    case NamespaceActionKeys.SET_ACTIVE_NAMESPACE:
-      return updateState(state, {
-        activeNamespace: { name: action.payload.name }
-      });
+    case NamespaceActionKeys.TOGGLE_ACTIVE_NAMESPACE:
+      const namespaceIndex = state.activeNamespaces.findIndex(namespace => namespace.name === action.payload.name);
+      if (namespaceIndex === -1) {
+        return updateState(state, {
+          activeNamespaces: [...state.activeNamespaces, { name: action.payload.name }]
+        });
+      } else {
+        const activeNamespaces = [...state.activeNamespaces];
+        activeNamespaces.splice(namespaceIndex, 1);
+        return updateState(state, { activeNamespaces });
+      }
+
+    case NamespaceActionKeys.SET_ACTIVE_NAMESPACES:
+      return updateState(state, { activeNamespaces: action.payload });
 
     case NamespaceActionKeys.NAMESPACE_REQUEST_STARTED:
       return updateState(state, {

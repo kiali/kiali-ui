@@ -30,7 +30,7 @@ describe('CytoscapeGraph component test', () => {
 
     const wrapper = shallow(
       <CytoscapeGraph
-        activeNamespace={{ name: testNamespace }}
+        activeNamespaces={[{ name: testNamespace }]}
         duration={60}
         elements={GRAPH_DATA[testNamespace].elements}
         graphLayout={myLayout}
@@ -38,7 +38,7 @@ describe('CytoscapeGraph component test', () => {
         onClick={testClickHandler}
         onReady={testReadyHandler}
         refresh={testClickHandler}
-        setActiveNamespace={testSetHandler}
+        setActiveNamespaces={testSetHandler}
         showNodeLabels={true}
         showCircuitBreakers={false}
         showVirtualServices={true}

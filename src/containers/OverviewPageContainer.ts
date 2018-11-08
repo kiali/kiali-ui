@@ -8,7 +8,7 @@ import OverviewPage from '../pages/Overview/OverviewPage';
 const mapDispatchToProps = (dispatch: Dispatch<any>) => {
   return {
     setActiveNamespace: (namespace: Namespace) => {
-      dispatch(NamespaceActions.setActiveNamespace(namespace));
+      dispatch(NamespaceActions.setActiveNamespaces([namespace]));
     }
   };
 };

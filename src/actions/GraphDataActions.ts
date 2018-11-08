@@ -8,8 +8,11 @@ import { GraphDataActionKeys } from './GraphDataActionKeys';
 import { GraphType, NodeParamsType } from '../types/Graph';
 import { AppenderString, DurationInSeconds } from '../types/Common';
 import { serverConfig } from '../config';
+import { PromisesRegistry } from '../utils/CancelablePromises';
 
 const EMPTY_GRAPH_DATA = { nodes: [], edges: [] };
+
+const promiseRegistry = new PromisesRegistry();
 
 // When updating the cytoscape graph, the element data expects to have all the changes
 // non provided values are taken as "this didn't change", similar as setState does.
@@ -72,6 +75,10 @@ const decorateGraphData = (graphData: any) => {
   return graphData;
 };
 
+const setCurrentRequest = (promise: Promise<any>) => {
+  return promiseRegistry.register('CURRENT_REQUEST', promise);
+};
+
 // synchronous action creators
 export const GraphDataActions = {
   getGraphDataStart: createAction(GraphDataActionKeys.GET_GRAPH_DATA_START),
@@ -91,7 +98,7 @@ export const GraphDataActions = {
 
   // action creator that performs the async request
   fetchGraphData: (
-    namespace: Namespace,
+    namespaces: Namespace[],
     duration: DurationInSeconds,
     graphType: GraphType,
     injectServiceNodes: boolean,
@@ -101,9 +108,12 @@ export const GraphDataActions = {
     node?: NodeParamsType
   ) => {
     return dispatch => {
+      if (namespaces.length === 0) {
+        return Promise.resolve();
+      }
       dispatch(GraphDataActions.getGraphDataStart());
       let restParams = { duration: duration + 's', graphType: graphType, injectServiceNodes: injectServiceNodes };
-      if (namespace.name === serverConfig().istioNamespace) {
+      if (namespaces.find(namespace => namespace.name === serverConfig().istioNamespace)) {
         restParams['includeIstio'] = true;
       }
 
@@ -135,7 +145,7 @@ export const GraphDataActions = {
       console.debug('Fetching graph with appenders: ' + appenders);
 
       if (node) {
-        return API.getNodeGraphElements(authentication(), namespace, node, restParams).then(
+        return setCurrentRequest(API.getNodeGraphElements(authentication(), node, restParams)).then(
           response => {
             const responseData: any = response['data'];
             const graphData = responseData && responseData.elements ? responseData.elements : EMPTY_GRAPH_DATA;
@@ -144,6 +154,9 @@ export const GraphDataActions = {
           },
           error => {
             let emsg: string;
+            if (error.isCanceled) {
+              return;
+            }
             if (error.response && error.response.data && error.response.data.error) {
               emsg = 'Cannot load the graph: ' + error.response.data.error;
             } else {
@@ -155,10 +168,8 @@ export const GraphDataActions = {
         );
       }
 
-      if (namespace.name !== 'all') {
-        restParams['namespaces'] = namespace.name;
-      }
-      return API.getGraphElements(authentication(), restParams).then(
+      restParams['namespaces'] = namespaces.map(namespace => namespace.name).join(',');
+      return setCurrentRequest(API.getGraphElements(authentication(), restParams)).then(
         response => {
           const responseData: any = response['data'];
           const graphData = responseData && responseData.elements ? responseData.elements : EMPTY_GRAPH_DATA;
@@ -167,6 +178,9 @@ export const GraphDataActions = {
         },
         error => {
           let emsg: string;
+          if (error.isCanceled) {
+            return;
+          }
           if (error.response && error.response.data && error.response.data.error) {
             emsg = 'Cannot load the graph: ' + error.response.data.error;
           } else {

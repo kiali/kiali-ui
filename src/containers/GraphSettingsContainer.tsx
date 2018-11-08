@@ -8,15 +8,15 @@ import { EdgeLabelMode } from '../types/GraphFilter';
 import Namespace from '../types/Namespace';
 import { GraphFilterActions } from '../actions/GraphFilterActions';
 import { style } from 'typestyle';
-import { makeNamespaceGraphUrlFromParams, makeNodeGraphUrlFromParams } from '../components/Nav/NavUtils';
+import { makeNamespacesGraphUrlFromParams, makeNodeGraphUrlFromParams } from '../components/Nav/NavUtils';
 import { GraphDataActions } from '../actions/GraphDataActions';
 import { KialiAppState, GraphFilterState } from '../store/Store';
-import { activeNamespaceSelector, durationSelector } from '../store/Selectors';
+import { activeNamespacesSelector, durationSelector } from '../store/Selectors';
 
 interface GraphDispatch {
   // Dispatch methods
   fetchGraphData: (
-    namespace: Namespace,
+    namespaces: Namespace[],
     duration: DurationInSeconds,
     graphType: GraphType,
     injectServiceNodes: boolean,
@@ -39,7 +39,7 @@ interface GraphDispatch {
 type GraphSettingsProps = GraphDispatch &
   GraphFilterState &
   GraphParamsType & {
-    activeNamespace: Namespace;
+    activeNamespaces: Namespace[];
     duration: DurationInSeconds;
   };
 
@@ -76,7 +76,7 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps> {
       // when turning on security, or toggling unused node, we need to perform a fetch, because we don't pull
       // security or unused node data by default.
       this.props.fetchGraphData(
-        this.props.activeNamespace,
+        this.props.activeNamespaces,
         this.props.duration,
         this.props.graphType,
         this.props.injectServiceNodes,
@@ -93,7 +93,7 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps> {
     if (params.node) {
       this.context.router.history.push(makeNodeGraphUrlFromParams(params));
     } else {
-      this.context.router.history.push(makeNamespaceGraphUrlFromParams(params));
+      this.context.router.history.push(makeNamespacesGraphUrlFromParams(params));
     }
   };
 
@@ -237,7 +237,7 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps> {
 
 // Allow Redux to map sections of our global app state to our props
 const mapStateToProps = (state: KialiAppState) => ({
-  activeNamespace: activeNamespaceSelector(state),
+  activeNamespaces: activeNamespacesSelector(state),
   duration: durationSelector(state),
   showNodeLabels: state.graph.filterState.showNodeLabels,
   showCircuitBreakers: state.graph.filterState.showCircuitBreakers,
@@ -253,7 +253,7 @@ const mapStateToProps = (state: KialiAppState) => ({
 const mapDispatchToProps = (dispatch: any) => {
   return {
     fetchGraphData: (
-      namespace: Namespace,
+      namespaces: Namespace[],
       duration: DurationInSeconds,
       graphType: GraphType,
       injectServiceNodes: boolean,
@@ -264,7 +264,7 @@ const mapDispatchToProps = (dispatch: any) => {
     ) =>
       dispatch(
         GraphDataActions.fetchGraphData(
-          namespace,
+          namespaces,
           duration,
           graphType,
           injectServiceNodes,

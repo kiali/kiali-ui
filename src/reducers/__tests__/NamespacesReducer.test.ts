@@ -6,25 +6,25 @@ describe('Namespaces reducer', () => {
   it('should return the initial state', () => {
     expect(namespaceState(undefined, {})).toEqual({
       isFetching: false,
-      activeNamespace: { name: 'all' },
-      items: ['all'],
+      activeNamespaces: [],
+      items: [],
       lastUpdated: undefined
     });
   });
 
   it('should handle ACTIVE_NAMESPACE', () => {
     const currentState = {
-      activeNamespace: { name: 'all' },
+      activeNamespaces: [{ name: 'my-namespace' }],
       isFetching: false,
       items: [],
       lastUpdated: undefined
     };
     const requestStartedAction = {
-      type: NamespaceActionKeys.SET_ACTIVE_NAMESPACE,
-      payload: { name: 'istio' }
+      type: NamespaceActionKeys.SET_ACTIVE_NAMESPACES,
+      payload: [{ name: 'istio' }]
     };
     const expectedState = {
-      activeNamespace: { name: 'istio' },
+      activeNamespaces: [{ name: 'istio' }],
       isFetching: false,
       items: [],
       lastUpdated: undefined
@@ -34,7 +34,7 @@ describe('Namespaces reducer', () => {
 
   it('should handle NAMESPACE_REQUEST_STARTED', () => {
     const currentState = {
-      activeNamespace: { name: 'all' },
+      activeNamespaces: [{ name: 'my-namespace' }],
       isFetching: false,
       items: [],
       lastUpdated: undefined
@@ -43,7 +43,7 @@ describe('Namespaces reducer', () => {
       type: NamespaceActionKeys.NAMESPACE_REQUEST_STARTED
     };
     const expectedState = {
-      activeNamespace: { name: 'all' },
+      activeNamespaces: [{ name: 'my-namespace' }],
       isFetching: true,
       items: [],
       lastUpdated: undefined
@@ -53,7 +53,7 @@ describe('Namespaces reducer', () => {
 
   it('should handle NAMESPACE_FAILED', () => {
     const currentState = {
-      activeNamespace: { name: 'all' },
+      activeNamespaces: [{ name: 'my-namespace' }],
       isFetching: true,
       items: []
     };
@@ -61,7 +61,7 @@ describe('Namespaces reducer', () => {
       type: NamespaceActionKeys.NAMESPACE_FAILED
     };
     const expectedState = {
-      activeNamespace: { name: 'all' },
+      activeNamespaces: [{ name: 'my-namespace' }],
       isFetching: false,
       items: []
     };
@@ -71,7 +71,7 @@ describe('Namespaces reducer', () => {
   it('should handle NAMESPACE_SUCCESS', () => {
     const currentDate = new Date();
     const currentState = {
-      activeNamespace: { name: 'all' },
+      activeNamespaces: [{ name: 'my-namespace' }],
       isFetching: true,
       items: ['old', 'namespace'],
       lastUpdated: undefined
@@ -82,7 +82,7 @@ describe('Namespaces reducer', () => {
       receivedAt: currentDate
     };
     const expectedState = {
-      activeNamespace: { name: 'all' },
+      activeNamespaces: [{ name: 'my-namespace' }],
       isFetching: false,
       items: ['a', 'b', 'c'],
       lastUpdated: currentDate

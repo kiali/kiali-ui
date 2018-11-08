@@ -27,12 +27,12 @@ describe('NamespaceActions', () => {
     expect(NamespaceActions.requestStarted()).toEqual(expectedAction);
   });
 
-  it('should set active namespace', () => {
+  it('should toggle active namespace', () => {
     const expectedAction = {
-      type: NamespaceActionKeys.SET_ACTIVE_NAMESPACE,
+      type: NamespaceActionKeys.TOGGLE_ACTIVE_NAMESPACE,
       payload: { name: 'istio' }
     };
-    expect(NamespaceActions.setActiveNamespace({ name: 'istio' })).toEqual(expectedAction);
+    expect(NamespaceActions.toggleActiveNamespace({ name: 'istio' })).toEqual(expectedAction);
   });
 
   it('request is success', () => {
@@ -61,7 +61,7 @@ describe('NamespaceActions', () => {
       },
       {
         type: NamespaceActionKeys.NAMESPACE_SUCCESS,
-        list: [{ name: 'all' }, 'a', 'b', 'c'],
+        list: ['a', 'b', 'c'],
         receivedAt: currentDate
       }
     ];

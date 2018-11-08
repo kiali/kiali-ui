@@ -7,7 +7,8 @@ export enum NamespaceActionKeys {
   NAMESPACE_REQUEST_STARTED = 'NAMESPACE_REQUEST_STARTED',
   NAMESPACE_SUCCESS = 'NAMESPACE_SUCCESS',
   NAMESPACE_FAILED = 'NAMESPACE_FAILED',
-  SET_ACTIVE_NAMESPACE = 'SET_ACTIVE_NAMESPACE',
+  TOGGLE_ACTIVE_NAMESPACE = 'TOGGLE_ACTIVE_NAMESPACE',
+  SET_ACTIVE_NAMESPACES = 'SET_ACTIVE_NAMESPACES',
   SET_PREVIOUS_GRAPH_STATE = 'SET_PREVIOUS_GRAPH_STATE'
 }
 
@@ -20,9 +21,13 @@ const shouldFetchNamespaces = (state: KialiAppState) => {
 };
 
 export const NamespaceActions = {
-  setActiveNamespace: createAction(NamespaceActionKeys.SET_ACTIVE_NAMESPACE, (namespace: Namespace) => ({
-    type: NamespaceActionKeys.SET_ACTIVE_NAMESPACE,
+  toggleActiveNamespace: createAction(NamespaceActionKeys.TOGGLE_ACTIVE_NAMESPACE, (namespace: Namespace) => ({
+    type: NamespaceActionKeys.TOGGLE_ACTIVE_NAMESPACE,
     payload: namespace
+  })),
+  setActiveNamespaces: createAction(NamespaceActionKeys.SET_ACTIVE_NAMESPACES, (namespaces: Namespace[]) => ({
+    type: NamespaceActionKeys.SET_ACTIVE_NAMESPACES,
+    payload: namespaces
   })),
   requestStarted: createAction(NamespaceActionKeys.NAMESPACE_REQUEST_STARTED),
   requestFailed: createAction(NamespaceActionKeys.NAMESPACE_FAILED),
@@ -37,7 +42,7 @@ export const NamespaceActions = {
       return Api.getNamespaces(auth)
         .then(response => response['data'])
         .then(data => {
-          let namespaceList: Namespace[] = [{ name: 'all' }];
+          let namespaceList: Namespace[] = [];
           data.forEach((aNamespace: Namespace) => {
             namespaceList.push(aNamespace);
           });
