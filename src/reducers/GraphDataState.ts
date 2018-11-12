@@ -4,6 +4,7 @@ import { GraphActionKeys } from '../actions/GraphActions';
 import FilterStateReducer from './GraphFilterState';
 
 export const INITIAL_GRAPH_STATE: GraphState = {
+  isNewGraphLoading: false,
   isLoading: false,
   isError: false,
   error: undefined,
@@ -41,11 +42,13 @@ const graphDataState = (state: GraphState = INITIAL_GRAPH_STATE, action) => {
       newState.isError = false;
       newState.graphDataTimestamp = action.timestamp;
       newState.graphData = action.graphData;
+      newState.isNewGraphLoading = false;
       break;
     case GraphDataActionKeys.GET_GRAPH_DATA_FAILURE:
       newState.isLoading = false;
       newState.isError = true;
       newState.error = action.error;
+      newState.isNewGraphLoading = false;
       break;
     case GraphActionKeys.GRAPH_SIDE_PANEL_SHOW_INFO:
       newState.sidePanelInfo = {
@@ -57,6 +60,9 @@ const graphDataState = (state: GraphState = INITIAL_GRAPH_STATE, action) => {
       newState.graphData = INITIAL_GRAPH_STATE.graphData;
       newState.graphDataTimestamp = INITIAL_GRAPH_STATE.graphDataTimestamp;
       newState.sidePanelInfo = INITIAL_GRAPH_STATE.sidePanelInfo;
+      break;
+    case GraphDataActionKeys.NEW_GRAPH_REQUESTED:
+      newState.isNewGraphLoading = true;
       break;
     default:
       break;

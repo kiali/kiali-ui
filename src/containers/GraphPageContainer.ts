@@ -40,7 +40,8 @@ const mapDispatchToProps = (dispatch: any) => ({
     edgeLabelMode: EdgeLabelMode,
     showSecurity: boolean,
     showUnusedNodes: boolean,
-    node?: NodeParamsType
+    node?: NodeParamsType,
+    isNewGraph?: boolean
   ) =>
     dispatch(
       GraphDataActions.fetchGraphData(
@@ -51,7 +52,8 @@ const mapDispatchToProps = (dispatch: any) => ({
         edgeLabelMode,
         showSecurity,
         showUnusedNodes,
-        node
+        node,
+        isNewGraph
       )
     ),
   toggleLegend: bindActionCreators(GraphFilterActions.toggleLegend, dispatch)

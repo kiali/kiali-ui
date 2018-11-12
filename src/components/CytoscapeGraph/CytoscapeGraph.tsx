@@ -55,7 +55,7 @@ type CytoscapeGraphType = {
 
 type CytoscapeGraphProps = CytoscapeGraphType &
   GraphParamsType & {
-    isLoading: boolean;
+    isNewGraphLoading: boolean;
     isError: boolean;
     containerClassName?: string;
   };
@@ -101,30 +101,6 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
       zoom: undefined
     };
     this.cytoscapeReactWrapperRef = React.createRef();
-  }
-
-  shouldComponentUpdate(nextProps: CytoscapeGraphProps, nextState: CytoscapeGraphState) {
-    this.nodeChanged = this.nodeChanged || this.props.node !== nextProps.node;
-    let result =
-      this.props.node !== nextProps.node ||
-      this.props.graphLayout !== nextProps.graphLayout ||
-      this.props.edgeLabelMode !== nextProps.edgeLabelMode ||
-      this.props.showNodeLabels !== nextProps.showNodeLabels ||
-      this.props.showCircuitBreakers !== nextProps.showCircuitBreakers ||
-      this.props.showVirtualServices !== nextProps.showVirtualServices ||
-      this.props.showMissingSidecars !== nextProps.showMissingSidecars ||
-      this.props.showSecurity !== nextProps.showSecurity ||
-      this.props.showServiceNodes !== nextProps.showServiceNodes ||
-      this.props.showTrafficAnimation !== nextProps.showTrafficAnimation ||
-      this.props.showUnusedNodes !== nextProps.showUnusedNodes ||
-      this.props.elements !== nextProps.elements ||
-      this.props.isError !== nextProps.isError;
-
-    if (!nextProps.elements || !nextProps.elements.nodes || nextProps.elements.nodes.length < 1) {
-      result = true;
-    }
-
-    return result;
   }
 
   componentDidMount() {
@@ -184,7 +160,7 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
           elements={this.props.elements}
           namespaces={this.props.activeNamespaces}
           action={this.props.refresh}
-          isLoading={this.props.isLoading}
+          isLoading={this.props.isNewGraphLoading}
           isError={this.props.isError}
         >
           <CytoscapeReactWrapper ref={e => this.setCytoscapeReactWrapperRef(e)} />
@@ -634,7 +610,7 @@ const mapStateToProps = (state: KialiAppState) => ({
   showTrafficAnimation: state.graph.filterState.showTrafficAnimation,
   showUnusedNodes: state.graph.filterState.showUnusedNodes,
   elements: state.graph.graphData,
-  isLoading: state.graph.isLoading,
+  isNewGraphLoading: state.graph.isNewGraphLoading,
   isError: state.graph.isError,
   namespaces: state.namespaces.activeNamespaces
 });

@@ -95,6 +95,7 @@ export const GraphDataActions = {
     error: error
   })),
   handleLegend: createAction(GraphDataActionKeys.HANDLE_LEGEND),
+  newGraphRequested: createAction(GraphDataActionKeys.NEW_GRAPH_REQUESTED),
 
   // action creator that performs the async request
   fetchGraphData: (
@@ -105,12 +106,19 @@ export const GraphDataActions = {
     edgeLabelMode: EdgeLabelMode,
     showSecurity: boolean,
     showUnusedNodes: boolean,
-    node?: NodeParamsType
+    node?: NodeParamsType,
+    isNewGraph?: boolean
   ) => {
     return dispatch => {
       if (namespaces.length === 0) {
-        return Promise.resolve();
+        dispatch(GraphDataActions.getGraphDataSuccess(0, {}));
+        return setCurrentRequest(Promise.resolve());
       }
+
+      if (isNewGraph) {
+        dispatch(GraphDataActions.newGraphRequested());
+      }
+
       dispatch(GraphDataActions.getGraphDataStart());
       let restParams = { duration: duration + 's', graphType: graphType, injectServiceNodes: injectServiceNodes };
       if (namespaces.find(namespace => namespace.name === serverConfig().istioNamespace)) {

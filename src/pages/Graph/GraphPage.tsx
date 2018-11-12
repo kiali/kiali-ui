@@ -47,7 +47,8 @@ type GraphPageProps = GraphParamsType & {
     edgeLabelMode: EdgeLabelMode,
     showSecurity: boolean,
     showUnusedNodes: boolean,
-    node?: NodeParamsType
+    node?: NodeParamsType,
+    isNewGraph?: boolean
   ) => any;
   toggleLegend: () => void;
   // redux store props (to avoid ts-ignore)
@@ -111,7 +112,7 @@ export default class GraphPage extends React.Component<GraphPageProps, GraphPage
   }
 
   componentDidMount() {
-    this.scheduleNextPollingInterval(0);
+    this.scheduleNextPollingInterval(0, true);
   }
 
   componentWillUnmount() {
@@ -154,7 +155,7 @@ export default class GraphPage extends React.Component<GraphPageProps, GraphPage
       durationHasChanged ||
       injectServiceNodesHasChanged
     ) {
-      this.scheduleNextPollingInterval(0);
+      this.scheduleNextPollingInterval(0, true);
     } else if (pollIntervalChanged) {
       this.scheduleNextPollingIntervalFromProps();
     }
@@ -172,7 +173,7 @@ export default class GraphPage extends React.Component<GraphPageProps, GraphPage
   }
 
   handleRefreshClick = () => {
-    this.scheduleNextPollingInterval(0);
+    this.scheduleNextPollingInterval(0, false);
   };
 
   handleLayoutChange = (layout: Layout) => {
@@ -278,7 +279,7 @@ export default class GraphPage extends React.Component<GraphPageProps, GraphPage
     this.cytoscapeGraphRef.current = cytoscapeGraph ? cytoscapeGraph.getWrappedInstance() : null;
   }
 
-  private loadGraphDataFromBackend = () => {
+  private loadGraphDataFromBackend = (isNewGraph?: boolean) => {
     const promise = this.props.fetchGraphData(
       this.props.node ? [this.props.node.namespace] : this.props.activeNamespaces,
       this.props.duration,
@@ -287,7 +288,8 @@ export default class GraphPage extends React.Component<GraphPageProps, GraphPage
       this.props.edgeLabelMode,
       this.props.showSecurity,
       this.props.showUnusedNodes,
-      this.props.node
+      this.props.node,
+      isNewGraph
     );
     this.pollPromise = makeCancelablePromise(promise);
 
@@ -304,18 +306,18 @@ export default class GraphPage extends React.Component<GraphPageProps, GraphPage
 
   private scheduleNextPollingIntervalFromProps() {
     if (this.props.pollInterval > 0) {
-      this.scheduleNextPollingInterval(this.props.pollInterval);
+      this.scheduleNextPollingInterval(this.props.pollInterval, false);
     } else {
       this.removePollingIntervalTimer();
     }
   }
 
-  private scheduleNextPollingInterval(pollInterval: number) {
+  private scheduleNextPollingInterval(pollInterval: number, isNewGraph: boolean) {
     // Remove any pending timeout to avoid having multiple requests at once
     this.removePollingIntervalTimer();
 
     if (pollInterval === 0) {
-      this.loadGraphDataFromBackend();
+      this.loadGraphDataFromBackend(isNewGraph);
     } else {
       // We are using setTimeout instead of setInterval because we have more control over it
       // e.g. If a request takes much time, the next interval will fire up anyway and is

@@ -23,7 +23,8 @@ interface GraphDispatch {
     edgeLabelMode: EdgeLabelMode,
     showSecurity: boolean,
     showUnusedNodes: boolean,
-    node?: NodeParamsType
+    node?: NodeParamsType,
+    isNewGraph?: boolean
   ) => void;
   toggleGraphNodeLabels(): void;
   toggleGraphCircuitBreakers(): void;
@@ -83,7 +84,8 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps> {
         this.props.edgeLabelMode,
         this.props.showSecurity,
         this.props.showUnusedNodes,
-        this.props.node
+        this.props.node,
+        true
       );
     }
   }
@@ -260,7 +262,8 @@ const mapDispatchToProps = (dispatch: any) => {
       edgeLabelMode: EdgeLabelMode,
       showSecurity: boolean,
       showUnusedNodes: boolean,
-      node?: NodeParamsType
+      node?: NodeParamsType,
+      isNewGraph?: boolean
     ) =>
       dispatch(
         GraphDataActions.fetchGraphData(
@@ -271,7 +274,8 @@ const mapDispatchToProps = (dispatch: any) => {
           edgeLabelMode,
           showSecurity,
           showUnusedNodes,
-          node
+          node,
+          isNewGraph
         )
       ),
     toggleGraphNodeLabels: bindActionCreators(GraphFilterActions.toggleGraphNodeLabel, dispatch),

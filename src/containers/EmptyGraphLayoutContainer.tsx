@@ -49,23 +49,6 @@ const emptyStateStyle = style({
 type EmptyGraphLayoutState = {};
 
 export class EmptyGraphLayout extends React.Component<EmptyGraphLayoutProps, EmptyGraphLayoutState> {
-  shouldComponentUpdate(nextProps: EmptyGraphLayoutProps) {
-    const currentIsEmpty = _.isEmpty(this.props.elements.nodes);
-    const nextIsEmpty = _.isEmpty(nextProps.elements.nodes);
-
-    // Update if we have elements and we are not loading
-    if (!nextProps.isLoading && !nextIsEmpty) {
-      return true;
-    }
-
-    // Update if we are going from having no elements to having elements or vice versa
-    if (currentIsEmpty !== nextIsEmpty) {
-      return true;
-    }
-    // Do not update if we have elements and the namespace didn't change, as this means we are refreshing
-    return !(!nextIsEmpty && this.props.namespaces === nextProps.namespaces);
-  }
-
   namespacesText() {
     if (this.props.namespaces && this.props.namespaces.length > 0) {
       if (this.props.namespaces.length === 1) {

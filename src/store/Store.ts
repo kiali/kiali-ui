@@ -40,6 +40,7 @@ export interface MessageCenterState {
 
 export interface GraphState {
   isLoading: boolean;
+  isNewGraphLoading: boolean;
   isError: boolean;
   error?: string; // the error message to show from loading graph
   graphDataTimestamp: number;

@@ -66,7 +66,8 @@ export class GraphFilterToolbar extends React.PureComponent<GraphFilterToolbarTy
         edgeLabelMode,
         this.props.showSecurity,
         this.props.showUnusedNodes,
-        this.props.node
+        this.props.node,
+        true
       );
     }
   };
@@ -104,7 +105,8 @@ const mapDispatchToProps = (dispatch: any) => ({
     edgeLabelMode: EdgeLabelMode,
     showSecurity: boolean,
     showUnusedNodes: boolean,
-    node?: NodeParamsType
+    node?: NodeParamsType,
+    isNewGraph?: boolean
   ) =>
     dispatch(
       GraphDataActions.fetchGraphData(
@@ -115,7 +117,8 @@ const mapDispatchToProps = (dispatch: any) => ({
         edgeLabelMode,
         showSecurity,
         showUnusedNodes,
-        node
+        node,
+        isNewGraph
       )
     )
 });

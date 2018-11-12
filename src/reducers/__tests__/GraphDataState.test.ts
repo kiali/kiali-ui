@@ -12,7 +12,8 @@ describe('GraphDataState', () => {
       error: undefined,
       graphDataTimestamp: 0,
       graphData: {},
-      sidePanelInfo: null
+      sidePanelInfo: null,
+      isNewGraphLoading: false
     });
   });
 

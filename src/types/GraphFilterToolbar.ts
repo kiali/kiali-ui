@@ -18,7 +18,8 @@ export default interface GraphFilterToolbarType extends GraphParamsType {
     edgeLabelMode: EdgeLabelMode,
     showSecurity: boolean,
     showUnusedNodes: boolean,
-    node?: NodeParamsType
+    node?: NodeParamsType,
+    isNewGraph?: boolean
   ) => any;
   handleRefreshClick: () => void;
 }
