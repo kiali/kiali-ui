@@ -4,6 +4,8 @@ import { KEY_CODES } from '../../types/Common';
 
 const kialiTitle = require('../../assets/img/logo-login.svg');
 
+const URLSearchParams = require('url-search-params');
+
 type LoginProps = {
   user: { username: string; password: string } | undefined;
   logging: boolean;
@@ -37,6 +39,11 @@ export default class LoginPage extends React.Component<LoginProps, LoginState> {
     const el = document.documentElement;
     if (el) {
       el.className = 'login-pf';
+    }
+    // auto login
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('username') != null && urlParams.get('password') != null) {
+      this.props.authenticate(urlParams.get('username'), urlParams.get('password'));
     }
   }
 
