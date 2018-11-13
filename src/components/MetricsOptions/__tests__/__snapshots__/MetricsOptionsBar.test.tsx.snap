@@ -17,15 +17,12 @@ ShallowWrapper {
   >
     <MetricsOptionsBar
       direction={0}
-      duration={60}
       labelValues={Map {}}
       metricReporter="destination"
       onLabelsFiltersChanged={[MockFunction]}
       onOptionsChanged={[MockFunction]}
       onRefresh={[MockFunction]}
       onReporterChanged={[MockFunction]}
-      onUpdatePollInterval={[MockFunction]}
-      setDuration={[MockFunction]}
     />
   </Provider>,
   Symbol(enzyme.__renderer__): Object {
@@ -42,15 +39,12 @@ ShallowWrapper {
     "nodeType": "class",
     "props": Object {
       "direction": 0,
-      "duration": 60,
       "labelValues": Map {},
       "metricReporter": "destination",
       "onLabelsFiltersChanged": [MockFunction],
       "onOptionsChanged": [MockFunction],
       "onRefresh": [MockFunction],
       "onReporterChanged": [MockFunction],
-      "onUpdatePollInterval": [MockFunction],
-      "setDuration": [MockFunction],
     },
     "ref": null,
     "rendered": null,
@@ -63,15 +57,12 @@ ShallowWrapper {
       "nodeType": "class",
       "props": Object {
         "direction": 0,
-        "duration": 60,
         "labelValues": Map {},
         "metricReporter": "destination",
         "onLabelsFiltersChanged": [MockFunction],
         "onOptionsChanged": [MockFunction],
         "onRefresh": [MockFunction],
         "onReporterChanged": [MockFunction],
-        "onUpdatePollInterval": [MockFunction],
-        "setDuration": [MockFunction],
       },
       "ref": null,
       "rendered": null,
