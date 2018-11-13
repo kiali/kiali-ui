@@ -188,6 +188,7 @@ class ServiceInfo extends React.Component<ServiceDetails, ServiceInfoState> {
                         <ServiceInfoDestinationRules
                           destinationRules={destinationRules.items}
                           editorLink={editorLink}
+                          validations={this.props.validations!['destinationrule']}
                         />
                       )}
                     </TabPane>
