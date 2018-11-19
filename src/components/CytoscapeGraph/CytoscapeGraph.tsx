@@ -646,7 +646,10 @@ const mapStateToProps = (state: KialiAppState) => ({
 const mapDispatchToProps = (dispatch: any) => ({
   onClick: (event: CytoscapeClickEvent) => dispatch(GraphActions.showSidePanelInfo(event)),
   onReady: (cy: any) => dispatch(GraphThunkActions.graphRendered(cy)),
-  setActiveNamespace: (namespace: Namespace) => dispatch(NamespaceActions.setActiveNamespace(namespace))
+  setActiveNamespace: (namespace: Namespace) => {
+    dispatch(GraphActions.changed());
+    dispatch(NamespaceActions.setActiveNamespace(namespace));
+  }
 });
 
 const CytoscapeGraphContainer = connect(
