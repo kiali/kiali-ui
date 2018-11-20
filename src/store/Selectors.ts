@@ -1,5 +1,6 @@
 import { createSelector } from 'reselect';
 import { KialiAppState } from './Store';
+// import { EdgeLabelMode } from '../types/GraphFilter';
 // These memoized selectors are from Redux Reselect package
 
 // select the proper field from Redux State
@@ -19,6 +20,27 @@ export const activeNamespacesAsStringSelector = createSelector(activeNamespaces,
   namespaces.map(namespace => namespace.name).join(', ')
 );
 
+const duration = (state: KialiAppState) => state.userSettings.duration;
+
+export const durationSelector = createSelector(
+  duration,
+  x => x // identity function
+);
+
+const edgeLabelMode = (state: KialiAppState) => state.graph.filterState.edgeLabelMode;
+
+export const edgeLabelModeSelector = createSelector(
+  edgeLabelMode,
+  x => x // identity function
+);
+
+const graphType = (state: KialiAppState) => state.graph.filterState.graphType;
+
+export const graphTypeSelector = createSelector(
+  graphType,
+  x => x // identity function
+);
+
 const namespaceItems = (state: KialiAppState) => state.namespaces.items;
 
 export const namespaceItemsSelector = createSelector(
@@ -33,9 +55,9 @@ export const refreshIntervalSelector = createSelector(
   x => x // identity function
 );
 
-const duration = (state: KialiAppState) => state.userSettings.duration;
+const showServiceNodes = (state: KialiAppState) => state.graph.filterState.showServiceNodes;
 
-export const durationSelector = createSelector(
-  duration,
+export const showServiceNodesSelector = createSelector(
+  showServiceNodes,
   x => x // identity function
 );
