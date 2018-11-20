@@ -17,20 +17,28 @@ import { AxiosError } from 'axios';
 import { FilterSelected } from '../../components/Filters/StatefulFilters';
 import { ListPagesHelper } from '../../components/ListPage/ListPagesHelper';
 import * as API from '../../services/Api';
-import { DEGRADED, FAILURE, HEALTHY, Health, NamespaceAppHealth, NamespaceWorkloadHealth } from '../../types/Health';
+import {
+  DEGRADED,
+  FAILURE,
+  HEALTHY,
+  Health,
+  NamespaceAppHealth,
+  NamespaceServiceHealth,
+  NamespaceWorkloadHealth
+} from '../../types/Health';
 import Namespace from '../../types/Namespace';
 import { authentication } from '../../utils/Authentication';
 
 import { FiltersAndSorts } from './FiltersAndSorts';
 import OverviewStatus from './OverviewStatus';
-import OverviewToolbarContainer from './OverviewToolbar';
+import OverviewToolbarContainer, { OverviewType } from './OverviewToolbar';
 import NamespaceInfo from './NamespaceInfo';
 import { ListPageLink, TargetPage } from '../../components/ListPage/ListPageLink';
 import { SortField } from '../../types/SortFilters';
 
 type State = {
   namespaces: NamespaceInfo[];
-  isApp: boolean;
+  type: OverviewType;
 };
 
 interface OverviewProps {}
@@ -71,11 +79,15 @@ class OverviewPage extends React.Component<OverviewProps, State> {
     };
   }
 
+  private static switchType<T, U, V>(type: OverviewType, caseApp: T, caseService: U, caseWorkload: V): T | U | V {
+    return type === 'app' ? caseApp : type === 'service' ? caseService : caseWorkload;
+  }
+
   constructor(props: OverviewProps) {
     super(props);
     this.state = {
       namespaces: [],
-      isApp: OverviewToolbarContainer.currentOverviewType() === 'app'
+      type: OverviewToolbarContainer.currentOverviewType()
     };
   }
 
@@ -103,12 +115,17 @@ class OverviewPage extends React.Component<OverviewProps, State> {
     const rateInterval = ListPagesHelper.currentDuration();
     const isAscending = ListPagesHelper.isCurrentSortAscending();
     const sortField = ListPagesHelper.currentSortField(FiltersAndSorts.sortFields);
-    const isApp = OverviewToolbarContainer.currentOverviewType() === 'app';
+    const type = OverviewToolbarContainer.currentOverviewType();
     const promises = namespaces.map(namespace => {
-      const appOrWorkloadHealth: Promise<NamespaceAppHealth | NamespaceWorkloadHealth> = isApp
-        ? API.getNamespaceAppHealth(authentication(), namespace, rateInterval)
-        : API.getNamespaceWorkloadHealth(authentication(), namespace, rateInterval);
-      return appOrWorkloadHealth.then(r => ({
+      const healthPromise: Promise<
+        NamespaceAppHealth | NamespaceWorkloadHealth | NamespaceServiceHealth
+      > = OverviewPage.switchType(
+        type,
+        API.getNamespaceAppHealth(authentication(), namespace, rateInterval),
+        API.getNamespaceServiceHealth(authentication(), namespace, rateInterval),
+        API.getNamespaceWorkloadHealth(authentication(), namespace, rateInterval)
+      );
+      return healthPromise.then(r => ({
         namespace: namespace,
         health: r
       }));
@@ -143,7 +160,7 @@ class OverviewPage extends React.Component<OverviewProps, State> {
         }
       });
 
-      this.setState({ isApp: isApp, namespaces: FiltersAndSorts.sortFunc(allNamespaces, sortField, isAscending) });
+      this.setState({ type: type, namespaces: FiltersAndSorts.sortFunc(allNamespaces, sortField, isAscending) });
     });
   }
 
@@ -157,6 +174,14 @@ class OverviewPage extends React.Component<OverviewProps, State> {
   };
 
   render() {
+    const targetPage = OverviewPage.switchType(
+      this.state.type,
+      TargetPage.APPLICATIONS,
+      TargetPage.SERVICES,
+      TargetPage.WORKLOADS
+    );
+    const oneItemText = OverviewPage.switchType(this.state.type, '1 Application', '1 Service', '1 Workload');
+    const pluralText = OverviewPage.switchType(this.state.type, ' Applications', ' Services', ' Workloads');
     return (
       <>
         <Breadcrumb title={true}>
@@ -176,12 +201,8 @@ class OverviewPage extends React.Component<OverviewProps, State> {
                         <Link to={`/graph/namespaces?namespaces=` + encodedNsName}>{ns.name}</Link>
                       </CardTitle>
                       <CardBody>
-                        <ListPageLink
-                          target={this.state.isApp ? TargetPage.APPLICATIONS : TargetPage.WORKLOADS}
-                          namespace={ns.name}
-                        >
-                          {nbItems === 1 && (this.state.isApp ? '1 Application' : '1 Workload')}
-                          {nbItems !== 1 && nbItems + (this.state.isApp ? ' Applications' : ' Workloads')}
+                        <ListPageLink target={targetPage} namespace={ns.name}>
+                          {nbItems === 1 ? oneItemText : nbItems + pluralText}
                         </ListPageLink>
                         <AggregateStatusNotifications>
                           {ns.inError.length > 0 && (
@@ -190,7 +211,7 @@ class OverviewPage extends React.Component<OverviewProps, State> {
                               namespace={ns.name}
                               status={FAILURE}
                               items={ns.inError}
-                              isApp={this.state.isApp}
+                              targetPage={targetPage}
                             />
                           )}
                           {ns.inWarning.length > 0 && (
@@ -199,7 +220,7 @@ class OverviewPage extends React.Component<OverviewProps, State> {
                               namespace={ns.name}
                               status={DEGRADED}
                               items={ns.inWarning}
-                              isApp={this.state.isApp}
+                              targetPage={targetPage}
                             />
                           )}
                           {ns.inSuccess.length > 0 && (
@@ -208,7 +229,7 @@ class OverviewPage extends React.Component<OverviewProps, State> {
                               namespace={ns.name}
                               status={HEALTHY}
                               items={ns.inSuccess}
-                              isApp={this.state.isApp}
+                              targetPage={targetPage}
                             />
                           )}
                           {nbItems === 0 && <AggregateStatusNotification>N/A</AggregateStatusNotification>}
