@@ -20,6 +20,7 @@ export interface Workload {
   availableReplicas: Number;
   pods: Pod[];
   services: Service[];
+  destinationServices: DestinationService[];
 }
 
 export const emptyWorkload: Workload = {
@@ -34,7 +35,8 @@ export const emptyWorkload: Workload = {
   replicas: 0,
   availableReplicas: 0,
   pods: [],
-  services: []
+  services: [],
+  destinationServices: []
 };
 
 export const worloadLink = (ns: string, name: string) => {
@@ -72,4 +74,9 @@ export interface WorkloadListItem {
 export interface WorkloadNamespaceResponse {
   namespace: Namespace;
   workloads: WorkloadOverview[];
+}
+
+export interface DestinationService {
+  name: string;
+  namespace: string;
 }
