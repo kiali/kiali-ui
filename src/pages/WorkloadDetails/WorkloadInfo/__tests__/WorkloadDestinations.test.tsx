@@ -14,10 +14,11 @@ describe('#WorkloadDestinations renders correctly', () => {
     const wrapper = render(
       <Router>
         <div>
-          <WorkloadDestinations destinationServices={services} />
+          <WorkloadDestinations workloadName={'product-v1'} destinationServices={services} />
         </div>
       </Router>
     );
+
     const expectationData = {
       reviews: { href: '/namespaces/bookinfo/services/reviews' },
       'istio-citadel': { href: '/namespaces/istio-system/services/istio-citadel' }

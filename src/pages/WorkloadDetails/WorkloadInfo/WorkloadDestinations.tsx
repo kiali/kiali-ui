@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { DestinationService } from '../../../types/Workload';
 
 interface WorkloadDestinationsProps {
+  workloadName: string;
   destinationServices: DestinationService[];
 }
 
@@ -12,7 +13,11 @@ class WorkloadDestinations extends React.Component<WorkloadDestinationsProps> {
     return (
       <Row className="card-pf-body">
         <Col xs={12}>
-          <ul className="workload-destination-services">
+          <div className="progress-description">
+            <strong>From: </strong>
+            {this.props.workloadName}
+          </div>
+          <ul className="workload-destination-services" style={{ listStyleType: 'none' }}>
             {this.props.destinationServices.map(service => (
               <li key={`dest-service-${service.name}`}>
                 <Link to={`/namespaces/${service.namespace}/services/${service.name}`}>{service.name}</Link>
