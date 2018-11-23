@@ -1,5 +1,5 @@
 import { ThunkDispatch } from 'redux-thunk';
-import { setServerConfig, ServerConfig } from '../config';
+import { setServerConfig } from '../config';
 import { HTTP_CODES } from '../types/Common';
 import { KialiAppState } from '../store/Store';
 import { KialiAppAction } from './KialiAppAction';
@@ -8,8 +8,11 @@ import GrafanaThunkActions from './GrafanaThunkActions';
 import { LoginActions } from './LoginActions';
 import * as API from '../services/Api';
 
+type Dispatch = ThunkDispatch<KialiAppState, void, KialiAppAction>;
+type GetState = () => KialiAppState;
+
 const performLogin = (
-  dispatch: ThunkDispatch<KialiAppState, void, KialiAppAction>,
+  dispatch: Dispatch,
   username?: string,
   password?: string
 ) => {
@@ -20,9 +23,11 @@ const performLogin = (
   let loginPass: string = password === undefined ? 'anonymous' : password;
 
   API.login(loginUser, loginPass).then(
-    token => {
-      dispatch(LoginActions.loginSuccess(token['data'], loginUser));
+    (token: API.Response<any>) => {
+      dispatch(LoginActions.loginSuccess(token.data));
+
       const auth = `Bearer ${token['data']['token']}`;
+
       dispatch(HelpDropdownThunkActions.refresh());
       dispatch(GrafanaThunkActions.getInfo(auth));
     },
@@ -38,7 +43,7 @@ const performLogin = (
 
 const LoginThunkActions = {
   extendSession: () => {
-    return (dispatch: ThunkDispatch<KialiAppState, void, KialiAppAction>, getState: () => KialiAppState) => {
+    return (dispatch: Dispatch, getState: GetState) => {
       const actualState = getState() || {};
       dispatch(
         LoginActions.loginExtend(
@@ -50,54 +55,58 @@ const LoginThunkActions = {
     };
   },
   checkCredentials: () => {
-    return (dispatch: ThunkDispatch<KialiAppState, void, KialiAppAction>, getState: () => KialiAppState) => {
+    return (dispatch: Dispatch, getState: GetState) => {
       const actualState = getState() || {};
-      /** Check if there is a token in session */
-      if (actualState['authentication']['token'] === undefined) {
-        /** log in as anonymous user - this will logout the user if no anonymous access is allowed */
-        performLogin(dispatch);
-      } else {
-        /** Check the session timeout */
-        if (new Date().getTime() > getState().authentication.sessionTimeOut!) {
-          // if anonymous access is allowed, re-login automatically; otherwise, log out
-          performLogin(dispatch);
-        } else {
-          /** Get the token storage in redux-store */
-          const token = getState().authentication.token!.token;
-          /** Check if the token is valid */
-          const auth = `Bearer ${token}`;
-          API.getServerConfig(auth).then(
-            response => {
-              /** Login success */
-              dispatch(
-                LoginActions.loginSuccess(
-                  actualState['authentication']['token']!,
-                  actualState['authentication']['username']!,
-                  actualState['authentication']['sessionTimeOut']!
-                )
-              );
-              dispatch(HelpDropdownThunkActions.refresh());
-              dispatch(GrafanaThunkActions.getInfo(auth));
-              const serverConfig: ServerConfig = {
-                istioNamespace: response.data.istioNamespace,
-                istioLabels: response.data.istioLabels
-              };
-              setServerConfig(serverConfig);
-            },
-            error => {
-              /** Logout user */
-              if (error.response && error.response.status === HTTP_CODES.UNAUTHORIZED) {
-                dispatch(LoginActions.logoutSuccess());
-              }
+
+      /** Check if there is a token in session and if it's still valid */
+      if (
+        actualState['authentication']['token'] === undefined ||
+        new Date().getTime() > getState().authentication!.sessionTimeOut!
+      ) {
+        API.checkOauth().then(
+          response => {
+            performLogin(dispatch, '', '');
+            LoginThunkActions.loginSuccess(dispatch, getState, 'not-necessary');
+          },
+          error => {
+            if (error.response && error.response.status === HTTP_CODES.UNAUTHORIZED) {
+              dispatch(LoginActions.loginFailure(error));
             }
-          );
-        }
+          }
+        );
+      } else {
+        const token = actualState.authentication!.token!.token!;
+
+        LoginThunkActions.loginSuccess(dispatch, getState, token);
       }
     };
   },
   // action creator that performs the async request
   authenticate: (username: string, password: string) => {
-    return (dispatch: ThunkDispatch<KialiAppState, void, KialiAppAction>) => performLogin(dispatch, username, password);
+    return dispatch => performLogin(dispatch, username, password);
+  },
+  loginSuccess: (dispatch: Dispatch, getState: GetState, token: string) => {
+    return () => {
+      /** Check if the token is valid */
+      const auth = `Bearer ${token}`;
+
+      API.getServerConfig(auth).then(
+        response => {
+          /** Login success */
+          dispatch(LoginThunkActions.extendSession());
+          dispatch(HelpDropdownThunkActions.refresh());
+          dispatch(GrafanaThunkActions.getInfo(auth));
+
+          setServerConfig(response.data);
+        },
+        error => {
+          /** Logout user */
+          if (error.response && error.response.status === HTTP_CODES.UNAUTHORIZED) {
+            dispatch(LoginActions.logoutSuccess());
+          }
+        }
+      );
+    };
   }
 };
 

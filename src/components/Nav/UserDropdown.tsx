@@ -5,6 +5,8 @@ import { config } from '../../config';
 import { MILLISECONDS } from '../../types/Common';
 import Timer = NodeJS.Timer;
 
+import { serverConfig } from '../../config';
+
 type UserProps = {
   username: string;
   logout: () => void;
@@ -26,6 +28,8 @@ class UserDropdown extends React.Component<UserProps, UserState> {
       showSessionTimeOut: false,
       timeCountDownSeconds: this.timeLeft() / MILLISECONDS
     };
+
+    this.handleLogout = this.handleLogout.bind(this);
   }
   componentDidMount() {
     let checkSessionTimerId = setInterval(() => {
@@ -65,10 +69,18 @@ class UserDropdown extends React.Component<UserProps, UserState> {
   };
 
   handleLogout() {
-    this.props.logout();
-    const el = document.documentElement;
-    if (el) {
-      el.className = 'login-pf';
+    console.log(serverConfig());
+    if (serverConfig().authStrategy === 'oauth') {
+      console.log('I got here...');
+      window.location.href = '/oauth/sign_in';
+    } else {
+      this.props.logout();
+
+      const el = document.documentElement;
+
+      if (el) {
+        el.className = 'login-pf';
+      }
     }
   }
 
@@ -91,7 +103,7 @@ class UserDropdown extends React.Component<UserProps, UserState> {
             <Icon type="pf" name="user" /> {this.props.username}
           </Dropdown.Toggle>
           <Dropdown.Menu>
-            <MenuItem id="usermenu_logout" onClick={() => this.handleLogout()}>
+            <MenuItem id="usermenu_logout" onClick={this.handleLogout}>
               Logout
             </MenuItem>
           </Dropdown.Menu>

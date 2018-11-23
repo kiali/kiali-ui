@@ -77,6 +77,15 @@ export const login = (username: string, password: string) => {
   });
 };
 
+/** This endpoint is provided by the oauth proxy, and returns 202 when the user
+ * is signed in, and 403 if not. We use that to check if the user is signed in
+ * without touching the actual API. If the proxy is not available, it will
+ * return an error as well, and we can ignore those.
+ */
+export const checkOauth = () => {
+  return newRequest(HTTP_VERBS.GET, urls.checkOauth, {}, {});
+};
+
 export const getStatus = () => {
   return newRequest(HTTP_VERBS.GET, urls.status, {}, {});
 };

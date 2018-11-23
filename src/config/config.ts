@@ -84,6 +84,7 @@ const conf = {
       },
       appHealth: (namespace: string, app: string) => `api/namespaces/${namespace}/apps/${app}/health`,
       appMetrics: (namespace: string, app: string) => `api/namespaces/${namespace}/apps/${app}/metrics`,
+      checkOauth: 'oauth/auth',
       grafana: 'api/grafana',
       istioConfig: (namespace: string) => `api/namespaces/${namespace}/istio`,
       istioConfigDetail: (namespace: string, objectType: string, object: string) =>
@@ -126,11 +127,13 @@ export const config = () => {
 };
 
 export interface ServerConfig {
+  authStrategy: string;
   istioNamespace: string;
   istioLabels: { [key: string]: string };
 }
 
 let serverConf: ServerConfig = {
+  authStrategy: 'login',
   istioNamespace: 'istio-system',
   istioLabels: {
     AppLabelName: 'app',
@@ -143,5 +146,5 @@ export const setServerConfig = (newServerConf: ServerConfig) => {
 };
 
 export const serverConfig = () => {
-  return deepFreeze(serverConf) as typeof serverConf;
+  return deepFreeze(serverConf) as ServerConfig;
 };

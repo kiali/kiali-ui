@@ -59,8 +59,9 @@ export interface GraphState {
 }
 
 export interface Token {
-  token: string;
   expired_at: string;
+  token: string;
+  username: string;
 }
 export interface LoginState {
   token?: Token;

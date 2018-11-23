@@ -33,15 +33,13 @@ export const LoginActions = {
         sessionTimeOut: currentTimeOut + config().session.extendedSessionTimeOut
       } as LoginPayload)
   ),
-  loginSuccess: createAction(
-    LoginActionKeys.LOGIN_SUCCESS,
-    resolve => (token: Token, username: string, currentTimeOut?: number) =>
-      resolve({
-        token: token,
-        username: username,
-        logged: true,
-        sessionTimeOut: currentTimeOut || new Date().getTime() + config().session.sessionTimeOut
-      } as LoginPayload)
+  loginSuccess: createAction(LoginActionKeys.LOGIN_SUCCESS, resolve => (token: Token, currentTimeOut?: number) =>
+    resolve({
+      token: token,
+      username: token.username,
+      logged: true,
+      sessionTimeOut: currentTimeOut || new Date().getTime() + config().session.sessionTimeOut
+    } as LoginPayload)
   ),
   loginFailure: createAction(LoginActionKeys.LOGIN_FAILURE, resolve => (error: any) =>
     resolve({ error: error } as LoginFailurePayload)

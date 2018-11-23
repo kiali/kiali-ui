@@ -13,7 +13,7 @@ describe('Authentication', () => {
   });
 
   it('should return username and password object ', () => {
-    store.dispatch(LoginActions.loginSuccess({ token: token, expired_at: expiredAt }, username));
+    store.dispatch(LoginActions.loginSuccess({ token, username, expired_at: expiredAt }));
     expect(authentication()).toEqual('Bearer ' + token);
   });
 });

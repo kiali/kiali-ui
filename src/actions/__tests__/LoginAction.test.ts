@@ -13,7 +13,7 @@ describe('LoginActions', () => {
       username: username,
       logged: true
     };
-    const result = LoginActions.loginSuccess({ token: token, expired_at: expiredAt }, username);
+    const result = LoginActions.loginSuccess({ token, username, expired_at: expiredAt });
     expect(result.type).toEqual(getType(LoginActions.loginSuccess));
     expect(result.payload.token).toEqual(expectedAction.token);
     expect(result.payload.username).toEqual(expectedAction.username);
