@@ -41,6 +41,13 @@ import { DurationInSeconds, PollIntervalInMs } from '../../types/Common';
 import { DagreGraph } from './graphs/DagreGraph';
 import { bindActionCreators } from 'redux';
 
+import EasterEgg, { strToSequence } from '@drookyn/react-easteregg';
+import TrafficPointSkinXMas from './TrafficAnimation/Skins/TrafficPointSkinXMas';
+import TrafficPointSkinNormal from './TrafficAnimation/Skins/TrafficPointSkinNormal';
+import { GraphStylesXMas } from './graphs/GraphStylesXMas';
+import { GraphStyles } from './graphs/GraphStyles';
+import TrafficPointSkin from './TrafficAnimation/Skins/TrafficPointSkin';
+
 type ReduxProps = {
   activeNamespaces: Namespace[];
   duration: DurationInSeconds;
@@ -102,6 +109,8 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
   private resetSelection: boolean;
   private initialValues: InitialValues;
   private cy: any;
+  private styles: any[];
+  private trafficPointSkin: TrafficPointSkin;
 
   constructor(props: CytoscapeGraphProps) {
     super(props);
@@ -111,6 +120,8 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
       position: undefined,
       zoom: undefined
     };
+    this.styles = GraphStyles.styles();
+    this.trafficPointSkin = new TrafficPointSkinNormal();
     this.cytoscapeReactWrapperRef = React.createRef();
   }
 
@@ -188,8 +199,11 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
   }
 
   render() {
+    const xmasEasterEggSequence = strToSequence('xmas');
+
     return (
       <div id="cytoscape-container" className={this.props.containerClassName}>
+        <EasterEgg onShow={this.turnOnEasterEgg} sequence={xmasEasterEggSequence} />
         <ReactResizeDetector handleWidth={true} handleHeight={true} skipOnMount={true} onResize={this.onResize} />
         <EmptyGraphLayout
           elements={this.props.elements}
@@ -198,7 +212,7 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
           isLoading={this.props.isLoading}
           isError={this.props.isError}
         >
-          <CytoscapeReactWrapper ref={e => this.setCytoscapeReactWrapperRef(e)} />
+          <CytoscapeReactWrapper styles={this.styles} ref={e => this.setCytoscapeReactWrapperRef(e)} />
         </EmptyGraphLayout>
       </div>
     );
@@ -212,6 +226,13 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
     this.cytoscapeReactWrapperRef.current = cyRef;
     this.cyInitialization(this.getCy());
   }
+
+  private turnOnEasterEgg = () => {
+    this.trafficPointSkin = new TrafficPointSkinXMas();
+    this.trafficRenderer.setPointSkin(this.trafficPointSkin);
+    this.styles = GraphStylesXMas.styles();
+    this.cy.style(this.styles);
+  };
 
   private onResize = () => {
     if (this.cy) {
@@ -250,7 +271,7 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
     this.cy = cy;
 
     this.graphHighlighter = new GraphHighlighter(cy);
-    this.trafficRenderer = new TrafficRender(cy, cy.edges());
+    this.trafficRenderer = new TrafficRender(cy, this.trafficPointSkin, cy.edges());
 
     const getCytoscapeBaseEvent = (event: any): CytoscapeBaseEvent | null => {
       const target = event.target;

@@ -1,12 +1,7 @@
 import { Point, clamp, quadraticBezier, linearInterpolation, distance, bezierLength } from '../../../utils/MathUtils';
 import { DimClass } from '../graphs/GraphStyles';
-import { PfColors } from '../../Pf/PfColors';
-import {
-  TrafficPointCircleRenderer,
-  TrafficPointConcentricDiamondRenderer,
-  TrafficPointRenderer,
-  Diamond
-} from './TrafficPointRenderer';
+import { EdgeConnectionType, TrafficEdgeType, TrafficPoint, TrafficPointType } from './Types';
+import TrafficPointSkin from './Skins/TrafficPointSkin';
 
 const TCP_SETTINGS = {
   baseSpeed: 0.5,
@@ -43,67 +38,6 @@ const BASE_LENGTH = 50;
 // How often paint a frame
 const FRAME_RATE = 1 / 60;
 
-enum EdgeConnectionType {
-  LINEAR,
-  CURVE,
-  LOOP
-}
-
-enum TrafficEdgeType {
-  HTTP,
-  TCP,
-  NONE
-}
-
-/**
- * Returns a TrafficPointRenderer for a Http error point
- * @param edge
- * @returns {TrafficPointRenderer}
- */
-const getTrafficPointRendererForHttpError: (edge: any) => TrafficPointRenderer = (edge: any) => {
-  return new TrafficPointConcentricDiamondRenderer(
-    new Diamond(2.5, PfColors.White, PfColors.Red100, 1.0),
-    new Diamond(1, PfColors.Red100, PfColors.Red100, 1.0)
-  );
-};
-
-/**
- * Returns a TrafficPointRenderer for a Http success point
- * @param edge
- * @returns {TrafficPointRenderer}
- */
-const getTrafficPointRendererForHttpSuccess: (edge: any) => TrafficPointRenderer = (edge: any) => {
-  return new TrafficPointCircleRenderer(1, PfColors.White, edge.style('line-color'), 2);
-};
-
-/**
- * Returns a TrafficPointRenderer for a Tcp point
- * @param edge
- * @returns {TrafficPointCircleRenderer}
- */
-const getTrafficPointRendererForTcp: (edge: any) => TrafficPointRenderer = (edge: any) => {
-  return new TrafficPointCircleRenderer(0.8, PfColors.Black100, PfColors.Black500, 1);
-};
-
-/**
- * Traffic Point, it defines in an edge
- * speed - defines how fast the point is going to travel from the start to the end
- *  of the edge. Is a rate of the edge length traveled by second.
- *  1 means that the edge is traveled in exactly 1 second.
- *  0.5 is 2 seconds, 2 is half a second, etc.
- * delta - defines in what part of the edge is the point,  is a normalized number
- *  from 0 to 1, 0 means at the start of the path, and 1 is the end. The position
- *  is interpolated.
- * offset - Offset to add to the rendered point position.
- * renderer - Renderer used to draw the shape at a given position.
- */
-type TrafficPoint = {
-  speed: number;
-  delta: number;
-  offset: Point;
-  renderer: TrafficPointRenderer;
-};
-
 /**
  * Helps generate traffic points
  * timer - defines how fast to generate a new point, its in milliseconds.
@@ -116,6 +50,11 @@ class TrafficPointGenerator {
   private speed: number;
   private errorRate: number;
   private type: TrafficEdgeType;
+  private pointSkin: TrafficPointSkin;
+
+  constructor(pointSkin: TrafficPointSkin) {
+    this.pointSkin = pointSkin;
+  }
 
   /**
    * Process a render step for the generator, decrements the timerForNextPoint and
@@ -155,14 +94,18 @@ class TrafficPointGenerator {
     this.type = type;
   }
 
+  setPointSkin(pointSkin: TrafficPointSkin) {
+    this.pointSkin = pointSkin;
+  }
+
   private nextPoint(edge: any): TrafficPoint {
-    let renderer;
     let offset;
+    let trafficPointType: TrafficPointType;
     const isErrorPoint = Math.random() <= this.errorRate;
     if (this.type === TrafficEdgeType.HTTP) {
-      renderer = isErrorPoint ? getTrafficPointRendererForHttpError(edge) : getTrafficPointRendererForHttpSuccess(edge);
-    } else if (this.type === TrafficEdgeType.TCP) {
-      renderer = getTrafficPointRendererForTcp(edge);
+      trafficPointType = isErrorPoint ? TrafficPointType.HTTP_ERROR : TrafficPointType.HTTP_SUCCESS;
+    } else {
+      trafficPointType = TrafficPointType.TCP;
       // Cheap way to put some offset around the edge, I think this is enough unless we want more accuracy
       // More accuracy would need to identify the slope of current segment of the edgge (for curves and loops) to only do
       // offsets perpendicular to it, instead of it, we are moving around a circle area
@@ -173,8 +116,9 @@ class TrafficPointGenerator {
     return {
       speed: this.speed,
       delta: 0, // at the beginning of the edge
-      renderer: renderer,
-      offset: offset
+      renderer: this.pointSkin.forType(trafficPointType, edge),
+      offset: offset,
+      type: trafficPointType
     };
   }
 }
@@ -192,8 +136,8 @@ class TrafficEdge {
   private edge: any;
   private type: TrafficEdgeType;
 
-  constructor() {
-    this.generator = new TrafficPointGenerator();
+  constructor(pointSkin: TrafficPointSkin) {
+    this.generator = new TrafficPointGenerator(pointSkin);
   }
 
   /**
@@ -250,6 +194,14 @@ class TrafficEdge {
     this.type = type;
     this.generator.setType(type);
   }
+
+  setPointSkin(pointSkin: TrafficPointSkin) {
+    this.generator.setPointSkin(pointSkin);
+    this.points = this.points.map(p => {
+      p.renderer = pointSkin.forType(p.type, this.edge);
+      return p;
+    });
+  }
 }
 
 type TrafficEdgeHash = {
@@ -268,15 +220,17 @@ export default class TrafficRenderer {
   private animationTimer;
   private previousTimestamp;
   private trafficEdges: TrafficEdgeHash = {};
+  private pointSkin: TrafficPointSkin;
 
   private readonly layer;
   private readonly canvas;
   private readonly context;
 
-  constructor(cy: any, edges: any) {
+  constructor(cy: any, pointSkin: TrafficPointSkin, edges: any) {
     this.layer = cy.cyCanvas();
     this.canvas = this.layer.getCanvas();
     this.context = this.canvas.getContext('2d');
+    this.pointSkin = pointSkin;
     this.setEdges(edges);
   }
 
@@ -301,6 +255,13 @@ export default class TrafficRenderer {
 
   setEdges(edges: any) {
     this.trafficEdges = this.processEdges(edges);
+  }
+
+  setPointSkin(pointSkin: TrafficPointSkin) {
+    this.pointSkin = pointSkin;
+    Object.keys(this.trafficEdges).forEach(edgeId => {
+      this.trafficEdges[edgeId].setPointSkin(pointSkin);
+    });
   }
 
   clear() {
@@ -413,7 +374,7 @@ export default class TrafficRenderer {
         if (edgeId in this.trafficEdges) {
           trafficEdges[edgeId] = this.trafficEdges[edgeId];
         } else {
-          trafficEdges[edgeId] = new TrafficEdge();
+          trafficEdges[edgeId] = new TrafficEdge(this.pointSkin);
         }
         trafficEdges[edgeId].setType(type);
         this.fillTrafficEdge(edge, trafficEdges[edgeId]);
@@ -456,7 +417,7 @@ export default class TrafficRenderer {
     }
   }
 
-  // see for easing functions https://gist.github.com/gre/1650294
+  // for easing functions check https://gist.github.com/gre/1650294
   private timerFromRate(rate: number) {
     if (isNaN(rate) || rate === 0) {
       return undefined;

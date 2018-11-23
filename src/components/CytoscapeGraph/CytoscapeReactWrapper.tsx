@@ -15,7 +15,9 @@ cytoscape.use(dagre);
 cytoscape.use(coseBilkent);
 cytoscape('layout', 'group-compound-layout', GroupCompoundLayout);
 
-type CytoscapeReactWrapperProps = {};
+type CytoscapeReactWrapperProps = {
+  styles: any[];
+};
 
 type CytoscapeReactWrapperState = {};
 
@@ -75,7 +77,7 @@ export class CytoscapeReactWrapper extends React.Component<CytoscapeReactWrapper
         container: this.divParentRef.current,
         boxSelectionEnabled: false,
         autounselectify: true,
-        style: GraphStyles.styles()
+        style: this.props.styles
       },
       GraphStyles.options()
     );
