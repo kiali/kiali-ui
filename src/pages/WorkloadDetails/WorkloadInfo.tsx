@@ -7,6 +7,7 @@ import WorkloadServices from './WorkloadInfo/WorkloadServices';
 import { severityToIconName, validationToSeverity } from '../../types/ServiceInfo';
 import { WorkloadHealth } from '../../types/Health';
 import { Workload } from '../../types/Workload';
+import WorkloadDestinations from './WorkloadInfo/WorkloadDestinations';
 
 type WorkloadInfoProps = {
   workload: Workload;
@@ -54,6 +55,7 @@ class WorkloadInfo extends React.Component<WorkloadInfoProps, WorkloadInfoState>
     const workload = this.props.workload;
     const pods = workload.pods || [];
     const services = workload.services || [];
+    const destinationServices = workload.destinationServices || [];
     const validationChecks = this.validationChecks();
 
     const getSeverityIcon: any = (severity: string = 'error') => (
@@ -109,6 +111,9 @@ class WorkloadInfo extends React.Component<WorkloadInfoProps, WorkloadInfoState>
                         : undefined}
                     </NavItem>
                     <NavItem eventKey={'services'}>{'Services (' + services.length + ')'}</NavItem>
+                    <NavItem eventKey={'destinationServices'}>
+                      {'Destination Services (' + destinationServices.length + ')'}
+                    </NavItem>
                   </Nav>
                   <TabContent>
                     <TabPane eventKey={'pods'}>
@@ -116,6 +121,11 @@ class WorkloadInfo extends React.Component<WorkloadInfoProps, WorkloadInfoState>
                     </TabPane>
                     <TabPane eventKey={'services'}>
                       {services.length > 0 && <WorkloadServices services={services} namespace={this.props.namespace} />}
+                    </TabPane>
+                    <TabPane eventKey={'destinationServices'}>
+                      {destinationServices.length > 0 && (
+                        <WorkloadDestinations destinationServices={destinationServices} />
+                      )}
                     </TabPane>
                   </TabContent>
                 </div>

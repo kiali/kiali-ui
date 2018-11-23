@@ -7,165 +7,203 @@ initialize {
     "children": Array [
       Object {
         "attribs": Object {
-          "class": "workload-destination-services",
+          "class": "card-pf-body row",
         },
         "children": Array [
           Object {
-            "attribs": Object {},
+            "attribs": Object {
+              "class": "col-xs-12",
+            },
             "children": Array [
               Object {
                 "attribs": Object {
-                  "href": "/namespaces/bookinfo/services/reviews",
+                  "class": "workload-destination-services",
                 },
                 "children": Array [
                   Object {
-                    "data": "reviews",
-                    "next": null,
-                    "parent": [Circular],
-                    "prev": null,
-                    "type": "text",
-                  },
-                ],
-                "name": "a",
-                "namespace": "http://www.w3.org/1999/xhtml",
-                "next": null,
-                "parent": [Circular],
-                "prev": null,
-                "type": "tag",
-                "x-attribsNamespace": Object {
-                  "href": undefined,
-                },
-                "x-attribsPrefix": Object {
-                  "href": undefined,
-                },
-              },
-            ],
-            "name": "li",
-            "namespace": "http://www.w3.org/1999/xhtml",
-            "next": Object {
-              "attribs": Object {},
-              "children": Array [
-                Object {
-                  "attribs": Object {
-                    "href": "/namespaces/istio-system/services/istio-citadel",
-                  },
-                  "children": Array [
-                    Object {
-                      "data": "istio-citadel",
+                    "attribs": Object {},
+                    "children": Array [
+                      Object {
+                        "attribs": Object {
+                          "href": "/namespaces/bookinfo/services/reviews",
+                        },
+                        "children": Array [
+                          Object {
+                            "data": "reviews",
+                            "next": null,
+                            "parent": [Circular],
+                            "prev": null,
+                            "type": "text",
+                          },
+                        ],
+                        "name": "a",
+                        "namespace": "http://www.w3.org/1999/xhtml",
+                        "next": null,
+                        "parent": [Circular],
+                        "prev": null,
+                        "type": "tag",
+                        "x-attribsNamespace": Object {
+                          "href": undefined,
+                        },
+                        "x-attribsPrefix": Object {
+                          "href": undefined,
+                        },
+                      },
+                    ],
+                    "name": "li",
+                    "namespace": "http://www.w3.org/1999/xhtml",
+                    "next": Object {
+                      "attribs": Object {},
+                      "children": Array [
+                        Object {
+                          "attribs": Object {
+                            "href": "/namespaces/istio-system/services/istio-citadel",
+                          },
+                          "children": Array [
+                            Object {
+                              "data": "istio-citadel",
+                              "next": null,
+                              "parent": [Circular],
+                              "prev": null,
+                              "type": "text",
+                            },
+                          ],
+                          "name": "a",
+                          "namespace": "http://www.w3.org/1999/xhtml",
+                          "next": null,
+                          "parent": [Circular],
+                          "prev": null,
+                          "type": "tag",
+                          "x-attribsNamespace": Object {
+                            "href": undefined,
+                          },
+                          "x-attribsPrefix": Object {
+                            "href": undefined,
+                          },
+                        },
+                      ],
+                      "name": "li",
+                      "namespace": "http://www.w3.org/1999/xhtml",
                       "next": null,
                       "parent": [Circular],
-                      "prev": null,
-                      "type": "text",
+                      "prev": [Circular],
+                      "type": "tag",
+                      "x-attribsNamespace": Object {},
+                      "x-attribsPrefix": Object {},
                     },
-                  ],
-                  "name": "a",
-                  "namespace": "http://www.w3.org/1999/xhtml",
-                  "next": null,
-                  "parent": [Circular],
-                  "prev": null,
-                  "type": "tag",
-                  "x-attribsNamespace": Object {
-                    "href": undefined,
-                  },
-                  "x-attribsPrefix": Object {
-                    "href": undefined,
-                  },
-                },
-              ],
-              "name": "li",
-              "namespace": "http://www.w3.org/1999/xhtml",
-              "next": null,
-              "parent": [Circular],
-              "prev": [Circular],
-              "type": "tag",
-              "x-attribsNamespace": Object {},
-              "x-attribsPrefix": Object {},
-            },
-            "parent": [Circular],
-            "prev": null,
-            "type": "tag",
-            "x-attribsNamespace": Object {},
-            "x-attribsPrefix": Object {},
-          },
-          Object {
-            "attribs": Object {},
-            "children": Array [
-              Object {
-                "attribs": Object {
-                  "href": "/namespaces/istio-system/services/istio-citadel",
-                },
-                "children": Array [
-                  Object {
-                    "data": "istio-citadel",
-                    "next": null,
                     "parent": [Circular],
                     "prev": null,
-                    "type": "text",
+                    "type": "tag",
+                    "x-attribsNamespace": Object {},
+                    "x-attribsPrefix": Object {},
+                  },
+                  Object {
+                    "attribs": Object {},
+                    "children": Array [
+                      Object {
+                        "attribs": Object {
+                          "href": "/namespaces/istio-system/services/istio-citadel",
+                        },
+                        "children": Array [
+                          Object {
+                            "data": "istio-citadel",
+                            "next": null,
+                            "parent": [Circular],
+                            "prev": null,
+                            "type": "text",
+                          },
+                        ],
+                        "name": "a",
+                        "namespace": "http://www.w3.org/1999/xhtml",
+                        "next": null,
+                        "parent": [Circular],
+                        "prev": null,
+                        "type": "tag",
+                        "x-attribsNamespace": Object {
+                          "href": undefined,
+                        },
+                        "x-attribsPrefix": Object {
+                          "href": undefined,
+                        },
+                      },
+                    ],
+                    "name": "li",
+                    "namespace": "http://www.w3.org/1999/xhtml",
+                    "next": null,
+                    "parent": [Circular],
+                    "prev": Object {
+                      "attribs": Object {},
+                      "children": Array [
+                        Object {
+                          "attribs": Object {
+                            "href": "/namespaces/bookinfo/services/reviews",
+                          },
+                          "children": Array [
+                            Object {
+                              "data": "reviews",
+                              "next": null,
+                              "parent": [Circular],
+                              "prev": null,
+                              "type": "text",
+                            },
+                          ],
+                          "name": "a",
+                          "namespace": "http://www.w3.org/1999/xhtml",
+                          "next": null,
+                          "parent": [Circular],
+                          "prev": null,
+                          "type": "tag",
+                          "x-attribsNamespace": Object {
+                            "href": undefined,
+                          },
+                          "x-attribsPrefix": Object {
+                            "href": undefined,
+                          },
+                        },
+                      ],
+                      "name": "li",
+                      "namespace": "http://www.w3.org/1999/xhtml",
+                      "next": [Circular],
+                      "parent": [Circular],
+                      "prev": null,
+                      "type": "tag",
+                      "x-attribsNamespace": Object {},
+                      "x-attribsPrefix": Object {},
+                    },
+                    "type": "tag",
+                    "x-attribsNamespace": Object {},
+                    "x-attribsPrefix": Object {},
                   },
                 ],
-                "name": "a",
+                "name": "ul",
                 "namespace": "http://www.w3.org/1999/xhtml",
                 "next": null,
                 "parent": [Circular],
                 "prev": null,
                 "type": "tag",
                 "x-attribsNamespace": Object {
-                  "href": undefined,
+                  "class": undefined,
                 },
                 "x-attribsPrefix": Object {
-                  "href": undefined,
+                  "class": undefined,
                 },
               },
             ],
-            "name": "li",
+            "name": "div",
             "namespace": "http://www.w3.org/1999/xhtml",
             "next": null,
             "parent": [Circular],
-            "prev": Object {
-              "attribs": Object {},
-              "children": Array [
-                Object {
-                  "attribs": Object {
-                    "href": "/namespaces/bookinfo/services/reviews",
-                  },
-                  "children": Array [
-                    Object {
-                      "data": "reviews",
-                      "next": null,
-                      "parent": [Circular],
-                      "prev": null,
-                      "type": "text",
-                    },
-                  ],
-                  "name": "a",
-                  "namespace": "http://www.w3.org/1999/xhtml",
-                  "next": null,
-                  "parent": [Circular],
-                  "prev": null,
-                  "type": "tag",
-                  "x-attribsNamespace": Object {
-                    "href": undefined,
-                  },
-                  "x-attribsPrefix": Object {
-                    "href": undefined,
-                  },
-                },
-              ],
-              "name": "li",
-              "namespace": "http://www.w3.org/1999/xhtml",
-              "next": [Circular],
-              "parent": [Circular],
-              "prev": null,
-              "type": "tag",
-              "x-attribsNamespace": Object {},
-              "x-attribsPrefix": Object {},
-            },
+            "prev": null,
             "type": "tag",
-            "x-attribsNamespace": Object {},
-            "x-attribsPrefix": Object {},
+            "x-attribsNamespace": Object {
+              "class": undefined,
+            },
+            "x-attribsPrefix": Object {
+              "class": undefined,
+            },
           },
         ],
-        "name": "ul",
+        "name": "div",
         "namespace": "http://www.w3.org/1999/xhtml",
         "next": null,
         "parent": [Circular],
