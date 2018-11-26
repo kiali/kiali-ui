@@ -67,6 +67,7 @@ class ServiceInfo extends React.Component<ServiceDetails, ServiceInfoState> {
     validationChecks.hasDestinationRuleChecks = this.props.serviceDetails.destinationRules.items.some(
       destinationRule =>
         this.props.validations['destinationrule'] &&
+        destinationRule.metadata &&
         this.props.validations['destinationrule'][destinationRule.metadata.name] &&
         this.props.validations['destinationrule'][destinationRule.metadata.name].checks.length > 0
     );

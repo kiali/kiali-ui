@@ -389,13 +389,6 @@ ShallowWrapper {
                       eventKey="destinationrules"
                     >
                       Destination Rules (1)
-                      <span>
-                         
-                        <Icon
-                          name="error-circle-o"
-                          type="pf"
-                        />
-                      </span>
                     </NavItem>
                   </Nav>
                   <TabContent
@@ -697,13 +690,6 @@ ShallowWrapper {
                         eventKey="destinationrules"
                       >
                         Destination Rules (1)
-                        <span>
-                           
-                          <Icon
-                            name="error-circle-o"
-                            type="pf"
-                          />
-                        </span>
                       </NavItem>
                     </Nav>
                     <TabContent
@@ -1248,13 +1234,6 @@ ShallowWrapper {
                         eventKey="destinationrules"
                       >
                         Destination Rules (1)
-                        <span>
-                           
-                          <Icon
-                            name="error-circle-o"
-                            type="pf"
-                          />
-                        </span>
                       </NavItem>
                     </Nav>
                     <TabContent
@@ -1421,13 +1400,6 @@ ShallowWrapper {
                         eventKey="destinationrules"
                       >
                         Destination Rules (1)
-                        <span>
-                           
-                          <Icon
-                            name="error-circle-o"
-                            type="pf"
-                          />
-                        </span>
                       </NavItem>
                     </Nav>
                     <TabContent
@@ -1591,13 +1563,6 @@ ShallowWrapper {
                         eventKey="destinationrules"
                       >
                         Destination Rules (1)
-                        <span>
-                           
-                          <Icon
-                            name="error-circle-o"
-                            type="pf"
-                          />
-                        </span>
                       </NavItem>
                     </Nav>
                     <TabContent
@@ -1756,13 +1721,6 @@ ShallowWrapper {
                           eventKey="destinationrules"
                         >
                           Destination Rules (1)
-                          <span>
-                             
-                            <Icon
-                              name="error-circle-o"
-                              type="pf"
-                            />
-                          </span>
                         </NavItem>
                       </Nav>,
                       <TabContent
@@ -1914,13 +1872,6 @@ ShallowWrapper {
                             eventKey="destinationrules"
                           >
                             Destination Rules (1)
-                            <span>
-                               
-                              <Icon
-                                name="error-circle-o"
-                                type="pf"
-                              />
-                            </span>
                           </NavItem>,
                         ],
                         "justified": false,
@@ -1986,13 +1937,7 @@ ShallowWrapper {
                             "active": false,
                             "children": Array [
                               "Destination Rules (1)",
-                              <span>
-                                 
-                                <Icon
-                                  name="error-circle-o"
-                                  type="pf"
-                                />
-                              </span>,
+                              undefined,
                             ],
                             "disabled": false,
                             "eventKey": "destinationrules",
@@ -2000,37 +1945,7 @@ ShallowWrapper {
                           "ref": null,
                           "rendered": Array [
                             "Destination Rules (1)",
-                            Object {
-                              "instance": null,
-                              "key": undefined,
-                              "nodeType": "host",
-                              "props": Object {
-                                "children": Array [
-                                  " ",
-                                  <Icon
-                                    name="error-circle-o"
-                                    type="pf"
-                                  />,
-                                ],
-                              },
-                              "ref": null,
-                              "rendered": Array [
-                                " ",
-                                Object {
-                                  "instance": null,
-                                  "key": undefined,
-                                  "nodeType": "function",
-                                  "props": Object {
-                                    "name": "error-circle-o",
-                                    "type": "pf",
-                                  },
-                                  "ref": null,
-                                  "rendered": null,
-                                  "type": [Function],
-                                },
-                              ],
-                              "type": "span",
-                            },
+                            undefined,
                           ],
                           "type": [Function],
                         },
@@ -2584,13 +2499,6 @@ ShallowWrapper {
                         eventKey="destinationrules"
                       >
                         Destination Rules (1)
-                        <span>
-                           
-                          <Icon
-                            name="error-circle-o"
-                            type="pf"
-                          />
-                        </span>
                       </NavItem>
                     </Nav>
                     <TabContent
@@ -2892,13 +2800,6 @@ ShallowWrapper {
                           eventKey="destinationrules"
                         >
                           Destination Rules (1)
-                          <span>
-                             
-                            <Icon
-                              name="error-circle-o"
-                              type="pf"
-                            />
-                          </span>
                         </NavItem>
                       </Nav>
                       <TabContent
@@ -3443,13 +3344,6 @@ ShallowWrapper {
                           eventKey="destinationrules"
                         >
                           Destination Rules (1)
-                          <span>
-                             
-                            <Icon
-                              name="error-circle-o"
-                              type="pf"
-                            />
-                          </span>
                         </NavItem>
                       </Nav>
                       <TabContent
@@ -3616,13 +3510,6 @@ ShallowWrapper {
                           eventKey="destinationrules"
                         >
                           Destination Rules (1)
-                          <span>
-                             
-                            <Icon
-                              name="error-circle-o"
-                              type="pf"
-                            />
-                          </span>
                         </NavItem>
                       </Nav>
                       <TabContent
@@ -3786,13 +3673,6 @@ ShallowWrapper {
                           eventKey="destinationrules"
                         >
                           Destination Rules (1)
-                          <span>
-                             
-                            <Icon
-                              name="error-circle-o"
-                              type="pf"
-                            />
-                          </span>
                         </NavItem>
                       </Nav>
                       <TabContent
@@ -3951,13 +3831,6 @@ ShallowWrapper {
                             eventKey="destinationrules"
                           >
                             Destination Rules (1)
-                            <span>
-                               
-                              <Icon
-                                name="error-circle-o"
-                                type="pf"
-                              />
-                            </span>
                           </NavItem>
                         </Nav>,
                         <TabContent
@@ -4109,13 +3982,6 @@ ShallowWrapper {
                               eventKey="destinationrules"
                             >
                               Destination Rules (1)
-                              <span>
-                                 
-                                <Icon
-                                  name="error-circle-o"
-                                  type="pf"
-                                />
-                              </span>
                             </NavItem>,
                           ],
                           "justified": false,
@@ -4181,13 +4047,7 @@ ShallowWrapper {
                               "active": false,
                               "children": Array [
                                 "Destination Rules (1)",
-                                <span>
-                                   
-                                  <Icon
-                                    name="error-circle-o"
-                                    type="pf"
-                                  />
-                                </span>,
+                                undefined,
                               ],
                               "disabled": false,
                               "eventKey": "destinationrules",
@@ -4195,37 +4055,7 @@ ShallowWrapper {
                             "ref": null,
                             "rendered": Array [
                               "Destination Rules (1)",
-                              Object {
-                                "instance": null,
-                                "key": undefined,
-                                "nodeType": "host",
-                                "props": Object {
-                                  "children": Array [
-                                    " ",
-                                    <Icon
-                                      name="error-circle-o"
-                                      type="pf"
-                                    />,
-                                  ],
-                                },
-                                "ref": null,
-                                "rendered": Array [
-                                  " ",
-                                  Object {
-                                    "instance": null,
-                                    "key": undefined,
-                                    "nodeType": "function",
-                                    "props": Object {
-                                      "name": "error-circle-o",
-                                      "type": "pf",
-                                    },
-                                    "ref": null,
-                                    "rendered": null,
-                                    "type": [Function],
-                                  },
-                                ],
-                                "type": "span",
-                              },
+                              undefined,
                             ],
                             "type": [Function],
                           },
