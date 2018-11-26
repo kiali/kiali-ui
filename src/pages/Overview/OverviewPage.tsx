@@ -121,10 +121,10 @@ class OverviewPage extends React.Component<OverviewProps, State> {
         NamespaceAppHealth | NamespaceWorkloadHealth | NamespaceServiceHealth
       > = OverviewPage.switchType(
         type,
-        API.getNamespaceAppHealth(authentication(), namespace, rateInterval),
-        API.getNamespaceServiceHealth(authentication(), namespace, rateInterval),
-        API.getNamespaceWorkloadHealth(authentication(), namespace, rateInterval)
-      );
+        () => API.getNamespaceAppHealth(authentication(), namespace, rateInterval),
+        () => API.getNamespaceServiceHealth(authentication(), namespace, rateInterval),
+        () => API.getNamespaceWorkloadHealth(authentication(), namespace, rateInterval)
+      )();
       return healthPromise.then(r => ({
         namespace: namespace,
         health: r
@@ -137,7 +137,8 @@ class OverviewPage extends React.Component<OverviewProps, State> {
           name: response.namespace,
           inError: [],
           inWarning: [],
-          inSuccess: []
+          inSuccess: [],
+          notAvailable: []
         };
         const { showInError, showInWarning, showInSuccess, noFilter } = OverviewPage.summarizeHealthFilters();
         let show = noFilter;
@@ -153,6 +154,8 @@ class OverviewPage extends React.Component<OverviewProps, State> {
           } else if (status === HEALTHY) {
             info.inSuccess.push(item);
             show = show || showInSuccess;
+          } else {
+            info.notAvailable.push(item);
           }
         });
         if (show) {
@@ -192,7 +195,7 @@ class OverviewPage extends React.Component<OverviewProps, State> {
           <CardGrid matchHeight={true}>
             <Row style={{ marginBottom: '20px', marginTop: '20px' }}>
               {this.state.namespaces.map(ns => {
-                const nbItems = ns.inError.length + ns.inWarning.length + ns.inSuccess.length;
+                const nbItems = ns.inError.length + ns.inWarning.length + ns.inSuccess.length + ns.notAvailable.length;
                 const encodedNsName = encodeURIComponent(ns.name);
                 return (
                   <Col xs={6} sm={3} md={3} key={ns.name}>
@@ -232,7 +235,9 @@ class OverviewPage extends React.Component<OverviewProps, State> {
                               targetPage={targetPage}
                             />
                           )}
-                          {nbItems === 0 && <AggregateStatusNotification>N/A</AggregateStatusNotification>}
+                          {nbItems === ns.notAvailable.length && (
+                            <AggregateStatusNotification>N/A</AggregateStatusNotification>
+                          )}
                         </AggregateStatusNotifications>
                         <div>
                           <Link to={`/graph/namespaces?namespaces=` + ns.name} title="Graph">
