@@ -33,31 +33,35 @@ ShallowWrapper {
         "destinationRules": Object {
           "items": Array [
             Object {
-              "createdAt": "2018-07-02T13:44:01+02:00",
-              "host": "reviews",
-              "name": "reviews",
-              "resourceVersion": "393061",
-              "subsets": Array [
-                Object {
-                  "labels": Object {
-                    "version": "v1",
+              "metadata": Object {
+                "createdTimestamp": "2018-07-02T13:44:01+02:00",
+                "name": "reviews",
+                "resourceVersion": "393061",
+              },
+              "spec": Object {
+                "host": "reviews",
+                "subsets": Array [
+                  Object {
+                    "labels": Object {
+                      "version": "v1",
+                    },
+                    "name": "v1",
                   },
-                  "name": "v1",
-                },
-                Object {
-                  "labels": Object {
-                    "version": "v2",
+                  Object {
+                    "labels": Object {
+                      "version": "v2",
+                    },
+                    "name": "v2",
                   },
-                  "name": "v2",
-                },
-                Object {
-                  "labels": Object {
-                    "version": "v3",
+                  Object {
+                    "labels": Object {
+                      "version": "v3",
+                    },
+                    "name": "v3",
                   },
-                  "name": "v3",
-                },
-              ],
-              "trafficPolicy": null,
+                ],
+                "trafficPolicy": null,
+              },
             },
           ],
           "permissions": Object {
@@ -146,26 +150,30 @@ ShallowWrapper {
         "virtualServices": Object {
           "items": Array [
             Object {
-              "createdAt": "2018-07-02T13:44:01+02:00",
-              "gateways": null,
-              "hosts": Array [
-                "reviews",
-              ],
-              "http": Array [
-                Object {
-                  "route": Array [
-                    Object {
-                      "destination": Object {
-                        "host": "reviews",
-                        "subset": "v1",
+              "metadata": Object {
+                "creationTimestamp": "2018-07-02T13:44:01+02:00",
+                "name": "reviews",
+                "resourceVersion": "393057",
+              },
+              "spec": Object {
+                "gateways": null,
+                "hosts": Array [
+                  "reviews",
+                ],
+                "http": Array [
+                  Object {
+                    "route": Array [
+                      Object {
+                        "destination": Object {
+                          "host": "reviews",
+                          "subset": "v1",
+                        },
                       },
-                    },
-                  ],
-                },
-              ],
-              "name": "reviews",
-              "resourceVersion": "393057",
-              "tcp": null,
+                    ],
+                  },
+                ],
+                "tcp": null,
+              },
             },
           ],
           "permissions": Object {
@@ -389,6 +397,13 @@ ShallowWrapper {
                       eventKey="destinationrules"
                     >
                       Destination Rules (1)
+                      <span>
+                         
+                        <Icon
+                          name="error-circle-o"
+                          type="pf"
+                        />
+                      </span>
                     </NavItem>
                   </Nav>
                   <TabContent
@@ -416,26 +431,30 @@ ShallowWrapper {
                         virtualServices={
                           Array [
                             Object {
-                              "createdAt": "2018-07-02T13:44:01+02:00",
-                              "gateways": null,
-                              "hosts": Array [
-                                "reviews",
-                              ],
-                              "http": Array [
-                                Object {
-                                  "route": Array [
-                                    Object {
-                                      "destination": Object {
-                                        "host": "reviews",
-                                        "subset": "v1",
+                              "metadata": Object {
+                                "creationTimestamp": "2018-07-02T13:44:01+02:00",
+                                "name": "reviews",
+                                "resourceVersion": "393057",
+                              },
+                              "spec": Object {
+                                "gateways": null,
+                                "hosts": Array [
+                                  "reviews",
+                                ],
+                                "http": Array [
+                                  Object {
+                                    "route": Array [
+                                      Object {
+                                        "destination": Object {
+                                          "host": "reviews",
+                                          "subset": "v1",
+                                        },
                                       },
-                                    },
-                                  ],
-                                },
-                              ],
-                              "name": "reviews",
-                              "resourceVersion": "393057",
-                              "tcp": null,
+                                    ],
+                                  },
+                                ],
+                                "tcp": null,
+                              },
                             },
                           ]
                         }
@@ -449,31 +468,35 @@ ShallowWrapper {
                         destinationRules={
                           Array [
                             Object {
-                              "createdAt": "2018-07-02T13:44:01+02:00",
-                              "host": "reviews",
-                              "name": "reviews",
-                              "resourceVersion": "393061",
-                              "subsets": Array [
-                                Object {
-                                  "labels": Object {
-                                    "version": "v1",
+                              "metadata": Object {
+                                "createdTimestamp": "2018-07-02T13:44:01+02:00",
+                                "name": "reviews",
+                                "resourceVersion": "393061",
+                              },
+                              "spec": Object {
+                                "host": "reviews",
+                                "subsets": Array [
+                                  Object {
+                                    "labels": Object {
+                                      "version": "v1",
+                                    },
+                                    "name": "v1",
                                   },
-                                  "name": "v1",
-                                },
-                                Object {
-                                  "labels": Object {
-                                    "version": "v2",
+                                  Object {
+                                    "labels": Object {
+                                      "version": "v2",
+                                    },
+                                    "name": "v2",
                                   },
-                                  "name": "v2",
-                                },
-                                Object {
-                                  "labels": Object {
-                                    "version": "v3",
+                                  Object {
+                                    "labels": Object {
+                                      "version": "v3",
+                                    },
+                                    "name": "v3",
                                   },
-                                  "name": "v3",
-                                },
-                              ],
-                              "trafficPolicy": null,
+                                ],
+                                "trafficPolicy": null,
+                              },
                             },
                           ]
                         }
@@ -690,6 +713,13 @@ ShallowWrapper {
                         eventKey="destinationrules"
                       >
                         Destination Rules (1)
+                        <span>
+                           
+                          <Icon
+                            name="error-circle-o"
+                            type="pf"
+                          />
+                        </span>
                       </NavItem>
                     </Nav>
                     <TabContent
@@ -717,26 +747,30 @@ ShallowWrapper {
                           virtualServices={
                             Array [
                               Object {
-                                "createdAt": "2018-07-02T13:44:01+02:00",
-                                "gateways": null,
-                                "hosts": Array [
-                                  "reviews",
-                                ],
-                                "http": Array [
-                                  Object {
-                                    "route": Array [
-                                      Object {
-                                        "destination": Object {
-                                          "host": "reviews",
-                                          "subset": "v1",
+                                "metadata": Object {
+                                  "creationTimestamp": "2018-07-02T13:44:01+02:00",
+                                  "name": "reviews",
+                                  "resourceVersion": "393057",
+                                },
+                                "spec": Object {
+                                  "gateways": null,
+                                  "hosts": Array [
+                                    "reviews",
+                                  ],
+                                  "http": Array [
+                                    Object {
+                                      "route": Array [
+                                        Object {
+                                          "destination": Object {
+                                            "host": "reviews",
+                                            "subset": "v1",
+                                          },
                                         },
-                                      },
-                                    ],
-                                  },
-                                ],
-                                "name": "reviews",
-                                "resourceVersion": "393057",
-                                "tcp": null,
+                                      ],
+                                    },
+                                  ],
+                                  "tcp": null,
+                                },
                               },
                             ]
                           }
@@ -750,31 +784,35 @@ ShallowWrapper {
                           destinationRules={
                             Array [
                               Object {
-                                "createdAt": "2018-07-02T13:44:01+02:00",
-                                "host": "reviews",
-                                "name": "reviews",
-                                "resourceVersion": "393061",
-                                "subsets": Array [
-                                  Object {
-                                    "labels": Object {
-                                      "version": "v1",
+                                "metadata": Object {
+                                  "createdTimestamp": "2018-07-02T13:44:01+02:00",
+                                  "name": "reviews",
+                                  "resourceVersion": "393061",
+                                },
+                                "spec": Object {
+                                  "host": "reviews",
+                                  "subsets": Array [
+                                    Object {
+                                      "labels": Object {
+                                        "version": "v1",
+                                      },
+                                      "name": "v1",
                                     },
-                                    "name": "v1",
-                                  },
-                                  Object {
-                                    "labels": Object {
-                                      "version": "v2",
+                                    Object {
+                                      "labels": Object {
+                                        "version": "v2",
+                                      },
+                                      "name": "v2",
                                     },
-                                    "name": "v2",
-                                  },
-                                  Object {
-                                    "labels": Object {
-                                      "version": "v3",
+                                    Object {
+                                      "labels": Object {
+                                        "version": "v3",
+                                      },
+                                      "name": "v3",
                                     },
-                                    "name": "v3",
-                                  },
-                                ],
-                                "trafficPolicy": null,
+                                  ],
+                                  "trafficPolicy": null,
+                                },
                               },
                             ]
                           }
@@ -1234,6 +1272,13 @@ ShallowWrapper {
                         eventKey="destinationrules"
                       >
                         Destination Rules (1)
+                        <span>
+                           
+                          <Icon
+                            name="error-circle-o"
+                            type="pf"
+                          />
+                        </span>
                       </NavItem>
                     </Nav>
                     <TabContent
@@ -1261,26 +1306,30 @@ ShallowWrapper {
                           virtualServices={
                             Array [
                               Object {
-                                "createdAt": "2018-07-02T13:44:01+02:00",
-                                "gateways": null,
-                                "hosts": Array [
-                                  "reviews",
-                                ],
-                                "http": Array [
-                                  Object {
-                                    "route": Array [
-                                      Object {
-                                        "destination": Object {
-                                          "host": "reviews",
-                                          "subset": "v1",
+                                "metadata": Object {
+                                  "creationTimestamp": "2018-07-02T13:44:01+02:00",
+                                  "name": "reviews",
+                                  "resourceVersion": "393057",
+                                },
+                                "spec": Object {
+                                  "gateways": null,
+                                  "hosts": Array [
+                                    "reviews",
+                                  ],
+                                  "http": Array [
+                                    Object {
+                                      "route": Array [
+                                        Object {
+                                          "destination": Object {
+                                            "host": "reviews",
+                                            "subset": "v1",
+                                          },
                                         },
-                                      },
-                                    ],
-                                  },
-                                ],
-                                "name": "reviews",
-                                "resourceVersion": "393057",
-                                "tcp": null,
+                                      ],
+                                    },
+                                  ],
+                                  "tcp": null,
+                                },
                               },
                             ]
                           }
@@ -1294,31 +1343,35 @@ ShallowWrapper {
                           destinationRules={
                             Array [
                               Object {
-                                "createdAt": "2018-07-02T13:44:01+02:00",
-                                "host": "reviews",
-                                "name": "reviews",
-                                "resourceVersion": "393061",
-                                "subsets": Array [
-                                  Object {
-                                    "labels": Object {
-                                      "version": "v1",
+                                "metadata": Object {
+                                  "createdTimestamp": "2018-07-02T13:44:01+02:00",
+                                  "name": "reviews",
+                                  "resourceVersion": "393061",
+                                },
+                                "spec": Object {
+                                  "host": "reviews",
+                                  "subsets": Array [
+                                    Object {
+                                      "labels": Object {
+                                        "version": "v1",
+                                      },
+                                      "name": "v1",
                                     },
-                                    "name": "v1",
-                                  },
-                                  Object {
-                                    "labels": Object {
-                                      "version": "v2",
+                                    Object {
+                                      "labels": Object {
+                                        "version": "v2",
+                                      },
+                                      "name": "v2",
                                     },
-                                    "name": "v2",
-                                  },
-                                  Object {
-                                    "labels": Object {
-                                      "version": "v3",
+                                    Object {
+                                      "labels": Object {
+                                        "version": "v3",
+                                      },
+                                      "name": "v3",
                                     },
-                                    "name": "v3",
-                                  },
-                                ],
-                                "trafficPolicy": null,
+                                  ],
+                                  "trafficPolicy": null,
+                                },
                               },
                             ]
                           }
@@ -1400,6 +1453,13 @@ ShallowWrapper {
                         eventKey="destinationrules"
                       >
                         Destination Rules (1)
+                        <span>
+                           
+                          <Icon
+                            name="error-circle-o"
+                            type="pf"
+                          />
+                        </span>
                       </NavItem>
                     </Nav>
                     <TabContent
@@ -1427,26 +1487,30 @@ ShallowWrapper {
                           virtualServices={
                             Array [
                               Object {
-                                "createdAt": "2018-07-02T13:44:01+02:00",
-                                "gateways": null,
-                                "hosts": Array [
-                                  "reviews",
-                                ],
-                                "http": Array [
-                                  Object {
-                                    "route": Array [
-                                      Object {
-                                        "destination": Object {
-                                          "host": "reviews",
-                                          "subset": "v1",
+                                "metadata": Object {
+                                  "creationTimestamp": "2018-07-02T13:44:01+02:00",
+                                  "name": "reviews",
+                                  "resourceVersion": "393057",
+                                },
+                                "spec": Object {
+                                  "gateways": null,
+                                  "hosts": Array [
+                                    "reviews",
+                                  ],
+                                  "http": Array [
+                                    Object {
+                                      "route": Array [
+                                        Object {
+                                          "destination": Object {
+                                            "host": "reviews",
+                                            "subset": "v1",
+                                          },
                                         },
-                                      },
-                                    ],
-                                  },
-                                ],
-                                "name": "reviews",
-                                "resourceVersion": "393057",
-                                "tcp": null,
+                                      ],
+                                    },
+                                  ],
+                                  "tcp": null,
+                                },
                               },
                             ]
                           }
@@ -1460,31 +1524,35 @@ ShallowWrapper {
                           destinationRules={
                             Array [
                               Object {
-                                "createdAt": "2018-07-02T13:44:01+02:00",
-                                "host": "reviews",
-                                "name": "reviews",
-                                "resourceVersion": "393061",
-                                "subsets": Array [
-                                  Object {
-                                    "labels": Object {
-                                      "version": "v1",
+                                "metadata": Object {
+                                  "createdTimestamp": "2018-07-02T13:44:01+02:00",
+                                  "name": "reviews",
+                                  "resourceVersion": "393061",
+                                },
+                                "spec": Object {
+                                  "host": "reviews",
+                                  "subsets": Array [
+                                    Object {
+                                      "labels": Object {
+                                        "version": "v1",
+                                      },
+                                      "name": "v1",
                                     },
-                                    "name": "v1",
-                                  },
-                                  Object {
-                                    "labels": Object {
-                                      "version": "v2",
+                                    Object {
+                                      "labels": Object {
+                                        "version": "v2",
+                                      },
+                                      "name": "v2",
                                     },
-                                    "name": "v2",
-                                  },
-                                  Object {
-                                    "labels": Object {
-                                      "version": "v3",
+                                    Object {
+                                      "labels": Object {
+                                        "version": "v3",
+                                      },
+                                      "name": "v3",
                                     },
-                                    "name": "v3",
-                                  },
-                                ],
-                                "trafficPolicy": null,
+                                  ],
+                                  "trafficPolicy": null,
+                                },
                               },
                             ]
                           }
@@ -1563,6 +1631,13 @@ ShallowWrapper {
                         eventKey="destinationrules"
                       >
                         Destination Rules (1)
+                        <span>
+                           
+                          <Icon
+                            name="error-circle-o"
+                            type="pf"
+                          />
+                        </span>
                       </NavItem>
                     </Nav>
                     <TabContent
@@ -1590,26 +1665,30 @@ ShallowWrapper {
                           virtualServices={
                             Array [
                               Object {
-                                "createdAt": "2018-07-02T13:44:01+02:00",
-                                "gateways": null,
-                                "hosts": Array [
-                                  "reviews",
-                                ],
-                                "http": Array [
-                                  Object {
-                                    "route": Array [
-                                      Object {
-                                        "destination": Object {
-                                          "host": "reviews",
-                                          "subset": "v1",
+                                "metadata": Object {
+                                  "creationTimestamp": "2018-07-02T13:44:01+02:00",
+                                  "name": "reviews",
+                                  "resourceVersion": "393057",
+                                },
+                                "spec": Object {
+                                  "gateways": null,
+                                  "hosts": Array [
+                                    "reviews",
+                                  ],
+                                  "http": Array [
+                                    Object {
+                                      "route": Array [
+                                        Object {
+                                          "destination": Object {
+                                            "host": "reviews",
+                                            "subset": "v1",
+                                          },
                                         },
-                                      },
-                                    ],
-                                  },
-                                ],
-                                "name": "reviews",
-                                "resourceVersion": "393057",
-                                "tcp": null,
+                                      ],
+                                    },
+                                  ],
+                                  "tcp": null,
+                                },
                               },
                             ]
                           }
@@ -1623,31 +1702,35 @@ ShallowWrapper {
                           destinationRules={
                             Array [
                               Object {
-                                "createdAt": "2018-07-02T13:44:01+02:00",
-                                "host": "reviews",
-                                "name": "reviews",
-                                "resourceVersion": "393061",
-                                "subsets": Array [
-                                  Object {
-                                    "labels": Object {
-                                      "version": "v1",
+                                "metadata": Object {
+                                  "createdTimestamp": "2018-07-02T13:44:01+02:00",
+                                  "name": "reviews",
+                                  "resourceVersion": "393061",
+                                },
+                                "spec": Object {
+                                  "host": "reviews",
+                                  "subsets": Array [
+                                    Object {
+                                      "labels": Object {
+                                        "version": "v1",
+                                      },
+                                      "name": "v1",
                                     },
-                                    "name": "v1",
-                                  },
-                                  Object {
-                                    "labels": Object {
-                                      "version": "v2",
+                                    Object {
+                                      "labels": Object {
+                                        "version": "v2",
+                                      },
+                                      "name": "v2",
                                     },
-                                    "name": "v2",
-                                  },
-                                  Object {
-                                    "labels": Object {
-                                      "version": "v3",
+                                    Object {
+                                      "labels": Object {
+                                        "version": "v3",
+                                      },
+                                      "name": "v3",
                                     },
-                                    "name": "v3",
-                                  },
-                                ],
-                                "trafficPolicy": null,
+                                  ],
+                                  "trafficPolicy": null,
+                                },
                               },
                             ]
                           }
@@ -1721,6 +1804,13 @@ ShallowWrapper {
                           eventKey="destinationrules"
                         >
                           Destination Rules (1)
+                          <span>
+                             
+                            <Icon
+                              name="error-circle-o"
+                              type="pf"
+                            />
+                          </span>
                         </NavItem>
                       </Nav>,
                       <TabContent
@@ -1748,26 +1838,30 @@ ShallowWrapper {
                             virtualServices={
                               Array [
                                 Object {
-                                  "createdAt": "2018-07-02T13:44:01+02:00",
-                                  "gateways": null,
-                                  "hosts": Array [
-                                    "reviews",
-                                  ],
-                                  "http": Array [
-                                    Object {
-                                      "route": Array [
-                                        Object {
-                                          "destination": Object {
-                                            "host": "reviews",
-                                            "subset": "v1",
+                                  "metadata": Object {
+                                    "creationTimestamp": "2018-07-02T13:44:01+02:00",
+                                    "name": "reviews",
+                                    "resourceVersion": "393057",
+                                  },
+                                  "spec": Object {
+                                    "gateways": null,
+                                    "hosts": Array [
+                                      "reviews",
+                                    ],
+                                    "http": Array [
+                                      Object {
+                                        "route": Array [
+                                          Object {
+                                            "destination": Object {
+                                              "host": "reviews",
+                                              "subset": "v1",
+                                            },
                                           },
-                                        },
-                                      ],
-                                    },
-                                  ],
-                                  "name": "reviews",
-                                  "resourceVersion": "393057",
-                                  "tcp": null,
+                                        ],
+                                      },
+                                    ],
+                                    "tcp": null,
+                                  },
                                 },
                               ]
                             }
@@ -1781,31 +1875,35 @@ ShallowWrapper {
                             destinationRules={
                               Array [
                                 Object {
-                                  "createdAt": "2018-07-02T13:44:01+02:00",
-                                  "host": "reviews",
-                                  "name": "reviews",
-                                  "resourceVersion": "393061",
-                                  "subsets": Array [
-                                    Object {
-                                      "labels": Object {
-                                        "version": "v1",
+                                  "metadata": Object {
+                                    "createdTimestamp": "2018-07-02T13:44:01+02:00",
+                                    "name": "reviews",
+                                    "resourceVersion": "393061",
+                                  },
+                                  "spec": Object {
+                                    "host": "reviews",
+                                    "subsets": Array [
+                                      Object {
+                                        "labels": Object {
+                                          "version": "v1",
+                                        },
+                                        "name": "v1",
                                       },
-                                      "name": "v1",
-                                    },
-                                    Object {
-                                      "labels": Object {
-                                        "version": "v2",
+                                      Object {
+                                        "labels": Object {
+                                          "version": "v2",
+                                        },
+                                        "name": "v2",
                                       },
-                                      "name": "v2",
-                                    },
-                                    Object {
-                                      "labels": Object {
-                                        "version": "v3",
+                                      Object {
+                                        "labels": Object {
+                                          "version": "v3",
+                                        },
+                                        "name": "v3",
                                       },
-                                      "name": "v3",
-                                    },
-                                  ],
-                                  "trafficPolicy": null,
+                                    ],
+                                    "trafficPolicy": null,
+                                  },
                                 },
                               ]
                             }
@@ -1872,6 +1970,13 @@ ShallowWrapper {
                             eventKey="destinationrules"
                           >
                             Destination Rules (1)
+                            <span>
+                               
+                              <Icon
+                                name="error-circle-o"
+                                type="pf"
+                              />
+                            </span>
                           </NavItem>,
                         ],
                         "justified": false,
@@ -1937,7 +2042,13 @@ ShallowWrapper {
                             "active": false,
                             "children": Array [
                               "Destination Rules (1)",
-                              undefined,
+                              <span>
+                                 
+                                <Icon
+                                  name="error-circle-o"
+                                  type="pf"
+                                />
+                              </span>,
                             ],
                             "disabled": false,
                             "eventKey": "destinationrules",
@@ -1945,7 +2056,37 @@ ShallowWrapper {
                           "ref": null,
                           "rendered": Array [
                             "Destination Rules (1)",
-                            undefined,
+                            Object {
+                              "instance": null,
+                              "key": undefined,
+                              "nodeType": "host",
+                              "props": Object {
+                                "children": Array [
+                                  " ",
+                                  <Icon
+                                    name="error-circle-o"
+                                    type="pf"
+                                  />,
+                                ],
+                              },
+                              "ref": null,
+                              "rendered": Array [
+                                " ",
+                                Object {
+                                  "instance": null,
+                                  "key": undefined,
+                                  "nodeType": "function",
+                                  "props": Object {
+                                    "name": "error-circle-o",
+                                    "type": "pf",
+                                  },
+                                  "ref": null,
+                                  "rendered": null,
+                                  "type": [Function],
+                                },
+                              ],
+                              "type": "span",
+                            },
                           ],
                           "type": [Function],
                         },
@@ -1978,26 +2119,30 @@ ShallowWrapper {
                               virtualServices={
                                 Array [
                                   Object {
-                                    "createdAt": "2018-07-02T13:44:01+02:00",
-                                    "gateways": null,
-                                    "hosts": Array [
-                                      "reviews",
-                                    ],
-                                    "http": Array [
-                                      Object {
-                                        "route": Array [
-                                          Object {
-                                            "destination": Object {
-                                              "host": "reviews",
-                                              "subset": "v1",
+                                    "metadata": Object {
+                                      "creationTimestamp": "2018-07-02T13:44:01+02:00",
+                                      "name": "reviews",
+                                      "resourceVersion": "393057",
+                                    },
+                                    "spec": Object {
+                                      "gateways": null,
+                                      "hosts": Array [
+                                        "reviews",
+                                      ],
+                                      "http": Array [
+                                        Object {
+                                          "route": Array [
+                                            Object {
+                                              "destination": Object {
+                                                "host": "reviews",
+                                                "subset": "v1",
+                                              },
                                             },
-                                          },
-                                        ],
-                                      },
-                                    ],
-                                    "name": "reviews",
-                                    "resourceVersion": "393057",
-                                    "tcp": null,
+                                          ],
+                                        },
+                                      ],
+                                      "tcp": null,
+                                    },
                                   },
                                 ]
                               }
@@ -2011,31 +2156,35 @@ ShallowWrapper {
                               destinationRules={
                                 Array [
                                   Object {
-                                    "createdAt": "2018-07-02T13:44:01+02:00",
-                                    "host": "reviews",
-                                    "name": "reviews",
-                                    "resourceVersion": "393061",
-                                    "subsets": Array [
-                                      Object {
-                                        "labels": Object {
-                                          "version": "v1",
+                                    "metadata": Object {
+                                      "createdTimestamp": "2018-07-02T13:44:01+02:00",
+                                      "name": "reviews",
+                                      "resourceVersion": "393061",
+                                    },
+                                    "spec": Object {
+                                      "host": "reviews",
+                                      "subsets": Array [
+                                        Object {
+                                          "labels": Object {
+                                            "version": "v1",
+                                          },
+                                          "name": "v1",
                                         },
-                                        "name": "v1",
-                                      },
-                                      Object {
-                                        "labels": Object {
-                                          "version": "v2",
+                                        Object {
+                                          "labels": Object {
+                                            "version": "v2",
+                                          },
+                                          "name": "v2",
                                         },
-                                        "name": "v2",
-                                      },
-                                      Object {
-                                        "labels": Object {
-                                          "version": "v3",
+                                        Object {
+                                          "labels": Object {
+                                            "version": "v3",
+                                          },
+                                          "name": "v3",
                                         },
-                                        "name": "v3",
-                                      },
-                                    ],
-                                    "trafficPolicy": null,
+                                      ],
+                                      "trafficPolicy": null,
+                                    },
                                   },
                                 ]
                               }
@@ -2108,26 +2257,30 @@ ShallowWrapper {
                               virtualServices={
                                 Array [
                                   Object {
-                                    "createdAt": "2018-07-02T13:44:01+02:00",
-                                    "gateways": null,
-                                    "hosts": Array [
-                                      "reviews",
-                                    ],
-                                    "http": Array [
-                                      Object {
-                                        "route": Array [
-                                          Object {
-                                            "destination": Object {
-                                              "host": "reviews",
-                                              "subset": "v1",
+                                    "metadata": Object {
+                                      "creationTimestamp": "2018-07-02T13:44:01+02:00",
+                                      "name": "reviews",
+                                      "resourceVersion": "393057",
+                                    },
+                                    "spec": Object {
+                                      "gateways": null,
+                                      "hosts": Array [
+                                        "reviews",
+                                      ],
+                                      "http": Array [
+                                        Object {
+                                          "route": Array [
+                                            Object {
+                                              "destination": Object {
+                                                "host": "reviews",
+                                                "subset": "v1",
+                                              },
                                             },
-                                          },
-                                        ],
-                                      },
-                                    ],
-                                    "name": "reviews",
-                                    "resourceVersion": "393057",
-                                    "tcp": null,
+                                          ],
+                                        },
+                                      ],
+                                      "tcp": null,
+                                    },
                                   },
                                 ]
                               }
@@ -2144,26 +2297,30 @@ ShallowWrapper {
                               "validations": undefined,
                               "virtualServices": Array [
                                 Object {
-                                  "createdAt": "2018-07-02T13:44:01+02:00",
-                                  "gateways": null,
-                                  "hosts": Array [
-                                    "reviews",
-                                  ],
-                                  "http": Array [
-                                    Object {
-                                      "route": Array [
-                                        Object {
-                                          "destination": Object {
-                                            "host": "reviews",
-                                            "subset": "v1",
+                                  "metadata": Object {
+                                    "creationTimestamp": "2018-07-02T13:44:01+02:00",
+                                    "name": "reviews",
+                                    "resourceVersion": "393057",
+                                  },
+                                  "spec": Object {
+                                    "gateways": null,
+                                    "hosts": Array [
+                                      "reviews",
+                                    ],
+                                    "http": Array [
+                                      Object {
+                                        "route": Array [
+                                          Object {
+                                            "destination": Object {
+                                              "host": "reviews",
+                                              "subset": "v1",
+                                            },
                                           },
-                                        },
-                                      ],
-                                    },
-                                  ],
-                                  "name": "reviews",
-                                  "resourceVersion": "393057",
-                                  "tcp": null,
+                                        ],
+                                      },
+                                    ],
+                                    "tcp": null,
+                                  },
                                 },
                               ],
                             },
@@ -2183,31 +2340,35 @@ ShallowWrapper {
                               destinationRules={
                                 Array [
                                   Object {
-                                    "createdAt": "2018-07-02T13:44:01+02:00",
-                                    "host": "reviews",
-                                    "name": "reviews",
-                                    "resourceVersion": "393061",
-                                    "subsets": Array [
-                                      Object {
-                                        "labels": Object {
-                                          "version": "v1",
+                                    "metadata": Object {
+                                      "createdTimestamp": "2018-07-02T13:44:01+02:00",
+                                      "name": "reviews",
+                                      "resourceVersion": "393061",
+                                    },
+                                    "spec": Object {
+                                      "host": "reviews",
+                                      "subsets": Array [
+                                        Object {
+                                          "labels": Object {
+                                            "version": "v1",
+                                          },
+                                          "name": "v1",
                                         },
-                                        "name": "v1",
-                                      },
-                                      Object {
-                                        "labels": Object {
-                                          "version": "v2",
+                                        Object {
+                                          "labels": Object {
+                                            "version": "v2",
+                                          },
+                                          "name": "v2",
                                         },
-                                        "name": "v2",
-                                      },
-                                      Object {
-                                        "labels": Object {
-                                          "version": "v3",
+                                        Object {
+                                          "labels": Object {
+                                            "version": "v3",
+                                          },
+                                          "name": "v3",
                                         },
-                                        "name": "v3",
-                                      },
-                                    ],
-                                    "trafficPolicy": null,
+                                      ],
+                                      "trafficPolicy": null,
+                                    },
                                   },
                                 ]
                               }
@@ -2244,31 +2405,35 @@ ShallowWrapper {
                             "props": Object {
                               "destinationRules": Array [
                                 Object {
-                                  "createdAt": "2018-07-02T13:44:01+02:00",
-                                  "host": "reviews",
-                                  "name": "reviews",
-                                  "resourceVersion": "393061",
-                                  "subsets": Array [
-                                    Object {
-                                      "labels": Object {
-                                        "version": "v1",
+                                  "metadata": Object {
+                                    "createdTimestamp": "2018-07-02T13:44:01+02:00",
+                                    "name": "reviews",
+                                    "resourceVersion": "393061",
+                                  },
+                                  "spec": Object {
+                                    "host": "reviews",
+                                    "subsets": Array [
+                                      Object {
+                                        "labels": Object {
+                                          "version": "v1",
+                                        },
+                                        "name": "v1",
                                       },
-                                      "name": "v1",
-                                    },
-                                    Object {
-                                      "labels": Object {
-                                        "version": "v2",
+                                      Object {
+                                        "labels": Object {
+                                          "version": "v2",
+                                        },
+                                        "name": "v2",
                                       },
-                                      "name": "v2",
-                                    },
-                                    Object {
-                                      "labels": Object {
-                                        "version": "v3",
+                                      Object {
+                                        "labels": Object {
+                                          "version": "v3",
+                                        },
+                                        "name": "v3",
                                       },
-                                      "name": "v3",
-                                    },
-                                  ],
-                                  "trafficPolicy": null,
+                                    ],
+                                    "trafficPolicy": null,
+                                  },
                                 },
                               ],
                               "editorLink": "/namespaces/istio-system/services/reviews",
@@ -2499,6 +2664,13 @@ ShallowWrapper {
                         eventKey="destinationrules"
                       >
                         Destination Rules (1)
+                        <span>
+                           
+                          <Icon
+                            name="error-circle-o"
+                            type="pf"
+                          />
+                        </span>
                       </NavItem>
                     </Nav>
                     <TabContent
@@ -2526,26 +2698,30 @@ ShallowWrapper {
                           virtualServices={
                             Array [
                               Object {
-                                "createdAt": "2018-07-02T13:44:01+02:00",
-                                "gateways": null,
-                                "hosts": Array [
-                                  "reviews",
-                                ],
-                                "http": Array [
-                                  Object {
-                                    "route": Array [
-                                      Object {
-                                        "destination": Object {
-                                          "host": "reviews",
-                                          "subset": "v1",
+                                "metadata": Object {
+                                  "creationTimestamp": "2018-07-02T13:44:01+02:00",
+                                  "name": "reviews",
+                                  "resourceVersion": "393057",
+                                },
+                                "spec": Object {
+                                  "gateways": null,
+                                  "hosts": Array [
+                                    "reviews",
+                                  ],
+                                  "http": Array [
+                                    Object {
+                                      "route": Array [
+                                        Object {
+                                          "destination": Object {
+                                            "host": "reviews",
+                                            "subset": "v1",
+                                          },
                                         },
-                                      },
-                                    ],
-                                  },
-                                ],
-                                "name": "reviews",
-                                "resourceVersion": "393057",
-                                "tcp": null,
+                                      ],
+                                    },
+                                  ],
+                                  "tcp": null,
+                                },
                               },
                             ]
                           }
@@ -2559,31 +2735,35 @@ ShallowWrapper {
                           destinationRules={
                             Array [
                               Object {
-                                "createdAt": "2018-07-02T13:44:01+02:00",
-                                "host": "reviews",
-                                "name": "reviews",
-                                "resourceVersion": "393061",
-                                "subsets": Array [
-                                  Object {
-                                    "labels": Object {
-                                      "version": "v1",
+                                "metadata": Object {
+                                  "createdTimestamp": "2018-07-02T13:44:01+02:00",
+                                  "name": "reviews",
+                                  "resourceVersion": "393061",
+                                },
+                                "spec": Object {
+                                  "host": "reviews",
+                                  "subsets": Array [
+                                    Object {
+                                      "labels": Object {
+                                        "version": "v1",
+                                      },
+                                      "name": "v1",
                                     },
-                                    "name": "v1",
-                                  },
-                                  Object {
-                                    "labels": Object {
-                                      "version": "v2",
+                                    Object {
+                                      "labels": Object {
+                                        "version": "v2",
+                                      },
+                                      "name": "v2",
                                     },
-                                    "name": "v2",
-                                  },
-                                  Object {
-                                    "labels": Object {
-                                      "version": "v3",
+                                    Object {
+                                      "labels": Object {
+                                        "version": "v3",
+                                      },
+                                      "name": "v3",
                                     },
-                                    "name": "v3",
-                                  },
-                                ],
-                                "trafficPolicy": null,
+                                  ],
+                                  "trafficPolicy": null,
+                                },
                               },
                             ]
                           }
@@ -2800,6 +2980,13 @@ ShallowWrapper {
                           eventKey="destinationrules"
                         >
                           Destination Rules (1)
+                          <span>
+                             
+                            <Icon
+                              name="error-circle-o"
+                              type="pf"
+                            />
+                          </span>
                         </NavItem>
                       </Nav>
                       <TabContent
@@ -2827,26 +3014,30 @@ ShallowWrapper {
                             virtualServices={
                               Array [
                                 Object {
-                                  "createdAt": "2018-07-02T13:44:01+02:00",
-                                  "gateways": null,
-                                  "hosts": Array [
-                                    "reviews",
-                                  ],
-                                  "http": Array [
-                                    Object {
-                                      "route": Array [
-                                        Object {
-                                          "destination": Object {
-                                            "host": "reviews",
-                                            "subset": "v1",
+                                  "metadata": Object {
+                                    "creationTimestamp": "2018-07-02T13:44:01+02:00",
+                                    "name": "reviews",
+                                    "resourceVersion": "393057",
+                                  },
+                                  "spec": Object {
+                                    "gateways": null,
+                                    "hosts": Array [
+                                      "reviews",
+                                    ],
+                                    "http": Array [
+                                      Object {
+                                        "route": Array [
+                                          Object {
+                                            "destination": Object {
+                                              "host": "reviews",
+                                              "subset": "v1",
+                                            },
                                           },
-                                        },
-                                      ],
-                                    },
-                                  ],
-                                  "name": "reviews",
-                                  "resourceVersion": "393057",
-                                  "tcp": null,
+                                        ],
+                                      },
+                                    ],
+                                    "tcp": null,
+                                  },
                                 },
                               ]
                             }
@@ -2860,31 +3051,35 @@ ShallowWrapper {
                             destinationRules={
                               Array [
                                 Object {
-                                  "createdAt": "2018-07-02T13:44:01+02:00",
-                                  "host": "reviews",
-                                  "name": "reviews",
-                                  "resourceVersion": "393061",
-                                  "subsets": Array [
-                                    Object {
-                                      "labels": Object {
-                                        "version": "v1",
+                                  "metadata": Object {
+                                    "createdTimestamp": "2018-07-02T13:44:01+02:00",
+                                    "name": "reviews",
+                                    "resourceVersion": "393061",
+                                  },
+                                  "spec": Object {
+                                    "host": "reviews",
+                                    "subsets": Array [
+                                      Object {
+                                        "labels": Object {
+                                          "version": "v1",
+                                        },
+                                        "name": "v1",
                                       },
-                                      "name": "v1",
-                                    },
-                                    Object {
-                                      "labels": Object {
-                                        "version": "v2",
+                                      Object {
+                                        "labels": Object {
+                                          "version": "v2",
+                                        },
+                                        "name": "v2",
                                       },
-                                      "name": "v2",
-                                    },
-                                    Object {
-                                      "labels": Object {
-                                        "version": "v3",
+                                      Object {
+                                        "labels": Object {
+                                          "version": "v3",
+                                        },
+                                        "name": "v3",
                                       },
-                                      "name": "v3",
-                                    },
-                                  ],
-                                  "trafficPolicy": null,
+                                    ],
+                                    "trafficPolicy": null,
+                                  },
                                 },
                               ]
                             }
@@ -3344,6 +3539,13 @@ ShallowWrapper {
                           eventKey="destinationrules"
                         >
                           Destination Rules (1)
+                          <span>
+                             
+                            <Icon
+                              name="error-circle-o"
+                              type="pf"
+                            />
+                          </span>
                         </NavItem>
                       </Nav>
                       <TabContent
@@ -3371,26 +3573,30 @@ ShallowWrapper {
                             virtualServices={
                               Array [
                                 Object {
-                                  "createdAt": "2018-07-02T13:44:01+02:00",
-                                  "gateways": null,
-                                  "hosts": Array [
-                                    "reviews",
-                                  ],
-                                  "http": Array [
-                                    Object {
-                                      "route": Array [
-                                        Object {
-                                          "destination": Object {
-                                            "host": "reviews",
-                                            "subset": "v1",
+                                  "metadata": Object {
+                                    "creationTimestamp": "2018-07-02T13:44:01+02:00",
+                                    "name": "reviews",
+                                    "resourceVersion": "393057",
+                                  },
+                                  "spec": Object {
+                                    "gateways": null,
+                                    "hosts": Array [
+                                      "reviews",
+                                    ],
+                                    "http": Array [
+                                      Object {
+                                        "route": Array [
+                                          Object {
+                                            "destination": Object {
+                                              "host": "reviews",
+                                              "subset": "v1",
+                                            },
                                           },
-                                        },
-                                      ],
-                                    },
-                                  ],
-                                  "name": "reviews",
-                                  "resourceVersion": "393057",
-                                  "tcp": null,
+                                        ],
+                                      },
+                                    ],
+                                    "tcp": null,
+                                  },
                                 },
                               ]
                             }
@@ -3404,31 +3610,35 @@ ShallowWrapper {
                             destinationRules={
                               Array [
                                 Object {
-                                  "createdAt": "2018-07-02T13:44:01+02:00",
-                                  "host": "reviews",
-                                  "name": "reviews",
-                                  "resourceVersion": "393061",
-                                  "subsets": Array [
-                                    Object {
-                                      "labels": Object {
-                                        "version": "v1",
+                                  "metadata": Object {
+                                    "createdTimestamp": "2018-07-02T13:44:01+02:00",
+                                    "name": "reviews",
+                                    "resourceVersion": "393061",
+                                  },
+                                  "spec": Object {
+                                    "host": "reviews",
+                                    "subsets": Array [
+                                      Object {
+                                        "labels": Object {
+                                          "version": "v1",
+                                        },
+                                        "name": "v1",
                                       },
-                                      "name": "v1",
-                                    },
-                                    Object {
-                                      "labels": Object {
-                                        "version": "v2",
+                                      Object {
+                                        "labels": Object {
+                                          "version": "v2",
+                                        },
+                                        "name": "v2",
                                       },
-                                      "name": "v2",
-                                    },
-                                    Object {
-                                      "labels": Object {
-                                        "version": "v3",
+                                      Object {
+                                        "labels": Object {
+                                          "version": "v3",
+                                        },
+                                        "name": "v3",
                                       },
-                                      "name": "v3",
-                                    },
-                                  ],
-                                  "trafficPolicy": null,
+                                    ],
+                                    "trafficPolicy": null,
+                                  },
                                 },
                               ]
                             }
@@ -3510,6 +3720,13 @@ ShallowWrapper {
                           eventKey="destinationrules"
                         >
                           Destination Rules (1)
+                          <span>
+                             
+                            <Icon
+                              name="error-circle-o"
+                              type="pf"
+                            />
+                          </span>
                         </NavItem>
                       </Nav>
                       <TabContent
@@ -3537,26 +3754,30 @@ ShallowWrapper {
                             virtualServices={
                               Array [
                                 Object {
-                                  "createdAt": "2018-07-02T13:44:01+02:00",
-                                  "gateways": null,
-                                  "hosts": Array [
-                                    "reviews",
-                                  ],
-                                  "http": Array [
-                                    Object {
-                                      "route": Array [
-                                        Object {
-                                          "destination": Object {
-                                            "host": "reviews",
-                                            "subset": "v1",
+                                  "metadata": Object {
+                                    "creationTimestamp": "2018-07-02T13:44:01+02:00",
+                                    "name": "reviews",
+                                    "resourceVersion": "393057",
+                                  },
+                                  "spec": Object {
+                                    "gateways": null,
+                                    "hosts": Array [
+                                      "reviews",
+                                    ],
+                                    "http": Array [
+                                      Object {
+                                        "route": Array [
+                                          Object {
+                                            "destination": Object {
+                                              "host": "reviews",
+                                              "subset": "v1",
+                                            },
                                           },
-                                        },
-                                      ],
-                                    },
-                                  ],
-                                  "name": "reviews",
-                                  "resourceVersion": "393057",
-                                  "tcp": null,
+                                        ],
+                                      },
+                                    ],
+                                    "tcp": null,
+                                  },
                                 },
                               ]
                             }
@@ -3570,31 +3791,35 @@ ShallowWrapper {
                             destinationRules={
                               Array [
                                 Object {
-                                  "createdAt": "2018-07-02T13:44:01+02:00",
-                                  "host": "reviews",
-                                  "name": "reviews",
-                                  "resourceVersion": "393061",
-                                  "subsets": Array [
-                                    Object {
-                                      "labels": Object {
-                                        "version": "v1",
+                                  "metadata": Object {
+                                    "createdTimestamp": "2018-07-02T13:44:01+02:00",
+                                    "name": "reviews",
+                                    "resourceVersion": "393061",
+                                  },
+                                  "spec": Object {
+                                    "host": "reviews",
+                                    "subsets": Array [
+                                      Object {
+                                        "labels": Object {
+                                          "version": "v1",
+                                        },
+                                        "name": "v1",
                                       },
-                                      "name": "v1",
-                                    },
-                                    Object {
-                                      "labels": Object {
-                                        "version": "v2",
+                                      Object {
+                                        "labels": Object {
+                                          "version": "v2",
+                                        },
+                                        "name": "v2",
                                       },
-                                      "name": "v2",
-                                    },
-                                    Object {
-                                      "labels": Object {
-                                        "version": "v3",
+                                      Object {
+                                        "labels": Object {
+                                          "version": "v3",
+                                        },
+                                        "name": "v3",
                                       },
-                                      "name": "v3",
-                                    },
-                                  ],
-                                  "trafficPolicy": null,
+                                    ],
+                                    "trafficPolicy": null,
+                                  },
                                 },
                               ]
                             }
@@ -3673,6 +3898,13 @@ ShallowWrapper {
                           eventKey="destinationrules"
                         >
                           Destination Rules (1)
+                          <span>
+                             
+                            <Icon
+                              name="error-circle-o"
+                              type="pf"
+                            />
+                          </span>
                         </NavItem>
                       </Nav>
                       <TabContent
@@ -3700,26 +3932,30 @@ ShallowWrapper {
                             virtualServices={
                               Array [
                                 Object {
-                                  "createdAt": "2018-07-02T13:44:01+02:00",
-                                  "gateways": null,
-                                  "hosts": Array [
-                                    "reviews",
-                                  ],
-                                  "http": Array [
-                                    Object {
-                                      "route": Array [
-                                        Object {
-                                          "destination": Object {
-                                            "host": "reviews",
-                                            "subset": "v1",
+                                  "metadata": Object {
+                                    "creationTimestamp": "2018-07-02T13:44:01+02:00",
+                                    "name": "reviews",
+                                    "resourceVersion": "393057",
+                                  },
+                                  "spec": Object {
+                                    "gateways": null,
+                                    "hosts": Array [
+                                      "reviews",
+                                    ],
+                                    "http": Array [
+                                      Object {
+                                        "route": Array [
+                                          Object {
+                                            "destination": Object {
+                                              "host": "reviews",
+                                              "subset": "v1",
+                                            },
                                           },
-                                        },
-                                      ],
-                                    },
-                                  ],
-                                  "name": "reviews",
-                                  "resourceVersion": "393057",
-                                  "tcp": null,
+                                        ],
+                                      },
+                                    ],
+                                    "tcp": null,
+                                  },
                                 },
                               ]
                             }
@@ -3733,31 +3969,35 @@ ShallowWrapper {
                             destinationRules={
                               Array [
                                 Object {
-                                  "createdAt": "2018-07-02T13:44:01+02:00",
-                                  "host": "reviews",
-                                  "name": "reviews",
-                                  "resourceVersion": "393061",
-                                  "subsets": Array [
-                                    Object {
-                                      "labels": Object {
-                                        "version": "v1",
+                                  "metadata": Object {
+                                    "createdTimestamp": "2018-07-02T13:44:01+02:00",
+                                    "name": "reviews",
+                                    "resourceVersion": "393061",
+                                  },
+                                  "spec": Object {
+                                    "host": "reviews",
+                                    "subsets": Array [
+                                      Object {
+                                        "labels": Object {
+                                          "version": "v1",
+                                        },
+                                        "name": "v1",
                                       },
-                                      "name": "v1",
-                                    },
-                                    Object {
-                                      "labels": Object {
-                                        "version": "v2",
+                                      Object {
+                                        "labels": Object {
+                                          "version": "v2",
+                                        },
+                                        "name": "v2",
                                       },
-                                      "name": "v2",
-                                    },
-                                    Object {
-                                      "labels": Object {
-                                        "version": "v3",
+                                      Object {
+                                        "labels": Object {
+                                          "version": "v3",
+                                        },
+                                        "name": "v3",
                                       },
-                                      "name": "v3",
-                                    },
-                                  ],
-                                  "trafficPolicy": null,
+                                    ],
+                                    "trafficPolicy": null,
+                                  },
                                 },
                               ]
                             }
@@ -3831,6 +4071,13 @@ ShallowWrapper {
                             eventKey="destinationrules"
                           >
                             Destination Rules (1)
+                            <span>
+                               
+                              <Icon
+                                name="error-circle-o"
+                                type="pf"
+                              />
+                            </span>
                           </NavItem>
                         </Nav>,
                         <TabContent
@@ -3858,26 +4105,30 @@ ShallowWrapper {
                               virtualServices={
                                 Array [
                                   Object {
-                                    "createdAt": "2018-07-02T13:44:01+02:00",
-                                    "gateways": null,
-                                    "hosts": Array [
-                                      "reviews",
-                                    ],
-                                    "http": Array [
-                                      Object {
-                                        "route": Array [
-                                          Object {
-                                            "destination": Object {
-                                              "host": "reviews",
-                                              "subset": "v1",
+                                    "metadata": Object {
+                                      "creationTimestamp": "2018-07-02T13:44:01+02:00",
+                                      "name": "reviews",
+                                      "resourceVersion": "393057",
+                                    },
+                                    "spec": Object {
+                                      "gateways": null,
+                                      "hosts": Array [
+                                        "reviews",
+                                      ],
+                                      "http": Array [
+                                        Object {
+                                          "route": Array [
+                                            Object {
+                                              "destination": Object {
+                                                "host": "reviews",
+                                                "subset": "v1",
+                                              },
                                             },
-                                          },
-                                        ],
-                                      },
-                                    ],
-                                    "name": "reviews",
-                                    "resourceVersion": "393057",
-                                    "tcp": null,
+                                          ],
+                                        },
+                                      ],
+                                      "tcp": null,
+                                    },
                                   },
                                 ]
                               }
@@ -3891,31 +4142,35 @@ ShallowWrapper {
                               destinationRules={
                                 Array [
                                   Object {
-                                    "createdAt": "2018-07-02T13:44:01+02:00",
-                                    "host": "reviews",
-                                    "name": "reviews",
-                                    "resourceVersion": "393061",
-                                    "subsets": Array [
-                                      Object {
-                                        "labels": Object {
-                                          "version": "v1",
+                                    "metadata": Object {
+                                      "createdTimestamp": "2018-07-02T13:44:01+02:00",
+                                      "name": "reviews",
+                                      "resourceVersion": "393061",
+                                    },
+                                    "spec": Object {
+                                      "host": "reviews",
+                                      "subsets": Array [
+                                        Object {
+                                          "labels": Object {
+                                            "version": "v1",
+                                          },
+                                          "name": "v1",
                                         },
-                                        "name": "v1",
-                                      },
-                                      Object {
-                                        "labels": Object {
-                                          "version": "v2",
+                                        Object {
+                                          "labels": Object {
+                                            "version": "v2",
+                                          },
+                                          "name": "v2",
                                         },
-                                        "name": "v2",
-                                      },
-                                      Object {
-                                        "labels": Object {
-                                          "version": "v3",
+                                        Object {
+                                          "labels": Object {
+                                            "version": "v3",
+                                          },
+                                          "name": "v3",
                                         },
-                                        "name": "v3",
-                                      },
-                                    ],
-                                    "trafficPolicy": null,
+                                      ],
+                                      "trafficPolicy": null,
+                                    },
                                   },
                                 ]
                               }
@@ -3982,6 +4237,13 @@ ShallowWrapper {
                               eventKey="destinationrules"
                             >
                               Destination Rules (1)
+                              <span>
+                                 
+                                <Icon
+                                  name="error-circle-o"
+                                  type="pf"
+                                />
+                              </span>
                             </NavItem>,
                           ],
                           "justified": false,
@@ -4047,7 +4309,13 @@ ShallowWrapper {
                               "active": false,
                               "children": Array [
                                 "Destination Rules (1)",
-                                undefined,
+                                <span>
+                                   
+                                  <Icon
+                                    name="error-circle-o"
+                                    type="pf"
+                                  />
+                                </span>,
                               ],
                               "disabled": false,
                               "eventKey": "destinationrules",
@@ -4055,7 +4323,37 @@ ShallowWrapper {
                             "ref": null,
                             "rendered": Array [
                               "Destination Rules (1)",
-                              undefined,
+                              Object {
+                                "instance": null,
+                                "key": undefined,
+                                "nodeType": "host",
+                                "props": Object {
+                                  "children": Array [
+                                    " ",
+                                    <Icon
+                                      name="error-circle-o"
+                                      type="pf"
+                                    />,
+                                  ],
+                                },
+                                "ref": null,
+                                "rendered": Array [
+                                  " ",
+                                  Object {
+                                    "instance": null,
+                                    "key": undefined,
+                                    "nodeType": "function",
+                                    "props": Object {
+                                      "name": "error-circle-o",
+                                      "type": "pf",
+                                    },
+                                    "ref": null,
+                                    "rendered": null,
+                                    "type": [Function],
+                                  },
+                                ],
+                                "type": "span",
+                              },
                             ],
                             "type": [Function],
                           },
@@ -4088,26 +4386,30 @@ ShallowWrapper {
                                 virtualServices={
                                   Array [
                                     Object {
-                                      "createdAt": "2018-07-02T13:44:01+02:00",
-                                      "gateways": null,
-                                      "hosts": Array [
-                                        "reviews",
-                                      ],
-                                      "http": Array [
-                                        Object {
-                                          "route": Array [
-                                            Object {
-                                              "destination": Object {
-                                                "host": "reviews",
-                                                "subset": "v1",
+                                      "metadata": Object {
+                                        "creationTimestamp": "2018-07-02T13:44:01+02:00",
+                                        "name": "reviews",
+                                        "resourceVersion": "393057",
+                                      },
+                                      "spec": Object {
+                                        "gateways": null,
+                                        "hosts": Array [
+                                          "reviews",
+                                        ],
+                                        "http": Array [
+                                          Object {
+                                            "route": Array [
+                                              Object {
+                                                "destination": Object {
+                                                  "host": "reviews",
+                                                  "subset": "v1",
+                                                },
                                               },
-                                            },
-                                          ],
-                                        },
-                                      ],
-                                      "name": "reviews",
-                                      "resourceVersion": "393057",
-                                      "tcp": null,
+                                            ],
+                                          },
+                                        ],
+                                        "tcp": null,
+                                      },
                                     },
                                   ]
                                 }
@@ -4121,31 +4423,35 @@ ShallowWrapper {
                                 destinationRules={
                                   Array [
                                     Object {
-                                      "createdAt": "2018-07-02T13:44:01+02:00",
-                                      "host": "reviews",
-                                      "name": "reviews",
-                                      "resourceVersion": "393061",
-                                      "subsets": Array [
-                                        Object {
-                                          "labels": Object {
-                                            "version": "v1",
+                                      "metadata": Object {
+                                        "createdTimestamp": "2018-07-02T13:44:01+02:00",
+                                        "name": "reviews",
+                                        "resourceVersion": "393061",
+                                      },
+                                      "spec": Object {
+                                        "host": "reviews",
+                                        "subsets": Array [
+                                          Object {
+                                            "labels": Object {
+                                              "version": "v1",
+                                            },
+                                            "name": "v1",
                                           },
-                                          "name": "v1",
-                                        },
-                                        Object {
-                                          "labels": Object {
-                                            "version": "v2",
+                                          Object {
+                                            "labels": Object {
+                                              "version": "v2",
+                                            },
+                                            "name": "v2",
                                           },
-                                          "name": "v2",
-                                        },
-                                        Object {
-                                          "labels": Object {
-                                            "version": "v3",
+                                          Object {
+                                            "labels": Object {
+                                              "version": "v3",
+                                            },
+                                            "name": "v3",
                                           },
-                                          "name": "v3",
-                                        },
-                                      ],
-                                      "trafficPolicy": null,
+                                        ],
+                                        "trafficPolicy": null,
+                                      },
                                     },
                                   ]
                                 }
@@ -4218,26 +4524,30 @@ ShallowWrapper {
                                 virtualServices={
                                   Array [
                                     Object {
-                                      "createdAt": "2018-07-02T13:44:01+02:00",
-                                      "gateways": null,
-                                      "hosts": Array [
-                                        "reviews",
-                                      ],
-                                      "http": Array [
-                                        Object {
-                                          "route": Array [
-                                            Object {
-                                              "destination": Object {
-                                                "host": "reviews",
-                                                "subset": "v1",
+                                      "metadata": Object {
+                                        "creationTimestamp": "2018-07-02T13:44:01+02:00",
+                                        "name": "reviews",
+                                        "resourceVersion": "393057",
+                                      },
+                                      "spec": Object {
+                                        "gateways": null,
+                                        "hosts": Array [
+                                          "reviews",
+                                        ],
+                                        "http": Array [
+                                          Object {
+                                            "route": Array [
+                                              Object {
+                                                "destination": Object {
+                                                  "host": "reviews",
+                                                  "subset": "v1",
+                                                },
                                               },
-                                            },
-                                          ],
-                                        },
-                                      ],
-                                      "name": "reviews",
-                                      "resourceVersion": "393057",
-                                      "tcp": null,
+                                            ],
+                                          },
+                                        ],
+                                        "tcp": null,
+                                      },
                                     },
                                   ]
                                 }
@@ -4254,26 +4564,30 @@ ShallowWrapper {
                                 "validations": undefined,
                                 "virtualServices": Array [
                                   Object {
-                                    "createdAt": "2018-07-02T13:44:01+02:00",
-                                    "gateways": null,
-                                    "hosts": Array [
-                                      "reviews",
-                                    ],
-                                    "http": Array [
-                                      Object {
-                                        "route": Array [
-                                          Object {
-                                            "destination": Object {
-                                              "host": "reviews",
-                                              "subset": "v1",
+                                    "metadata": Object {
+                                      "creationTimestamp": "2018-07-02T13:44:01+02:00",
+                                      "name": "reviews",
+                                      "resourceVersion": "393057",
+                                    },
+                                    "spec": Object {
+                                      "gateways": null,
+                                      "hosts": Array [
+                                        "reviews",
+                                      ],
+                                      "http": Array [
+                                        Object {
+                                          "route": Array [
+                                            Object {
+                                              "destination": Object {
+                                                "host": "reviews",
+                                                "subset": "v1",
+                                              },
                                             },
-                                          },
-                                        ],
-                                      },
-                                    ],
-                                    "name": "reviews",
-                                    "resourceVersion": "393057",
-                                    "tcp": null,
+                                          ],
+                                        },
+                                      ],
+                                      "tcp": null,
+                                    },
                                   },
                                 ],
                               },
@@ -4293,31 +4607,35 @@ ShallowWrapper {
                                 destinationRules={
                                   Array [
                                     Object {
-                                      "createdAt": "2018-07-02T13:44:01+02:00",
-                                      "host": "reviews",
-                                      "name": "reviews",
-                                      "resourceVersion": "393061",
-                                      "subsets": Array [
-                                        Object {
-                                          "labels": Object {
-                                            "version": "v1",
+                                      "metadata": Object {
+                                        "createdTimestamp": "2018-07-02T13:44:01+02:00",
+                                        "name": "reviews",
+                                        "resourceVersion": "393061",
+                                      },
+                                      "spec": Object {
+                                        "host": "reviews",
+                                        "subsets": Array [
+                                          Object {
+                                            "labels": Object {
+                                              "version": "v1",
+                                            },
+                                            "name": "v1",
                                           },
-                                          "name": "v1",
-                                        },
-                                        Object {
-                                          "labels": Object {
-                                            "version": "v2",
+                                          Object {
+                                            "labels": Object {
+                                              "version": "v2",
+                                            },
+                                            "name": "v2",
                                           },
-                                          "name": "v2",
-                                        },
-                                        Object {
-                                          "labels": Object {
-                                            "version": "v3",
+                                          Object {
+                                            "labels": Object {
+                                              "version": "v3",
+                                            },
+                                            "name": "v3",
                                           },
-                                          "name": "v3",
-                                        },
-                                      ],
-                                      "trafficPolicy": null,
+                                        ],
+                                        "trafficPolicy": null,
+                                      },
                                     },
                                   ]
                                 }
@@ -4354,31 +4672,35 @@ ShallowWrapper {
                               "props": Object {
                                 "destinationRules": Array [
                                   Object {
-                                    "createdAt": "2018-07-02T13:44:01+02:00",
-                                    "host": "reviews",
-                                    "name": "reviews",
-                                    "resourceVersion": "393061",
-                                    "subsets": Array [
-                                      Object {
-                                        "labels": Object {
-                                          "version": "v1",
+                                    "metadata": Object {
+                                      "createdTimestamp": "2018-07-02T13:44:01+02:00",
+                                      "name": "reviews",
+                                      "resourceVersion": "393061",
+                                    },
+                                    "spec": Object {
+                                      "host": "reviews",
+                                      "subsets": Array [
+                                        Object {
+                                          "labels": Object {
+                                            "version": "v1",
+                                          },
+                                          "name": "v1",
                                         },
-                                        "name": "v1",
-                                      },
-                                      Object {
-                                        "labels": Object {
-                                          "version": "v2",
+                                        Object {
+                                          "labels": Object {
+                                            "version": "v2",
+                                          },
+                                          "name": "v2",
                                         },
-                                        "name": "v2",
-                                      },
-                                      Object {
-                                        "labels": Object {
-                                          "version": "v3",
+                                        Object {
+                                          "labels": Object {
+                                            "version": "v3",
+                                          },
+                                          "name": "v3",
                                         },
-                                        "name": "v3",
-                                      },
-                                    ],
-                                    "trafficPolicy": null,
+                                      ],
+                                      "trafficPolicy": null,
+                                    },
                                   },
                                 ],
                                 "editorLink": "/namespaces/istio-system/services/reviews",
