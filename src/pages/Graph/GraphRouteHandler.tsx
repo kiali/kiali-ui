@@ -162,7 +162,7 @@ export default class GraphRouteHandler extends React.Component<
     const injectServiceNodesChanged = nextInjectServiceNodes !== currentState.injectServiceNodes;
     const layoutHasChanged = nextLayout.name !== currentState.graphLayout.name;
     const namespacesHaveChanged =
-      !nextNode && arrayEquals(nextNamespaces, currentNamespaces, (n1, n2) => n1.name === n2.name);
+      !nextNode && !arrayEquals(nextNamespaces, currentNamespaces, (n1, n2) => n1.name === n2.name);
     const nodeAppHasChanged = nextNode && currentState.node && nextNode.app !== currentState.node.app;
     const nodeServiceHasChanged = nextNode && currentState.node && nextNode.service !== currentState.node.service;
     const nodeVersionHasChanged = nextNode && currentState.node && nextNode.version !== currentState.node.version;
