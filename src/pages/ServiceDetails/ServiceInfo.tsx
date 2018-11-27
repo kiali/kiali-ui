@@ -188,6 +188,7 @@ class ServiceInfo extends React.Component<ServiceDetails, ServiceInfoState> {
                     <TabPane eventKey={'virtualservices'}>
                       {(virtualServices.items.length > 0 || this.props.serviceDetails.istioSidecar) && (
                         <ServiceInfoVirtualServices
+                          namespace={this.props.namespace}
                           virtualServices={virtualServices.items}
                           editorLink={editorLink}
                           validations={this.props.validations!['virtualservice']}
@@ -197,6 +198,7 @@ class ServiceInfo extends React.Component<ServiceDetails, ServiceInfoState> {
                     <TabPane eventKey={'destinationrules'}>
                       {(destinationRules.items.length > 0 || this.props.serviceDetails.istioSidecar) && (
                         <ServiceInfoDestinationRules
+                          namespace={this.props.namespace}
                           destinationRules={destinationRules.items}
                           editorLink={editorLink}
                           validations={this.props.validations!['destinationrule']}

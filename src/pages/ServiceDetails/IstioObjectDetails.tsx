@@ -2,30 +2,11 @@ import * as React from 'react';
 import { DestinationRule, VirtualService } from '../../types/ServiceInfo';
 import { Validations } from '../../types/IstioObjects';
 import { Col, Nav, NavItem, Row, TabContainer, TabContent, TabPane } from 'patternfly-react';
-import { AceValidations, parseAceValidations } from '../../types/AceValidations';
-import AceEditor, { AceOptions } from 'react-ace';
-import 'brace/mode/yaml';
-import 'brace/theme/eclipse';
 import VirtualServiceDetail from './ServiceInfo/IstioObjectDetails/VirtualServiceDetail';
 import DestinationRuleDetail from './ServiceInfo/IstioObjectDetails/DestinationRuleDetail';
 import './ServiceInfo/IstioObjectDetails/IstioObjectDetails.css';
-import { Link } from 'react-router-dom';
 import IstioActionDropdown from '../../components/IstioActions/IstioActionsDropdown';
 import { ResourcePermissions } from '../../types/Permissions';
-
-const yaml = require('js-yaml');
-
-const safeDumpOptions = {
-  styles: {
-    '!!null': 'canonical' // dump null as ~
-  }
-};
-
-const aceOptions: AceOptions = {
-  readOnly: true,
-  showPrintMargin: false,
-  autoScrollEditorIntoView: true
-};
 
 type IstioObjectDetailsProps = {
   namespace: string;
@@ -39,7 +20,6 @@ type IstioObjectDetailsProps = {
 };
 
 type IstioObjectDetailsState = {
-  aceValidations: AceValidations;
   validationsParsed: boolean;
   yamlEditor: string;
 };
@@ -49,69 +29,8 @@ export default class IstioObjectDetails extends React.Component<IstioObjectDetai
     super(props);
     this.state = {
       yamlEditor: '',
-      validationsParsed: false,
-      aceValidations: {
-        markers: [],
-        annotations: []
-      }
+      validationsParsed: false
     };
-  }
-
-  markers() {
-    return this.aceValidations().markers;
-  }
-
-  annotations() {
-    return this.aceValidations().annotations;
-  }
-
-  aceValidations() {
-    if (!this.state.validationsParsed) {
-      this.setState({
-        aceValidations: parseAceValidations(this.yamlEditor(), this.props.validations),
-        validationsParsed: true
-      });
-    }
-
-    return this.state.aceValidations;
-  }
-
-  yamlEditor() {
-    let yamlEditor = this.state.yamlEditor;
-
-    if (!yamlEditor) {
-      yamlEditor = yaml.safeDump(this.props.object, safeDumpOptions);
-    }
-
-    return yamlEditor;
-  }
-
-  editorTab() {
-    return (
-      <TabPane eventKey="yaml">
-        <div className="card-pf">
-          <Row className={'card-pf-body'} key={'virtualservice-yaml'}>
-            <Col xs={12}>
-              <div className={'pull-right'}>
-                <Link to={this.props.servicePageURL}>Back to Service</Link>{' '}
-              </div>
-              <AceEditor
-                mode="yaml"
-                theme="eclipse"
-                readOnly={true}
-                width={'100%'}
-                height={'50vh'}
-                className={'istio-ace-editor'}
-                setOptions={aceOptions}
-                value={this.yamlEditor()}
-                markers={this.markers()}
-                annotations={this.annotations()}
-              />
-            </Col>
-          </Row>
-        </div>
-      </TabPane>
-    );
   }
 
   isIstioObjectWithOverview() {
@@ -125,6 +44,13 @@ export default class IstioObjectDetails extends React.Component<IstioObjectDetai
   isDestinationRule() {
     return this.typeIstioObject() === 'DestinationRule';
   }
+
+  navigateToIstioObject = () => {
+    window.open(
+      `/namespaces/${this.props.namespace}/istio/${this.typeIstioObject().toLowerCase()}s/${this.props.object.name}`,
+      '_self'
+    );
+  };
 
   typeIstioObject() {
     if ('tcp' in this.props.object && 'http' in this.props.object) {
@@ -155,12 +81,6 @@ export default class IstioObjectDetails extends React.Component<IstioObjectDetai
         return null;
     }
   }
-  overviewTab() {
-    if (this.isIstioObjectWithOverview()) {
-      return <TabPane eventKey="overview">{this.overviewDetail()}</TabPane>;
-    }
-    return null;
-  }
 
   renderTabNav() {
     return (
@@ -171,7 +91,7 @@ export default class IstioObjectDetails extends React.Component<IstioObjectDetai
               <div>Overview</div>
             </NavItem>
           )}
-          <NavItem eventKey="yaml">
+          <NavItem eventKey="yaml" onClick={this.navigateToIstioObject}>
             <div>YAML</div>
           </NavItem>
         </Nav>
@@ -200,8 +120,7 @@ export default class IstioObjectDetails extends React.Component<IstioObjectDetai
               <>
                 {this.renderTabNav()}
                 <TabContent>
-                  {this.overviewTab()}
-                  {this.editorTab()}
+                  {this.isIstioObjectWithOverview() && <TabPane eventKey="overview">{this.overviewDetail()}</TabPane>}
                 </TabContent>
               </>
             </TabContainer>

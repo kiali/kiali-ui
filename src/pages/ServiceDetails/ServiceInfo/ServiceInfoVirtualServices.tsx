@@ -9,6 +9,7 @@ import LocalTime from '../../../components/Time/LocalTime';
 import { ConfigIndicator } from '../../../components/ConfigValidation/ConfigIndicator';
 
 interface ServiceInfoVirtualServicesProps extends EditorLink {
+  namespace: string;
   virtualServices?: VirtualService[];
   validations: { [key: string]: ObjectValidation };
 }
@@ -100,7 +101,7 @@ class ServiceInfoVirtualServices extends React.Component<ServiceInfoVirtualServi
 
   yamlLink(virtualService: VirtualService) {
     return (
-      <Link to={this.props.editorLink + '?virtualservice=' + virtualService.name + '&detail=yaml'}>View YAML</Link>
+      <Link to={`/namespaces/${this.props.namespace}/istio/virtualservices/${virtualService.name}`}>View YAML</Link>
     );
   }
 

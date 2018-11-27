@@ -10,6 +10,7 @@ import { ConfigIndicator } from '../../../components/ConfigValidation/ConfigIndi
 import { ObjectValidation } from '../../../types/IstioObjects';
 
 interface ServiceInfoDestinationRulesProps extends EditorLink {
+  namespace: string;
   destinationRules?: DestinationRule[];
   validations: { [key: string]: ObjectValidation };
 }
@@ -119,7 +120,7 @@ class ServiceInfoDestinationRules extends React.Component<ServiceInfoDestination
 
   yamlLink(destinationRule: DestinationRule) {
     return (
-      <Link to={this.props.editorLink + '?destinationrule=' + destinationRule.name + '&detail=yaml'}>View YAML</Link>
+      <Link to={`/namespaces/${this.props.namespace}/istio/destinationrules/${destinationRule.name}`}>View YAML</Link>
     );
   }
 
