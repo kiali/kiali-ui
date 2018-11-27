@@ -11,7 +11,9 @@ ShallowWrapper {
       Array [
         Object {
           "metadata": Object {
+            "creationTimestamp": "2018-03-14T10:17:52Z",
             "name": "reviews-default",
+            "resourceVersion": "1234",
           },
           "spec": Object {
             "gateways": Array [
@@ -281,7 +283,7 @@ ShallowWrapper {
                     View YAML
                   </Link>,
                   "createdAt": <LocalTime
-                    time=""
+                    time="2018-03-14T10:17:52Z"
                   />,
                   "id": 0,
                   "name": <Link
@@ -290,7 +292,7 @@ ShallowWrapper {
                   >
                     reviews-default
                   </Link>,
-                  "resourceVersion": undefined,
+                  "resourceVersion": "1234",
                   "status": <ConfigIndicator
                     id="0-config-validation"
                     validations={
@@ -511,7 +513,7 @@ ShallowWrapper {
                     View YAML
                   </Link>,
                   "createdAt": <LocalTime
-                    time=""
+                    time="2018-03-14T10:17:52Z"
                   />,
                   "id": 0,
                   "name": <Link
@@ -520,7 +522,7 @@ ShallowWrapper {
                   >
                     reviews-default
                   </Link>,
-                  "resourceVersion": undefined,
+                  "resourceVersion": "1234",
                   "status": <ConfigIndicator
                     id="0-config-validation"
                     validations={
@@ -654,7 +656,7 @@ ShallowWrapper {
                       View YAML
                     </Link>,
                     "createdAt": <LocalTime
-                      time=""
+                      time="2018-03-14T10:17:52Z"
                     />,
                     "id": 0,
                     "name": <Link
@@ -663,7 +665,7 @@ ShallowWrapper {
                     >
                       reviews-default
                     </Link>,
-                    "resourceVersion": undefined,
+                    "resourceVersion": "1234",
                     "status": <ConfigIndicator
                       id="0-config-validation"
                       validations={
@@ -880,7 +882,7 @@ ShallowWrapper {
                     View YAML
                   </Link>,
                   "createdAt": <LocalTime
-                    time=""
+                    time="2018-03-14T10:17:52Z"
                   />,
                   "id": 0,
                   "name": <Link
@@ -889,7 +891,7 @@ ShallowWrapper {
                   >
                     reviews-default
                   </Link>,
-                  "resourceVersion": undefined,
+                  "resourceVersion": "1234",
                   "status": <ConfigIndicator
                     id="0-config-validation"
                     validations={
@@ -1120,7 +1122,7 @@ ShallowWrapper {
                       View YAML
                     </Link>,
                     "createdAt": <LocalTime
-                      time=""
+                      time="2018-03-14T10:17:52Z"
                     />,
                     "id": 0,
                     "name": <Link
@@ -1129,7 +1131,7 @@ ShallowWrapper {
                     >
                       reviews-default
                     </Link>,
-                    "resourceVersion": undefined,
+                    "resourceVersion": "1234",
                     "status": <ConfigIndicator
                       id="0-config-validation"
                       validations={
@@ -1350,7 +1352,7 @@ ShallowWrapper {
                       View YAML
                     </Link>,
                     "createdAt": <LocalTime
-                      time=""
+                      time="2018-03-14T10:17:52Z"
                     />,
                     "id": 0,
                     "name": <Link
@@ -1359,7 +1361,7 @@ ShallowWrapper {
                     >
                       reviews-default
                     </Link>,
-                    "resourceVersion": undefined,
+                    "resourceVersion": "1234",
                     "status": <ConfigIndicator
                       id="0-config-validation"
                       validations={
@@ -1493,7 +1495,7 @@ ShallowWrapper {
                         View YAML
                       </Link>,
                       "createdAt": <LocalTime
-                        time=""
+                        time="2018-03-14T10:17:52Z"
                       />,
                       "id": 0,
                       "name": <Link
@@ -1502,7 +1504,7 @@ ShallowWrapper {
                       >
                         reviews-default
                       </Link>,
-                      "resourceVersion": undefined,
+                      "resourceVersion": "1234",
                       "status": <ConfigIndicator
                         id="0-config-validation"
                         validations={
@@ -1719,7 +1721,7 @@ ShallowWrapper {
                       View YAML
                     </Link>,
                     "createdAt": <LocalTime
-                      time=""
+                      time="2018-03-14T10:17:52Z"
                     />,
                     "id": 0,
                     "name": <Link
@@ -1728,7 +1730,7 @@ ShallowWrapper {
                     >
                       reviews-default
                     </Link>,
-                    "resourceVersion": undefined,
+                    "resourceVersion": "1234",
                     "status": <ConfigIndicator
                       id="0-config-validation"
                       validations={

@@ -6,7 +6,9 @@ import { VirtualService } from '../../../../types/IstioObjects';
 const virtualServices: VirtualService[] = [
   {
     metadata: {
-      name: 'reviews-default'
+      name: 'reviews-default',
+      resourceVersion: '1234',
+      creationTimestamp: '2018-03-14T10:17:52Z'
     },
     spec: {
       hosts: ['rewiews'],
