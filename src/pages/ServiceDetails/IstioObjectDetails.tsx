@@ -145,7 +145,7 @@ export default class IstioObjectDetails extends React.Component<IstioObjectDetai
       case 'DestinationRule':
         return (
           <DestinationRuleDetail
-            destinationRule={istioObj}
+            destinationRule={istioObj as DestinationRule}
             validations={this.props.validations['destinationRule']}
             namespace={this.props.namespace}
           />
