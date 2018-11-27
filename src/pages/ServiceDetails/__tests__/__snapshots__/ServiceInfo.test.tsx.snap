@@ -419,6 +419,7 @@ ShallowWrapper {
                     >
                       <ServiceInfoVirtualServices
                         editorLink="/namespaces/istio-system/services/reviews"
+                        namespace="istio-system"
                         validations={undefined}
                         virtualServices={
                           Array [
@@ -485,6 +486,7 @@ ShallowWrapper {
                           ]
                         }
                         editorLink="/namespaces/istio-system/services/reviews"
+                        namespace="istio-system"
                         validations={
                           Object {
                             "reviews": Object {
@@ -727,6 +729,7 @@ ShallowWrapper {
                       >
                         <ServiceInfoVirtualServices
                           editorLink="/namespaces/istio-system/services/reviews"
+                          namespace="istio-system"
                           validations={undefined}
                           virtualServices={
                             Array [
@@ -793,6 +796,7 @@ ShallowWrapper {
                             ]
                           }
                           editorLink="/namespaces/istio-system/services/reviews"
+                          namespace="istio-system"
                           validations={
                             Object {
                               "reviews": Object {
@@ -1278,6 +1282,7 @@ ShallowWrapper {
                       >
                         <ServiceInfoVirtualServices
                           editorLink="/namespaces/istio-system/services/reviews"
+                          namespace="istio-system"
                           validations={undefined}
                           virtualServices={
                             Array [
@@ -1344,6 +1349,7 @@ ShallowWrapper {
                             ]
                           }
                           editorLink="/namespaces/istio-system/services/reviews"
+                          namespace="istio-system"
                           validations={
                             Object {
                               "reviews": Object {
@@ -1451,6 +1457,7 @@ ShallowWrapper {
                       >
                         <ServiceInfoVirtualServices
                           editorLink="/namespaces/istio-system/services/reviews"
+                          namespace="istio-system"
                           validations={undefined}
                           virtualServices={
                             Array [
@@ -1517,6 +1524,7 @@ ShallowWrapper {
                             ]
                           }
                           editorLink="/namespaces/istio-system/services/reviews"
+                          namespace="istio-system"
                           validations={
                             Object {
                               "reviews": Object {
@@ -1621,6 +1629,7 @@ ShallowWrapper {
                       >
                         <ServiceInfoVirtualServices
                           editorLink="/namespaces/istio-system/services/reviews"
+                          namespace="istio-system"
                           validations={undefined}
                           virtualServices={
                             Array [
@@ -1687,6 +1696,7 @@ ShallowWrapper {
                             ]
                           }
                           editorLink="/namespaces/istio-system/services/reviews"
+                          namespace="istio-system"
                           validations={
                             Object {
                               "reviews": Object {
@@ -1786,6 +1796,7 @@ ShallowWrapper {
                         >
                           <ServiceInfoVirtualServices
                             editorLink="/namespaces/istio-system/services/reviews"
+                            namespace="istio-system"
                             validations={undefined}
                             virtualServices={
                               Array [
@@ -1852,6 +1863,7 @@ ShallowWrapper {
                               ]
                             }
                             editorLink="/namespaces/istio-system/services/reviews"
+                            namespace="istio-system"
                             validations={
                               Object {
                                 "reviews": Object {
@@ -2059,6 +2071,7 @@ ShallowWrapper {
                           >
                             <ServiceInfoVirtualServices
                               editorLink="/namespaces/istio-system/services/reviews"
+                              namespace="istio-system"
                               validations={undefined}
                               virtualServices={
                                 Array [
@@ -2125,6 +2138,7 @@ ShallowWrapper {
                                 ]
                               }
                               editorLink="/namespaces/istio-system/services/reviews"
+                              namespace="istio-system"
                               validations={
                                 Object {
                                   "reviews": Object {
@@ -2189,6 +2203,7 @@ ShallowWrapper {
                             "bsClass": "tab-pane",
                             "children": <ServiceInfoVirtualServices
                               editorLink="/namespaces/istio-system/services/reviews"
+                              namespace="istio-system"
                               validations={undefined}
                               virtualServices={
                                 Array [
@@ -2226,6 +2241,7 @@ ShallowWrapper {
                             "nodeType": "class",
                             "props": Object {
                               "editorLink": "/namespaces/istio-system/services/reviews",
+                              "namespace": "istio-system",
                               "validations": undefined,
                               "virtualServices": Array [
                                 Object {
@@ -2297,6 +2313,7 @@ ShallowWrapper {
                                 ]
                               }
                               editorLink="/namespaces/istio-system/services/reviews"
+                              namespace="istio-system"
                               validations={
                                 Object {
                                   "reviews": Object {
@@ -2357,6 +2374,7 @@ ShallowWrapper {
                                 },
                               ],
                               "editorLink": "/namespaces/istio-system/services/reviews",
+                              "namespace": "istio-system",
                               "validations": Object {
                                 "reviews": Object {
                                   "checks": Array [
@@ -2614,6 +2632,7 @@ ShallowWrapper {
                       >
                         <ServiceInfoVirtualServices
                           editorLink="/namespaces/istio-system/services/reviews"
+                          namespace="istio-system"
                           validations={undefined}
                           virtualServices={
                             Array [
@@ -2680,6 +2699,7 @@ ShallowWrapper {
                             ]
                           }
                           editorLink="/namespaces/istio-system/services/reviews"
+                          namespace="istio-system"
                           validations={
                             Object {
                               "reviews": Object {
@@ -2922,6 +2942,7 @@ ShallowWrapper {
                         >
                           <ServiceInfoVirtualServices
                             editorLink="/namespaces/istio-system/services/reviews"
+                            namespace="istio-system"
                             validations={undefined}
                             virtualServices={
                               Array [
@@ -2988,6 +3009,7 @@ ShallowWrapper {
                               ]
                             }
                             editorLink="/namespaces/istio-system/services/reviews"
+                            namespace="istio-system"
                             validations={
                               Object {
                                 "reviews": Object {
@@ -3473,6 +3495,7 @@ ShallowWrapper {
                         >
                           <ServiceInfoVirtualServices
                             editorLink="/namespaces/istio-system/services/reviews"
+                            namespace="istio-system"
                             validations={undefined}
                             virtualServices={
                               Array [
@@ -3539,6 +3562,7 @@ ShallowWrapper {
                               ]
                             }
                             editorLink="/namespaces/istio-system/services/reviews"
+                            namespace="istio-system"
                             validations={
                               Object {
                                 "reviews": Object {
@@ -3646,6 +3670,7 @@ ShallowWrapper {
                         >
                           <ServiceInfoVirtualServices
                             editorLink="/namespaces/istio-system/services/reviews"
+                            namespace="istio-system"
                             validations={undefined}
                             virtualServices={
                               Array [
@@ -3712,6 +3737,7 @@ ShallowWrapper {
                               ]
                             }
                             editorLink="/namespaces/istio-system/services/reviews"
+                            namespace="istio-system"
                             validations={
                               Object {
                                 "reviews": Object {
@@ -3816,6 +3842,7 @@ ShallowWrapper {
                         >
                           <ServiceInfoVirtualServices
                             editorLink="/namespaces/istio-system/services/reviews"
+                            namespace="istio-system"
                             validations={undefined}
                             virtualServices={
                               Array [
@@ -3882,6 +3909,7 @@ ShallowWrapper {
                               ]
                             }
                             editorLink="/namespaces/istio-system/services/reviews"
+                            namespace="istio-system"
                             validations={
                               Object {
                                 "reviews": Object {
@@ -3981,6 +4009,7 @@ ShallowWrapper {
                           >
                             <ServiceInfoVirtualServices
                               editorLink="/namespaces/istio-system/services/reviews"
+                              namespace="istio-system"
                               validations={undefined}
                               virtualServices={
                                 Array [
@@ -4047,6 +4076,7 @@ ShallowWrapper {
                                 ]
                               }
                               editorLink="/namespaces/istio-system/services/reviews"
+                              namespace="istio-system"
                               validations={
                                 Object {
                                   "reviews": Object {
@@ -4254,6 +4284,7 @@ ShallowWrapper {
                             >
                               <ServiceInfoVirtualServices
                                 editorLink="/namespaces/istio-system/services/reviews"
+                                namespace="istio-system"
                                 validations={undefined}
                                 virtualServices={
                                   Array [
@@ -4320,6 +4351,7 @@ ShallowWrapper {
                                   ]
                                 }
                                 editorLink="/namespaces/istio-system/services/reviews"
+                                namespace="istio-system"
                                 validations={
                                   Object {
                                     "reviews": Object {
@@ -4384,6 +4416,7 @@ ShallowWrapper {
                               "bsClass": "tab-pane",
                               "children": <ServiceInfoVirtualServices
                                 editorLink="/namespaces/istio-system/services/reviews"
+                                namespace="istio-system"
                                 validations={undefined}
                                 virtualServices={
                                   Array [
@@ -4421,6 +4454,7 @@ ShallowWrapper {
                               "nodeType": "class",
                               "props": Object {
                                 "editorLink": "/namespaces/istio-system/services/reviews",
+                                "namespace": "istio-system",
                                 "validations": undefined,
                                 "virtualServices": Array [
                                   Object {
@@ -4492,6 +4526,7 @@ ShallowWrapper {
                                   ]
                                 }
                                 editorLink="/namespaces/istio-system/services/reviews"
+                                namespace="istio-system"
                                 validations={
                                   Object {
                                     "reviews": Object {
@@ -4552,6 +4587,7 @@ ShallowWrapper {
                                   },
                                 ],
                                 "editorLink": "/namespaces/istio-system/services/reviews",
+                                "namespace": "istio-system",
                                 "validations": Object {
                                   "reviews": Object {
                                     "checks": Array [

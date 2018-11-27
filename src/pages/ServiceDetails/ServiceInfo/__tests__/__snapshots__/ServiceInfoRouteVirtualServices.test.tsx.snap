@@ -6,6 +6,7 @@ ShallowWrapper {
   Symbol(enzyme.__root__): [Circular],
   Symbol(enzyme.__unrendered__): <ServiceInfoVirtualServices
     editorLink="/namespaces/test_namespace/services/test_services"
+    namespace="test_namespace"
     validations={Object {}}
     virtualServices={
       Array [
@@ -274,7 +275,7 @@ ShallowWrapper {
                 Object {
                   "actions": <Link
                     replace={false}
-                    to="/namespaces/test_namespace/services/test_services?virtualservice=reviews-default&detail=yaml"
+                    to="/namespaces/test_namespace/istio/virtualservices/reviews-default"
                   >
                     View YAML
                   </Link>,
@@ -504,7 +505,7 @@ ShallowWrapper {
                 Object {
                   "actions": <Link
                     replace={false}
-                    to="/namespaces/test_namespace/services/test_services?virtualservice=reviews-default&detail=yaml"
+                    to="/namespaces/test_namespace/istio/virtualservices/reviews-default"
                   >
                     View YAML
                   </Link>,
@@ -647,7 +648,7 @@ ShallowWrapper {
                   Object {
                     "actions": <Link
                       replace={false}
-                      to="/namespaces/test_namespace/services/test_services?virtualservice=reviews-default&detail=yaml"
+                      to="/namespaces/test_namespace/istio/virtualservices/reviews-default"
                     >
                       View YAML
                     </Link>,
@@ -873,7 +874,7 @@ ShallowWrapper {
                 Object {
                   "actions": <Link
                     replace={false}
-                    to="/namespaces/test_namespace/services/test_services?virtualservice=reviews-default&detail=yaml"
+                    to="/namespaces/test_namespace/istio/virtualservices/reviews-default"
                   >
                     View YAML
                   </Link>,
@@ -1113,7 +1114,7 @@ ShallowWrapper {
                   Object {
                     "actions": <Link
                       replace={false}
-                      to="/namespaces/test_namespace/services/test_services?virtualservice=reviews-default&detail=yaml"
+                      to="/namespaces/test_namespace/istio/virtualservices/reviews-default"
                     >
                       View YAML
                     </Link>,
@@ -1343,7 +1344,7 @@ ShallowWrapper {
                   Object {
                     "actions": <Link
                       replace={false}
-                      to="/namespaces/test_namespace/services/test_services?virtualservice=reviews-default&detail=yaml"
+                      to="/namespaces/test_namespace/istio/virtualservices/reviews-default"
                     >
                       View YAML
                     </Link>,
@@ -1486,7 +1487,7 @@ ShallowWrapper {
                     Object {
                       "actions": <Link
                         replace={false}
-                        to="/namespaces/test_namespace/services/test_services?virtualservice=reviews-default&detail=yaml"
+                        to="/namespaces/test_namespace/istio/virtualservices/reviews-default"
                       >
                         View YAML
                       </Link>,
@@ -1712,7 +1713,7 @@ ShallowWrapper {
                   Object {
                     "actions": <Link
                       replace={false}
-                      to="/namespaces/test_namespace/services/test_services?virtualservice=reviews-default&detail=yaml"
+                      to="/namespaces/test_namespace/istio/virtualservices/reviews-default"
                     >
                       View YAML
                     </Link>,
