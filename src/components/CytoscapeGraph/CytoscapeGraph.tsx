@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import ReactResizeDetector from 'react-resize-detector';
+import Sound from 'react-sound';
 
 import Namespace from '../../types/Namespace';
 import { GraphHighlighter } from './graphs/GraphHighlighter';
@@ -89,6 +90,8 @@ type InitialValues = {
   position?: Position;
   zoom?: number;
 };
+
+const jingleBells8Bit = require('../../assets/music/8BitJingleBells.mp3');
 
 // @todo: Move this class to 'containers' folder -- but it effects many other things
 // exporting this class for testing
@@ -203,7 +206,9 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
 
     return (
       <div id="cytoscape-container" className={this.props.containerClassName}>
-        <EasterEgg onShow={this.turnOnEasterEgg} sequence={xmasEasterEggSequence} />
+        <EasterEgg onShow={this.turnOnEasterEgg} sequence={xmasEasterEggSequence}>
+          <Sound url={jingleBells8Bit} playStatus={Sound.status.PLAYING} loop={true} />
+        </EasterEgg>
         <ReactResizeDetector handleWidth={true} handleHeight={true} skipOnMount={true} onResize={this.onResize} />
         <EmptyGraphLayout
           elements={this.props.elements}
