@@ -117,8 +117,6 @@ const graphDataState = (state: GraphState = INITIAL_GRAPH_STATE, action: KialiAp
     case getType(GraphFilterActions.toggleUnusedNodes):
       newState.filterState.showUnusedNodes = !state.filterState.showUnusedNodes;
       break;
-    // case getType(GraphFilterActions.showGraphFilters):
-    //   return updateState(state, { disableLayers: action.payload });
     default:
       break;
   }

@@ -1,6 +1,5 @@
 import { createSelector } from 'reselect';
 import { KialiAppState } from './Store';
-// import { EdgeLabelMode } from '../types/GraphFilter';
 // These memoized selectors are from Redux Reselect package
 
 // select the proper field from Redux State

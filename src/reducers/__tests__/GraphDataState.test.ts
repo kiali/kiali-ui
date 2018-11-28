@@ -1,5 +1,4 @@
 import graphDataState from '../GraphDataState';
-// import graphFilterState from '../GraphFilterState';
 import { GraphActions } from '../../actions/GraphActions';
 import { GraphDataActions } from '../../actions/GraphDataActions';
 import { GlobalActions } from '../../actions/GlobalActions';

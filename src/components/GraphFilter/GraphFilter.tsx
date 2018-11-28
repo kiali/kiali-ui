@@ -134,7 +134,7 @@ export class GraphFilter extends React.PureComponent<GraphFilterProps> {
         <Toolbar>
           <FormGroup className={zeroPaddingLeft}>
             {this.props.node ? (
-              <Button className={namespaceStyle} onClick={() => this.handleNamespaceReturn()}>
+              <Button className={namespaceStyle} onClick={this.handleNamespaceReturn}>
                 Back to Full Graph...
               </Button>
             ) : (

@@ -64,7 +64,6 @@ const mapDispatchToProps = (dispatch: Dispatch<any>) => {
       dispatch(NamespaceThunkActions.fetchNamespacesIfNeeded());
     },
     setActiveNamespace: (namespace: string) => {
-      console.log('setActiveNamespace=' + namespace);
       // TODO: This needs to be a single update
       dispatch(GraphActions.changed());
       dispatch(NamespaceActions.setActiveNamespaces([namespaceFromString(namespace)]));

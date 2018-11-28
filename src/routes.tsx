@@ -7,9 +7,7 @@ import WorkloadDetailsPage from './pages/WorkloadDetails/WorkloadDetailsPage';
 import AppListPage from './pages/AppList/AppListPage';
 import AppDetailsPage from './pages/AppDetails/AppDetailsPage';
 import OverviewPage from './pages/Overview/OverviewPage';
-// import GraphRouteHandler from './pages/Graph/GraphRouteHandler';
 import { MenuItem, Path } from './types/Routes';
-
 import GraphPageContainer from './containers/GraphPageContainer';
 import ServiceDetailsPageContainer from './containers/ServiceDetailsPageContainer';
 

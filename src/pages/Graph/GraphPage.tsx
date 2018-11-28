@@ -189,6 +189,9 @@ export default class GraphPage extends React.Component<GraphPageProps, GraphPage
   componentDidMount() {
     // This is a special bookmarking case. If the initial URL is for a node graph then
     // defer the graph fetch until the first component update, when the node is set.
+    // (note: to avoid direct store access we could parse the URL again, perhaps that
+    // is preferable?  We could also move the logic from the constructor, but that
+    // would break our pattern of redux/url handling in the components).
     if (!store.getState().graph.node) {
       this.scheduleNextPollingInterval(0);
     }
