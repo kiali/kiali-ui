@@ -69,13 +69,11 @@ class UserDropdown extends React.Component<UserProps, UserState> {
   };
 
   handleLogout() {
-    console.log(serverConfig());
-    if (serverConfig().authStrategy === 'oauth') {
-      console.log('I got here...');
+    this.props.logout();
+
+    if (serverConfig().authStrategy === 'openshift') {
       window.location.href = '/oauth/sign_in';
     } else {
-      this.props.logout();
-
       const el = document.documentElement;
 
       if (el) {
