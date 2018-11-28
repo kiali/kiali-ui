@@ -234,9 +234,13 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
 
   private turnOnEasterEgg = () => {
     this.trafficPointSkin = new TrafficPointSkinXMas();
-    this.trafficRenderer.setPointSkin(this.trafficPointSkin);
+    if (this.trafficRenderer) {
+      this.trafficRenderer.setPointSkin(this.trafficPointSkin);
+    }
     this.styles = GraphStylesXMas.styles();
-    this.cy.style(this.styles);
+    if (this.cy) {
+      this.cy.style(this.styles);
+    }
   };
 
   private onResize = () => {
