@@ -11,7 +11,6 @@ import { shouldRefreshData, getDatapoints } from './SummaryPanelCommon';
 import { Response } from '../../services/Api';
 import { Metrics } from '../../types/Metrics';
 import { CancelablePromise, makeCancelablePromise } from '../../utils/CancelablePromises';
-import { namespacesToString } from '../../types/Namespace';
 
 type SummaryPanelGraphState = {
   loading: boolean;
@@ -45,7 +44,7 @@ export default class SummaryPanelGraph extends React.Component<SummaryPanelPropT
   }
 
   componentDidMount() {
-    if ('all' !== namespacesToString(this.props.namespaces)) {
+    if (this.props.namespaces.length === 1) {
       this.updateRpsChart(this.props);
     }
   }
@@ -61,7 +60,7 @@ export default class SummaryPanelGraph extends React.Component<SummaryPanelPropT
     if (shouldRefreshData(prevProps, this.props)) {
       // TODO (maybe) we omit the rps chart when dealing with multiple namespaces. There is no backend
       // API support to gather the data. The whole-graph chart is of nominal value, it will likely be OK.
-      if ('all' !== namespacesToString(this.props.namespaces)) {
+      if (this.props.namespaces.length === 1) {
         this.updateRpsChart(this.props);
       }
     }
@@ -109,7 +108,7 @@ export default class SummaryPanelGraph extends React.Component<SummaryPanelPropT
               rate4xx={trafficRate.rate4xx}
               rate5xx={trafficRate.rate5xx}
             />
-            {'all' !== namespacesToString(this.props.namespaces) && (
+            {this.props.namespaces.length === 1 && (
               <div>
                 <hr />
                 {this.renderRpsChart()}
