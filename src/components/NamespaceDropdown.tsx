@@ -43,8 +43,6 @@ export class NamespaceDropdown extends React.PureComponent<NamespaceListType, {}
     }
   }
 
-  handleToggle = (isOpen: boolean) => isOpen && this.props.refresh();
-
   getPopoverContent() {
     if (this.props.items.length > 0) {
       const activeMap = this.props.activeNamespaces.reduce((map, namespace) => {
@@ -83,7 +81,13 @@ export class NamespaceDropdown extends React.PureComponent<NamespaceListType, {}
   render() {
     const popover = <Popover id="namespace-list-layers-popover">{this.getPopoverContent()}</Popover>;
     return (
-      <OverlayTrigger overlay={popover} placement="bottom" trigger={['click']} rootClose={true}>
+      <OverlayTrigger
+        onEnter={this.props.refresh}
+        overlay={popover}
+        placement="bottom"
+        trigger={['click']}
+        rootClose={true}
+      >
         <Button id="graph_settings">
           {this.namespaceButtonText()} <Icon name="angle-down" />
         </Button>
