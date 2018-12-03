@@ -2,28 +2,28 @@
 
 exports[`MetricsOptionsBar renders initial layout 1`] = `
 ShallowWrapper {
-  "length": 1,
   Symbol(enzyme.__root__): [Circular],
   Symbol(enzyme.__unrendered__): <Provider
     store={
-      Object {
-        "dispatch": [Function],
-        "getState": [Function],
-        "replaceReducer": [Function],
-        "subscribe": [Function],
-        Symbol(observable): [Function],
-      }
+        Object {
+            "dispatch": [Function],
+            "getState": [Function],
+            "replaceReducer": [Function],
+            "subscribe": [Function],
+            Symbol(observable): [Function],
+          }
     }
-  >
+>
     <MetricsOptionsBar
-      direction="inbound"
-      grafanaLink="http://grafana-istio-system.127.0.0.1.nip.io/d/UbsSZTDik/istio-workload-dashboard"
-      labelValues={Map {}}
-      onLabelsFiltersChanged={[MockFunction]}
-      onOptionsChanged={[MockFunction]}
-      onRefresh={[MockFunction]}
+        direction={0}
+        labelValues={Map {}}
+        metricReporter="destination"
+        onLabelsFiltersChanged={[Function]}
+        onOptionsChanged={[Function]}
+        onRefresh={[Function]}
+        onReporterChanged={[Function]}
     />
-  </Provider>,
+</Provider>,
   Symbol(enzyme.__renderer__): Object {
     "batchedUpdates": [Function],
     "getNode": [Function],
@@ -37,12 +37,13 @@ ShallowWrapper {
     "key": undefined,
     "nodeType": "class",
     "props": Object {
-      "direction": "inbound",
-      "grafanaLink": "http://grafana-istio-system.127.0.0.1.nip.io/d/UbsSZTDik/istio-workload-dashboard",
+      "direction": 0,
       "labelValues": Map {},
-      "onLabelsFiltersChanged": [MockFunction],
-      "onOptionsChanged": [MockFunction],
-      "onRefresh": [MockFunction],
+      "metricReporter": "destination",
+      "onLabelsFiltersChanged": [Function],
+      "onOptionsChanged": [Function],
+      "onRefresh": [Function],
+      "onReporterChanged": [Function],
     },
     "ref": null,
     "rendered": null,
@@ -54,12 +55,13 @@ ShallowWrapper {
       "key": undefined,
       "nodeType": "class",
       "props": Object {
-        "direction": "inbound",
-        "grafanaLink": "http://grafana-istio-system.127.0.0.1.nip.io/d/UbsSZTDik/istio-workload-dashboard",
+        "direction": 0,
         "labelValues": Map {},
-        "onLabelsFiltersChanged": [MockFunction],
-        "onOptionsChanged": [MockFunction],
-        "onRefresh": [MockFunction],
+        "metricReporter": "destination",
+        "onLabelsFiltersChanged": [Function],
+        "onOptionsChanged": [Function],
+        "onRefresh": [Function],
+        "onReporterChanged": [Function],
       },
       "ref": null,
       "rendered": null,

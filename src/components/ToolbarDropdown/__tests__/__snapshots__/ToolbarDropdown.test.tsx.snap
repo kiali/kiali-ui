@@ -2,31 +2,30 @@
 
 exports[`ToolbarDropdown Render correctly all dropdowns 1`] = `
 ShallowWrapper {
-  "length": 1,
   Symbol(enzyme.__root__): [Circular],
   Symbol(enzyme.__unrendered__): <ToolbarDropdown
     disabled={false}
-    handleSelect={[MockFunction]}
+    handleSelect={[Function]}
     id="graph_filter_interval_duration"
     initialLabel="Last min"
     initialValue={60}
     nameDropdown="graph_filter_interval_duration"
     options={
-      Object {
-        "10800": "Last 3 hours",
-        "1800": "Last 30 min",
-        "21600": "Last 6 hours",
-        "2592000": "Last 30 days",
-        "300": "Last 5 min",
-        "3600": "Last hour",
-        "43200": "Last 12 hours",
-        "60": "Last min",
-        "600": "Last 10 min",
-        "604800": "Last 7 days",
-        "86400": "Last day",
-      }
+        Object {
+            "10800": "Last 3 hours",
+            "1800": "Last 30 min",
+            "21600": "Last 6 hours",
+            "2592000": "Last 30 days",
+            "300": "Last 5 min",
+            "3600": "Last hour",
+            "43200": "Last 12 hours",
+            "60": "Last min",
+            "600": "Last 10 min",
+            "604800": "Last 7 days",
+            "86400": "Last day",
+          }
     }
-  />,
+/>,
   Symbol(enzyme.__renderer__): Object {
     "batchedUpdates": [Function],
     "getNode": [Function],
@@ -43,132 +42,132 @@ ShallowWrapper {
       "children": Array [
         <label
           style={
-            Object {
-              "paddingLeft": "0.5em",
-              "paddingRight": "0.5em",
-            }
+                    Object {
+                              "paddingLeft": "0.5em",
+                              "paddingRight": "0.5em",
+                            }
           }
-        >
+>
           graph_filter_interval_duration
-        </label>,
+</label>,
         <DropdownButton
           disabled={false}
           id="graph_filter_interval_duration"
           onSelect={[Function]}
           onToggle={[Function]}
           title="Last min"
-        >
+>
           <MenuItem
-            active={false}
-            bsClass="dropdown"
-            disabled={false}
-            divider={false}
-            eventKey="60"
-            header={false}
+                    active={false}
+                    bsClass="dropdown"
+                    disabled={false}
+                    divider={false}
+                    eventKey="60"
+                    header={false}
           >
-            Last min
+                    Last min
           </MenuItem>
           <MenuItem
-            active={false}
-            bsClass="dropdown"
-            disabled={false}
-            divider={false}
-            eventKey="300"
-            header={false}
+                    active={false}
+                    bsClass="dropdown"
+                    disabled={false}
+                    divider={false}
+                    eventKey="300"
+                    header={false}
           >
-            Last 5 min
+                    Last 5 min
           </MenuItem>
           <MenuItem
-            active={false}
-            bsClass="dropdown"
-            disabled={false}
-            divider={false}
-            eventKey="600"
-            header={false}
+                    active={false}
+                    bsClass="dropdown"
+                    disabled={false}
+                    divider={false}
+                    eventKey="600"
+                    header={false}
           >
-            Last 10 min
+                    Last 10 min
           </MenuItem>
           <MenuItem
-            active={false}
-            bsClass="dropdown"
-            disabled={false}
-            divider={false}
-            eventKey="1800"
-            header={false}
+                    active={false}
+                    bsClass="dropdown"
+                    disabled={false}
+                    divider={false}
+                    eventKey="1800"
+                    header={false}
           >
-            Last 30 min
+                    Last 30 min
           </MenuItem>
           <MenuItem
-            active={false}
-            bsClass="dropdown"
-            disabled={false}
-            divider={false}
-            eventKey="3600"
-            header={false}
+                    active={false}
+                    bsClass="dropdown"
+                    disabled={false}
+                    divider={false}
+                    eventKey="3600"
+                    header={false}
           >
-            Last hour
+                    Last hour
           </MenuItem>
           <MenuItem
-            active={false}
-            bsClass="dropdown"
-            disabled={false}
-            divider={false}
-            eventKey="10800"
-            header={false}
+                    active={false}
+                    bsClass="dropdown"
+                    disabled={false}
+                    divider={false}
+                    eventKey="10800"
+                    header={false}
           >
-            Last 3 hours
+                    Last 3 hours
           </MenuItem>
           <MenuItem
-            active={false}
-            bsClass="dropdown"
-            disabled={false}
-            divider={false}
-            eventKey="21600"
-            header={false}
+                    active={false}
+                    bsClass="dropdown"
+                    disabled={false}
+                    divider={false}
+                    eventKey="21600"
+                    header={false}
           >
-            Last 6 hours
+                    Last 6 hours
           </MenuItem>
           <MenuItem
-            active={false}
-            bsClass="dropdown"
-            disabled={false}
-            divider={false}
-            eventKey="43200"
-            header={false}
+                    active={false}
+                    bsClass="dropdown"
+                    disabled={false}
+                    divider={false}
+                    eventKey="43200"
+                    header={false}
           >
-            Last 12 hours
+                    Last 12 hours
           </MenuItem>
           <MenuItem
-            active={false}
-            bsClass="dropdown"
-            disabled={false}
-            divider={false}
-            eventKey="86400"
-            header={false}
+                    active={false}
+                    bsClass="dropdown"
+                    disabled={false}
+                    divider={false}
+                    eventKey="86400"
+                    header={false}
           >
-            Last day
+                    Last day
           </MenuItem>
           <MenuItem
-            active={false}
-            bsClass="dropdown"
-            disabled={false}
-            divider={false}
-            eventKey="604800"
-            header={false}
+                    active={false}
+                    bsClass="dropdown"
+                    disabled={false}
+                    divider={false}
+                    eventKey="604800"
+                    header={false}
           >
-            Last 7 days
+                    Last 7 days
           </MenuItem>
           <MenuItem
-            active={false}
-            bsClass="dropdown"
-            disabled={false}
-            divider={false}
-            eventKey="2592000"
-            header={false}
+                    active={false}
+                    bsClass="dropdown"
+                    disabled={false}
+                    divider={false}
+                    eventKey="2592000"
+                    header={false}
           >
-            Last 30 days
+                    Last 30 days
           </MenuItem>
-        </DropdownButton>,
+</DropdownButton>,
       ],
     },
     "ref": null,
@@ -201,9 +200,9 @@ ShallowWrapper {
               divider={false}
               eventKey="60"
               header={false}
-            >
+>
               Last min
-            </MenuItem>,
+</MenuItem>,
             <MenuItem
               active={false}
               bsClass="dropdown"
@@ -211,9 +210,9 @@ ShallowWrapper {
               divider={false}
               eventKey="300"
               header={false}
-            >
+>
               Last 5 min
-            </MenuItem>,
+</MenuItem>,
             <MenuItem
               active={false}
               bsClass="dropdown"
@@ -221,9 +220,9 @@ ShallowWrapper {
               divider={false}
               eventKey="600"
               header={false}
-            >
+>
               Last 10 min
-            </MenuItem>,
+</MenuItem>,
             <MenuItem
               active={false}
               bsClass="dropdown"
@@ -231,9 +230,9 @@ ShallowWrapper {
               divider={false}
               eventKey="1800"
               header={false}
-            >
+>
               Last 30 min
-            </MenuItem>,
+</MenuItem>,
             <MenuItem
               active={false}
               bsClass="dropdown"
@@ -241,9 +240,9 @@ ShallowWrapper {
               divider={false}
               eventKey="3600"
               header={false}
-            >
+>
               Last hour
-            </MenuItem>,
+</MenuItem>,
             <MenuItem
               active={false}
               bsClass="dropdown"
@@ -251,9 +250,9 @@ ShallowWrapper {
               divider={false}
               eventKey="10800"
               header={false}
-            >
+>
               Last 3 hours
-            </MenuItem>,
+</MenuItem>,
             <MenuItem
               active={false}
               bsClass="dropdown"
@@ -261,9 +260,9 @@ ShallowWrapper {
               divider={false}
               eventKey="21600"
               header={false}
-            >
+>
               Last 6 hours
-            </MenuItem>,
+</MenuItem>,
             <MenuItem
               active={false}
               bsClass="dropdown"
@@ -271,9 +270,9 @@ ShallowWrapper {
               divider={false}
               eventKey="43200"
               header={false}
-            >
+>
               Last 12 hours
-            </MenuItem>,
+</MenuItem>,
             <MenuItem
               active={false}
               bsClass="dropdown"
@@ -281,9 +280,9 @@ ShallowWrapper {
               divider={false}
               eventKey="86400"
               header={false}
-            >
+>
               Last day
-            </MenuItem>,
+</MenuItem>,
             <MenuItem
               active={false}
               bsClass="dropdown"
@@ -291,9 +290,9 @@ ShallowWrapper {
               divider={false}
               eventKey="604800"
               header={false}
-            >
+>
               Last 7 days
-            </MenuItem>,
+</MenuItem>,
             <MenuItem
               active={false}
               bsClass="dropdown"
@@ -301,9 +300,9 @@ ShallowWrapper {
               divider={false}
               eventKey="2592000"
               header={false}
-            >
+>
               Last 30 days
-            </MenuItem>,
+</MenuItem>,
           ],
           "disabled": false,
           "id": "graph_filter_interval_duration",
@@ -515,132 +514,132 @@ ShallowWrapper {
         "children": Array [
           <label
             style={
-              Object {
-                "paddingLeft": "0.5em",
-                "paddingRight": "0.5em",
-              }
+                        Object {
+                                    "paddingLeft": "0.5em",
+                                    "paddingRight": "0.5em",
+                                  }
             }
-          >
+>
             graph_filter_interval_duration
-          </label>,
+</label>,
           <DropdownButton
             disabled={false}
             id="graph_filter_interval_duration"
             onSelect={[Function]}
             onToggle={[Function]}
             title="Last min"
-          >
+>
             <MenuItem
-              active={false}
-              bsClass="dropdown"
-              disabled={false}
-              divider={false}
-              eventKey="60"
-              header={false}
+                        active={false}
+                        bsClass="dropdown"
+                        disabled={false}
+                        divider={false}
+                        eventKey="60"
+                        header={false}
             >
-              Last min
+                        Last min
             </MenuItem>
             <MenuItem
-              active={false}
-              bsClass="dropdown"
-              disabled={false}
-              divider={false}
-              eventKey="300"
-              header={false}
+                        active={false}
+                        bsClass="dropdown"
+                        disabled={false}
+                        divider={false}
+                        eventKey="300"
+                        header={false}
             >
-              Last 5 min
+                        Last 5 min
             </MenuItem>
             <MenuItem
-              active={false}
-              bsClass="dropdown"
-              disabled={false}
-              divider={false}
-              eventKey="600"
-              header={false}
+                        active={false}
+                        bsClass="dropdown"
+                        disabled={false}
+                        divider={false}
+                        eventKey="600"
+                        header={false}
             >
-              Last 10 min
+                        Last 10 min
             </MenuItem>
             <MenuItem
-              active={false}
-              bsClass="dropdown"
-              disabled={false}
-              divider={false}
-              eventKey="1800"
-              header={false}
+                        active={false}
+                        bsClass="dropdown"
+                        disabled={false}
+                        divider={false}
+                        eventKey="1800"
+                        header={false}
             >
-              Last 30 min
+                        Last 30 min
             </MenuItem>
             <MenuItem
-              active={false}
-              bsClass="dropdown"
-              disabled={false}
-              divider={false}
-              eventKey="3600"
-              header={false}
+                        active={false}
+                        bsClass="dropdown"
+                        disabled={false}
+                        divider={false}
+                        eventKey="3600"
+                        header={false}
             >
-              Last hour
+                        Last hour
             </MenuItem>
             <MenuItem
-              active={false}
-              bsClass="dropdown"
-              disabled={false}
-              divider={false}
-              eventKey="10800"
-              header={false}
+                        active={false}
+                        bsClass="dropdown"
+                        disabled={false}
+                        divider={false}
+                        eventKey="10800"
+                        header={false}
             >
-              Last 3 hours
+                        Last 3 hours
             </MenuItem>
             <MenuItem
-              active={false}
-              bsClass="dropdown"
-              disabled={false}
-              divider={false}
-              eventKey="21600"
-              header={false}
+                        active={false}
+                        bsClass="dropdown"
+                        disabled={false}
+                        divider={false}
+                        eventKey="21600"
+                        header={false}
             >
-              Last 6 hours
+                        Last 6 hours
             </MenuItem>
             <MenuItem
-              active={false}
-              bsClass="dropdown"
-              disabled={false}
-              divider={false}
-              eventKey="43200"
-              header={false}
+                        active={false}
+                        bsClass="dropdown"
+                        disabled={false}
+                        divider={false}
+                        eventKey="43200"
+                        header={false}
             >
-              Last 12 hours
+                        Last 12 hours
             </MenuItem>
             <MenuItem
-              active={false}
-              bsClass="dropdown"
-              disabled={false}
-              divider={false}
-              eventKey="86400"
-              header={false}
+                        active={false}
+                        bsClass="dropdown"
+                        disabled={false}
+                        divider={false}
+                        eventKey="86400"
+                        header={false}
             >
-              Last day
+                        Last day
             </MenuItem>
             <MenuItem
-              active={false}
-              bsClass="dropdown"
-              disabled={false}
-              divider={false}
-              eventKey="604800"
-              header={false}
+                        active={false}
+                        bsClass="dropdown"
+                        disabled={false}
+                        divider={false}
+                        eventKey="604800"
+                        header={false}
             >
-              Last 7 days
+                        Last 7 days
             </MenuItem>
             <MenuItem
-              active={false}
-              bsClass="dropdown"
-              disabled={false}
-              divider={false}
-              eventKey="2592000"
-              header={false}
+                        active={false}
+                        bsClass="dropdown"
+                        disabled={false}
+                        divider={false}
+                        eventKey="2592000"
+                        header={false}
             >
-              Last 30 days
+                        Last 30 days
             </MenuItem>
-          </DropdownButton>,
+</DropdownButton>,
         ],
       },
       "ref": null,
@@ -673,9 +672,9 @@ ShallowWrapper {
                 divider={false}
                 eventKey="60"
                 header={false}
-              >
+>
                 Last min
-              </MenuItem>,
+</MenuItem>,
               <MenuItem
                 active={false}
                 bsClass="dropdown"
@@ -683,9 +682,9 @@ ShallowWrapper {
                 divider={false}
                 eventKey="300"
                 header={false}
-              >
+>
                 Last 5 min
-              </MenuItem>,
+</MenuItem>,
               <MenuItem
                 active={false}
                 bsClass="dropdown"
@@ -693,9 +692,9 @@ ShallowWrapper {
                 divider={false}
                 eventKey="600"
                 header={false}
-              >
+>
                 Last 10 min
-              </MenuItem>,
+</MenuItem>,
               <MenuItem
                 active={false}
                 bsClass="dropdown"
@@ -703,9 +702,9 @@ ShallowWrapper {
                 divider={false}
                 eventKey="1800"
                 header={false}
-              >
+>
                 Last 30 min
-              </MenuItem>,
+</MenuItem>,
               <MenuItem
                 active={false}
                 bsClass="dropdown"
@@ -713,9 +712,9 @@ ShallowWrapper {
                 divider={false}
                 eventKey="3600"
                 header={false}
-              >
+>
                 Last hour
-              </MenuItem>,
+</MenuItem>,
               <MenuItem
                 active={false}
                 bsClass="dropdown"
@@ -723,9 +722,9 @@ ShallowWrapper {
                 divider={false}
                 eventKey="10800"
                 header={false}
-              >
+>
                 Last 3 hours
-              </MenuItem>,
+</MenuItem>,
               <MenuItem
                 active={false}
                 bsClass="dropdown"
@@ -733,9 +732,9 @@ ShallowWrapper {
                 divider={false}
                 eventKey="21600"
                 header={false}
-              >
+>
                 Last 6 hours
-              </MenuItem>,
+</MenuItem>,
               <MenuItem
                 active={false}
                 bsClass="dropdown"
@@ -743,9 +742,9 @@ ShallowWrapper {
                 divider={false}
                 eventKey="43200"
                 header={false}
-              >
+>
                 Last 12 hours
-              </MenuItem>,
+</MenuItem>,
               <MenuItem
                 active={false}
                 bsClass="dropdown"
@@ -753,9 +752,9 @@ ShallowWrapper {
                 divider={false}
                 eventKey="86400"
                 header={false}
-              >
+>
                 Last day
-              </MenuItem>,
+</MenuItem>,
               <MenuItem
                 active={false}
                 bsClass="dropdown"
@@ -763,9 +762,9 @@ ShallowWrapper {
                 divider={false}
                 eventKey="604800"
                 header={false}
-              >
+>
                 Last 7 days
-              </MenuItem>,
+</MenuItem>,
               <MenuItem
                 active={false}
                 bsClass="dropdown"
@@ -773,9 +772,9 @@ ShallowWrapper {
                 divider={false}
                 eventKey="2592000"
                 header={false}
-              >
+>
                 Last 30 days
-              </MenuItem>,
+</MenuItem>,
             ],
             "disabled": false,
             "id": "graph_filter_interval_duration",
@@ -1001,28 +1000,26 @@ ShallowWrapper {
 
 exports[`ToolbarDropdown Render correctly all dropdowns 2`] = `
 ShallowWrapper {
-  "length": 1,
   Symbol(enzyme.__root__): [Circular],
   Symbol(enzyme.__unrendered__): <ToolbarDropdown
     disabled={false}
-    handleSelect={[MockFunction]}
+    handleSelect={[Function]}
     id="metrics_filter_poll_interval"
-    initialLabel="Every 15 sec"
+    initialLabel="15 sec"
     initialValue={15000}
     nameDropdown="metrics_filter_poll_interval"
     options={
-      Object {
-        "0": "Pause",
-        "10000": "Every 10 sec",
-        "15000": "Every 15 sec",
-        "30000": "Every 30 sec",
-        "300000": "Every 5 min",
-        "5000": "Every 5 sec",
-        "60000": "Every 1 min",
-        "900000": "Every 15 min",
-      }
+        Object {
+            "0": "Pause",
+            "10000": "10 sec",
+            "15000": "15 sec",
+            "30000": "30 sec",
+            "300000": "5 min",
+            "5000": "5 sec",
+            "60000": "1 min",
+          }
     }
-  />,
+/>,
   Symbol(enzyme.__renderer__): Object {
     "batchedUpdates": [Function],
     "getNode": [Function],
@@ -1039,102 +1036,92 @@ ShallowWrapper {
       "children": Array [
         <label
           style={
-            Object {
-              "paddingLeft": "0.5em",
-              "paddingRight": "0.5em",
-            }
+                    Object {
+                              "paddingLeft": "0.5em",
+                              "paddingRight": "0.5em",
+                            }
           }
-        >
+>
           metrics_filter_poll_interval
-        </label>,
+</label>,
         <DropdownButton
           disabled={false}
           id="metrics_filter_poll_interval"
           onSelect={[Function]}
           onToggle={[Function]}
-          title="Every 15 sec"
-        >
+          title="15 sec"
+>
           <MenuItem
-            active={false}
-            bsClass="dropdown"
-            disabled={false}
-            divider={false}
-            eventKey="0"
-            header={false}
+                    active={false}
+                    bsClass="dropdown"
+                    disabled={false}
+                    divider={false}
+                    eventKey="0"
+                    header={false}
           >
-            Pause
+                    Pause
           </MenuItem>
           <MenuItem
-            active={false}
-            bsClass="dropdown"
-            disabled={false}
-            divider={false}
-            eventKey="5000"
-            header={false}
+                    active={false}
+                    bsClass="dropdown"
+                    disabled={false}
+                    divider={false}
+                    eventKey="5000"
+                    header={false}
           >
-            Every 5 sec
+                    5 sec
           </MenuItem>
           <MenuItem
-            active={false}
-            bsClass="dropdown"
-            disabled={false}
-            divider={false}
-            eventKey="10000"
-            header={false}
+                    active={false}
+                    bsClass="dropdown"
+                    disabled={false}
+                    divider={false}
+                    eventKey="10000"
+                    header={false}
           >
-            Every 10 sec
+                    10 sec
           </MenuItem>
           <MenuItem
-            active={false}
-            bsClass="dropdown"
-            disabled={false}
-            divider={false}
-            eventKey="15000"
-            header={false}
+                    active={false}
+                    bsClass="dropdown"
+                    disabled={false}
+                    divider={false}
+                    eventKey="15000"
+                    header={false}
           >
-            Every 15 sec
+                    15 sec
           </MenuItem>
           <MenuItem
-            active={false}
-            bsClass="dropdown"
-            disabled={false}
-            divider={false}
-            eventKey="30000"
-            header={false}
+                    active={false}
+                    bsClass="dropdown"
+                    disabled={false}
+                    divider={false}
+                    eventKey="30000"
+                    header={false}
           >
-            Every 30 sec
+                    30 sec
           </MenuItem>
           <MenuItem
-            active={false}
-            bsClass="dropdown"
-            disabled={false}
-            divider={false}
-            eventKey="60000"
-            header={false}
+                    active={false}
+                    bsClass="dropdown"
+                    disabled={false}
+                    divider={false}
+                    eventKey="60000"
+                    header={false}
           >
-            Every 1 min
+                    1 min
           </MenuItem>
           <MenuItem
-            active={false}
-            bsClass="dropdown"
-            disabled={false}
-            divider={false}
-            eventKey="300000"
-            header={false}
+                    active={false}
+                    bsClass="dropdown"
+                    disabled={false}
+                    divider={false}
+                    eventKey="300000"
+                    header={false}
           >
-            Every 5 min
+                    5 min
           </MenuItem>
-          <MenuItem
-            active={false}
-            bsClass="dropdown"
-            disabled={false}
-            divider={false}
-            eventKey="900000"
-            header={false}
-          >
-            Every 15 min
-          </MenuItem>
-        </DropdownButton>,
+</DropdownButton>,
       ],
     },
     "ref": null,
@@ -1167,9 +1154,9 @@ ShallowWrapper {
               divider={false}
               eventKey="0"
               header={false}
-            >
+>
               Pause
-            </MenuItem>,
+</MenuItem>,
             <MenuItem
               active={false}
               bsClass="dropdown"
@@ -1177,9 +1164,9 @@ ShallowWrapper {
               divider={false}
               eventKey="5000"
               header={false}
-            >
-              Every 5 sec
-            </MenuItem>,
+>
+              5 sec
+</MenuItem>,
             <MenuItem
               active={false}
               bsClass="dropdown"
@@ -1187,9 +1174,9 @@ ShallowWrapper {
               divider={false}
               eventKey="10000"
               header={false}
-            >
-              Every 10 sec
-            </MenuItem>,
+>
+              10 sec
+</MenuItem>,
             <MenuItem
               active={false}
               bsClass="dropdown"
@@ -1197,9 +1184,9 @@ ShallowWrapper {
               divider={false}
               eventKey="15000"
               header={false}
-            >
-              Every 15 sec
-            </MenuItem>,
+>
+              15 sec
+</MenuItem>,
             <MenuItem
               active={false}
               bsClass="dropdown"
@@ -1207,9 +1194,9 @@ ShallowWrapper {
               divider={false}
               eventKey="30000"
               header={false}
-            >
-              Every 30 sec
-            </MenuItem>,
+>
+              30 sec
+</MenuItem>,
             <MenuItem
               active={false}
               bsClass="dropdown"
@@ -1217,9 +1204,9 @@ ShallowWrapper {
               divider={false}
               eventKey="60000"
               header={false}
-            >
-              Every 1 min
-            </MenuItem>,
+>
+              1 min
+</MenuItem>,
             <MenuItem
               active={false}
               bsClass="dropdown"
@@ -1227,25 +1214,15 @@ ShallowWrapper {
               divider={false}
               eventKey="300000"
               header={false}
-            >
-              Every 5 min
-            </MenuItem>,
-            <MenuItem
-              active={false}
-              bsClass="dropdown"
-              disabled={false}
-              divider={false}
-              eventKey="900000"
-              header={false}
-            >
-              Every 15 min
-            </MenuItem>,
+>
+              5 min
+</MenuItem>,
           ],
           "disabled": false,
           "id": "metrics_filter_poll_interval",
           "onSelect": [Function],
           "onToggle": [Function],
-          "title": "Every 15 sec",
+          "title": "15 sec",
         },
         "ref": null,
         "rendered": Array [
@@ -1273,14 +1250,14 @@ ShallowWrapper {
             "props": Object {
               "active": false,
               "bsClass": "dropdown",
-              "children": "Every 5 sec",
+              "children": "5 sec",
               "disabled": false,
               "divider": false,
               "eventKey": "5000",
               "header": false,
             },
             "ref": null,
-            "rendered": "Every 5 sec",
+            "rendered": "5 sec",
             "type": [Function],
           },
           Object {
@@ -1290,14 +1267,14 @@ ShallowWrapper {
             "props": Object {
               "active": false,
               "bsClass": "dropdown",
-              "children": "Every 10 sec",
+              "children": "10 sec",
               "disabled": false,
               "divider": false,
               "eventKey": "10000",
               "header": false,
             },
             "ref": null,
-            "rendered": "Every 10 sec",
+            "rendered": "10 sec",
             "type": [Function],
           },
           Object {
@@ -1307,14 +1284,14 @@ ShallowWrapper {
             "props": Object {
               "active": false,
               "bsClass": "dropdown",
-              "children": "Every 15 sec",
+              "children": "15 sec",
               "disabled": false,
               "divider": false,
               "eventKey": "15000",
               "header": false,
             },
             "ref": null,
-            "rendered": "Every 15 sec",
+            "rendered": "15 sec",
             "type": [Function],
           },
           Object {
@@ -1324,14 +1301,14 @@ ShallowWrapper {
             "props": Object {
               "active": false,
               "bsClass": "dropdown",
-              "children": "Every 30 sec",
+              "children": "30 sec",
               "disabled": false,
               "divider": false,
               "eventKey": "30000",
               "header": false,
             },
             "ref": null,
-            "rendered": "Every 30 sec",
+            "rendered": "30 sec",
             "type": [Function],
           },
           Object {
@@ -1341,14 +1318,14 @@ ShallowWrapper {
             "props": Object {
               "active": false,
               "bsClass": "dropdown",
-              "children": "Every 1 min",
+              "children": "1 min",
               "disabled": false,
               "divider": false,
               "eventKey": "60000",
               "header": false,
             },
             "ref": null,
-            "rendered": "Every 1 min",
+            "rendered": "1 min",
             "type": [Function],
           },
           Object {
@@ -1358,31 +1335,14 @@ ShallowWrapper {
             "props": Object {
               "active": false,
               "bsClass": "dropdown",
-              "children": "Every 5 min",
+              "children": "5 min",
               "disabled": false,
               "divider": false,
               "eventKey": "300000",
               "header": false,
             },
             "ref": null,
-            "rendered": "Every 5 min",
-            "type": [Function],
-          },
-          Object {
-            "instance": null,
-            "key": "900000",
-            "nodeType": "class",
-            "props": Object {
-              "active": false,
-              "bsClass": "dropdown",
-              "children": "Every 15 min",
-              "disabled": false,
-              "divider": false,
-              "eventKey": "900000",
-              "header": false,
-            },
-            "ref": null,
-            "rendered": "Every 15 min",
+            "rendered": "5 min",
             "type": [Function],
           },
         ],
@@ -1400,102 +1360,92 @@ ShallowWrapper {
         "children": Array [
           <label
             style={
-              Object {
-                "paddingLeft": "0.5em",
-                "paddingRight": "0.5em",
-              }
+                        Object {
+                                    "paddingLeft": "0.5em",
+                                    "paddingRight": "0.5em",
+                                  }
             }
-          >
+>
             metrics_filter_poll_interval
-          </label>,
+</label>,
           <DropdownButton
             disabled={false}
             id="metrics_filter_poll_interval"
             onSelect={[Function]}
             onToggle={[Function]}
-            title="Every 15 sec"
-          >
+            title="15 sec"
+>
             <MenuItem
-              active={false}
-              bsClass="dropdown"
-              disabled={false}
-              divider={false}
-              eventKey="0"
-              header={false}
+                        active={false}
+                        bsClass="dropdown"
+                        disabled={false}
+                        divider={false}
+                        eventKey="0"
+                        header={false}
             >
-              Pause
+                        Pause
             </MenuItem>
             <MenuItem
-              active={false}
-              bsClass="dropdown"
-              disabled={false}
-              divider={false}
-              eventKey="5000"
-              header={false}
+                        active={false}
+                        bsClass="dropdown"
+                        disabled={false}
+                        divider={false}
+                        eventKey="5000"
+                        header={false}
             >
-              Every 5 sec
+                        5 sec
             </MenuItem>
             <MenuItem
-              active={false}
-              bsClass="dropdown"
-              disabled={false}
-              divider={false}
-              eventKey="10000"
-              header={false}
+                        active={false}
+                        bsClass="dropdown"
+                        disabled={false}
+                        divider={false}
+                        eventKey="10000"
+                        header={false}
             >
-              Every 10 sec
+                        10 sec
             </MenuItem>
             <MenuItem
-              active={false}
-              bsClass="dropdown"
-              disabled={false}
-              divider={false}
-              eventKey="15000"
-              header={false}
+                        active={false}
+                        bsClass="dropdown"
+                        disabled={false}
+                        divider={false}
+                        eventKey="15000"
+                        header={false}
             >
-              Every 15 sec
+                        15 sec
             </MenuItem>
             <MenuItem
-              active={false}
-              bsClass="dropdown"
-              disabled={false}
-              divider={false}
-              eventKey="30000"
-              header={false}
+                        active={false}
+                        bsClass="dropdown"
+                        disabled={false}
+                        divider={false}
+                        eventKey="30000"
+                        header={false}
             >
-              Every 30 sec
+                        30 sec
             </MenuItem>
             <MenuItem
-              active={false}
-              bsClass="dropdown"
-              disabled={false}
-              divider={false}
-              eventKey="60000"
-              header={false}
+                        active={false}
+                        bsClass="dropdown"
+                        disabled={false}
+                        divider={false}
+                        eventKey="60000"
+                        header={false}
             >
-              Every 1 min
+                        1 min
             </MenuItem>
             <MenuItem
-              active={false}
-              bsClass="dropdown"
-              disabled={false}
-              divider={false}
-              eventKey="300000"
-              header={false}
+                        active={false}
+                        bsClass="dropdown"
+                        disabled={false}
+                        divider={false}
+                        eventKey="300000"
+                        header={false}
             >
-              Every 5 min
+                        5 min
             </MenuItem>
-            <MenuItem
-              active={false}
-              bsClass="dropdown"
-              disabled={false}
-              divider={false}
-              eventKey="900000"
-              header={false}
-            >
-              Every 15 min
-            </MenuItem>
-          </DropdownButton>,
+</DropdownButton>,
         ],
       },
       "ref": null,
@@ -1528,9 +1478,9 @@ ShallowWrapper {
                 divider={false}
                 eventKey="0"
                 header={false}
-              >
+>
                 Pause
-              </MenuItem>,
+</MenuItem>,
               <MenuItem
                 active={false}
                 bsClass="dropdown"
@@ -1538,9 +1488,9 @@ ShallowWrapper {
                 divider={false}
                 eventKey="5000"
                 header={false}
-              >
-                Every 5 sec
-              </MenuItem>,
+>
+                5 sec
+</MenuItem>,
               <MenuItem
                 active={false}
                 bsClass="dropdown"
@@ -1548,9 +1498,9 @@ ShallowWrapper {
                 divider={false}
                 eventKey="10000"
                 header={false}
-              >
-                Every 10 sec
-              </MenuItem>,
+>
+                10 sec
+</MenuItem>,
               <MenuItem
                 active={false}
                 bsClass="dropdown"
@@ -1558,9 +1508,9 @@ ShallowWrapper {
                 divider={false}
                 eventKey="15000"
                 header={false}
-              >
-                Every 15 sec
-              </MenuItem>,
+>
+                15 sec
+</MenuItem>,
               <MenuItem
                 active={false}
                 bsClass="dropdown"
@@ -1568,9 +1518,9 @@ ShallowWrapper {
                 divider={false}
                 eventKey="30000"
                 header={false}
-              >
-                Every 30 sec
-              </MenuItem>,
+>
+                30 sec
+</MenuItem>,
               <MenuItem
                 active={false}
                 bsClass="dropdown"
@@ -1578,9 +1528,9 @@ ShallowWrapper {
                 divider={false}
                 eventKey="60000"
                 header={false}
-              >
-                Every 1 min
-              </MenuItem>,
+>
+                1 min
+</MenuItem>,
               <MenuItem
                 active={false}
                 bsClass="dropdown"
@@ -1588,25 +1538,15 @@ ShallowWrapper {
                 divider={false}
                 eventKey="300000"
                 header={false}
-              >
-                Every 5 min
-              </MenuItem>,
-              <MenuItem
-                active={false}
-                bsClass="dropdown"
-                disabled={false}
-                divider={false}
-                eventKey="900000"
-                header={false}
-              >
-                Every 15 min
-              </MenuItem>,
+>
+                5 min
+</MenuItem>,
             ],
             "disabled": false,
             "id": "metrics_filter_poll_interval",
             "onSelect": [Function],
             "onToggle": [Function],
-            "title": "Every 15 sec",
+            "title": "15 sec",
           },
           "ref": null,
           "rendered": Array [
@@ -1634,14 +1574,14 @@ ShallowWrapper {
               "props": Object {
                 "active": false,
                 "bsClass": "dropdown",
-                "children": "Every 5 sec",
+                "children": "5 sec",
                 "disabled": false,
                 "divider": false,
                 "eventKey": "5000",
                 "header": false,
               },
               "ref": null,
-              "rendered": "Every 5 sec",
+              "rendered": "5 sec",
               "type": [Function],
             },
             Object {
@@ -1651,14 +1591,14 @@ ShallowWrapper {
               "props": Object {
                 "active": false,
                 "bsClass": "dropdown",
-                "children": "Every 10 sec",
+                "children": "10 sec",
                 "disabled": false,
                 "divider": false,
                 "eventKey": "10000",
                 "header": false,
               },
               "ref": null,
-              "rendered": "Every 10 sec",
+              "rendered": "10 sec",
               "type": [Function],
             },
             Object {
@@ -1668,14 +1608,14 @@ ShallowWrapper {
               "props": Object {
                 "active": false,
                 "bsClass": "dropdown",
-                "children": "Every 15 sec",
+                "children": "15 sec",
                 "disabled": false,
                 "divider": false,
                 "eventKey": "15000",
                 "header": false,
               },
               "ref": null,
-              "rendered": "Every 15 sec",
+              "rendered": "15 sec",
               "type": [Function],
             },
             Object {
@@ -1685,14 +1625,14 @@ ShallowWrapper {
               "props": Object {
                 "active": false,
                 "bsClass": "dropdown",
-                "children": "Every 30 sec",
+                "children": "30 sec",
                 "disabled": false,
                 "divider": false,
                 "eventKey": "30000",
                 "header": false,
               },
               "ref": null,
-              "rendered": "Every 30 sec",
+              "rendered": "30 sec",
               "type": [Function],
             },
             Object {
@@ -1702,14 +1642,14 @@ ShallowWrapper {
               "props": Object {
                 "active": false,
                 "bsClass": "dropdown",
-                "children": "Every 1 min",
+                "children": "1 min",
                 "disabled": false,
                 "divider": false,
                 "eventKey": "60000",
                 "header": false,
               },
               "ref": null,
-              "rendered": "Every 1 min",
+              "rendered": "1 min",
               "type": [Function],
             },
             Object {
@@ -1719,31 +1659,14 @@ ShallowWrapper {
               "props": Object {
                 "active": false,
                 "bsClass": "dropdown",
-                "children": "Every 5 min",
+                "children": "5 min",
                 "disabled": false,
                 "divider": false,
                 "eventKey": "300000",
                 "header": false,
               },
               "ref": null,
-              "rendered": "Every 5 min",
-              "type": [Function],
-            },
-            Object {
-              "instance": null,
-              "key": "900000",
-              "nodeType": "class",
-              "props": Object {
-                "active": false,
-                "bsClass": "dropdown",
-                "children": "Every 15 min",
-                "disabled": false,
-                "divider": false,
-                "eventKey": "900000",
-                "header": false,
-              },
-              "ref": null,
-              "rendered": "Every 15 min",
+              "rendered": "5 min",
               "type": [Function],
             },
           ],
@@ -1775,23 +1698,22 @@ ShallowWrapper {
 
 exports[`ToolbarDropdown Render correctly all dropdowns 3`] = `
 ShallowWrapper {
-  "length": 1,
   Symbol(enzyme.__root__): [Circular],
   Symbol(enzyme.__unrendered__): <ToolbarDropdown
     disabled={false}
-    handleSelect={[MockFunction]}
+    handleSelect={[Function]}
     id="graph_filter_layouts"
     initialLabel="Cola"
     initialValue="cola"
     nameDropdown="graph_filter_layouts"
     options={
-      Object {
-        "cola": "Cola",
-        "cose-bilkent": "Cose",
-        "dagre": "Dagre",
-      }
+        Object {
+            "cola": "Cola",
+            "cose-bilkent": "Cose",
+            "dagre": "Dagre",
+          }
     }
-  />,
+/>,
   Symbol(enzyme.__renderer__): Object {
     "batchedUpdates": [Function],
     "getNode": [Function],
@@ -1808,52 +1730,52 @@ ShallowWrapper {
       "children": Array [
         <label
           style={
-            Object {
-              "paddingLeft": "0.5em",
-              "paddingRight": "0.5em",
-            }
+                    Object {
+                              "paddingLeft": "0.5em",
+                              "paddingRight": "0.5em",
+                            }
           }
-        >
+>
           graph_filter_layouts
-        </label>,
+</label>,
         <DropdownButton
           disabled={false}
           id="graph_filter_layouts"
           onSelect={[Function]}
           onToggle={[Function]}
           title="Cola"
-        >
+>
           <MenuItem
-            active={true}
-            bsClass="dropdown"
-            disabled={false}
-            divider={false}
-            eventKey="cola"
-            header={false}
+                    active={true}
+                    bsClass="dropdown"
+                    disabled={false}
+                    divider={false}
+                    eventKey="cola"
+                    header={false}
           >
-            Cola
+                    Cola
           </MenuItem>
           <MenuItem
-            active={false}
-            bsClass="dropdown"
-            disabled={false}
-            divider={false}
-            eventKey="cose-bilkent"
-            header={false}
+                    active={false}
+                    bsClass="dropdown"
+                    disabled={false}
+                    divider={false}
+                    eventKey="cose-bilkent"
+                    header={false}
           >
-            Cose
+                    Cose
           </MenuItem>
           <MenuItem
-            active={false}
-            bsClass="dropdown"
-            disabled={false}
-            divider={false}
-            eventKey="dagre"
-            header={false}
+                    active={false}
+                    bsClass="dropdown"
+                    disabled={false}
+                    divider={false}
+                    eventKey="dagre"
+                    header={false}
           >
-            Dagre
+                    Dagre
           </MenuItem>
-        </DropdownButton>,
+</DropdownButton>,
       ],
     },
     "ref": null,
@@ -1886,9 +1808,9 @@ ShallowWrapper {
               divider={false}
               eventKey="cola"
               header={false}
-            >
+>
               Cola
-            </MenuItem>,
+</MenuItem>,
             <MenuItem
               active={false}
               bsClass="dropdown"
@@ -1896,9 +1818,9 @@ ShallowWrapper {
               divider={false}
               eventKey="cose-bilkent"
               header={false}
-            >
+>
               Cose
-            </MenuItem>,
+</MenuItem>,
             <MenuItem
               active={false}
               bsClass="dropdown"
@@ -1906,9 +1828,9 @@ ShallowWrapper {
               divider={false}
               eventKey="dagre"
               header={false}
-            >
+>
               Dagre
-            </MenuItem>,
+</MenuItem>,
           ],
           "disabled": false,
           "id": "graph_filter_layouts",
@@ -1984,52 +1906,52 @@ ShallowWrapper {
         "children": Array [
           <label
             style={
-              Object {
-                "paddingLeft": "0.5em",
-                "paddingRight": "0.5em",
-              }
+                        Object {
+                                    "paddingLeft": "0.5em",
+                                    "paddingRight": "0.5em",
+                                  }
             }
-          >
+>
             graph_filter_layouts
-          </label>,
+</label>,
           <DropdownButton
             disabled={false}
             id="graph_filter_layouts"
             onSelect={[Function]}
             onToggle={[Function]}
             title="Cola"
-          >
+>
             <MenuItem
-              active={true}
-              bsClass="dropdown"
-              disabled={false}
-              divider={false}
-              eventKey="cola"
-              header={false}
+                        active={true}
+                        bsClass="dropdown"
+                        disabled={false}
+                        divider={false}
+                        eventKey="cola"
+                        header={false}
             >
-              Cola
+                        Cola
             </MenuItem>
             <MenuItem
-              active={false}
-              bsClass="dropdown"
-              disabled={false}
-              divider={false}
-              eventKey="cose-bilkent"
-              header={false}
+                        active={false}
+                        bsClass="dropdown"
+                        disabled={false}
+                        divider={false}
+                        eventKey="cose-bilkent"
+                        header={false}
             >
-              Cose
+                        Cose
             </MenuItem>
             <MenuItem
-              active={false}
-              bsClass="dropdown"
-              disabled={false}
-              divider={false}
-              eventKey="dagre"
-              header={false}
+                        active={false}
+                        bsClass="dropdown"
+                        disabled={false}
+                        divider={false}
+                        eventKey="dagre"
+                        header={false}
             >
-              Dagre
+                        Dagre
             </MenuItem>
-          </DropdownButton>,
+</DropdownButton>,
         ],
       },
       "ref": null,
@@ -2062,9 +1984,9 @@ ShallowWrapper {
                 divider={false}
                 eventKey="cola"
                 header={false}
-              >
+>
                 Cola
-              </MenuItem>,
+</MenuItem>,
               <MenuItem
                 active={false}
                 bsClass="dropdown"
@@ -2072,9 +1994,9 @@ ShallowWrapper {
                 divider={false}
                 eventKey="cose-bilkent"
                 header={false}
-              >
+>
                 Cose
-              </MenuItem>,
+</MenuItem>,
               <MenuItem
                 active={false}
                 bsClass="dropdown"
@@ -2082,9 +2004,9 @@ ShallowWrapper {
                 divider={false}
                 eventKey="dagre"
                 header={false}
-              >
+>
                 Dagre
-              </MenuItem>,
+</MenuItem>,
             ],
             "disabled": false,
             "id": "graph_filter_layouts",
@@ -2174,31 +2096,30 @@ ShallowWrapper {
 
 exports[`ToolbarDropdown Render dropdowns correctly with controlled values and labels 1`] = `
 ShallowWrapper {
-  "length": 1,
   Symbol(enzyme.__root__): [Circular],
   Symbol(enzyme.__unrendered__): <ToolbarDropdown
     disabled={false}
-    handleSelect={[MockFunction]}
+    handleSelect={[Function]}
     id="graph_filter_interval_duration"
     label="Last min"
     nameDropdown="graph_filter_interval_duration"
     options={
-      Object {
-        "10800": "Last 3 hours",
-        "1800": "Last 30 min",
-        "21600": "Last 6 hours",
-        "2592000": "Last 30 days",
-        "300": "Last 5 min",
-        "3600": "Last hour",
-        "43200": "Last 12 hours",
-        "60": "Last min",
-        "600": "Last 10 min",
-        "604800": "Last 7 days",
-        "86400": "Last day",
-      }
+        Object {
+            "10800": "Last 3 hours",
+            "1800": "Last 30 min",
+            "21600": "Last 6 hours",
+            "2592000": "Last 30 days",
+            "300": "Last 5 min",
+            "3600": "Last hour",
+            "43200": "Last 12 hours",
+            "60": "Last min",
+            "600": "Last 10 min",
+            "604800": "Last 7 days",
+            "86400": "Last day",
+          }
     }
     value={60}
-  />,
+/>,
   Symbol(enzyme.__renderer__): Object {
     "batchedUpdates": [Function],
     "getNode": [Function],
@@ -2215,132 +2136,132 @@ ShallowWrapper {
       "children": Array [
         <label
           style={
-            Object {
-              "paddingLeft": "0.5em",
-              "paddingRight": "0.5em",
-            }
+                    Object {
+                              "paddingLeft": "0.5em",
+                              "paddingRight": "0.5em",
+                            }
           }
-        >
+>
           graph_filter_interval_duration
-        </label>,
+</label>,
         <DropdownButton
           disabled={false}
           id="graph_filter_interval_duration"
           onSelect={[Function]}
           onToggle={[Function]}
           title="Last min"
-        >
+>
           <MenuItem
-            active={false}
-            bsClass="dropdown"
-            disabled={false}
-            divider={false}
-            eventKey="60"
-            header={false}
+                    active={false}
+                    bsClass="dropdown"
+                    disabled={false}
+                    divider={false}
+                    eventKey="60"
+                    header={false}
           >
-            Last min
+                    Last min
           </MenuItem>
           <MenuItem
-            active={false}
-            bsClass="dropdown"
-            disabled={false}
-            divider={false}
-            eventKey="300"
-            header={false}
+                    active={false}
+                    bsClass="dropdown"
+                    disabled={false}
+                    divider={false}
+                    eventKey="300"
+                    header={false}
           >
-            Last 5 min
+                    Last 5 min
           </MenuItem>
           <MenuItem
-            active={false}
-            bsClass="dropdown"
-            disabled={false}
-            divider={false}
-            eventKey="600"
-            header={false}
+                    active={false}
+                    bsClass="dropdown"
+                    disabled={false}
+                    divider={false}
+                    eventKey="600"
+                    header={false}
           >
-            Last 10 min
+                    Last 10 min
           </MenuItem>
           <MenuItem
-            active={false}
-            bsClass="dropdown"
-            disabled={false}
-            divider={false}
-            eventKey="1800"
-            header={false}
+                    active={false}
+                    bsClass="dropdown"
+                    disabled={false}
+                    divider={false}
+                    eventKey="1800"
+                    header={false}
           >
-            Last 30 min
+                    Last 30 min
           </MenuItem>
           <MenuItem
-            active={false}
-            bsClass="dropdown"
-            disabled={false}
-            divider={false}
-            eventKey="3600"
-            header={false}
+                    active={false}
+                    bsClass="dropdown"
+                    disabled={false}
+                    divider={false}
+                    eventKey="3600"
+                    header={false}
           >
-            Last hour
+                    Last hour
           </MenuItem>
           <MenuItem
-            active={false}
-            bsClass="dropdown"
-            disabled={false}
-            divider={false}
-            eventKey="10800"
-            header={false}
+                    active={false}
+                    bsClass="dropdown"
+                    disabled={false}
+                    divider={false}
+                    eventKey="10800"
+                    header={false}
           >
-            Last 3 hours
+                    Last 3 hours
           </MenuItem>
           <MenuItem
-            active={false}
-            bsClass="dropdown"
-            disabled={false}
-            divider={false}
-            eventKey="21600"
-            header={false}
+                    active={false}
+                    bsClass="dropdown"
+                    disabled={false}
+                    divider={false}
+                    eventKey="21600"
+                    header={false}
           >
-            Last 6 hours
+                    Last 6 hours
           </MenuItem>
           <MenuItem
-            active={false}
-            bsClass="dropdown"
-            disabled={false}
-            divider={false}
-            eventKey="43200"
-            header={false}
+                    active={false}
+                    bsClass="dropdown"
+                    disabled={false}
+                    divider={false}
+                    eventKey="43200"
+                    header={false}
           >
-            Last 12 hours
+                    Last 12 hours
           </MenuItem>
           <MenuItem
-            active={false}
-            bsClass="dropdown"
-            disabled={false}
-            divider={false}
-            eventKey="86400"
-            header={false}
+                    active={false}
+                    bsClass="dropdown"
+                    disabled={false}
+                    divider={false}
+                    eventKey="86400"
+                    header={false}
           >
-            Last day
+                    Last day
           </MenuItem>
           <MenuItem
-            active={false}
-            bsClass="dropdown"
-            disabled={false}
-            divider={false}
-            eventKey="604800"
-            header={false}
+                    active={false}
+                    bsClass="dropdown"
+                    disabled={false}
+                    divider={false}
+                    eventKey="604800"
+                    header={false}
           >
-            Last 7 days
+                    Last 7 days
           </MenuItem>
           <MenuItem
-            active={false}
-            bsClass="dropdown"
-            disabled={false}
-            divider={false}
-            eventKey="2592000"
-            header={false}
+                    active={false}
+                    bsClass="dropdown"
+                    disabled={false}
+                    divider={false}
+                    eventKey="2592000"
+                    header={false}
           >
-            Last 30 days
+                    Last 30 days
           </MenuItem>
-        </DropdownButton>,
+</DropdownButton>,
       ],
     },
     "ref": null,
@@ -2373,9 +2294,9 @@ ShallowWrapper {
               divider={false}
               eventKey="60"
               header={false}
-            >
+>
               Last min
-            </MenuItem>,
+</MenuItem>,
             <MenuItem
               active={false}
               bsClass="dropdown"
@@ -2383,9 +2304,9 @@ ShallowWrapper {
               divider={false}
               eventKey="300"
               header={false}
-            >
+>
               Last 5 min
-            </MenuItem>,
+</MenuItem>,
             <MenuItem
               active={false}
               bsClass="dropdown"
@@ -2393,9 +2314,9 @@ ShallowWrapper {
               divider={false}
               eventKey="600"
               header={false}
-            >
+>
               Last 10 min
-            </MenuItem>,
+</MenuItem>,
             <MenuItem
               active={false}
               bsClass="dropdown"
@@ -2403,9 +2324,9 @@ ShallowWrapper {
               divider={false}
               eventKey="1800"
               header={false}
-            >
+>
               Last 30 min
-            </MenuItem>,
+</MenuItem>,
             <MenuItem
               active={false}
               bsClass="dropdown"
@@ -2413,9 +2334,9 @@ ShallowWrapper {
               divider={false}
               eventKey="3600"
               header={false}
-            >
+>
               Last hour
-            </MenuItem>,
+</MenuItem>,
             <MenuItem
               active={false}
               bsClass="dropdown"
@@ -2423,9 +2344,9 @@ ShallowWrapper {
               divider={false}
               eventKey="10800"
               header={false}
-            >
+>
               Last 3 hours
-            </MenuItem>,
+</MenuItem>,
             <MenuItem
               active={false}
               bsClass="dropdown"
@@ -2433,9 +2354,9 @@ ShallowWrapper {
               divider={false}
               eventKey="21600"
               header={false}
-            >
+>
               Last 6 hours
-            </MenuItem>,
+</MenuItem>,
             <MenuItem
               active={false}
               bsClass="dropdown"
@@ -2443,9 +2364,9 @@ ShallowWrapper {
               divider={false}
               eventKey="43200"
               header={false}
-            >
+>
               Last 12 hours
-            </MenuItem>,
+</MenuItem>,
             <MenuItem
               active={false}
               bsClass="dropdown"
@@ -2453,9 +2374,9 @@ ShallowWrapper {
               divider={false}
               eventKey="86400"
               header={false}
-            >
+>
               Last day
-            </MenuItem>,
+</MenuItem>,
             <MenuItem
               active={false}
               bsClass="dropdown"
@@ -2463,9 +2384,9 @@ ShallowWrapper {
               divider={false}
               eventKey="604800"
               header={false}
-            >
+>
               Last 7 days
-            </MenuItem>,
+</MenuItem>,
             <MenuItem
               active={false}
               bsClass="dropdown"
@@ -2473,9 +2394,9 @@ ShallowWrapper {
               divider={false}
               eventKey="2592000"
               header={false}
-            >
+>
               Last 30 days
-            </MenuItem>,
+</MenuItem>,
           ],
           "disabled": false,
           "id": "graph_filter_interval_duration",
@@ -2687,132 +2608,132 @@ ShallowWrapper {
         "children": Array [
           <label
             style={
-              Object {
-                "paddingLeft": "0.5em",
-                "paddingRight": "0.5em",
-              }
+                        Object {
+                                    "paddingLeft": "0.5em",
+                                    "paddingRight": "0.5em",
+                                  }
             }
-          >
+>
             graph_filter_interval_duration
-          </label>,
+</label>,
           <DropdownButton
             disabled={false}
             id="graph_filter_interval_duration"
             onSelect={[Function]}
             onToggle={[Function]}
             title="Last min"
-          >
+>
             <MenuItem
-              active={false}
-              bsClass="dropdown"
-              disabled={false}
-              divider={false}
-              eventKey="60"
-              header={false}
+                        active={false}
+                        bsClass="dropdown"
+                        disabled={false}
+                        divider={false}
+                        eventKey="60"
+                        header={false}
             >
-              Last min
+                        Last min
             </MenuItem>
             <MenuItem
-              active={false}
-              bsClass="dropdown"
-              disabled={false}
-              divider={false}
-              eventKey="300"
-              header={false}
+                        active={false}
+                        bsClass="dropdown"
+                        disabled={false}
+                        divider={false}
+                        eventKey="300"
+                        header={false}
             >
-              Last 5 min
+                        Last 5 min
             </MenuItem>
             <MenuItem
-              active={false}
-              bsClass="dropdown"
-              disabled={false}
-              divider={false}
-              eventKey="600"
-              header={false}
+                        active={false}
+                        bsClass="dropdown"
+                        disabled={false}
+                        divider={false}
+                        eventKey="600"
+                        header={false}
             >
-              Last 10 min
+                        Last 10 min
             </MenuItem>
             <MenuItem
-              active={false}
-              bsClass="dropdown"
-              disabled={false}
-              divider={false}
-              eventKey="1800"
-              header={false}
+                        active={false}
+                        bsClass="dropdown"
+                        disabled={false}
+                        divider={false}
+                        eventKey="1800"
+                        header={false}
             >
-              Last 30 min
+                        Last 30 min
             </MenuItem>
             <MenuItem
-              active={false}
-              bsClass="dropdown"
-              disabled={false}
-              divider={false}
-              eventKey="3600"
-              header={false}
+                        active={false}
+                        bsClass="dropdown"
+                        disabled={false}
+                        divider={false}
+                        eventKey="3600"
+                        header={false}
             >
-              Last hour
+                        Last hour
             </MenuItem>
             <MenuItem
-              active={false}
-              bsClass="dropdown"
-              disabled={false}
-              divider={false}
-              eventKey="10800"
-              header={false}
+                        active={false}
+                        bsClass="dropdown"
+                        disabled={false}
+                        divider={false}
+                        eventKey="10800"
+                        header={false}
             >
-              Last 3 hours
+                        Last 3 hours
             </MenuItem>
             <MenuItem
-              active={false}
-              bsClass="dropdown"
-              disabled={false}
-              divider={false}
-              eventKey="21600"
-              header={false}
+                        active={false}
+                        bsClass="dropdown"
+                        disabled={false}
+                        divider={false}
+                        eventKey="21600"
+                        header={false}
             >
-              Last 6 hours
+                        Last 6 hours
             </MenuItem>
             <MenuItem
-              active={false}
-              bsClass="dropdown"
-              disabled={false}
-              divider={false}
-              eventKey="43200"
-              header={false}
+                        active={false}
+                        bsClass="dropdown"
+                        disabled={false}
+                        divider={false}
+                        eventKey="43200"
+                        header={false}
             >
-              Last 12 hours
+                        Last 12 hours
             </MenuItem>
             <MenuItem
-              active={false}
-              bsClass="dropdown"
-              disabled={false}
-              divider={false}
-              eventKey="86400"
-              header={false}
+                        active={false}
+                        bsClass="dropdown"
+                        disabled={false}
+                        divider={false}
+                        eventKey="86400"
+                        header={false}
             >
-              Last day
+                        Last day
             </MenuItem>
             <MenuItem
-              active={false}
-              bsClass="dropdown"
-              disabled={false}
-              divider={false}
-              eventKey="604800"
-              header={false}
+                        active={false}
+                        bsClass="dropdown"
+                        disabled={false}
+                        divider={false}
+                        eventKey="604800"
+                        header={false}
             >
-              Last 7 days
+                        Last 7 days
             </MenuItem>
             <MenuItem
-              active={false}
-              bsClass="dropdown"
-              disabled={false}
-              divider={false}
-              eventKey="2592000"
-              header={false}
+                        active={false}
+                        bsClass="dropdown"
+                        disabled={false}
+                        divider={false}
+                        eventKey="2592000"
+                        header={false}
             >
-              Last 30 days
+                        Last 30 days
             </MenuItem>
-          </DropdownButton>,
+</DropdownButton>,
         ],
       },
       "ref": null,
@@ -2845,9 +2766,9 @@ ShallowWrapper {
                 divider={false}
                 eventKey="60"
                 header={false}
-              >
+>
                 Last min
-              </MenuItem>,
+</MenuItem>,
               <MenuItem
                 active={false}
                 bsClass="dropdown"
@@ -2855,9 +2776,9 @@ ShallowWrapper {
                 divider={false}
                 eventKey="300"
                 header={false}
-              >
+>
                 Last 5 min
-              </MenuItem>,
+</MenuItem>,
               <MenuItem
                 active={false}
                 bsClass="dropdown"
@@ -2865,9 +2786,9 @@ ShallowWrapper {
                 divider={false}
                 eventKey="600"
                 header={false}
-              >
+>
                 Last 10 min
-              </MenuItem>,
+</MenuItem>,
               <MenuItem
                 active={false}
                 bsClass="dropdown"
@@ -2875,9 +2796,9 @@ ShallowWrapper {
                 divider={false}
                 eventKey="1800"
                 header={false}
-              >
+>
                 Last 30 min
-              </MenuItem>,
+</MenuItem>,
               <MenuItem
                 active={false}
                 bsClass="dropdown"
@@ -2885,9 +2806,9 @@ ShallowWrapper {
                 divider={false}
                 eventKey="3600"
                 header={false}
-              >
+>
                 Last hour
-              </MenuItem>,
+</MenuItem>,
               <MenuItem
                 active={false}
                 bsClass="dropdown"
@@ -2895,9 +2816,9 @@ ShallowWrapper {
                 divider={false}
                 eventKey="10800"
                 header={false}
-              >
+>
                 Last 3 hours
-              </MenuItem>,
+</MenuItem>,
               <MenuItem
                 active={false}
                 bsClass="dropdown"
@@ -2905,9 +2826,9 @@ ShallowWrapper {
                 divider={false}
                 eventKey="21600"
                 header={false}
-              >
+>
                 Last 6 hours
-              </MenuItem>,
+</MenuItem>,
               <MenuItem
                 active={false}
                 bsClass="dropdown"
@@ -2915,9 +2836,9 @@ ShallowWrapper {
                 divider={false}
                 eventKey="43200"
                 header={false}
-              >
+>
                 Last 12 hours
-              </MenuItem>,
+</MenuItem>,
               <MenuItem
                 active={false}
                 bsClass="dropdown"
@@ -2925,9 +2846,9 @@ ShallowWrapper {
                 divider={false}
                 eventKey="86400"
                 header={false}
-              >
+>
                 Last day
-              </MenuItem>,
+</MenuItem>,
               <MenuItem
                 active={false}
                 bsClass="dropdown"
@@ -2935,9 +2856,9 @@ ShallowWrapper {
                 divider={false}
                 eventKey="604800"
                 header={false}
-              >
+>
                 Last 7 days
-              </MenuItem>,
+</MenuItem>,
               <MenuItem
                 active={false}
                 bsClass="dropdown"
@@ -2945,9 +2866,9 @@ ShallowWrapper {
                 divider={false}
                 eventKey="2592000"
                 header={false}
-              >
+>
                 Last 30 days
-              </MenuItem>,
+</MenuItem>,
             ],
             "disabled": false,
             "id": "graph_filter_interval_duration",
@@ -3173,28 +3094,26 @@ ShallowWrapper {
 
 exports[`ToolbarDropdown Render dropdowns correctly with controlled values and labels 2`] = `
 ShallowWrapper {
-  "length": 1,
   Symbol(enzyme.__root__): [Circular],
   Symbol(enzyme.__unrendered__): <ToolbarDropdown
     disabled={false}
-    handleSelect={[MockFunction]}
+    handleSelect={[Function]}
     id="metrics_filter_poll_interval"
-    label="Every 15 sec"
+    label="15 sec"
     nameDropdown="metrics_filter_poll_interval"
     options={
-      Object {
-        "0": "Pause",
-        "10000": "Every 10 sec",
-        "15000": "Every 15 sec",
-        "30000": "Every 30 sec",
-        "300000": "Every 5 min",
-        "5000": "Every 5 sec",
-        "60000": "Every 1 min",
-        "900000": "Every 15 min",
-      }
+        Object {
+            "0": "Pause",
+            "10000": "10 sec",
+            "15000": "15 sec",
+            "30000": "30 sec",
+            "300000": "5 min",
+            "5000": "5 sec",
+            "60000": "1 min",
+          }
     }
     value={15000}
-  />,
+/>,
   Symbol(enzyme.__renderer__): Object {
     "batchedUpdates": [Function],
     "getNode": [Function],
@@ -3211,102 +3130,92 @@ ShallowWrapper {
       "children": Array [
         <label
           style={
-            Object {
-              "paddingLeft": "0.5em",
-              "paddingRight": "0.5em",
-            }
+                    Object {
+                              "paddingLeft": "0.5em",
+                              "paddingRight": "0.5em",
+                            }
           }
-        >
+>
           metrics_filter_poll_interval
-        </label>,
+</label>,
         <DropdownButton
           disabled={false}
           id="metrics_filter_poll_interval"
           onSelect={[Function]}
           onToggle={[Function]}
-          title="Every 15 sec"
-        >
+          title="15 sec"
+>
           <MenuItem
-            active={false}
-            bsClass="dropdown"
-            disabled={false}
-            divider={false}
-            eventKey="0"
-            header={false}
+                    active={false}
+                    bsClass="dropdown"
+                    disabled={false}
+                    divider={false}
+                    eventKey="0"
+                    header={false}
           >
-            Pause
+                    Pause
           </MenuItem>
           <MenuItem
-            active={false}
-            bsClass="dropdown"
-            disabled={false}
-            divider={false}
-            eventKey="5000"
-            header={false}
+                    active={false}
+                    bsClass="dropdown"
+                    disabled={false}
+                    divider={false}
+                    eventKey="5000"
+                    header={false}
           >
-            Every 5 sec
+                    5 sec
           </MenuItem>
           <MenuItem
-            active={false}
-            bsClass="dropdown"
-            disabled={false}
-            divider={false}
-            eventKey="10000"
-            header={false}
+                    active={false}
+                    bsClass="dropdown"
+                    disabled={false}
+                    divider={false}
+                    eventKey="10000"
+                    header={false}
           >
-            Every 10 sec
+                    10 sec
           </MenuItem>
           <MenuItem
-            active={false}
-            bsClass="dropdown"
-            disabled={false}
-            divider={false}
-            eventKey="15000"
-            header={false}
+                    active={false}
+                    bsClass="dropdown"
+                    disabled={false}
+                    divider={false}
+                    eventKey="15000"
+                    header={false}
           >
-            Every 15 sec
+                    15 sec
           </MenuItem>
           <MenuItem
-            active={false}
-            bsClass="dropdown"
-            disabled={false}
-            divider={false}
-            eventKey="30000"
-            header={false}
+                    active={false}
+                    bsClass="dropdown"
+                    disabled={false}
+                    divider={false}
+                    eventKey="30000"
+                    header={false}
           >
-            Every 30 sec
+                    30 sec
           </MenuItem>
           <MenuItem
-            active={false}
-            bsClass="dropdown"
-            disabled={false}
-            divider={false}
-            eventKey="60000"
-            header={false}
+                    active={false}
+                    bsClass="dropdown"
+                    disabled={false}
+                    divider={false}
+                    eventKey="60000"
+                    header={false}
           >
-            Every 1 min
+                    1 min
           </MenuItem>
           <MenuItem
-            active={false}
-            bsClass="dropdown"
-            disabled={false}
-            divider={false}
-            eventKey="300000"
-            header={false}
+                    active={false}
+                    bsClass="dropdown"
+                    disabled={false}
+                    divider={false}
+                    eventKey="300000"
+                    header={false}
           >
-            Every 5 min
+                    5 min
           </MenuItem>
-          <MenuItem
-            active={false}
-            bsClass="dropdown"
-            disabled={false}
-            divider={false}
-            eventKey="900000"
-            header={false}
-          >
-            Every 15 min
-          </MenuItem>
-        </DropdownButton>,
+</DropdownButton>,
       ],
     },
     "ref": null,
@@ -3339,9 +3248,9 @@ ShallowWrapper {
               divider={false}
               eventKey="0"
               header={false}
-            >
+>
               Pause
-            </MenuItem>,
+</MenuItem>,
             <MenuItem
               active={false}
               bsClass="dropdown"
@@ -3349,9 +3258,9 @@ ShallowWrapper {
               divider={false}
               eventKey="5000"
               header={false}
-            >
-              Every 5 sec
-            </MenuItem>,
+>
+              5 sec
+</MenuItem>,
             <MenuItem
               active={false}
               bsClass="dropdown"
@@ -3359,9 +3268,9 @@ ShallowWrapper {
               divider={false}
               eventKey="10000"
               header={false}
-            >
-              Every 10 sec
-            </MenuItem>,
+>
+              10 sec
+</MenuItem>,
             <MenuItem
               active={false}
               bsClass="dropdown"
@@ -3369,9 +3278,9 @@ ShallowWrapper {
               divider={false}
               eventKey="15000"
               header={false}
-            >
-              Every 15 sec
-            </MenuItem>,
+>
+              15 sec
+</MenuItem>,
             <MenuItem
               active={false}
               bsClass="dropdown"
@@ -3379,9 +3288,9 @@ ShallowWrapper {
               divider={false}
               eventKey="30000"
               header={false}
-            >
-              Every 30 sec
-            </MenuItem>,
+>
+              30 sec
+</MenuItem>,
             <MenuItem
               active={false}
               bsClass="dropdown"
@@ -3389,9 +3298,9 @@ ShallowWrapper {
               divider={false}
               eventKey="60000"
               header={false}
-            >
-              Every 1 min
-            </MenuItem>,
+>
+              1 min
+</MenuItem>,
             <MenuItem
               active={false}
               bsClass="dropdown"
@@ -3399,25 +3308,15 @@ ShallowWrapper {
               divider={false}
               eventKey="300000"
               header={false}
-            >
-              Every 5 min
-            </MenuItem>,
-            <MenuItem
-              active={false}
-              bsClass="dropdown"
-              disabled={false}
-              divider={false}
-              eventKey="900000"
-              header={false}
-            >
-              Every 15 min
-            </MenuItem>,
+>
+              5 min
+</MenuItem>,
           ],
           "disabled": false,
           "id": "metrics_filter_poll_interval",
           "onSelect": [Function],
           "onToggle": [Function],
-          "title": "Every 15 sec",
+          "title": "15 sec",
         },
         "ref": null,
         "rendered": Array [
@@ -3445,14 +3344,14 @@ ShallowWrapper {
             "props": Object {
               "active": false,
               "bsClass": "dropdown",
-              "children": "Every 5 sec",
+              "children": "5 sec",
               "disabled": false,
               "divider": false,
               "eventKey": "5000",
               "header": false,
             },
             "ref": null,
-            "rendered": "Every 5 sec",
+            "rendered": "5 sec",
             "type": [Function],
           },
           Object {
@@ -3462,14 +3361,14 @@ ShallowWrapper {
             "props": Object {
               "active": false,
               "bsClass": "dropdown",
-              "children": "Every 10 sec",
+              "children": "10 sec",
               "disabled": false,
               "divider": false,
               "eventKey": "10000",
               "header": false,
             },
             "ref": null,
-            "rendered": "Every 10 sec",
+            "rendered": "10 sec",
             "type": [Function],
           },
           Object {
@@ -3479,14 +3378,14 @@ ShallowWrapper {
             "props": Object {
               "active": false,
               "bsClass": "dropdown",
-              "children": "Every 15 sec",
+              "children": "15 sec",
               "disabled": false,
               "divider": false,
               "eventKey": "15000",
               "header": false,
             },
             "ref": null,
-            "rendered": "Every 15 sec",
+            "rendered": "15 sec",
             "type": [Function],
           },
           Object {
@@ -3496,14 +3395,14 @@ ShallowWrapper {
             "props": Object {
               "active": false,
               "bsClass": "dropdown",
-              "children": "Every 30 sec",
+              "children": "30 sec",
               "disabled": false,
               "divider": false,
               "eventKey": "30000",
               "header": false,
             },
             "ref": null,
-            "rendered": "Every 30 sec",
+            "rendered": "30 sec",
             "type": [Function],
           },
           Object {
@@ -3513,14 +3412,14 @@ ShallowWrapper {
             "props": Object {
               "active": false,
               "bsClass": "dropdown",
-              "children": "Every 1 min",
+              "children": "1 min",
               "disabled": false,
               "divider": false,
               "eventKey": "60000",
               "header": false,
             },
             "ref": null,
-            "rendered": "Every 1 min",
+            "rendered": "1 min",
             "type": [Function],
           },
           Object {
@@ -3530,31 +3429,14 @@ ShallowWrapper {
             "props": Object {
               "active": false,
               "bsClass": "dropdown",
-              "children": "Every 5 min",
+              "children": "5 min",
               "disabled": false,
               "divider": false,
               "eventKey": "300000",
               "header": false,
             },
             "ref": null,
-            "rendered": "Every 5 min",
-            "type": [Function],
-          },
-          Object {
-            "instance": null,
-            "key": "900000",
-            "nodeType": "class",
-            "props": Object {
-              "active": false,
-              "bsClass": "dropdown",
-              "children": "Every 15 min",
-              "disabled": false,
-              "divider": false,
-              "eventKey": "900000",
-              "header": false,
-            },
-            "ref": null,
-            "rendered": "Every 15 min",
+            "rendered": "5 min",
             "type": [Function],
           },
         ],
@@ -3572,102 +3454,92 @@ ShallowWrapper {
         "children": Array [
           <label
             style={
-              Object {
-                "paddingLeft": "0.5em",
-                "paddingRight": "0.5em",
-              }
+                        Object {
+                                    "paddingLeft": "0.5em",
+                                    "paddingRight": "0.5em",
+                                  }
             }
-          >
+>
             metrics_filter_poll_interval
-          </label>,
+</label>,
           <DropdownButton
             disabled={false}
             id="metrics_filter_poll_interval"
             onSelect={[Function]}
             onToggle={[Function]}
-            title="Every 15 sec"
-          >
+            title="15 sec"
+>
             <MenuItem
-              active={false}
-              bsClass="dropdown"
-              disabled={false}
-              divider={false}
-              eventKey="0"
-              header={false}
+                        active={false}
+                        bsClass="dropdown"
+                        disabled={false}
+                        divider={false}
+                        eventKey="0"
+                        header={false}
             >
-              Pause
+                        Pause
             </MenuItem>
             <MenuItem
-              active={false}
-              bsClass="dropdown"
-              disabled={false}
-              divider={false}
-              eventKey="5000"
-              header={false}
+                        active={false}
+                        bsClass="dropdown"
+                        disabled={false}
+                        divider={false}
+                        eventKey="5000"
+                        header={false}
             >
-              Every 5 sec
+                        5 sec
             </MenuItem>
             <MenuItem
-              active={false}
-              bsClass="dropdown"
-              disabled={false}
-              divider={false}
-              eventKey="10000"
-              header={false}
+                        active={false}
+                        bsClass="dropdown"
+                        disabled={false}
+                        divider={false}
+                        eventKey="10000"
+                        header={false}
             >
-              Every 10 sec
+                        10 sec
             </MenuItem>
             <MenuItem
-              active={false}
-              bsClass="dropdown"
-              disabled={false}
-              divider={false}
-              eventKey="15000"
-              header={false}
+                        active={false}
+                        bsClass="dropdown"
+                        disabled={false}
+                        divider={false}
+                        eventKey="15000"
+                        header={false}
             >
-              Every 15 sec
+                        15 sec
             </MenuItem>
             <MenuItem
-              active={false}
-              bsClass="dropdown"
-              disabled={false}
-              divider={false}
-              eventKey="30000"
-              header={false}
+                        active={false}
+                        bsClass="dropdown"
+                        disabled={false}
+                        divider={false}
+                        eventKey="30000"
+                        header={false}
             >
-              Every 30 sec
+                        30 sec
             </MenuItem>
             <MenuItem
-              active={false}
-              bsClass="dropdown"
-              disabled={false}
-              divider={false}
-              eventKey="60000"
-              header={false}
+                        active={false}
+                        bsClass="dropdown"
+                        disabled={false}
+                        divider={false}
+                        eventKey="60000"
+                        header={false}
             >
-              Every 1 min
+                        1 min
             </MenuItem>
             <MenuItem
-              active={false}
-              bsClass="dropdown"
-              disabled={false}
-              divider={false}
-              eventKey="300000"
-              header={false}
+                        active={false}
+                        bsClass="dropdown"
+                        disabled={false}
+                        divider={false}
+                        eventKey="300000"
+                        header={false}
             >
-              Every 5 min
+                        5 min
             </MenuItem>
-            <MenuItem
-              active={false}
-              bsClass="dropdown"
-              disabled={false}
-              divider={false}
-              eventKey="900000"
-              header={false}
-            >
-              Every 15 min
-            </MenuItem>
-          </DropdownButton>,
+</DropdownButton>,
         ],
       },
       "ref": null,
@@ -3700,9 +3572,9 @@ ShallowWrapper {
                 divider={false}
                 eventKey="0"
                 header={false}
-              >
+>
                 Pause
-              </MenuItem>,
+</MenuItem>,
               <MenuItem
                 active={false}
                 bsClass="dropdown"
@@ -3710,9 +3582,9 @@ ShallowWrapper {
                 divider={false}
                 eventKey="5000"
                 header={false}
-              >
-                Every 5 sec
-              </MenuItem>,
+>
+                5 sec
+</MenuItem>,
               <MenuItem
                 active={false}
                 bsClass="dropdown"
@@ -3720,9 +3592,9 @@ ShallowWrapper {
                 divider={false}
                 eventKey="10000"
                 header={false}
-              >
-                Every 10 sec
-              </MenuItem>,
+>
+                10 sec
+</MenuItem>,
               <MenuItem
                 active={false}
                 bsClass="dropdown"
@@ -3730,9 +3602,9 @@ ShallowWrapper {
                 divider={false}
                 eventKey="15000"
                 header={false}
-              >
-                Every 15 sec
-              </MenuItem>,
+>
+                15 sec
+</MenuItem>,
               <MenuItem
                 active={false}
                 bsClass="dropdown"
@@ -3740,9 +3612,9 @@ ShallowWrapper {
                 divider={false}
                 eventKey="30000"
                 header={false}
-              >
-                Every 30 sec
-              </MenuItem>,
+>
+                30 sec
+</MenuItem>,
               <MenuItem
                 active={false}
                 bsClass="dropdown"
@@ -3750,9 +3622,9 @@ ShallowWrapper {
                 divider={false}
                 eventKey="60000"
                 header={false}
-              >
-                Every 1 min
-              </MenuItem>,
+>
+                1 min
+</MenuItem>,
               <MenuItem
                 active={false}
                 bsClass="dropdown"
@@ -3760,25 +3632,15 @@ ShallowWrapper {
                 divider={false}
                 eventKey="300000"
                 header={false}
-              >
-                Every 5 min
-              </MenuItem>,
-              <MenuItem
-                active={false}
-                bsClass="dropdown"
-                disabled={false}
-                divider={false}
-                eventKey="900000"
-                header={false}
-              >
-                Every 15 min
-              </MenuItem>,
+>
+                5 min
+</MenuItem>,
             ],
             "disabled": false,
             "id": "metrics_filter_poll_interval",
             "onSelect": [Function],
             "onToggle": [Function],
-            "title": "Every 15 sec",
+            "title": "15 sec",
           },
           "ref": null,
           "rendered": Array [
@@ -3806,14 +3668,14 @@ ShallowWrapper {
               "props": Object {
                 "active": false,
                 "bsClass": "dropdown",
-                "children": "Every 5 sec",
+                "children": "5 sec",
                 "disabled": false,
                 "divider": false,
                 "eventKey": "5000",
                 "header": false,
               },
               "ref": null,
-              "rendered": "Every 5 sec",
+              "rendered": "5 sec",
               "type": [Function],
             },
             Object {
@@ -3823,14 +3685,14 @@ ShallowWrapper {
               "props": Object {
                 "active": false,
                 "bsClass": "dropdown",
-                "children": "Every 10 sec",
+                "children": "10 sec",
                 "disabled": false,
                 "divider": false,
                 "eventKey": "10000",
                 "header": false,
               },
               "ref": null,
-              "rendered": "Every 10 sec",
+              "rendered": "10 sec",
               "type": [Function],
             },
             Object {
@@ -3840,14 +3702,14 @@ ShallowWrapper {
               "props": Object {
                 "active": false,
                 "bsClass": "dropdown",
-                "children": "Every 15 sec",
+                "children": "15 sec",
                 "disabled": false,
                 "divider": false,
                 "eventKey": "15000",
                 "header": false,
               },
               "ref": null,
-              "rendered": "Every 15 sec",
+              "rendered": "15 sec",
               "type": [Function],
             },
             Object {
@@ -3857,14 +3719,14 @@ ShallowWrapper {
               "props": Object {
                 "active": false,
                 "bsClass": "dropdown",
-                "children": "Every 30 sec",
+                "children": "30 sec",
                 "disabled": false,
                 "divider": false,
                 "eventKey": "30000",
                 "header": false,
               },
               "ref": null,
-              "rendered": "Every 30 sec",
+              "rendered": "30 sec",
               "type": [Function],
             },
             Object {
@@ -3874,14 +3736,14 @@ ShallowWrapper {
               "props": Object {
                 "active": false,
                 "bsClass": "dropdown",
-                "children": "Every 1 min",
+                "children": "1 min",
                 "disabled": false,
                 "divider": false,
                 "eventKey": "60000",
                 "header": false,
               },
               "ref": null,
-              "rendered": "Every 1 min",
+              "rendered": "1 min",
               "type": [Function],
             },
             Object {
@@ -3891,31 +3753,14 @@ ShallowWrapper {
               "props": Object {
                 "active": false,
                 "bsClass": "dropdown",
-                "children": "Every 5 min",
+                "children": "5 min",
                 "disabled": false,
                 "divider": false,
                 "eventKey": "300000",
                 "header": false,
               },
               "ref": null,
-              "rendered": "Every 5 min",
-              "type": [Function],
-            },
-            Object {
-              "instance": null,
-              "key": "900000",
-              "nodeType": "class",
-              "props": Object {
-                "active": false,
-                "bsClass": "dropdown",
-                "children": "Every 15 min",
-                "disabled": false,
-                "divider": false,
-                "eventKey": "900000",
-                "header": false,
-              },
-              "ref": null,
-              "rendered": "Every 15 min",
+              "rendered": "5 min",
               "type": [Function],
             },
           ],
@@ -3947,23 +3792,22 @@ ShallowWrapper {
 
 exports[`ToolbarDropdown Render dropdowns correctly with controlled values and labels 3`] = `
 ShallowWrapper {
-  "length": 1,
   Symbol(enzyme.__root__): [Circular],
   Symbol(enzyme.__unrendered__): <ToolbarDropdown
     disabled={false}
-    handleSelect={[MockFunction]}
+    handleSelect={[Function]}
     id="graph_filter_layouts"
     label="Cola"
     nameDropdown="graph_filter_layouts"
     options={
-      Object {
-        "cola": "Cola",
-        "cose-bilkent": "Cose",
-        "dagre": "Dagre",
-      }
+        Object {
+            "cola": "Cola",
+            "cose-bilkent": "Cose",
+            "dagre": "Dagre",
+          }
     }
     value="cola"
-  />,
+/>,
   Symbol(enzyme.__renderer__): Object {
     "batchedUpdates": [Function],
     "getNode": [Function],
@@ -3980,52 +3824,52 @@ ShallowWrapper {
       "children": Array [
         <label
           style={
-            Object {
-              "paddingLeft": "0.5em",
-              "paddingRight": "0.5em",
-            }
+                    Object {
+                              "paddingLeft": "0.5em",
+                              "paddingRight": "0.5em",
+                            }
           }
-        >
+>
           graph_filter_layouts
-        </label>,
+</label>,
         <DropdownButton
           disabled={false}
           id="graph_filter_layouts"
           onSelect={[Function]}
           onToggle={[Function]}
           title="Cola"
-        >
+>
           <MenuItem
-            active={true}
-            bsClass="dropdown"
-            disabled={false}
-            divider={false}
-            eventKey="cola"
-            header={false}
+                    active={true}
+                    bsClass="dropdown"
+                    disabled={false}
+                    divider={false}
+                    eventKey="cola"
+                    header={false}
           >
-            Cola
+                    Cola
           </MenuItem>
           <MenuItem
-            active={false}
-            bsClass="dropdown"
-            disabled={false}
-            divider={false}
-            eventKey="cose-bilkent"
-            header={false}
+                    active={false}
+                    bsClass="dropdown"
+                    disabled={false}
+                    divider={false}
+                    eventKey="cose-bilkent"
+                    header={false}
           >
-            Cose
+                    Cose
           </MenuItem>
           <MenuItem
-            active={false}
-            bsClass="dropdown"
-            disabled={false}
-            divider={false}
-            eventKey="dagre"
-            header={false}
+                    active={false}
+                    bsClass="dropdown"
+                    disabled={false}
+                    divider={false}
+                    eventKey="dagre"
+                    header={false}
           >
-            Dagre
+                    Dagre
           </MenuItem>
-        </DropdownButton>,
+</DropdownButton>,
       ],
     },
     "ref": null,
@@ -4058,9 +3902,9 @@ ShallowWrapper {
               divider={false}
               eventKey="cola"
               header={false}
-            >
+>
               Cola
-            </MenuItem>,
+</MenuItem>,
             <MenuItem
               active={false}
               bsClass="dropdown"
@@ -4068,9 +3912,9 @@ ShallowWrapper {
               divider={false}
               eventKey="cose-bilkent"
               header={false}
-            >
+>
               Cose
-            </MenuItem>,
+</MenuItem>,
             <MenuItem
               active={false}
               bsClass="dropdown"
@@ -4078,9 +3922,9 @@ ShallowWrapper {
               divider={false}
               eventKey="dagre"
               header={false}
-            >
+>
               Dagre
-            </MenuItem>,
+</MenuItem>,
           ],
           "disabled": false,
           "id": "graph_filter_layouts",
@@ -4156,52 +4000,52 @@ ShallowWrapper {
         "children": Array [
           <label
             style={
-              Object {
-                "paddingLeft": "0.5em",
-                "paddingRight": "0.5em",
-              }
+                        Object {
+                                    "paddingLeft": "0.5em",
+                                    "paddingRight": "0.5em",
+                                  }
             }
-          >
+>
             graph_filter_layouts
-          </label>,
+</label>,
           <DropdownButton
             disabled={false}
             id="graph_filter_layouts"
             onSelect={[Function]}
             onToggle={[Function]}
             title="Cola"
-          >
+>
             <MenuItem
-              active={true}
-              bsClass="dropdown"
-              disabled={false}
-              divider={false}
-              eventKey="cola"
-              header={false}
+                        active={true}
+                        bsClass="dropdown"
+                        disabled={false}
+                        divider={false}
+                        eventKey="cola"
+                        header={false}
             >
-              Cola
+                        Cola
             </MenuItem>
             <MenuItem
-              active={false}
-              bsClass="dropdown"
-              disabled={false}
-              divider={false}
-              eventKey="cose-bilkent"
-              header={false}
+                        active={false}
+                        bsClass="dropdown"
+                        disabled={false}
+                        divider={false}
+                        eventKey="cose-bilkent"
+                        header={false}
             >
-              Cose
+                        Cose
             </MenuItem>
             <MenuItem
-              active={false}
-              bsClass="dropdown"
-              disabled={false}
-              divider={false}
-              eventKey="dagre"
-              header={false}
+                        active={false}
+                        bsClass="dropdown"
+                        disabled={false}
+                        divider={false}
+                        eventKey="dagre"
+                        header={false}
             >
-              Dagre
+                        Dagre
             </MenuItem>
-          </DropdownButton>,
+</DropdownButton>,
         ],
       },
       "ref": null,
@@ -4234,9 +4078,9 @@ ShallowWrapper {
                 divider={false}
                 eventKey="cola"
                 header={false}
-              >
+>
                 Cola
-              </MenuItem>,
+</MenuItem>,
               <MenuItem
                 active={false}
                 bsClass="dropdown"
@@ -4244,9 +4088,9 @@ ShallowWrapper {
                 divider={false}
                 eventKey="cose-bilkent"
                 header={false}
-              >
+>
                 Cose
-              </MenuItem>,
+</MenuItem>,
               <MenuItem
                 active={false}
                 bsClass="dropdown"
@@ -4254,9 +4098,9 @@ ShallowWrapper {
                 divider={false}
                 eventKey="dagre"
                 header={false}
-              >
+>
                 Dagre
-              </MenuItem>,
+</MenuItem>,
             ],
             "disabled": false,
             "id": "graph_filter_layouts",

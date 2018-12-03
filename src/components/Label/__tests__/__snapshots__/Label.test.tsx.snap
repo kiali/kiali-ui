@@ -2,12 +2,11 @@
 
 exports[`#Badge render correctly with data should render badge 1`] = `
 ShallowWrapper {
-  "length": 1,
   Symbol(enzyme.__root__): [Circular],
   Symbol(enzyme.__unrendered__): <Label
     name="app"
     value="bookinfo"
-  />,
+/>,
   Symbol(enzyme.__renderer__): Object {
     "batchedUpdates": [Function],
     "getNode": [Function],
@@ -27,17 +26,17 @@ ShallowWrapper {
           className="label-key"
           onRemoveClick={undefined}
           type="default"
-        >
+>
           app
-        </Label>,
+</Label>,
         <Label
           bsStyle="primary"
           className="label-value"
           onRemoveClick={undefined}
           type="default"
-        >
+>
           bookinfo
-        </Label>,
+</Label>,
       ],
       "className": "label-pair",
     },
@@ -88,17 +87,17 @@ ShallowWrapper {
             className="label-key"
             onRemoveClick={undefined}
             type="default"
-          >
+>
             app
-          </Label>,
+</Label>,
           <Label
             bsStyle="primary"
             className="label-value"
             onRemoveClick={undefined}
             type="default"
-          >
+>
             bookinfo
-          </Label>,
+</Label>,
         ],
         "className": "label-pair",
       },

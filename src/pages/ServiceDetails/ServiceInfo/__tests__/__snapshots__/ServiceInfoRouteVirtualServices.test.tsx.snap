@@ -2,72 +2,71 @@
 
 exports[`#ServiceInfoVirtualServices render correctly with data should render service virtual services 1`] = `
 ShallowWrapper {
-  "length": 1,
   Symbol(enzyme.__root__): [Circular],
   Symbol(enzyme.__unrendered__): <ServiceInfoVirtualServices
     editorLink="/namespaces/test_namespace/services/test_services"
     validations={Object {}}
     virtualServices={
-      Array [
-        Object {
-          "metadata": Object {
-            "creationTimestamp": "2018-03-14T10:17:52Z",
-            "name": "reviews-default",
-            "resourceVersion": "1234",
-          },
-          "spec": Object {
-            "gateways": Array [
-              "reviews",
-            ],
-            "hosts": Array [
-              "rewiews",
-            ],
-            "http": Array [
-              Object {
-                "route": Array [
+        Array [
+            Object {
+              "metadata": Object {
+                "creationTimestamp": "2018-03-14T10:17:52Z",
+                "name": "reviews-default",
+                "resourceVersion": "1234",
+              },
+              "spec": Object {
+                "gateways": Array [
+                  "reviews",
+                ],
+                "hosts": Array [
+                  "rewiews",
+                ],
+                "http": Array [
                   Object {
-                    "destination": Object {
-                      "host": "reviews",
-                      "subset": "v1",
-                    },
-                    "weight": 55,
+                    "route": Array [
+                      Object {
+                        "destination": Object {
+                          "host": "reviews",
+                          "subset": "v1",
+                        },
+                        "weight": 55,
+                      },
+                      Object {
+                        "destination": Object {
+                          "host": "reviews",
+                          "subset": "v3",
+                        },
+                        "weight": 55,
+                      },
+                    ],
                   },
+                ],
+                "tcp": Array [
                   Object {
-                    "destination": Object {
-                      "host": "reviews",
-                      "subset": "v3",
-                    },
-                    "weight": 55,
+                    "match": Array [],
+                    "route": Array [
+                      Object {
+                        "destination": Object {
+                          "host": "reviews",
+                          "subset": "v1",
+                        },
+                        "weight": 55,
+                      },
+                      Object {
+                        "destination": Object {
+                          "host": "reviews",
+                          "subset": "v2",
+                        },
+                        "weight": 55,
+                      },
+                    ],
                   },
                 ],
               },
-            ],
-            "tcp": Array [
-              Object {
-                "match": Array [],
-                "route": Array [
-                  Object {
-                    "destination": Object {
-                      "host": "reviews",
-                      "subset": "v1",
-                    },
-                    "weight": 55,
-                  },
-                  Object {
-                    "destination": Object {
-                      "host": "reviews",
-                      "subset": "v2",
-                    },
-                    "weight": 55,
-                  },
-                ],
-              },
-            ],
-          },
-        },
-      ]
+            },
+          ]
     }
-  />,
+/>,
   Symbol(enzyme.__renderer__): Object {
     "batchedUpdates": [Function],
     "getNode": [Function],
@@ -86,227 +85,227 @@ ShallowWrapper {
         bsClass="col"
         componentClass="div"
         xs={12}
-      >
+>
         <TablePfProvider
-          bordered={true}
-          className=""
-          columns={
-            Array [
-              Object {
-                "cell": Object {
-                  "formatters": Array [
-                    [Function],
-                  ],
-                  "props": Object {
-                    "align": "text-center",
-                  },
-                },
-                "header": Object {
-                  "formatters": Array [
-                    [Function],
-                  ],
-                  "label": "Status",
-                },
-                "property": "status",
-              },
-              Object {
-                "cell": Object {
-                  "formatters": Array [
-                    [Function],
-                  ],
-                },
-                "header": Object {
-                  "formatters": Array [
-                    [Function],
-                  ],
-                  "label": "Name",
-                },
-                "property": "name",
-              },
-              Object {
-                "cell": Object {
-                  "formatters": Array [
-                    [Function],
-                  ],
-                },
-                "header": Object {
-                  "formatters": Array [
-                    [Function],
-                  ],
-                  "label": "Created at",
-                },
-                "property": "createdAt",
-              },
-              Object {
-                "cell": Object {
-                  "formatters": Array [
-                    [Function],
-                  ],
-                },
-                "header": Object {
-                  "formatters": Array [
-                    [Function],
-                  ],
-                  "label": "Resource version",
-                },
-                "property": "resourceVersion",
-              },
-              Object {
-                "cell": Object {
-                  "formatters": Array [
-                    [Function],
-                  ],
-                },
-                "header": Object {
-                  "formatters": Array [
-                    [Function],
-                  ],
-                  "label": "Actions",
-                },
-                "property": "actions",
-              },
-            ]
-          }
-          components={Object {}}
-          condensed={false}
-          dataTable={true}
-          hover={true}
-          inlineEdit={false}
-          striped={true}
+                bordered={true}
+                className=""
+                columns={
+                        Array [
+                                Object {
+                                  "cell": Object {
+                                    "formatters": Array [
+                                      [Function],
+                                    ],
+                                    "props": Object {
+                                      "align": "text-center",
+                                    },
+                                  },
+                                  "header": Object {
+                                    "formatters": Array [
+                                      [Function],
+                                    ],
+                                    "label": "Status",
+                                  },
+                                  "property": "status",
+                                },
+                                Object {
+                                  "cell": Object {
+                                    "formatters": Array [
+                                      [Function],
+                                    ],
+                                  },
+                                  "header": Object {
+                                    "formatters": Array [
+                                      [Function],
+                                    ],
+                                    "label": "Name",
+                                  },
+                                  "property": "name",
+                                },
+                                Object {
+                                  "cell": Object {
+                                    "formatters": Array [
+                                      [Function],
+                                    ],
+                                  },
+                                  "header": Object {
+                                    "formatters": Array [
+                                      [Function],
+                                    ],
+                                    "label": "Created at",
+                                  },
+                                  "property": "createdAt",
+                                },
+                                Object {
+                                  "cell": Object {
+                                    "formatters": Array [
+                                      [Function],
+                                    ],
+                                  },
+                                  "header": Object {
+                                    "formatters": Array [
+                                      [Function],
+                                    ],
+                                    "label": "Resource version",
+                                  },
+                                  "property": "resourceVersion",
+                                },
+                                Object {
+                                  "cell": Object {
+                                    "formatters": Array [
+                                      [Function],
+                                    ],
+                                  },
+                                  "header": Object {
+                                    "formatters": Array [
+                                      [Function],
+                                    ],
+                                    "label": "Actions",
+                                  },
+                                  "property": "actions",
+                                },
+                              ]
+                }
+                components={Object {}}
+                condensed={false}
+                dataTable={true}
+                hover={true}
+                inlineEdit={false}
+                striped={true}
         >
-          <Header
-            headerRows={
-              Array [
-                Array [
-                  Object {
-                    "cell": Object {
-                      "formatters": Array [
-                        [Function],
-                      ],
-                      "props": Object {
-                        "align": "text-center",
-                      },
-                    },
-                    "header": Object {
-                      "formatters": Array [
-                        [Function],
-                      ],
-                      "label": "Status",
-                    },
-                    "property": "status",
-                    "props": Object {
-                      "rowSpan": 1,
-                    },
-                  },
-                  Object {
-                    "cell": Object {
-                      "formatters": Array [
-                        [Function],
-                      ],
-                    },
-                    "header": Object {
-                      "formatters": Array [
-                        [Function],
-                      ],
-                      "label": "Name",
-                    },
-                    "property": "name",
-                    "props": Object {
-                      "rowSpan": 1,
-                    },
-                  },
-                  Object {
-                    "cell": Object {
-                      "formatters": Array [
-                        [Function],
-                      ],
-                    },
-                    "header": Object {
-                      "formatters": Array [
-                        [Function],
-                      ],
-                      "label": "Created at",
-                    },
-                    "property": "createdAt",
-                    "props": Object {
-                      "rowSpan": 1,
-                    },
-                  },
-                  Object {
-                    "cell": Object {
-                      "formatters": Array [
-                        [Function],
-                      ],
-                    },
-                    "header": Object {
-                      "formatters": Array [
-                        [Function],
-                      ],
-                      "label": "Resource version",
-                    },
-                    "property": "resourceVersion",
-                    "props": Object {
-                      "rowSpan": 1,
-                    },
-                  },
-                  Object {
-                    "cell": Object {
-                      "formatters": Array [
-                        [Function],
-                      ],
-                    },
-                    "header": Object {
-                      "formatters": Array [
-                        [Function],
-                      ],
-                      "label": "Actions",
-                    },
-                    "property": "actions",
-                    "props": Object {
-                      "rowSpan": 1,
-                    },
-                  },
-                ],
-              ]
-            }
-          />
-          <Body
-            onRow={[Function]}
-            rowKey="id"
-            rows={
-              Array [
-                Object {
-                  "actions": <Link
-                    replace={false}
-                    to="/namespaces/test_namespace/services/test_services?virtualservice=reviews-default&detail=yaml"
-                  >
-                    View YAML
-                  </Link>,
-                  "createdAt": <LocalTime
-                    time="2018-03-14T10:17:52Z"
-                  />,
-                  "id": 0,
-                  "name": <Link
-                    replace={false}
-                    to="/namespaces/test_namespace/services/test_services?virtualservice=reviews-default&detail=overview"
-                  >
-                    reviews-default
-                  </Link>,
-                  "resourceVersion": "1234",
-                  "status": <ConfigIndicator
-                    id="0-config-validation"
-                    validations={
-                      Array [
-                        undefined,
-                      ]
-                    }
-                  />,
-                },
-              ]
-            }
-          />
+                <Header
+                        headerRows={
+                                Array [
+                                        Array [
+                                          Object {
+                                            "cell": Object {
+                                              "formatters": Array [
+                                                [Function],
+                                              ],
+                                              "props": Object {
+                                                "align": "text-center",
+                                              },
+                                            },
+                                            "header": Object {
+                                              "formatters": Array [
+                                                [Function],
+                                              ],
+                                              "label": "Status",
+                                            },
+                                            "property": "status",
+                                            "props": Object {
+                                              "rowSpan": 1,
+                                            },
+                                          },
+                                          Object {
+                                            "cell": Object {
+                                              "formatters": Array [
+                                                [Function],
+                                              ],
+                                            },
+                                            "header": Object {
+                                              "formatters": Array [
+                                                [Function],
+                                              ],
+                                              "label": "Name",
+                                            },
+                                            "property": "name",
+                                            "props": Object {
+                                              "rowSpan": 1,
+                                            },
+                                          },
+                                          Object {
+                                            "cell": Object {
+                                              "formatters": Array [
+                                                [Function],
+                                              ],
+                                            },
+                                            "header": Object {
+                                              "formatters": Array [
+                                                [Function],
+                                              ],
+                                              "label": "Created at",
+                                            },
+                                            "property": "createdAt",
+                                            "props": Object {
+                                              "rowSpan": 1,
+                                            },
+                                          },
+                                          Object {
+                                            "cell": Object {
+                                              "formatters": Array [
+                                                [Function],
+                                              ],
+                                            },
+                                            "header": Object {
+                                              "formatters": Array [
+                                                [Function],
+                                              ],
+                                              "label": "Resource version",
+                                            },
+                                            "property": "resourceVersion",
+                                            "props": Object {
+                                              "rowSpan": 1,
+                                            },
+                                          },
+                                          Object {
+                                            "cell": Object {
+                                              "formatters": Array [
+                                                [Function],
+                                              ],
+                                            },
+                                            "header": Object {
+                                              "formatters": Array [
+                                                [Function],
+                                              ],
+                                              "label": "Actions",
+                                            },
+                                            "property": "actions",
+                                            "props": Object {
+                                              "rowSpan": 1,
+                                            },
+                                          },
+                                        ],
+                                      ]
+                        }
+                />
+                <Body
+                        onRow={[Function]}
+                        rowKey="id"
+                        rows={
+                                Array [
+                                        Object {
+                                          "actions": <Link
+                                            replace={false}
+                                            to="/namespaces/test_namespace/services/test_services?virtualservice=reviews-default&detail=yaml"
+                                >
+                                            View YAML
+                                </Link>,
+                                          "createdAt": <LocalTime
+                                            time="2018-03-14T10:17:52Z"
+                                />,
+                                          "id": 0,
+                                          "name": <Link
+                                            replace={false}
+                                            to="/namespaces/test_namespace/services/test_services?virtualservice=reviews-default&detail=overview"
+                                >
+                                            reviews-default
+                                </Link>,
+                                          "resourceVersion": "1234",
+                                          "status": <ConfigIndicator
+                                            id="0-config-validation"
+                                            validations={
+                                                        Array [
+                                                                    undefined,
+                                                                  ]
+                                            }
+                                />,
+                                        },
+                                      ]
+                        }
+                />
         </TablePfProvider>
-      </Col>,
+</Col>,
       "className": "card-pf-body",
       "componentClass": "div",
     },
@@ -321,81 +320,81 @@ ShallowWrapper {
           bordered={true}
           className=""
           columns={
-            Array [
-              Object {
-                "cell": Object {
-                  "formatters": Array [
-                    [Function],
-                  ],
-                  "props": Object {
-                    "align": "text-center",
-                  },
-                },
-                "header": Object {
-                  "formatters": Array [
-                    [Function],
-                  ],
-                  "label": "Status",
-                },
-                "property": "status",
-              },
-              Object {
-                "cell": Object {
-                  "formatters": Array [
-                    [Function],
-                  ],
-                },
-                "header": Object {
-                  "formatters": Array [
-                    [Function],
-                  ],
-                  "label": "Name",
-                },
-                "property": "name",
-              },
-              Object {
-                "cell": Object {
-                  "formatters": Array [
-                    [Function],
-                  ],
-                },
-                "header": Object {
-                  "formatters": Array [
-                    [Function],
-                  ],
-                  "label": "Created at",
-                },
-                "property": "createdAt",
-              },
-              Object {
-                "cell": Object {
-                  "formatters": Array [
-                    [Function],
-                  ],
-                },
-                "header": Object {
-                  "formatters": Array [
-                    [Function],
-                  ],
-                  "label": "Resource version",
-                },
-                "property": "resourceVersion",
-              },
-              Object {
-                "cell": Object {
-                  "formatters": Array [
-                    [Function],
-                  ],
-                },
-                "header": Object {
-                  "formatters": Array [
-                    [Function],
-                  ],
-                  "label": "Actions",
-                },
-                "property": "actions",
-              },
-            ]
+                    Array [
+                              Object {
+                                "cell": Object {
+                                  "formatters": Array [
+                                    [Function],
+                                  ],
+                                  "props": Object {
+                                    "align": "text-center",
+                                  },
+                                },
+                                "header": Object {
+                                  "formatters": Array [
+                                    [Function],
+                                  ],
+                                  "label": "Status",
+                                },
+                                "property": "status",
+                              },
+                              Object {
+                                "cell": Object {
+                                  "formatters": Array [
+                                    [Function],
+                                  ],
+                                },
+                                "header": Object {
+                                  "formatters": Array [
+                                    [Function],
+                                  ],
+                                  "label": "Name",
+                                },
+                                "property": "name",
+                              },
+                              Object {
+                                "cell": Object {
+                                  "formatters": Array [
+                                    [Function],
+                                  ],
+                                },
+                                "header": Object {
+                                  "formatters": Array [
+                                    [Function],
+                                  ],
+                                  "label": "Created at",
+                                },
+                                "property": "createdAt",
+                              },
+                              Object {
+                                "cell": Object {
+                                  "formatters": Array [
+                                    [Function],
+                                  ],
+                                },
+                                "header": Object {
+                                  "formatters": Array [
+                                    [Function],
+                                  ],
+                                  "label": "Resource version",
+                                },
+                                "property": "resourceVersion",
+                              },
+                              Object {
+                                "cell": Object {
+                                  "formatters": Array [
+                                    [Function],
+                                  ],
+                                },
+                                "header": Object {
+                                  "formatters": Array [
+                                    [Function],
+                                  ],
+                                  "label": "Actions",
+                                },
+                                "property": "actions",
+                              },
+                            ]
           }
           components={Object {}}
           condensed={false}
@@ -403,139 +402,139 @@ ShallowWrapper {
           hover={true}
           inlineEdit={false}
           striped={true}
-        >
+>
           <Header
-            headerRows={
-              Array [
-                Array [
-                  Object {
-                    "cell": Object {
-                      "formatters": Array [
-                        [Function],
-                      ],
-                      "props": Object {
-                        "align": "text-center",
-                      },
-                    },
-                    "header": Object {
-                      "formatters": Array [
-                        [Function],
-                      ],
-                      "label": "Status",
-                    },
-                    "property": "status",
-                    "props": Object {
-                      "rowSpan": 1,
-                    },
-                  },
-                  Object {
-                    "cell": Object {
-                      "formatters": Array [
-                        [Function],
-                      ],
-                    },
-                    "header": Object {
-                      "formatters": Array [
-                        [Function],
-                      ],
-                      "label": "Name",
-                    },
-                    "property": "name",
-                    "props": Object {
-                      "rowSpan": 1,
-                    },
-                  },
-                  Object {
-                    "cell": Object {
-                      "formatters": Array [
-                        [Function],
-                      ],
-                    },
-                    "header": Object {
-                      "formatters": Array [
-                        [Function],
-                      ],
-                      "label": "Created at",
-                    },
-                    "property": "createdAt",
-                    "props": Object {
-                      "rowSpan": 1,
-                    },
-                  },
-                  Object {
-                    "cell": Object {
-                      "formatters": Array [
-                        [Function],
-                      ],
-                    },
-                    "header": Object {
-                      "formatters": Array [
-                        [Function],
-                      ],
-                      "label": "Resource version",
-                    },
-                    "property": "resourceVersion",
-                    "props": Object {
-                      "rowSpan": 1,
-                    },
-                  },
-                  Object {
-                    "cell": Object {
-                      "formatters": Array [
-                        [Function],
-                      ],
-                    },
-                    "header": Object {
-                      "formatters": Array [
-                        [Function],
-                      ],
-                      "label": "Actions",
-                    },
-                    "property": "actions",
-                    "props": Object {
-                      "rowSpan": 1,
-                    },
-                  },
-                ],
-              ]
-            }
+                    headerRows={
+                              Array [
+                                        Array [
+                                          Object {
+                                            "cell": Object {
+                                              "formatters": Array [
+                                                [Function],
+                                              ],
+                                              "props": Object {
+                                                "align": "text-center",
+                                              },
+                                            },
+                                            "header": Object {
+                                              "formatters": Array [
+                                                [Function],
+                                              ],
+                                              "label": "Status",
+                                            },
+                                            "property": "status",
+                                            "props": Object {
+                                              "rowSpan": 1,
+                                            },
+                                          },
+                                          Object {
+                                            "cell": Object {
+                                              "formatters": Array [
+                                                [Function],
+                                              ],
+                                            },
+                                            "header": Object {
+                                              "formatters": Array [
+                                                [Function],
+                                              ],
+                                              "label": "Name",
+                                            },
+                                            "property": "name",
+                                            "props": Object {
+                                              "rowSpan": 1,
+                                            },
+                                          },
+                                          Object {
+                                            "cell": Object {
+                                              "formatters": Array [
+                                                [Function],
+                                              ],
+                                            },
+                                            "header": Object {
+                                              "formatters": Array [
+                                                [Function],
+                                              ],
+                                              "label": "Created at",
+                                            },
+                                            "property": "createdAt",
+                                            "props": Object {
+                                              "rowSpan": 1,
+                                            },
+                                          },
+                                          Object {
+                                            "cell": Object {
+                                              "formatters": Array [
+                                                [Function],
+                                              ],
+                                            },
+                                            "header": Object {
+                                              "formatters": Array [
+                                                [Function],
+                                              ],
+                                              "label": "Resource version",
+                                            },
+                                            "property": "resourceVersion",
+                                            "props": Object {
+                                              "rowSpan": 1,
+                                            },
+                                          },
+                                          Object {
+                                            "cell": Object {
+                                              "formatters": Array [
+                                                [Function],
+                                              ],
+                                            },
+                                            "header": Object {
+                                              "formatters": Array [
+                                                [Function],
+                                              ],
+                                              "label": "Actions",
+                                            },
+                                            "property": "actions",
+                                            "props": Object {
+                                              "rowSpan": 1,
+                                            },
+                                          },
+                                        ],
+                                      ]
+                    }
           />
           <Body
-            onRow={[Function]}
-            rowKey="id"
-            rows={
-              Array [
-                Object {
-                  "actions": <Link
-                    replace={false}
-                    to="/namespaces/test_namespace/services/test_services?virtualservice=reviews-default&detail=yaml"
-                  >
-                    View YAML
-                  </Link>,
-                  "createdAt": <LocalTime
-                    time="2018-03-14T10:17:52Z"
-                  />,
-                  "id": 0,
-                  "name": <Link
-                    replace={false}
-                    to="/namespaces/test_namespace/services/test_services?virtualservice=reviews-default&detail=overview"
-                  >
-                    reviews-default
-                  </Link>,
-                  "resourceVersion": "1234",
-                  "status": <ConfigIndicator
-                    id="0-config-validation"
-                    validations={
-                      Array [
-                        undefined,
-                      ]
+                    onRow={[Function]}
+                    rowKey="id"
+                    rows={
+                              Array [
+                                        Object {
+                                          "actions": <Link
+                                            replace={false}
+                                            to="/namespaces/test_namespace/services/test_services?virtualservice=reviews-default&detail=yaml"
+                              >
+                                            View YAML
+                              </Link>,
+                                          "createdAt": <LocalTime
+                                            time="2018-03-14T10:17:52Z"
+                              />,
+                                          "id": 0,
+                                          "name": <Link
+                                            replace={false}
+                                            to="/namespaces/test_namespace/services/test_services?virtualservice=reviews-default&detail=overview"
+                              >
+                                            reviews-default
+                              </Link>,
+                                          "resourceVersion": "1234",
+                                          "status": <ConfigIndicator
+                                            id="0-config-validation"
+                                            validations={
+                                                          Array [
+                                                                        undefined,
+                                                                      ]
+                                            }
+                              />,
+                                        },
+                                      ]
                     }
-                  />,
-                },
-              ]
-            }
           />
-        </TablePfProvider>,
+</TablePfProvider>,
         "componentClass": "div",
         "xs": 12,
       },
@@ -549,135 +548,135 @@ ShallowWrapper {
           "children": Array [
             <Header
               headerRows={
-                Array [
-                  Array [
-                    Object {
-                      "cell": Object {
-                        "formatters": Array [
-                          [Function],
-                        ],
-                        "props": Object {
-                          "align": "text-center",
-                        },
-                      },
-                      "header": Object {
-                        "formatters": Array [
-                          [Function],
-                        ],
-                        "label": "Status",
-                      },
-                      "property": "status",
-                      "props": Object {
-                        "rowSpan": 1,
-                      },
-                    },
-                    Object {
-                      "cell": Object {
-                        "formatters": Array [
-                          [Function],
-                        ],
-                      },
-                      "header": Object {
-                        "formatters": Array [
-                          [Function],
-                        ],
-                        "label": "Name",
-                      },
-                      "property": "name",
-                      "props": Object {
-                        "rowSpan": 1,
-                      },
-                    },
-                    Object {
-                      "cell": Object {
-                        "formatters": Array [
-                          [Function],
-                        ],
-                      },
-                      "header": Object {
-                        "formatters": Array [
-                          [Function],
-                        ],
-                        "label": "Created at",
-                      },
-                      "property": "createdAt",
-                      "props": Object {
-                        "rowSpan": 1,
-                      },
-                    },
-                    Object {
-                      "cell": Object {
-                        "formatters": Array [
-                          [Function],
-                        ],
-                      },
-                      "header": Object {
-                        "formatters": Array [
-                          [Function],
-                        ],
-                        "label": "Resource version",
-                      },
-                      "property": "resourceVersion",
-                      "props": Object {
-                        "rowSpan": 1,
-                      },
-                    },
-                    Object {
-                      "cell": Object {
-                        "formatters": Array [
-                          [Function],
-                        ],
-                      },
-                      "header": Object {
-                        "formatters": Array [
-                          [Function],
-                        ],
-                        "label": "Actions",
-                      },
-                      "property": "actions",
-                      "props": Object {
-                        "rowSpan": 1,
-                      },
-                    },
-                  ],
-                ]
+                            Array [
+                                          Array [
+                                            Object {
+                                              "cell": Object {
+                                                "formatters": Array [
+                                                  [Function],
+                                                ],
+                                                "props": Object {
+                                                  "align": "text-center",
+                                                },
+                                              },
+                                              "header": Object {
+                                                "formatters": Array [
+                                                  [Function],
+                                                ],
+                                                "label": "Status",
+                                              },
+                                              "property": "status",
+                                              "props": Object {
+                                                "rowSpan": 1,
+                                              },
+                                            },
+                                            Object {
+                                              "cell": Object {
+                                                "formatters": Array [
+                                                  [Function],
+                                                ],
+                                              },
+                                              "header": Object {
+                                                "formatters": Array [
+                                                  [Function],
+                                                ],
+                                                "label": "Name",
+                                              },
+                                              "property": "name",
+                                              "props": Object {
+                                                "rowSpan": 1,
+                                              },
+                                            },
+                                            Object {
+                                              "cell": Object {
+                                                "formatters": Array [
+                                                  [Function],
+                                                ],
+                                              },
+                                              "header": Object {
+                                                "formatters": Array [
+                                                  [Function],
+                                                ],
+                                                "label": "Created at",
+                                              },
+                                              "property": "createdAt",
+                                              "props": Object {
+                                                "rowSpan": 1,
+                                              },
+                                            },
+                                            Object {
+                                              "cell": Object {
+                                                "formatters": Array [
+                                                  [Function],
+                                                ],
+                                              },
+                                              "header": Object {
+                                                "formatters": Array [
+                                                  [Function],
+                                                ],
+                                                "label": "Resource version",
+                                              },
+                                              "property": "resourceVersion",
+                                              "props": Object {
+                                                "rowSpan": 1,
+                                              },
+                                            },
+                                            Object {
+                                              "cell": Object {
+                                                "formatters": Array [
+                                                  [Function],
+                                                ],
+                                              },
+                                              "header": Object {
+                                                "formatters": Array [
+                                                  [Function],
+                                                ],
+                                                "label": "Actions",
+                                              },
+                                              "property": "actions",
+                                              "props": Object {
+                                                "rowSpan": 1,
+                                              },
+                                            },
+                                          ],
+                                        ]
               }
-            />,
+/>,
             <Body
               onRow={[Function]}
               rowKey="id"
               rows={
-                Array [
-                  Object {
-                    "actions": <Link
-                      replace={false}
-                      to="/namespaces/test_namespace/services/test_services?virtualservice=reviews-default&detail=yaml"
-                    >
-                      View YAML
-                    </Link>,
-                    "createdAt": <LocalTime
-                      time="2018-03-14T10:17:52Z"
-                    />,
-                    "id": 0,
-                    "name": <Link
-                      replace={false}
-                      to="/namespaces/test_namespace/services/test_services?virtualservice=reviews-default&detail=overview"
-                    >
-                      reviews-default
-                    </Link>,
-                    "resourceVersion": "1234",
-                    "status": <ConfigIndicator
-                      id="0-config-validation"
-                      validations={
-                        Array [
-                          undefined,
-                        ]
-                      }
-                    />,
-                  },
-                ]
+                            Array [
+                                          Object {
+                                            "actions": <Link
+                                              replace={false}
+                                              to="/namespaces/test_namespace/services/test_services?virtualservice=reviews-default&detail=yaml"
+                            >
+                                              View YAML
+                            </Link>,
+                                            "createdAt": <LocalTime
+                                              time="2018-03-14T10:17:52Z"
+                            />,
+                                            "id": 0,
+                                            "name": <Link
+                                              replace={false}
+                                              to="/namespaces/test_namespace/services/test_services?virtualservice=reviews-default&detail=overview"
+                            >
+                                              reviews-default
+                            </Link>,
+                                            "resourceVersion": "1234",
+                                            "status": <ConfigIndicator
+                                              id="0-config-validation"
+                                              validations={
+                                                                Array [
+                                                                                  undefined,
+                                                                                ]
+                                              }
+                            />,
+                                          },
+                                        ]
               }
-            />,
+/>,
           ],
           "className": "",
           "columns": Array [
@@ -878,28 +877,28 @@ ShallowWrapper {
                   "actions": <Link
                     replace={false}
                     to="/namespaces/test_namespace/services/test_services?virtualservice=reviews-default&detail=yaml"
-                  >
+>
                     View YAML
-                  </Link>,
+</Link>,
                   "createdAt": <LocalTime
                     time="2018-03-14T10:17:52Z"
-                  />,
+/>,
                   "id": 0,
                   "name": <Link
                     replace={false}
                     to="/namespaces/test_namespace/services/test_services?virtualservice=reviews-default&detail=overview"
-                  >
+>
                     reviews-default
-                  </Link>,
+</Link>,
                   "resourceVersion": "1234",
                   "status": <ConfigIndicator
                     id="0-config-validation"
                     validations={
-                      Array [
-                        undefined,
-                      ]
+                                        Array [
+                                                            undefined,
+                                                          ]
                     }
-                  />,
+/>,
                 },
               ],
             },
@@ -925,227 +924,227 @@ ShallowWrapper {
           bsClass="col"
           componentClass="div"
           xs={12}
-        >
+>
           <TablePfProvider
-            bordered={true}
-            className=""
-            columns={
-              Array [
-                Object {
-                  "cell": Object {
-                    "formatters": Array [
-                      [Function],
-                    ],
-                    "props": Object {
-                      "align": "text-center",
-                    },
-                  },
-                  "header": Object {
-                    "formatters": Array [
-                      [Function],
-                    ],
-                    "label": "Status",
-                  },
-                  "property": "status",
-                },
-                Object {
-                  "cell": Object {
-                    "formatters": Array [
-                      [Function],
-                    ],
-                  },
-                  "header": Object {
-                    "formatters": Array [
-                      [Function],
-                    ],
-                    "label": "Name",
-                  },
-                  "property": "name",
-                },
-                Object {
-                  "cell": Object {
-                    "formatters": Array [
-                      [Function],
-                    ],
-                  },
-                  "header": Object {
-                    "formatters": Array [
-                      [Function],
-                    ],
-                    "label": "Created at",
-                  },
-                  "property": "createdAt",
-                },
-                Object {
-                  "cell": Object {
-                    "formatters": Array [
-                      [Function],
-                    ],
-                  },
-                  "header": Object {
-                    "formatters": Array [
-                      [Function],
-                    ],
-                    "label": "Resource version",
-                  },
-                  "property": "resourceVersion",
-                },
-                Object {
-                  "cell": Object {
-                    "formatters": Array [
-                      [Function],
-                    ],
-                  },
-                  "header": Object {
-                    "formatters": Array [
-                      [Function],
-                    ],
-                    "label": "Actions",
-                  },
-                  "property": "actions",
-                },
-              ]
-            }
-            components={Object {}}
-            condensed={false}
-            dataTable={true}
-            hover={true}
-            inlineEdit={false}
-            striped={true}
+                    bordered={true}
+                    className=""
+                    columns={
+                              Array [
+                                        Object {
+                                          "cell": Object {
+                                            "formatters": Array [
+                                              [Function],
+                                            ],
+                                            "props": Object {
+                                              "align": "text-center",
+                                            },
+                                          },
+                                          "header": Object {
+                                            "formatters": Array [
+                                              [Function],
+                                            ],
+                                            "label": "Status",
+                                          },
+                                          "property": "status",
+                                        },
+                                        Object {
+                                          "cell": Object {
+                                            "formatters": Array [
+                                              [Function],
+                                            ],
+                                          },
+                                          "header": Object {
+                                            "formatters": Array [
+                                              [Function],
+                                            ],
+                                            "label": "Name",
+                                          },
+                                          "property": "name",
+                                        },
+                                        Object {
+                                          "cell": Object {
+                                            "formatters": Array [
+                                              [Function],
+                                            ],
+                                          },
+                                          "header": Object {
+                                            "formatters": Array [
+                                              [Function],
+                                            ],
+                                            "label": "Created at",
+                                          },
+                                          "property": "createdAt",
+                                        },
+                                        Object {
+                                          "cell": Object {
+                                            "formatters": Array [
+                                              [Function],
+                                            ],
+                                          },
+                                          "header": Object {
+                                            "formatters": Array [
+                                              [Function],
+                                            ],
+                                            "label": "Resource version",
+                                          },
+                                          "property": "resourceVersion",
+                                        },
+                                        Object {
+                                          "cell": Object {
+                                            "formatters": Array [
+                                              [Function],
+                                            ],
+                                          },
+                                          "header": Object {
+                                            "formatters": Array [
+                                              [Function],
+                                            ],
+                                            "label": "Actions",
+                                          },
+                                          "property": "actions",
+                                        },
+                                      ]
+                    }
+                    components={Object {}}
+                    condensed={false}
+                    dataTable={true}
+                    hover={true}
+                    inlineEdit={false}
+                    striped={true}
           >
-            <Header
-              headerRows={
-                Array [
-                  Array [
-                    Object {
-                      "cell": Object {
-                        "formatters": Array [
-                          [Function],
-                        ],
-                        "props": Object {
-                          "align": "text-center",
-                        },
-                      },
-                      "header": Object {
-                        "formatters": Array [
-                          [Function],
-                        ],
-                        "label": "Status",
-                      },
-                      "property": "status",
-                      "props": Object {
-                        "rowSpan": 1,
-                      },
-                    },
-                    Object {
-                      "cell": Object {
-                        "formatters": Array [
-                          [Function],
-                        ],
-                      },
-                      "header": Object {
-                        "formatters": Array [
-                          [Function],
-                        ],
-                        "label": "Name",
-                      },
-                      "property": "name",
-                      "props": Object {
-                        "rowSpan": 1,
-                      },
-                    },
-                    Object {
-                      "cell": Object {
-                        "formatters": Array [
-                          [Function],
-                        ],
-                      },
-                      "header": Object {
-                        "formatters": Array [
-                          [Function],
-                        ],
-                        "label": "Created at",
-                      },
-                      "property": "createdAt",
-                      "props": Object {
-                        "rowSpan": 1,
-                      },
-                    },
-                    Object {
-                      "cell": Object {
-                        "formatters": Array [
-                          [Function],
-                        ],
-                      },
-                      "header": Object {
-                        "formatters": Array [
-                          [Function],
-                        ],
-                        "label": "Resource version",
-                      },
-                      "property": "resourceVersion",
-                      "props": Object {
-                        "rowSpan": 1,
-                      },
-                    },
-                    Object {
-                      "cell": Object {
-                        "formatters": Array [
-                          [Function],
-                        ],
-                      },
-                      "header": Object {
-                        "formatters": Array [
-                          [Function],
-                        ],
-                        "label": "Actions",
-                      },
-                      "property": "actions",
-                      "props": Object {
-                        "rowSpan": 1,
-                      },
-                    },
-                  ],
-                ]
-              }
-            />
-            <Body
-              onRow={[Function]}
-              rowKey="id"
-              rows={
-                Array [
-                  Object {
-                    "actions": <Link
-                      replace={false}
-                      to="/namespaces/test_namespace/services/test_services?virtualservice=reviews-default&detail=yaml"
-                    >
-                      View YAML
-                    </Link>,
-                    "createdAt": <LocalTime
-                      time="2018-03-14T10:17:52Z"
-                    />,
-                    "id": 0,
-                    "name": <Link
-                      replace={false}
-                      to="/namespaces/test_namespace/services/test_services?virtualservice=reviews-default&detail=overview"
-                    >
-                      reviews-default
-                    </Link>,
-                    "resourceVersion": "1234",
-                    "status": <ConfigIndicator
-                      id="0-config-validation"
-                      validations={
-                        Array [
-                          undefined,
-                        ]
-                      }
-                    />,
-                  },
-                ]
-              }
-            />
+                    <Header
+                              headerRows={
+                                        Array [
+                                                  Array [
+                                                    Object {
+                                                      "cell": Object {
+                                                        "formatters": Array [
+                                                          [Function],
+                                                        ],
+                                                        "props": Object {
+                                                          "align": "text-center",
+                                                        },
+                                                      },
+                                                      "header": Object {
+                                                        "formatters": Array [
+                                                          [Function],
+                                                        ],
+                                                        "label": "Status",
+                                                      },
+                                                      "property": "status",
+                                                      "props": Object {
+                                                        "rowSpan": 1,
+                                                      },
+                                                    },
+                                                    Object {
+                                                      "cell": Object {
+                                                        "formatters": Array [
+                                                          [Function],
+                                                        ],
+                                                      },
+                                                      "header": Object {
+                                                        "formatters": Array [
+                                                          [Function],
+                                                        ],
+                                                        "label": "Name",
+                                                      },
+                                                      "property": "name",
+                                                      "props": Object {
+                                                        "rowSpan": 1,
+                                                      },
+                                                    },
+                                                    Object {
+                                                      "cell": Object {
+                                                        "formatters": Array [
+                                                          [Function],
+                                                        ],
+                                                      },
+                                                      "header": Object {
+                                                        "formatters": Array [
+                                                          [Function],
+                                                        ],
+                                                        "label": "Created at",
+                                                      },
+                                                      "property": "createdAt",
+                                                      "props": Object {
+                                                        "rowSpan": 1,
+                                                      },
+                                                    },
+                                                    Object {
+                                                      "cell": Object {
+                                                        "formatters": Array [
+                                                          [Function],
+                                                        ],
+                                                      },
+                                                      "header": Object {
+                                                        "formatters": Array [
+                                                          [Function],
+                                                        ],
+                                                        "label": "Resource version",
+                                                      },
+                                                      "property": "resourceVersion",
+                                                      "props": Object {
+                                                        "rowSpan": 1,
+                                                      },
+                                                    },
+                                                    Object {
+                                                      "cell": Object {
+                                                        "formatters": Array [
+                                                          [Function],
+                                                        ],
+                                                      },
+                                                      "header": Object {
+                                                        "formatters": Array [
+                                                          [Function],
+                                                        ],
+                                                        "label": "Actions",
+                                                      },
+                                                      "property": "actions",
+                                                      "props": Object {
+                                                        "rowSpan": 1,
+                                                      },
+                                                    },
+                                                  ],
+                                                ]
+                              }
+                    />
+                    <Body
+                              onRow={[Function]}
+                              rowKey="id"
+                              rows={
+                                        Array [
+                                                  Object {
+                                                    "actions": <Link
+                                                      replace={false}
+                                                      to="/namespaces/test_namespace/services/test_services?virtualservice=reviews-default&detail=yaml"
+                                        >
+                                                      View YAML
+                                        </Link>,
+                                                    "createdAt": <LocalTime
+                                                      time="2018-03-14T10:17:52Z"
+                                        />,
+                                                    "id": 0,
+                                                    "name": <Link
+                                                      replace={false}
+                                                      to="/namespaces/test_namespace/services/test_services?virtualservice=reviews-default&detail=overview"
+                                        >
+                                                      reviews-default
+                                        </Link>,
+                                                    "resourceVersion": "1234",
+                                                    "status": <ConfigIndicator
+                                                      id="0-config-validation"
+                                                      validations={
+                                                                    Array [
+                                                                                  undefined,
+                                                                                ]
+                                                      }
+                                        />,
+                                                  },
+                                                ]
+                              }
+                    />
           </TablePfProvider>
-        </Col>,
+</Col>,
         "className": "card-pf-body",
         "componentClass": "div",
       },
@@ -1160,81 +1159,81 @@ ShallowWrapper {
             bordered={true}
             className=""
             columns={
-              Array [
-                Object {
-                  "cell": Object {
-                    "formatters": Array [
-                      [Function],
-                    ],
-                    "props": Object {
-                      "align": "text-center",
-                    },
-                  },
-                  "header": Object {
-                    "formatters": Array [
-                      [Function],
-                    ],
-                    "label": "Status",
-                  },
-                  "property": "status",
-                },
-                Object {
-                  "cell": Object {
-                    "formatters": Array [
-                      [Function],
-                    ],
-                  },
-                  "header": Object {
-                    "formatters": Array [
-                      [Function],
-                    ],
-                    "label": "Name",
-                  },
-                  "property": "name",
-                },
-                Object {
-                  "cell": Object {
-                    "formatters": Array [
-                      [Function],
-                    ],
-                  },
-                  "header": Object {
-                    "formatters": Array [
-                      [Function],
-                    ],
-                    "label": "Created at",
-                  },
-                  "property": "createdAt",
-                },
-                Object {
-                  "cell": Object {
-                    "formatters": Array [
-                      [Function],
-                    ],
-                  },
-                  "header": Object {
-                    "formatters": Array [
-                      [Function],
-                    ],
-                    "label": "Resource version",
-                  },
-                  "property": "resourceVersion",
-                },
-                Object {
-                  "cell": Object {
-                    "formatters": Array [
-                      [Function],
-                    ],
-                  },
-                  "header": Object {
-                    "formatters": Array [
-                      [Function],
-                    ],
-                    "label": "Actions",
-                  },
-                  "property": "actions",
-                },
-              ]
+                        Array [
+                                    Object {
+                                      "cell": Object {
+                                        "formatters": Array [
+                                          [Function],
+                                        ],
+                                        "props": Object {
+                                          "align": "text-center",
+                                        },
+                                      },
+                                      "header": Object {
+                                        "formatters": Array [
+                                          [Function],
+                                        ],
+                                        "label": "Status",
+                                      },
+                                      "property": "status",
+                                    },
+                                    Object {
+                                      "cell": Object {
+                                        "formatters": Array [
+                                          [Function],
+                                        ],
+                                      },
+                                      "header": Object {
+                                        "formatters": Array [
+                                          [Function],
+                                        ],
+                                        "label": "Name",
+                                      },
+                                      "property": "name",
+                                    },
+                                    Object {
+                                      "cell": Object {
+                                        "formatters": Array [
+                                          [Function],
+                                        ],
+                                      },
+                                      "header": Object {
+                                        "formatters": Array [
+                                          [Function],
+                                        ],
+                                        "label": "Created at",
+                                      },
+                                      "property": "createdAt",
+                                    },
+                                    Object {
+                                      "cell": Object {
+                                        "formatters": Array [
+                                          [Function],
+                                        ],
+                                      },
+                                      "header": Object {
+                                        "formatters": Array [
+                                          [Function],
+                                        ],
+                                        "label": "Resource version",
+                                      },
+                                      "property": "resourceVersion",
+                                    },
+                                    Object {
+                                      "cell": Object {
+                                        "formatters": Array [
+                                          [Function],
+                                        ],
+                                      },
+                                      "header": Object {
+                                        "formatters": Array [
+                                          [Function],
+                                        ],
+                                        "label": "Actions",
+                                      },
+                                      "property": "actions",
+                                    },
+                                  ]
             }
             components={Object {}}
             condensed={false}
@@ -1242,139 +1241,139 @@ ShallowWrapper {
             hover={true}
             inlineEdit={false}
             striped={true}
-          >
+>
             <Header
-              headerRows={
-                Array [
-                  Array [
-                    Object {
-                      "cell": Object {
-                        "formatters": Array [
-                          [Function],
-                        ],
-                        "props": Object {
-                          "align": "text-center",
-                        },
-                      },
-                      "header": Object {
-                        "formatters": Array [
-                          [Function],
-                        ],
-                        "label": "Status",
-                      },
-                      "property": "status",
-                      "props": Object {
-                        "rowSpan": 1,
-                      },
-                    },
-                    Object {
-                      "cell": Object {
-                        "formatters": Array [
-                          [Function],
-                        ],
-                      },
-                      "header": Object {
-                        "formatters": Array [
-                          [Function],
-                        ],
-                        "label": "Name",
-                      },
-                      "property": "name",
-                      "props": Object {
-                        "rowSpan": 1,
-                      },
-                    },
-                    Object {
-                      "cell": Object {
-                        "formatters": Array [
-                          [Function],
-                        ],
-                      },
-                      "header": Object {
-                        "formatters": Array [
-                          [Function],
-                        ],
-                        "label": "Created at",
-                      },
-                      "property": "createdAt",
-                      "props": Object {
-                        "rowSpan": 1,
-                      },
-                    },
-                    Object {
-                      "cell": Object {
-                        "formatters": Array [
-                          [Function],
-                        ],
-                      },
-                      "header": Object {
-                        "formatters": Array [
-                          [Function],
-                        ],
-                        "label": "Resource version",
-                      },
-                      "property": "resourceVersion",
-                      "props": Object {
-                        "rowSpan": 1,
-                      },
-                    },
-                    Object {
-                      "cell": Object {
-                        "formatters": Array [
-                          [Function],
-                        ],
-                      },
-                      "header": Object {
-                        "formatters": Array [
-                          [Function],
-                        ],
-                        "label": "Actions",
-                      },
-                      "property": "actions",
-                      "props": Object {
-                        "rowSpan": 1,
-                      },
-                    },
-                  ],
-                ]
-              }
+                        headerRows={
+                                    Array [
+                                                Array [
+                                                  Object {
+                                                    "cell": Object {
+                                                      "formatters": Array [
+                                                        [Function],
+                                                      ],
+                                                      "props": Object {
+                                                        "align": "text-center",
+                                                      },
+                                                    },
+                                                    "header": Object {
+                                                      "formatters": Array [
+                                                        [Function],
+                                                      ],
+                                                      "label": "Status",
+                                                    },
+                                                    "property": "status",
+                                                    "props": Object {
+                                                      "rowSpan": 1,
+                                                    },
+                                                  },
+                                                  Object {
+                                                    "cell": Object {
+                                                      "formatters": Array [
+                                                        [Function],
+                                                      ],
+                                                    },
+                                                    "header": Object {
+                                                      "formatters": Array [
+                                                        [Function],
+                                                      ],
+                                                      "label": "Name",
+                                                    },
+                                                    "property": "name",
+                                                    "props": Object {
+                                                      "rowSpan": 1,
+                                                    },
+                                                  },
+                                                  Object {
+                                                    "cell": Object {
+                                                      "formatters": Array [
+                                                        [Function],
+                                                      ],
+                                                    },
+                                                    "header": Object {
+                                                      "formatters": Array [
+                                                        [Function],
+                                                      ],
+                                                      "label": "Created at",
+                                                    },
+                                                    "property": "createdAt",
+                                                    "props": Object {
+                                                      "rowSpan": 1,
+                                                    },
+                                                  },
+                                                  Object {
+                                                    "cell": Object {
+                                                      "formatters": Array [
+                                                        [Function],
+                                                      ],
+                                                    },
+                                                    "header": Object {
+                                                      "formatters": Array [
+                                                        [Function],
+                                                      ],
+                                                      "label": "Resource version",
+                                                    },
+                                                    "property": "resourceVersion",
+                                                    "props": Object {
+                                                      "rowSpan": 1,
+                                                    },
+                                                  },
+                                                  Object {
+                                                    "cell": Object {
+                                                      "formatters": Array [
+                                                        [Function],
+                                                      ],
+                                                    },
+                                                    "header": Object {
+                                                      "formatters": Array [
+                                                        [Function],
+                                                      ],
+                                                      "label": "Actions",
+                                                    },
+                                                    "property": "actions",
+                                                    "props": Object {
+                                                      "rowSpan": 1,
+                                                    },
+                                                  },
+                                                ],
+                                              ]
+                        }
             />
             <Body
-              onRow={[Function]}
-              rowKey="id"
-              rows={
-                Array [
-                  Object {
-                    "actions": <Link
-                      replace={false}
-                      to="/namespaces/test_namespace/services/test_services?virtualservice=reviews-default&detail=yaml"
-                    >
-                      View YAML
-                    </Link>,
-                    "createdAt": <LocalTime
-                      time="2018-03-14T10:17:52Z"
-                    />,
-                    "id": 0,
-                    "name": <Link
-                      replace={false}
-                      to="/namespaces/test_namespace/services/test_services?virtualservice=reviews-default&detail=overview"
-                    >
-                      reviews-default
-                    </Link>,
-                    "resourceVersion": "1234",
-                    "status": <ConfigIndicator
-                      id="0-config-validation"
-                      validations={
-                        Array [
-                          undefined,
-                        ]
-                      }
-                    />,
-                  },
-                ]
-              }
+                        onRow={[Function]}
+                        rowKey="id"
+                        rows={
+                                    Array [
+                                                Object {
+                                                  "actions": <Link
+                                                    replace={false}
+                                                    to="/namespaces/test_namespace/services/test_services?virtualservice=reviews-default&detail=yaml"
+                                    >
+                                                    View YAML
+                                    </Link>,
+                                                  "createdAt": <LocalTime
+                                                    time="2018-03-14T10:17:52Z"
+                                    />,
+                                                  "id": 0,
+                                                  "name": <Link
+                                                    replace={false}
+                                                    to="/namespaces/test_namespace/services/test_services?virtualservice=reviews-default&detail=overview"
+                                    >
+                                                    reviews-default
+                                    </Link>,
+                                                  "resourceVersion": "1234",
+                                                  "status": <ConfigIndicator
+                                                    id="0-config-validation"
+                                                    validations={
+                                                                    Array [
+                                                                                    undefined,
+                                                                                  ]
+                                                    }
+                                    />,
+                                                },
+                                              ]
+                        }
             />
-          </TablePfProvider>,
+</TablePfProvider>,
           "componentClass": "div",
           "xs": 12,
         },
@@ -1388,135 +1387,135 @@ ShallowWrapper {
             "children": Array [
               <Header
                 headerRows={
-                  Array [
-                    Array [
-                      Object {
-                        "cell": Object {
-                          "formatters": Array [
-                            [Function],
-                          ],
-                          "props": Object {
-                            "align": "text-center",
-                          },
-                        },
-                        "header": Object {
-                          "formatters": Array [
-                            [Function],
-                          ],
-                          "label": "Status",
-                        },
-                        "property": "status",
-                        "props": Object {
-                          "rowSpan": 1,
-                        },
-                      },
-                      Object {
-                        "cell": Object {
-                          "formatters": Array [
-                            [Function],
-                          ],
-                        },
-                        "header": Object {
-                          "formatters": Array [
-                            [Function],
-                          ],
-                          "label": "Name",
-                        },
-                        "property": "name",
-                        "props": Object {
-                          "rowSpan": 1,
-                        },
-                      },
-                      Object {
-                        "cell": Object {
-                          "formatters": Array [
-                            [Function],
-                          ],
-                        },
-                        "header": Object {
-                          "formatters": Array [
-                            [Function],
-                          ],
-                          "label": "Created at",
-                        },
-                        "property": "createdAt",
-                        "props": Object {
-                          "rowSpan": 1,
-                        },
-                      },
-                      Object {
-                        "cell": Object {
-                          "formatters": Array [
-                            [Function],
-                          ],
-                        },
-                        "header": Object {
-                          "formatters": Array [
-                            [Function],
-                          ],
-                          "label": "Resource version",
-                        },
-                        "property": "resourceVersion",
-                        "props": Object {
-                          "rowSpan": 1,
-                        },
-                      },
-                      Object {
-                        "cell": Object {
-                          "formatters": Array [
-                            [Function],
-                          ],
-                        },
-                        "header": Object {
-                          "formatters": Array [
-                            [Function],
-                          ],
-                          "label": "Actions",
-                        },
-                        "property": "actions",
-                        "props": Object {
-                          "rowSpan": 1,
-                        },
-                      },
-                    ],
-                  ]
+                                Array [
+                                                Array [
+                                                  Object {
+                                                    "cell": Object {
+                                                      "formatters": Array [
+                                                        [Function],
+                                                      ],
+                                                      "props": Object {
+                                                        "align": "text-center",
+                                                      },
+                                                    },
+                                                    "header": Object {
+                                                      "formatters": Array [
+                                                        [Function],
+                                                      ],
+                                                      "label": "Status",
+                                                    },
+                                                    "property": "status",
+                                                    "props": Object {
+                                                      "rowSpan": 1,
+                                                    },
+                                                  },
+                                                  Object {
+                                                    "cell": Object {
+                                                      "formatters": Array [
+                                                        [Function],
+                                                      ],
+                                                    },
+                                                    "header": Object {
+                                                      "formatters": Array [
+                                                        [Function],
+                                                      ],
+                                                      "label": "Name",
+                                                    },
+                                                    "property": "name",
+                                                    "props": Object {
+                                                      "rowSpan": 1,
+                                                    },
+                                                  },
+                                                  Object {
+                                                    "cell": Object {
+                                                      "formatters": Array [
+                                                        [Function],
+                                                      ],
+                                                    },
+                                                    "header": Object {
+                                                      "formatters": Array [
+                                                        [Function],
+                                                      ],
+                                                      "label": "Created at",
+                                                    },
+                                                    "property": "createdAt",
+                                                    "props": Object {
+                                                      "rowSpan": 1,
+                                                    },
+                                                  },
+                                                  Object {
+                                                    "cell": Object {
+                                                      "formatters": Array [
+                                                        [Function],
+                                                      ],
+                                                    },
+                                                    "header": Object {
+                                                      "formatters": Array [
+                                                        [Function],
+                                                      ],
+                                                      "label": "Resource version",
+                                                    },
+                                                    "property": "resourceVersion",
+                                                    "props": Object {
+                                                      "rowSpan": 1,
+                                                    },
+                                                  },
+                                                  Object {
+                                                    "cell": Object {
+                                                      "formatters": Array [
+                                                        [Function],
+                                                      ],
+                                                    },
+                                                    "header": Object {
+                                                      "formatters": Array [
+                                                        [Function],
+                                                      ],
+                                                      "label": "Actions",
+                                                    },
+                                                    "property": "actions",
+                                                    "props": Object {
+                                                      "rowSpan": 1,
+                                                    },
+                                                  },
+                                                ],
+                                              ]
                 }
-              />,
+/>,
               <Body
                 onRow={[Function]}
                 rowKey="id"
                 rows={
-                  Array [
-                    Object {
-                      "actions": <Link
-                        replace={false}
-                        to="/namespaces/test_namespace/services/test_services?virtualservice=reviews-default&detail=yaml"
-                      >
-                        View YAML
-                      </Link>,
-                      "createdAt": <LocalTime
-                        time="2018-03-14T10:17:52Z"
-                      />,
-                      "id": 0,
-                      "name": <Link
-                        replace={false}
-                        to="/namespaces/test_namespace/services/test_services?virtualservice=reviews-default&detail=overview"
-                      >
-                        reviews-default
-                      </Link>,
-                      "resourceVersion": "1234",
-                      "status": <ConfigIndicator
-                        id="0-config-validation"
-                        validations={
-                          Array [
-                            undefined,
-                          ]
-                        }
-                      />,
-                    },
-                  ]
+                                Array [
+                                                Object {
+                                                  "actions": <Link
+                                                    replace={false}
+                                                    to="/namespaces/test_namespace/services/test_services?virtualservice=reviews-default&detail=yaml"
+                                >
+                                                    View YAML
+                                </Link>,
+                                                  "createdAt": <LocalTime
+                                                    time="2018-03-14T10:17:52Z"
+                                />,
+                                                  "id": 0,
+                                                  "name": <Link
+                                                    replace={false}
+                                                    to="/namespaces/test_namespace/services/test_services?virtualservice=reviews-default&detail=overview"
+                                >
+                                                    reviews-default
+                                </Link>,
+                                                  "resourceVersion": "1234",
+                                                  "status": <ConfigIndicator
+                                                    id="0-config-validation"
+                                                    validations={
+                                                                        Array [
+                                                                                            undefined,
+                                                                                          ]
+                                                    }
+                                />,
+                                                },
+                                              ]
                 }
-              />,
+/>,
             ],
             "className": "",
             "columns": Array [
@@ -1717,28 +1716,28 @@ ShallowWrapper {
                     "actions": <Link
                       replace={false}
                       to="/namespaces/test_namespace/services/test_services?virtualservice=reviews-default&detail=yaml"
-                    >
+>
                       View YAML
-                    </Link>,
+</Link>,
                     "createdAt": <LocalTime
                       time="2018-03-14T10:17:52Z"
-                    />,
+/>,
                     "id": 0,
                     "name": <Link
                       replace={false}
                       to="/namespaces/test_namespace/services/test_services?virtualservice=reviews-default&detail=overview"
-                    >
+>
                       reviews-default
-                    </Link>,
+</Link>,
                     "resourceVersion": "1234",
                     "status": <ConfigIndicator
                       id="0-config-validation"
                       validations={
-                        Array [
-                          undefined,
-                        ]
+                                            Array [
+                                                                  undefined,
+                                                                ]
                       }
-                    />,
+/>,
                   },
                 ],
               },

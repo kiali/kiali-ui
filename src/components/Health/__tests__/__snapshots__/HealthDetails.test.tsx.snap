@@ -2,74 +2,73 @@
 
 exports[`HealthDetails renders deployments failure 1`] = `
 ShallowWrapper {
-  "length": 1,
   Symbol(enzyme.__root__): [Circular],
   Symbol(enzyme.__unrendered__): <HealthDetails
     headline=""
     health={
-      ServiceHealth {
-        "envoy": Object {
-          "inbound": Object {
-            "healthy": 1,
-            "total": 10,
-          },
-          "outbound": Object {
-            "healthy": 1,
-            "total": 1,
-          },
-        },
-        "items": Array [
-          Object {
-            "children": Array [
+        ServiceHealth {
+            "envoy": Object {
+              "inbound": Object {
+                "healthy": 1,
+                "total": 10,
+              },
+              "outbound": Object {
+                "healthy": 1,
+                "total": 1,
+              },
+            },
+            "items": Array [
               Object {
+                "children": Array [
+                  Object {
+                    "status": Object {
+                      "color": "#ec7a08",
+                      "icon": "warning-triangle-o",
+                      "name": "Degraded",
+                      "priority": 2,
+                    },
+                    "text": "Inbound: 1 / 10",
+                  },
+                  Object {
+                    "status": Object {
+                      "color": "#3f9c35",
+                      "icon": "ok",
+                      "name": "Healthy",
+                      "priority": 1,
+                    },
+                    "text": "Outbound: 1 / 1",
+                  },
+                ],
+                "report": "Envoy health degraded",
                 "status": Object {
                   "color": "#ec7a08",
                   "icon": "warning-triangle-o",
                   "name": "Degraded",
                   "priority": 2,
                 },
-                "text": "Inbound: 1 / 10",
+                "title": "Envoy Health",
               },
               Object {
                 "status": Object {
-                  "color": "#3f9c35",
-                  "icon": "ok",
-                  "name": "Healthy",
-                  "priority": 1,
+                  "color": "#72767b",
+                  "name": "No health information",
+                  "priority": 0,
+                  "text": "N/A",
                 },
-                "text": "Outbound: 1 / 1",
+                "text": "No requests over last min",
+                "title": "Error Rate",
               },
             ],
-            "report": "Envoy health degraded",
-            "status": Object {
-              "color": "#ec7a08",
-              "icon": "warning-triangle-o",
-              "name": "Degraded",
-              "priority": 2,
+            "rateInterval": 60,
+            "requests": Object {
+              "errorRatio": -1,
+              "inboundErrorRatio": -1,
+              "outboundErrorRatio": -1,
             },
-            "title": "Envoy Health",
-          },
-          Object {
-            "status": Object {
-              "color": "#72767b",
-              "name": "No health information",
-              "priority": 0,
-              "text": "N/A",
-            },
-            "text": "No requests over last min",
-            "title": "Error Rate",
-          },
-        ],
-        "rateInterval": 60,
-        "requests": Object {
-          "errorRatio": -1,
-          "inboundErrorRatio": -1,
-          "outboundErrorRatio": -1,
-        },
-      }
+          }
     }
     id="svc"
-  />,
+/>,
   Symbol(enzyme.__renderer__): Object {
     "batchedUpdates": [Function],
     "getNode": [Function],
@@ -90,57 +89,57 @@ ShallowWrapper {
         id="svc-health-tooltip"
         placement="right"
         title=""
-      >
+>
         <div>
-          <strong>
-            <Icon
-              name="warning-triangle-o"
-              type="pf"
-            />
-             Envoy Health: 
-          </strong>
-          <ul
-            style={
-              Object {
-                "listStyleType": "none",
-                "paddingLeft": 12,
-              }
-            }
-          >
-            <li>
-              <Icon
-                name="warning-triangle-o"
-                type="pf"
-              />
-               
-              Inbound: 1 / 10
-            </li>
-            <li>
-              <Icon
-                name="ok"
-                type="pf"
-              />
-               
-              Outbound: 1 / 1
-            </li>
-          </ul>
+                <strong>
+                        <Icon
+                                name="warning-triangle-o"
+                                type="pf"
+                        />
+                         Envoy Health: 
+                </strong>
+                <ul
+                        style={
+                                Object {
+                                        "listStyleType": "none",
+                                        "paddingLeft": 12,
+                                      }
+                        }
+                >
+                        <li>
+                                <Icon
+                                        name="warning-triangle-o"
+                                        type="pf"
+                                />
+                                 
+                                Inbound: 1 / 10
+                        </li>
+                        <li>
+                                <Icon
+                                        name="ok"
+                                        type="pf"
+                                />
+                                 
+                                Outbound: 1 / 1
+                        </li>
+                </ul>
         </div>
         <div>
-          <strong>
-            <span
-              style={
-                Object {
-                  "color": "#72767b",
-                }
-              }
-            >
-              N/A
-            </span>
-             Error Rate: 
-          </strong>
-          No requests over last min
+                <strong>
+                        <span
+                                style={
+                                        Object {
+                                                "color": "#72767b",
+                                              }
+                                }
+                        >
+                                N/A
+                        </span>
+                         Error Rate: 
+                </strong>
+                No requests over last min
         </div>
-      </Popover>,
+</Popover>,
       "placement": "right",
       "rootClose": false,
       "trigger": Array [
@@ -165,57 +164,57 @@ ShallowWrapper {
           id="svc-health-tooltip"
           placement="right"
           title=""
-        >
+>
           <div>
-            <strong>
-              <Icon
-                name="warning-triangle-o"
-                type="pf"
-              />
-               Envoy Health: 
-            </strong>
-            <ul
-              style={
-                Object {
-                  "listStyleType": "none",
-                  "paddingLeft": 12,
-                }
-              }
-            >
-              <li>
-                <Icon
-                  name="warning-triangle-o"
-                  type="pf"
-                />
-                 
-                Inbound: 1 / 10
-              </li>
-              <li>
-                <Icon
-                  name="ok"
-                  type="pf"
-                />
-                 
-                Outbound: 1 / 1
-              </li>
-            </ul>
+                    <strong>
+                              <Icon
+                                        name="warning-triangle-o"
+                                        type="pf"
+                              />
+                               Envoy Health: 
+                    </strong>
+                    <ul
+                              style={
+                                        Object {
+                                                  "listStyleType": "none",
+                                                  "paddingLeft": 12,
+                                                }
+                              }
+                    >
+                              <li>
+                                        <Icon
+                                                  name="warning-triangle-o"
+                                                  type="pf"
+                                        />
+                                         
+                                        Inbound: 1 / 10
+                              </li>
+                              <li>
+                                        <Icon
+                                                  name="ok"
+                                                  type="pf"
+                                        />
+                                         
+                                        Outbound: 1 / 1
+                              </li>
+                    </ul>
           </div>
           <div>
-            <strong>
-              <span
-                style={
-                  Object {
-                    "color": "#72767b",
-                  }
-                }
-              >
-                N/A
-              </span>
-               Error Rate: 
-            </strong>
-            No requests over last min
+                    <strong>
+                              <span
+                                        style={
+                                                  Object {
+                                                            "color": "#72767b",
+                                                          }
+                                        }
+                              >
+                                        N/A
+                              </span>
+                               Error Rate: 
+                    </strong>
+                    No requests over last min
           </div>
-        </Popover>,
+</Popover>,
         "placement": "right",
         "rootClose": false,
         "trigger": Array [
@@ -250,74 +249,73 @@ ShallowWrapper {
 
 exports[`HealthDetails renders envoy degraded 1`] = `
 ShallowWrapper {
-  "length": 1,
   Symbol(enzyme.__root__): [Circular],
   Symbol(enzyme.__unrendered__): <HealthDetails
     headline=""
     health={
-      ServiceHealth {
-        "envoy": Object {
-          "inbound": Object {
-            "healthy": 1,
-            "total": 10,
-          },
-          "outbound": Object {
-            "healthy": 1,
-            "total": 1,
-          },
-        },
-        "items": Array [
-          Object {
-            "children": Array [
+        ServiceHealth {
+            "envoy": Object {
+              "inbound": Object {
+                "healthy": 1,
+                "total": 10,
+              },
+              "outbound": Object {
+                "healthy": 1,
+                "total": 1,
+              },
+            },
+            "items": Array [
               Object {
+                "children": Array [
+                  Object {
+                    "status": Object {
+                      "color": "#ec7a08",
+                      "icon": "warning-triangle-o",
+                      "name": "Degraded",
+                      "priority": 2,
+                    },
+                    "text": "Inbound: 1 / 10",
+                  },
+                  Object {
+                    "status": Object {
+                      "color": "#3f9c35",
+                      "icon": "ok",
+                      "name": "Healthy",
+                      "priority": 1,
+                    },
+                    "text": "Outbound: 1 / 1",
+                  },
+                ],
+                "report": "Envoy health degraded",
                 "status": Object {
                   "color": "#ec7a08",
                   "icon": "warning-triangle-o",
                   "name": "Degraded",
                   "priority": 2,
                 },
-                "text": "Inbound: 1 / 10",
+                "title": "Envoy Health",
               },
               Object {
                 "status": Object {
-                  "color": "#3f9c35",
-                  "icon": "ok",
-                  "name": "Healthy",
-                  "priority": 1,
+                  "color": "#72767b",
+                  "name": "No health information",
+                  "priority": 0,
+                  "text": "N/A",
                 },
-                "text": "Outbound: 1 / 1",
+                "text": "No requests over last min",
+                "title": "Error Rate",
               },
             ],
-            "report": "Envoy health degraded",
-            "status": Object {
-              "color": "#ec7a08",
-              "icon": "warning-triangle-o",
-              "name": "Degraded",
-              "priority": 2,
+            "rateInterval": 60,
+            "requests": Object {
+              "errorRatio": -1,
+              "inboundErrorRatio": -1,
+              "outboundErrorRatio": -1,
             },
-            "title": "Envoy Health",
-          },
-          Object {
-            "status": Object {
-              "color": "#72767b",
-              "name": "No health information",
-              "priority": 0,
-              "text": "N/A",
-            },
-            "text": "No requests over last min",
-            "title": "Error Rate",
-          },
-        ],
-        "rateInterval": 60,
-        "requests": Object {
-          "errorRatio": -1,
-          "inboundErrorRatio": -1,
-          "outboundErrorRatio": -1,
-        },
-      }
+          }
     }
     id="svc"
-  />,
+/>,
   Symbol(enzyme.__renderer__): Object {
     "batchedUpdates": [Function],
     "getNode": [Function],
@@ -338,57 +336,57 @@ ShallowWrapper {
         id="svc-health-tooltip"
         placement="right"
         title=""
-      >
+>
         <div>
-          <strong>
-            <Icon
-              name="warning-triangle-o"
-              type="pf"
-            />
-             Envoy Health: 
-          </strong>
-          <ul
-            style={
-              Object {
-                "listStyleType": "none",
-                "paddingLeft": 12,
-              }
-            }
-          >
-            <li>
-              <Icon
-                name="warning-triangle-o"
-                type="pf"
-              />
-               
-              Inbound: 1 / 10
-            </li>
-            <li>
-              <Icon
-                name="ok"
-                type="pf"
-              />
-               
-              Outbound: 1 / 1
-            </li>
-          </ul>
+                <strong>
+                        <Icon
+                                name="warning-triangle-o"
+                                type="pf"
+                        />
+                         Envoy Health: 
+                </strong>
+                <ul
+                        style={
+                                Object {
+                                        "listStyleType": "none",
+                                        "paddingLeft": 12,
+                                      }
+                        }
+                >
+                        <li>
+                                <Icon
+                                        name="warning-triangle-o"
+                                        type="pf"
+                                />
+                                 
+                                Inbound: 1 / 10
+                        </li>
+                        <li>
+                                <Icon
+                                        name="ok"
+                                        type="pf"
+                                />
+                                 
+                                Outbound: 1 / 1
+                        </li>
+                </ul>
         </div>
         <div>
-          <strong>
-            <span
-              style={
-                Object {
-                  "color": "#72767b",
-                }
-              }
-            >
-              N/A
-            </span>
-             Error Rate: 
-          </strong>
-          No requests over last min
+                <strong>
+                        <span
+                                style={
+                                        Object {
+                                                "color": "#72767b",
+                                              }
+                                }
+                        >
+                                N/A
+                        </span>
+                         Error Rate: 
+                </strong>
+                No requests over last min
         </div>
-      </Popover>,
+</Popover>,
       "placement": "right",
       "rootClose": false,
       "trigger": Array [
@@ -413,57 +411,57 @@ ShallowWrapper {
           id="svc-health-tooltip"
           placement="right"
           title=""
-        >
+>
           <div>
-            <strong>
-              <Icon
-                name="warning-triangle-o"
-                type="pf"
-              />
-               Envoy Health: 
-            </strong>
-            <ul
-              style={
-                Object {
-                  "listStyleType": "none",
-                  "paddingLeft": 12,
-                }
-              }
-            >
-              <li>
-                <Icon
-                  name="warning-triangle-o"
-                  type="pf"
-                />
-                 
-                Inbound: 1 / 10
-              </li>
-              <li>
-                <Icon
-                  name="ok"
-                  type="pf"
-                />
-                 
-                Outbound: 1 / 1
-              </li>
-            </ul>
+                    <strong>
+                              <Icon
+                                        name="warning-triangle-o"
+                                        type="pf"
+                              />
+                               Envoy Health: 
+                    </strong>
+                    <ul
+                              style={
+                                        Object {
+                                                  "listStyleType": "none",
+                                                  "paddingLeft": 12,
+                                                }
+                              }
+                    >
+                              <li>
+                                        <Icon
+                                                  name="warning-triangle-o"
+                                                  type="pf"
+                                        />
+                                         
+                                        Inbound: 1 / 10
+                              </li>
+                              <li>
+                                        <Icon
+                                                  name="ok"
+                                                  type="pf"
+                                        />
+                                         
+                                        Outbound: 1 / 1
+                              </li>
+                    </ul>
           </div>
           <div>
-            <strong>
-              <span
-                style={
-                  Object {
-                    "color": "#72767b",
-                  }
-                }
-              >
-                N/A
-              </span>
-               Error Rate: 
-            </strong>
-            No requests over last min
+                    <strong>
+                              <span
+                                        style={
+                                                  Object {
+                                                            "color": "#72767b",
+                                                          }
+                                        }
+                              >
+                                        N/A
+                              </span>
+                               Error Rate: 
+                    </strong>
+                    No requests over last min
           </div>
-        </Popover>,
+</Popover>,
         "placement": "right",
         "rootClose": false,
         "trigger": Array [
@@ -498,73 +496,72 @@ ShallowWrapper {
 
 exports[`HealthDetails renders healthy 1`] = `
 ShallowWrapper {
-  "length": 1,
   Symbol(enzyme.__root__): [Circular],
   Symbol(enzyme.__unrendered__): <HealthDetails
     headline=""
     health={
-      ServiceHealth {
-        "envoy": Object {
-          "inbound": Object {
-            "healthy": 1,
-            "total": 1,
-          },
-          "outbound": Object {
-            "healthy": 1,
-            "total": 1,
-          },
-        },
-        "items": Array [
-          Object {
-            "children": Array [
+        ServiceHealth {
+            "envoy": Object {
+              "inbound": Object {
+                "healthy": 1,
+                "total": 1,
+              },
+              "outbound": Object {
+                "healthy": 1,
+                "total": 1,
+              },
+            },
+            "items": Array [
               Object {
+                "children": Array [
+                  Object {
+                    "status": Object {
+                      "color": "#3f9c35",
+                      "icon": "ok",
+                      "name": "Healthy",
+                      "priority": 1,
+                    },
+                    "text": "Inbound: 1 / 1",
+                  },
+                  Object {
+                    "status": Object {
+                      "color": "#3f9c35",
+                      "icon": "ok",
+                      "name": "Healthy",
+                      "priority": 1,
+                    },
+                    "text": "Outbound: 1 / 1",
+                  },
+                ],
                 "status": Object {
                   "color": "#3f9c35",
                   "icon": "ok",
                   "name": "Healthy",
                   "priority": 1,
                 },
-                "text": "Inbound: 1 / 1",
+                "title": "Envoy Health",
               },
               Object {
                 "status": Object {
-                  "color": "#3f9c35",
-                  "icon": "ok",
-                  "name": "Healthy",
-                  "priority": 1,
+                  "color": "#72767b",
+                  "name": "No health information",
+                  "priority": 0,
+                  "text": "N/A",
                 },
-                "text": "Outbound: 1 / 1",
+                "text": "No requests over last min",
+                "title": "Error Rate",
               },
             ],
-            "status": Object {
-              "color": "#3f9c35",
-              "icon": "ok",
-              "name": "Healthy",
-              "priority": 1,
+            "rateInterval": 60,
+            "requests": Object {
+              "errorRatio": -1,
+              "inboundErrorRatio": -1,
+              "outboundErrorRatio": -1,
             },
-            "title": "Envoy Health",
-          },
-          Object {
-            "status": Object {
-              "color": "#72767b",
-              "name": "No health information",
-              "priority": 0,
-              "text": "N/A",
-            },
-            "text": "No requests over last min",
-            "title": "Error Rate",
-          },
-        ],
-        "rateInterval": 60,
-        "requests": Object {
-          "errorRatio": -1,
-          "inboundErrorRatio": -1,
-          "outboundErrorRatio": -1,
-        },
-      }
+          }
     }
     id="svc"
-  />,
+/>,
   Symbol(enzyme.__renderer__): Object {
     "batchedUpdates": [Function],
     "getNode": [Function],
@@ -585,57 +582,57 @@ ShallowWrapper {
         id="svc-health-tooltip"
         placement="right"
         title=""
-      >
+>
         <div>
-          <strong>
-            <Icon
-              name="ok"
-              type="pf"
-            />
-             Envoy Health: 
-          </strong>
-          <ul
-            style={
-              Object {
-                "listStyleType": "none",
-                "paddingLeft": 12,
-              }
-            }
-          >
-            <li>
-              <Icon
-                name="ok"
-                type="pf"
-              />
-               
-              Inbound: 1 / 1
-            </li>
-            <li>
-              <Icon
-                name="ok"
-                type="pf"
-              />
-               
-              Outbound: 1 / 1
-            </li>
-          </ul>
+                <strong>
+                        <Icon
+                                name="ok"
+                                type="pf"
+                        />
+                         Envoy Health: 
+                </strong>
+                <ul
+                        style={
+                                Object {
+                                        "listStyleType": "none",
+                                        "paddingLeft": 12,
+                                      }
+                        }
+                >
+                        <li>
+                                <Icon
+                                        name="ok"
+                                        type="pf"
+                                />
+                                 
+                                Inbound: 1 / 1
+                        </li>
+                        <li>
+                                <Icon
+                                        name="ok"
+                                        type="pf"
+                                />
+                                 
+                                Outbound: 1 / 1
+                        </li>
+                </ul>
         </div>
         <div>
-          <strong>
-            <span
-              style={
-                Object {
-                  "color": "#72767b",
-                }
-              }
-            >
-              N/A
-            </span>
-             Error Rate: 
-          </strong>
-          No requests over last min
+                <strong>
+                        <span
+                                style={
+                                        Object {
+                                                "color": "#72767b",
+                                              }
+                                }
+                        >
+                                N/A
+                        </span>
+                         Error Rate: 
+                </strong>
+                No requests over last min
         </div>
-      </Popover>,
+</Popover>,
       "placement": "right",
       "rootClose": false,
       "trigger": Array [
@@ -660,57 +657,57 @@ ShallowWrapper {
           id="svc-health-tooltip"
           placement="right"
           title=""
-        >
+>
           <div>
-            <strong>
-              <Icon
-                name="ok"
-                type="pf"
-              />
-               Envoy Health: 
-            </strong>
-            <ul
-              style={
-                Object {
-                  "listStyleType": "none",
-                  "paddingLeft": 12,
-                }
-              }
-            >
-              <li>
-                <Icon
-                  name="ok"
-                  type="pf"
-                />
-                 
-                Inbound: 1 / 1
-              </li>
-              <li>
-                <Icon
-                  name="ok"
-                  type="pf"
-                />
-                 
-                Outbound: 1 / 1
-              </li>
-            </ul>
+                    <strong>
+                              <Icon
+                                        name="ok"
+                                        type="pf"
+                              />
+                               Envoy Health: 
+                    </strong>
+                    <ul
+                              style={
+                                        Object {
+                                                  "listStyleType": "none",
+                                                  "paddingLeft": 12,
+                                                }
+                              }
+                    >
+                              <li>
+                                        <Icon
+                                                  name="ok"
+                                                  type="pf"
+                                        />
+                                         
+                                        Inbound: 1 / 1
+                              </li>
+                              <li>
+                                        <Icon
+                                                  name="ok"
+                                                  type="pf"
+                                        />
+                                         
+                                        Outbound: 1 / 1
+                              </li>
+                    </ul>
           </div>
           <div>
-            <strong>
-              <span
-                style={
-                  Object {
-                    "color": "#72767b",
-                  }
-                }
-              >
-                N/A
-              </span>
-               Error Rate: 
-            </strong>
-            No requests over last min
+                    <strong>
+                              <span
+                                        style={
+                                                  Object {
+                                                            "color": "#72767b",
+                                                          }
+                                        }
+                              >
+                                        N/A
+                              </span>
+                               Error Rate: 
+                    </strong>
+                    No requests over last min
           </div>
-        </Popover>,
+</Popover>,
         "placement": "right",
         "rootClose": false,
         "trigger": Array [
