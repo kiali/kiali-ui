@@ -44,7 +44,7 @@ export default class SummaryPanelGraph extends React.Component<SummaryPanelPropT
   }
 
   componentDidMount() {
-    if (this.props.namespaces.length === 1) {
+    if (this.shouldShowRPSChart()) {
       this.updateRpsChart(this.props);
     }
   }
@@ -58,9 +58,7 @@ export default class SummaryPanelGraph extends React.Component<SummaryPanelPropT
     }
 
     if (shouldRefreshData(prevProps, this.props)) {
-      // TODO (maybe) we omit the rps chart when dealing with multiple namespaces. There is no backend
-      // API support to gather the data. The whole-graph chart is of nominal value, it will likely be OK.
-      if (this.props.namespaces.length === 1) {
+      if (this.shouldShowRPSChart()) {
         this.updateRpsChart(this.props);
       }
     }
@@ -108,7 +106,7 @@ export default class SummaryPanelGraph extends React.Component<SummaryPanelPropT
               rate4xx={trafficRate.rate4xx}
               rate5xx={trafficRate.rate5xx}
             />
-            {this.props.namespaces.length === 1 && (
+            {this.shouldShowRPSChart() && (
               <div>
                 <hr />
                 {this.renderRpsChart()}
@@ -118,6 +116,12 @@ export default class SummaryPanelGraph extends React.Component<SummaryPanelPropT
         </div>
       </div>
     );
+  }
+
+  private shouldShowRPSChart() {
+    // TODO we omit the rps chart when dealing with multiple namespaces. There is no backend
+    // API support to gather the data. The whole-graph chart is of nominal value, it will likely be OK.
+    return this.props.namespaces.length === 1;
   }
 
   private updateRpsChart = (props: SummaryPanelPropType) => {

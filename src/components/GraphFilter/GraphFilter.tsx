@@ -107,7 +107,7 @@ export class GraphFilter extends React.PureComponent<GraphFilterProps> {
   componentDidUpdate() {
     // ensure redux state and URL are aligned
     const activeNamespacesString = namespacesToString(this.props.activeNamespaces);
-    if (!this.props.activeNamespaces) {
+    if (this.props.activeNamespaces.length === 0) {
       HistoryManager.deleteParam(URLParams.NAMESPACES, true);
     } else {
       HistoryManager.setParam(URLParams.NAMESPACES, activeNamespacesString);
