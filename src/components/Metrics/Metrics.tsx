@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { Icon } from 'patternfly-react';
 import { style } from 'typestyle';
 import assign from 'lodash/fp/assign';
+import { URLSearchParams } from 'url';
 
 import history from '../../app/History';
 import MetricsOptionsBar from '../MetricsOptions/MetricsOptionsBar';

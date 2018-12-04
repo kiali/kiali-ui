@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Toolbar, ToolbarRightContent, FormGroup, Icon } from 'patternfly-react';
 import isEqual from 'lodash/fp/isEqual';
+import { URLSearchParams } from 'url';
 
 import RefreshContainer from '../../containers/RefreshContainer';
 import { ToolbarDropdown } from '../ToolbarDropdown/ToolbarDropdown';
