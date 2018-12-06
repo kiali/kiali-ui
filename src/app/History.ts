@@ -1,4 +1,4 @@
-import { URLSearchParams } from 'url';
+import URLSearchParams from 'url-search-params';
 
 import { createBrowserHistory } from 'history';
 
