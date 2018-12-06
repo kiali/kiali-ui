@@ -2,6 +2,7 @@
 
 exports[`HealthDetails renders deployments failure 1`] = `
 ShallowWrapper {
+  "length": 1,
   Symbol(enzyme.__root__): [Circular],
   Symbol(enzyme.__unrendered__): <HealthDetails
     headline=""
@@ -249,6 +250,7 @@ ShallowWrapper {
 
 exports[`HealthDetails renders envoy degraded 1`] = `
 ShallowWrapper {
+  "length": 1,
   Symbol(enzyme.__root__): [Circular],
   Symbol(enzyme.__unrendered__): <HealthDetails
     headline=""
@@ -496,6 +498,7 @@ ShallowWrapper {
 
 exports[`HealthDetails renders healthy 1`] = `
 ShallowWrapper {
+  "length": 1,
   Symbol(enzyme.__root__): [Circular],
   Symbol(enzyme.__unrendered__): <HealthDetails
     headline=""

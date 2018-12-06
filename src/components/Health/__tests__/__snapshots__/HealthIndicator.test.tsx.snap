@@ -2,6 +2,7 @@
 
 exports[`HealthIndicator renders all workloads down 1`] = `
 ShallowWrapper {
+  "length": 1,
   Symbol(enzyme.__root__): [Circular],
   Symbol(enzyme.__unrendered__): <HealthIndicator
     health={
@@ -787,6 +788,7 @@ ShallowWrapper {
 
 exports[`HealthIndicator renders all workloads down 2`] = `
 ShallowWrapper {
+  "length": 1,
   Symbol(enzyme.__root__): [Circular],
   Symbol(enzyme.__unrendered__): <HealthIndicator
     health={
@@ -1614,6 +1616,7 @@ ShallowWrapper {
 
 exports[`HealthIndicator renders envoy failure 1`] = `
 ShallowWrapper {
+  "length": 1,
   Symbol(enzyme.__root__): [Circular],
   Symbol(enzyme.__unrendered__): <HealthIndicator
     health={
@@ -2404,6 +2407,7 @@ ShallowWrapper {
 
 exports[`HealthIndicator renders envoy failure 2`] = `
 ShallowWrapper {
+  "length": 1,
   Symbol(enzyme.__root__): [Circular],
   Symbol(enzyme.__unrendered__): <HealthIndicator
     health={
@@ -3348,6 +3352,7 @@ ShallowWrapper {
 
 exports[`HealthIndicator renders error rate failure 1`] = `
 ShallowWrapper {
+  "length": 1,
   Symbol(enzyme.__root__): [Circular],
   Symbol(enzyme.__unrendered__): <HealthIndicator
     health={
@@ -4068,6 +4073,7 @@ ShallowWrapper {
 
 exports[`HealthIndicator renders error rate failure 2`] = `
 ShallowWrapper {
+  "length": 1,
   Symbol(enzyme.__root__): [Circular],
   Symbol(enzyme.__unrendered__): <HealthIndicator
     health={
@@ -4942,6 +4948,7 @@ ShallowWrapper {
 
 exports[`HealthIndicator renders healthy 1`] = `
 ShallowWrapper {
+  "length": 1,
   Symbol(enzyme.__root__): [Circular],
   Symbol(enzyme.__unrendered__): <HealthIndicator
     health={
@@ -5722,6 +5729,7 @@ ShallowWrapper {
 
 exports[`HealthIndicator renders healthy 2`] = `
 ShallowWrapper {
+  "length": 1,
   Symbol(enzyme.__root__): [Circular],
   Symbol(enzyme.__unrendered__): <HealthIndicator
     health={
@@ -6544,6 +6552,7 @@ ShallowWrapper {
 
 exports[`HealthIndicator renders some scaled down workload 1`] = `
 ShallowWrapper {
+  "length": 1,
   Symbol(enzyme.__root__): [Circular],
   Symbol(enzyme.__unrendered__): <HealthIndicator
     health={
@@ -7329,6 +7338,7 @@ ShallowWrapper {
 
 exports[`HealthIndicator renders some scaled down workload 2`] = `
 ShallowWrapper {
+  "length": 1,
   Symbol(enzyme.__root__): [Circular],
   Symbol(enzyme.__unrendered__): <HealthIndicator
     health={
@@ -8156,6 +8166,7 @@ ShallowWrapper {
 
 exports[`HealthIndicator renders workloads degraded 1`] = `
 ShallowWrapper {
+  "length": 1,
   Symbol(enzyme.__root__): [Circular],
   Symbol(enzyme.__unrendered__): <HealthIndicator
     health={
@@ -8941,6 +8952,7 @@ ShallowWrapper {
 
 exports[`HealthIndicator renders workloads degraded 2`] = `
 ShallowWrapper {
+  "length": 1,
   Symbol(enzyme.__root__): [Circular],
   Symbol(enzyme.__unrendered__): <HealthIndicator
     health={
