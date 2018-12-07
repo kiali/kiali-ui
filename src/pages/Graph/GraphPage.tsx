@@ -281,7 +281,11 @@ export default class GraphPage extends React.Component<GraphPageProps, GraphPage
           </Breadcrumb>
           <div>
             {/* Use empty div to reset the flex, this component doesn't seem to like that. It renders all its contents in the center */}
-            <GraphFilterContainer disabled={this.props.isLoading} onRefresh={this.handleRefreshClick} />
+            <GraphFilterContainer
+              cytoscapeGraphRef={this.cytoscapeGraphRef}
+              disabled={this.props.isLoading}
+              onRefresh={this.handleRefreshClick}
+            />
           </div>
           <FlexView grow={true} className={cytoscapeGraphWrapperDivStyle}>
             <ErrorBoundary

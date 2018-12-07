@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Toolbar, FormGroup, Button } from 'patternfly-react';
+// import * as ReactDOM from 'react-dom';
+import { Button, Form, FormGroup, Icon, Toolbar } from 'patternfly-react';
 import { style } from 'typestyle';
 import * as _ from 'lodash';
 import { connect } from 'react-redux';
@@ -22,6 +23,7 @@ import Namespace, { namespacesToString, namespacesFromString } from '../../types
 import { NamespaceActions } from '../../actions/NamespaceAction';
 import { GraphActions } from '../../actions/GraphActions';
 import { KialiAppAction } from '../../actions/KialiAppAction';
+import * as MessageCenterUtils from '../../utils/MessageCenter';
 
 type ReduxProps = {
   activeNamespaces: Namespace[];
@@ -36,8 +38,14 @@ type ReduxProps = {
 };
 
 type GraphFilterProps = ReduxProps & {
+  cytoscapeGraphRef: any;
   disabled: boolean;
   onRefresh: () => void;
+};
+
+type ParsedExpression = {
+  target: 'node' | 'edge';
+  selector: string;
 };
 
 const zeroPaddingLeft = style({
@@ -71,6 +79,9 @@ export class GraphFilter extends React.PureComponent<GraphFilterProps> {
     router: () => null
   };
 
+  private searchInputRef;
+  private searchValue: string;
+
   constructor(props: GraphFilterProps) {
     super(props);
     // Let URL override current redux state at construction time. Update URL with unset params.
@@ -101,6 +112,9 @@ export class GraphFilter extends React.PureComponent<GraphFilterProps> {
       const activeNamespacesString = namespacesToString(props.activeNamespaces);
       HistoryManager.setParam(URLParams.NAMESPACES, activeNamespacesString);
     }
+
+    this.searchInputRef = React.createRef();
+    this.searchValue = '';
   }
 
   componentDidUpdate() {
@@ -127,37 +141,64 @@ export class GraphFilter extends React.PureComponent<GraphFilterProps> {
   render() {
     const graphTypeKey: string = _.findKey(GraphType, val => val === this.props.graphType)!;
     const edgeLabelModeKey: string = _.findKey(EdgeLabelMode, val => val === this.props.edgeLabelMode)!;
-
+    console.log('render');
     return (
       <>
         <Toolbar>
-          <FormGroup className={zeroPaddingLeft}>
-            {this.props.node && (
+          {this.props.node && (
+            <FormGroup className={zeroPaddingLeft}>
               <Button className={namespaceStyle} onClick={this.handleNamespaceReturn}>
                 Back to Full Graph...
               </Button>
-            )}
-          </FormGroup>
+            </FormGroup>
+          )}
           <FormGroup className={zeroPaddingLeft}>
             <GraphSettingsContainer edgeLabelMode={this.props.edgeLabelMode} graphType={this.props.graphType} />
+            <ToolbarDropdown
+              id={'graph_filter_edge_labels'}
+              disabled={false}
+              handleSelect={this.setEdgeLabelMode}
+              value={edgeLabelModeKey}
+              label="Edge Labels"
+              options={GraphFilter.EDGE_LABEL_MODES}
+            />
+            <ToolbarDropdown
+              id={'graph_filter_view_type'}
+              disabled={this.props.node !== undefined || this.props.disabled}
+              handleSelect={this.setGraphType}
+              nameDropdown={'Graph Type'}
+              value={graphTypeKey}
+              label={GraphFilter.GRAPH_TYPES[graphTypeKey]}
+              options={GraphFilter.GRAPH_TYPES}
+            />
           </FormGroup>
-          <ToolbarDropdown
-            id={'graph_filter_edge_labels'}
-            disabled={false}
-            handleSelect={this.setEdgeLabelMode}
-            value={edgeLabelModeKey}
-            label="Edge Labels"
-            options={GraphFilter.EDGE_LABEL_MODES}
-          />
-          <ToolbarDropdown
-            id={'graph_filter_view_type'}
-            disabled={this.props.node !== undefined || this.props.disabled}
-            handleSelect={this.setGraphType}
-            nameDropdown={'Graph Type'}
-            value={graphTypeKey}
-            label={GraphFilter.GRAPH_TYPES[graphTypeKey]}
-            options={GraphFilter.GRAPH_TYPES}
-          />
+          <FormGroup>
+            <Form onSubmit={this.handleSearchSubmit}>
+              <label style={{ paddingRight: '0.5em' }}>Search</label>
+              <input
+                type="text"
+                style={{ width: '25em' }}
+                ref={this.searchInputRef}
+                disabled={this.props.disabled}
+                onChange={this.updateSearchValue}
+              />
+              <span className={'pullRight'}>
+                <Button
+                  bsStyle="link"
+                  style={{ paddingLeft: '2px' }}
+                  disabled={this.props.disabled || this.searchValue === ''}
+                  onClick={this.clearSearchValue}
+                >
+                  <Icon name="close" />
+                </Button>
+              </span>
+              <span className={'pullRight'}>
+                <Button bsStyle="link" style={{ paddingLeft: '2px' }}>
+                  <Icon name="help" type="pf" title="Search help..." />
+                </Button>
+              </span>
+            </Form>
+          </FormGroup>
           <Toolbar.RightContent>
             <GraphRefreshContainer
               id="graph_refresh_container"
@@ -169,6 +210,256 @@ export class GraphFilter extends React.PureComponent<GraphFilterProps> {
       </>
     );
   }
+
+  private updateSearchValue = event => {
+    this.searchValue = event.target.value;
+  };
+
+  private clearSearchValue = () => {
+    this.searchValue = '';
+    this.searchInputRef.current.value = '';
+    this.handleSearch();
+  };
+
+  private handleSearchSubmit = event => {
+    event.preventDefault();
+    this.handleSearch();
+  };
+
+  private handleSearch = () => {
+    console.log('HandleSearch:' + this.searchValue);
+    const cy = this.getCy();
+    if (cy === null) {
+      console.debug('Can not set search filter, cy is unavailable.');
+      return;
+    }
+    // unhighlight old search
+    cy.elements().removeClass('search');
+
+    const selector = this.parseSearchValue(this.searchValue);
+    if (selector) {
+      cy.elements(selector).addClass('search');
+    }
+
+    this.forceUpdate(); // to enable/disable clear button
+  };
+
+  private parseSearchValue = (val: string): string | undefined => {
+    let validVal = this.searchValue.trim();
+    if (!validVal) {
+      return undefined;
+    }
+    validVal = validVal.replace(/ and /gi, ' AND ');
+    validVal = validVal.replace(/ or /gi, ' OR ');
+    const conjunctive = validVal.includes(' AND ');
+    const disjunctive = validVal.includes(' OR ');
+    if (conjunctive && disjunctive) {
+      MessageCenterUtils.add(`Search value can not contain both 'and' and 'or'.`);
+      return undefined;
+    }
+    const separator = disjunctive ? ',' : '';
+    const expressions = disjunctive ? validVal.split(' OR ') : validVal.split(' AND ');
+    let selector;
+
+    for (const expression of expressions) {
+      console.log('EXPRESSION=' + expression);
+      const parsedExpression = this.parseSearchExpression(expression, conjunctive);
+      if (!parsedExpression) {
+        return undefined;
+      }
+      console.log('Parsed EXPRESSION=' + parsedExpression);
+      selector = this.appendSelector(selector, parsedExpression, separator);
+      if (!selector) {
+        return undefined;
+      }
+      console.log('Selector=' + selector);
+    }
+
+    return selector;
+  };
+
+  private parseSearchExpression = (expression: string, conjunctive: boolean): ParsedExpression | undefined => {
+    let op;
+    if (expression.includes('!=')) {
+      op = '!=';
+    } else if (expression.includes('>=')) {
+      op = '>=';
+    } else if (expression.includes('<=')) {
+      op = '<=';
+    } else if (expression.includes('*=')) {
+      op = '*='; // substring
+    } else if (expression.includes('$=')) {
+      op = '$='; // starts with
+    } else if (expression.includes('^=')) {
+      op = '^='; // ends with
+    } else if (expression.includes('=')) {
+      op = '=';
+      // current numbers are store a s string, we need to change this for numeric matching
+    } else if (expression.includes('>')) {
+      op = '>';
+    } else if (expression.includes('<')) {
+      op = '<';
+    } else if (expression.includes('!')) {
+      op = '!';
+    }
+    if (!op) {
+      const unaryExpression = this.parseUnarySearchExpression(expression.trim(), false);
+      if (unaryExpression) {
+        return unaryExpression;
+      }
+
+      if (conjunctive) {
+        MessageCenterUtils.add('Search values do not allow AND exporessions with a global substring.');
+        return undefined;
+      }
+
+      const wl = '[workload *= "' + expression + '"]';
+      const app = ',[app *= "' + expression + '"]';
+      const svc = ',[service *= "' + expression + '"]';
+      return { target: 'node', selector: wl + app + svc };
+    }
+
+    const tokens = expression.split(op);
+    if (op === '!') {
+      const unaryExpression = this.parseUnarySearchExpression(tokens[1], true);
+      if (unaryExpression) {
+        return unaryExpression;
+      }
+
+      MessageCenterUtils.add('Invalid search value: [' + expression + '].');
+      return undefined;
+    }
+
+    const field = tokens[0].trim();
+    const val = tokens[1].trim();
+
+    switch (field.toLowerCase()) {
+      case 'app':
+        return { target: 'node', selector: '[app ' + op + ' "' + val + '"]' };
+      case 'ns':
+      case 'namespace':
+        return { target: 'node', selector: '[namespace ' + op + ' "' + val + '"]' };
+      case 'percenterr':
+      case 'percenterror':
+      case '%error':
+      case '%err': {
+        const selector = op !== '=' || 0 !== Number(val) ? '[percentErr ' + op + ' ' + val + ']' : '[^percentErr]';
+        return { target: 'edge', selector: selector };
+      }
+      case 'percentrate':
+      case '%rate': {
+        const selector = op !== '=' || 0 !== Number(val) ? '[percentRate ' + op + ' ' + val + ']' : '[^percentRate]';
+        return { target: 'edge', selector: selector };
+      }
+      case 'rate': {
+        const selector = op !== '=' || 0 !== Number(val) ? '[rate ' + op + ' ' + val + ']' : '[^rate]';
+        return { target: 'edge', selector: selector };
+      }
+      case 'ratein': {
+        const selector = op !== '=' || 0 !== Number(val) ? '[rate ' + op + ' ' + val + ']' : '[^rate]';
+        return { target: 'node', selector: selector };
+      }
+      case 'rateout': {
+        const selector = op !== '=' || 0 !== Number(val) ? '[rateOut ' + op + ' ' + val + ']' : '[^rateOut]';
+        return { target: 'node', selector: selector };
+      }
+      case 'ratetcp': {
+        const selector = op !== '=' || 0 !== Number(val) ? '[tcpSentRate ' + op + ' ' + val + ']' : '[^tcpSentRate]';
+        return { target: 'edge', selector: selector };
+      }
+      case 'ratetcpin': {
+        const selector = op !== '=' || 0 !== Number(val) ? '[rateTcpSent ' + op + ' ' + val + ']' : '[^rateTcpSent]';
+        return { target: 'node', selector: selector };
+      }
+      case 'ratetcpout': {
+        const selector =
+          op !== '=' || 0 !== Number(val) ? '[rateTcpSentOut ' + op + ' ' + val + ']' : '[^rateTcpSentOut]';
+        return { target: 'node', selector: selector };
+      }
+      case 'rt':
+      case 'responsetime':
+        return { target: 'edge', selector: '[responseTime ' + op + ' ' + Number(val) / 1000 + ']' };
+      case 'svc':
+      case 'service':
+        return { target: 'node', selector: '[service ' + op + ' "' + val + '"]' };
+      case 'version':
+        return { target: 'node', selector: '[version ' + op + ' "' + val + '"]' };
+      case 'wl':
+      case 'workload':
+        return { target: 'node', selector: '[workload ' + op + ' "' + val + '"]' };
+      default:
+        MessageCenterUtils.add('Invalid search value: [' + expression + '].');
+        return undefined;
+    }
+  };
+
+  private parseUnarySearchExpression = (field: string, isNegation): ParsedExpression | undefined => {
+    switch (field.toLowerCase()) {
+      case 'hascb':
+        return { target: 'node', selector: isNegation ? '[^hasCB]' : '[hasCB]' };
+      case 'hasmissingsc':
+        return { target: 'node', selector: isNegation ? '[^hasMissingSC]' : '[hasMissingSC]' };
+      case 'hashttpin':
+        return { target: 'node', selector: isNegation ? '[^rate]' : '[rate]' };
+      case 'hashttpout':
+        return { target: 'node', selector: isNegation ? '[^rateOut]' : '[rateOut]' };
+      case 'hastcpin':
+        return { target: 'node', selector: isNegation ? '[^rateTcpSent]' : '[rateTcpSent]' };
+      case 'hastcpout':
+        return { target: 'node', selector: isNegation ? '[^rateTcpSentOut]' : '[rateTcpSentOut]' };
+      case 'hasvs':
+        return { target: 'node', selector: isNegation ? '[^hasVS]' : '[hasVS]' };
+      case 'isapp':
+        return { target: 'node', selector: isNegation ? '[nodeType != "app"]' : '[nodeType = "app"]' };
+      case 'isdead':
+        return { target: 'node', selector: isNegation ? '[^isDead]' : '[isDead]' };
+      case 'isinaccessible':
+        return { target: 'node', selector: isNegation ? '[^isInaccessible]' : '[isInaccessible]' };
+      case 'ismtls':
+      case 'issecure':
+        return { target: 'edge', selector: isNegation ? '[^isMTLS]' : '[isMTLS]' };
+      case 'isroot':
+      case 'istrafficsource':
+        return { target: 'node', selector: isNegation ? '[^isRoot]' : '[isRoot]' };
+      case 'isoutside':
+      case 'isoutsider':
+        return { target: 'node', selector: isNegation ? '[^isOutside]' : '[isOutside]' };
+      case 'isunused':
+        return { target: 'node', selector: isNegation ? '[^isUnused]' : '[isUnused]' };
+      case 'isservice':
+        return { target: 'node', selector: isNegation ? '[nodeType != "service"]' : '[nodeType = "service"]' };
+      case 'isserviceentry':
+        return { target: 'node', selector: isNegation ? '[^isServiceEntry]' : '[isServiceEntry]' };
+      case 'isunknown':
+        return { target: 'node', selector: isNegation ? '[nodeType != "unknown"]' : '[nodeType = "unknown"]' };
+      case 'isworkload':
+        return { target: 'node', selector: isNegation ? '[nodeType != "workload"]' : '[nodeType = "workload"]' };
+      default:
+        return undefined;
+    }
+  };
+
+  private appendSelector = (
+    selector: string,
+    parsedExpression: ParsedExpression,
+    separator: string
+  ): string | undefined => {
+    if (!selector) {
+      return parsedExpression.target + parsedExpression.selector;
+    }
+    if (!selector.startsWith(parsedExpression.target)) {
+      MessageCenterUtils.add('Search value can not mix node and edge criteria.');
+      return undefined;
+    }
+    return selector + separator + parsedExpression.selector;
+  };
+
+  private getCy = (): any | null => {
+    if (this.props.cytoscapeGraphRef.current) {
+      return this.props.cytoscapeGraphRef.current.getCy();
+    }
+    return null;
+  };
 
   private setGraphType = (type: string) => {
     const graphType: GraphType = GraphType[type] as GraphType;

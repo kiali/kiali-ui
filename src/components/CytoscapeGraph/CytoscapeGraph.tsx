@@ -460,6 +460,8 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
       return;
     }
 
+    console.log('Node: ' + JSON.stringify(target.json()));
+
     const namespace = target.data('namespace');
     const nodeType = target.data('nodeType');
     const workload = target.data('workload');
