@@ -304,7 +304,7 @@ export class GraphStyles {
         style: nodeSelectedStyle
       },
       {
-        // version group
+        // app box
         selector: `$node > node, node.${COMPOUND_PARENT_NODE_CLASS}`,
         css: {
           'text-valign': 'top',
@@ -403,6 +403,22 @@ export class GraphStyles {
         selector: 'edge.' + DimClass,
         style: {
           opacity: '0.3'
+        }
+      },
+      {
+        selector: 'node.find[^isGroup]',
+        style: {
+          'overlay-color': PfColors.Gold400,
+          'overlay-padding': '8px',
+          'overlay-opacity': '0.5'
+        }
+      },
+      {
+        selector: 'edge.find',
+        style: {
+          'overlay-color': PfColors.Gold400,
+          'overlay-padding': '8px',
+          'overlay-opacity': '0.5'
         }
       }
     ];

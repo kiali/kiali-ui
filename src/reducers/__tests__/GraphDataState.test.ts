@@ -16,6 +16,7 @@ describe('GraphDataState', () => {
         edgeLabelMode: EdgeLabelMode.HIDE,
         graphType: GraphType.VERSIONED_APP,
         showCircuitBreakers: true,
+        showFindHelp: false,
         showLegend: false,
         showMissingSidecars: true,
         showNodeLabels: true,
