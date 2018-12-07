@@ -1,25 +1,29 @@
 import * as React from 'react';
+import PropTypes from 'prop-types';
 import { Label as PfLabel } from 'patternfly-react';
 import './Label.css';
+import { isNotObject } from '../../utils/Common';
 
-interface LabelProps {
-  name: string;
-  value: string;
-}
-
-class Label extends React.Component<LabelProps> {
-  render() {
+const Label = ({ name, value }) => {
+  if (isNotObject(name) && isNotObject(value)) {
     return (
       <span className="label-pair">
         <PfLabel bsStyle="primary" className="label-key">
-          {this.props.name}
+          {name}
         </PfLabel>
         <PfLabel bsStyle="primary" className="label-value">
-          {this.props.value || ''}
+          {value || ''}
         </PfLabel>
       </span>
     );
+  } else {
+    return <span>This label has an unexpected format</span>;
   }
-}
+};
+
+Label.propTypes = {
+  name: PropTypes.string,
+  value: PropTypes.string
+};
 
 export default Label;

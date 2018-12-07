@@ -11,3 +11,7 @@ export const arrayEquals = <T>(a1: T[], a2: T[], comparator: (v1: T, v2: T) => b
   }
   return true;
 };
+
+export const isNotObject = (value: any): boolean => {
+  return typeof value !== 'object';
+};
