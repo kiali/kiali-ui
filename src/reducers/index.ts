@@ -9,6 +9,7 @@ import globalState from './GlobalState';
 import namespaceState from './NamespaceState';
 import UserSettingsState from './UserSettingsState';
 import GrafanaState from './GrafanaState';
+import JaegerState from './JaegerState';
 import { KialiAppAction } from '../actions/KialiAppAction';
 
 const rootReducer = combineReducers<KialiAppState, KialiAppAction>({
@@ -19,7 +20,8 @@ const rootReducer = combineReducers<KialiAppState, KialiAppAction>({
   globalState: globalState,
   graph: graphDataState,
   userSettings: UserSettingsState,
-  grafanaInfo: GrafanaState
+  grafanaInfo: GrafanaState,
+  jaegerState: JaegerState
 });
 
 export default rootReducer;

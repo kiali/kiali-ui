@@ -66,20 +66,6 @@ class Navigation extends React.Component<PropsType> {
       return isRoute;
     });
     return navItems.map(item => {
-      if (item.title === 'Distributed Tracing') {
-        if (this.props.jaegerUrl === '') {
-          return '';
-        }
-        return (
-          <VerticalNav.Item
-            key={item.to}
-            title={item.title}
-            iconClass={item.iconClass}
-            active={item === activeItem}
-            onClick={() => this.goTojaeger()}
-          />
-        );
-      }
       return (
         <VerticalNav.Item
           key={item.to}

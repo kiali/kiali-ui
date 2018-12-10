@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import { Breadcrumb, Nav, NavItem, TabContainer, TabContent, TabPane } from 'patternfly-react';
+import { Breadcrumb, Nav, NavItem, TabContainer, TabContent, TabPane, Icon } from 'patternfly-react';
 import history from '../../app/History';
 import ServiceId from '../../types/ServiceId';
 import * as API from '../../services/Api';
@@ -10,6 +10,7 @@ import { Validations } from '../../types/IstioObjects';
 import { authentication } from '../../utils/Authentication';
 import IstioObjectDetails from './IstioObjectDetails';
 import ServiceMetricsContainer from '../../containers/ServiceMetricsContainer';
+import ServiceTracesContainer from './ServiceTraces';
 import ServiceInfo from './ServiceInfo';
 import { TargetPage, ListPageLink } from '../../components/ListPage/ListPageLink';
 import { MetricsObjectTypes, MetricsDirection } from '../../types/Metrics';
@@ -212,6 +213,7 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
   };
 
   render() {
+    const errorTraces = this.state.serviceDetailsInfo.errorTraces || 0;
     const parsedSearch = this.parseSearch();
     const istioObject = this.searchObject(parsedSearch);
     const editorVisible = parsedSearch.name && parsedSearch.type;
@@ -247,8 +249,16 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
                 <NavItem eventKey="metrics">
                   <div>Inbound Metrics</div>
                 </NavItem>
-                <NavItem onClick={this.navigateToJaeger}>
-                  <div>Traces</div>
+                <NavItem eventKey="traces">
+                  <div>
+                    Traces{' '}
+                    {errorTraces > 0 && (
+                      <span>
+                        ({errorTraces}
+                        <Icon type={'fa'} name={'exclamation-circle'} style={{ color: 'red', marginLeft: '2px' }} />)
+                      </span>
+                    )}
+                  </div>
                 </NavItem>
               </Nav>
               <TabContent>
@@ -269,6 +279,12 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
                     object={this.props.match.params.service}
                     objectType={MetricsObjectTypes.SERVICE}
                     direction={MetricsDirection.INBOUND}
+                  />
+                </TabPane>
+                <TabPane eventKey="traces" mountOnEnter={true} unmountOnExit={true}>
+                  <ServiceTracesContainer
+                    namespace={this.props.match.params.namespace}
+                    service={this.props.match.params.service}
                   />
                 </TabPane>
               </TabContent>

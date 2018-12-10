@@ -9,4 +9,7 @@ import { ICONS } from './icons';
 // Logos
 import { IstioLogo, KialiLogo } from './logos';
 
-export { config, serverConfig, ServerConfig, setServerConfig, ICONS, IstioLogo, KialiLogo };
+// Jaeger Query
+import { JAEGER_QUERY } from './jaegerQuery';
+
+export { config, serverConfig, ServerConfig, setServerConfig, ICONS, JAEGER_QUERY, IstioLogo, KialiLogo };
