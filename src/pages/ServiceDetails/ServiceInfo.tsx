@@ -94,7 +94,7 @@ class ServiceInfo extends React.Component<ServiceDetails, ServiceInfoState> {
   wrongFormatMessage(resourceName: string) {
     return (
       <div className="card-pf-body">
-        <Alert type="warning">One of the {resourceName} pointing to this service has an invalid format.</Alert>
+        <Alert type="warning">One of the {resourceName} associated to this service has an invalid format.</Alert>
       </div>
     );
   }
@@ -192,9 +192,11 @@ class ServiceInfo extends React.Component<ServiceDetails, ServiceInfoState> {
                   </Nav>
                   <TabContent>
                     <TabPane eventKey={'workloads'}>
-                      {(Object.keys(workloads).length > 0 || this.props.serviceDetails.istioSidecar) && (
-                        <ServiceInfoWorkload workloads={workloads} namespace={this.props.namespace} />
-                      )}
+                      <ErrorBoundary fallBackComponent={this.wrongFormatMessage('Workloads')}>
+                        {(Object.keys(workloads).length > 0 || this.props.serviceDetails.istioSidecar) && (
+                          <ServiceInfoWorkload workloads={workloads} namespace={this.props.namespace} />
+                        )}
+                      </ErrorBoundary>
                     </TabPane>
                     <TabPane eventKey={'sources'}>
                       {(Object.keys(dependencies).length > 0 || this.props.serviceDetails.istioSidecar) && (
