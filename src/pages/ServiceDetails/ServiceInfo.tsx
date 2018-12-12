@@ -1,5 +1,6 @@
 import * as React from 'react';
 import {
+  Alert,
   Button,
   Col,
   Icon,
@@ -22,6 +23,7 @@ import ServiceInfoWorkload from './ServiceInfo/ServiceInfoWorkload';
 import { Validations } from '../../types/IstioObjects';
 import { ServiceInfoRoutes } from '../../components/InfoRoutes/ServiceInfoRoutes';
 import { Route } from '../../components/InfoRoutes/InfoRoutes';
+import ErrorBoundary from '../../components/ErrorBoundary/ErrorBoundary';
 
 interface ServiceDetails extends ServiceId {
   serviceDetails: ServiceDetailsInfo;
@@ -87,6 +89,14 @@ class ServiceInfo extends React.Component<ServiceDetails, ServiceInfoState> {
     });
 
     return differentDependencies.size;
+  }
+
+  wrongFormatMessage(resourceName: string) {
+    return (
+      <div className="card-pf-body">
+        <Alert type="warning">One of the {resourceName} pointing to this service has an invalid format.</Alert>
+      </div>
+    );
   }
 
   render() {
@@ -193,20 +203,24 @@ class ServiceInfo extends React.Component<ServiceDetails, ServiceInfoState> {
                     </TabPane>
                     <TabPane eventKey={'virtualservices'}>
                       {(virtualServices.items.length > 0 || this.props.serviceDetails.istioSidecar) && (
-                        <ServiceInfoVirtualServices
-                          virtualServices={virtualServices.items}
-                          editorLink={editorLink}
-                          validations={this.props.validations!['virtualservice']}
-                        />
+                        <ErrorBoundary fallBackComponent={this.wrongFormatMessage('Virtual Services')}>
+                          <ServiceInfoVirtualServices
+                            virtualServices={virtualServices.items}
+                            editorLink={editorLink}
+                            validations={this.props.validations!['virtualservice']}
+                          />
+                        </ErrorBoundary>
                       )}
                     </TabPane>
                     <TabPane eventKey={'destinationrules'}>
                       {(destinationRules.items.length > 0 || this.props.serviceDetails.istioSidecar) && (
-                        <ServiceInfoDestinationRules
-                          destinationRules={destinationRules.items}
-                          editorLink={editorLink}
-                          validations={this.props.validations!['destinationrule']}
-                        />
+                        <ErrorBoundary fallBackComponent={this.wrongFormatMessage('Destination Rules')}>
+                          <ServiceInfoDestinationRules
+                            destinationRules={destinationRules.items}
+                            editorLink={editorLink}
+                            validations={this.props.validations!['destinationrule']}
+                          />
+                        </ErrorBoundary>
                       )}
                     </TabPane>
                   </TabContent>
