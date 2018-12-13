@@ -15,3 +15,7 @@ export const arrayEquals = <T>(a1: T[], a2: T[], comparator: (v1: T, v2: T) => b
 export const isNotObject = (value: any): boolean => {
   return typeof value !== 'object';
 };
+
+export const safeRender = (value: any, message = 'Invalid value'): any => {
+  return isNotObject(value) ? value : message;
+};

@@ -8,6 +8,7 @@ import { Link } from 'react-router-dom';
 import { ConfigIndicator } from '../../../components/ConfigValidation/ConfigIndicator';
 import { DestinationRule, ObjectValidation, Subset } from '../../../types/IstioObjects';
 import Labels from '../../../components/Label/Labels';
+import { safeRender } from '../../../utils/Common';
 
 interface ServiceInfoDestinationRulesProps extends EditorLink {
   destinationRules?: DestinationRule[];
@@ -172,7 +173,7 @@ class ServiceInfoDestinationRules extends React.Component<ServiceInfoDestination
       <li key={this.generateKey() + '_k' + subset.name} style={{ marginBottom: '13px' }}>
         <Row>
           <Col xs={3}>
-            <span style={{ paddingRight: '10px', paddingTop: '3px' }}>{subset.name}</span>{' '}
+            <span style={{ paddingRight: '10px', paddingTop: '3px' }}>{safeRender(subset.name)}</span>{' '}
           </Col>
           <Col xs={4}>
             <Labels labels={subset.labels} />

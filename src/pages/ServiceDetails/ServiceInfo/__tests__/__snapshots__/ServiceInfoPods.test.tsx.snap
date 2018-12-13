@@ -406,7 +406,7 @@ ShallowWrapper {
                   Object {
                     "instance": null,
                     "key": "pod_0_0",
-                    "nodeType": "class",
+                    "nodeType": "function",
                     "props": Object {
                       "name": "app",
                       "value": "reviews",
@@ -854,7 +854,7 @@ ShallowWrapper {
                     Object {
                       "instance": null,
                       "key": "pod_0_0",
-                      "nodeType": "class",
+                      "nodeType": "function",
                       "props": Object {
                         "name": "app",
                         "value": "reviews",
