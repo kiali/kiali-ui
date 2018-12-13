@@ -183,8 +183,9 @@ export default class SummaryPanelGraph extends React.Component<SummaryPanelPropT
       {numApps > 0 && (
         <>
           <Icon name="applications" type="pf" style={{ padding: '0 1em' }} />
+          {numApps.toString()} {numApps === 1 ? 'app' : 'apps'}
           <ListPageLink key="appsLink" target={TargetPage.APPLICATIONS} namespaces={this.props.namespaces}>
-            {numApps.toString()} {numApps === 1 ? 'app' : 'apps'}
+            {' applications list...'}
           </ListPageLink>
           <br />
         </>
@@ -192,8 +193,9 @@ export default class SummaryPanelGraph extends React.Component<SummaryPanelPropT
       {numSvc > 0 && (
         <>
           <Icon name="service" type="pf" style={{ padding: '0 1em' }} />
+          {numSvc.toString()} {numSvc === 1 ? 'service' : 'services'}
           <ListPageLink key="servicesLink" target={TargetPage.SERVICES} namespaces={this.props.namespaces}>
-            {numSvc.toString()} {numSvc === 1 ? 'service' : 'services'}
+            {' services list...'}
           </ListPageLink>
           <br />
         </>
@@ -201,8 +203,9 @@ export default class SummaryPanelGraph extends React.Component<SummaryPanelPropT
       {numWorkloads > 0 && (
         <>
           <Icon name="bundle" type="pf" style={{ padding: '0 1em' }} />
+          {numWorkloads.toString()} {numWorkloads === 1 ? 'workload' : 'workloads'}
           <ListPageLink key="workloadsLink" target={TargetPage.WORKLOADS} namespaces={this.props.namespaces}>
-            {numWorkloads.toString()} {numWorkloads === 1 ? 'workload' : 'workloads'}
+            {' workloads list...'}
           </ListPageLink>
           <br />
         </>
