@@ -2,11 +2,10 @@
 
 exports[`RateIntervalToolbarItem renders correctly 1`] = `
 ShallowWrapper {
-  "length": 1,
   Symbol(enzyme.__root__): [Circular],
   Symbol(enzyme.__unrendered__): <RateIntervalToolbarItem
     rateIntervalSelected={600}
-/>,
+  />,
   Symbol(enzyme.__renderer__): Object {
     "batchedUpdates": [Function],
     "getNode": [Function],
@@ -23,129 +22,128 @@ ShallowWrapper {
       "children": Array [
         <label
           style={
-                    Object {
-                              "paddingRight": "0.5em",
-                            }
+            Object {
+              "paddingRight": "0.5em",
+            }
           }
->
+        >
           Rate Interval:
-</label>,
+        </label>,
         <DropdownButton
           id="rateIntervalDropDown"
-          onSelect={undefined}
           title="Last 10 min"
->
+        >
           <MenuItem
-                    active={false}
-                    bsClass="dropdown"
-                    disabled={false}
-                    divider={false}
-                    eventKey={60}
-                    header={false}
+            active={false}
+            bsClass="dropdown"
+            disabled={false}
+            divider={false}
+            eventKey={60}
+            header={false}
           >
-                    Last min
+            Last min
           </MenuItem>
           <MenuItem
-                    active={false}
-                    bsClass="dropdown"
-                    disabled={false}
-                    divider={false}
-                    eventKey={300}
-                    header={false}
+            active={false}
+            bsClass="dropdown"
+            disabled={false}
+            divider={false}
+            eventKey={300}
+            header={false}
           >
-                    Last 5 min
+            Last 5 min
           </MenuItem>
           <MenuItem
-                    active={true}
-                    bsClass="dropdown"
-                    disabled={false}
-                    divider={false}
-                    eventKey={600}
-                    header={false}
+            active={true}
+            bsClass="dropdown"
+            disabled={false}
+            divider={false}
+            eventKey={600}
+            header={false}
           >
-                    Last 10 min
+            Last 10 min
           </MenuItem>
           <MenuItem
-                    active={false}
-                    bsClass="dropdown"
-                    disabled={false}
-                    divider={false}
-                    eventKey={1800}
-                    header={false}
+            active={false}
+            bsClass="dropdown"
+            disabled={false}
+            divider={false}
+            eventKey={1800}
+            header={false}
           >
-                    Last 30 min
+            Last 30 min
           </MenuItem>
           <MenuItem
-                    active={false}
-                    bsClass="dropdown"
-                    disabled={false}
-                    divider={false}
-                    eventKey={3600}
-                    header={false}
+            active={false}
+            bsClass="dropdown"
+            disabled={false}
+            divider={false}
+            eventKey={3600}
+            header={false}
           >
-                    Last hour
+            Last hour
           </MenuItem>
           <MenuItem
-                    active={false}
-                    bsClass="dropdown"
-                    disabled={false}
-                    divider={false}
-                    eventKey={10800}
-                    header={false}
+            active={false}
+            bsClass="dropdown"
+            disabled={false}
+            divider={false}
+            eventKey={10800}
+            header={false}
           >
-                    Last 3 hours
+            Last 3 hours
           </MenuItem>
           <MenuItem
-                    active={false}
-                    bsClass="dropdown"
-                    disabled={false}
-                    divider={false}
-                    eventKey={21600}
-                    header={false}
+            active={false}
+            bsClass="dropdown"
+            disabled={false}
+            divider={false}
+            eventKey={21600}
+            header={false}
           >
-                    Last 6 hours
+            Last 6 hours
           </MenuItem>
           <MenuItem
-                    active={false}
-                    bsClass="dropdown"
-                    disabled={false}
-                    divider={false}
-                    eventKey={43200}
-                    header={false}
+            active={false}
+            bsClass="dropdown"
+            disabled={false}
+            divider={false}
+            eventKey={43200}
+            header={false}
           >
-                    Last 12 hours
+            Last 12 hours
           </MenuItem>
           <MenuItem
-                    active={false}
-                    bsClass="dropdown"
-                    disabled={false}
-                    divider={false}
-                    eventKey={86400}
-                    header={false}
+            active={false}
+            bsClass="dropdown"
+            disabled={false}
+            divider={false}
+            eventKey={86400}
+            header={false}
           >
-                    Last day
+            Last day
           </MenuItem>
           <MenuItem
-                    active={false}
-                    bsClass="dropdown"
-                    disabled={false}
-                    divider={false}
-                    eventKey={604800}
-                    header={false}
+            active={false}
+            bsClass="dropdown"
+            disabled={false}
+            divider={false}
+            eventKey={604800}
+            header={false}
           >
-                    Last 7 days
+            Last 7 days
           </MenuItem>
           <MenuItem
-                    active={false}
-                    bsClass="dropdown"
-                    disabled={false}
-                    divider={false}
-                    eventKey={2592000}
-                    header={false}
+            active={false}
+            bsClass="dropdown"
+            disabled={false}
+            divider={false}
+            eventKey={2592000}
+            header={false}
           >
-                    Last 30 days
+            Last 30 days
           </MenuItem>
-</DropdownButton>,
+        </DropdownButton>,
       ],
       "className": "form-group",
     },
@@ -178,9 +176,9 @@ ShallowWrapper {
               divider={false}
               eventKey={60}
               header={false}
->
+            >
               Last min
-</MenuItem>,
+            </MenuItem>,
             <MenuItem
               active={false}
               bsClass="dropdown"
@@ -188,9 +186,9 @@ ShallowWrapper {
               divider={false}
               eventKey={300}
               header={false}
->
+            >
               Last 5 min
-</MenuItem>,
+            </MenuItem>,
             <MenuItem
               active={true}
               bsClass="dropdown"
@@ -198,9 +196,9 @@ ShallowWrapper {
               divider={false}
               eventKey={600}
               header={false}
->
+            >
               Last 10 min
-</MenuItem>,
+            </MenuItem>,
             <MenuItem
               active={false}
               bsClass="dropdown"
@@ -208,9 +206,9 @@ ShallowWrapper {
               divider={false}
               eventKey={1800}
               header={false}
->
+            >
               Last 30 min
-</MenuItem>,
+            </MenuItem>,
             <MenuItem
               active={false}
               bsClass="dropdown"
@@ -218,9 +216,9 @@ ShallowWrapper {
               divider={false}
               eventKey={3600}
               header={false}
->
+            >
               Last hour
-</MenuItem>,
+            </MenuItem>,
             <MenuItem
               active={false}
               bsClass="dropdown"
@@ -228,9 +226,9 @@ ShallowWrapper {
               divider={false}
               eventKey={10800}
               header={false}
->
+            >
               Last 3 hours
-</MenuItem>,
+            </MenuItem>,
             <MenuItem
               active={false}
               bsClass="dropdown"
@@ -238,9 +236,9 @@ ShallowWrapper {
               divider={false}
               eventKey={21600}
               header={false}
->
+            >
               Last 6 hours
-</MenuItem>,
+            </MenuItem>,
             <MenuItem
               active={false}
               bsClass="dropdown"
@@ -248,9 +246,9 @@ ShallowWrapper {
               divider={false}
               eventKey={43200}
               header={false}
->
+            >
               Last 12 hours
-</MenuItem>,
+            </MenuItem>,
             <MenuItem
               active={false}
               bsClass="dropdown"
@@ -258,9 +256,9 @@ ShallowWrapper {
               divider={false}
               eventKey={86400}
               header={false}
->
+            >
               Last day
-</MenuItem>,
+            </MenuItem>,
             <MenuItem
               active={false}
               bsClass="dropdown"
@@ -268,9 +266,9 @@ ShallowWrapper {
               divider={false}
               eventKey={604800}
               header={false}
->
+            >
               Last 7 days
-</MenuItem>,
+            </MenuItem>,
             <MenuItem
               active={false}
               bsClass="dropdown"
@@ -278,9 +276,9 @@ ShallowWrapper {
               divider={false}
               eventKey={2592000}
               header={false}
->
+            >
               Last 30 days
-</MenuItem>,
+            </MenuItem>,
           ],
           "id": "rateIntervalDropDown",
           "onSelect": undefined,
@@ -490,129 +488,128 @@ ShallowWrapper {
         "children": Array [
           <label
             style={
-                        Object {
-                                    "paddingRight": "0.5em",
-                                  }
+              Object {
+                "paddingRight": "0.5em",
+              }
             }
->
+          >
             Rate Interval:
-</label>,
+          </label>,
           <DropdownButton
             id="rateIntervalDropDown"
-            onSelect={undefined}
             title="Last 10 min"
->
+          >
             <MenuItem
-                        active={false}
-                        bsClass="dropdown"
-                        disabled={false}
-                        divider={false}
-                        eventKey={60}
-                        header={false}
+              active={false}
+              bsClass="dropdown"
+              disabled={false}
+              divider={false}
+              eventKey={60}
+              header={false}
             >
-                        Last min
+              Last min
             </MenuItem>
             <MenuItem
-                        active={false}
-                        bsClass="dropdown"
-                        disabled={false}
-                        divider={false}
-                        eventKey={300}
-                        header={false}
+              active={false}
+              bsClass="dropdown"
+              disabled={false}
+              divider={false}
+              eventKey={300}
+              header={false}
             >
-                        Last 5 min
+              Last 5 min
             </MenuItem>
             <MenuItem
-                        active={true}
-                        bsClass="dropdown"
-                        disabled={false}
-                        divider={false}
-                        eventKey={600}
-                        header={false}
+              active={true}
+              bsClass="dropdown"
+              disabled={false}
+              divider={false}
+              eventKey={600}
+              header={false}
             >
-                        Last 10 min
+              Last 10 min
             </MenuItem>
             <MenuItem
-                        active={false}
-                        bsClass="dropdown"
-                        disabled={false}
-                        divider={false}
-                        eventKey={1800}
-                        header={false}
+              active={false}
+              bsClass="dropdown"
+              disabled={false}
+              divider={false}
+              eventKey={1800}
+              header={false}
             >
-                        Last 30 min
+              Last 30 min
             </MenuItem>
             <MenuItem
-                        active={false}
-                        bsClass="dropdown"
-                        disabled={false}
-                        divider={false}
-                        eventKey={3600}
-                        header={false}
+              active={false}
+              bsClass="dropdown"
+              disabled={false}
+              divider={false}
+              eventKey={3600}
+              header={false}
             >
-                        Last hour
+              Last hour
             </MenuItem>
             <MenuItem
-                        active={false}
-                        bsClass="dropdown"
-                        disabled={false}
-                        divider={false}
-                        eventKey={10800}
-                        header={false}
+              active={false}
+              bsClass="dropdown"
+              disabled={false}
+              divider={false}
+              eventKey={10800}
+              header={false}
             >
-                        Last 3 hours
+              Last 3 hours
             </MenuItem>
             <MenuItem
-                        active={false}
-                        bsClass="dropdown"
-                        disabled={false}
-                        divider={false}
-                        eventKey={21600}
-                        header={false}
+              active={false}
+              bsClass="dropdown"
+              disabled={false}
+              divider={false}
+              eventKey={21600}
+              header={false}
             >
-                        Last 6 hours
+              Last 6 hours
             </MenuItem>
             <MenuItem
-                        active={false}
-                        bsClass="dropdown"
-                        disabled={false}
-                        divider={false}
-                        eventKey={43200}
-                        header={false}
+              active={false}
+              bsClass="dropdown"
+              disabled={false}
+              divider={false}
+              eventKey={43200}
+              header={false}
             >
-                        Last 12 hours
+              Last 12 hours
             </MenuItem>
             <MenuItem
-                        active={false}
-                        bsClass="dropdown"
-                        disabled={false}
-                        divider={false}
-                        eventKey={86400}
-                        header={false}
+              active={false}
+              bsClass="dropdown"
+              disabled={false}
+              divider={false}
+              eventKey={86400}
+              header={false}
             >
-                        Last day
+              Last day
             </MenuItem>
             <MenuItem
-                        active={false}
-                        bsClass="dropdown"
-                        disabled={false}
-                        divider={false}
-                        eventKey={604800}
-                        header={false}
+              active={false}
+              bsClass="dropdown"
+              disabled={false}
+              divider={false}
+              eventKey={604800}
+              header={false}
             >
-                        Last 7 days
+              Last 7 days
             </MenuItem>
             <MenuItem
-                        active={false}
-                        bsClass="dropdown"
-                        disabled={false}
-                        divider={false}
-                        eventKey={2592000}
-                        header={false}
+              active={false}
+              bsClass="dropdown"
+              disabled={false}
+              divider={false}
+              eventKey={2592000}
+              header={false}
             >
-                        Last 30 days
+              Last 30 days
             </MenuItem>
-</DropdownButton>,
+          </DropdownButton>,
         ],
         "className": "form-group",
       },
@@ -645,9 +642,9 @@ ShallowWrapper {
                 divider={false}
                 eventKey={60}
                 header={false}
->
+              >
                 Last min
-</MenuItem>,
+              </MenuItem>,
               <MenuItem
                 active={false}
                 bsClass="dropdown"
@@ -655,9 +652,9 @@ ShallowWrapper {
                 divider={false}
                 eventKey={300}
                 header={false}
->
+              >
                 Last 5 min
-</MenuItem>,
+              </MenuItem>,
               <MenuItem
                 active={true}
                 bsClass="dropdown"
@@ -665,9 +662,9 @@ ShallowWrapper {
                 divider={false}
                 eventKey={600}
                 header={false}
->
+              >
                 Last 10 min
-</MenuItem>,
+              </MenuItem>,
               <MenuItem
                 active={false}
                 bsClass="dropdown"
@@ -675,9 +672,9 @@ ShallowWrapper {
                 divider={false}
                 eventKey={1800}
                 header={false}
->
+              >
                 Last 30 min
-</MenuItem>,
+              </MenuItem>,
               <MenuItem
                 active={false}
                 bsClass="dropdown"
@@ -685,9 +682,9 @@ ShallowWrapper {
                 divider={false}
                 eventKey={3600}
                 header={false}
->
+              >
                 Last hour
-</MenuItem>,
+              </MenuItem>,
               <MenuItem
                 active={false}
                 bsClass="dropdown"
@@ -695,9 +692,9 @@ ShallowWrapper {
                 divider={false}
                 eventKey={10800}
                 header={false}
->
+              >
                 Last 3 hours
-</MenuItem>,
+              </MenuItem>,
               <MenuItem
                 active={false}
                 bsClass="dropdown"
@@ -705,9 +702,9 @@ ShallowWrapper {
                 divider={false}
                 eventKey={21600}
                 header={false}
->
+              >
                 Last 6 hours
-</MenuItem>,
+              </MenuItem>,
               <MenuItem
                 active={false}
                 bsClass="dropdown"
@@ -715,9 +712,9 @@ ShallowWrapper {
                 divider={false}
                 eventKey={43200}
                 header={false}
->
+              >
                 Last 12 hours
-</MenuItem>,
+              </MenuItem>,
               <MenuItem
                 active={false}
                 bsClass="dropdown"
@@ -725,9 +722,9 @@ ShallowWrapper {
                 divider={false}
                 eventKey={86400}
                 header={false}
->
+              >
                 Last day
-</MenuItem>,
+              </MenuItem>,
               <MenuItem
                 active={false}
                 bsClass="dropdown"
@@ -735,9 +732,9 @@ ShallowWrapper {
                 divider={false}
                 eventKey={604800}
                 header={false}
->
+              >
                 Last 7 days
-</MenuItem>,
+              </MenuItem>,
               <MenuItem
                 active={false}
                 bsClass="dropdown"
@@ -745,9 +742,9 @@ ShallowWrapper {
                 divider={false}
                 eventKey={2592000}
                 header={false}
->
+              >
                 Last 30 days
-</MenuItem>,
+              </MenuItem>,
             ],
             "id": "rateIntervalDropDown",
             "onSelect": undefined,

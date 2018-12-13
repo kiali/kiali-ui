@@ -2,29 +2,28 @@
 
 exports[`MetricsOptionsBar renders initial layout 1`] = `
 ShallowWrapper {
-  "length": 1,
   Symbol(enzyme.__root__): [Circular],
   Symbol(enzyme.__unrendered__): <Provider
     store={
-        Object {
-            "dispatch": [Function],
-            "getState": [Function],
-            "replaceReducer": [Function],
-            "subscribe": [Function],
-            Symbol(observable): [Function],
-          }
+      Object {
+        "dispatch": [Function],
+        "getState": [Function],
+        "replaceReducer": [Function],
+        "subscribe": [Function],
+        Symbol(observable): [Function],
+      }
     }
->
+  >
     <MetricsOptionsBar
-        direction={0}
-        labelValues={Map {}}
-        metricReporter="destination"
-        onLabelsFiltersChanged={[Function]}
-        onOptionsChanged={[Function]}
-        onRefresh={[Function]}
-        onReporterChanged={[Function]}
+      direction={0}
+      labelValues={Map {}}
+      metricReporter="destination"
+      onLabelsFiltersChanged={[MockFunction]}
+      onOptionsChanged={[MockFunction]}
+      onRefresh={[MockFunction]}
+      onReporterChanged={[MockFunction]}
     />
-</Provider>,
+  </Provider>,
   Symbol(enzyme.__renderer__): Object {
     "batchedUpdates": [Function],
     "getNode": [Function],
@@ -41,10 +40,10 @@ ShallowWrapper {
       "direction": 0,
       "labelValues": Map {},
       "metricReporter": "destination",
-      "onLabelsFiltersChanged": [Function],
-      "onOptionsChanged": [Function],
-      "onRefresh": [Function],
-      "onReporterChanged": [Function],
+      "onLabelsFiltersChanged": [MockFunction],
+      "onOptionsChanged": [MockFunction],
+      "onRefresh": [MockFunction],
+      "onReporterChanged": [MockFunction],
     },
     "ref": null,
     "rendered": null,
@@ -59,10 +58,10 @@ ShallowWrapper {
         "direction": 0,
         "labelValues": Map {},
         "metricReporter": "destination",
-        "onLabelsFiltersChanged": [Function],
-        "onOptionsChanged": [Function],
-        "onRefresh": [Function],
-        "onReporterChanged": [Function],
+        "onLabelsFiltersChanged": [MockFunction],
+        "onOptionsChanged": [MockFunction],
+        "onRefresh": [MockFunction],
+        "onReporterChanged": [MockFunction],
       },
       "ref": null,
       "rendered": null,

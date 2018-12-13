@@ -2,7 +2,6 @@
 
 exports[`Overview page renders initial layout 1`] = `
 ShallowWrapper {
-  "length": 1,
   Symbol(enzyme.__root__): [Circular],
   Symbol(enzyme.__unrendered__): <OverviewPage />,
   Symbol(enzyme.__renderer__): Object {
@@ -21,39 +20,37 @@ ShallowWrapper {
       "children": Array [
         <Breadcrumb
           title={true}
->
+        >
           <BreadcrumbItem
-                    active={true}
+            active={true}
           >
-                    Namespaces
+            Namespaces
           </BreadcrumbItem>
-</Breadcrumb>,
+        </Breadcrumb>,
         <Connect(OverviewToolbar)
           onError={[Function]}
           onRefresh={[Function]}
           sort={[Function]}
-/>,
+        />,
         <div
           className="cards-pf"
->
+        >
           <CardGrid
-                    className=""
-                    matchHeight={true}
+            className=""
+            matchHeight={true}
           >
-                    <Row
-                              bsClass="row"
-                              componentClass="div"
-                              style={
-                                        Object {
-                                                  "marginBottom": "20px",
-                                                  "marginTop": "20px",
-                                                }
-                              }
-                    >
-                              
-                    </Row>
+            <Row
+              bsClass="row"
+              componentClass="div"
+              style={
+                Object {
+                  "marginBottom": "20px",
+                  "marginTop": "20px",
+                }
+              }
+            />
           </CardGrid>
-</div>,
+        </div>,
       ],
     },
     "ref": null,
@@ -65,9 +62,9 @@ ShallowWrapper {
         "props": Object {
           "children": <BreadcrumbItem
             active={true}
->
+          >
             Namespaces
-</BreadcrumbItem>,
+          </BreadcrumbItem>,
           "title": true,
         },
         "ref": null,
@@ -106,20 +103,18 @@ ShallowWrapper {
           "children": <CardGrid
             className=""
             matchHeight={true}
->
+          >
             <Row
-                        bsClass="row"
-                        componentClass="div"
-                        style={
-                                    Object {
-                                                "marginBottom": "20px",
-                                                "marginTop": "20px",
-                                              }
-                        }
-            >
-                        
-            </Row>
-</CardGrid>,
+              bsClass="row"
+              componentClass="div"
+              style={
+                Object {
+                  "marginBottom": "20px",
+                  "marginTop": "20px",
+                }
+              }
+            />
+          </CardGrid>,
           "className": "cards-pf",
         },
         "ref": null,
@@ -132,14 +127,12 @@ ShallowWrapper {
               bsClass="row"
               componentClass="div"
               style={
-                            Object {
-                                          "marginBottom": "20px",
-                                          "marginTop": "20px",
-                                        }
+                Object {
+                  "marginBottom": "20px",
+                  "marginTop": "20px",
+                }
               }
->
-              
-</Row>,
+            />,
             "className": "",
             "matchHeight": true,
           },
@@ -177,39 +170,37 @@ ShallowWrapper {
         "children": Array [
           <Breadcrumb
             title={true}
->
+          >
             <BreadcrumbItem
-                        active={true}
+              active={true}
             >
-                        Namespaces
+              Namespaces
             </BreadcrumbItem>
-</Breadcrumb>,
+          </Breadcrumb>,
           <Connect(OverviewToolbar)
             onError={[Function]}
             onRefresh={[Function]}
             sort={[Function]}
-/>,
+          />,
           <div
             className="cards-pf"
->
+          >
             <CardGrid
-                        className=""
-                        matchHeight={true}
+              className=""
+              matchHeight={true}
             >
-                        <Row
-                                    bsClass="row"
-                                    componentClass="div"
-                                    style={
-                                                Object {
-                                                            "marginBottom": "20px",
-                                                            "marginTop": "20px",
-                                                          }
-                                    }
-                        >
-                                    
-                        </Row>
+              <Row
+                bsClass="row"
+                componentClass="div"
+                style={
+                  Object {
+                    "marginBottom": "20px",
+                    "marginTop": "20px",
+                  }
+                }
+              />
             </CardGrid>
-</div>,
+          </div>,
         ],
       },
       "ref": null,
@@ -221,9 +212,9 @@ ShallowWrapper {
           "props": Object {
             "children": <BreadcrumbItem
               active={true}
->
+            >
               Namespaces
-</BreadcrumbItem>,
+            </BreadcrumbItem>,
             "title": true,
           },
           "ref": null,
@@ -262,20 +253,18 @@ ShallowWrapper {
             "children": <CardGrid
               className=""
               matchHeight={true}
->
+            >
               <Row
-                            bsClass="row"
-                            componentClass="div"
-                            style={
-                                          Object {
-                                                        "marginBottom": "20px",
-                                                        "marginTop": "20px",
-                                                      }
-                            }
-              >
-                            
-              </Row>
-</CardGrid>,
+                bsClass="row"
+                componentClass="div"
+                style={
+                  Object {
+                    "marginBottom": "20px",
+                    "marginTop": "20px",
+                  }
+                }
+              />
+            </CardGrid>,
             "className": "cards-pf",
           },
           "ref": null,
@@ -288,14 +277,12 @@ ShallowWrapper {
                 bsClass="row"
                 componentClass="div"
                 style={
-                                Object {
-                                                "marginBottom": "20px",
-                                                "marginTop": "20px",
-                                              }
+                  Object {
+                    "marginBottom": "20px",
+                    "marginTop": "20px",
+                  }
                 }
->
-                
-</Row>,
+              />,
               "className": "",
               "matchHeight": true,
             },

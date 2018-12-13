@@ -2,50 +2,49 @@
 
 exports[`#ServiceInfoPods render correctly with data should render service pods 1`] = `
 ShallowWrapper {
-  "length": 1,
   Symbol(enzyme.__root__): [Circular],
   Symbol(enzyme.__unrendered__): <ServiceInfoPods
     pods={
-        Array [
-            Object {
-              "appLabel": false,
-              "createdAt": "2018-03-14T10:17:52Z",
-              "createdBy": Array [],
-              "labels": Object {
-                "app": "reviews",
-                "version": "v2",
-              },
-              "name": "reviews-v2-1234",
-              "status": "",
-              "versionLabel": false,
-            },
-            Object {
-              "appLabel": false,
-              "createdAt": "2018-03-14T10:17:52Z",
-              "createdBy": Array [],
-              "labels": Object {
-                "app": "reviews",
-                "version": "v3",
-              },
-              "name": "reviews-v3-1234",
-              "status": "",
-              "versionLabel": false,
-            },
-            Object {
-              "appLabel": false,
-              "createdAt": "2018-03-14T10:17:52Z",
-              "createdBy": Array [],
-              "labels": Object {
-                "app": "reviews",
-                "version": "v1",
-              },
-              "name": "reviews-v1-1234",
-              "status": "",
-              "versionLabel": false,
-            },
-          ]
+      Array [
+        Object {
+          "appLabel": false,
+          "createdAt": "2018-03-14T10:17:52Z",
+          "createdBy": Array [],
+          "labels": Object {
+            "app": "reviews",
+            "version": "v2",
+          },
+          "name": "reviews-v2-1234",
+          "status": "",
+          "versionLabel": false,
+        },
+        Object {
+          "appLabel": false,
+          "createdAt": "2018-03-14T10:17:52Z",
+          "createdBy": Array [],
+          "labels": Object {
+            "app": "reviews",
+            "version": "v3",
+          },
+          "name": "reviews-v3-1234",
+          "status": "",
+          "versionLabel": false,
+        },
+        Object {
+          "appLabel": false,
+          "createdAt": "2018-03-14T10:17:52Z",
+          "createdBy": Array [],
+          "labels": Object {
+            "app": "reviews",
+            "version": "v1",
+          },
+          "name": "reviews-v1-1234",
+          "status": "",
+          "versionLabel": false,
+        },
+      ]
     }
-/>,
+  />,
   Symbol(enzyme.__renderer__): Object {
     "batchedUpdates": [Function],
     "getNode": [Function],
@@ -63,66 +62,66 @@ ShallowWrapper {
         bsClass="row"
         className="row-cards-pf"
         componentClass="div"
->
+      >
         <Col
-                bsClass="col"
-                componentClass="div"
-                lg={12}
-                md={12}
-                sm={12}
-                xs={12}
+          bsClass="col"
+          componentClass="div"
+          lg={12}
+          md={12}
+          sm={12}
+          xs={12}
         >
-                <div
-                        className="card-pf-body"
-                >
-                        <h3>
-                                <OverlayTrigger
-                                        defaultOverlayShown={false}
-                                        overlay={
-                                                <Tooltip
-                                                        bsClass="tooltip"
-                                                        id="pod_names_0"
-                                                        placement="right"
-                                                        title="Pod Names"
-                                                >
-                                                        reviews-v2-1234, reviews-v3-1234, reviews-v1-1234
-                                                </Tooltip>
-                                        }
-                                        placement="top"
-                                        trigger={
-                                                Array [
-                                                        "hover",
-                                                        "focus",
-                                                      ]
-                                        }
-                                >
-                                        <span>
-                                                reviews-v... (3 replicas)
-                                        </span>
-                                </OverlayTrigger>
-                        </h3>
-                        <div
-                                className="label-collection"
-                        >
-                                <Label
-                                        name="app"
-                                        value="reviews"
-                                />
-                        </div>
-                        <div>
-                                <span>
-                                        <Unknown>
-                                                <strong>
-                                                        Created at: 
-                                                </strong>
-                                                2018-03-14T10:17:52.000Z
-                                        </Unknown>
-                                </span>
-                        </div>
-                        <hr />
-                </div>
+          <div
+            className="card-pf-body"
+          >
+            <h3>
+              <OverlayTrigger
+                defaultOverlayShown={false}
+                overlay={
+                  <Tooltip
+                    bsClass="tooltip"
+                    id="pod_names_0"
+                    placement="right"
+                    title="Pod Names"
+                  >
+                    reviews-v2-1234, reviews-v3-1234, reviews-v1-1234
+                  </Tooltip>
+                }
+                placement="top"
+                trigger={
+                  Array [
+                    "hover",
+                    "focus",
+                  ]
+                }
+              >
+                <span>
+                  reviews-v... (3 replicas)
+                </span>
+              </OverlayTrigger>
+            </h3>
+            <div
+              className="label-collection"
+            >
+              <Label
+                name="app"
+                value="reviews"
+              />
+            </div>
+            <div>
+              <span>
+                <React.Fragment>
+                  <strong>
+                    Created at: 
+                  </strong>
+                  2018-03-14T10:17:52.000Z
+                </React.Fragment>
+              </span>
+            </div>
+            <hr />
+          </div>
         </Col>
-</Row>,
+      </Row>,
       "className": "card-pf",
     },
     "ref": null,
@@ -139,57 +138,57 @@ ShallowWrapper {
           md={12}
           sm={12}
           xs={12}
->
+        >
           <div
-                    className="card-pf-body"
+            className="card-pf-body"
           >
-                    <h3>
-                              <OverlayTrigger
-                                        defaultOverlayShown={false}
-                                        overlay={
-                                                  <Tooltip
-                                                            bsClass="tooltip"
-                                                            id="pod_names_0"
-                                                            placement="right"
-                                                            title="Pod Names"
-                                                  >
-                                                            reviews-v2-1234, reviews-v3-1234, reviews-v1-1234
-                                                  </Tooltip>
-                                        }
-                                        placement="top"
-                                        trigger={
-                                                  Array [
-                                                            "hover",
-                                                            "focus",
-                                                          ]
-                                        }
-                              >
-                                        <span>
-                                                  reviews-v... (3 replicas)
-                                        </span>
-                              </OverlayTrigger>
-                    </h3>
-                    <div
-                              className="label-collection"
-                    >
-                              <Label
-                                        name="app"
-                                        value="reviews"
-                              />
-                    </div>
-                    <div>
-                              <span>
-                                        <Unknown>
-                                                  <strong>
-                                                            Created at: 
-                                                  </strong>
-                                                  2018-03-14T10:17:52.000Z
-                                        </Unknown>
-                              </span>
-                    </div>
-                    <hr />
+            <h3>
+              <OverlayTrigger
+                defaultOverlayShown={false}
+                overlay={
+                  <Tooltip
+                    bsClass="tooltip"
+                    id="pod_names_0"
+                    placement="right"
+                    title="Pod Names"
+                  >
+                    reviews-v2-1234, reviews-v3-1234, reviews-v1-1234
+                  </Tooltip>
+                }
+                placement="top"
+                trigger={
+                  Array [
+                    "hover",
+                    "focus",
+                  ]
+                }
+              >
+                <span>
+                  reviews-v... (3 replicas)
+                </span>
+              </OverlayTrigger>
+            </h3>
+            <div
+              className="label-collection"
+            >
+              <Label
+                name="app"
+                value="reviews"
+              />
+            </div>
+            <div>
+              <span>
+                <React.Fragment>
+                  <strong>
+                    Created at: 
+                  </strong>
+                  2018-03-14T10:17:52.000Z
+                </React.Fragment>
+              </span>
+            </div>
+            <hr />
           </div>
-</Col>,
+        </Col>,
         "className": "row-cards-pf",
         "componentClass": "div",
       },
@@ -203,53 +202,53 @@ ShallowWrapper {
           "children": Array [
             <div
               className="card-pf-body"
->
+            >
               <h3>
-                            <OverlayTrigger
-                                          defaultOverlayShown={false}
-                                          overlay={
-                                                        <Tooltip
-                                                                      bsClass="tooltip"
-                                                                      id="pod_names_0"
-                                                                      placement="right"
-                                                                      title="Pod Names"
-                                                        >
-                                                                      reviews-v2-1234, reviews-v3-1234, reviews-v1-1234
-                                                        </Tooltip>
-                                          }
-                                          placement="top"
-                                          trigger={
-                                                        Array [
-                                                                      "hover",
-                                                                      "focus",
-                                                                    ]
-                                          }
-                            >
-                                          <span>
-                                                        reviews-v... (3 replicas)
-                                          </span>
-                            </OverlayTrigger>
+                <OverlayTrigger
+                  defaultOverlayShown={false}
+                  overlay={
+                    <Tooltip
+                      bsClass="tooltip"
+                      id="pod_names_0"
+                      placement="right"
+                      title="Pod Names"
+                    >
+                      reviews-v2-1234, reviews-v3-1234, reviews-v1-1234
+                    </Tooltip>
+                  }
+                  placement="top"
+                  trigger={
+                    Array [
+                      "hover",
+                      "focus",
+                    ]
+                  }
+                >
+                  <span>
+                    reviews-v... (3 replicas)
+                  </span>
+                </OverlayTrigger>
               </h3>
               <div
-                            className="label-collection"
+                className="label-collection"
               >
-                            <Label
-                                          name="app"
-                                          value="reviews"
-                            />
+                <Label
+                  name="app"
+                  value="reviews"
+                />
               </div>
               <div>
-                            <span>
-                                          <Unknown>
-                                                        <strong>
-                                                                      Created at: 
-                                                        </strong>
-                                                        2018-03-14T10:17:52.000Z
-                                          </Unknown>
-                            </span>
+                <span>
+                  <React.Fragment>
+                    <strong>
+                      Created at: 
+                    </strong>
+                    2018-03-14T10:17:52.000Z
+                  </React.Fragment>
+                </span>
               </div>
               <hr />
-</div>,
+            </div>,
           ],
           "componentClass": "div",
           "lg": 12,
@@ -267,48 +266,48 @@ ShallowWrapper {
               "children": Array [
                 <h3>
                   <OverlayTrigger
-                                    defaultOverlayShown={false}
-                                    overlay={
-                                                      <Tooltip
-                                                                        bsClass="tooltip"
-                                                                        id="pod_names_0"
-                                                                        placement="right"
-                                                                        title="Pod Names"
-                                                      >
-                                                                        reviews-v2-1234, reviews-v3-1234, reviews-v1-1234
-                                                      </Tooltip>
-                                    }
-                                    placement="top"
-                                    trigger={
-                                                      Array [
-                                                                        "hover",
-                                                                        "focus",
-                                                                      ]
-                                    }
+                    defaultOverlayShown={false}
+                    overlay={
+                      <Tooltip
+                        bsClass="tooltip"
+                        id="pod_names_0"
+                        placement="right"
+                        title="Pod Names"
+                      >
+                        reviews-v2-1234, reviews-v3-1234, reviews-v1-1234
+                      </Tooltip>
+                    }
+                    placement="top"
+                    trigger={
+                      Array [
+                        "hover",
+                        "focus",
+                      ]
+                    }
                   >
-                                    <span>
-                                                      reviews-v... (3 replicas)
-                                    </span>
+                    <span>
+                      reviews-v... (3 replicas)
+                    </span>
                   </OverlayTrigger>
-</h3>,
+                </h3>,
                 <div
                   className="label-collection"
->
+                >
                   <Label
-                                    name="app"
-                                    value="reviews"
+                    name="app"
+                    value="reviews"
                   />
-</div>,
+                </div>,
                 <div>
                   <span>
-                                    <Unknown>
-                                                      <strong>
-                                                                        Created at: 
-                                                      </strong>
-                                                      2018-03-14T10:17:52.000Z
-                                    </Unknown>
+                    <React.Fragment>
+                      <strong>
+                        Created at: 
+                      </strong>
+                      2018-03-14T10:17:52.000Z
+                    </React.Fragment>
                   </span>
-</div>,
+                </div>,
                 false,
                 undefined,
                 undefined,
@@ -326,27 +325,27 @@ ShallowWrapper {
                   "children": <OverlayTrigger
                     defaultOverlayShown={false}
                     overlay={
-                                        <Tooltip
-                                                            bsClass="tooltip"
-                                                            id="pod_names_0"
-                                                            placement="right"
-                                                            title="Pod Names"
-                                        >
-                                                            reviews-v2-1234, reviews-v3-1234, reviews-v1-1234
-                                        </Tooltip>
+                      <Tooltip
+                        bsClass="tooltip"
+                        id="pod_names_0"
+                        placement="right"
+                        title="Pod Names"
+                      >
+                        reviews-v2-1234, reviews-v3-1234, reviews-v1-1234
+                      </Tooltip>
                     }
                     placement="top"
                     trigger={
-                                        Array [
-                                                            "hover",
-                                                            "focus",
-                                                          ]
+                      Array [
+                        "hover",
+                        "focus",
+                      ]
                     }
->
+                  >
                     <span>
-                                        reviews-v... (3 replicas)
+                      reviews-v... (3 replicas)
                     </span>
-</OverlayTrigger>,
+                  </OverlayTrigger>,
                 },
                 "ref": null,
                 "rendered": Object {
@@ -356,16 +355,16 @@ ShallowWrapper {
                   "props": Object {
                     "children": <span>
                       reviews-v... (3 replicas)
-</span>,
+                    </span>,
                     "defaultOverlayShown": false,
                     "overlay": <Tooltip
                       bsClass="tooltip"
                       id="pod_names_0"
                       placement="right"
                       title="Pod Names"
->
+                    >
                       reviews-v2-1234, reviews-v3-1234, reviews-v1-1234
-</Tooltip>,
+                    </Tooltip>,
                     "placement": "top",
                     "trigger": Array [
                       "hover",
@@ -397,7 +396,7 @@ ShallowWrapper {
                     <Label
                       name="app"
                       value="reviews"
-/>,
+                    />,
                   ],
                   "className": "label-collection",
                 },
@@ -424,13 +423,13 @@ ShallowWrapper {
                 "nodeType": "host",
                 "props": Object {
                   "children": <span>
-                    <Unknown>
-                                        <strong>
-                                                            Created at: 
-                                        </strong>
-                                        2018-03-14T10:17:52.000Z
-                    </Unknown>
-</span>,
+                    <React.Fragment>
+                      <strong>
+                        Created at: 
+                      </strong>
+                      2018-03-14T10:17:52.000Z
+                    </React.Fragment>
+                  </span>,
                 },
                 "ref": null,
                 "rendered": Object {
@@ -438,12 +437,12 @@ ShallowWrapper {
                   "key": undefined,
                   "nodeType": "host",
                   "props": Object {
-                    "children": <Unknown>
+                    "children": <React.Fragment>
                       <strong>
-                                            Created at: 
+                        Created at: 
                       </strong>
                       2018-03-14T10:17:52.000Z
-</Unknown>,
+                    </React.Fragment>,
                   },
                   "ref": null,
                   "rendered": Object {
@@ -454,7 +453,7 @@ ShallowWrapper {
                       "children": Array [
                         <strong>
                           Created at: 
-</strong>,
+                        </strong>,
                         "2018-03-14T10:17:52.000Z",
                       ],
                     },
@@ -511,66 +510,66 @@ ShallowWrapper {
           bsClass="row"
           className="row-cards-pf"
           componentClass="div"
->
+        >
           <Col
-                    bsClass="col"
-                    componentClass="div"
-                    lg={12}
-                    md={12}
-                    sm={12}
-                    xs={12}
+            bsClass="col"
+            componentClass="div"
+            lg={12}
+            md={12}
+            sm={12}
+            xs={12}
           >
-                    <div
-                              className="card-pf-body"
+            <div
+              className="card-pf-body"
+            >
+              <h3>
+                <OverlayTrigger
+                  defaultOverlayShown={false}
+                  overlay={
+                    <Tooltip
+                      bsClass="tooltip"
+                      id="pod_names_0"
+                      placement="right"
+                      title="Pod Names"
                     >
-                              <h3>
-                                        <OverlayTrigger
-                                                  defaultOverlayShown={false}
-                                                  overlay={
-                                                            <Tooltip
-                                                                      bsClass="tooltip"
-                                                                      id="pod_names_0"
-                                                                      placement="right"
-                                                                      title="Pod Names"
-                                                            >
-                                                                      reviews-v2-1234, reviews-v3-1234, reviews-v1-1234
-                                                            </Tooltip>
-                                                  }
-                                                  placement="top"
-                                                  trigger={
-                                                            Array [
-                                                                      "hover",
-                                                                      "focus",
-                                                                    ]
-                                                  }
-                                        >
-                                                  <span>
-                                                            reviews-v... (3 replicas)
-                                                  </span>
-                                        </OverlayTrigger>
-                              </h3>
-                              <div
-                                        className="label-collection"
-                              >
-                                        <Label
-                                                  name="app"
-                                                  value="reviews"
-                                        />
-                              </div>
-                              <div>
-                                        <span>
-                                                  <Unknown>
-                                                            <strong>
-                                                                      Created at: 
-                                                            </strong>
-                                                            2018-03-14T10:17:52.000Z
-                                                  </Unknown>
-                                        </span>
-                              </div>
-                              <hr />
-                    </div>
+                      reviews-v2-1234, reviews-v3-1234, reviews-v1-1234
+                    </Tooltip>
+                  }
+                  placement="top"
+                  trigger={
+                    Array [
+                      "hover",
+                      "focus",
+                    ]
+                  }
+                >
+                  <span>
+                    reviews-v... (3 replicas)
+                  </span>
+                </OverlayTrigger>
+              </h3>
+              <div
+                className="label-collection"
+              >
+                <Label
+                  name="app"
+                  value="reviews"
+                />
+              </div>
+              <div>
+                <span>
+                  <React.Fragment>
+                    <strong>
+                      Created at: 
+                    </strong>
+                    2018-03-14T10:17:52.000Z
+                  </React.Fragment>
+                </span>
+              </div>
+              <hr />
+            </div>
           </Col>
-</Row>,
+        </Row>,
         "className": "card-pf",
       },
       "ref": null,
@@ -587,57 +586,57 @@ ShallowWrapper {
             md={12}
             sm={12}
             xs={12}
->
+          >
             <div
-                        className="card-pf-body"
+              className="card-pf-body"
             >
-                        <h3>
-                                    <OverlayTrigger
-                                                defaultOverlayShown={false}
-                                                overlay={
-                                                            <Tooltip
-                                                                        bsClass="tooltip"
-                                                                        id="pod_names_0"
-                                                                        placement="right"
-                                                                        title="Pod Names"
-                                                            >
-                                                                        reviews-v2-1234, reviews-v3-1234, reviews-v1-1234
-                                                            </Tooltip>
-                                                }
-                                                placement="top"
-                                                trigger={
-                                                            Array [
-                                                                        "hover",
-                                                                        "focus",
-                                                                      ]
-                                                }
-                                    >
-                                                <span>
-                                                            reviews-v... (3 replicas)
-                                                </span>
-                                    </OverlayTrigger>
-                        </h3>
-                        <div
-                                    className="label-collection"
-                        >
-                                    <Label
-                                                name="app"
-                                                value="reviews"
-                                    />
-                        </div>
-                        <div>
-                                    <span>
-                                                <Unknown>
-                                                            <strong>
-                                                                        Created at: 
-                                                            </strong>
-                                                            2018-03-14T10:17:52.000Z
-                                                </Unknown>
-                                    </span>
-                        </div>
-                        <hr />
+              <h3>
+                <OverlayTrigger
+                  defaultOverlayShown={false}
+                  overlay={
+                    <Tooltip
+                      bsClass="tooltip"
+                      id="pod_names_0"
+                      placement="right"
+                      title="Pod Names"
+                    >
+                      reviews-v2-1234, reviews-v3-1234, reviews-v1-1234
+                    </Tooltip>
+                  }
+                  placement="top"
+                  trigger={
+                    Array [
+                      "hover",
+                      "focus",
+                    ]
+                  }
+                >
+                  <span>
+                    reviews-v... (3 replicas)
+                  </span>
+                </OverlayTrigger>
+              </h3>
+              <div
+                className="label-collection"
+              >
+                <Label
+                  name="app"
+                  value="reviews"
+                />
+              </div>
+              <div>
+                <span>
+                  <React.Fragment>
+                    <strong>
+                      Created at: 
+                    </strong>
+                    2018-03-14T10:17:52.000Z
+                  </React.Fragment>
+                </span>
+              </div>
+              <hr />
             </div>
-</Col>,
+          </Col>,
           "className": "row-cards-pf",
           "componentClass": "div",
         },
@@ -651,53 +650,53 @@ ShallowWrapper {
             "children": Array [
               <div
                 className="card-pf-body"
->
+              >
                 <h3>
-                                <OverlayTrigger
-                                                defaultOverlayShown={false}
-                                                overlay={
-                                                                <Tooltip
-                                                                                bsClass="tooltip"
-                                                                                id="pod_names_0"
-                                                                                placement="right"
-                                                                                title="Pod Names"
-                                                                >
-                                                                                reviews-v2-1234, reviews-v3-1234, reviews-v1-1234
-                                                                </Tooltip>
-                                                }
-                                                placement="top"
-                                                trigger={
-                                                                Array [
-                                                                                "hover",
-                                                                                "focus",
-                                                                              ]
-                                                }
-                                >
-                                                <span>
-                                                                reviews-v... (3 replicas)
-                                                </span>
-                                </OverlayTrigger>
+                  <OverlayTrigger
+                    defaultOverlayShown={false}
+                    overlay={
+                      <Tooltip
+                        bsClass="tooltip"
+                        id="pod_names_0"
+                        placement="right"
+                        title="Pod Names"
+                      >
+                        reviews-v2-1234, reviews-v3-1234, reviews-v1-1234
+                      </Tooltip>
+                    }
+                    placement="top"
+                    trigger={
+                      Array [
+                        "hover",
+                        "focus",
+                      ]
+                    }
+                  >
+                    <span>
+                      reviews-v... (3 replicas)
+                    </span>
+                  </OverlayTrigger>
                 </h3>
                 <div
-                                className="label-collection"
+                  className="label-collection"
                 >
-                                <Label
-                                                name="app"
-                                                value="reviews"
-                                />
+                  <Label
+                    name="app"
+                    value="reviews"
+                  />
                 </div>
                 <div>
-                                <span>
-                                                <Unknown>
-                                                                <strong>
-                                                                                Created at: 
-                                                                </strong>
-                                                                2018-03-14T10:17:52.000Z
-                                                </Unknown>
-                                </span>
+                  <span>
+                    <React.Fragment>
+                      <strong>
+                        Created at: 
+                      </strong>
+                      2018-03-14T10:17:52.000Z
+                    </React.Fragment>
+                  </span>
                 </div>
                 <hr />
-</div>,
+              </div>,
             ],
             "componentClass": "div",
             "lg": 12,
@@ -715,48 +714,48 @@ ShallowWrapper {
                 "children": Array [
                   <h3>
                     <OverlayTrigger
-                                        defaultOverlayShown={false}
-                                        overlay={
-                                                            <Tooltip
-                                                                                bsClass="tooltip"
-                                                                                id="pod_names_0"
-                                                                                placement="right"
-                                                                                title="Pod Names"
-                                                            >
-                                                                                reviews-v2-1234, reviews-v3-1234, reviews-v1-1234
-                                                            </Tooltip>
-                                        }
-                                        placement="top"
-                                        trigger={
-                                                            Array [
-                                                                                "hover",
-                                                                                "focus",
-                                                                              ]
-                                        }
+                      defaultOverlayShown={false}
+                      overlay={
+                        <Tooltip
+                          bsClass="tooltip"
+                          id="pod_names_0"
+                          placement="right"
+                          title="Pod Names"
+                        >
+                          reviews-v2-1234, reviews-v3-1234, reviews-v1-1234
+                        </Tooltip>
+                      }
+                      placement="top"
+                      trigger={
+                        Array [
+                          "hover",
+                          "focus",
+                        ]
+                      }
                     >
-                                        <span>
-                                                            reviews-v... (3 replicas)
-                                        </span>
+                      <span>
+                        reviews-v... (3 replicas)
+                      </span>
                     </OverlayTrigger>
-</h3>,
+                  </h3>,
                   <div
                     className="label-collection"
->
+                  >
                     <Label
-                                        name="app"
-                                        value="reviews"
+                      name="app"
+                      value="reviews"
                     />
-</div>,
+                  </div>,
                   <div>
                     <span>
-                                        <Unknown>
-                                                            <strong>
-                                                                                Created at: 
-                                                            </strong>
-                                                            2018-03-14T10:17:52.000Z
-                                        </Unknown>
+                      <React.Fragment>
+                        <strong>
+                          Created at: 
+                        </strong>
+                        2018-03-14T10:17:52.000Z
+                      </React.Fragment>
                     </span>
-</div>,
+                  </div>,
                   false,
                   undefined,
                   undefined,
@@ -774,27 +773,27 @@ ShallowWrapper {
                     "children": <OverlayTrigger
                       defaultOverlayShown={false}
                       overlay={
-                                            <Tooltip
-                                                                  bsClass="tooltip"
-                                                                  id="pod_names_0"
-                                                                  placement="right"
-                                                                  title="Pod Names"
-                                            >
-                                                                  reviews-v2-1234, reviews-v3-1234, reviews-v1-1234
-                                            </Tooltip>
+                        <Tooltip
+                          bsClass="tooltip"
+                          id="pod_names_0"
+                          placement="right"
+                          title="Pod Names"
+                        >
+                          reviews-v2-1234, reviews-v3-1234, reviews-v1-1234
+                        </Tooltip>
                       }
                       placement="top"
                       trigger={
-                                            Array [
-                                                                  "hover",
-                                                                  "focus",
-                                                                ]
+                        Array [
+                          "hover",
+                          "focus",
+                        ]
                       }
->
+                    >
                       <span>
-                                            reviews-v... (3 replicas)
+                        reviews-v... (3 replicas)
                       </span>
-</OverlayTrigger>,
+                    </OverlayTrigger>,
                   },
                   "ref": null,
                   "rendered": Object {
@@ -804,16 +803,16 @@ ShallowWrapper {
                     "props": Object {
                       "children": <span>
                         reviews-v... (3 replicas)
-</span>,
+                      </span>,
                       "defaultOverlayShown": false,
                       "overlay": <Tooltip
                         bsClass="tooltip"
                         id="pod_names_0"
                         placement="right"
                         title="Pod Names"
->
+                      >
                         reviews-v2-1234, reviews-v3-1234, reviews-v1-1234
-</Tooltip>,
+                      </Tooltip>,
                       "placement": "top",
                       "trigger": Array [
                         "hover",
@@ -845,7 +844,7 @@ ShallowWrapper {
                       <Label
                         name="app"
                         value="reviews"
-/>,
+                      />,
                     ],
                     "className": "label-collection",
                   },
@@ -872,13 +871,13 @@ ShallowWrapper {
                   "nodeType": "host",
                   "props": Object {
                     "children": <span>
-                      <Unknown>
-                                            <strong>
-                                                                  Created at: 
-                                            </strong>
-                                            2018-03-14T10:17:52.000Z
-                      </Unknown>
-</span>,
+                      <React.Fragment>
+                        <strong>
+                          Created at: 
+                        </strong>
+                        2018-03-14T10:17:52.000Z
+                      </React.Fragment>
+                    </span>,
                   },
                   "ref": null,
                   "rendered": Object {
@@ -886,12 +885,12 @@ ShallowWrapper {
                     "key": undefined,
                     "nodeType": "host",
                     "props": Object {
-                      "children": <Unknown>
+                      "children": <React.Fragment>
                         <strong>
-                                                Created at: 
+                          Created at: 
                         </strong>
                         2018-03-14T10:17:52.000Z
-</Unknown>,
+                      </React.Fragment>,
                     },
                     "ref": null,
                     "rendered": Object {
@@ -902,7 +901,7 @@ ShallowWrapper {
                         "children": Array [
                           <strong>
                             Created at: 
-</strong>,
+                          </strong>,
                           "2018-03-14T10:17:52.000Z",
                         ],
                       },
