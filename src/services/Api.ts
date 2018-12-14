@@ -21,7 +21,7 @@ import { ServiceList } from '../types/ServiceList';
 import { AppList } from '../types/AppList';
 import { App } from '../types/App';
 import { NodeParamsType, NodeType } from '../types/Graph';
-import { config, serverConfig } from '../config';
+import { config } from '../config';
 import { AuthToken, HTTP_VERBS } from '../types/Common';
 import { ServerConfig } from '../config/config';
 
