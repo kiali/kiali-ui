@@ -23,6 +23,9 @@ export interface GraphFilterState {
   // dropdown props
   edgeLabelMode: EdgeLabelMode;
   graphType: GraphType;
+  // search props
+  search: string;
+  showSearchHelp: boolean;
   // Toggle props
   showCircuitBreakers: boolean;
   showLegend: boolean;

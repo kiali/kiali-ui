@@ -20,10 +20,12 @@ export const INITIAL_GRAPH_STATE: GraphState = {
   filterState: {
     edgeLabelMode: EdgeLabelMode.HIDE,
     graphType: GraphType.VERSIONED_APP,
+    search: '',
     showCircuitBreakers: true,
     showLegend: false,
     showMissingSidecars: true,
     showNodeLabels: true,
+    showSearchHelp: false,
     showSecurity: false,
     showServiceNodes: true,
     showTrafficAnimation: false,
@@ -76,6 +78,7 @@ const graphDataState = (state: GraphState = INITIAL_GRAPH_STATE, action: KialiAp
       newState.sidePanelInfo = INITIAL_GRAPH_STATE.sidePanelInfo;
       break;
     // Filter actions
+    //
     case getType(GraphFilterActions.setEdgelLabelMode):
       newState.filterState.edgeLabelMode = action.payload;
       break;
@@ -85,6 +88,9 @@ const graphDataState = (state: GraphState = INITIAL_GRAPH_STATE, action: KialiAp
       newState.graphData = INITIAL_GRAPH_STATE.graphData;
       newState.graphDataTimestamp = INITIAL_GRAPH_STATE.graphDataTimestamp;
       newState.sidePanelInfo = INITIAL_GRAPH_STATE.sidePanelInfo;
+      break;
+    case getType(GraphFilterActions.setSearch):
+      newState.filterState.search = action.payload;
       break;
     case getType(GraphFilterActions.toggleLegend):
       newState.filterState.showLegend = !state.filterState.showLegend;
@@ -103,6 +109,9 @@ const graphDataState = (state: GraphState = INITIAL_GRAPH_STATE, action: KialiAp
       break;
     case getType(GraphFilterActions.toggleGraphSecurity):
       newState.filterState.showSecurity = !state.filterState.showSecurity;
+      break;
+    case getType(GraphFilterActions.toggleSearchHelp):
+      newState.filterState.showSearchHelp = !state.filterState.showSearchHelp;
       break;
     case getType(GraphFilterActions.toggleServiceNodes):
       newState.filterState.showServiceNodes = !state.filterState.showServiceNodes;

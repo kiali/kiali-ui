@@ -24,17 +24,22 @@ import { NamespaceActions } from '../../actions/NamespaceAction';
 import { GraphActions } from '../../actions/GraphActions';
 import { KialiAppAction } from '../../actions/KialiAppAction';
 import * as MessageCenterUtils from '../../utils/MessageCenter';
+import GraphHelpSearch from '../../pages/Graph/GraphHelpSearch';
 
 type ReduxProps = {
   activeNamespaces: Namespace[];
   edgeLabelMode: EdgeLabelMode;
   graphType: GraphType;
   node?: NodeParamsType;
+  search: string;
+  showSearchHelp: boolean;
 
   setActiveNamespaces: (activeNamespaces: Namespace[]) => void;
   setEdgeLabelMode: (edgeLabelMode: EdgeLabelMode) => void;
   setGraphType: (graphType: GraphType) => void;
   setNode: (node?: NodeParamsType) => void;
+  setSearch: (search: string) => void;
+  toggleSearchHelp: () => void;
 };
 
 type GraphFilterProps = ReduxProps & {
@@ -113,8 +118,14 @@ export class GraphFilter extends React.PureComponent<GraphFilterProps> {
       HistoryManager.setParam(URLParams.NAMESPACES, activeNamespacesString);
     }
 
-    this.searchInputRef = React.createRef();
+    if (props.search) {
+      props.setSearch('');
+    }
+    if (props.showSearchHelp) {
+      props.toggleSearchHelp();
+    }
     this.searchValue = '';
+    this.searchInputRef = React.createRef();
   }
 
   componentDidUpdate() {
@@ -141,7 +152,7 @@ export class GraphFilter extends React.PureComponent<GraphFilterProps> {
   render() {
     const graphTypeKey: string = _.findKey(GraphType, val => val === this.props.graphType)!;
     const edgeLabelModeKey: string = _.findKey(EdgeLabelMode, val => val === this.props.edgeLabelMode)!;
-    console.log('render');
+    console.log('render showSearchHelp=' + this.props.showSearchHelp);
     return (
       <>
         <Toolbar>
@@ -177,7 +188,7 @@ export class GraphFilter extends React.PureComponent<GraphFilterProps> {
               <label style={{ paddingRight: '0.5em' }}>Search</label>
               <input
                 type="text"
-                style={{ width: '25em' }}
+                style={{ width: '15em' }}
                 ref={this.searchInputRef}
                 disabled={this.props.disabled}
                 onChange={this.updateSearchValue}
@@ -193,7 +204,7 @@ export class GraphFilter extends React.PureComponent<GraphFilterProps> {
                 </Button>
               </span>
               <span className={'pullRight'}>
-                <Button bsStyle="link" style={{ paddingLeft: '2px' }}>
+                <Button bsStyle="link" style={{ paddingLeft: '2px' }} onClick={this.toggleSearchHelp}>
                   <Icon name="help" type="pf" title="Search help..." />
                 </Button>
               </span>
@@ -207,9 +218,15 @@ export class GraphFilter extends React.PureComponent<GraphFilterProps> {
             />
           </Toolbar.RightContent>
         </Toolbar>
+        {this.props.showSearchHelp && <GraphHelpSearch onClose={this.toggleSearchHelp} />}{' '}
       </>
     );
   }
+
+  private toggleSearchHelp = () => {
+    console.log('toggle from ' + this.props.toggleSearchHelp);
+    this.props.toggleSearchHelp();
+  };
 
   private updateSearchValue = event => {
     this.searchValue = event.target.value;
@@ -334,11 +351,42 @@ export class GraphFilter extends React.PureComponent<GraphFilterProps> {
     const val = tokens[1].trim();
 
     switch (field.toLowerCase()) {
+      // node search
       case 'app':
         return { target: 'node', selector: '[app ' + op + ' "' + val + '"]' };
+      case 'httpin': {
+        const selector = op !== '=' || 0 !== Number(val) ? '[rate ' + op + ' ' + val + ']' : '[^rate]';
+        return { target: 'node', selector: selector };
+      }
+      case 'httpout': {
+        const selector = op !== '=' || 0 !== Number(val) ? '[rateOut ' + op + ' ' + val + ']' : '[^rateOut]';
+        return { target: 'node', selector: selector };
+      }
       case 'ns':
       case 'namespace':
         return { target: 'node', selector: '[namespace ' + op + ' "' + val + '"]' };
+      case 'svc':
+      case 'service':
+        return { target: 'node', selector: '[service ' + op + ' "' + val + '"]' };
+      case 'tcpin': {
+        const selector = op !== '=' || 0 !== Number(val) ? '[rateTcpSent ' + op + ' ' + val + ']' : '[^rateTcpSent]';
+        return { target: 'node', selector: selector };
+      }
+      case 'tcpout': {
+        const selector =
+          op !== '=' || 0 !== Number(val) ? '[rateTcpSentOut ' + op + ' ' + val + ']' : '[^rateTcpSentOut]';
+        return { target: 'node', selector: selector };
+      }
+      case 'version':
+        return { target: 'node', selector: '[version ' + op + ' "' + val + '"]' };
+      case 'wl':
+      case 'workload':
+        return { target: 'node', selector: '[workload ' + op + ' "' + val + '"]' };
+      // edge search
+      case 'http': {
+        const selector = op !== '=' || 0 !== Number(val) ? '[rate ' + op + ' ' + val + ']' : '[^rate]';
+        return { target: 'edge', selector: selector };
+      }
       case 'percenterr':
       case 'percenterror':
       case '%error':
@@ -346,47 +394,18 @@ export class GraphFilter extends React.PureComponent<GraphFilterProps> {
         const selector = op !== '=' || 0 !== Number(val) ? '[percentErr ' + op + ' ' + val + ']' : '[^percentErr]';
         return { target: 'edge', selector: selector };
       }
-      case 'percentrate':
-      case '%rate': {
+      case 'percenttraffic':
+      case '%traffic': {
         const selector = op !== '=' || 0 !== Number(val) ? '[percentRate ' + op + ' ' + val + ']' : '[^percentRate]';
         return { target: 'edge', selector: selector };
-      }
-      case 'rate': {
-        const selector = op !== '=' || 0 !== Number(val) ? '[rate ' + op + ' ' + val + ']' : '[^rate]';
-        return { target: 'edge', selector: selector };
-      }
-      case 'ratein': {
-        const selector = op !== '=' || 0 !== Number(val) ? '[rate ' + op + ' ' + val + ']' : '[^rate]';
-        return { target: 'node', selector: selector };
-      }
-      case 'rateout': {
-        const selector = op !== '=' || 0 !== Number(val) ? '[rateOut ' + op + ' ' + val + ']' : '[^rateOut]';
-        return { target: 'node', selector: selector };
-      }
-      case 'ratetcp': {
-        const selector = op !== '=' || 0 !== Number(val) ? '[tcpSentRate ' + op + ' ' + val + ']' : '[^tcpSentRate]';
-        return { target: 'edge', selector: selector };
-      }
-      case 'ratetcpin': {
-        const selector = op !== '=' || 0 !== Number(val) ? '[rateTcpSent ' + op + ' ' + val + ']' : '[^rateTcpSent]';
-        return { target: 'node', selector: selector };
-      }
-      case 'ratetcpout': {
-        const selector =
-          op !== '=' || 0 !== Number(val) ? '[rateTcpSentOut ' + op + ' ' + val + ']' : '[^rateTcpSentOut]';
-        return { target: 'node', selector: selector };
       }
       case 'rt':
       case 'responsetime':
         return { target: 'edge', selector: '[responseTime ' + op + ' ' + Number(val) / 1000 + ']' };
-      case 'svc':
-      case 'service':
-        return { target: 'node', selector: '[service ' + op + ' "' + val + '"]' };
-      case 'version':
-        return { target: 'node', selector: '[version ' + op + ' "' + val + '"]' };
-      case 'wl':
-      case 'workload':
-        return { target: 'node', selector: '[workload ' + op + ' "' + val + '"]' };
+      case 'tcp': {
+        const selector = op !== '=' || 0 !== Number(val) ? '[tcpSentRate ' + op + ' ' + val + ']' : '[^tcpSentRate]';
+        return { target: 'edge', selector: selector };
+      }
       default:
         MessageCenterUtils.add('Invalid search value: [' + expression + '].');
         return undefined;
@@ -395,45 +414,43 @@ export class GraphFilter extends React.PureComponent<GraphFilterProps> {
 
   private parseUnarySearchExpression = (field: string, isNegation): ParsedExpression | undefined => {
     switch (field.toLowerCase()) {
-      case 'hascb':
-        return { target: 'node', selector: isNegation ? '[^hasCB]' : '[hasCB]' };
-      case 'hasmissingsc':
-        return { target: 'node', selector: isNegation ? '[^hasMissingSC]' : '[hasMissingSC]' };
-      case 'hashttpin':
-        return { target: 'node', selector: isNegation ? '[^rate]' : '[rate]' };
-      case 'hashttpout':
-        return { target: 'node', selector: isNegation ? '[^rateOut]' : '[rateOut]' };
-      case 'hastcpin':
-        return { target: 'node', selector: isNegation ? '[^rateTcpSent]' : '[rateTcpSent]' };
-      case 'hastcpout':
-        return { target: 'node', selector: isNegation ? '[^rateTcpSentOut]' : '[rateTcpSentOut]' };
-      case 'hasvs':
-        return { target: 'node', selector: isNegation ? '[^hasVS]' : '[hasVS]' };
-      case 'isapp':
+      // node search
+      case 'appnode':
         return { target: 'node', selector: isNegation ? '[nodeType != "app"]' : '[nodeType = "app"]' };
-      case 'isdead':
+      case 'cb':
+      case 'circuitbreaker':
+        return { target: 'node', selector: isNegation ? '[^hasCB]' : '[hasCB]' };
+      case 'dead':
         return { target: 'node', selector: isNegation ? '[^isDead]' : '[isDead]' };
-      case 'isinaccessible':
+      case 'inaccessible':
         return { target: 'node', selector: isNegation ? '[^isInaccessible]' : '[isInaccessible]' };
-      case 'ismtls':
-      case 'issecure':
-        return { target: 'edge', selector: isNegation ? '[^isMTLS]' : '[isMTLS]' };
-      case 'isroot':
-      case 'istrafficsource':
-        return { target: 'node', selector: isNegation ? '[^isRoot]' : '[isRoot]' };
-      case 'isoutside':
-      case 'isoutsider':
+      case 'outside':
+      case 'outsider':
         return { target: 'node', selector: isNegation ? '[^isOutside]' : '[isOutside]' };
-      case 'isunused':
-        return { target: 'node', selector: isNegation ? '[^isUnused]' : '[isUnused]' };
-      case 'isservice':
-        return { target: 'node', selector: isNegation ? '[nodeType != "service"]' : '[nodeType = "service"]' };
-      case 'isserviceentry':
+      case 'serviceentry':
         return { target: 'node', selector: isNegation ? '[^isServiceEntry]' : '[isServiceEntry]' };
-      case 'isunknown':
+      case 'sc':
+      case 'sidecar':
+        return { target: 'node', selector: isNegation ? '[hasMissingSC]' : '[^hasMissingSC]' };
+      case 'svcnode':
+      case 'servicenode':
+        return { target: 'node', selector: isNegation ? '[nodeType != "service"]' : '[nodeType = "service"]' };
+      case 'trafficsource':
+        return { target: 'node', selector: isNegation ? '[^isRoot]' : '[isRoot]' };
+      case 'unknown':
         return { target: 'node', selector: isNegation ? '[nodeType != "unknown"]' : '[nodeType = "unknown"]' };
-      case 'isworkload':
+      case 'unused':
+        return { target: 'node', selector: isNegation ? '[^isUnused]' : '[isUnused]' };
+      case 'vs':
+      case 'virtualservice':
+        return { target: 'node', selector: isNegation ? '[^hasVS]' : '[hasVS]' };
+      case 'wlnode':
+      case 'workloadnode':
         return { target: 'node', selector: isNegation ? '[nodeType != "workload"]' : '[nodeType = "workload"]' };
+      // edge search
+      case 'mtls':
+        return { target: 'edge', selector: isNegation ? '[^isMTLS]' : '[isMTLS]' };
+      case 'root':
       default:
         return undefined;
     }
@@ -480,7 +497,9 @@ const mapStateToProps = (state: KialiAppState) => ({
   activeNamespaces: activeNamespacesSelector(state),
   edgeLabelMode: edgeLabelModeSelector(state),
   graphType: graphTypeSelector(state),
-  node: state.graph.node
+  node: state.graph.node,
+  search: state.graph.filterState.search,
+  showSearchHelp: state.graph.filterState.showSearchHelp
 });
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<KialiAppState, void, KialiAppAction>) => {
@@ -488,7 +507,9 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<KialiAppState, void, KialiAp
     setActiveNamespaces: bindActionCreators(NamespaceActions.setActiveNamespaces, dispatch),
     setEdgeLabelMode: bindActionCreators(GraphFilterActions.setEdgelLabelMode, dispatch),
     setGraphType: bindActionCreators(GraphFilterActions.setGraphType, dispatch),
-    setNode: bindActionCreators(GraphActions.setNode, dispatch)
+    setNode: bindActionCreators(GraphActions.setNode, dispatch),
+    setSearch: bindActionCreators(GraphFilterActions.setSearch, dispatch),
+    toggleSearchHelp: bindActionCreators(GraphFilterActions.toggleSearchHelp, dispatch)
   };
 };
 

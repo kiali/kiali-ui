@@ -6,6 +6,7 @@ import { EdgeLabelMode } from '../types/GraphFilter';
 enum GraphFilterActionKeys {
   SET_EDGE_LABEL_MODE = 'SET_EDGE_LABEL_MODE',
   SET_GRAPH_TYPE = 'SET_GRAPH_TYPE',
+  SET_SEARCH = 'SET_SEARCH',
   // Toggle Actions
   TOGGLE_GRAPH_NODE_LABEL = 'TOGGLE_GRAPH_NODE_LABEL',
   TOGGLE_GRAPH_CIRCUIT_BREAKERS = 'TOGGLE_GRAPH_CIRCUIT_BREAKERS',
@@ -13,6 +14,7 @@ enum GraphFilterActionKeys {
   TOGGLE_GRAPH_MISSING_SIDECARS = 'TOGGLE_GRAPH_MISSING_SIDECARS',
   TOGGLE_GRAPH_SECURITY = 'TOGGLE_GRAPH_SECURITY',
   TOGGLE_LEGEND = 'TOGGLE_LEGEND',
+  TOGGLE_SEARCH_HELP = 'TOGGLE_SEARCH_HELP',
   TOGGLE_SERVICE_NODES = 'TOGGLE_SERVICE_NODES',
   TOGGLE_TRAFFIC_ANIMATION = 'TOGGLE_TRAFFIC_ANIMATION',
   TOGGLE_UNUSED_NODES = 'TOGGLE_UNUSED_NODES',
@@ -23,6 +25,7 @@ enum GraphFilterActionKeys {
 export const GraphFilterActions = {
   setEdgelLabelMode: createStandardAction(GraphFilterActionKeys.SET_EDGE_LABEL_MODE)<EdgeLabelMode>(),
   setGraphType: createStandardAction(GraphFilterActionKeys.SET_GRAPH_TYPE)<GraphType>(),
+  setSearch: createStandardAction(GraphFilterActionKeys.SET_SEARCH)<string>(),
   // Toggle actions
   showGraphFilters: createStandardAction(GraphFilterActionKeys.ENABLE_GRAPH_FILTERS)<boolean>(),
   toggleGraphNodeLabel: createAction(GraphFilterActionKeys.TOGGLE_GRAPH_NODE_LABEL),
@@ -31,6 +34,7 @@ export const GraphFilterActions = {
   toggleGraphCircuitBreakers: createAction(GraphFilterActionKeys.TOGGLE_GRAPH_CIRCUIT_BREAKERS),
   toggleGraphMissingSidecars: createAction(GraphFilterActionKeys.TOGGLE_GRAPH_MISSING_SIDECARS),
   toggleGraphSecurity: createAction(GraphFilterActionKeys.TOGGLE_GRAPH_SECURITY),
+  toggleSearchHelp: createAction(GraphFilterActionKeys.TOGGLE_SEARCH_HELP),
   toggleServiceNodes: createAction(GraphFilterActionKeys.TOGGLE_SERVICE_NODES),
   toggleTrafficAnimation: createAction(GraphFilterActionKeys.TOGGLE_TRAFFIC_ANIMATION),
   toggleUnusedNodes: createAction(GraphFilterActionKeys.TOGGLE_UNUSED_NODES)
