@@ -20,7 +20,6 @@ export const INITIAL_GRAPH_STATE: GraphState = {
   filterState: {
     edgeLabelMode: EdgeLabelMode.HIDE,
     graphType: GraphType.VERSIONED_APP,
-    search: '',
     showCircuitBreakers: true,
     showLegend: false,
     showMissingSidecars: true,
@@ -88,9 +87,6 @@ const graphDataState = (state: GraphState = INITIAL_GRAPH_STATE, action: KialiAp
       newState.graphData = INITIAL_GRAPH_STATE.graphData;
       newState.graphDataTimestamp = INITIAL_GRAPH_STATE.graphDataTimestamp;
       newState.sidePanelInfo = INITIAL_GRAPH_STATE.sidePanelInfo;
-      break;
-    case getType(GraphFilterActions.setSearch):
-      newState.filterState.search = action.payload;
       break;
     case getType(GraphFilterActions.toggleLegend):
       newState.filterState.showLegend = !state.filterState.showLegend;

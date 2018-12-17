@@ -13,7 +13,7 @@ import { GraphType } from '../../types/Graph';
 import { PfColors } from '../Pf/PfColors';
 import { Omit } from 'lodash';
 
-type ReduxProps = Omit<Omit<Omit<GraphFilterState, 'search'>, 'showLegend'>, 'showSearchHelp'> & {
+type ReduxProps = Omit<Omit<GraphFilterState, 'showLegend'>, 'showSearchHelp'> & {
   // Dispatch methods
   toggleGraphCircuitBreakers(): void;
   toggleGraphMissingSidecars(): void;

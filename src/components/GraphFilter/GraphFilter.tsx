@@ -31,14 +31,12 @@ type ReduxProps = {
   edgeLabelMode: EdgeLabelMode;
   graphType: GraphType;
   node?: NodeParamsType;
-  search: string;
   showSearchHelp: boolean;
 
   setActiveNamespaces: (activeNamespaces: Namespace[]) => void;
   setEdgeLabelMode: (edgeLabelMode: EdgeLabelMode) => void;
   setGraphType: (graphType: GraphType) => void;
   setNode: (node?: NodeParamsType) => void;
-  setSearch: (search: string) => void;
   toggleSearchHelp: () => void;
 };
 
@@ -118,9 +116,6 @@ export class GraphFilter extends React.PureComponent<GraphFilterProps> {
       HistoryManager.setParam(URLParams.NAMESPACES, activeNamespacesString);
     }
 
-    if (props.search) {
-      props.setSearch('');
-    }
     if (props.showSearchHelp) {
       props.toggleSearchHelp();
     }
@@ -498,7 +493,6 @@ const mapStateToProps = (state: KialiAppState) => ({
   edgeLabelMode: edgeLabelModeSelector(state),
   graphType: graphTypeSelector(state),
   node: state.graph.node,
-  search: state.graph.filterState.search,
   showSearchHelp: state.graph.filterState.showSearchHelp
 });
 
@@ -508,7 +502,6 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<KialiAppState, void, KialiAp
     setEdgeLabelMode: bindActionCreators(GraphFilterActions.setEdgelLabelMode, dispatch),
     setGraphType: bindActionCreators(GraphFilterActions.setGraphType, dispatch),
     setNode: bindActionCreators(GraphActions.setNode, dispatch),
-    setSearch: bindActionCreators(GraphFilterActions.setSearch, dispatch),
     toggleSearchHelp: bindActionCreators(GraphFilterActions.toggleSearchHelp, dispatch)
   };
 };

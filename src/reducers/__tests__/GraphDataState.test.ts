@@ -19,6 +19,7 @@ describe('GraphDataState', () => {
         showLegend: false,
         showMissingSidecars: true,
         showNodeLabels: true,
+        showSearchHelp: false,
         showSecurity: false,
         showServiceNodes: true,
         showTrafficAnimation: false,

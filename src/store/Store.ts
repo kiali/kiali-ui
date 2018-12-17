@@ -24,7 +24,6 @@ export interface GraphFilterState {
   edgeLabelMode: EdgeLabelMode;
   graphType: GraphType;
   // search props
-  search: string;
   showSearchHelp: boolean;
   // Toggle props
   showCircuitBreakers: boolean;
