@@ -94,6 +94,7 @@ export interface UserSettings {
   interface: InterfaceSettings;
   refreshInterval: PollIntervalInMs;
   duration: DurationInSeconds;
+  pfNext: boolean;
 }
 
 export interface GrafanaInfo {

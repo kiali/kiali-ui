@@ -10,7 +10,8 @@ const mapStateToProps = (state: KialiAppState) => ({
   username: state.authentication.username,
   logging: state.authentication.logging,
   error: state.authentication.error,
-  message: state.authentication.message
+  message: state.authentication.message,
+  pfNext: state.userSettings.pfNext
 });
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<KialiAppState, void, KialiAppAction>) => ({

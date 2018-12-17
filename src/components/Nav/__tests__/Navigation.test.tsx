@@ -55,6 +55,7 @@ const _tester = (path: string, expectedMenuPath: string) => {
       checkCredentials={jest.fn()}
       navCollapsed={false}
       setNavCollapsed={jest.fn()}
+      setPfNext={jest.fn()}
       jaegerUrl={''}
       {...routerProps}
     />

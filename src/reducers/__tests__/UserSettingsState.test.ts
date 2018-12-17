@@ -17,14 +17,16 @@ describe('UserSettingsState reducer', () => {
         {
           interface: { navCollapse: false },
           duration: 60,
-          refreshInterval: 60
+          refreshInterval: 60,
+          pfNext: false
         },
         UserSettingsActions.navCollapse(true)
       )
     ).toEqual({
       interface: { navCollapse: true },
       duration: 60,
-      refreshInterval: 60
+      refreshInterval: 60,
+      pfNext: false
     });
   });
 
@@ -34,14 +36,16 @@ describe('UserSettingsState reducer', () => {
         {
           interface: { navCollapse: false },
           duration: 60,
-          refreshInterval: 60
+          refreshInterval: 60,
+          pfNext: false
         },
         UserSettingsActions.setDuration(120)
       )
     ).toEqual({
       interface: { navCollapse: false },
       duration: 120,
-      refreshInterval: 60
+      refreshInterval: 60,
+      pfNext: false
     });
   });
 
@@ -51,14 +55,16 @@ describe('UserSettingsState reducer', () => {
         {
           interface: { navCollapse: false },
           duration: 60,
-          refreshInterval: 60
+          refreshInterval: 60,
+          pfNext: false
         },
         UserSettingsActions.setRefreshInterval(120)
       )
     ).toEqual({
       interface: { navCollapse: false },
       duration: 60,
-      refreshInterval: 120
+      refreshInterval: 120,
+      pfNext: false
     });
   });
 });

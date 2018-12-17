@@ -5,6 +5,7 @@ import { KialiAppState, Component } from '../store/Store';
 import { KialiAppAction } from '../actions/KialiAppAction';
 import LoginThunkActions from '../actions/LoginThunkActions';
 import UserSettingsThunkActions from '../actions/UserSettingsThunkActions';
+import { UserSettingsActions } from '../actions/UserSettingsActions';
 
 const getJaegerUrl = (components: Component[]) => {
   const jaegerinfo = components.find(comp => comp.name === 'Jaeger');
@@ -19,7 +20,8 @@ const mapStateToProps = (state: KialiAppState) => ({
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<KialiAppState, void, KialiAppAction>) => ({
   checkCredentials: () => dispatch(LoginThunkActions.checkCredentials()),
-  setNavCollapsed: (collapse: boolean) => dispatch(UserSettingsThunkActions.setNavCollapsed(!collapse))
+  setNavCollapsed: (collapse: boolean) => dispatch(UserSettingsThunkActions.setNavCollapsed(!collapse)),
+  setPfNext: (enable: boolean) => dispatch(UserSettingsActions.setPfNext(enable))
 });
 
 const NavigationContainer = connect(

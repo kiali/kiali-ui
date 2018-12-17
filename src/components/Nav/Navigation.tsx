@@ -23,6 +23,7 @@ type PropsType = RouteComponentProps & {
   checkCredentials: () => void;
   setNavCollapsed: (collapse: boolean) => void;
   jaegerUrl: string;
+  setPfNext: (enable: boolean) => void;
 };
 
 class Navigation extends React.Component<PropsType> {
@@ -35,6 +36,12 @@ class Navigation extends React.Component<PropsType> {
 
     // handle initial path from the browser
     this.props.checkCredentials();
+
+    // Check if Pf4next
+    const pfNext = new URLSearchParams(this.props.location.search).get('pfnext');
+    if (pfNext) {
+      pfNext === '1' ? this.props.setPfNext(true) : this.props.setPfNext(false);
+    }
   }
 
   setDocLayout = () => {

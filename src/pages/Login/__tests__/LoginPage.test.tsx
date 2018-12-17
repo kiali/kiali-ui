@@ -8,7 +8,8 @@ const LoginProps = {
   logging: false,
   error: undefined,
   message: '',
-  authenticate: jest.fn()
+  authenticate: jest.fn(),
+  pfNext: false
 };
 
 const wrapper = shallow(<LoginPage {...LoginProps} />);
