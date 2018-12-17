@@ -1,5 +1,5 @@
 import { Annotation, Marker } from 'react-ace';
-import { ObjectCheck, ObjectValidation, Validations } from './IstioObjects';
+import { ObjectCheck, ObjectValidation } from './IstioObjects';
 
 export const jsYaml = require('js-yaml');
 
@@ -26,14 +26,6 @@ interface YamlPosition {
   row: number;
   col: number;
 }
-
-const getObjectValidations = (validations: Validations): ObjectValidation[] => {
-  const oValidations: ObjectValidation[] = [];
-  Object.keys(validations).forEach(objectType => {
-    Object.keys(validations[objectType]).forEach(object => oValidations.push(validations[objectType][object]));
-  });
-  return oValidations;
-};
 
 const numRows = (yaml: string): number => {
   let rows = 0;
@@ -233,13 +225,10 @@ export const parseKialiValidations = (yamlInput: string, kialiValidations?: Vali
     return aceValidations;
   }
 
-  const objectValidations = getObjectValidations(kialiValidations);
-  objectValidations.forEach(objectValidation => {
-    objectValidation.checks.forEach(check => {
-      const aceCheck = parseCheck(yamlInput, check);
-      aceValidations.markers.push(aceCheck.marker);
-      aceValidations.annotations.push(aceCheck.annotation);
-    });
+  validation.checks.forEach(check => {
+    const aceCheck = parseCheck(yaml, check);
+    aceValidations.markers.push(aceCheck.marker);
+    aceValidations.annotations.push(aceCheck.annotation);
   });
   return aceValidations;
 };

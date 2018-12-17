@@ -28,7 +28,6 @@ import DestinationRuleDetail from '../ServiceDetails/ServiceInfo/IstioObjectDeta
 
 interface IstioConfigDetailsState {
   istioObjectDetails?: IstioConfigDetails;
-  istioValidations?: Validations;
   isModified: boolean;
   yamlModified?: string;
   yamlValidations?: AceValidations;
@@ -68,21 +67,13 @@ class IstioConfigDetailsPage extends React.Component<RouteComponentProps<IstioCo
           props.objectSubtype,
           props.object
         )
-      : API.getIstioConfigDetail(authentication(), props.namespace, props.objectType, props.object);
+      : API.getIstioConfigDetail(authentication(), props.namespace, props.objectType, props.object, true);
 
     // Note that adapters/templates are not supported yet for validations
-    // This logic will be refactored later on KIALI-1671
-    const promiseConfigValidations = API.getIstioConfigValidations(
-      authentication(),
-      props.namespace,
-      props.objectType,
-      props.object
-    );
-    Promise.all([promiseConfigDetails, promiseConfigValidations])
-      .then(([resultConfigDetails, resultConfigValidations]) => {
+    promiseConfigDetails
+      .then(resultConfigDetails => {
         this.setState({
           istioObjectDetails: resultConfigDetails.data,
-          istioValidations: resultConfigValidations.data,
           isModified: false,
           yamlModified: ''
         });
