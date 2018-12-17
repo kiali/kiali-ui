@@ -1,5 +1,3 @@
-import URLSearchParams from 'url-search-params';
-
 import { createBrowserHistory } from 'history';
 
 const webRoot = (window as any).WEB_ROOT ? (window as any).WEB_ROOT : undefined;

@@ -92,7 +92,6 @@
     "ssri": "6.0.1",
     "typesafe-actions": "2.0.4",
     "typestyle": "2.0.1",
-    "url-search-params": "1.1.0",
     "visibilityjs": "2.0.2"
   },
   "devDependencies": {

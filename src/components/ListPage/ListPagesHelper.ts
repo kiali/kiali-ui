@@ -1,5 +1,4 @@
 import history, { URLParams } from '../../app/History';
-import URLSearchParams from 'url-search-params';
 import { config } from '../../config';
 import { ActiveFilter, FilterType } from '../../types/Filters';
 import { Pagination } from '../../types/Pagination';
