@@ -90,10 +90,8 @@ export default class SummaryPanelGraph extends React.Component<SummaryPanelPropT
     return (
       <div className="panel panel-default" style={SummaryPanelGraph.panelStyle}>
         <div className="panel-heading">
-          Namespace{this.props.namespaces.length > 1 ? 's' : ''}:
-          {this.props.namespaces.map(namespace => (
-            <>{' ' + namespace.name}</>
-          ))}
+          <strong>Namespace{this.props.namespaces.length > 1 ? 's' : ''}: </strong>
+          {this.props.namespaces.map(namespace => namespace.name).join(', ')}
           {this.renderTopologySummary(numSvc, numWorkloads, numApps, numEdges)}
         </div>
         <div className="panel-body">
@@ -180,13 +178,23 @@ export default class SummaryPanelGraph extends React.Component<SummaryPanelPropT
 
   private renderTopologySummary = (numSvc: number, numWorkloads: number, numApps: number, numEdges: number) => (
     <div>
+      <ListPageLink key="appsLink" target={TargetPage.APPLICATIONS} namespaces={this.props.namespaces}>
+        {' applications'}
+      </ListPageLink>
+      <ListPageLink key="servicesLink" target={TargetPage.SERVICES} namespaces={this.props.namespaces}>
+        {', services'}
+      </ListPageLink>
+      <ListPageLink key="workloadsLink" target={TargetPage.WORKLOADS} namespaces={this.props.namespaces}>
+        {', workloads'}
+      </ListPageLink>
+      <br />
+      <br />
+      <strong>Current Graph:</strong>
+      <br />
       {numApps > 0 && (
         <>
           <Icon name="applications" type="pf" style={{ padding: '0 1em' }} />
           {numApps.toString()} {numApps === 1 ? 'app' : 'apps'}
-          <ListPageLink key="appsLink" target={TargetPage.APPLICATIONS} namespaces={this.props.namespaces}>
-            {' applications list...'}
-          </ListPageLink>
           <br />
         </>
       )}
@@ -194,9 +202,6 @@ export default class SummaryPanelGraph extends React.Component<SummaryPanelPropT
         <>
           <Icon name="service" type="pf" style={{ padding: '0 1em' }} />
           {numSvc.toString()} {numSvc === 1 ? 'service' : 'services'}
-          <ListPageLink key="servicesLink" target={TargetPage.SERVICES} namespaces={this.props.namespaces}>
-            {' services list...'}
-          </ListPageLink>
           <br />
         </>
       )}
@@ -204,9 +209,6 @@ export default class SummaryPanelGraph extends React.Component<SummaryPanelPropT
         <>
           <Icon name="bundle" type="pf" style={{ padding: '0 1em' }} />
           {numWorkloads.toString()} {numWorkloads === 1 ? 'workload' : 'workloads'}
-          <ListPageLink key="workloadsLink" target={TargetPage.WORKLOADS} namespaces={this.props.namespaces}>
-            {' workloads list...'}
-          </ListPageLink>
           <br />
         </>
       )}
