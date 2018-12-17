@@ -11,11 +11,7 @@ import * as API from '../services/Api';
 type Dispatch = ThunkDispatch<KialiAppState, void, KialiAppAction>;
 type GetState = () => KialiAppState;
 
-const performLogin = (
-  dispatch: Dispatch,
-  username?: string,
-  password?: string
-) => {
+const performLogin = (dispatch: Dispatch, username?: string, password?: string) => {
   dispatch(LoginActions.loginRequest());
 
   let anonymous = username === undefined;
@@ -66,7 +62,7 @@ const LoginThunkActions = {
         API.checkOauth().then(
           response => {
             performLogin(dispatch, '', '');
-            LoginThunkActions.loginSuccess(dispatch, getState, 'not-necessary');
+            dispatch(LoginThunkActions.loginSuccess(dispatch, getState, 'not-necessary'));
           },
           error => {
             if (error.response && error.response.status === HTTP_CODES.UNAUTHORIZED) {
