@@ -429,14 +429,17 @@ ShallowWrapper {
                     unmountOnExit={false}
                   >
                     <WithErrorBoundary
+                      component={[Function]}
                       eventKey="workloads"
                       message="One of the Workloads associated to this service has an invalid format"
                     />
                     <WithErrorBoundary
+                      component={[Function]}
                       eventKey="sources"
                       message="One of the Sources associated to this service has an invalid format"
                     />
                     <WithErrorBoundary
+                      component={[Function]}
                       eventKey="virtualservices"
                       message="One of the Virtual Services associated to this service has an invalid format"
                     >
@@ -476,6 +479,7 @@ ShallowWrapper {
                       />
                     </WithErrorBoundary>
                     <WithErrorBoundary
+                      component={[Function]}
                       eventKey="destinationrules"
                       message="One of the Destination Rules associated to this service has an invalid format"
                     >
@@ -760,14 +764,17 @@ ShallowWrapper {
                       unmountOnExit={false}
                     >
                       <WithErrorBoundary
+                        component={[Function]}
                         eventKey="workloads"
                         message="One of the Workloads associated to this service has an invalid format"
                       />
                       <WithErrorBoundary
+                        component={[Function]}
                         eventKey="sources"
                         message="One of the Sources associated to this service has an invalid format"
                       />
                       <WithErrorBoundary
+                        component={[Function]}
                         eventKey="virtualservices"
                         message="One of the Virtual Services associated to this service has an invalid format"
                       >
@@ -807,6 +814,7 @@ ShallowWrapper {
                         />
                       </WithErrorBoundary>
                       <WithErrorBoundary
+                        component={[Function]}
                         eventKey="destinationrules"
                         message="One of the Destination Rules associated to this service has an invalid format"
                       >
@@ -1351,14 +1359,17 @@ ShallowWrapper {
                       unmountOnExit={false}
                     >
                       <WithErrorBoundary
+                        component={[Function]}
                         eventKey="workloads"
                         message="One of the Workloads associated to this service has an invalid format"
                       />
                       <WithErrorBoundary
+                        component={[Function]}
                         eventKey="sources"
                         message="One of the Sources associated to this service has an invalid format"
                       />
                       <WithErrorBoundary
+                        component={[Function]}
                         eventKey="virtualservices"
                         message="One of the Virtual Services associated to this service has an invalid format"
                       >
@@ -1398,6 +1409,7 @@ ShallowWrapper {
                         />
                       </WithErrorBoundary>
                       <WithErrorBoundary
+                        component={[Function]}
                         eventKey="destinationrules"
                         message="One of the Destination Rules associated to this service has an invalid format"
                       >
@@ -1532,14 +1544,17 @@ ShallowWrapper {
                       unmountOnExit={false}
                     >
                       <WithErrorBoundary
+                        component={[Function]}
                         eventKey="workloads"
                         message="One of the Workloads associated to this service has an invalid format"
                       />
                       <WithErrorBoundary
+                        component={[Function]}
                         eventKey="sources"
                         message="One of the Sources associated to this service has an invalid format"
                       />
                       <WithErrorBoundary
+                        component={[Function]}
                         eventKey="virtualservices"
                         message="One of the Virtual Services associated to this service has an invalid format"
                       >
@@ -1579,6 +1594,7 @@ ShallowWrapper {
                         />
                       </WithErrorBoundary>
                       <WithErrorBoundary
+                        component={[Function]}
                         eventKey="destinationrules"
                         message="One of the Destination Rules associated to this service has an invalid format"
                       >
@@ -1710,14 +1726,17 @@ ShallowWrapper {
                       unmountOnExit={false}
                     >
                       <WithErrorBoundary
+                        component={[Function]}
                         eventKey="workloads"
                         message="One of the Workloads associated to this service has an invalid format"
                       />
                       <WithErrorBoundary
+                        component={[Function]}
                         eventKey="sources"
                         message="One of the Sources associated to this service has an invalid format"
                       />
                       <WithErrorBoundary
+                        component={[Function]}
                         eventKey="virtualservices"
                         message="One of the Virtual Services associated to this service has an invalid format"
                       >
@@ -1757,6 +1776,7 @@ ShallowWrapper {
                         />
                       </WithErrorBoundary>
                       <WithErrorBoundary
+                        component={[Function]}
                         eventKey="destinationrules"
                         message="One of the Destination Rules associated to this service has an invalid format"
                       >
@@ -1883,14 +1903,17 @@ ShallowWrapper {
                         unmountOnExit={false}
                       >
                         <WithErrorBoundary
+                          component={[Function]}
                           eventKey="workloads"
                           message="One of the Workloads associated to this service has an invalid format"
                         />
                         <WithErrorBoundary
+                          component={[Function]}
                           eventKey="sources"
                           message="One of the Sources associated to this service has an invalid format"
                         />
                         <WithErrorBoundary
+                          component={[Function]}
                           eventKey="virtualservices"
                           message="One of the Virtual Services associated to this service has an invalid format"
                         >
@@ -1930,6 +1953,7 @@ ShallowWrapper {
                           />
                         </WithErrorBoundary>
                         <WithErrorBoundary
+                          component={[Function]}
                           eventKey="destinationrules"
                           message="One of the Destination Rules associated to this service has an invalid format"
                         >
@@ -2164,14 +2188,17 @@ ShallowWrapper {
                         "bsClass": "tab",
                         "children": Array [
                           <WithErrorBoundary
+                            component={[Function]}
                             eventKey="workloads"
                             message="One of the Workloads associated to this service has an invalid format"
                           />,
                           <WithErrorBoundary
+                            component={[Function]}
                             eventKey="sources"
                             message="One of the Sources associated to this service has an invalid format"
                           />,
                           <WithErrorBoundary
+                            component={[Function]}
                             eventKey="virtualservices"
                             message="One of the Virtual Services associated to this service has an invalid format"
                           >
@@ -2211,6 +2238,7 @@ ShallowWrapper {
                             />
                           </WithErrorBoundary>,
                           <WithErrorBoundary
+                            component={[Function]}
                             eventKey="destinationrules"
                             message="One of the Destination Rules associated to this service has an invalid format"
                           >
@@ -2284,9 +2312,10 @@ ShallowWrapper {
                         Object {
                           "instance": null,
                           "key": undefined,
-                          "nodeType": "class",
+                          "nodeType": "function",
                           "props": Object {
                             "children": false,
+                            "component": [Function],
                             "eventKey": "workloads",
                             "message": "One of the Workloads associated to this service has an invalid format",
                           },
@@ -2297,9 +2326,10 @@ ShallowWrapper {
                         Object {
                           "instance": null,
                           "key": undefined,
-                          "nodeType": "class",
+                          "nodeType": "function",
                           "props": Object {
                             "children": false,
+                            "component": [Function],
                             "eventKey": "sources",
                             "message": "One of the Sources associated to this service has an invalid format",
                           },
@@ -2310,7 +2340,7 @@ ShallowWrapper {
                         Object {
                           "instance": null,
                           "key": undefined,
-                          "nodeType": "class",
+                          "nodeType": "function",
                           "props": Object {
                             "children": <ServiceInfoVirtualServices
                               editorLink="/namespaces/istio-system/services/reviews"
@@ -2346,6 +2376,7 @@ ShallowWrapper {
                                 ]
                               }
                             />,
+                            "component": [Function],
                             "eventKey": "virtualservices",
                             "message": "One of the Virtual Services associated to this service has an invalid format",
                           },
@@ -2395,7 +2426,7 @@ ShallowWrapper {
                         Object {
                           "instance": null,
                           "key": undefined,
-                          "nodeType": "class",
+                          "nodeType": "function",
                           "props": Object {
                             "children": <ServiceInfoDestinationRules
                               destinationRules={
@@ -2456,6 +2487,7 @@ ShallowWrapper {
                                 }
                               }
                             />,
+                            "component": [Function],
                             "eventKey": "destinationrules",
                             "message": "One of the Destination Rules associated to this service has an invalid format",
                           },
@@ -2758,14 +2790,17 @@ ShallowWrapper {
                       unmountOnExit={false}
                     >
                       <WithErrorBoundary
+                        component={[Function]}
                         eventKey="workloads"
                         message="One of the Workloads associated to this service has an invalid format"
                       />
                       <WithErrorBoundary
+                        component={[Function]}
                         eventKey="sources"
                         message="One of the Sources associated to this service has an invalid format"
                       />
                       <WithErrorBoundary
+                        component={[Function]}
                         eventKey="virtualservices"
                         message="One of the Virtual Services associated to this service has an invalid format"
                       >
@@ -2805,6 +2840,7 @@ ShallowWrapper {
                         />
                       </WithErrorBoundary>
                       <WithErrorBoundary
+                        component={[Function]}
                         eventKey="destinationrules"
                         message="One of the Destination Rules associated to this service has an invalid format"
                       >
@@ -3089,14 +3125,17 @@ ShallowWrapper {
                         unmountOnExit={false}
                       >
                         <WithErrorBoundary
+                          component={[Function]}
                           eventKey="workloads"
                           message="One of the Workloads associated to this service has an invalid format"
                         />
                         <WithErrorBoundary
+                          component={[Function]}
                           eventKey="sources"
                           message="One of the Sources associated to this service has an invalid format"
                         />
                         <WithErrorBoundary
+                          component={[Function]}
                           eventKey="virtualservices"
                           message="One of the Virtual Services associated to this service has an invalid format"
                         >
@@ -3136,6 +3175,7 @@ ShallowWrapper {
                           />
                         </WithErrorBoundary>
                         <WithErrorBoundary
+                          component={[Function]}
                           eventKey="destinationrules"
                           message="One of the Destination Rules associated to this service has an invalid format"
                         >
@@ -3680,14 +3720,17 @@ ShallowWrapper {
                         unmountOnExit={false}
                       >
                         <WithErrorBoundary
+                          component={[Function]}
                           eventKey="workloads"
                           message="One of the Workloads associated to this service has an invalid format"
                         />
                         <WithErrorBoundary
+                          component={[Function]}
                           eventKey="sources"
                           message="One of the Sources associated to this service has an invalid format"
                         />
                         <WithErrorBoundary
+                          component={[Function]}
                           eventKey="virtualservices"
                           message="One of the Virtual Services associated to this service has an invalid format"
                         >
@@ -3727,6 +3770,7 @@ ShallowWrapper {
                           />
                         </WithErrorBoundary>
                         <WithErrorBoundary
+                          component={[Function]}
                           eventKey="destinationrules"
                           message="One of the Destination Rules associated to this service has an invalid format"
                         >
@@ -3861,14 +3905,17 @@ ShallowWrapper {
                         unmountOnExit={false}
                       >
                         <WithErrorBoundary
+                          component={[Function]}
                           eventKey="workloads"
                           message="One of the Workloads associated to this service has an invalid format"
                         />
                         <WithErrorBoundary
+                          component={[Function]}
                           eventKey="sources"
                           message="One of the Sources associated to this service has an invalid format"
                         />
                         <WithErrorBoundary
+                          component={[Function]}
                           eventKey="virtualservices"
                           message="One of the Virtual Services associated to this service has an invalid format"
                         >
@@ -3908,6 +3955,7 @@ ShallowWrapper {
                           />
                         </WithErrorBoundary>
                         <WithErrorBoundary
+                          component={[Function]}
                           eventKey="destinationrules"
                           message="One of the Destination Rules associated to this service has an invalid format"
                         >
@@ -4039,14 +4087,17 @@ ShallowWrapper {
                         unmountOnExit={false}
                       >
                         <WithErrorBoundary
+                          component={[Function]}
                           eventKey="workloads"
                           message="One of the Workloads associated to this service has an invalid format"
                         />
                         <WithErrorBoundary
+                          component={[Function]}
                           eventKey="sources"
                           message="One of the Sources associated to this service has an invalid format"
                         />
                         <WithErrorBoundary
+                          component={[Function]}
                           eventKey="virtualservices"
                           message="One of the Virtual Services associated to this service has an invalid format"
                         >
@@ -4086,6 +4137,7 @@ ShallowWrapper {
                           />
                         </WithErrorBoundary>
                         <WithErrorBoundary
+                          component={[Function]}
                           eventKey="destinationrules"
                           message="One of the Destination Rules associated to this service has an invalid format"
                         >
@@ -4212,14 +4264,17 @@ ShallowWrapper {
                           unmountOnExit={false}
                         >
                           <WithErrorBoundary
+                            component={[Function]}
                             eventKey="workloads"
                             message="One of the Workloads associated to this service has an invalid format"
                           />
                           <WithErrorBoundary
+                            component={[Function]}
                             eventKey="sources"
                             message="One of the Sources associated to this service has an invalid format"
                           />
                           <WithErrorBoundary
+                            component={[Function]}
                             eventKey="virtualservices"
                             message="One of the Virtual Services associated to this service has an invalid format"
                           >
@@ -4259,6 +4314,7 @@ ShallowWrapper {
                             />
                           </WithErrorBoundary>
                           <WithErrorBoundary
+                            component={[Function]}
                             eventKey="destinationrules"
                             message="One of the Destination Rules associated to this service has an invalid format"
                           >
@@ -4493,14 +4549,17 @@ ShallowWrapper {
                           "bsClass": "tab",
                           "children": Array [
                             <WithErrorBoundary
+                              component={[Function]}
                               eventKey="workloads"
                               message="One of the Workloads associated to this service has an invalid format"
                             />,
                             <WithErrorBoundary
+                              component={[Function]}
                               eventKey="sources"
                               message="One of the Sources associated to this service has an invalid format"
                             />,
                             <WithErrorBoundary
+                              component={[Function]}
                               eventKey="virtualservices"
                               message="One of the Virtual Services associated to this service has an invalid format"
                             >
@@ -4540,6 +4599,7 @@ ShallowWrapper {
                               />
                             </WithErrorBoundary>,
                             <WithErrorBoundary
+                              component={[Function]}
                               eventKey="destinationrules"
                               message="One of the Destination Rules associated to this service has an invalid format"
                             >
@@ -4613,9 +4673,10 @@ ShallowWrapper {
                           Object {
                             "instance": null,
                             "key": undefined,
-                            "nodeType": "class",
+                            "nodeType": "function",
                             "props": Object {
                               "children": false,
+                              "component": [Function],
                               "eventKey": "workloads",
                               "message": "One of the Workloads associated to this service has an invalid format",
                             },
@@ -4626,9 +4687,10 @@ ShallowWrapper {
                           Object {
                             "instance": null,
                             "key": undefined,
-                            "nodeType": "class",
+                            "nodeType": "function",
                             "props": Object {
                               "children": false,
+                              "component": [Function],
                               "eventKey": "sources",
                               "message": "One of the Sources associated to this service has an invalid format",
                             },
@@ -4639,7 +4701,7 @@ ShallowWrapper {
                           Object {
                             "instance": null,
                             "key": undefined,
-                            "nodeType": "class",
+                            "nodeType": "function",
                             "props": Object {
                               "children": <ServiceInfoVirtualServices
                                 editorLink="/namespaces/istio-system/services/reviews"
@@ -4675,6 +4737,7 @@ ShallowWrapper {
                                   ]
                                 }
                               />,
+                              "component": [Function],
                               "eventKey": "virtualservices",
                               "message": "One of the Virtual Services associated to this service has an invalid format",
                             },
@@ -4724,7 +4787,7 @@ ShallowWrapper {
                           Object {
                             "instance": null,
                             "key": undefined,
-                            "nodeType": "class",
+                            "nodeType": "function",
                             "props": Object {
                               "children": <ServiceInfoDestinationRules
                                 destinationRules={
@@ -4785,6 +4848,7 @@ ShallowWrapper {
                                   }
                                 }
                               />,
+                              "component": [Function],
                               "eventKey": "destinationrules",
                               "message": "One of the Destination Rules associated to this service has an invalid format",
                             },
