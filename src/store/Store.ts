@@ -47,7 +47,8 @@ export interface GraphState {
   isLoading: boolean;
   isError: boolean;
   error?: string; // the error message to show from loading graph
-  graphDataTimestamp: number;
+  graphDataDuration: number; // in seconds
+  graphDataTimestamp: number; // in unix time seconds
   graphData: any;
   filterState: GraphFilterState;
   layout: Layout;

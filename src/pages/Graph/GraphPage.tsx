@@ -34,10 +34,11 @@ type GraphURLPathProps = {
 
 type ReduxProps = {
   activeNamespaces: Namespace[];
-  duration: DurationInSeconds;
+  duration: DurationInSeconds; // current duration (dropdown) setting
   edgeLabelMode: EdgeLabelMode;
   graphData: any;
-  graphTimestamp: number;
+  graphDuration: number; // duration used for current graph
+  graphTimestamp: number; // timestamp (queryTime) used for current graph
   graphType: GraphType;
   isError: boolean;
   isLoading: boolean;
@@ -263,6 +264,16 @@ export default class GraphPage extends React.Component<GraphPageProps, GraphPage
   };
 
   render() {
+    const options = {
+      day: '2-digit',
+      month: 'short',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false
+    };
+    const graphEnd = new Date(this.props.graphTimestamp * 1000);
+    const graphStart = new Date((this.props.graphTimestamp - this.props.duration) * 1000);
     let conStyle = containerStyle;
     if (isKioskMode()) {
       conStyle = kioskContainerStyle;
@@ -271,14 +282,23 @@ export default class GraphPage extends React.Component<GraphPageProps, GraphPage
       <>
         <StatefulTour steps={graphHelp} isOpen={this.state.showHelp} onClose={this.toggleHelp} />
         <FlexView className={conStyle} column={true}>
-          <Breadcrumb title={true}>
-            <Breadcrumb.Item active={true}>
-              Graph{' '}
-              <Button bsStyle="link" onClick={this.toggleHelp}>
-                <Icon title="Help" type="pf" name="help" />
-              </Button>
-            </Breadcrumb.Item>
-          </Breadcrumb>
+          <div>
+            <Breadcrumb title={true}>
+              <Breadcrumb.Item active={true}>
+                Graph{' '}
+                <Button bsStyle="link" onClick={this.toggleHelp}>
+                  <Icon title="Help" type="pf" name="help" />
+                </Button>
+              </Breadcrumb.Item>
+              {this.props.graphTimestamp && (
+                <span className={'pull-right'}>
+                  {graphStart.toLocaleDateString(undefined, options)}
+                  {' ... '}
+                  {graphEnd.toLocaleDateString(undefined, options)}
+                </span>
+              )}
+            </Breadcrumb>
+          </div>
           <div>
             {/* Use empty div to reset the flex, this component doesn't seem to like that. It renders all its contents in the center */}
             <GraphFilterContainer disabled={this.props.isLoading} onRefresh={this.handleRefreshClick} />
@@ -294,26 +314,24 @@ export default class GraphPage extends React.Component<GraphPageProps, GraphPage
                 containerClassName={cytoscapeGraphContainerStyle}
                 ref={refInstance => this.setCytoscapeGraph(refInstance)}
               />
-              {this.props.graphData.nodes &&
-              Object.keys(this.props.graphData.nodes).length > 0 &&
-              !this.props.isError ? (
+              {this.props.graphData.nodes && Object.keys(this.props.graphData.nodes).length > 0 && !this.props.isError && (
                 <div className={cytoscapeToolbarWrapperDivStyle}>
                   <CytoscapeToolbarContainer cytoscapeGraphRef={this.cytoscapeGraphRef} />
                 </div>
-              ) : null}
+              )}
             </ErrorBoundary>
-            {this.props.summaryData ? (
+            {this.props.summaryData && (
               <SummaryPanel
                 data={this.props.summaryData}
                 namespaces={this.props.activeNamespaces}
                 graphType={this.props.graphType}
                 injectServiceNodes={this.props.showServiceNodes}
                 queryTime={this.props.graphTimestamp}
-                duration={this.props.duration}
+                duration={this.props.graphDuration}
                 isPageVisible={this.props.isPageVisible}
                 {...computePrometheusQueryInterval(this.props.duration, NUMBER_OF_DATAPOINTS)}
               />
-            ) : null}
+            )}
             {this.props.showLegend && (
               <GraphLegend className={graphToolbarStyle} closeLegend={this.props.toggleLegend} />
             )}
