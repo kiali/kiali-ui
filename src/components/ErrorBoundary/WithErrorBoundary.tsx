@@ -1,38 +1,29 @@
 import * as React from 'react';
-import PropTypes from 'prop-types';
 import { Alert, TabPane } from 'patternfly-react';
 import ErrorBoundary from './ErrorBoundary';
 
-const propTypes = {
-  /** content inside the ErrorBoundary */
-  children: PropTypes.any,
-  /** Message */
-  message: PropTypes.string,
-  /** Sets the base component to render. defaults to TabPane */
-  component: PropTypes.object
-};
+interface WithMessage {
+  message: string;
+}
 
-const defaultProps = {
-  children: null,
-  message: 'Something went wrong rending this component',
-  component: TabPane
-};
-
-const WithErrorBoundary = ({ children, component: Component = TabPane, message, ...props }) => (
-  <Component {...props}>
-    <ErrorBoundary
-      fallBackComponent={
+const withErrorBoundary = <P extends object>(WrappedComponent: React.ComponentClass<P>) =>
+  class WithErrorBoundary extends React.Component<P & WithMessage> {
+    alert() {
+      return (
         <div className="card-pf-body">
-          <Alert type="warning">{message}</Alert>
+          <Alert type="warning">{this.props.message || 'Something went wrong rending this component'}</Alert>
         </div>
-      }
-    >
-      {children}
-    </ErrorBoundary>
-  </Component>
-);
+      );
+    }
 
-WithErrorBoundary.propTypes = propTypes;
-WithErrorBoundary.defaultProps = defaultProps;
+    render() {
+      return (
+        <WrappedComponent {...this.props}>
+          <ErrorBoundary fallBackComponent={this.alert()}>{this.props.children}</ErrorBoundary>
+        </WrappedComponent>
+      );
+    }
+  };
 
-export default WithErrorBoundary;
+const TabPaneWithErrorBoundary = withErrorBoundary<TabPane.propTypes>(TabPane);
+export default TabPaneWithErrorBoundary;

@@ -11,7 +11,7 @@ import { authentication } from '../../utils/Authentication';
 import IstioObjectDetails from './IstioObjectDetails';
 import ServiceMetricsContainer from '../../containers/ServiceMetricsContainer';
 import ServiceInfo from './ServiceInfo';
-import { TargetPage, ListPageLink } from '../../components/ListPage/ListPageLink';
+import { ListPageLink, TargetPage } from '../../components/ListPage/ListPageLink';
 import { MetricsObjectTypes } from '../../types/Metrics';
 import DestinationRule from './ServiceInfo/types/DestinationRule';
 

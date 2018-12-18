@@ -2312,7 +2312,7 @@ ShallowWrapper {
                         Object {
                           "instance": null,
                           "key": undefined,
-                          "nodeType": "function",
+                          "nodeType": "class",
                           "props": Object {
                             "children": false,
                             "component": [Function],
@@ -2326,7 +2326,7 @@ ShallowWrapper {
                         Object {
                           "instance": null,
                           "key": undefined,
-                          "nodeType": "function",
+                          "nodeType": "class",
                           "props": Object {
                             "children": false,
                             "component": [Function],
@@ -2340,7 +2340,7 @@ ShallowWrapper {
                         Object {
                           "instance": null,
                           "key": undefined,
-                          "nodeType": "function",
+                          "nodeType": "class",
                           "props": Object {
                             "children": <ServiceInfoVirtualServices
                               editorLink="/namespaces/istio-system/services/reviews"
@@ -2426,7 +2426,7 @@ ShallowWrapper {
                         Object {
                           "instance": null,
                           "key": undefined,
-                          "nodeType": "function",
+                          "nodeType": "class",
                           "props": Object {
                             "children": <ServiceInfoDestinationRules
                               destinationRules={
@@ -4673,7 +4673,7 @@ ShallowWrapper {
                           Object {
                             "instance": null,
                             "key": undefined,
-                            "nodeType": "function",
+                            "nodeType": "class",
                             "props": Object {
                               "children": false,
                               "component": [Function],
@@ -4687,7 +4687,7 @@ ShallowWrapper {
                           Object {
                             "instance": null,
                             "key": undefined,
-                            "nodeType": "function",
+                            "nodeType": "class",
                             "props": Object {
                               "children": false,
                               "component": [Function],
@@ -4701,7 +4701,7 @@ ShallowWrapper {
                           Object {
                             "instance": null,
                             "key": undefined,
-                            "nodeType": "function",
+                            "nodeType": "class",
                             "props": Object {
                               "children": <ServiceInfoVirtualServices
                                 editorLink="/namespaces/istio-system/services/reviews"
@@ -4787,7 +4787,7 @@ ShallowWrapper {
                           Object {
                             "instance": null,
                             "key": undefined,
-                            "nodeType": "function",
+                            "nodeType": "class",
                             "props": Object {
                               "children": <ServiceInfoDestinationRules
                                 destinationRules={
