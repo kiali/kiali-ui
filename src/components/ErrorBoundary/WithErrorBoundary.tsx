@@ -2,13 +2,18 @@ import * as React from 'react';
 import { Alert, TabPane } from 'patternfly-react';
 import ErrorBoundary from '../../components/ErrorBoundary/ErrorBoundary';
 
-function withErrorBoundary(Component) {
-  return class WithErrorBoundary extends React.Component {
+interface WithErrorBoundaryProps {
+  message: string;
+}
+
+const withErrorBoundary = <P extends object>(Component: React.ComponentType<P>) => {
+  return class extends React.Component<P & WithErrorBoundaryProps> {
     wrongFormatMessage() {
-      let message = this.props.message || 'Something went wrong rending this component';
+      const { message, ...props } = this.props as WithErrorBoundaryProps;
+      const displayingMessage = message || 'Something went wrong rending this component';
       return (
         <div className="card-pf-body">
-          <Alert type="warning">{message}</Alert>
+          <Alert type="warning">{displayingMessage}</Alert>
         </div>
       );
     }
@@ -21,7 +26,7 @@ function withErrorBoundary(Component) {
       );
     }
   };
-}
+};
 
 const TabPaneWithErrorBoundary = withErrorBoundary(TabPane);
 export default TabPaneWithErrorBoundary;
