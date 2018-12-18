@@ -2,7 +2,7 @@ import * as React from 'react';
 import PropTypes from 'prop-types';
 import { Label as PfLabel } from 'patternfly-react';
 import './Label.css';
-import { isNotObject } from '../../utils/Common';
+import { isNotObject } from '../../utils/SafeRender';
 
 const Label = ({ name, value }) => {
   if (isNotObject(name) && isNotObject(value)) {

@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom';
 import { ConfigIndicator } from '../../../components/ConfigValidation/ConfigIndicator';
 import { DestinationRule, ObjectValidation, Subset } from '../../../types/IstioObjects';
 import Labels from '../../../components/Label/Labels';
-import { safeRender } from '../../../utils/Common';
+import { safeRender } from '../../../utils/SafeRender';
 
 interface ServiceInfoDestinationRulesProps extends EditorLink {
   destinationRules?: DestinationRule[];
@@ -139,24 +139,26 @@ class ServiceInfoDestinationRules extends React.Component<ServiceInfoDestination
   }
 
   rows() {
-    return (this.props.destinationRules || []).map((destinationRule, vsIdx) => ({
-      id: vsIdx,
-      name: this.overviewLink(destinationRule),
-      status: <ConfigIndicator id={vsIdx + '-config-validation'} validations={[this.validation(destinationRule)]} />,
-      trafficPolicy: destinationRule.spec.trafficPolicy ? (
-        <DetailObject name="" detail={destinationRule.spec.trafficPolicy} />
-      ) : (
-        'None'
-      ),
-      subsets:
-        destinationRule.spec.subsets && destinationRule.spec.subsets.length > 0
-          ? this.generateSubsets(destinationRule.spec.subsets)
-          : 'None',
-      host: destinationRule.spec.host ? <DetailObject name="" detail={destinationRule.spec.host} /> : undefined,
-      createdAt: <LocalTime time={destinationRule.metadata.creationTimestamp || ''} />,
-      resourceVersion: destinationRule.metadata.resourceVersion,
-      actions: this.yamlLink(destinationRule)
-    }));
+    return (this.props.destinationRules || []).map((destinationRule, vsIdx) => {
+      return {
+        id: vsIdx,
+        name: this.overviewLink(destinationRule),
+        status: <ConfigIndicator id={vsIdx + '-config-validation'} validations={[this.validation(destinationRule)]} />,
+        trafficPolicy: destinationRule.spec.trafficPolicy ? (
+          <DetailObject name="" detail={destinationRule.spec.trafficPolicy} />
+        ) : (
+          'None'
+        ),
+        subsets:
+          destinationRule.spec.subsets && destinationRule.spec.subsets.length > 0
+            ? this.generateSubsets(destinationRule.spec.subsets)
+            : 'None',
+        host: destinationRule.spec.host ? <DetailObject name="" detail={destinationRule.spec.host} /> : undefined,
+        createdAt: <LocalTime time={destinationRule.metadata.creationTimestamp || ''} />,
+        resourceVersion: destinationRule.metadata.resourceVersion,
+        actions: this.yamlLink(destinationRule)
+      };
+    });
   }
 
   generateKey() {

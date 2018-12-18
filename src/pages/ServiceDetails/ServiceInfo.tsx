@@ -8,11 +8,11 @@ import {
   Row,
   TabContainer,
   TabContent,
+  TabPane,
   ToastNotification,
   ToastNotificationList
 } from 'patternfly-react';
 
-import TabPaneWithErrorBoundary from '../../components/ErrorBoundary/WithErrorBoundary';
 import ServiceId from '../../types/ServiceId';
 import ServiceInfoDescription from './ServiceInfo/ServiceInfoDescription';
 import { ServiceDetailsInfo, severityToIconName, validationToSeverity } from '../../types/ServiceInfo';
@@ -185,20 +185,17 @@ class ServiceInfo extends React.Component<ServiceDetails, ServiceInfoState> {
                     </NavItem>
                   </Nav>
                   <TabContent>
-                    <TabPaneWithErrorBoundary eventKey={'workloads'} message={this.errorBoundaryMessage('Workloads')}>
+                    <TabPane eventKey={'workloads'} message={this.errorBoundaryMessage('Workloads')}>
                       {(Object.keys(workloads).length > 0 || this.props.serviceDetails.istioSidecar) && (
                         <ServiceInfoWorkload workloads={workloads} namespace={this.props.namespace} />
                       )}
-                    </TabPaneWithErrorBoundary>
-                    <TabPaneWithErrorBoundary eventKey={'sources'} message={this.errorBoundaryMessage('Sources')}>
+                    </TabPane>
+                    <TabPane eventKey={'sources'} message={this.errorBoundaryMessage('Sources')}>
                       {(Object.keys(dependencies).length > 0 || this.props.serviceDetails.istioSidecar) && (
                         <ServiceInfoRoutes dependencies={dependencies} />
                       )}
-                    </TabPaneWithErrorBoundary>
-                    <TabPaneWithErrorBoundary
-                      eventKey={'virtualservices'}
-                      message={this.errorBoundaryMessage('Virtual Services')}
-                    >
+                    </TabPane>
+                    <TabPane eventKey={'virtualservices'} message={this.errorBoundaryMessage('Virtual Services')}>
                       {(virtualServices.items.length > 0 || this.props.serviceDetails.istioSidecar) && (
                         <ServiceInfoVirtualServices
                           virtualServices={virtualServices.items}
@@ -206,11 +203,8 @@ class ServiceInfo extends React.Component<ServiceDetails, ServiceInfoState> {
                           validations={this.props.validations!['virtualservice']}
                         />
                       )}
-                    </TabPaneWithErrorBoundary>
-                    <TabPaneWithErrorBoundary
-                      eventKey={'destinationrules'}
-                      message={this.errorBoundaryMessage('Destination Rules')}
-                    >
+                    </TabPane>
+                    <TabPane eventKey={'destinationrules'} message={this.errorBoundaryMessage('Destination Rules')}>
                       {(destinationRules.items.length > 0 || this.props.serviceDetails.istioSidecar) && (
                         <ServiceInfoDestinationRules
                           destinationRules={destinationRules.items}
@@ -218,7 +212,7 @@ class ServiceInfo extends React.Component<ServiceDetails, ServiceInfoState> {
                           validations={this.props.validations!['destinationrule']}
                         />
                       )}
-                    </TabPaneWithErrorBoundary>
+                    </TabPane>
                   </TabContent>
                 </div>
               </TabContainer>

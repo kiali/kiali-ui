@@ -13,6 +13,7 @@ import ServiceMetricsContainer from '../../containers/ServiceMetricsContainer';
 import ServiceInfo from './ServiceInfo';
 import { TargetPage, ListPageLink } from '../../components/ListPage/ListPageLink';
 import { MetricsObjectTypes } from '../../types/Metrics';
+import DestinationRule from './ServiceInfo/types/DestinationRule';
 
 type ServiceDetailsState = {
   serviceDetailsInfo: ServiceDetailsInfo;
@@ -144,13 +145,30 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
       .then(([resultDetails, resultValidations]) => {
         this.setState({
           serviceDetailsInfo: resultDetails,
-          validations: resultValidations.data
+          validations: this.addFormatValidation(resultDetails, resultValidations.data)
         });
       })
       .catch(error => {
         MessageCenter.add(API.getErrorMsg('Could not fetch Service Details', error));
       });
   };
+
+  addFormatValidation(details: ServiceDetailsInfo, validations: Validations): Validations {
+    details.destinationRules.items.forEach((destinationRule, index, ary) => {
+      const dr = new DestinationRule(destinationRule.metadata, destinationRule.spec);
+      const formatValidation = dr.formatValidation();
+
+      let objectValidations = validations['destinationrule'][destinationRule.metadata.name];
+      if (
+        formatValidation !== null &&
+        !objectValidations.checks.some(check => check.message === formatValidation.message)
+      ) {
+        objectValidations.checks.push(formatValidation);
+        objectValidations.valid = false;
+      }
+    });
+    return validations;
+  }
 
   onDeleteIstioObject = (type: string, name: string) => {
     API.deleteIstioConfigDetail(authentication(), this.props.match.params.namespace, type, name)
