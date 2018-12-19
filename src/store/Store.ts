@@ -1,6 +1,6 @@
 import { NotificationGroup } from '../types/MessageCenter';
 import Namespace from '../types/Namespace';
-import { DurationInSeconds, PollIntervalInMs } from '../types/Common';
+import { DurationInSeconds, PollIntervalInMs, TimeInSeconds } from '../types/Common';
 import { EdgeLabelMode, Layout } from '../types/GraphFilter';
 import { GraphType, NodeParamsType } from '../types/Graph';
 
@@ -47,8 +47,8 @@ export interface GraphState {
   isLoading: boolean;
   isError: boolean;
   error?: string; // the error message to show from loading graph
-  graphDataDuration: number; // in seconds
-  graphDataTimestamp: number; // in unix time seconds
+  graphDataDuration: DurationInSeconds;
+  graphDataTimestamp: TimeInSeconds;
   graphData: any;
   filterState: GraphFilterState;
   layout: Layout;

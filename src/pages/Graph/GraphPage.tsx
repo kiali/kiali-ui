@@ -4,7 +4,7 @@ import FlexView from 'react-flexview';
 import { Breadcrumb, Icon, Button } from 'patternfly-react';
 import { style } from 'typestyle';
 import { store } from '../../store/ConfigStore';
-import { DurationInSeconds, PollIntervalInMs } from '../../types/Common';
+import { DurationInSeconds, PollIntervalInMs, TimeInSeconds, TimeInMilliseconds } from '../../types/Common';
 import Namespace from '../../types/Namespace';
 import { SummaryData, NodeParamsType, NodeType, GraphType } from '../../types/Graph';
 import { Layout, EdgeLabelMode } from '../../types/GraphFilter';
@@ -37,8 +37,8 @@ type ReduxProps = {
   duration: DurationInSeconds; // current duration (dropdown) setting
   edgeLabelMode: EdgeLabelMode;
   graphData: any;
-  graphDuration: number; // duration used for current graph
-  graphTimestamp: number; // timestamp (queryTime) used for current graph
+  graphDuration: DurationInSeconds; // duration of current graph
+  graphTimestamp: TimeInSeconds; // queryTime of current graph
   graphType: GraphType;
   isError: boolean;
   isLoading: boolean;
@@ -114,6 +114,15 @@ const GraphErrorBoundaryFallback = () => {
       <EmptyGraphLayoutContainer namespaces={[]} isError={true} />
     </div>
   );
+};
+
+const timeDisplayOptions = {
+  day: '2-digit',
+  month: 'short',
+  hour: '2-digit',
+  minute: '2-digit',
+  second: '2-digit',
+  hour12: false
 };
 
 export default class GraphPage extends React.Component<GraphPageProps, GraphPageState> {
@@ -264,16 +273,8 @@ export default class GraphPage extends React.Component<GraphPageProps, GraphPage
   };
 
   render() {
-    const options = {
-      day: '2-digit',
-      month: 'short',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: false
-    };
-    const graphEnd = new Date(this.props.graphTimestamp * 1000);
-    const graphStart = new Date((this.props.graphTimestamp - this.props.duration) * 1000);
+    const graphEnd: TimeInMilliseconds = this.props.graphTimestamp * 1000;
+    const graphStart: TimeInMilliseconds = graphEnd - this.props.graphDuration * 1000;
     let conStyle = containerStyle;
     if (isKioskMode()) {
       conStyle = kioskContainerStyle;
@@ -292,9 +293,9 @@ export default class GraphPage extends React.Component<GraphPageProps, GraphPage
               </Breadcrumb.Item>
               {this.props.graphTimestamp && (
                 <span className={'pull-right'}>
-                  {graphStart.toLocaleDateString(undefined, options)}
+                  {new Date(graphStart).toLocaleDateString(undefined, timeDisplayOptions)}
                   {' ... '}
-                  {graphEnd.toLocaleDateString(undefined, options)}
+                  {new Date(graphEnd).toLocaleDateString(undefined, timeDisplayOptions)}
                 </span>
               )}
             </Breadcrumb>
