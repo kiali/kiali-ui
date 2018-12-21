@@ -13,7 +13,7 @@ import ServiceMetricsContainer from '../../containers/ServiceMetricsContainer';
 import ServiceInfo from './ServiceInfo';
 import { ListPageLink, TargetPage } from '../../components/ListPage/ListPageLink';
 import { MetricsObjectTypes } from '../../types/Metrics';
-import DestinationRule from './ServiceInfo/types/DestinationRule';
+import { default as DestinationRuleValidator } from './ServiceInfo/types/DestinationRuleValidator';
 
 type ServiceDetailsState = {
   serviceDetailsInfo: ServiceDetailsInfo;
@@ -155,7 +155,7 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
 
   addFormatValidation(details: ServiceDetailsInfo, validations: Validations): Validations {
     details.destinationRules.items.forEach((destinationRule, index, ary) => {
-      const dr = new DestinationRule(destinationRule.metadata, destinationRule.spec);
+      const dr = new DestinationRuleValidator(destinationRule);
       const formatValidation = dr.formatValidation();
 
       let objectValidations = validations['destinationrule'][destinationRule.metadata.name];

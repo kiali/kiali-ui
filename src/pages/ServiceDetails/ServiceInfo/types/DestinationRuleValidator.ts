@@ -1,14 +1,12 @@
-import { DestinationRuleSpec, K8sMetadata } from '../../../../types/IstioObjects';
-import Subset from './Subset';
+import { DestinationRule } from '../../../../types/IstioObjects';
+import SubsetValidator from './SubsetValidator';
 
-export default class DestinationRule {
-  metadata: K8sMetadata;
-  spec: DestinationRuleSpec;
+export default class DestinationRuleValidator {
+  destinationRule: DestinationRule;
   unformattedField: string;
 
-  constructor(metadata: K8sMetadata, spec: DestinationRuleSpec) {
-    this.metadata = metadata;
-    this.spec = spec;
+  constructor(destinationRule: DestinationRule) {
+    this.destinationRule = destinationRule;
   }
 
   isValid() {
@@ -16,7 +14,7 @@ export default class DestinationRule {
   }
 
   hasValidName() {
-    if (typeof this.metadata.name !== 'string') {
+    if (typeof this.destinationRule.metadata.name !== 'string') {
       this.unformattedField = 'Name';
       return false;
     }
@@ -25,20 +23,16 @@ export default class DestinationRule {
   }
 
   hasSpecData() {
-    return this.spec !== null;
+    return this.destinationRule.spec !== null;
   }
 
   hasValidSubsets() {
-    if (!this.spec.subsets) {
+    if (!this.destinationRule.spec.subsets) {
       return true;
     }
 
-    let valid = this.spec.subsets instanceof Array;
-    valid =
-      valid &&
-      this.spec.subsets.every((subset, i, ary) =>
-        new Subset(subset.name, subset.labels, subset.trafficPolicy).isValid()
-      );
+    let valid = this.destinationRule.spec.subsets instanceof Array;
+    valid = valid && this.destinationRule.spec.subsets.every((subset, i, ary) => new SubsetValidator(subset).isValid());
 
     if (!valid) {
       this.unformattedField = 'Subsets';
@@ -48,7 +42,7 @@ export default class DestinationRule {
   }
 
   hasValidHost() {
-    if (typeof this.spec.host !== 'string') {
+    if (typeof this.destinationRule.spec.host !== 'string') {
       this.unformattedField = 'Host';
       return false;
     }
