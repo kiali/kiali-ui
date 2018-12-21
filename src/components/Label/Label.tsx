@@ -1,11 +1,17 @@
 import * as React from 'react';
-import PropTypes from 'prop-types';
 import { Label as PfLabel } from 'patternfly-react';
 import './Label.css';
-import { isNotObject } from '../../utils/SafeRender';
+import { canRender } from '../../utils/SafeRender';
 
-const Label = ({ name, value }) => {
-  if (isNotObject(name) && isNotObject(value)) {
+interface Props {
+  name: string;
+  value: string;
+}
+
+const Label = (props: Props) => {
+  const { name, value } = props;
+
+  if (canRender(name) && canRender(value)) {
     return (
       <span className="label-pair">
         <PfLabel bsStyle="primary" className="label-key">
@@ -19,11 +25,6 @@ const Label = ({ name, value }) => {
   } else {
     return <span>This label has an unexpected format</span>;
   }
-};
-
-Label.propTypes = {
-  name: PropTypes.string,
-  value: PropTypes.string
 };
 
 export default Label;

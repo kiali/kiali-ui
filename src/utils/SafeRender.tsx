@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Icon } from 'patternfly-react';
 
-export const isNotObject = (value: any): boolean => {
+export const canRender = (value: any): boolean => {
   return typeof value !== 'object';
 };
 
@@ -9,11 +9,11 @@ export const renderErrorMessage = (message: string): any => {
   return (
     <Icon type="pf" name="error">
       {' '}
-      message{' '}
+      {message + ' '}
     </Icon>
   );
 };
 
 export const safeRender = (value: any, message = 'Invalid value'): any => {
-  return isNotObject(value) ? value : renderErrorMessage(message);
+  return canRender(value) ? value : renderErrorMessage(message);
 };
