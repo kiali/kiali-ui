@@ -8,51 +8,9 @@ import { LoginActions } from './LoginActions';
 import * as API from '../services/Api';
 import { ServerConfigActions } from './ServerConfigActions';
 
-const ANONYMOUS: string = 'anonymous';
+type KialiDispatch = ThunkDispatch<KialiAppState, void, KialiAppAction>;
 
-// completeLogin performs any initialization required prior to declaring the login complete. This
-// prevents early rendering for components waiting on a login.
-const completeLogin = (
-  dispatch: ThunkDispatch<KialiAppState, void, KialiAppAction>,
-  token: Token,
-  username: string,
-  timeout?: number
-) => {
-  const auth = `Bearer ${token['token']}`;
-  API.getServerConfig(auth).then(
-    response => {
-      // set the serverConfig before completing login so that it is available for
-      // anything needing it to render properly.
-      const serverConfig: ServerConfig = {
-        istioNamespace: response.data.istioNamespace,
-        istioLabels: response.data.istioLabels,
-        prometheus: response.data.prometheus
-      };
-      dispatch(ServerConfigActions.setServerConfig(serverConfig));
-
-      // complete the login process
-      dispatch(LoginActions.loginSuccess(token, username, timeout));
-
-      // dispatch requests to be done now but not necessarily requiring immediate completion
-      dispatch(HelpDropdownThunkActions.refresh());
-      dispatch(GrafanaThunkActions.getInfo(auth));
-    },
-    error => {
-      /** Logout user */
-      if (error.response && error.response.status === HTTP_CODES.UNAUTHORIZED) {
-        dispatch(LoginActions.logoutSuccess());
-      }
-    }
-  );
-};
-
-// performLogin performs only the authentication part of login. If successful
-// we call completeLogin to perform any initialization required for the user session.
-const performLogin = (
-  dispatch: ThunkDispatch<KialiAppState, void, KialiAppAction>,
-  username?: string,
-  password?: string
-) => {
+const performLogin = (dispatch: KialiDispatch, username?: string, password?: string) => {
   dispatch(LoginActions.loginRequest());
 
   const loginUser: string = username === undefined ? ANONYMOUS : username;
@@ -74,7 +32,7 @@ const performLogin = (
 
 const LoginThunkActions = {
   extendSession: () => {
-    return (dispatch: ThunkDispatch<KialiAppState, void, KialiAppAction>, getState: () => KialiAppState) => {
+    return (dispatch: KialiDispatch, getState: () => KialiAppState) => {
       const actualState = getState() || {};
       dispatch(
         LoginActions.loginExtend(
@@ -86,7 +44,7 @@ const LoginThunkActions = {
     };
   },
   checkCredentials: () => {
-    return (dispatch: ThunkDispatch<KialiAppState, void, KialiAppAction>, getState: () => KialiAppState) => {
+    return (dispatch: KialiDispatch, getState: () => KialiAppState) => {
       const actualState = getState() || {};
       const token = actualState['authentication']['token'];
       const username = actualState['authentication']['username'];
@@ -109,7 +67,7 @@ const LoginThunkActions = {
   },
   // action creator that performs the async request
   authenticate: (username: string, password: string) => {
-    return (dispatch: ThunkDispatch<KialiAppState, void, KialiAppAction>) => performLogin(dispatch, username, password);
+    return (dispatch: KialiDispatch) => performLogin(dispatch, username, password);
   }
 };
 
