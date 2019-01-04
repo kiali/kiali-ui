@@ -6,11 +6,8 @@ import { KialiAppAction } from '../actions/KialiAppAction';
 import LoginThunkActions from '../actions/LoginThunkActions';
 
 const mapStateToProps = (state: KialiAppState) => ({
-  token: state.authentication.token,
-  username: state.authentication.username,
-  logging: state.authentication.logging,
-  error: state.authentication.error,
-  message: state.authentication.message
+  status: state.authentication.status,
+  error: state.authentication.error
 });
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<KialiAppState, void, KialiAppAction>) => ({

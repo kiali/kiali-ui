@@ -7,7 +7,7 @@ import { IstioConfigList } from '../types/IstioConfigList';
 import { Workload, WorkloadNamespaceResponse } from '../types/Workload';
 import { ServiceDetailsInfo } from '../types/ServiceInfo';
 import JaegerInfo from '../types/JaegerInfo';
-import { GrafanaInfo, ServerConfig } from '../store/Store';
+import { GrafanaInfo, Session } from '../store/Store';
 import {
   AppHealth,
   ServiceHealth,
@@ -17,6 +17,7 @@ import {
   NamespaceWorkloadHealth
 } from '../types/Health';
 import { ServiceList } from '../types/ServiceList';
+import { AuthInfo } from '../types/Auth';
 import { AppList } from '../types/AppList';
 import { App } from '../types/App';
 import { NodeParamsType, NodeType, GraphDefinition } from '../types/Graph';
@@ -58,22 +59,27 @@ export const newRequest = <P>(method: HTTP_VERBS, url: string, queryParams: any,
     params: queryParams
   });
 
+interface LoginRequest {
+  username: string;
+  password: string;
+}
+
 /** Requests */
-export const login = (username: string, password: string) => {
-  return new Promise((resolve, reject) => {
-    axios({
-      method: HTTP_VERBS.GET,
-      url: urls.token,
-      headers: getHeaders(),
-      auth: basicAuth(username, password)
-    })
-      .then(response => {
-        resolve(response);
-      })
-      .catch(error => {
-        reject(error);
-      });
+export const login = async (
+  request: LoginRequest = { username: 'anonymous', password: 'anonymous' }
+): Promise<Response<Session>> => {
+  return axios({
+    method: HTTP_VERBS.GET,
+    url: urls.token,
+    headers: getHeaders(),
+    auth: basicAuth(request.username, request.password)
   });
+};
+
+export const getAuthInfo = async () => {
+  let response = await newRequest<any>(HTTP_VERBS.GET, urls.authInfo, {}, {});
+
+  return response as Response<AuthInfo>;
 };
 
 export const getStatus = () => {

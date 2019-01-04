@@ -63,18 +63,23 @@ export interface GraphState {
   summaryData: SummaryData | null;
 }
 
-export interface Token {
-  token: string;
-  expired_at: string;
+export enum LoginStatus {
+  logging,
+  loggedIn,
+  loggedOut,
+  error
 }
+
+export interface Session {
+  token: string;
+  expiresOn: string;
+  username: string;
+}
+
 export interface LoginState {
-  token?: Token;
-  username?: string;
-  error: any;
-  message: string;
-  logged: boolean;
-  logging: boolean;
-  sessionTimeOut?: number;
+  status: LoginStatus;
+  session?: Session;
+  error?: any;
 }
 
 export interface Component {

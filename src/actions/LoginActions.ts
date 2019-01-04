@@ -1,6 +1,5 @@
 import { ActionType, createAction } from 'typesafe-actions';
-import { Token } from '../store/Store';
-import { config } from '../config/config';
+import { Session, LoginStatus } from '../store/Store';
 
 enum LoginActionKeys {
   LOGIN_REQUEST = 'LOGIN_REQUEST',
@@ -11,43 +10,38 @@ enum LoginActionKeys {
 }
 
 export interface LoginPayload {
-  logged?: boolean;
-  sessionTimeOut?: number;
-  token: Token;
-  username: string;
-}
-
-export interface LoginFailurePayload {
-  error: any;
+  status: LoginStatus;
+  session?: Session;
+  error?: any;
 }
 
 // synchronous action creators
 export const LoginActions = {
   loginRequest: createAction(LoginActionKeys.LOGIN_REQUEST),
-  loginExtend: createAction(
-    LoginActionKeys.LOGIN_EXTEND,
-    resolve => (token: Token, username: string, currentTimeOut: number) =>
-      resolve({
-        token: token,
-        username: username,
-        sessionTimeOut: currentTimeOut + config.session.extendedSessionTimeOut
-      } as LoginPayload)
+  loginExtend: createAction(LoginActionKeys.LOGIN_EXTEND, resolve => (session: Session) =>
+    resolve({
+      status: LoginStatus.loggedIn,
+      session: session
+    } as LoginPayload)
   ),
-  loginSuccess: createAction(
-    LoginActionKeys.LOGIN_SUCCESS,
-    resolve => (token: Token, username: string, currentTimeOut?: number) =>
-      resolve({
-        token: token,
-        username: username,
-        logged: true,
-        sessionTimeOut: currentTimeOut || new Date().getTime() + config.session.sessionTimeOut
-      } as LoginPayload)
+  loginSuccess: createAction(LoginActionKeys.LOGIN_SUCCESS, resolve => (session: Session) =>
+    resolve({
+      status: LoginStatus.loggedIn,
+      session: session
+    } as LoginPayload)
   ),
   loginFailure: createAction(LoginActionKeys.LOGIN_FAILURE, resolve => (error: any) =>
-    resolve({ error: error } as LoginFailurePayload)
+    resolve({
+      status: LoginStatus.error,
+      session: undefined,
+      error: error
+    } as LoginPayload)
   ),
   logoutSuccess: createAction(LoginActionKeys.LOGOUT_SUCCESS, resolve => () =>
-    resolve({ logged: false } as LoginPayload)
+    resolve({
+      status: LoginStatus.loggedOut,
+      session: undefined
+    } as LoginPayload)
   )
 };
 

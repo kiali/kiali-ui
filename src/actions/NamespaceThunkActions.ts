@@ -35,9 +35,8 @@ const NamespaceThunkActions = {
         if (getState()['authentication']['token'] === undefined) {
           return Promise.resolve();
         }
-        const auth = 'Bearer ' + getState().authentication.token!.token;
         // Dispatch a thunk from thunk!
-        return dispatch(NamespaceThunkActions.asyncFetchNamespaces(auth));
+        return dispatch(NamespaceThunkActions.asyncFetchNamespaces(getState().authentication.session!.token));
       } else {
         // Let the calling code know there's nothing to wait for.
         return Promise.resolve();

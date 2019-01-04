@@ -4,12 +4,14 @@ import { SessionTimeout } from '../SessionTimeout/SessionTimeout';
 import { config } from '../../config';
 import { MILLISECONDS } from '../../types/Common';
 import Timer = NodeJS.Timer;
+import { Session } from 'src/store/Store';
+
+import moment from 'moment';
 
 type UserProps = {
-  username: string;
+  session: Session;
   logout: () => void;
   extendSession: () => void;
-  sessionTimeOut: number;
 };
 
 type UserState = {
@@ -51,11 +53,13 @@ class UserDropdown extends React.Component<UserProps, UserState> {
   }
 
   timeLeft = (): number => {
-    const nowDate = new Date().getTime();
-    if (this.props.sessionTimeOut - nowDate < 1) {
+    const expiresOn = moment(this.props.session.expiresOn).toDate();
+
+    if (expiresOn <= new Date()) {
       this.handleLogout();
     }
-    return this.props.sessionTimeOut - nowDate;
+
+    return expiresOn.getTime() - new Date().getTime();
   };
 
   checkSession = () => {
@@ -88,7 +92,7 @@ class UserDropdown extends React.Component<UserProps, UserState> {
         />
         <Dropdown componentClass="li" id="user">
           <Dropdown.Toggle useAnchor={true} className="nav-item-iconic">
-            <Icon type="pf" name="user" /> {this.props.username}
+            <Icon type="pf" name="user" /> {this.props.session.username}
           </Dropdown.Toggle>
           <Dropdown.Menu>
             <MenuItem id="usermenu_logout" onClick={() => this.handleLogout()}>

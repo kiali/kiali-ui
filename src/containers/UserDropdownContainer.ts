@@ -8,8 +8,7 @@ import { LoginActions } from '../actions/LoginActions';
 import LoginThunkActions from '../actions/LoginThunkActions';
 
 const mapStateToProps = (state: KialiAppState) => ({
-  username: state.authentication.username,
-  sessionTimeOut: state.authentication.sessionTimeOut
+  session: state.authentication.session!
 });
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<KialiAppState, void, KialiAppAction>) => ({
