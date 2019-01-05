@@ -8,20 +8,26 @@ import { Session } from 'src/store/Store';
 type Dispatch = any;
 type AppState = any;
 
-enum Result {
-  continue,
-  success,
-  failure
+// Stores the result of a computation:
+// hold = stop all computation and wait for a side-effect, such as a redirect
+// continue = continue...
+// success = authentication was a success, session is available
+// failure = authentication failed, session is undefined but error is available
+export enum Result {
+  hold = 'hold',
+  continue = 'continue',
+  success = 'success',
+  failure = 'failure'
 }
 
-interface LoginResult {
+export interface LoginResult {
   status: Result;
   session?: Session;
   error?: any;
 }
 
 interface LoginStrategy<T = {}> {
-  prepare: () => Promise<Result>;
+  prepare: (info: AuthInfo) => Promise<Result>;
   perform: (request: DispatchRequest<T>) => Promise<LoginResult>;
 }
 
@@ -32,7 +38,7 @@ interface DispatchRequest<T> {
 }
 
 class AnonymousLogin implements LoginStrategy {
-  public async prepare() {
+  public async prepare(info: AuthInfo) {
     return Result.continue;
   }
 
@@ -52,7 +58,7 @@ interface WebLoginData {
 }
 
 class WebLogin implements LoginStrategy<WebLoginData> {
-  public async prepare() {
+  public async prepare(info: AuthInfo) {
     return Result.continue;
   }
 
@@ -66,7 +72,34 @@ class WebLogin implements LoginStrategy<WebLoginData> {
   }
 }
 
-export class LoginDispatcher implements LoginStrategy<any> {
+class OpenshiftLogin implements LoginStrategy {
+  public async prepare(info: AuthInfo) {
+    if (info.authorizationEndpoint === undefined) {
+      return Result.failure;
+    }
+
+    if (window.location.hash.startsWith('#access_token')) {
+      return Result.continue;
+    } else {
+      window.location.href = info.authorizationEndpoint!;
+
+      return Result.hold;
+    }
+  }
+
+  public async perform(request: DispatchRequest<any>): Promise<LoginResult> {
+    const session = (await API.checkOpenshiftAuth(window.location.hash.substring(1))).data;
+
+    console.log(`Session: ${JSON.stringify(session)}`);
+
+    return {
+      status: Result.success,
+      session: session
+    };
+  }
+}
+
+export class LoginDispatcher {
   strategyMapping: Map<AuthStrategy, LoginStrategy>;
   info?: AuthInfo;
 
@@ -75,13 +108,36 @@ export class LoginDispatcher implements LoginStrategy<any> {
 
     this.strategyMapping.set(AuthStrategy.anonymous, new AnonymousLogin());
     this.strategyMapping.set(AuthStrategy.login, new WebLogin());
+    this.strategyMapping.set(AuthStrategy.openshift, new OpenshiftLogin());
   }
 
   public async prepare(): Promise<Result> {
-    const strategy = this.strategyMapping.get((await this.getInfo()).strategy)!;
+    const info = await this.getInfo();
+    const strategy = this.strategyMapping.get(info.strategy)!;
 
     try {
-      return await strategy.prepare();
+      const delay = async (ms: number = 3000) => {
+        return new Promise(resolve => setTimeout(resolve, ms));
+      };
+
+      const result = await strategy.prepare(info);
+
+      // If preparation requires a hold time, with things such as redirects that
+      // require the auth flow to stop running for a while, we do that.
+      //
+      // If it fails to run for a while, we return a failure state.
+      // This assume that the user is leaving the page for auth, which should be
+      // the case for oauth implementations.
+      if (result === Result.hold) {
+        await delay();
+
+        return Promise.reject({
+          status: Result.failure,
+          error: 'Failed to redirect user to authentication page.'
+        });
+      } else {
+        return result;
+      }
     } catch (error) {
       return Promise.reject({ status: Result.failure, error });
     }

@@ -1,6 +1,7 @@
 export enum AuthStrategy {
   login = 'login',
-  anonymous = 'anonymous'
+  anonymous = 'anonymous',
+  openshift = 'openshift'
 }
 
 export interface AuthInfo {

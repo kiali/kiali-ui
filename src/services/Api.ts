@@ -77,9 +77,11 @@ export const login = async (
 };
 
 export const getAuthInfo = async () => {
-  let response = await newRequest<any>(HTTP_VERBS.GET, urls.authInfo, {}, {});
+  return newRequest<AuthInfo>(HTTP_VERBS.GET, urls.authInfo, {}, {});
+};
 
-  return response as Response<AuthInfo>;
+export const checkOpenshiftAuth = async (data: any): Promise<Response<Session>> => {
+  return newRequest<Session>(HTTP_VERBS.POST, urls.checkOpenshiftAuth, {}, data);
 };
 
 export const getStatus = () => {
