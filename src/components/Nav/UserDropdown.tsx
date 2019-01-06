@@ -12,6 +12,7 @@ type UserProps = {
   session: Session;
   logout: () => void;
   extendSession: () => void;
+  checkCredentials: () => void;
 };
 
 type UserState = {
@@ -70,6 +71,10 @@ class UserDropdown extends React.Component<UserProps, UserState> {
 
   handleLogout() {
     this.props.logout();
+
+    // Force login dispatcher to run
+    this.props.checkCredentials();
+
     const el = document.documentElement;
     if (el) {
       el.className = 'login-pf';

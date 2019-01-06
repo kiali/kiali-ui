@@ -90,8 +90,6 @@ class OpenshiftLogin implements LoginStrategy {
   public async perform(request: DispatchRequest<any>): Promise<LoginResult> {
     const session = (await API.checkOpenshiftAuth(window.location.hash.substring(1))).data;
 
-    console.log(`Session: ${JSON.stringify(session)}`);
-
     return {
       status: Result.success,
       session: session

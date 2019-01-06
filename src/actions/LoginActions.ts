@@ -21,13 +21,15 @@ export const LoginActions = {
   loginExtend: createAction(LoginActionKeys.LOGIN_EXTEND, resolve => (session: Session) =>
     resolve({
       status: LoginStatus.loggedIn,
-      session: session
+      session: session,
+      error: undefined
     } as LoginPayload)
   ),
   loginSuccess: createAction(LoginActionKeys.LOGIN_SUCCESS, resolve => (session: Session) =>
     resolve({
       status: LoginStatus.loggedIn,
-      session: session
+      session: session,
+      error: undefined
     } as LoginPayload)
   ),
   loginFailure: createAction(LoginActionKeys.LOGIN_FAILURE, resolve => (error: any) =>
@@ -40,7 +42,8 @@ export const LoginActions = {
   logoutSuccess: createAction(LoginActionKeys.LOGOUT_SUCCESS, resolve => () =>
     resolve({
       status: LoginStatus.loggedOut,
-      session: undefined
+      session: undefined,
+      error: undefined
     } as LoginPayload)
   )
 };

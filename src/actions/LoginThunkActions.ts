@@ -1,7 +1,7 @@
 import moment from 'moment';
 import { ThunkDispatch } from 'redux-thunk';
 import { HTTP_CODES } from '../types/Common';
-import { KialiAppState, LoginState, Session } from '../store/Store';
+import { KialiAppState, LoginState, Session, LoginStatus } from '../store/Store';
 import { KialiAppAction } from './KialiAppAction';
 import HelpDropdownThunkActions from './HelpDropdownThunkActions';
 import GrafanaThunkActions from './GrafanaThunkActions';
@@ -13,9 +13,10 @@ import * as Login from '../services/Login';
 
 type KialiDispatch = ThunkDispatch<KialiAppState, void, KialiAppAction>;
 
-const shouldRelogin = (state?: LoginState): boolean => {
-  return !(state && state.session && state.session.token && new Date() < moment(state.session!.expiresOn).toDate());
-};
+const Dispatcher = new Login.LoginDispatcher();
+
+const shouldRelogin = (state?: LoginState): boolean =>
+  !(state && state.status === LoginStatus.loggedIn && new Date() < moment(state.session!.expiresOn).toDate());
 
 const loginSuccess = async (dispatch: KialiDispatch, session: Session) => {
   const authHeader = `Bearer ${session.token}`;
@@ -39,16 +40,15 @@ const loginSuccess = async (dispatch: KialiDispatch, session: Session) => {
 const performLogin = (dispatch: KialiDispatch, getState: () => KialiAppState, data?: any) => {
   dispatch(LoginActions.loginRequest());
 
-  const dispatcher = new Login.LoginDispatcher();
-
   const bail = (error: Login.LoginResult) =>
     data ? dispatch(LoginActions.loginFailure(error)) : dispatch(LoginActions.logoutSuccess());
 
-  dispatcher.prepare().then((result: Login.Result) => {
+  Dispatcher.prepare().then((result: Login.Result) => {
     if (result === Login.Result.continue) {
-      dispatcher
-        .perform({ dispatch, getState, data })
-        .then(loginResult => loginSuccess(dispatch, loginResult.session!), error => bail(error));
+      Dispatcher.perform({ dispatch, getState, data }).then(
+        loginResult => loginSuccess(dispatch, loginResult.session!),
+        error => bail(error)
+      );
     } else {
       bail({ status: Login.Result.failure, error: 'Preparation for login failed, try again.' });
     }
