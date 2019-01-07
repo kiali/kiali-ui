@@ -87,10 +87,10 @@ export default class SummaryPanelEdge extends React.Component<SummaryPanelPropTy
     const edge = this.props.data.summaryTarget;
     const source = edge.source();
     const dest = edge.target();
-    const rate = this.safeRate(edge.data('rate'));
-    const rate3xx = this.safeRate(edge.data('rate3XX'));
-    const rate4xx = this.safeRate(edge.data('rate4XX'));
-    const rate5xx = this.safeRate(edge.data('rate5XX'));
+    const http = this.safeRate(edge.data('http'));
+    const http3xx = this.safeRate(edge.data('http3XX'));
+    const http4xx = this.safeRate(edge.data('http4XX'));
+    const http5xx = this.safeRate(edge.data('http5XX'));
     const hasHttpTraffic = this.hasHttpMetrics(edge);
     const hasTcpTraffic = this.hasTcpMetrics(edge);
 
@@ -114,10 +114,10 @@ export default class SummaryPanelEdge extends React.Component<SummaryPanelPropTy
             <>
               <RateTable
                 title="HTTP Traffic (requests per second):"
-                rate={rate}
-                rate3xx={rate3xx}
-                rate4xx={rate4xx}
-                rate5xx={rate5xx}
+                rate={http}
+                rate3xx={http3xx}
+                rate4xx={http4xx}
+                rate5xx={http5xx}
               />
               <hr />
             </>
@@ -423,10 +423,10 @@ export default class SummaryPanelEdge extends React.Component<SummaryPanelPropTy
   }
 
   private hasHttpMetrics = (edge): boolean => {
-    return edge.data('rate') ? true : false;
+    return edge.data('http') ? true : false;
   };
 
   private hasTcpMetrics = (edge): boolean => {
-    return edge.data('tcpSentRate') ? true : false;
+    return edge.data('tcp') ? true : false;
   };
 }
