@@ -12,11 +12,29 @@ export const NODE_HTTP_OUT = {
   RATE4XX: 'n/a',
   RATE5XX: 'n/a'
 };
+export const NODE_TCP_IN = {
+  RATE: 'tcpIn',
+  RATE3XX: 'n/a',
+  RATE4XX: 'n/a',
+  RATE5XX: 'n/a'
+};
+export const NODE_TCP_OUT = {
+  RATE: 'tcpOut',
+  RATE3XX: 'n/a',
+  RATE4XX: 'n/a',
+  RATE5XX: 'n/a'
+};
 export const EDGE_HTTP = {
   RATE: 'http',
   RATE3XX: 'http3XX',
   RATE4XX: 'http4XX',
   RATE5XX: 'http5XX'
+};
+export const EDGE_TCP = {
+  RATE: 'tcp',
+  RATE3XX: 'n/a',
+  RATE4XX: 'n/a',
+  RATE5XX: 'n/a'
 };
 
 export interface TrafficRate {

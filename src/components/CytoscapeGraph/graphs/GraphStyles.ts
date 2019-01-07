@@ -4,6 +4,7 @@ import { FAILURE, DEGRADED, REQUESTS_THRESHOLDS } from '../../../types/Health';
 import { GraphType, NodeType, CytoscapeGlobalScratchNamespace, CytoscapeGlobalScratchData } from '../../../types/Graph';
 import { COMPOUND_PARENT_NODE_CLASS } from '../Layout/GroupCompoundLayout';
 import { ICONS } from '../../../config';
+import { EDGE_HTTP, EDGE_TCP } from '../../../utils/TrafficRate';
 
 export const DimClass = 'mousedim';
 
@@ -65,7 +66,7 @@ export class GraphStyles {
       if (ele.data('isUnused')) {
         return EdgeColorDead;
       }
-      const http = ele.data('http') ? Number(ele.data('http')) : 0;
+      const http = ele.data(EDGE_HTTP.RATE) ? Number(ele.data(EDGE_HTTP.RATE)) : 0;
       if (http === 0 || ele.data('isUnused')) {
         return EdgeColorDead;
       }
@@ -86,14 +87,14 @@ export class GraphStyles {
 
       switch (edgeLabelMode) {
         case EdgeLabelMode.TRAFFIC_RATE_PER_SECOND: {
-          if (ele.data('http')) {
-            const http = Number(ele.data('http'));
+          if (ele.data(EDGE_HTTP.RATE)) {
+            const http = Number(ele.data(EDGE_HTTP.RATE));
             if (http > 0) {
               const httpPercentErr = ele.data('httpPercentErr') ? Number(ele.data('httpPercentErr')) : 0;
               content = httpPercentErr > 0 ? http.toFixed(2) + ', ' + httpPercentErr.toFixed(1) + '%' : http.toFixed(2);
             }
-          } else if (ele.data('tcp')) {
-            const tcp = Number(ele.data('tcp'));
+          } else if (ele.data(EDGE_TCP.RATE)) {
+            const tcp = Number(ele.data(EDGE_TCP.RATE));
             if (tcp > 0) {
               content = `${tcp.toFixed(2)}`;
             }
