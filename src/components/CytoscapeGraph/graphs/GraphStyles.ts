@@ -63,9 +63,6 @@ export class GraphStyles {
     };
 
     const getHttpEdgeColor = (ele: any): string => {
-      if (ele.data('isUnused')) {
-        return EdgeColorDead;
-      }
       const http = ele.data(EDGE_HTTP.RATE) ? Number(ele.data(EDGE_HTTP.RATE)) : 0;
       if (http === 0 || ele.data('isUnused')) {
         return EdgeColorDead;
