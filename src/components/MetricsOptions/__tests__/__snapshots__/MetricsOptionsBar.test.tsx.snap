@@ -5,24 +5,24 @@ ShallowWrapper {
   Symbol(enzyme.__root__): [Circular],
   Symbol(enzyme.__unrendered__): <Provider
     store={
-      Object {
-        "dispatch": [Function],
-        "getState": [Function],
-        "replaceReducer": [Function],
-        "subscribe": [Function],
-        Symbol(observable): [Function],
-      }
+        Object {
+            "dispatch": [Function],
+            "getState": [Function],
+            "replaceReducer": [Function],
+            "subscribe": [Function],
+            Symbol(observable): [Function],
+          }
     }
-  >
+>
     <MetricsOptionsBar
-      direction="inbound"
-      grafanaLink="http://grafana-istio-system.127.0.0.1.nip.io/d/UbsSZTDik/istio-workload-dashboard"
-      labelValues={Map {}}
-      onLabelsFiltersChanged={[MockFunction]}
-      onOptionsChanged={[MockFunction]}
-      onRefresh={[MockFunction]}
+        direction="inbound"
+        grafanaLink="http://grafana-istio-system.127.0.0.1.nip.io/d/UbsSZTDik/istio-workload-dashboard"
+        labelValues={Map {}}
+        onLabelsFiltersChanged={[Function]}
+        onOptionsChanged={[Function]}
+        onRefresh={[Function]}
     />
-  </Provider>,
+</Provider>,
   Symbol(enzyme.__renderer__): Object {
     "batchedUpdates": [Function],
     "getNode": [Function],
@@ -39,9 +39,9 @@ ShallowWrapper {
       "direction": "inbound",
       "grafanaLink": "http://grafana-istio-system.127.0.0.1.nip.io/d/UbsSZTDik/istio-workload-dashboard",
       "labelValues": Map {},
-      "onLabelsFiltersChanged": [MockFunction],
-      "onOptionsChanged": [MockFunction],
-      "onRefresh": [MockFunction],
+      "onLabelsFiltersChanged": [Function],
+      "onOptionsChanged": [Function],
+      "onRefresh": [Function],
     },
     "ref": null,
     "rendered": null,
@@ -56,9 +56,9 @@ ShallowWrapper {
         "direction": "inbound",
         "grafanaLink": "http://grafana-istio-system.127.0.0.1.nip.io/d/UbsSZTDik/istio-workload-dashboard",
         "labelValues": Map {},
-        "onLabelsFiltersChanged": [MockFunction],
-        "onOptionsChanged": [MockFunction],
-        "onRefresh": [MockFunction],
+        "onLabelsFiltersChanged": [Function],
+        "onOptionsChanged": [Function],
+        "onRefresh": [Function],
       },
       "ref": null,
       "rendered": null,

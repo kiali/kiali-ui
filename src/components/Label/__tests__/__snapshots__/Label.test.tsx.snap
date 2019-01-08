@@ -6,7 +6,7 @@ ShallowWrapper {
   Symbol(enzyme.__unrendered__): <Label
     name="app"
     value="bookinfo"
-  />,
+/>,
   Symbol(enzyme.__renderer__): Object {
     "batchedUpdates": [Function],
     "getNode": [Function],
@@ -24,17 +24,19 @@ ShallowWrapper {
         <Label
           bsStyle="primary"
           className="label-key"
+          onRemoveClick={undefined}
           type="default"
-        >
+>
           app
-        </Label>,
+</Label>,
         <Label
           bsStyle="primary"
           className="label-value"
+          onRemoveClick={undefined}
           type="default"
-        >
+>
           bookinfo
-        </Label>,
+</Label>,
       ],
       "className": "label-pair",
     },
@@ -83,17 +85,19 @@ ShallowWrapper {
           <Label
             bsStyle="primary"
             className="label-key"
+            onRemoveClick={undefined}
             type="default"
-          >
+>
             app
-          </Label>,
+</Label>,
           <Label
             bsStyle="primary"
             className="label-value"
+            onRemoveClick={undefined}
             type="default"
-          >
+>
             bookinfo
-          </Label>,
+</Label>,
         ],
         "className": "label-pair",
       },
