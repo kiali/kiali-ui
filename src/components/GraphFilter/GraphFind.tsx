@@ -10,6 +10,7 @@ import { GraphFilterActions } from '../../actions/GraphFilterActions';
 import { KialiAppAction } from '../../actions/KialiAppAction';
 import * as MessageCenterUtils from '../../utils/MessageCenter';
 import GraphHelpFind from '../../pages/Graph/GraphHelpFind';
+import { CyNode, CyEdge } from '../CytoscapeGraph/CytoscapeGraphUtils';
 
 type ReduxProps = {
   showFindHelp: boolean;
@@ -187,7 +188,7 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
     }
     if (!op) {
       if (expression.split(' ').length > 1) {
-        MessageCenterUtils.add('Invalid find expression or operator: [' + expression + '].');
+        MessageCenterUtils.add(`Invalid find expression or operator: [${expression}]`);
         return undefined;
       }
 
@@ -198,7 +199,7 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
 
       // handle special 'find by name'substring unary
       op = '*=';
-      expression = 'name *= ' + expression;
+      expression = `name ${op} ${expression}`;
     }
 
     const tokens = expression.split(op);
@@ -208,7 +209,7 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
         return unaryExpression;
       }
 
-      MessageCenterUtils.add('Invalid find value: [' + expression + '].');
+      MessageCenterUtils.add(`Invalid find value: [${expression}]`);
       return undefined;
     }
 
@@ -216,75 +217,77 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
     const val = tokens[1].trim();
 
     switch (field.toLowerCase()) {
-      // node find
+      //
+      // nodes
+      //
       case 'app':
-        return { target: 'node', selector: '[app ' + op + ' "' + val + '"]' };
+        return { target: 'node', selector: `[${CyNode.app} ${op} "${val}"]` };
       case 'httpin': {
-        const s = this.getNumericSelector('rate', op, val, 1.0, expression);
-        return s ? { target: 'edge', selector: s } : undefined;
+        const s = this.getNumericSelector(CyNode.httpIn, op, val, 1.0, expression);
+        return s ? { target: 'node', selector: s } : undefined;
       }
       case 'httpout': {
-        const s = this.getNumericSelector('rateOut', op, val, 1.0, expression);
-        return s ? { target: 'edge', selector: s } : undefined;
+        const s = this.getNumericSelector(CyNode.httpOut, op, val, 1.0, expression);
+        return s ? { target: 'node', selector: s } : undefined;
       }
       case 'name':
         if (conjunctive) {
-          MessageCenterUtils.add('Find values do not allow AND expressions with "find by name".');
+          MessageCenterUtils.add(`Find values do not allow AND expressions with "find by name": [${expression}]`);
           return undefined;
         }
-        const wl = '[workload ' + op + ' "' + val + '"]';
-        const app = ',[app ' + op + ' "' + val + '"]';
-        const svc = ',[service ' + op + ' "' + val + '"]';
-        return { target: 'node', selector: wl + app + svc };
+        const wl = `[${CyNode.workload} ${op} "${val}"]`;
+        const app = `[${CyNode.app} ${op} "${val}"]`;
+        const svc = `[${CyNode.service} ${op} "${val}"]`;
+        return { target: 'node', selector: `${wl},${app},${svc}` };
       case 'ns':
       case 'namespace':
-        return { target: 'node', selector: '[namespace ' + op + ' "' + val + '"]' };
+        return { target: 'node', selector: `[${CyNode.namespace} ${op} "${val}"]` };
       case 'svc':
       case 'service':
-        return { target: 'node', selector: '[service ' + op + ' "' + val + '"]' };
+        return { target: 'node', selector: `[${CyNode.service} ${op} "${val}"]` };
       case 'tcpin': {
-        const s = this.getNumericSelector('rateTcpSent', op, val, 1.0, expression);
-        return s ? { target: 'edge', selector: s } : undefined;
+        const s = this.getNumericSelector(CyNode.tcpIn, op, val, 1.0, expression);
+        return s ? { target: 'node', selector: s } : undefined;
       }
       case 'tcpout': {
-        const s = this.getNumericSelector('rateTcpSentOut', op, val, 1.0, expression);
-        return s ? { target: 'edge', selector: s } : undefined;
+        const s = this.getNumericSelector(CyNode.tcpOut, op, val, 1.0, expression);
+        return s ? { target: 'node', selector: s } : undefined;
       }
       case 'version':
-        return { target: 'node', selector: '[version ' + op + ' "' + val + '"]' };
+        return { target: 'node', selector: `[${CyNode.version} ${op} "${val}"]` };
       case 'wl':
       case 'workload':
-        return { target: 'node', selector: '[workload ' + op + ' "' + val + '"]' };
+        return { target: 'node', selector: `[${CyNode.workload} ${op} "${val}"]` };
       //
       // edges..
       //
       case 'http': {
-        const s = this.getNumericSelector('rate', op, val, 1.0, expression);
+        const s = this.getNumericSelector(CyEdge.http, op, val, 1.0, expression);
         return s ? { target: 'edge', selector: s } : undefined;
       }
       case 'percenterr':
       case 'percenterror':
       case '%error':
       case '%err': {
-        const s = this.getNumericSelector('percentErr', op, val, 1.0, expression);
+        const s = this.getNumericSelector(CyEdge.httpPercentErr, op, val, 1.0, expression);
         return s ? { target: 'edge', selector: s } : undefined;
       }
       case 'percenttraffic':
       case '%traffic': {
-        const s = this.getNumericSelector('percentRate', op, val, 1.0, expression);
+        const s = this.getNumericSelector(CyEdge.httpPercentReq, op, val, 1.0, expression);
         return s ? { target: 'edge', selector: s } : undefined;
       }
       case 'rt':
       case 'responsetime': {
-        const s = this.getNumericSelector('responseTime', op, val, 0.001, expression);
+        const s = this.getNumericSelector(CyEdge.responseTime, op, val, 0.001, expression);
         return s ? { target: 'edge', selector: s } : undefined;
       }
       case 'tcp': {
-        const s = this.getNumericSelector('rateTcpSent', op, val, 1.0, expression);
+        const s = this.getNumericSelector(CyEdge.tcp, op, val, 1.0, expression);
         return s ? { target: 'edge', selector: s } : undefined;
       }
       default:
-        MessageCenterUtils.add('Invalid find value: [' + expression + '].');
+        MessageCenterUtils.add(`Invalid find value: [${expression}]`);
         return undefined;
     }
   };
@@ -297,7 +300,7 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
     expression: string
   ): string | undefined {
     if (isNaN(val)) {
-      MessageCenterUtils.add(`Invalid find value: [${expression}]. Expected a numeric value (use . for decimals)`);
+      MessageCenterUtils.add(`Invalid find value, expected a numeric value (use . for decimals):  [${expression}]`);
       return undefined;
     }
     switch (op) {
@@ -309,7 +312,7 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
       case '!=':
         break;
       default:
-        MessageCenterUtils.add(`Invalid operator for numeric condition: [${expression}].`);
+        MessageCenterUtils.add(`Invalid operator for numeric condition: [${expression}]`);
         return undefined;
     }
 
@@ -326,44 +329,51 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
 
   private parseUnaryFindExpression = (field: string, isNegation): ParsedExpression | undefined => {
     switch (field.toLowerCase()) {
-      // node find
+      //
+      // nodes...
+      //
       case 'appnode':
-        return { target: 'node', selector: isNegation ? '[nodeType != "app"]' : '[nodeType = "app"]' };
+        return { target: 'node', selector: `[${CyNode.nodeType} ${isNegation ? '!=' : '='} "app"]` };
       case 'cb':
       case 'circuitbreaker':
-        return { target: 'node', selector: isNegation ? '[^hasCB]' : '[hasCB]' };
+        return { target: 'node', selector: isNegation ? `[^${CyNode.hasCB}]` : `[${CyNode.hasCB}]` };
       case 'dead':
-        return { target: 'node', selector: isNegation ? '[^isDead]' : '[isDead]' };
+        return { target: 'node', selector: isNegation ? `[^${CyNode.isDead}]` : `[${CyNode.isDead}]` };
       case 'inaccessible':
-        return { target: 'node', selector: isNegation ? '[^isInaccessible]' : '[isInaccessible]' };
+        return { target: 'node', selector: isNegation ? `[^${CyNode.isInaccessible}]` : `[${CyNode.isInaccessible}]` };
       case 'outside':
       case 'outsider':
-        return { target: 'node', selector: isNegation ? '[^isOutside]' : '[isOutside]' };
+        return { target: 'node', selector: isNegation ? `[^${CyNode.isOutside}]` : `[${CyNode.isOutside}]` };
       case 'se':
       case 'serviceentry':
-        return { target: 'node', selector: isNegation ? '[^isServiceEntry]' : '[isServiceEntry]' };
+        return { target: 'node', selector: isNegation ? `[^${CyNode.isServiceEntry}]` : `[${CyNode.isServiceEntry}]` };
       case 'sc':
       case 'sidecar':
-        return { target: 'node', selector: isNegation ? '[hasMissingSC]' : '[^hasMissingSC]' };
+        return { target: 'node', selector: isNegation ? `[${CyNode.hasMissingSC}]` : `[^${CyNode.hasMissingSC}]` };
       case 'svcnode':
       case 'servicenode':
-        return { target: 'node', selector: isNegation ? '[nodeType != "service"]' : '[nodeType = "service"]' };
+        return { target: 'node', selector: `[${CyNode.nodeType} ${isNegation ? '!=' : '='} "service"]` };
       case 'trafficsource':
       case 'root':
-        return { target: 'node', selector: isNegation ? '[^isRoot]' : '[isRoot]' };
+        return { target: 'node', selector: isNegation ? `[^${CyNode.isRoot}]` : `[${CyNode.isRoot}]` };
       case 'unknown':
-        return { target: 'node', selector: isNegation ? '[nodeType != "unknown"]' : '[nodeType = "unknown"]' };
+        return {
+          target: 'node',
+          selector: isNegation ? `[${CyNode.nodeType} != "unknown"]` : `[${CyNode.nodeType} = "unknown"]`
+        };
       case 'unused':
-        return { target: 'node', selector: isNegation ? '[^isUnused]' : '[isUnused]' };
+        return { target: 'node', selector: isNegation ? `[^${CyNode.isUnused}]` : `[${CyNode.isUnused}]` };
       case 'vs':
       case 'virtualservice':
-        return { target: 'node', selector: isNegation ? '[^hasVS]' : '[hasVS]' };
+        return { target: 'node', selector: isNegation ? `[^${CyNode.hasVS}]` : `[${CyNode.hasVS}]` };
       case 'wlnode':
       case 'workloadnode':
-        return { target: 'node', selector: isNegation ? '[nodeType != "workload"]' : '[nodeType = "workload"]' };
-      // edge find
+        return { target: 'node', selector: `[${CyNode.nodeType} ${isNegation ? '!=' : '='} "workload"]` };
+      //
+      // edges...
+      //
       case 'mtls':
-        return { target: 'edge', selector: isNegation ? '[^isMTLS]' : '[isMTLS]' };
+        return { target: 'edge', selector: isNegation ? `[^${CyEdge.isMTLS}]` : `[${CyEdge.isMTLS}]` };
       default:
         return undefined;
     }
