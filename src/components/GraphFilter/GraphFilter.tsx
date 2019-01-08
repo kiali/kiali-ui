@@ -37,7 +37,6 @@ type ReduxProps = {
 };
 
 type GraphFilterProps = ReduxProps & {
-  cytoscapeGraphRef: any;
   disabled: boolean;
   onRefresh: () => void;
 };
@@ -159,7 +158,7 @@ export class GraphFilter extends React.PureComponent<GraphFilterProps> {
               options={GraphFilter.GRAPH_TYPES}
             />
           </FormGroup>
-          <GraphFindContainer cytoscapeGraphRef={this.props.cytoscapeGraphRef} />
+          <GraphFindContainer />
           <Toolbar.RightContent>
             <GraphRefreshContainer
               id="graph_refresh_container"

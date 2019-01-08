@@ -104,8 +104,8 @@ export class GraphStyles {
           break;
         }
         case EdgeLabelMode.REQUESTS_PERCENT_OF_TOTAL: {
-          const httpPercentReq = ele.data(CyEdge.httpPercentReq) ? Number(ele.data(CyEdge.httpPercentReq)) : 0;
-          content = httpPercentReq > 0 ? httpPercentReq.toFixed(1) + '%' : '';
+          const httpPercentReq = ele.data(CyEdge.httpPercentReq) ? Number(ele.data(CyEdge.httpPercentReq)) : 100.0;
+          content = httpPercentReq < 100.0 ? httpPercentReq.toFixed(1) + '%' : '100%';
           break;
         }
         default:
@@ -159,7 +159,7 @@ export class GraphStyles {
         const service = ele.data(CyNode.service);
         const version = ele.data(CyNode.version);
         const workload = ele.data(CyNode.workload);
-  
+
         if (isGroupMember) {
           switch (nodeType) {
             case NodeType.APP:
@@ -357,7 +357,7 @@ export class GraphStyles {
         }
       },
       {
-        selector: 'edge[tcp]',
+        selector: 'edge[tcp > 0]',
         css: {
           'target-arrow-shape': 'triangle-cross',
           'line-color': PfColors.Blue600,

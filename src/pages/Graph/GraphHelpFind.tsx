@@ -137,6 +137,26 @@ export default class GraphHelpFind extends React.Component<GraphHelpFindProps> {
     };
   };
 
+  tipColumns = () => {
+    return {
+      columns: [
+        {
+          property: 't',
+          header: {
+            label: 'Tip',
+            formatters: [this.headerFormat]
+          },
+          cell: {
+            formatters: [this.cellFormat],
+            props: {
+              align: 'textleft'
+            }
+          }
+        }
+      ]
+    };
+  };
+
   render() {
     const className = this.props.className ? this.props.className : '';
     return (
@@ -173,6 +193,9 @@ export default class GraphHelpFind extends React.Component<GraphHelpFindProps> {
                 <NavItem eventKey="operators">
                   <div>Operators</div>
                 </NavItem>
+                <NavItem eventKey="tips">
+                  <div>Tips</div>
+                </NavItem>
               </Nav>
               <TabContent>
                 <TabPane eventKey="examples">
@@ -189,31 +212,39 @@ export default class GraphHelpFind extends React.Component<GraphHelpFindProps> {
                       rows={[
                         {
                           id: 'e0',
-                          e: 'product',
-                          d: `"shortcut for 'name contains product': app, service or workload containing 'product'`
+                          e: 'prod',
+                          d: `shortcut for "name contains prod": app, service, workload contains "prod"`
                         },
                         {
                           id: 'e1',
+                          e: 'not prod',
+                          d: `shortcut for "name not contains prod": app, service, workload not contains 'prod'`
+                        },
+                        {
+                          id: 'e2',
                           e: 'name = reviews',
                           d: `"find by name": find app label, service name or workload name equal to 'reviews'`
                         },
-                        { id: 'e2', e: 'app *= product', d: `app label containing 'product'` },
+                        { id: 'e3', e: 'app startswith product', d: `app label starts with 'product'` },
                         {
-                          id: 'e3',
-                          e: 'app = details and version=v1',
-                          d: `app label equal to'details' and having version equal to 'v1'`
+                          id: 'e4',
+                          e: 'app != details and version=v1',
+                          d: `app label not equal to 'details' and having version equal to 'v1'`
                         },
-                        { id: 'e4', e: '!sc', d: `nodes without a sidecar` },
-                        { id: 'e5', e: 'httpin > 0.5', d: `nodes with incoming http rate > 0.5 rps` },
-                        { id: 'e6', e: 'tcpout > 1000', d: `nodes with outgoing tcp rates > 1000 bps` },
-                        { id: 'e7', e: 'http > 0.5', d: `edges with http rate > 0.5 rps` },
+                        { id: 'e5', e: '!sc', d: `nodes without a sidecar` },
+                        { id: 'e6', e: 'httpin > 0.5', d: `nodes with incoming http rate > 0.5 rps` },
+                        { id: 'e7', e: 'tcpout >= 1000', d: `nodes with outgoing tcp rates >= 1000 bps` },
+                        { id: 'e8', e: 'http > 0.5', d: `edges with http rate > 0.5 rps` },
                         {
-                          id: 'e8',
+                          id: 'e9',
                           e: 'rt > 500',
                           d: `edges with response time > 500ms. (requires response time edge labels)`
                         },
-                        { id: 'e9', e: '', d: 'Tip: Expressions can not combine "and" with "or"' },
-                        { id: 'e10', e: '', d: 'Tip: Expressions can not combine "and" with "find by name"' }
+                        {
+                          id: 'e10',
+                          e: '%traffic >= 50.0',
+                          d: `edges with >= 50% of the outgoing http request traffic of the parent`
+                        }
                       ]}
                     />
                   </TablePfProvider>
@@ -286,16 +317,48 @@ export default class GraphHelpFind extends React.Component<GraphHelpFindProps> {
                     <Table.Body
                       rowKey="id"
                       rows={[
-                        { id: 'o0', o: '! | not', d: `negation, unary expressions only` },
+                        { id: 'o0', o: '! | not <unary expression>', d: `negation` },
                         { id: 'o1', o: '=', d: `equals` },
                         { id: 'o2', o: '!=', d: `not equals` },
-                        { id: 'o3', o: '^= | endswith', d: `starts with, strings only` },
-                        { id: 'o4', o: '$= | startswith', d: `ends with, strings only` },
-                        { id: 'o5', o: '*= | contains', d: 'contains, strings only' },
-                        { id: 'o6', o: '>', d: `greater than, numbers only` },
-                        { id: 'o7', o: '>=', d: `greater than or equals, numbers only` },
-                        { id: 'o8', o: '<', d: `less than, numbers only` },
-                        { id: 'o9', o: '<=', d: `less than or equals, numbers only` }
+                        { id: 'o3', o: 'endswith | ^=', d: `ends with, strings only` },
+                        { id: 'o4', o: '!endswith | !^=', d: `not ends with, strings only` },
+                        { id: 'o5', o: 'startswith | $=', d: `starts with, strings only` },
+                        { id: 'o6', o: '!startswith | !$=', d: `not starts with, strings only` },
+                        { id: 'o7', o: 'contains | *=', d: 'contains, strings only' },
+                        { id: 'o8', o: '!contains | !*=', d: 'not contains, strings only' },
+                        { id: 'o9', o: '>', d: `greater than` },
+                        { id: 'o10', o: '>=', d: `greater than or equals` },
+                        { id: 'o11', o: '<', d: `less than` },
+                        { id: 'o12', o: '<=', d: `less than or equals` }
+                      ]}
+                    />
+                  </TablePfProvider>
+                </TabPane>
+                <TabPane eventKey="tips" mountOnEnter={true} unmountOnExit={true}>
+                  <TablePfProvider
+                    striped={true}
+                    bordered={true}
+                    hover={true}
+                    dataTable={true}
+                    columns={this.tipColumns().columns}
+                  >
+                    <Table.Header headerRows={resolve.headerRows(this.tipColumns())} />
+                    <Table.Body
+                      rowKey="id"
+                      rows={[
+                        { id: 't0', t: 'Expressions can not combine "and" with "or".' },
+                        { id: 't1', t: 'Find by name expands to an "or" expression internally.' },
+                        { id: 't2', t: 'Not Find by name expands to an "and" expression internally.' },
+                        {
+                          id: 't3',
+                          t: 'Numeric equality (=) is exact match. Include leading 0 and digits of precision.'
+                        },
+                        { id: 't4', t: 'Numerics use "." decimal notation.' },
+                        { id: 't5', t: 'Percentages use 1 digit of precision, Rates use 2 digits of precision.' },
+                        {
+                          id: 't6',
+                          t: 'responsetime expressions only work when Response Time edge labels are enabled.'
+                        }
                       ]}
                     />
                   </TablePfProvider>

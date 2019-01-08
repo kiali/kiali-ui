@@ -13,14 +13,14 @@ import GraphHelpFind from '../../pages/Graph/GraphHelpFind';
 import { CyNode, CyEdge } from '../CytoscapeGraph/CytoscapeGraphUtils';
 
 type ReduxProps = {
+  graphInfo: any;
+  isLoading: boolean;
   showFindHelp: boolean;
 
   toggleFindHelp: () => void;
 };
 
-type GraphFindProps = ReduxProps & {
-  cytoscapeGraphRef: any;
-};
+type GraphFindProps = ReduxProps;
 
 type ParsedExpression = {
   target: 'node' | 'edge';
@@ -33,6 +33,7 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
   };
 
   private findInputRef;
+  private findInputValue: string;
   private findValue: string;
 
   constructor(props: GraphFindProps) {
@@ -41,8 +42,15 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
     if (props.showFindHelp) {
       props.toggleFindHelp();
     }
-    this.findValue = '';
     this.findInputRef = React.createRef();
+    this.findInputValue = '';
+    this.findValue = '';
+  }
+
+  componentDidUpdate(prevProps: GraphFindProps) {
+    if (this.findValue.length > 0 && !this.props.isLoading) {
+      this.handleFind();
+    }
   }
 
   render() {
@@ -82,10 +90,11 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
   };
 
   private updateFind = event => {
-    this.findValue = event.target.value;
+    this.findInputValue = event.target.value;
   };
 
   private clearFind = () => {
+    this.findInputValue = '';
     this.findValue = '';
     // note, we don't use findInputRef.current because <FormControl> deals with refs differently than <input>
     this.findInputRef.value = '';
@@ -94,6 +103,7 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
 
   private handleFindSubmit = event => {
     event.preventDefault();
+    this.findValue = this.findInputValue;
     this.handleFind();
   };
 
@@ -110,8 +120,6 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
     if (selector) {
       cy.elements(selector).addClass('find');
     }
-
-    this.forceUpdate(); // to enable/disable clear button
   };
 
   private parseFindValue = (val: string): string | undefined => {
@@ -133,11 +141,10 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
 
     for (const expression of expressions) {
       console.log('EXPRESSION=' + expression);
-      const parsedExpression = this.parseFindExpression(expression, conjunctive);
+      const parsedExpression = this.parseFindExpression(expression, conjunctive, disjunctive);
       if (!parsedExpression) {
         return undefined;
       }
-      console.log('Parsed EXPRESSION=' + parsedExpression);
       selector = this.appendSelector(selector, parsedExpression, separator);
       if (!selector) {
         return undefined;
@@ -149,24 +156,41 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
   };
 
   private prepareFindValue = (val: string): string => {
+    console.log(`Raw=[${val}]`);
+    // remove double spaces
+    val = val.replace(/ +(?= )/g, '');
+
     // remove unnecessary mnemonic qualifiers on unary operators (e.g. 'has cb' -> 'cb').
     val = ' ' + val;
     val = val.replace(' is ', ' ');
     val = val.replace(' has ', ' ');
 
     // replace string operators
+    val = val.replace(' not ', ' !');
     val = val.replace(' contains ', ' *= ');
     val = val.replace(' startswith ', ' $= ');
     val = val.replace(' endswith ', ' ^= ');
-    val = val.replace(' not ', ' !');
-
+    val = val.replace(' !contains ', ' !*= ');
+    val = val.replace(' !startswith ', ' !$= ');
+    val = val.replace(' !endswith ', ' !^= ');
+    console.log(`Prepared=[${val.trim()}]`);
     return val.trim();
   };
 
-  private parseFindExpression = (expression: string, conjunctive: boolean): ParsedExpression | undefined => {
+  private parseFindExpression = (
+    expression: string,
+    conjunctive: boolean,
+    disjunctive: boolean
+  ): ParsedExpression | undefined => {
     let op;
     if (expression.includes('!=')) {
       op = '!=';
+    } else if (expression.includes('!*=')) {
+      op = '!*=';
+    } else if (expression.includes('!$=')) {
+      op = '!$=';
+    } else if (expression.includes('!^=')) {
+      op = '!^=';
     } else if (expression.includes('>=')) {
       op = '>=';
     } else if (expression.includes('<=')) {
@@ -202,15 +226,17 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
       expression = `name ${op} ${expression}`;
     }
 
-    const tokens = expression.split(op);
+    let tokens = expression.split(op);
     if (op === '!') {
       const unaryExpression = this.parseUnaryFindExpression(tokens[1], true);
       if (unaryExpression) {
         return unaryExpression;
       }
 
-      MessageCenterUtils.add(`Invalid find value: [${expression}]`);
-      return undefined;
+      // handle special 'not find by name'substring unary
+      op = '!*=';
+      expression = `name ${op} ${tokens[1]}`;
+      tokens = expression.split(op);
     }
 
     const field = tokens[0].trim();
@@ -218,7 +244,7 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
 
     switch (field.toLowerCase()) {
       //
-      // nodes
+      // nodes...
       //
       case 'app':
         return { target: 'node', selector: `[${CyNode.app} ${op} "${val}"]` };
@@ -230,15 +256,20 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
         const s = this.getNumericSelector(CyNode.httpOut, op, val, 1.0, expression);
         return s ? { target: 'node', selector: s } : undefined;
       }
-      case 'name':
-        if (conjunctive) {
+      case 'name': {
+        const isNegation = op.startsWith('!');
+        if (disjunctive && isNegation) {
+          MessageCenterUtils.add(`Find values do not allow OR expressions with "not find by name": [${expression}]`);
+          return undefined;
+        } else if (conjunctive) {
           MessageCenterUtils.add(`Find values do not allow AND expressions with "find by name": [${expression}]`);
           return undefined;
         }
         const wl = `[${CyNode.workload} ${op} "${val}"]`;
         const app = `[${CyNode.app} ${op} "${val}"]`;
         const svc = `[${CyNode.service} ${op} "${val}"]`;
-        return { target: 'node', selector: `${wl},${app},${svc}` };
+        return { target: 'node', selector: isNegation ? `${wl}${app}${svc}` : `${wl},${app},${svc}` };
+      }
       case 'ns':
       case 'namespace':
         return { target: 'node', selector: `[${CyNode.namespace} ${op} "${val}"]` };
@@ -395,14 +426,16 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
   };
 
   private getCy = (): any | null => {
-    if (this.props.cytoscapeGraphRef.current) {
-      return this.props.cytoscapeGraphRef.current.getCy();
+    if (this.props.graphInfo.graphReference) {
+      return this.props.graphInfo.graphReference;
     }
     return null;
   };
 }
 
 const mapStateToProps = (state: KialiAppState) => ({
+  graphInfo: state.graph.sidePanelInfo,
+  isLoading: state.graph.isLoading,
   showFindHelp: state.graph.filterState.showFindHelp
 });
 
