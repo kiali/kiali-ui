@@ -246,8 +246,8 @@ export default class GraphHelpFind extends React.Component<GraphHelpFindProps> {
                         { id: 'nc13', c: '[is] se | serviceentry' },
                         { id: 'nc14', c: '[is] unknown' },
                         { id: 'nc15', c: '[is] unused' },
-                        { id: 'nc16', c: '', k: '[has] vs | virtualservice' },
-                        { id: 'nc17', c: '', k: '[is] wlnode | workloadnode' }
+                        { id: 'nc16', c: '[has] vs | virtualservice' },
+                        { id: 'nc17', c: '[is] wlnode | workloadnode' }
                       ]}
                     />
                   </TablePfProvider>
