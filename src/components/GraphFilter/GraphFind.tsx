@@ -168,17 +168,19 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
 
     // remove unnecessary mnemonic qualifiers on unary operators (e.g. 'has cb' -> 'cb').
     val = ' ' + val;
-    val = val.replace(' is ', ' ');
-    val = val.replace(' has ', ' ');
+    val = val.replace(/ is /gi, ' ');
+    val = val.replace(/ has /gi, ' ');
+    val = val.replace(/ !\s*is /gi, ' ! ');
+    val = val.replace(/ !\s*has /gi, ' ! ');
 
     // replace string operators
-    val = val.replace(' not ', ' !');
-    val = val.replace(' contains ', ' *= ');
-    val = val.replace(' startswith ', ' $= ');
-    val = val.replace(' endswith ', ' ^= ');
-    val = val.replace(' !contains ', ' !*= ');
-    val = val.replace(' !startswith ', ' !$= ');
-    val = val.replace(' !endswith ', ' !^= ');
+    val = val.replace(/ not /gi, ' !');
+    val = val.replace(/ contains /gi, ' *= ');
+    val = val.replace(/ startswith /gi, ' ^= ');
+    val = val.replace(/ endswith /gi, ' $= ');
+    val = val.replace(/ !\s*contains /gi, ' !*= ');
+    val = val.replace(/ !\s*startswith /gi, ' !^= ');
+    val = val.replace(/ !\s*endswith /gi, ' !$= ');
     console.log(`Prepared=[${val.trim()}]`);
     return val.trim();
   };
@@ -234,7 +236,7 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
 
     let tokens = expression.split(op);
     if (op === '!') {
-      const unaryExpression = this.parseUnaryFindExpression(tokens[1], true);
+      const unaryExpression = this.parseUnaryFindExpression(tokens[1].trim(), true);
       if (unaryExpression) {
         return unaryExpression;
       }
