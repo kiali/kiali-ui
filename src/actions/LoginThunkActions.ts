@@ -10,7 +10,7 @@ import * as API from '../services/Api';
 import { ServerConfigActions } from './ServerConfigActions';
 
 import * as Login from '../services/Login';
-import { AuthResult } from 'src/types/Auth';
+import { AuthResult } from '../types/Auth';
 
 type KialiDispatch = ThunkDispatch<KialiAppState, void, KialiAppAction>;
 

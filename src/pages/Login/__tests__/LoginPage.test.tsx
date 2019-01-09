@@ -2,7 +2,7 @@ import * as React from 'react';
 import { shallow } from 'enzyme';
 import LoginPage from '../LoginPage';
 import { KEY_CODES } from '../../../types/Common';
-import { LoginStatus } from 'src/store/Store';
+import { LoginStatus } from '../../../store/Store';
 
 const LoginProps = {
   status: LoginStatus.loggedOut,

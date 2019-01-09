@@ -1,6 +1,6 @@
 import { getType } from 'typesafe-actions';
 import { LoginActions } from '../LoginActions';
-import { LoginStatus } from 'src/store/Store';
+import { LoginStatus } from '../../store/Store';
 
 const session = {
   token:
@@ -20,7 +20,7 @@ describe('LoginActions', () => {
 
   it('Login action failure', () => {
     const error = 'Error with username or password';
-    const expectedAction = { error: error };
+    const expectedAction = { error: error, status: LoginStatus.error, session: undefined };
     expect(LoginActions.loginFailure(error).payload).toEqual(expectedAction);
   });
 

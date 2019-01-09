@@ -1,7 +1,7 @@
 import React from 'react';
 import { Alert, Row, Col, Form, FormGroup, FormControl, Button, HelpBlock } from 'patternfly-react';
 import { KEY_CODES } from '../../types/Common';
-import { LoginStatus, LoginSession } from 'src/store/Store';
+import { LoginStatus, LoginSession } from '../../store/Store';
 
 const kialiTitle = require('../../assets/img/logo-login.svg');
 

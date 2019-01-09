@@ -5,10 +5,7 @@ ShallowWrapper {
   Symbol(enzyme.__root__): [Circular],
   Symbol(enzyme.__unrendered__): <LoginPage
     authenticate={[MockFunction]}
-    error={undefined}
-    logging={false}
-    message=""
-    user={undefined}
+    status={2}
   />,
   Symbol(enzyme.__renderer__): Object {
     "batchedUpdates": [Function],
