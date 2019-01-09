@@ -4,12 +4,12 @@ import { SessionTimeout } from '../SessionTimeout/SessionTimeout';
 import { config } from '../../config';
 import { MILLISECONDS } from '../../types/Common';
 import Timer = NodeJS.Timer;
-import { Session } from 'src/store/Store';
+import { LoginSession } from 'src/store/Store';
 
 import moment from 'moment';
 
 type UserProps = {
-  session: Session;
+  session: LoginSession;
   logout: () => void;
   extendSession: () => void;
   checkCredentials: () => void;
@@ -54,13 +54,13 @@ class UserDropdown extends React.Component<UserProps, UserState> {
   }
 
   timeLeft = (): number => {
-    const expiresOn = moment(this.props.session.expiresOn).toDate();
+    const expiresOn = moment(this.props.session.expiresOn);
 
-    if (expiresOn <= new Date()) {
+    if (expiresOn <= moment()) {
       this.handleLogout();
     }
 
-    return expiresOn.getTime() - new Date().getTime();
+    return expiresOn.diff(moment(), 'seconds');
   };
 
   checkSession = () => {

@@ -1,13 +1,13 @@
 import React from 'react';
 import { Alert, Row, Col, Form, FormGroup, FormControl, Button, HelpBlock } from 'patternfly-react';
 import { KEY_CODES } from '../../types/Common';
-import { LoginStatus, Session } from 'src/store/Store';
+import { LoginStatus, LoginSession } from 'src/store/Store';
 
 const kialiTitle = require('../../assets/img/logo-login.svg');
 
 type LoginProps = {
   status: LoginStatus;
-  session?: Session;
+  session?: LoginSession;
   message?: string;
   error?: any;
   authenticate: (username: string, password: string) => void;

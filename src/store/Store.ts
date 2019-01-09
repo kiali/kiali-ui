@@ -1,6 +1,6 @@
 import { NotificationGroup } from '../types/MessageCenter';
 import Namespace from '../types/Namespace';
-import { DurationInSeconds, PollIntervalInMs, TimeInSeconds } from '../types/Common';
+import { DurationInSeconds, PollIntervalInMs, TimeInSeconds, UserName, RawDate, AuthToken } from '../types/Common';
 import { EdgeLabelMode, Layout } from '../types/GraphFilter';
 import { GraphType, NodeParamsType, SummaryData, CyData, GraphElements } from '../types/Graph';
 
@@ -70,15 +70,15 @@ export enum LoginStatus {
   error
 }
 
-export interface Session {
-  token: string;
-  expiresOn: string;
-  username: string;
+export interface LoginSession {
+  token: AuthToken;
+  expiresOn: RawDate;
+  username: UserName;
 }
 
 export interface LoginState {
   status: LoginStatus;
-  session?: Session;
+  session?: LoginSession;
   error?: any;
 }
 

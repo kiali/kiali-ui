@@ -1,52 +1,42 @@
 import * as API from './Api';
+import { ThunkDispatch } from 'redux-thunk';
 
-import { AuthInfo, AuthStrategy } from '../types/Auth';
-import { Session } from 'src/store/Store';
+import { KialiAppAction } from '../actions/KialiAppAction';
+import { LoginSession, KialiAppState } from '../store/Store';
+import { AuthInfo, AuthStrategy, AuthResult } from '../types/Auth';
+import { TimeInMilliseconds } from '../types/Common';
 
-// We just mock the types for state for now, to avoid injecting more
-// dependencies on the service.
-type Dispatch = any;
-type AppState = any;
-
-// Stores the result of a computation:
-// hold = stop all computation and wait for a side-effect, such as a redirect
-// continue = continue...
-// success = authentication was a success, session is available
-// failure = authentication failed, session is undefined but error is available
-export enum Result {
-  hold = 'hold',
-  continue = 'continue',
-  success = 'success',
-  failure = 'failure'
-}
+type Dispatch = ThunkDispatch<KialiAppState, void, KialiAppAction>;
 
 export interface LoginResult {
-  status: Result;
-  session?: Session;
+  status: AuthResult;
+  session?: LoginSession;
   error?: any;
 }
 
 interface LoginStrategy<T = {}> {
-  prepare: (info: AuthInfo) => Promise<Result>;
+  prepare: (info: AuthInfo) => Promise<AuthResult>;
   perform: (request: DispatchRequest<T>) => Promise<LoginResult>;
 }
 
 interface DispatchRequest<T> {
   dispatch: Dispatch;
-  getState: () => AppState;
+  state: KialiAppState;
   data: T;
 }
 
+type NullDispatch = DispatchRequest<any>;
+
 class AnonymousLogin implements LoginStrategy {
   public async prepare(info: AuthInfo) {
-    return Result.continue;
+    return AuthResult.CONTINUE;
   }
 
-  public async perform(request: DispatchRequest<{}>): Promise<LoginResult> {
-    const session: Session = (await API.login()).data;
+  public async perform(_request: NullDispatch): Promise<LoginResult> {
+    const session: LoginSession = (await API.login()).data;
 
     return {
-      status: Result.success,
+      status: AuthResult.SUCCESS,
       session: session
     };
   }
@@ -59,39 +49,39 @@ interface WebLoginData {
 
 class WebLogin implements LoginStrategy<WebLoginData> {
   public async prepare(info: AuthInfo) {
-    return Result.continue;
+    return AuthResult.CONTINUE;
   }
 
   public async perform(request: DispatchRequest<WebLoginData>): Promise<LoginResult> {
     const session = (await API.login(request.data)).data;
 
     return {
-      status: Result.success,
+      status: AuthResult.SUCCESS,
       session: session
     };
   }
 }
 
-class OpenshiftLogin implements LoginStrategy {
+class OpenshiftLogin implements LoginStrategy<any> {
   public async prepare(info: AuthInfo) {
-    if (info.authorizationEndpoint === undefined) {
-      return Result.failure;
+    if (!info.authorizationEndpoint) {
+      return AuthResult.FAILURE;
     }
 
     if (window.location.hash.startsWith('#access_token')) {
-      return Result.continue;
+      return AuthResult.CONTINUE;
     } else {
       window.location.href = info.authorizationEndpoint!;
 
-      return Result.hold;
+      return AuthResult.HOLD;
     }
   }
 
-  public async perform(request: DispatchRequest<any>): Promise<LoginResult> {
+  public async perform(_request: NullDispatch): Promise<LoginResult> {
     const session = (await API.checkOpenshiftAuth(window.location.hash.substring(1))).data;
 
     return {
-      status: Result.success,
+      status: AuthResult.SUCCESS,
       session: session
     };
   }
@@ -109,12 +99,12 @@ export class LoginDispatcher {
     this.strategyMapping.set(AuthStrategy.openshift, new OpenshiftLogin());
   }
 
-  public async prepare(): Promise<Result> {
+  public async prepare(): Promise<AuthResult> {
     const info = await this.getInfo();
     const strategy = this.strategyMapping.get(info.strategy)!;
 
     try {
-      const delay = async (ms: number = 3000) => {
+      const delay = async (ms: TimeInMilliseconds = 3000) => {
         return new Promise(resolve => setTimeout(resolve, ms));
       };
 
@@ -126,18 +116,18 @@ export class LoginDispatcher {
       // If it fails to run for a while, we return a failure state.
       // This assume that the user is leaving the page for auth, which should be
       // the case for oauth implementations.
-      if (result === Result.hold) {
+      if (result === AuthResult.HOLD) {
         await delay();
 
         return Promise.reject({
-          status: Result.failure,
+          status: AuthResult.FAILURE,
           error: 'Failed to redirect user to authentication page.'
         });
       } else {
         return result;
       }
     } catch (error) {
-      return Promise.reject({ status: Result.failure, error });
+      return Promise.reject({ status: AuthResult.FAILURE, error });
     }
   }
 
@@ -147,7 +137,7 @@ export class LoginDispatcher {
     try {
       return await strategy.perform(request);
     } catch (error) {
-      return Promise.reject({ status: Result.failure, error });
+      return Promise.reject({ status: AuthResult.FAILURE, error });
     }
   }
 

@@ -7,7 +7,7 @@ import { IstioConfigList } from '../types/IstioConfigList';
 import { Workload, WorkloadNamespaceResponse } from '../types/Workload';
 import { ServiceDetailsInfo } from '../types/ServiceInfo';
 import JaegerInfo from '../types/JaegerInfo';
-import { GrafanaInfo, Session } from '../store/Store';
+import { GrafanaInfo, LoginSession } from '../store/Store';
 import {
   AppHealth,
   ServiceHealth,
@@ -23,6 +23,7 @@ import { App } from '../types/App';
 import { NodeParamsType, NodeType, GraphDefinition } from '../types/Graph';
 import { config } from '../config';
 import { AuthToken, HTTP_VERBS } from '../types/Common';
+import { ServerConfig } from '../config/Config';
 
 export interface Response<T> {
   data: T;
@@ -46,7 +47,7 @@ const getHeaders = (auth?: AuthToken) => {
   return { ...loginHeaders, ...authHeader(auth) };
 };
 
-const basicAuth = (username: string, password: string) => {
+const basicAuth = (username: UserName, password: Password) => {
   return { username: username, password: password };
 };
 
@@ -60,14 +61,14 @@ export const newRequest = <P>(method: HTTP_VERBS, url: string, queryParams: any,
   });
 
 interface LoginRequest {
-  username: string;
-  password: string;
+  username: UserName;
+  password: Password;
 }
 
 /** Requests */
 export const login = async (
   request: LoginRequest = { username: 'anonymous', password: 'anonymous' }
-): Promise<Response<Session>> => {
+): Promise<Response<LoginSession>> => {
   return axios({
     method: HTTP_VERBS.GET,
     url: urls.token,
@@ -80,8 +81,8 @@ export const getAuthInfo = async () => {
   return newRequest<AuthInfo>(HTTP_VERBS.GET, urls.authInfo, {}, {});
 };
 
-export const checkOpenshiftAuth = async (data: any): Promise<Response<Session>> => {
-  return newRequest<Session>(HTTP_VERBS.POST, urls.checkOpenshiftAuth, {}, data);
+export const checkOpenshiftAuth = async (data: any): Promise<Response<LoginSession>> => {
+  return newRequest<LoginSession>(HTTP_VERBS.POST, urls.checkOpenshiftAuth, {}, data);
 };
 
 export const getStatus = () => {

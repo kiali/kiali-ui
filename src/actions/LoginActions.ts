@@ -1,5 +1,5 @@
 import { ActionType, createAction } from 'typesafe-actions';
-import { Session, LoginStatus } from '../store/Store';
+import { LoginSession, LoginStatus } from '../store/Store';
 
 enum LoginActionKeys {
   LOGIN_REQUEST = 'LOGIN_REQUEST',
@@ -11,21 +11,21 @@ enum LoginActionKeys {
 
 export interface LoginPayload {
   status: LoginStatus;
-  session?: Session;
+  session?: LoginSession;
   error?: any;
 }
 
 // synchronous action creators
 export const LoginActions = {
   loginRequest: createAction(LoginActionKeys.LOGIN_REQUEST),
-  loginExtend: createAction(LoginActionKeys.LOGIN_EXTEND, resolve => (session: Session) =>
+  loginExtend: createAction(LoginActionKeys.LOGIN_EXTEND, resolve => (session: LoginSession) =>
     resolve({
       status: LoginStatus.loggedIn,
       session: session,
       error: undefined
     } as LoginPayload)
   ),
-  loginSuccess: createAction(LoginActionKeys.LOGIN_SUCCESS, resolve => (session: Session) =>
+  loginSuccess: createAction(LoginActionKeys.LOGIN_SUCCESS, resolve => (session: LoginSession) =>
     resolve({
       status: LoginStatus.loggedIn,
       session: session,

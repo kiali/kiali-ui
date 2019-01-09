@@ -1,7 +1,7 @@
 import moment from 'moment';
 import { ThunkDispatch } from 'redux-thunk';
 import { HTTP_CODES } from '../types/Common';
-import { KialiAppState, LoginState, Session, LoginStatus } from '../store/Store';
+import { KialiAppState, LoginState, LoginSession, LoginStatus } from '../store/Store';
 import { KialiAppAction } from './KialiAppAction';
 import HelpDropdownThunkActions from './HelpDropdownThunkActions';
 import GrafanaThunkActions from './GrafanaThunkActions';
@@ -10,6 +10,7 @@ import * as API from '../services/Api';
 import { ServerConfigActions } from './ServerConfigActions';
 
 import * as Login from '../services/Login';
+import { AuthResult } from 'src/types/Auth';
 
 type KialiDispatch = ThunkDispatch<KialiAppState, void, KialiAppAction>;
 
@@ -18,7 +19,7 @@ const Dispatcher = new Login.LoginDispatcher();
 const shouldRelogin = (state?: LoginState): boolean =>
   !(state && state.status === LoginStatus.loggedIn && new Date() < moment(state.session!.expiresOn).toDate());
 
-const loginSuccess = async (dispatch: KialiDispatch, session: Session) => {
+const loginSuccess = async (dispatch: KialiDispatch, session: LoginSession) => {
   const authHeader = `Bearer ${session.token}`;
 
   try {
@@ -37,20 +38,23 @@ const loginSuccess = async (dispatch: KialiDispatch, session: Session) => {
   }
 };
 
-const performLogin = (dispatch: KialiDispatch, getState: () => KialiAppState, data?: any) => {
+// Performs the user login, dispatching to the proper login implementations.
+// The `data` argument is defined as `any` because the dispatchers receive
+// different kinds of data (such as e-mail/password, tokens).
+const performLogin = (dispatch: KialiDispatch, state: KialiAppState, data?: any) => {
   dispatch(LoginActions.loginRequest());
 
   const bail = (error: Login.LoginResult) =>
     data ? dispatch(LoginActions.loginFailure(error)) : dispatch(LoginActions.logoutSuccess());
 
-  Dispatcher.prepare().then((result: Login.Result) => {
-    if (result === Login.Result.continue) {
-      Dispatcher.perform({ dispatch, getState, data }).then(
+  Dispatcher.prepare().then((result: AuthResult) => {
+    if (result === AuthResult.CONTINUE) {
+      Dispatcher.perform({ dispatch, state, data }).then(
         loginResult => loginSuccess(dispatch, loginResult.session!),
         error => bail(error)
       );
     } else {
-      bail({ status: Login.Result.failure, error: 'Preparation for login failed, try again.' });
+      bail({ status: AuthResult.FAILURE, error: 'Preparation for login failed, try again.' });
     }
   });
 };
@@ -67,7 +71,7 @@ const LoginThunkActions = {
       const state: KialiAppState = getState();
 
       if (shouldRelogin(state.authentication)) {
-        performLogin(dispatch, getState);
+        performLogin(dispatch, state);
       } else {
         loginSuccess(dispatch, state.authentication!.session!);
       }
@@ -76,7 +80,7 @@ const LoginThunkActions = {
   // action creator that performs the async request
   authenticate: (username: string, password: string) => {
     return (dispatch: KialiDispatch, getState: () => KialiAppState) =>
-      performLogin(dispatch, getState, { username, password });
+      performLogin(dispatch, getState(), { username, password });
   }
 };
 
