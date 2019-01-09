@@ -4,12 +4,12 @@ exports[`#LoginPage render correctly should render LoginPage 1`] = `
 ShallowWrapper {
   Symbol(enzyme.__root__): [Circular],
   Symbol(enzyme.__unrendered__): <LoginPage
-    authenticate={[Function]}
+    authenticate={[MockFunction]}
     error={undefined}
     logging={false}
     message=""
     user={undefined}
-/>,
+  />,
   Symbol(enzyme.__renderer__): Object {
     "batchedUpdates": [Function],
     "getNode": [Function],
@@ -25,108 +25,108 @@ ShallowWrapper {
     "props": Object {
       "children": <div
         className="container-fluid"
->
+      >
         <Row
-                bsClass="row"
-                componentClass="div"
+          bsClass="row"
+          componentClass="div"
         >
-                <Col
-                        bsClass="col"
-                        componentClass="div"
-                        lg={6}
-                        lgOffset={3}
-                        md={6}
-                        mdOffset={3}
-                        sm={8}
-                        smOffset={2}
+          <Col
+            bsClass="col"
+            componentClass="div"
+            lg={6}
+            lgOffset={3}
+            md={6}
+            mdOffset={3}
+            sm={8}
+            smOffset={2}
+          >
+            <header
+              className="login-pf-page-header"
+            >
+              <img
+                alt="logo"
+                className="login-pf-brand"
+                src="logo-login.svg"
+              />
+            </header>
+            <Row
+              bsClass="row"
+              componentClass="div"
+            >
+              <Col
+                bsClass="col"
+                componentClass="div"
+                lg={8}
+                lgOffset={2}
+                md={8}
+                mdOffset={2}
+                sm={10}
+                smOffset={1}
+              >
+                <div
+                  className="card-pf"
                 >
-                        <header
-                                className="login-pf-page-header"
-                        >
-                                <img
-                                        alt="logo"
-                                        className="login-pf-brand"
-                                        src="logo-login.svg"
-                                />
-                        </header>
-                        <Row
-                                bsClass="row"
-                                componentClass="div"
-                        >
-                                <Col
-                                        bsClass="col"
-                                        componentClass="div"
-                                        lg={8}
-                                        lgOffset={2}
-                                        md={8}
-                                        mdOffset={2}
-                                        sm={10}
-                                        smOffset={1}
-                                >
-                                        <div
-                                                className="card-pf"
-                                        >
-                                                <header
-                                                        className="login-pf-header"
-                                                />
-                                                <Form
-                                                        bsClass="form"
-                                                        componentClass="form"
-                                                        horizontal={false}
-                                                        id="kiali-login"
-                                                        inline={false}
-                                                        onSubmit={[Function]}
-                                                >
-                                                        <FormGroup
-                                                                bsClass="form-group"
-                                                        >
-                                                                <FormControl
-                                                                        bsClass="form-control"
-                                                                        componentClass="input"
-                                                                        disabled={false}
-                                                                        id="username"
-                                                                        name="username"
-                                                                        onChange={[Function]}
-                                                                        onKeyPress={[Function]}
-                                                                        placeholder="Username"
-                                                                        required={true}
-                                                                        type="text"
-                                                                />
-                                                        </FormGroup>
-                                                        <FormGroup
-                                                                bsClass="form-group"
-                                                        >
-                                                                <FormControl
-                                                                        bsClass="form-control"
-                                                                        componentClass="input"
-                                                                        disabled={false}
-                                                                        name="password"
-                                                                        onChange={[Function]}
-                                                                        onKeyPress={[Function]}
-                                                                        placeholder="Password"
-                                                                        required={true}
-                                                                        type="password"
-                                                                />
-                                                        </FormGroup>
-                                                        <Button
-                                                                active={false}
-                                                                block={false}
-                                                                bsClass="btn"
-                                                                bsStyle="default"
-                                                                className="btn btn-primary btn-block btn-lg"
-                                                                disabled={false}
-                                                                onKeyPress={[Function]}
-                                                                type="submit"
-                                                        >
-                                                                Log In
-                                                        </Button>
-                                                </Form>
-                                        </div>
-                                </Col>
-                        </Row>
-                </Col>
+                  <header
+                    className="login-pf-header"
+                  />
+                  <Form
+                    bsClass="form"
+                    componentClass="form"
+                    horizontal={false}
+                    id="kiali-login"
+                    inline={false}
+                    onSubmit={[Function]}
+                  >
+                    <FormGroup
+                      bsClass="form-group"
+                    >
+                      <FormControl
+                        bsClass="form-control"
+                        componentClass="input"
+                        disabled={false}
+                        id="username"
+                        name="username"
+                        onChange={[Function]}
+                        onKeyPress={[Function]}
+                        placeholder="Username"
+                        required={true}
+                        type="text"
+                      />
+                    </FormGroup>
+                    <FormGroup
+                      bsClass="form-group"
+                    >
+                      <FormControl
+                        bsClass="form-control"
+                        componentClass="input"
+                        disabled={false}
+                        name="password"
+                        onChange={[Function]}
+                        onKeyPress={[Function]}
+                        placeholder="Password"
+                        required={true}
+                        type="password"
+                      />
+                    </FormGroup>
+                    <Button
+                      active={false}
+                      block={false}
+                      bsClass="btn"
+                      bsStyle="default"
+                      className="btn btn-primary btn-block btn-lg"
+                      disabled={false}
+                      onKeyPress={[Function]}
+                      type="submit"
+                    >
+                      Log In
+                    </Button>
+                  </Form>
+                </div>
+              </Col>
+            </Row>
+          </Col>
         </Row>
-</div>,
+      </div>,
       "className": "login-pf-page",
     },
     "ref": null,
@@ -138,103 +138,103 @@ ShallowWrapper {
         "children": <Row
           bsClass="row"
           componentClass="div"
->
+        >
           <Col
-                    bsClass="col"
-                    componentClass="div"
-                    lg={6}
-                    lgOffset={3}
-                    md={6}
-                    mdOffset={3}
-                    sm={8}
-                    smOffset={2}
+            bsClass="col"
+            componentClass="div"
+            lg={6}
+            lgOffset={3}
+            md={6}
+            mdOffset={3}
+            sm={8}
+            smOffset={2}
           >
-                    <header
-                              className="login-pf-page-header"
+            <header
+              className="login-pf-page-header"
+            >
+              <img
+                alt="logo"
+                className="login-pf-brand"
+                src="logo-login.svg"
+              />
+            </header>
+            <Row
+              bsClass="row"
+              componentClass="div"
+            >
+              <Col
+                bsClass="col"
+                componentClass="div"
+                lg={8}
+                lgOffset={2}
+                md={8}
+                mdOffset={2}
+                sm={10}
+                smOffset={1}
+              >
+                <div
+                  className="card-pf"
+                >
+                  <header
+                    className="login-pf-header"
+                  />
+                  <Form
+                    bsClass="form"
+                    componentClass="form"
+                    horizontal={false}
+                    id="kiali-login"
+                    inline={false}
+                    onSubmit={[Function]}
+                  >
+                    <FormGroup
+                      bsClass="form-group"
                     >
-                              <img
-                                        alt="logo"
-                                        className="login-pf-brand"
-                                        src="logo-login.svg"
-                              />
-                    </header>
-                    <Row
-                              bsClass="row"
-                              componentClass="div"
+                      <FormControl
+                        bsClass="form-control"
+                        componentClass="input"
+                        disabled={false}
+                        id="username"
+                        name="username"
+                        onChange={[Function]}
+                        onKeyPress={[Function]}
+                        placeholder="Username"
+                        required={true}
+                        type="text"
+                      />
+                    </FormGroup>
+                    <FormGroup
+                      bsClass="form-group"
                     >
-                              <Col
-                                        bsClass="col"
-                                        componentClass="div"
-                                        lg={8}
-                                        lgOffset={2}
-                                        md={8}
-                                        mdOffset={2}
-                                        sm={10}
-                                        smOffset={1}
-                              >
-                                        <div
-                                                  className="card-pf"
-                                        >
-                                                  <header
-                                                            className="login-pf-header"
-                                                  />
-                                                  <Form
-                                                            bsClass="form"
-                                                            componentClass="form"
-                                                            horizontal={false}
-                                                            id="kiali-login"
-                                                            inline={false}
-                                                            onSubmit={[Function]}
-                                                  >
-                                                            <FormGroup
-                                                                      bsClass="form-group"
-                                                            >
-                                                                      <FormControl
-                                                                                bsClass="form-control"
-                                                                                componentClass="input"
-                                                                                disabled={false}
-                                                                                id="username"
-                                                                                name="username"
-                                                                                onChange={[Function]}
-                                                                                onKeyPress={[Function]}
-                                                                                placeholder="Username"
-                                                                                required={true}
-                                                                                type="text"
-                                                                      />
-                                                            </FormGroup>
-                                                            <FormGroup
-                                                                      bsClass="form-group"
-                                                            >
-                                                                      <FormControl
-                                                                                bsClass="form-control"
-                                                                                componentClass="input"
-                                                                                disabled={false}
-                                                                                name="password"
-                                                                                onChange={[Function]}
-                                                                                onKeyPress={[Function]}
-                                                                                placeholder="Password"
-                                                                                required={true}
-                                                                                type="password"
-                                                                      />
-                                                            </FormGroup>
-                                                            <Button
-                                                                      active={false}
-                                                                      block={false}
-                                                                      bsClass="btn"
-                                                                      bsStyle="default"
-                                                                      className="btn btn-primary btn-block btn-lg"
-                                                                      disabled={false}
-                                                                      onKeyPress={[Function]}
-                                                                      type="submit"
-                                                            >
-                                                                      Log In
-                                                            </Button>
-                                                  </Form>
-                                        </div>
-                              </Col>
-                    </Row>
+                      <FormControl
+                        bsClass="form-control"
+                        componentClass="input"
+                        disabled={false}
+                        name="password"
+                        onChange={[Function]}
+                        onKeyPress={[Function]}
+                        placeholder="Password"
+                        required={true}
+                        type="password"
+                      />
+                    </FormGroup>
+                    <Button
+                      active={false}
+                      block={false}
+                      bsClass="btn"
+                      bsStyle="default"
+                      className="btn btn-primary btn-block btn-lg"
+                      disabled={false}
+                      onKeyPress={[Function]}
+                      type="submit"
+                    >
+                      Log In
+                    </Button>
+                  </Form>
+                </div>
+              </Col>
+            </Row>
           </Col>
-</Row>,
+        </Row>,
         "className": "container-fluid",
       },
       "ref": null,
@@ -253,92 +253,92 @@ ShallowWrapper {
             mdOffset={3}
             sm={8}
             smOffset={2}
->
+          >
             <header
-                        className="login-pf-page-header"
+              className="login-pf-page-header"
             >
-                        <img
-                                    alt="logo"
-                                    className="login-pf-brand"
-                                    src="logo-login.svg"
-                        />
+              <img
+                alt="logo"
+                className="login-pf-brand"
+                src="logo-login.svg"
+              />
             </header>
             <Row
-                        bsClass="row"
-                        componentClass="div"
+              bsClass="row"
+              componentClass="div"
             >
-                        <Col
-                                    bsClass="col"
-                                    componentClass="div"
-                                    lg={8}
-                                    lgOffset={2}
-                                    md={8}
-                                    mdOffset={2}
-                                    sm={10}
-                                    smOffset={1}
-                        >
-                                    <div
-                                                className="card-pf"
-                                    >
-                                                <header
-                                                            className="login-pf-header"
-                                                />
-                                                <Form
-                                                            bsClass="form"
-                                                            componentClass="form"
-                                                            horizontal={false}
-                                                            id="kiali-login"
-                                                            inline={false}
-                                                            onSubmit={[Function]}
-                                                >
-                                                            <FormGroup
-                                                                        bsClass="form-group"
-                                                            >
-                                                                        <FormControl
-                                                                                    bsClass="form-control"
-                                                                                    componentClass="input"
-                                                                                    disabled={false}
-                                                                                    id="username"
-                                                                                    name="username"
-                                                                                    onChange={[Function]}
-                                                                                    onKeyPress={[Function]}
-                                                                                    placeholder="Username"
-                                                                                    required={true}
-                                                                                    type="text"
-                                                                        />
-                                                            </FormGroup>
-                                                            <FormGroup
-                                                                        bsClass="form-group"
-                                                            >
-                                                                        <FormControl
-                                                                                    bsClass="form-control"
-                                                                                    componentClass="input"
-                                                                                    disabled={false}
-                                                                                    name="password"
-                                                                                    onChange={[Function]}
-                                                                                    onKeyPress={[Function]}
-                                                                                    placeholder="Password"
-                                                                                    required={true}
-                                                                                    type="password"
-                                                                        />
-                                                            </FormGroup>
-                                                            <Button
-                                                                        active={false}
-                                                                        block={false}
-                                                                        bsClass="btn"
-                                                                        bsStyle="default"
-                                                                        className="btn btn-primary btn-block btn-lg"
-                                                                        disabled={false}
-                                                                        onKeyPress={[Function]}
-                                                                        type="submit"
-                                                            >
-                                                                        Log In
-                                                            </Button>
-                                                </Form>
-                                    </div>
-                        </Col>
+              <Col
+                bsClass="col"
+                componentClass="div"
+                lg={8}
+                lgOffset={2}
+                md={8}
+                mdOffset={2}
+                sm={10}
+                smOffset={1}
+              >
+                <div
+                  className="card-pf"
+                >
+                  <header
+                    className="login-pf-header"
+                  />
+                  <Form
+                    bsClass="form"
+                    componentClass="form"
+                    horizontal={false}
+                    id="kiali-login"
+                    inline={false}
+                    onSubmit={[Function]}
+                  >
+                    <FormGroup
+                      bsClass="form-group"
+                    >
+                      <FormControl
+                        bsClass="form-control"
+                        componentClass="input"
+                        disabled={false}
+                        id="username"
+                        name="username"
+                        onChange={[Function]}
+                        onKeyPress={[Function]}
+                        placeholder="Username"
+                        required={true}
+                        type="text"
+                      />
+                    </FormGroup>
+                    <FormGroup
+                      bsClass="form-group"
+                    >
+                      <FormControl
+                        bsClass="form-control"
+                        componentClass="input"
+                        disabled={false}
+                        name="password"
+                        onChange={[Function]}
+                        onKeyPress={[Function]}
+                        placeholder="Password"
+                        required={true}
+                        type="password"
+                      />
+                    </FormGroup>
+                    <Button
+                      active={false}
+                      block={false}
+                      bsClass="btn"
+                      bsStyle="default"
+                      className="btn btn-primary btn-block btn-lg"
+                      disabled={false}
+                      onKeyPress={[Function]}
+                      type="submit"
+                    >
+                      Log In
+                    </Button>
+                  </Form>
+                </div>
+              </Col>
             </Row>
-</Col>,
+          </Col>,
           "componentClass": "div",
         },
         "ref": null,
@@ -351,88 +351,88 @@ ShallowWrapper {
             "children": Array [
               <header
                 className="login-pf-page-header"
->
+              >
                 <img
-                                alt="logo"
-                                className="login-pf-brand"
-                                src="logo-login.svg"
+                  alt="logo"
+                  className="login-pf-brand"
+                  src="logo-login.svg"
                 />
-</header>,
+              </header>,
               <Row
                 bsClass="row"
                 componentClass="div"
->
+              >
                 <Col
-                                bsClass="col"
-                                componentClass="div"
-                                lg={8}
-                                lgOffset={2}
-                                md={8}
-                                mdOffset={2}
-                                sm={10}
-                                smOffset={1}
+                  bsClass="col"
+                  componentClass="div"
+                  lg={8}
+                  lgOffset={2}
+                  md={8}
+                  mdOffset={2}
+                  sm={10}
+                  smOffset={1}
                 >
-                                <div
-                                                className="card-pf"
-                                >
-                                                <header
-                                                                className="login-pf-header"
-                                                />
-                                                <Form
-                                                                bsClass="form"
-                                                                componentClass="form"
-                                                                horizontal={false}
-                                                                id="kiali-login"
-                                                                inline={false}
-                                                                onSubmit={[Function]}
-                                                >
-                                                                <FormGroup
-                                                                                bsClass="form-group"
-                                                                >
-                                                                                <FormControl
-                                                                                                bsClass="form-control"
-                                                                                                componentClass="input"
-                                                                                                disabled={false}
-                                                                                                id="username"
-                                                                                                name="username"
-                                                                                                onChange={[Function]}
-                                                                                                onKeyPress={[Function]}
-                                                                                                placeholder="Username"
-                                                                                                required={true}
-                                                                                                type="text"
-                                                                                />
-                                                                </FormGroup>
-                                                                <FormGroup
-                                                                                bsClass="form-group"
-                                                                >
-                                                                                <FormControl
-                                                                                                bsClass="form-control"
-                                                                                                componentClass="input"
-                                                                                                disabled={false}
-                                                                                                name="password"
-                                                                                                onChange={[Function]}
-                                                                                                onKeyPress={[Function]}
-                                                                                                placeholder="Password"
-                                                                                                required={true}
-                                                                                                type="password"
-                                                                                />
-                                                                </FormGroup>
-                                                                <Button
-                                                                                active={false}
-                                                                                block={false}
-                                                                                bsClass="btn"
-                                                                                bsStyle="default"
-                                                                                className="btn btn-primary btn-block btn-lg"
-                                                                                disabled={false}
-                                                                                onKeyPress={[Function]}
-                                                                                type="submit"
-                                                                >
-                                                                                Log In
-                                                                </Button>
-                                                </Form>
-                                </div>
+                  <div
+                    className="card-pf"
+                  >
+                    <header
+                      className="login-pf-header"
+                    />
+                    <Form
+                      bsClass="form"
+                      componentClass="form"
+                      horizontal={false}
+                      id="kiali-login"
+                      inline={false}
+                      onSubmit={[Function]}
+                    >
+                      <FormGroup
+                        bsClass="form-group"
+                      >
+                        <FormControl
+                          bsClass="form-control"
+                          componentClass="input"
+                          disabled={false}
+                          id="username"
+                          name="username"
+                          onChange={[Function]}
+                          onKeyPress={[Function]}
+                          placeholder="Username"
+                          required={true}
+                          type="text"
+                        />
+                      </FormGroup>
+                      <FormGroup
+                        bsClass="form-group"
+                      >
+                        <FormControl
+                          bsClass="form-control"
+                          componentClass="input"
+                          disabled={false}
+                          name="password"
+                          onChange={[Function]}
+                          onKeyPress={[Function]}
+                          placeholder="Password"
+                          required={true}
+                          type="password"
+                        />
+                      </FormGroup>
+                      <Button
+                        active={false}
+                        block={false}
+                        bsClass="btn"
+                        bsStyle="default"
+                        className="btn btn-primary btn-block btn-lg"
+                        disabled={false}
+                        onKeyPress={[Function]}
+                        type="submit"
+                      >
+                        Log In
+                      </Button>
+                    </Form>
+                  </div>
                 </Col>
-</Row>,
+              </Row>,
             ],
             "componentClass": "div",
             "lg": 6,
@@ -453,7 +453,7 @@ ShallowWrapper {
                   alt="logo"
                   className="login-pf-brand"
                   src="logo-login.svg"
-/>,
+                />,
                 "className": "login-pf-page-header",
               },
               "ref": null,
@@ -487,67 +487,67 @@ ShallowWrapper {
                   mdOffset={2}
                   sm={10}
                   smOffset={1}
->
+                >
                   <div
-                                    className="card-pf"
+                    className="card-pf"
                   >
-                                    <header
-                                                      className="login-pf-header"
-                                    />
-                                    <Form
-                                                      bsClass="form"
-                                                      componentClass="form"
-                                                      horizontal={false}
-                                                      id="kiali-login"
-                                                      inline={false}
-                                                      onSubmit={[Function]}
-                                    >
-                                                      <FormGroup
-                                                                        bsClass="form-group"
-                                                      >
-                                                                        <FormControl
-                                                                                          bsClass="form-control"
-                                                                                          componentClass="input"
-                                                                                          disabled={false}
-                                                                                          id="username"
-                                                                                          name="username"
-                                                                                          onChange={[Function]}
-                                                                                          onKeyPress={[Function]}
-                                                                                          placeholder="Username"
-                                                                                          required={true}
-                                                                                          type="text"
-                                                                        />
-                                                      </FormGroup>
-                                                      <FormGroup
-                                                                        bsClass="form-group"
-                                                      >
-                                                                        <FormControl
-                                                                                          bsClass="form-control"
-                                                                                          componentClass="input"
-                                                                                          disabled={false}
-                                                                                          name="password"
-                                                                                          onChange={[Function]}
-                                                                                          onKeyPress={[Function]}
-                                                                                          placeholder="Password"
-                                                                                          required={true}
-                                                                                          type="password"
-                                                                        />
-                                                      </FormGroup>
-                                                      <Button
-                                                                        active={false}
-                                                                        block={false}
-                                                                        bsClass="btn"
-                                                                        bsStyle="default"
-                                                                        className="btn btn-primary btn-block btn-lg"
-                                                                        disabled={false}
-                                                                        onKeyPress={[Function]}
-                                                                        type="submit"
-                                                      >
-                                                                        Log In
-                                                      </Button>
-                                    </Form>
+                    <header
+                      className="login-pf-header"
+                    />
+                    <Form
+                      bsClass="form"
+                      componentClass="form"
+                      horizontal={false}
+                      id="kiali-login"
+                      inline={false}
+                      onSubmit={[Function]}
+                    >
+                      <FormGroup
+                        bsClass="form-group"
+                      >
+                        <FormControl
+                          bsClass="form-control"
+                          componentClass="input"
+                          disabled={false}
+                          id="username"
+                          name="username"
+                          onChange={[Function]}
+                          onKeyPress={[Function]}
+                          placeholder="Username"
+                          required={true}
+                          type="text"
+                        />
+                      </FormGroup>
+                      <FormGroup
+                        bsClass="form-group"
+                      >
+                        <FormControl
+                          bsClass="form-control"
+                          componentClass="input"
+                          disabled={false}
+                          name="password"
+                          onChange={[Function]}
+                          onKeyPress={[Function]}
+                          placeholder="Password"
+                          required={true}
+                          type="password"
+                        />
+                      </FormGroup>
+                      <Button
+                        active={false}
+                        block={false}
+                        bsClass="btn"
+                        bsStyle="default"
+                        className="btn btn-primary btn-block btn-lg"
+                        disabled={false}
+                        onKeyPress={[Function]}
+                        type="submit"
+                      >
+                        Log In
+                      </Button>
+                    </Form>
                   </div>
-</Col>,
+                </Col>,
                 "componentClass": "div",
               },
               "ref": null,
@@ -559,63 +559,63 @@ ShallowWrapper {
                   "bsClass": "col",
                   "children": <div
                     className="card-pf"
->
+                  >
                     <header
-                                        className="login-pf-header"
+                      className="login-pf-header"
                     />
                     <Form
-                                        bsClass="form"
-                                        componentClass="form"
-                                        horizontal={false}
-                                        id="kiali-login"
-                                        inline={false}
-                                        onSubmit={[Function]}
+                      bsClass="form"
+                      componentClass="form"
+                      horizontal={false}
+                      id="kiali-login"
+                      inline={false}
+                      onSubmit={[Function]}
                     >
-                                        <FormGroup
-                                                            bsClass="form-group"
-                                        >
-                                                            <FormControl
-                                                                                bsClass="form-control"
-                                                                                componentClass="input"
-                                                                                disabled={false}
-                                                                                id="username"
-                                                                                name="username"
-                                                                                onChange={[Function]}
-                                                                                onKeyPress={[Function]}
-                                                                                placeholder="Username"
-                                                                                required={true}
-                                                                                type="text"
-                                                            />
-                                        </FormGroup>
-                                        <FormGroup
-                                                            bsClass="form-group"
-                                        >
-                                                            <FormControl
-                                                                                bsClass="form-control"
-                                                                                componentClass="input"
-                                                                                disabled={false}
-                                                                                name="password"
-                                                                                onChange={[Function]}
-                                                                                onKeyPress={[Function]}
-                                                                                placeholder="Password"
-                                                                                required={true}
-                                                                                type="password"
-                                                            />
-                                        </FormGroup>
-                                        <Button
-                                                            active={false}
-                                                            block={false}
-                                                            bsClass="btn"
-                                                            bsStyle="default"
-                                                            className="btn btn-primary btn-block btn-lg"
-                                                            disabled={false}
-                                                            onKeyPress={[Function]}
-                                                            type="submit"
-                                        >
-                                                            Log In
-                                        </Button>
+                      <FormGroup
+                        bsClass="form-group"
+                      >
+                        <FormControl
+                          bsClass="form-control"
+                          componentClass="input"
+                          disabled={false}
+                          id="username"
+                          name="username"
+                          onChange={[Function]}
+                          onKeyPress={[Function]}
+                          placeholder="Username"
+                          required={true}
+                          type="text"
+                        />
+                      </FormGroup>
+                      <FormGroup
+                        bsClass="form-group"
+                      >
+                        <FormControl
+                          bsClass="form-control"
+                          componentClass="input"
+                          disabled={false}
+                          name="password"
+                          onChange={[Function]}
+                          onKeyPress={[Function]}
+                          placeholder="Password"
+                          required={true}
+                          type="password"
+                        />
+                      </FormGroup>
+                      <Button
+                        active={false}
+                        block={false}
+                        bsClass="btn"
+                        bsStyle="default"
+                        className="btn btn-primary btn-block btn-lg"
+                        disabled={false}
+                        onKeyPress={[Function]}
+                        type="submit"
+                      >
+                        Log In
+                      </Button>
                     </Form>
-</div>,
+                  </div>,
                   "componentClass": "div",
                   "lg": 8,
                   "lgOffset": 2,
@@ -633,7 +633,7 @@ ShallowWrapper {
                     "children": Array [
                       <header
                         className="login-pf-header"
-/>,
+                      />,
                       undefined,
                       <Form
                         bsClass="form"
@@ -642,51 +642,51 @@ ShallowWrapper {
                         id="kiali-login"
                         inline={false}
                         onSubmit={[Function]}
->
+                      >
                         <FormGroup
-                                                bsClass="form-group"
+                          bsClass="form-group"
                         >
-                                                <FormControl
-                                                                        bsClass="form-control"
-                                                                        componentClass="input"
-                                                                        disabled={false}
-                                                                        id="username"
-                                                                        name="username"
-                                                                        onChange={[Function]}
-                                                                        onKeyPress={[Function]}
-                                                                        placeholder="Username"
-                                                                        required={true}
-                                                                        type="text"
-                                                />
+                          <FormControl
+                            bsClass="form-control"
+                            componentClass="input"
+                            disabled={false}
+                            id="username"
+                            name="username"
+                            onChange={[Function]}
+                            onKeyPress={[Function]}
+                            placeholder="Username"
+                            required={true}
+                            type="text"
+                          />
                         </FormGroup>
                         <FormGroup
-                                                bsClass="form-group"
+                          bsClass="form-group"
                         >
-                                                <FormControl
-                                                                        bsClass="form-control"
-                                                                        componentClass="input"
-                                                                        disabled={false}
-                                                                        name="password"
-                                                                        onChange={[Function]}
-                                                                        onKeyPress={[Function]}
-                                                                        placeholder="Password"
-                                                                        required={true}
-                                                                        type="password"
-                                                />
+                          <FormControl
+                            bsClass="form-control"
+                            componentClass="input"
+                            disabled={false}
+                            name="password"
+                            onChange={[Function]}
+                            onKeyPress={[Function]}
+                            placeholder="Password"
+                            required={true}
+                            type="password"
+                          />
                         </FormGroup>
                         <Button
-                                                active={false}
-                                                block={false}
-                                                bsClass="btn"
-                                                bsStyle="default"
-                                                className="btn btn-primary btn-block btn-lg"
-                                                disabled={false}
-                                                onKeyPress={[Function]}
-                                                type="submit"
+                          active={false}
+                          block={false}
+                          bsClass="btn"
+                          bsStyle="default"
+                          className="btn btn-primary btn-block btn-lg"
+                          disabled={false}
+                          onKeyPress={[Function]}
+                          type="submit"
                         >
-                                                Log In
+                          Log In
                         </Button>
-</Form>,
+                      </Form>,
                     ],
                     "className": "card-pf",
                   },
@@ -713,35 +713,35 @@ ShallowWrapper {
                         "children": Array [
                           <FormGroup
                             bsClass="form-group"
->
+                          >
                             <FormControl
-                                                        bsClass="form-control"
-                                                        componentClass="input"
-                                                        disabled={false}
-                                                        id="username"
-                                                        name="username"
-                                                        onChange={[Function]}
-                                                        onKeyPress={[Function]}
-                                                        placeholder="Username"
-                                                        required={true}
-                                                        type="text"
+                              bsClass="form-control"
+                              componentClass="input"
+                              disabled={false}
+                              id="username"
+                              name="username"
+                              onChange={[Function]}
+                              onKeyPress={[Function]}
+                              placeholder="Username"
+                              required={true}
+                              type="text"
                             />
-</FormGroup>,
+                          </FormGroup>,
                           <FormGroup
                             bsClass="form-group"
->
+                          >
                             <FormControl
-                                                        bsClass="form-control"
-                                                        componentClass="input"
-                                                        disabled={false}
-                                                        name="password"
-                                                        onChange={[Function]}
-                                                        onKeyPress={[Function]}
-                                                        placeholder="Password"
-                                                        required={true}
-                                                        type="password"
+                              bsClass="form-control"
+                              componentClass="input"
+                              disabled={false}
+                              name="password"
+                              onChange={[Function]}
+                              onKeyPress={[Function]}
+                              placeholder="Password"
+                              required={true}
+                              type="password"
                             />
-</FormGroup>,
+                          </FormGroup>,
                           <Button
                             active={false}
                             block={false}
@@ -751,9 +751,9 @@ ShallowWrapper {
                             disabled={false}
                             onKeyPress={[Function]}
                             type="submit"
->
+                          >
                             Log In
-</Button>,
+                          </Button>,
                         ],
                         "componentClass": "form",
                         "horizontal": false,
@@ -781,7 +781,7 @@ ShallowWrapper {
                                 placeholder="Username"
                                 required={true}
                                 type="text"
-/>,
+                              />,
                               false,
                             ],
                           },
@@ -828,7 +828,7 @@ ShallowWrapper {
                                 placeholder="Password"
                                 required={true}
                                 type="password"
-/>,
+                              />,
                               false,
                             ],
                           },
@@ -903,108 +903,108 @@ ShallowWrapper {
       "props": Object {
         "children": <div
           className="container-fluid"
->
+        >
           <Row
-                    bsClass="row"
-                    componentClass="div"
+            bsClass="row"
+            componentClass="div"
           >
-                    <Col
-                              bsClass="col"
-                              componentClass="div"
-                              lg={6}
-                              lgOffset={3}
-                              md={6}
-                              mdOffset={3}
-                              sm={8}
-                              smOffset={2}
+            <Col
+              bsClass="col"
+              componentClass="div"
+              lg={6}
+              lgOffset={3}
+              md={6}
+              mdOffset={3}
+              sm={8}
+              smOffset={2}
+            >
+              <header
+                className="login-pf-page-header"
+              >
+                <img
+                  alt="logo"
+                  className="login-pf-brand"
+                  src="logo-login.svg"
+                />
+              </header>
+              <Row
+                bsClass="row"
+                componentClass="div"
+              >
+                <Col
+                  bsClass="col"
+                  componentClass="div"
+                  lg={8}
+                  lgOffset={2}
+                  md={8}
+                  mdOffset={2}
+                  sm={10}
+                  smOffset={1}
+                >
+                  <div
+                    className="card-pf"
+                  >
+                    <header
+                      className="login-pf-header"
+                    />
+                    <Form
+                      bsClass="form"
+                      componentClass="form"
+                      horizontal={false}
+                      id="kiali-login"
+                      inline={false}
+                      onSubmit={[Function]}
                     >
-                              <header
-                                        className="login-pf-page-header"
-                              >
-                                        <img
-                                                  alt="logo"
-                                                  className="login-pf-brand"
-                                                  src="logo-login.svg"
-                                        />
-                              </header>
-                              <Row
-                                        bsClass="row"
-                                        componentClass="div"
-                              >
-                                        <Col
-                                                  bsClass="col"
-                                                  componentClass="div"
-                                                  lg={8}
-                                                  lgOffset={2}
-                                                  md={8}
-                                                  mdOffset={2}
-                                                  sm={10}
-                                                  smOffset={1}
-                                        >
-                                                  <div
-                                                            className="card-pf"
-                                                  >
-                                                            <header
-                                                                      className="login-pf-header"
-                                                            />
-                                                            <Form
-                                                                      bsClass="form"
-                                                                      componentClass="form"
-                                                                      horizontal={false}
-                                                                      id="kiali-login"
-                                                                      inline={false}
-                                                                      onSubmit={[Function]}
-                                                            >
-                                                                      <FormGroup
-                                                                                bsClass="form-group"
-                                                                      >
-                                                                                <FormControl
-                                                                                          bsClass="form-control"
-                                                                                          componentClass="input"
-                                                                                          disabled={false}
-                                                                                          id="username"
-                                                                                          name="username"
-                                                                                          onChange={[Function]}
-                                                                                          onKeyPress={[Function]}
-                                                                                          placeholder="Username"
-                                                                                          required={true}
-                                                                                          type="text"
-                                                                                />
-                                                                      </FormGroup>
-                                                                      <FormGroup
-                                                                                bsClass="form-group"
-                                                                      >
-                                                                                <FormControl
-                                                                                          bsClass="form-control"
-                                                                                          componentClass="input"
-                                                                                          disabled={false}
-                                                                                          name="password"
-                                                                                          onChange={[Function]}
-                                                                                          onKeyPress={[Function]}
-                                                                                          placeholder="Password"
-                                                                                          required={true}
-                                                                                          type="password"
-                                                                                />
-                                                                      </FormGroup>
-                                                                      <Button
-                                                                                active={false}
-                                                                                block={false}
-                                                                                bsClass="btn"
-                                                                                bsStyle="default"
-                                                                                className="btn btn-primary btn-block btn-lg"
-                                                                                disabled={false}
-                                                                                onKeyPress={[Function]}
-                                                                                type="submit"
-                                                                      >
-                                                                                Log In
-                                                                      </Button>
-                                                            </Form>
-                                                  </div>
-                                        </Col>
-                              </Row>
-                    </Col>
+                      <FormGroup
+                        bsClass="form-group"
+                      >
+                        <FormControl
+                          bsClass="form-control"
+                          componentClass="input"
+                          disabled={false}
+                          id="username"
+                          name="username"
+                          onChange={[Function]}
+                          onKeyPress={[Function]}
+                          placeholder="Username"
+                          required={true}
+                          type="text"
+                        />
+                      </FormGroup>
+                      <FormGroup
+                        bsClass="form-group"
+                      >
+                        <FormControl
+                          bsClass="form-control"
+                          componentClass="input"
+                          disabled={false}
+                          name="password"
+                          onChange={[Function]}
+                          onKeyPress={[Function]}
+                          placeholder="Password"
+                          required={true}
+                          type="password"
+                        />
+                      </FormGroup>
+                      <Button
+                        active={false}
+                        block={false}
+                        bsClass="btn"
+                        bsStyle="default"
+                        className="btn btn-primary btn-block btn-lg"
+                        disabled={false}
+                        onKeyPress={[Function]}
+                        type="submit"
+                      >
+                        Log In
+                      </Button>
+                    </Form>
+                  </div>
+                </Col>
+              </Row>
+            </Col>
           </Row>
-</div>,
+        </div>,
         "className": "login-pf-page",
       },
       "ref": null,
@@ -1016,103 +1016,103 @@ ShallowWrapper {
           "children": <Row
             bsClass="row"
             componentClass="div"
->
+          >
             <Col
-                        bsClass="col"
-                        componentClass="div"
-                        lg={6}
-                        lgOffset={3}
-                        md={6}
-                        mdOffset={3}
-                        sm={8}
-                        smOffset={2}
+              bsClass="col"
+              componentClass="div"
+              lg={6}
+              lgOffset={3}
+              md={6}
+              mdOffset={3}
+              sm={8}
+              smOffset={2}
             >
-                        <header
-                                    className="login-pf-page-header"
-                        >
-                                    <img
-                                                alt="logo"
-                                                className="login-pf-brand"
-                                                src="logo-login.svg"
-                                    />
-                        </header>
-                        <Row
-                                    bsClass="row"
-                                    componentClass="div"
-                        >
-                                    <Col
-                                                bsClass="col"
-                                                componentClass="div"
-                                                lg={8}
-                                                lgOffset={2}
-                                                md={8}
-                                                mdOffset={2}
-                                                sm={10}
-                                                smOffset={1}
-                                    >
-                                                <div
-                                                            className="card-pf"
-                                                >
-                                                            <header
-                                                                        className="login-pf-header"
-                                                            />
-                                                            <Form
-                                                                        bsClass="form"
-                                                                        componentClass="form"
-                                                                        horizontal={false}
-                                                                        id="kiali-login"
-                                                                        inline={false}
-                                                                        onSubmit={[Function]}
-                                                            >
-                                                                        <FormGroup
-                                                                                    bsClass="form-group"
-                                                                        >
-                                                                                    <FormControl
-                                                                                                bsClass="form-control"
-                                                                                                componentClass="input"
-                                                                                                disabled={false}
-                                                                                                id="username"
-                                                                                                name="username"
-                                                                                                onChange={[Function]}
-                                                                                                onKeyPress={[Function]}
-                                                                                                placeholder="Username"
-                                                                                                required={true}
-                                                                                                type="text"
-                                                                                    />
-                                                                        </FormGroup>
-                                                                        <FormGroup
-                                                                                    bsClass="form-group"
-                                                                        >
-                                                                                    <FormControl
-                                                                                                bsClass="form-control"
-                                                                                                componentClass="input"
-                                                                                                disabled={false}
-                                                                                                name="password"
-                                                                                                onChange={[Function]}
-                                                                                                onKeyPress={[Function]}
-                                                                                                placeholder="Password"
-                                                                                                required={true}
-                                                                                                type="password"
-                                                                                    />
-                                                                        </FormGroup>
-                                                                        <Button
-                                                                                    active={false}
-                                                                                    block={false}
-                                                                                    bsClass="btn"
-                                                                                    bsStyle="default"
-                                                                                    className="btn btn-primary btn-block btn-lg"
-                                                                                    disabled={false}
-                                                                                    onKeyPress={[Function]}
-                                                                                    type="submit"
-                                                                        >
-                                                                                    Log In
-                                                                        </Button>
-                                                            </Form>
-                                                </div>
-                                    </Col>
-                        </Row>
+              <header
+                className="login-pf-page-header"
+              >
+                <img
+                  alt="logo"
+                  className="login-pf-brand"
+                  src="logo-login.svg"
+                />
+              </header>
+              <Row
+                bsClass="row"
+                componentClass="div"
+              >
+                <Col
+                  bsClass="col"
+                  componentClass="div"
+                  lg={8}
+                  lgOffset={2}
+                  md={8}
+                  mdOffset={2}
+                  sm={10}
+                  smOffset={1}
+                >
+                  <div
+                    className="card-pf"
+                  >
+                    <header
+                      className="login-pf-header"
+                    />
+                    <Form
+                      bsClass="form"
+                      componentClass="form"
+                      horizontal={false}
+                      id="kiali-login"
+                      inline={false}
+                      onSubmit={[Function]}
+                    >
+                      <FormGroup
+                        bsClass="form-group"
+                      >
+                        <FormControl
+                          bsClass="form-control"
+                          componentClass="input"
+                          disabled={false}
+                          id="username"
+                          name="username"
+                          onChange={[Function]}
+                          onKeyPress={[Function]}
+                          placeholder="Username"
+                          required={true}
+                          type="text"
+                        />
+                      </FormGroup>
+                      <FormGroup
+                        bsClass="form-group"
+                      >
+                        <FormControl
+                          bsClass="form-control"
+                          componentClass="input"
+                          disabled={false}
+                          name="password"
+                          onChange={[Function]}
+                          onKeyPress={[Function]}
+                          placeholder="Password"
+                          required={true}
+                          type="password"
+                        />
+                      </FormGroup>
+                      <Button
+                        active={false}
+                        block={false}
+                        bsClass="btn"
+                        bsStyle="default"
+                        className="btn btn-primary btn-block btn-lg"
+                        disabled={false}
+                        onKeyPress={[Function]}
+                        type="submit"
+                      >
+                        Log In
+                      </Button>
+                    </Form>
+                  </div>
+                </Col>
+              </Row>
             </Col>
-</Row>,
+          </Row>,
           "className": "container-fluid",
         },
         "ref": null,
@@ -1131,92 +1131,92 @@ ShallowWrapper {
               mdOffset={3}
               sm={8}
               smOffset={2}
->
+            >
               <header
-                            className="login-pf-page-header"
+                className="login-pf-page-header"
               >
-                            <img
-                                          alt="logo"
-                                          className="login-pf-brand"
-                                          src="logo-login.svg"
-                            />
+                <img
+                  alt="logo"
+                  className="login-pf-brand"
+                  src="logo-login.svg"
+                />
               </header>
               <Row
-                            bsClass="row"
-                            componentClass="div"
+                bsClass="row"
+                componentClass="div"
               >
-                            <Col
-                                          bsClass="col"
-                                          componentClass="div"
-                                          lg={8}
-                                          lgOffset={2}
-                                          md={8}
-                                          mdOffset={2}
-                                          sm={10}
-                                          smOffset={1}
-                            >
-                                          <div
-                                                        className="card-pf"
-                                          >
-                                                        <header
-                                                                      className="login-pf-header"
-                                                        />
-                                                        <Form
-                                                                      bsClass="form"
-                                                                      componentClass="form"
-                                                                      horizontal={false}
-                                                                      id="kiali-login"
-                                                                      inline={false}
-                                                                      onSubmit={[Function]}
-                                                        >
-                                                                      <FormGroup
-                                                                                    bsClass="form-group"
-                                                                      >
-                                                                                    <FormControl
-                                                                                                  bsClass="form-control"
-                                                                                                  componentClass="input"
-                                                                                                  disabled={false}
-                                                                                                  id="username"
-                                                                                                  name="username"
-                                                                                                  onChange={[Function]}
-                                                                                                  onKeyPress={[Function]}
-                                                                                                  placeholder="Username"
-                                                                                                  required={true}
-                                                                                                  type="text"
-                                                                                    />
-                                                                      </FormGroup>
-                                                                      <FormGroup
-                                                                                    bsClass="form-group"
-                                                                      >
-                                                                                    <FormControl
-                                                                                                  bsClass="form-control"
-                                                                                                  componentClass="input"
-                                                                                                  disabled={false}
-                                                                                                  name="password"
-                                                                                                  onChange={[Function]}
-                                                                                                  onKeyPress={[Function]}
-                                                                                                  placeholder="Password"
-                                                                                                  required={true}
-                                                                                                  type="password"
-                                                                                    />
-                                                                      </FormGroup>
-                                                                      <Button
-                                                                                    active={false}
-                                                                                    block={false}
-                                                                                    bsClass="btn"
-                                                                                    bsStyle="default"
-                                                                                    className="btn btn-primary btn-block btn-lg"
-                                                                                    disabled={false}
-                                                                                    onKeyPress={[Function]}
-                                                                                    type="submit"
-                                                                      >
-                                                                                    Log In
-                                                                      </Button>
-                                                        </Form>
-                                          </div>
-                            </Col>
+                <Col
+                  bsClass="col"
+                  componentClass="div"
+                  lg={8}
+                  lgOffset={2}
+                  md={8}
+                  mdOffset={2}
+                  sm={10}
+                  smOffset={1}
+                >
+                  <div
+                    className="card-pf"
+                  >
+                    <header
+                      className="login-pf-header"
+                    />
+                    <Form
+                      bsClass="form"
+                      componentClass="form"
+                      horizontal={false}
+                      id="kiali-login"
+                      inline={false}
+                      onSubmit={[Function]}
+                    >
+                      <FormGroup
+                        bsClass="form-group"
+                      >
+                        <FormControl
+                          bsClass="form-control"
+                          componentClass="input"
+                          disabled={false}
+                          id="username"
+                          name="username"
+                          onChange={[Function]}
+                          onKeyPress={[Function]}
+                          placeholder="Username"
+                          required={true}
+                          type="text"
+                        />
+                      </FormGroup>
+                      <FormGroup
+                        bsClass="form-group"
+                      >
+                        <FormControl
+                          bsClass="form-control"
+                          componentClass="input"
+                          disabled={false}
+                          name="password"
+                          onChange={[Function]}
+                          onKeyPress={[Function]}
+                          placeholder="Password"
+                          required={true}
+                          type="password"
+                        />
+                      </FormGroup>
+                      <Button
+                        active={false}
+                        block={false}
+                        bsClass="btn"
+                        bsStyle="default"
+                        className="btn btn-primary btn-block btn-lg"
+                        disabled={false}
+                        onKeyPress={[Function]}
+                        type="submit"
+                      >
+                        Log In
+                      </Button>
+                    </Form>
+                  </div>
+                </Col>
               </Row>
-</Col>,
+            </Col>,
             "componentClass": "div",
           },
           "ref": null,
@@ -1229,88 +1229,88 @@ ShallowWrapper {
               "children": Array [
                 <header
                   className="login-pf-page-header"
->
+                >
                   <img
-                                    alt="logo"
-                                    className="login-pf-brand"
-                                    src="logo-login.svg"
+                    alt="logo"
+                    className="login-pf-brand"
+                    src="logo-login.svg"
                   />
-</header>,
+                </header>,
                 <Row
                   bsClass="row"
                   componentClass="div"
->
+                >
                   <Col
-                                    bsClass="col"
-                                    componentClass="div"
-                                    lg={8}
-                                    lgOffset={2}
-                                    md={8}
-                                    mdOffset={2}
-                                    sm={10}
-                                    smOffset={1}
+                    bsClass="col"
+                    componentClass="div"
+                    lg={8}
+                    lgOffset={2}
+                    md={8}
+                    mdOffset={2}
+                    sm={10}
+                    smOffset={1}
                   >
-                                    <div
-                                                      className="card-pf"
-                                    >
-                                                      <header
-                                                                        className="login-pf-header"
-                                                      />
-                                                      <Form
-                                                                        bsClass="form"
-                                                                        componentClass="form"
-                                                                        horizontal={false}
-                                                                        id="kiali-login"
-                                                                        inline={false}
-                                                                        onSubmit={[Function]}
-                                                      >
-                                                                        <FormGroup
-                                                                                          bsClass="form-group"
-                                                                        >
-                                                                                          <FormControl
-                                                                                                            bsClass="form-control"
-                                                                                                            componentClass="input"
-                                                                                                            disabled={false}
-                                                                                                            id="username"
-                                                                                                            name="username"
-                                                                                                            onChange={[Function]}
-                                                                                                            onKeyPress={[Function]}
-                                                                                                            placeholder="Username"
-                                                                                                            required={true}
-                                                                                                            type="text"
-                                                                                          />
-                                                                        </FormGroup>
-                                                                        <FormGroup
-                                                                                          bsClass="form-group"
-                                                                        >
-                                                                                          <FormControl
-                                                                                                            bsClass="form-control"
-                                                                                                            componentClass="input"
-                                                                                                            disabled={false}
-                                                                                                            name="password"
-                                                                                                            onChange={[Function]}
-                                                                                                            onKeyPress={[Function]}
-                                                                                                            placeholder="Password"
-                                                                                                            required={true}
-                                                                                                            type="password"
-                                                                                          />
-                                                                        </FormGroup>
-                                                                        <Button
-                                                                                          active={false}
-                                                                                          block={false}
-                                                                                          bsClass="btn"
-                                                                                          bsStyle="default"
-                                                                                          className="btn btn-primary btn-block btn-lg"
-                                                                                          disabled={false}
-                                                                                          onKeyPress={[Function]}
-                                                                                          type="submit"
-                                                                        >
-                                                                                          Log In
-                                                                        </Button>
-                                                      </Form>
-                                    </div>
+                    <div
+                      className="card-pf"
+                    >
+                      <header
+                        className="login-pf-header"
+                      />
+                      <Form
+                        bsClass="form"
+                        componentClass="form"
+                        horizontal={false}
+                        id="kiali-login"
+                        inline={false}
+                        onSubmit={[Function]}
+                      >
+                        <FormGroup
+                          bsClass="form-group"
+                        >
+                          <FormControl
+                            bsClass="form-control"
+                            componentClass="input"
+                            disabled={false}
+                            id="username"
+                            name="username"
+                            onChange={[Function]}
+                            onKeyPress={[Function]}
+                            placeholder="Username"
+                            required={true}
+                            type="text"
+                          />
+                        </FormGroup>
+                        <FormGroup
+                          bsClass="form-group"
+                        >
+                          <FormControl
+                            bsClass="form-control"
+                            componentClass="input"
+                            disabled={false}
+                            name="password"
+                            onChange={[Function]}
+                            onKeyPress={[Function]}
+                            placeholder="Password"
+                            required={true}
+                            type="password"
+                          />
+                        </FormGroup>
+                        <Button
+                          active={false}
+                          block={false}
+                          bsClass="btn"
+                          bsStyle="default"
+                          className="btn btn-primary btn-block btn-lg"
+                          disabled={false}
+                          onKeyPress={[Function]}
+                          type="submit"
+                        >
+                          Log In
+                        </Button>
+                      </Form>
+                    </div>
                   </Col>
-</Row>,
+                </Row>,
               ],
               "componentClass": "div",
               "lg": 6,
@@ -1331,7 +1331,7 @@ ShallowWrapper {
                     alt="logo"
                     className="login-pf-brand"
                     src="logo-login.svg"
-/>,
+                  />,
                   "className": "login-pf-page-header",
                 },
                 "ref": null,
@@ -1365,67 +1365,67 @@ ShallowWrapper {
                     mdOffset={2}
                     sm={10}
                     smOffset={1}
->
+                  >
                     <div
-                                        className="card-pf"
+                      className="card-pf"
                     >
-                                        <header
-                                                            className="login-pf-header"
-                                        />
-                                        <Form
-                                                            bsClass="form"
-                                                            componentClass="form"
-                                                            horizontal={false}
-                                                            id="kiali-login"
-                                                            inline={false}
-                                                            onSubmit={[Function]}
-                                        >
-                                                            <FormGroup
-                                                                                bsClass="form-group"
-                                                            >
-                                                                                <FormControl
-                                                                                                    bsClass="form-control"
-                                                                                                    componentClass="input"
-                                                                                                    disabled={false}
-                                                                                                    id="username"
-                                                                                                    name="username"
-                                                                                                    onChange={[Function]}
-                                                                                                    onKeyPress={[Function]}
-                                                                                                    placeholder="Username"
-                                                                                                    required={true}
-                                                                                                    type="text"
-                                                                                />
-                                                            </FormGroup>
-                                                            <FormGroup
-                                                                                bsClass="form-group"
-                                                            >
-                                                                                <FormControl
-                                                                                                    bsClass="form-control"
-                                                                                                    componentClass="input"
-                                                                                                    disabled={false}
-                                                                                                    name="password"
-                                                                                                    onChange={[Function]}
-                                                                                                    onKeyPress={[Function]}
-                                                                                                    placeholder="Password"
-                                                                                                    required={true}
-                                                                                                    type="password"
-                                                                                />
-                                                            </FormGroup>
-                                                            <Button
-                                                                                active={false}
-                                                                                block={false}
-                                                                                bsClass="btn"
-                                                                                bsStyle="default"
-                                                                                className="btn btn-primary btn-block btn-lg"
-                                                                                disabled={false}
-                                                                                onKeyPress={[Function]}
-                                                                                type="submit"
-                                                            >
-                                                                                Log In
-                                                            </Button>
-                                        </Form>
+                      <header
+                        className="login-pf-header"
+                      />
+                      <Form
+                        bsClass="form"
+                        componentClass="form"
+                        horizontal={false}
+                        id="kiali-login"
+                        inline={false}
+                        onSubmit={[Function]}
+                      >
+                        <FormGroup
+                          bsClass="form-group"
+                        >
+                          <FormControl
+                            bsClass="form-control"
+                            componentClass="input"
+                            disabled={false}
+                            id="username"
+                            name="username"
+                            onChange={[Function]}
+                            onKeyPress={[Function]}
+                            placeholder="Username"
+                            required={true}
+                            type="text"
+                          />
+                        </FormGroup>
+                        <FormGroup
+                          bsClass="form-group"
+                        >
+                          <FormControl
+                            bsClass="form-control"
+                            componentClass="input"
+                            disabled={false}
+                            name="password"
+                            onChange={[Function]}
+                            onKeyPress={[Function]}
+                            placeholder="Password"
+                            required={true}
+                            type="password"
+                          />
+                        </FormGroup>
+                        <Button
+                          active={false}
+                          block={false}
+                          bsClass="btn"
+                          bsStyle="default"
+                          className="btn btn-primary btn-block btn-lg"
+                          disabled={false}
+                          onKeyPress={[Function]}
+                          type="submit"
+                        >
+                          Log In
+                        </Button>
+                      </Form>
                     </div>
-</Col>,
+                  </Col>,
                   "componentClass": "div",
                 },
                 "ref": null,
@@ -1437,63 +1437,63 @@ ShallowWrapper {
                     "bsClass": "col",
                     "children": <div
                       className="card-pf"
->
+                    >
                       <header
-                                            className="login-pf-header"
+                        className="login-pf-header"
                       />
                       <Form
-                                            bsClass="form"
-                                            componentClass="form"
-                                            horizontal={false}
-                                            id="kiali-login"
-                                            inline={false}
-                                            onSubmit={[Function]}
+                        bsClass="form"
+                        componentClass="form"
+                        horizontal={false}
+                        id="kiali-login"
+                        inline={false}
+                        onSubmit={[Function]}
                       >
-                                            <FormGroup
-                                                                  bsClass="form-group"
-                                            >
-                                                                  <FormControl
-                                                                                        bsClass="form-control"
-                                                                                        componentClass="input"
-                                                                                        disabled={false}
-                                                                                        id="username"
-                                                                                        name="username"
-                                                                                        onChange={[Function]}
-                                                                                        onKeyPress={[Function]}
-                                                                                        placeholder="Username"
-                                                                                        required={true}
-                                                                                        type="text"
-                                                                  />
-                                            </FormGroup>
-                                            <FormGroup
-                                                                  bsClass="form-group"
-                                            >
-                                                                  <FormControl
-                                                                                        bsClass="form-control"
-                                                                                        componentClass="input"
-                                                                                        disabled={false}
-                                                                                        name="password"
-                                                                                        onChange={[Function]}
-                                                                                        onKeyPress={[Function]}
-                                                                                        placeholder="Password"
-                                                                                        required={true}
-                                                                                        type="password"
-                                                                  />
-                                            </FormGroup>
-                                            <Button
-                                                                  active={false}
-                                                                  block={false}
-                                                                  bsClass="btn"
-                                                                  bsStyle="default"
-                                                                  className="btn btn-primary btn-block btn-lg"
-                                                                  disabled={false}
-                                                                  onKeyPress={[Function]}
-                                                                  type="submit"
-                                            >
-                                                                  Log In
-                                            </Button>
+                        <FormGroup
+                          bsClass="form-group"
+                        >
+                          <FormControl
+                            bsClass="form-control"
+                            componentClass="input"
+                            disabled={false}
+                            id="username"
+                            name="username"
+                            onChange={[Function]}
+                            onKeyPress={[Function]}
+                            placeholder="Username"
+                            required={true}
+                            type="text"
+                          />
+                        </FormGroup>
+                        <FormGroup
+                          bsClass="form-group"
+                        >
+                          <FormControl
+                            bsClass="form-control"
+                            componentClass="input"
+                            disabled={false}
+                            name="password"
+                            onChange={[Function]}
+                            onKeyPress={[Function]}
+                            placeholder="Password"
+                            required={true}
+                            type="password"
+                          />
+                        </FormGroup>
+                        <Button
+                          active={false}
+                          block={false}
+                          bsClass="btn"
+                          bsStyle="default"
+                          className="btn btn-primary btn-block btn-lg"
+                          disabled={false}
+                          onKeyPress={[Function]}
+                          type="submit"
+                        >
+                          Log In
+                        </Button>
                       </Form>
-</div>,
+                    </div>,
                     "componentClass": "div",
                     "lg": 8,
                     "lgOffset": 2,
@@ -1511,7 +1511,7 @@ ShallowWrapper {
                       "children": Array [
                         <header
                           className="login-pf-header"
-/>,
+                        />,
                         undefined,
                         <Form
                           bsClass="form"
@@ -1520,51 +1520,51 @@ ShallowWrapper {
                           id="kiali-login"
                           inline={false}
                           onSubmit={[Function]}
->
+                        >
                           <FormGroup
-                                                    bsClass="form-group"
+                            bsClass="form-group"
                           >
-                                                    <FormControl
-                                                                              bsClass="form-control"
-                                                                              componentClass="input"
-                                                                              disabled={false}
-                                                                              id="username"
-                                                                              name="username"
-                                                                              onChange={[Function]}
-                                                                              onKeyPress={[Function]}
-                                                                              placeholder="Username"
-                                                                              required={true}
-                                                                              type="text"
-                                                    />
+                            <FormControl
+                              bsClass="form-control"
+                              componentClass="input"
+                              disabled={false}
+                              id="username"
+                              name="username"
+                              onChange={[Function]}
+                              onKeyPress={[Function]}
+                              placeholder="Username"
+                              required={true}
+                              type="text"
+                            />
                           </FormGroup>
                           <FormGroup
-                                                    bsClass="form-group"
+                            bsClass="form-group"
                           >
-                                                    <FormControl
-                                                                              bsClass="form-control"
-                                                                              componentClass="input"
-                                                                              disabled={false}
-                                                                              name="password"
-                                                                              onChange={[Function]}
-                                                                              onKeyPress={[Function]}
-                                                                              placeholder="Password"
-                                                                              required={true}
-                                                                              type="password"
-                                                    />
+                            <FormControl
+                              bsClass="form-control"
+                              componentClass="input"
+                              disabled={false}
+                              name="password"
+                              onChange={[Function]}
+                              onKeyPress={[Function]}
+                              placeholder="Password"
+                              required={true}
+                              type="password"
+                            />
                           </FormGroup>
                           <Button
-                                                    active={false}
-                                                    block={false}
-                                                    bsClass="btn"
-                                                    bsStyle="default"
-                                                    className="btn btn-primary btn-block btn-lg"
-                                                    disabled={false}
-                                                    onKeyPress={[Function]}
-                                                    type="submit"
+                            active={false}
+                            block={false}
+                            bsClass="btn"
+                            bsStyle="default"
+                            className="btn btn-primary btn-block btn-lg"
+                            disabled={false}
+                            onKeyPress={[Function]}
+                            type="submit"
                           >
-                                                    Log In
+                            Log In
                           </Button>
-</Form>,
+                        </Form>,
                       ],
                       "className": "card-pf",
                     },
@@ -1591,35 +1591,35 @@ ShallowWrapper {
                           "children": Array [
                             <FormGroup
                               bsClass="form-group"
->
+                            >
                               <FormControl
-                                                            bsClass="form-control"
-                                                            componentClass="input"
-                                                            disabled={false}
-                                                            id="username"
-                                                            name="username"
-                                                            onChange={[Function]}
-                                                            onKeyPress={[Function]}
-                                                            placeholder="Username"
-                                                            required={true}
-                                                            type="text"
+                                bsClass="form-control"
+                                componentClass="input"
+                                disabled={false}
+                                id="username"
+                                name="username"
+                                onChange={[Function]}
+                                onKeyPress={[Function]}
+                                placeholder="Username"
+                                required={true}
+                                type="text"
                               />
-</FormGroup>,
+                            </FormGroup>,
                             <FormGroup
                               bsClass="form-group"
->
+                            >
                               <FormControl
-                                                            bsClass="form-control"
-                                                            componentClass="input"
-                                                            disabled={false}
-                                                            name="password"
-                                                            onChange={[Function]}
-                                                            onKeyPress={[Function]}
-                                                            placeholder="Password"
-                                                            required={true}
-                                                            type="password"
+                                bsClass="form-control"
+                                componentClass="input"
+                                disabled={false}
+                                name="password"
+                                onChange={[Function]}
+                                onKeyPress={[Function]}
+                                placeholder="Password"
+                                required={true}
+                                type="password"
                               />
-</FormGroup>,
+                            </FormGroup>,
                             <Button
                               active={false}
                               block={false}
@@ -1629,9 +1629,9 @@ ShallowWrapper {
                               disabled={false}
                               onKeyPress={[Function]}
                               type="submit"
->
+                            >
                               Log In
-</Button>,
+                            </Button>,
                           ],
                           "componentClass": "form",
                           "horizontal": false,
@@ -1659,7 +1659,7 @@ ShallowWrapper {
                                   placeholder="Username"
                                   required={true}
                                   type="text"
-/>,
+                                />,
                                 false,
                               ],
                             },
@@ -1706,7 +1706,7 @@ ShallowWrapper {
                                   placeholder="Password"
                                   required={true}
                                   type="password"
-/>,
+                                />,
                                 false,
                               ],
                             },
