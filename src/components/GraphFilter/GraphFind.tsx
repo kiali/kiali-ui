@@ -32,6 +32,7 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
     router: () => null
   };
 
+  private cy: any;
   private findInputRef;
   private findInputValue: string;
   private findValue: string;
@@ -48,6 +49,12 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
   }
 
   componentDidUpdate(prevProps: GraphFindProps) {
+    if (!(this.props.graphInfo && this.props.graphInfo.kind === 'graph')) {
+      return;
+    }
+    if (this.cy !== this.props.graphInfo.graphReference) {
+      this.cy = this.props.graphInfo.graphReference;
+    }
     if (this.findValue.length > 0 && !this.props.isLoading) {
       this.handleFind();
     }
@@ -108,17 +115,16 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
   };
 
   private handleFind = () => {
-    const cy = this.getCy();
-    if (cy === null) {
-      console.debug('Can not handle find, cy is unavailable.');
+    if (!this.cy) {
+      console.debug('Skip Find: cy not set.');
       return;
     }
     // unhighlight old find
-    cy.elements().removeClass('find');
+    this.cy.elements('*.find').removeClass('find');
 
     const selector = this.parseFindValue(this.findValue);
     if (selector) {
-      cy.elements(selector).addClass('find');
+      this.cy.elements(selector).addClass('find');
     }
   };
 
@@ -423,13 +429,6 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
       return undefined;
     }
     return selector + separator + parsedExpression.selector;
-  };
-
-  private getCy = (): any | null => {
-    if (this.props.graphInfo.graphReference) {
-      return this.props.graphInfo.graphReference;
-    }
-    return null;
   };
 }
 
