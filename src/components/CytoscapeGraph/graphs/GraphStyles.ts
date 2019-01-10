@@ -409,15 +409,7 @@ export class GraphStyles {
         }
       },
       {
-        selector: 'node.find[^isGroup]',
-        style: {
-          'overlay-color': PfColors.Gold400,
-          'overlay-padding': '8px',
-          'overlay-opacity': '0.5'
-        }
-      },
-      {
-        selector: 'edge.find',
+        selector: '*.find[^isGroup]',
         style: {
           'overlay-color': PfColors.Gold400,
           'overlay-padding': '8px',

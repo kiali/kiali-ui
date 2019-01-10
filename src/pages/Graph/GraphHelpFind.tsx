@@ -347,16 +347,17 @@ export default class GraphHelpFind extends React.Component<GraphHelpFindProps> {
                       rowKey="id"
                       rows={[
                         { id: 't0', t: 'Expressions can not combine "and" with "or".' },
-                        { id: 't1', t: 'Find by name expands to an "or" expression internally.' },
-                        { id: 't2', t: 'Not Find by name expands to an "and" expression internally.' },
+                        { id: 't10', t: 'Find by name expands to an "or" expression internally.' },
+                        { id: 't20', t: 'Not Find by name expands to an "and" expression internally.' },
+                        { id: 't30', t: 'Expressions can not combine node and edge criteria.' },
                         {
-                          id: 't3',
+                          id: 't40',
                           t: 'Numeric equality (=) is exact match. Include leading 0 and digits of precision.'
                         },
-                        { id: 't4', t: 'Numerics use "." decimal notation.' },
-                        { id: 't5', t: 'Percentages use 1 digit of precision, Rates use 2 digits of precision.' },
+                        { id: 't50', t: 'Numerics use "." decimal notation.' },
+                        { id: 't60', t: 'Percentages use 1 digit of precision, Rates use 2 digits of precision.' },
                         {
-                          id: 't6',
+                          id: 't70',
                           t: 'responsetime expressions only work when Response Time edge labels are enabled.'
                         }
                       ]}

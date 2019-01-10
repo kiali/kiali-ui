@@ -9,6 +9,7 @@ import { GraphFilterActions } from '../actions/GraphFilterActions';
 import { DagreGraph } from '../components/CytoscapeGraph/graphs/DagreGraph';
 
 export const INITIAL_GRAPH_STATE: GraphState = {
+  cyData: null,
   isLoading: false,
   isError: false,
   error: undefined,
@@ -17,7 +18,7 @@ export const INITIAL_GRAPH_STATE: GraphState = {
   graphData: {},
   layout: DagreGraph.getLayout(),
   node: undefined,
-  sidePanelInfo: null,
+  summaryData: null,
   filterState: {
     edgeLabelMode: EdgeLabelMode.HIDE,
     graphType: GraphType.VERSIONED_APP,
@@ -57,6 +58,12 @@ const graphDataState = (state: GraphState = INITIAL_GRAPH_STATE, action: KialiAp
       newState.isError = true;
       newState.error = action.payload.error;
       break;
+    case getType(GraphActions.changed):
+      newState.graphData = INITIAL_GRAPH_STATE.graphData;
+      newState.graphDataDuration = INITIAL_GRAPH_STATE.graphDataDuration;
+      newState.graphDataTimestamp = INITIAL_GRAPH_STATE.graphDataTimestamp;
+      newState.summaryData = INITIAL_GRAPH_STATE.summaryData;
+      break;
     case getType(GraphActions.setLayout):
       newState.layout = action.payload;
       break;
@@ -66,19 +73,19 @@ const graphDataState = (state: GraphState = INITIAL_GRAPH_STATE, action: KialiAp
       newState.graphData = INITIAL_GRAPH_STATE.graphData;
       newState.graphDataDuration = INITIAL_GRAPH_STATE.graphDataDuration;
       newState.graphDataTimestamp = INITIAL_GRAPH_STATE.graphDataTimestamp;
-      newState.sidePanelInfo = INITIAL_GRAPH_STATE.sidePanelInfo;
+      newState.summaryData = INITIAL_GRAPH_STATE.summaryData;
       break;
-    case getType(GraphActions.showSidePanelInfo):
-      newState.sidePanelInfo = {
-        kind: action.payload.summaryType,
-        graphReference: action.payload.summaryTarget
+    case getType(GraphActions.updateGraph):
+      newState.cyData = {
+        updateTimestamp: action.payload.updateTimestamp,
+        cyRef: action.payload.cyRef
       };
       break;
-    case getType(GraphActions.changed):
-      newState.graphData = INITIAL_GRAPH_STATE.graphData;
-      newState.graphDataDuration = INITIAL_GRAPH_STATE.graphDataDuration;
-      newState.graphDataTimestamp = INITIAL_GRAPH_STATE.graphDataTimestamp;
-      newState.sidePanelInfo = INITIAL_GRAPH_STATE.sidePanelInfo;
+    case getType(GraphActions.updateSummary):
+      newState.summaryData = {
+        summaryType: action.payload.summaryType,
+        summaryTarget: action.payload.summaryTarget
+      };
       break;
     // Filter actions
     //
@@ -91,7 +98,7 @@ const graphDataState = (state: GraphState = INITIAL_GRAPH_STATE, action: KialiAp
       newState.graphData = INITIAL_GRAPH_STATE.graphData;
       newState.graphDataDuration = INITIAL_GRAPH_STATE.graphDataDuration;
       newState.graphDataTimestamp = INITIAL_GRAPH_STATE.graphDataTimestamp;
-      newState.sidePanelInfo = INITIAL_GRAPH_STATE.sidePanelInfo;
+      newState.summaryData = INITIAL_GRAPH_STATE.summaryData;
       break;
     case getType(GraphFilterActions.toggleFindHelp):
       newState.filterState.showFindHelp = !state.filterState.showFindHelp;
@@ -120,7 +127,7 @@ const graphDataState = (state: GraphState = INITIAL_GRAPH_STATE, action: KialiAp
       newState.graphData = INITIAL_GRAPH_STATE.graphData;
       newState.graphDataDuration = INITIAL_GRAPH_STATE.graphDataDuration;
       newState.graphDataTimestamp = INITIAL_GRAPH_STATE.graphDataTimestamp;
-      newState.sidePanelInfo = INITIAL_GRAPH_STATE.sidePanelInfo;
+      newState.summaryData = INITIAL_GRAPH_STATE.summaryData;
       break;
     case getType(GraphFilterActions.toggleTrafficAnimation):
       newState.filterState.showTrafficAnimation = !state.filterState.showTrafficAnimation;

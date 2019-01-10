@@ -11,10 +11,10 @@ import { KialiAppAction } from '../../actions/KialiAppAction';
 import * as MessageCenterUtils from '../../utils/MessageCenter';
 import GraphHelpFind from '../../pages/Graph/GraphHelpFind';
 import { CyNode, CyEdge } from '../CytoscapeGraph/CytoscapeGraphUtils';
+import { CyData } from '../../types/Graph';
 
 type ReduxProps = {
-  graphInfo: any;
-  isLoading: boolean;
+  cyData: CyData;
   showFindHelp: boolean;
 
   toggleFindHelp: () => void;
@@ -32,7 +32,6 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
     router: () => null
   };
 
-  private cy: any;
   private findInputRef;
   private findInputValue: string;
   private findValue: string;
@@ -49,13 +48,8 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
   }
 
   componentDidUpdate(prevProps: GraphFindProps) {
-    if (!(this.props.graphInfo && this.props.graphInfo.kind === 'graph')) {
-      return;
-    }
-    if (this.cy !== this.props.graphInfo.graphReference) {
-      this.cy = this.props.graphInfo.graphReference;
-    }
-    if (this.findValue.length > 0 && !this.props.isLoading) {
+    if (this.findValue.length > 0 && this.props.cyData.updateTimestamp !== prevProps.cyData.updateTimestamp) {
+      console.log('CDI Find');
       this.handleFind();
     }
   }
@@ -92,7 +86,6 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
   }
 
   private toggleFindHelp = () => {
-    console.log('toggle from ' + this.props.toggleFindHelp);
     this.props.toggleFindHelp();
   };
 
@@ -115,16 +108,21 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
   };
 
   private handleFind = () => {
-    if (!this.cy) {
+    if (!this.props.cyData) {
       console.debug('Skip Find: cy not set.');
       return;
     }
-    // unhighlight old find
-    this.cy.elements('*.find').removeClass('find');
-
+    const cy = this.props.cyData.cyRef;
     const selector = this.parseFindValue(this.findValue);
     if (selector) {
-      this.cy.elements(selector).addClass('find');
+      console.log('Start Batch - Find');
+      cy.startBatch();
+      // unhighlight old find-hits
+      cy.elements('*.find').removeClass('find');
+      // add new find-hits
+      cy.elements(selector).addClass('find');
+      cy.endBatch();
+      console.log('End Batch - Find');
     }
   };
 
@@ -146,7 +144,7 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
     let selector;
 
     for (const expression of expressions) {
-      console.log('EXPRESSION=' + expression);
+      // console.log('EXPRESSION=' + expression);
       const parsedExpression = this.parseFindExpression(expression, conjunctive, disjunctive);
       if (!parsedExpression) {
         return undefined;
@@ -155,14 +153,14 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
       if (!selector) {
         return undefined;
       }
-      console.log('Selector=' + selector);
+      // console.log('Selector=' + selector);
     }
 
     return selector;
   };
 
   private prepareFindValue = (val: string): string => {
-    console.log(`Raw=[${val}]`);
+    // console.log(`Raw=[${val}]`);
     // remove double spaces
     val = val.replace(/ +(?= )/g, '');
 
@@ -181,7 +179,7 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
     val = val.replace(/ !\s*contains /gi, ' !*= ');
     val = val.replace(/ !\s*startswith /gi, ' !^= ');
     val = val.replace(/ !\s*endswith /gi, ' !$= ');
-    console.log(`Prepared=[${val.trim()}]`);
+    // console.log(`Prepared=[${val.trim()}]`);
     return val.trim();
   };
 
@@ -435,8 +433,7 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
 }
 
 const mapStateToProps = (state: KialiAppState) => ({
-  graphInfo: state.graph.sidePanelInfo,
-  isLoading: state.graph.isLoading,
+  cyData: state.graph.cyData,
   showFindHelp: state.graph.filterState.showFindHelp
 });
 

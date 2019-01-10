@@ -31,7 +31,8 @@ import {
   CytoscapeGlobalScratchData,
   NodeParamsType,
   NodeType,
-  GraphType
+  GraphType,
+  CyData
 } from '../../types/Graph';
 import { EdgeLabelMode, Layout } from '../../types/GraphFilter';
 import * as H from '../../types/Health';
@@ -63,17 +64,18 @@ type ReduxProps = {
   showTrafficAnimation: boolean;
   showUnusedNodes: boolean;
   showVirtualServices: boolean;
-  onClick: (event: CytoscapeClickEvent) => void;
   onReady: (cytoscapeRef: any) => void;
-  refresh: () => void;
   setActiveNamespaces: (namespace: Namespace[]) => void;
   setNode: (node?: NodeParamsType) => void;
+  updateGraph: (cyData: CyData) => void;
+  updateSummary: (event: CytoscapeClickEvent) => void;
 };
 
 type CytoscapeGraphProps = ReduxProps & {
   isLoading: boolean;
   isError: boolean;
   containerClassName?: string;
+  refresh: () => void;
 };
 
 type CytoscapeGraphState = {};
@@ -164,6 +166,7 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
     }
 
     this.processGraphUpdate(cy, updateLayout);
+
     // pre-select node if provided
     const node = this.props.node;
     if (node && cy && cy.$(':selected').length === 0) {
@@ -184,12 +187,17 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
       const eles = cy.nodes(selector);
       if (eles.length > 0) {
         this.selectTarget(eles[0]);
-        this.props.onClick({ summaryType: eles[0].data(CyNode.isGroup) ? 'group' : 'node', summaryTarget: eles[0] });
+        this.props.updateSummary({
+          summaryType: eles[0].data(CyNode.isGroup) ? 'group' : 'node',
+          summaryTarget: eles[0]
+        });
       }
     }
     if (this.props.elements !== prevProps.elements) {
       this.updateHealth(cy);
     }
+
+    this.props.updateGraph({ updateTimestamp: Date.now(), cyRef: cy });
   }
 
   render() {
@@ -333,7 +341,7 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
     cy.on('destroy', (evt: any) => {
       this.trafficRenderer.stop();
       this.cy = undefined;
-      this.props.onClick({ summaryType: 'graph', summaryTarget: undefined });
+      this.props.updateSummary({ summaryType: 'graph', summaryTarget: undefined });
     });
   }
 
@@ -347,6 +355,7 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
     if (!cy) {
       return;
     }
+    console.log('Start - CyGraph');
 
     this.trafficRenderer.stop();
 
@@ -371,6 +380,7 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
     };
     cy.scratch(CytoscapeGlobalScratchNamespace, globalScratchData);
 
+    console.log('Start Batch - CyGraph');
     cy.startBatch();
 
     // KIALI-1291 issue was caused because some layouts (can't tell if all) do reuse the existing positions.
@@ -407,6 +417,7 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
     this.turnNodeLabelsTo(cy, this.props.showNodeLabels);
 
     cy.endBatch();
+    console.log('End Batch - CyGraph');
 
     // We need to fit outside of the batch operation for it to take effect on the new nodes
     if (updateLayout) {
@@ -428,6 +439,7 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
     if (this.props.showTrafficAnimation) {
       this.trafficRenderer.start();
     }
+    console.log('End - CyGraph');
   }
 
   private selectTarget = (target: any) => {
@@ -521,7 +533,7 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
   };
 
   private handleTap = (event: CytoscapeClickEvent) => {
-    this.props.onClick(event);
+    this.props.updateSummary(event);
     this.graphHighlighter.onClick(event);
   };
 
@@ -682,10 +694,11 @@ const mapStateToProps = (state: KialiAppState) => ({
 });
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<KialiAppState, void, KialiAppAction>) => ({
-  onClick: (event: CytoscapeClickEvent) => dispatch(GraphActions.showSidePanelInfo(event)),
-  onReady: (cy: any) => dispatch(GraphThunkActions.graphRendered(cy)),
+  onReady: (cy: any) => dispatch(GraphThunkActions.graphReady(cy)),
   setActiveNamespaces: (namespaces: Namespace[]) => dispatch(NamespaceActions.setActiveNamespaces(namespaces)),
-  setNode: bindActionCreators(GraphActions.setNode, dispatch)
+  setNode: bindActionCreators(GraphActions.setNode, dispatch),
+  updateGraph: (cyData: CyData) => dispatch(GraphActions.updateGraph(cyData)),
+  updateSummary: (event: CytoscapeClickEvent) => dispatch(GraphActions.updateSummary(event))
 });
 
 const CytoscapeGraphContainer = connect(
