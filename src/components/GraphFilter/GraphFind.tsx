@@ -167,12 +167,12 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
 
     // replace string operators
     val = val.replace(/ not /gi, ' !');
-    val = val.replace(/ contains /gi, ' *= ');
-    val = val.replace(/ startswith /gi, ' ^= ');
-    val = val.replace(/ endswith /gi, ' $= ');
     val = val.replace(/ !\s*contains /gi, ' !*= ');
     val = val.replace(/ !\s*startswith /gi, ' !^= ');
     val = val.replace(/ !\s*endswith /gi, ' !$= ');
+    val = val.replace(/ contains /gi, ' *= ');
+    val = val.replace(/ startswith /gi, ' ^= ');
+    val = val.replace(/ endswith /gi, ' $= ');
     return val.trim();
   };
 

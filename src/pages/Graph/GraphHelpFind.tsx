@@ -271,7 +271,7 @@ export default class GraphHelpFind extends React.Component<GraphHelpFindProps> {
                         { id: 'nc7', c: 'workload <op> <workloadName>' },
                         { id: 'nc8', c: '[is] appnode' },
                         { id: 'nc9', c: '[has] circuitbreaker' },
-                        { id: 'nc10', c: '[is] outsider' },
+                        { id: 'nc10', c: '[is] outsider (outside of requested namespaces)' },
                         { id: 'nc11', c: '[has] sidecar' },
                         { id: 'nc12', c: '[is] servicenode' },
                         { id: 'nc13', c: '[is] serviceentry' },
