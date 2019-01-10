@@ -49,7 +49,6 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
 
   componentDidUpdate(prevProps: GraphFindProps) {
     if (this.findValue.length > 0 && this.props.cyData.updateTimestamp !== prevProps.cyData.updateTimestamp) {
-      console.log('CDI Find');
       this.handleFind();
     }
   }
@@ -115,14 +114,12 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
     const cy = this.props.cyData.cyRef;
     const selector = this.parseFindValue(this.findValue);
     if (selector) {
-      console.log('Start Batch - Find');
       cy.startBatch();
       // unhighlight old find-hits
       cy.elements('*.find').removeClass('find');
       // add new find-hits
       cy.elements(selector).addClass('find');
       cy.endBatch();
-      console.log('End Batch - Find');
     }
   };
 
@@ -144,7 +141,6 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
     let selector;
 
     for (const expression of expressions) {
-      // console.log('EXPRESSION=' + expression);
       const parsedExpression = this.parseFindExpression(expression, conjunctive, disjunctive);
       if (!parsedExpression) {
         return undefined;
@@ -153,14 +149,12 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
       if (!selector) {
         return undefined;
       }
-      // console.log('Selector=' + selector);
     }
 
     return selector;
   };
 
   private prepareFindValue = (val: string): string => {
-    // console.log(`Raw=[${val}]`);
     // remove double spaces
     val = val.replace(/ +(?= )/g, '');
 
@@ -179,7 +173,6 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
     val = val.replace(/ !\s*contains /gi, ' !*= ');
     val = val.replace(/ !\s*startswith /gi, ' !^= ');
     val = val.replace(/ !\s*endswith /gi, ' !$= ');
-    // console.log(`Prepared=[${val.trim()}]`);
     return val.trim();
   };
 
@@ -302,14 +295,11 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
         const s = this.getNumericSelector(CyEdge.http, op, val, 1.0, expression);
         return s ? { target: 'edge', selector: s } : undefined;
       }
-      case 'percenterr':
-      case 'percenterror':
       case '%error':
       case '%err': {
         const s = this.getNumericSelector(CyEdge.httpPercentErr, op, val, 1.0, expression);
         return s ? { target: 'edge', selector: s } : undefined;
       }
-      case 'percenttraffic':
       case '%traffic': {
         const s = this.getNumericSelector(CyEdge.httpPercentReq, op, val, 1.0, expression);
         return s ? { target: 'edge', selector: s } : undefined;

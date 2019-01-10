@@ -263,22 +263,22 @@ export default class GraphHelpFind extends React.Component<GraphHelpFindProps> {
                       rows={[
                         { id: 'nc0', c: 'httpin <op> <number> (requests per sec)' },
                         { id: 'nc1', c: 'httpout <op> <number> (requests per sec)' },
-                        { id: 'nc2', c: 'ns | namespace <op> <namespaceName>' },
-                        { id: 'nc3', c: 'svc | service <op> <serviceName>' },
+                        { id: 'nc2', c: 'namespace <op> <namespaceName>' },
+                        { id: 'nc3', c: 'service <op> <serviceName>' },
                         { id: 'nc4', c: 'version <op> <string>' },
                         { id: 'nc5', c: 'tcpin <op> <number> (bytes per sec)' },
                         { id: 'nc6', c: 'tcpout <op> <number> (bytes per sec)' },
-                        { id: 'nc7', c: 'wl | workload <op> <workloadName>' },
+                        { id: 'nc7', c: 'workload <op> <workloadName>' },
                         { id: 'nc8', c: '[is] appnode' },
-                        { id: 'nc9', c: '[has] cb | circuitbreaker' },
-                        { id: 'nc10', c: '[is] outside | outsider' },
-                        { id: 'nc11', c: '[has] sc | sidecar' },
-                        { id: 'nc12', c: '[is] svcnode | servicenode' },
-                        { id: 'nc13', c: '[is] se | serviceentry' },
+                        { id: 'nc9', c: '[has] circuitbreaker' },
+                        { id: 'nc10', c: '[is] outsider' },
+                        { id: 'nc11', c: '[has] sidecar' },
+                        { id: 'nc12', c: '[is] servicenode' },
+                        { id: 'nc13', c: '[is] serviceentry' },
                         { id: 'nc14', c: '[is] unknown' },
                         { id: 'nc15', c: '[is] unused' },
-                        { id: 'nc16', c: '[has] vs | virtualservice' },
-                        { id: 'nc17', c: '[is] wlnode | workloadnode' }
+                        { id: 'nc16', c: '[has] virtualservice' },
+                        { id: 'nc17', c: '[is] workloadnode' }
                       ]}
                     />
                   </TablePfProvider>
@@ -296,9 +296,9 @@ export default class GraphHelpFind extends React.Component<GraphHelpFindProps> {
                       rowKey="id"
                       rows={[
                         { id: 'ec0', c: 'http <op> <number> (requests per sec)' },
-                        { id: 'ec1', c: '%err | percenterr <op> <number> <0..100>' },
-                        { id: 'ec2', c: '%traffic | percenttraffic <op> <number> (0..100)' },
-                        { id: 'ec3', c: 'rt | responsetime <op> <number> (millis)' },
+                        { id: 'ec1', c: '%err <op> <number> (0..100)' },
+                        { id: 'ec2', c: '%traffic <op> <number> (0..100)' },
+                        { id: 'ec3', c: 'responsetime <op> <number> (millis)' },
                         { id: 'ec4', c: 'tcp <op> <number> (bytes per sec)' },
                         { id: 'ec5', c: '[has] mtls' }
                       ]}
@@ -346,13 +346,22 @@ export default class GraphHelpFind extends React.Component<GraphHelpFindProps> {
                     <Table.Body
                       rowKey="id"
                       rows={[
-                        { id: 't0', t: 'Expressions can not combine "and" with "or".' },
+                        { id: 't00', t: 'Expressions can not combine "and" with "or".' },
                         { id: 't10', t: 'Find by name expands to an "or" expression internally.' },
                         { id: 't20', t: 'Not Find by name expands to an "and" expression internally.' },
                         { id: 't30', t: 'Expressions can not combine node and edge criteria.' },
                         {
                           id: 't40',
                           t: 'Numeric equality (=) is exact match. Include leading 0 and digits of precision.'
+                        },
+                        {
+                          id: 't45',
+                          t: 'Abbrevations: namespace|ns, service|svc, workload|wl (e.g. is wlnode)'
+                        },
+                        {
+                          id: 't46',
+                          t:
+                            'Abbrevations: circuitbreaker|cb, responsetime|rt, serviceentry->se, sidecar|sc, virtualservice|vs'
                         },
                         { id: 't50', t: 'Numerics use "." decimal notation.' },
                         { id: 't60', t: 'Percentages use 1 digit of precision, Rates use 2 digits of precision.' },

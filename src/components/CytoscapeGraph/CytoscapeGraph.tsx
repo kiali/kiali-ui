@@ -355,7 +355,6 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
     if (!cy) {
       return;
     }
-    console.log('Start - CyGraph');
 
     this.trafficRenderer.stop();
 
@@ -380,7 +379,6 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
     };
     cy.scratch(CytoscapeGlobalScratchNamespace, globalScratchData);
 
-    console.log('Start Batch - CyGraph');
     cy.startBatch();
 
     // KIALI-1291 issue was caused because some layouts (can't tell if all) do reuse the existing positions.
@@ -417,7 +415,6 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
     this.turnNodeLabelsTo(cy, this.props.showNodeLabels);
 
     cy.endBatch();
-    console.log('End Batch - CyGraph');
 
     // We need to fit outside of the batch operation for it to take effect on the new nodes
     if (updateLayout) {
@@ -439,7 +436,6 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
     if (this.props.showTrafficAnimation) {
       this.trafficRenderer.start();
     }
-    console.log('End - CyGraph');
   }
 
   private selectTarget = (target: any) => {
