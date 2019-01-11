@@ -46,6 +46,19 @@ export default class GraphHelpFind extends React.Component<GraphHelpFindProps> {
               align: 'text-left'
             }
           }
+        },
+        {
+          property: 'n',
+          header: {
+            label: 'Notes',
+            formatters: [this.headerFormat]
+          },
+          cell: {
+            formatters: [this.cellFormat],
+            props: {
+              align: 'text-left'
+            }
+          }
         }
       ]
     };
@@ -91,6 +104,19 @@ export default class GraphHelpFind extends React.Component<GraphHelpFindProps> {
           property: 'c',
           header: {
             label: 'Expression',
+            formatters: [this.headerFormat]
+          },
+          cell: {
+            formatters: [this.cellFormat],
+            props: {
+              align: 'text-left'
+            }
+          }
+        },
+        {
+          property: 'n',
+          header: {
+            label: 'Notes',
             formatters: [this.headerFormat]
           },
           cell: {
@@ -261,24 +287,29 @@ export default class GraphHelpFind extends React.Component<GraphHelpFindProps> {
                     <Table.Body
                       rowKey="id"
                       rows={[
-                        { id: 'nc0', c: 'httpin <op> <number> (requests per sec)' },
-                        { id: 'nc1', c: 'httpout <op> <number> (requests per sec)' },
-                        { id: 'nc2', c: 'namespace <op> <namespaceName>' },
-                        { id: 'nc3', c: 'service <op> <serviceName>' },
-                        { id: 'nc4', c: 'version <op> <string>' },
-                        { id: 'nc5', c: 'tcpin <op> <number> (bytes per sec)' },
-                        { id: 'nc6', c: 'tcpout <op> <number> (bytes per sec)' },
-                        { id: 'nc7', c: 'workload <op> <workloadName>' },
-                        { id: 'nc8', c: '[is] appnode' },
-                        { id: 'nc9', c: '[has] circuitbreaker' },
-                        { id: 'nc10', c: '[is] outsider (outside of requested namespaces)' },
-                        { id: 'nc11', c: '[has] sidecar' },
-                        { id: 'nc12', c: '[is] servicenode' },
-                        { id: 'nc13', c: '[is] serviceentry' },
-                        { id: 'nc14', c: '[is] unknown' },
-                        { id: 'nc15', c: '[is] unused' },
-                        { id: 'nc16', c: '[has] virtualservice' },
-                        { id: 'nc17', c: '[is] workloadnode' }
+                        { id: 'nc00', c: 'httpin <op> <number>', n: 'unit: requests per second' },
+                        { id: 'nc10', c: 'httpout <op> <number>', n: 'unit: requests per second' },
+                        {
+                          id: 'nc15',
+                          c: 'name <op> <string>',
+                          n: 'tests against app label, service name and workload name'
+                        },
+                        { id: 'nc20', c: 'namespace <op> <namespaceName>' },
+                        { id: 'nc30', c: 'service <op> <serviceName>' },
+                        { id: 'nc40', c: 'version <op> <string>' },
+                        { id: 'nc50', c: 'tcpin <op> <number>', n: 'unit: bytes per second' },
+                        { id: 'nc60', c: 'tcpout <op> <number>', n: 'unit: bytes per second' },
+                        { id: 'nc70', c: 'workload <op> <workloadName>' },
+                        { id: 'nc80', c: '[is] appnode' },
+                        { id: 'nc90', c: '[has] circuitbreaker' },
+                        { id: 'nc100', c: '[is] outsider', n: 'is outside of requested namespaces' },
+                        { id: 'nc110', c: '[has] sidecar' },
+                        { id: 'nc120', c: '[is] servicenode' },
+                        { id: 'nc130', c: '[is] serviceentry' },
+                        { id: 'nc140', c: '[is] unknown' },
+                        { id: 'nc150', c: '[is] unused', n: `'Show Unused' option must be enabled` },
+                        { id: 'nc160', c: '[has] virtualservice' },
+                        { id: 'nc170', c: '[is] workloadnode' }
                       ]}
                     />
                   </TablePfProvider>
@@ -295,12 +326,16 @@ export default class GraphHelpFind extends React.Component<GraphHelpFindProps> {
                     <Table.Body
                       rowKey="id"
                       rows={[
-                        { id: 'ec0', c: 'http <op> <number> (requests per sec)' },
-                        { id: 'ec1', c: '%err <op> <number> (0..100)' },
-                        { id: 'ec2', c: '%traffic <op> <number> (0..100)' },
-                        { id: 'ec3', c: 'responsetime <op> <number> (millis)' },
-                        { id: 'ec4', c: 'tcp <op> <number> (bytes per sec)' },
-                        { id: 'ec5', c: '[has] mtls' }
+                        { id: 'ec00', c: 'http <op> <number>', n: 'unit: requests per second' },
+                        { id: 'ec10', c: '%err <op> <number>', n: 'range: [0..100]' },
+                        { id: 'ec20', c: '%traffic <op> <number>', n: 'range: [0..100]' },
+                        {
+                          id: 'ec30',
+                          c: 'responsetime <op> <number>',
+                          n: `unit: millis, 'Response Time' edge labels required`
+                        },
+                        { id: 'ec40', c: 'tcp <op> <number>', n: 'unit: requests per second' },
+                        { id: 'ec50', c: '[has] mtls' }
                       ]}
                     />
                   </TablePfProvider>
@@ -347,6 +382,7 @@ export default class GraphHelpFind extends React.Component<GraphHelpFindProps> {
                       rowKey="id"
                       rows={[
                         { id: 't00', t: 'Expressions can not combine "and" with "or".' },
+                        { id: 't05', t: 'Parentheses are not supported (or needed).' },
                         { id: 't10', t: 'Find by name expands to an "or" expression internally.' },
                         { id: 't20', t: 'Not Find by name expands to an "and" expression internally.' },
                         { id: 't30', t: 'Expressions can not combine node and edge criteria.' },
@@ -354,20 +390,16 @@ export default class GraphHelpFind extends React.Component<GraphHelpFindProps> {
                           id: 't40',
                           t: 'Numeric equality (=) is exact match. Include leading 0 and digits of precision.'
                         },
-                        {
-                          id: 't45',
-                          t: 'Abbrevations: namespace|ns, service|svc, workload|wl (e.g. is wlnode)'
-                        },
-                        {
-                          id: 't46',
-                          t:
-                            'Abbrevations: circuitbreaker|cb, responsetime|rt, serviceentry->se, sidecar|sc, virtualservice|vs'
-                        },
                         { id: 't50', t: 'Numerics use "." decimal notation.' },
                         { id: 't60', t: 'Percentages use 1 digit of precision, Rates use 2 digits of precision.' },
                         {
                           id: 't70',
-                          t: 'responsetime expressions only work when Response Time edge labels are enabled.'
+                          t: 'Abbrevations: namespace|ns, service|svc, workload|wl (e.g. is wlnode)'
+                        },
+                        {
+                          id: 't80',
+                          t:
+                            'Abbrevations: circuitbreaker|cb, responsetime|rt, serviceentry->se, sidecar|sc, virtualservice|vs'
                         }
                       ]}
                     />
