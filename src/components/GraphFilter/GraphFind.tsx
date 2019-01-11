@@ -216,26 +216,21 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
       }
 
       const unaryExpression = this.parseUnaryFindExpression(expression.trim(), false);
-      if (unaryExpression) {
-        return unaryExpression;
+      if (!unaryExpression) {
+        MessageCenterUtils.add(`Invalid find expression or operator: [${expression}]`);
       }
 
-      // handle special 'find by name'substring unary
-      op = '*=';
-      expression = `name ${op} ${expression}`;
+      return unaryExpression;
     }
 
     let tokens = expression.split(op);
     if (op === '!') {
       const unaryExpression = this.parseUnaryFindExpression(tokens[1].trim(), true);
-      if (unaryExpression) {
-        return unaryExpression;
+      if (!unaryExpression) {
+        MessageCenterUtils.add(`Invalid find expression or operator: [${expression}]`);
       }
 
-      // handle special 'not find by name'substring unary
-      op = '!*=';
-      expression = `name ${op} ${tokens[1]}`;
-      tokens = expression.split(op);
+      return unaryExpression;
     }
 
     const field = tokens[0].trim();
@@ -269,6 +264,28 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
         const svc = `[${CyNode.service} ${op} "${val}"]`;
         return { target: 'node', selector: isNegation ? `${wl}${app}${svc}` : `${wl},${app},${svc}` };
       }
+      case 'node':
+        let nodeType = val.toLowerCase();
+        switch (nodeType) {
+          case 'svc':
+            nodeType = 'service';
+            break;
+          case 'wl':
+            nodeType = 'workload';
+            break;
+          default:
+            break; // no-op
+        }
+        switch (nodeType) {
+          case 'app':
+          case 'service':
+          case 'workload':
+          case 'unknown':
+            return { target: 'node', selector: `[${CyNode.nodeType} ${op} "${nodeType}"]` };
+          default:
+            MessageCenterUtils.add(`Invalid node type. Expected app | service | unknown | workload : [${expression}]`);
+        }
+        return undefined;
       case 'ns':
       case 'namespace':
         return { target: 'node', selector: `[${CyNode.namespace} ${op} "${val}"]` };
@@ -359,8 +376,6 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
       //
       // nodes...
       //
-      case 'appnode':
-        return { target: 'node', selector: `[${CyNode.nodeType} ${isNegation ? '!=' : '='} "app"]` };
       case 'cb':
       case 'circuitbreaker':
         return { target: 'node', selector: isNegation ? `[^${CyNode.hasCB}]` : `[${CyNode.hasCB}]` };
@@ -377,25 +392,14 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
       case 'sc':
       case 'sidecar':
         return { target: 'node', selector: isNegation ? `[${CyNode.hasMissingSC}]` : `[^${CyNode.hasMissingSC}]` };
-      case 'svcnode':
-      case 'servicenode':
-        return { target: 'node', selector: `[${CyNode.nodeType} ${isNegation ? '!=' : '='} "service"]` };
       case 'trafficsource':
       case 'root':
         return { target: 'node', selector: isNegation ? `[^${CyNode.isRoot}]` : `[${CyNode.isRoot}]` };
-      case 'unknown':
-        return {
-          target: 'node',
-          selector: isNegation ? `[${CyNode.nodeType} != "unknown"]` : `[${CyNode.nodeType} = "unknown"]`
-        };
       case 'unused':
         return { target: 'node', selector: isNegation ? `[^${CyNode.isUnused}]` : `[${CyNode.isUnused}]` };
       case 'vs':
       case 'virtualservice':
         return { target: 'node', selector: isNegation ? `[^${CyNode.hasVS}]` : `[${CyNode.hasVS}]` };
-      case 'wlnode':
-      case 'workloadnode':
-        return { target: 'node', selector: `[${CyNode.nodeType} ${isNegation ? '!=' : '='} "workload"]` };
       //
       // edges...
       //

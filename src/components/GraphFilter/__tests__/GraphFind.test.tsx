@@ -30,6 +30,18 @@ describe('Parse find value test', () => {
     // @ts-ignore
     expect(instance.parseFindValue('ns = foo')).toEqual('node[namespace = "foo"]');
     // @ts-ignore
+    expect(instance.parseFindValue('node = app')).toEqual('node[nodeType = "app"]');
+    // @ts-ignore
+    expect(instance.parseFindValue('node = service')).toEqual('node[nodeType = "service"]');
+    // @ts-ignore
+    expect(instance.parseFindValue('node = svc')).toEqual('node[nodeType = "service"]');
+    // @ts-ignore
+    expect(instance.parseFindValue('node = unknown')).toEqual('node[nodeType = "unknown"]');
+    // @ts-ignore
+    expect(instance.parseFindValue('node = workload')).toEqual('node[nodeType = "workload"]');
+    // @ts-ignore
+    expect(instance.parseFindValue('node = wl')).toEqual('node[nodeType = "workload"]');
+    // @ts-ignore
     expect(instance.parseFindValue('service = foo')).toEqual('node[service = "foo"]');
     // @ts-ignore
     expect(instance.parseFindValue('svc = foo')).toEqual('node[service = "foo"]');
@@ -45,8 +57,6 @@ describe('Parse find value test', () => {
     expect(instance.parseFindValue('wl = foo')).toEqual('node[workload = "foo"]');
 
     // @ts-ignore
-    expect(instance.parseFindValue('appnode')).toEqual('node[nodeType = "app"]');
-    // @ts-ignore
     expect(instance.parseFindValue('circuitBreaker')).toEqual('node[hasCB]');
     // @ts-ignore
     expect(instance.parseFindValue('cb')).toEqual('node[hasCB]');
@@ -57,21 +67,11 @@ describe('Parse find value test', () => {
     // @ts-ignore
     expect(instance.parseFindValue('outside')).toEqual('node[isOutside]');
     // @ts-ignore
-    expect(instance.parseFindValue('servicenode')).toEqual('node[nodeType = "service"]');
-    // @ts-ignore
-    expect(instance.parseFindValue('svcnode')).toEqual('node[nodeType = "service"]');
-    // @ts-ignore
-    expect(instance.parseFindValue('unknown')).toEqual('node[nodeType = "unknown"]');
-    // @ts-ignore
     expect(instance.parseFindValue('unused')).toEqual('node[isUnused]');
     // @ts-ignore
     expect(instance.parseFindValue('virtualService')).toEqual('node[hasVS]');
     // @ts-ignore
     expect(instance.parseFindValue('vs')).toEqual('node[hasVS]');
-    // @ts-ignore
-    expect(instance.parseFindValue('workloadnode')).toEqual('node[nodeType = "workload"]');
-    // @ts-ignore
-    expect(instance.parseFindValue('wlnode')).toEqual('node[nodeType = "workload"]');
 
     // check coverage of edge operands
     // @ts-ignore
@@ -178,15 +178,17 @@ describe('Parse find value test', () => {
 
     // check find by name
     // @ts-ignore
-    expect(instance.parseFindValue('foo')).toEqual('node[workload *= "foo"],[app *= "foo"],[service *= "foo"]');
-    // @ts-ignore
-    expect(instance.parseFindValue('!foo')).toEqual('node[workload !*= "foo"][app !*= "foo"][service !*= "foo"]');
-    // @ts-ignore
     expect(instance.parseFindValue('name = foo')).toEqual('node[workload = "foo"],[app = "foo"],[service = "foo"]');
     // @ts-ignore
     expect(instance.parseFindValue('name != foo')).toEqual('node[workload != "foo"][app != "foo"][service != "foo"]');
 
     // check violations
+    // @ts-ignore
+    expect(instance.parseFindValue('foo')).toEqual(undefined); // invalid unary
+    // @ts-ignore
+    expect(instance.parseFindValue('!foo')).toEqual(undefined); // invalid negated unary
+    // @ts-ignore
+    expect(instance.parseFindValue('node = appp')).toEqual(undefined); // invalid node type
     // @ts-ignore
     expect(instance.parseFindValue('ns=foo OR ns=bar AND app=foo')).toEqual(undefined); // AND and OR
     // @ts-ignore

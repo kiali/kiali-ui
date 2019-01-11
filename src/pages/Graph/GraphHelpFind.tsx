@@ -237,39 +237,38 @@ export default class GraphHelpFind extends React.Component<GraphHelpFindProps> {
                       rowKey="id"
                       rows={[
                         {
-                          id: 'e0',
-                          e: 'prod',
-                          d: `shortcut for "name contains prod": app, service, workload contains "prod"`
-                        },
-                        {
-                          id: 'e1',
-                          e: 'not prod',
-                          d: `shortcut for "name not contains prod": app, service, workload not contains 'prod'`
-                        },
-                        {
-                          id: 'e2',
+                          id: 'e00',
                           e: 'name = reviews',
-                          d: `"find by name": find app label, service name or workload name equal to 'reviews'`
-                        },
-                        { id: 'e3', e: 'app startswith product', d: `app label starts with 'product'` },
-                        {
-                          id: 'e4',
-                          e: 'app != details and version=v1',
-                          d: `app label not equal to 'details' and having version equal to 'v1'`
-                        },
-                        { id: 'e5', e: '!sc', d: `nodes without a sidecar` },
-                        { id: 'e6', e: 'httpin > 0.5', d: `nodes with incoming http rate > 0.5 rps` },
-                        { id: 'e7', e: 'tcpout >= 1000', d: `nodes with outgoing tcp rates >= 1000 bps` },
-                        { id: 'e8', e: 'http > 0.5', d: `edges with http rate > 0.5 rps` },
-                        {
-                          id: 'e9',
-                          e: 'rt > 500',
-                          d: `edges with response time > 500ms. (requires response time edge labels)`
+                          d: `"find by name": find nodes with app label, service name or workload name equal to 'reviews'`
                         },
                         {
                           id: 'e10',
+                          e: 'name not contains rev',
+                          d: `"find by name": find nodes with app label, service name and workload name not containing 'rev'`
+                        },
+                        {
+                          id: 'e20',
+                          e: 'app startswith product',
+                          d: `find nodes with app label starting with 'product'`
+                        },
+                        {
+                          id: 'e30',
+                          e: 'app != details and version=v1',
+                          d: `find nodes with app label not equal to 'details' and with version equal to 'v1'`
+                        },
+                        { id: 'e40', e: '!sc', d: `find nodes without a sidecar` },
+                        { id: 'e50', e: 'httpin > 0.5', d: `find nodes with incoming http rate > 0.5 rps` },
+                        { id: 'e60', e: 'tcpout >= 1000', d: `find nodes with outgoing tcp rates >= 1000 bps` },
+                        { id: 'e70', e: 'http > 0.5', d: `find edges with http rate > 0.5 rps` },
+                        {
+                          id: 'e80',
+                          e: 'rt > 500',
+                          d: `find edges with response time > 500ms. (requires response time edge labels)`
+                        },
+                        {
+                          id: 'e90',
                           e: '%traffic >= 50.0',
-                          d: `edges with >= 50% of the outgoing http request traffic of the parent`
+                          d: `find edges with >= 50% of the outgoing http request traffic of the parent`
                         }
                       ]}
                     />
@@ -295,21 +294,18 @@ export default class GraphHelpFind extends React.Component<GraphHelpFindProps> {
                           n: 'tests against app label, service name and workload name'
                         },
                         { id: 'nc20', c: 'namespace <op> <namespaceName>' },
+                        { id: 'nc25', c: 'node <op> <nodeType>', n: 'nodeType: app | service | workload | unknown' },
                         { id: 'nc30', c: 'service <op> <serviceName>' },
                         { id: 'nc40', c: 'version <op> <string>' },
                         { id: 'nc50', c: 'tcpin <op> <number>', n: 'unit: bytes per second' },
                         { id: 'nc60', c: 'tcpout <op> <number>', n: 'unit: bytes per second' },
                         { id: 'nc70', c: 'workload <op> <workloadName>' },
-                        { id: 'nc80', c: '[is] appnode' },
-                        { id: 'nc90', c: '[has] circuitbreaker' },
-                        { id: 'nc100', c: '[is] outsider', n: 'is outside of requested namespaces' },
-                        { id: 'nc110', c: '[has] sidecar' },
-                        { id: 'nc120', c: '[is] servicenode' },
-                        { id: 'nc130', c: '[is] serviceentry' },
-                        { id: 'nc140', c: '[is] unknown' },
-                        { id: 'nc150', c: '[is] unused', n: `'Show Unused' option must be enabled` },
-                        { id: 'nc160', c: '[has] virtualservice' },
-                        { id: 'nc170', c: '[is] workloadnode' }
+                        { id: 'nc90', c: 'circuitbreaker' },
+                        { id: 'nc100', c: 'outside', n: 'is outside of requested namespaces' },
+                        { id: 'nc110', c: 'sidecar' },
+                        { id: 'nc130', c: 'serviceentry' },
+                        { id: 'nc150', c: 'unused', n: `'Show Unused' option must be enabled` },
+                        { id: 'nc160', c: 'virtualservice' }
                       ]}
                     />
                   </TablePfProvider>
@@ -335,7 +331,7 @@ export default class GraphHelpFind extends React.Component<GraphHelpFindProps> {
                           n: `unit: millis, 'Response Time' edge labels required`
                         },
                         { id: 'ec40', c: 'tcp <op> <number>', n: 'unit: requests per second' },
-                        { id: 'ec50', c: '[has] mtls' }
+                        { id: 'ec50', c: 'mtls' }
                       ]}
                     />
                   </TablePfProvider>
@@ -394,10 +390,14 @@ export default class GraphHelpFind extends React.Component<GraphHelpFindProps> {
                         { id: 't60', t: 'Percentages use 1 digit of precision, Rates use 2 digits of precision.' },
                         {
                           id: 't70',
-                          t: 'Abbrevations: namespace|ns, service|svc, workload|wl (e.g. is wlnode)'
+                          t: `Unary operands may optionally be prefixed with " is " or " has ". (i.e. "has mtls")`
                         },
                         {
                           id: 't80',
+                          t: 'Abbrevations: namespace|ns, service|svc, workload|wl (e.g. is wlnode)'
+                        },
+                        {
+                          id: 't90',
                           t:
                             'Abbrevations: circuitbreaker|cb, responsetime|rt, serviceentry->se, sidecar|sc, virtualservice|vs'
                         }
