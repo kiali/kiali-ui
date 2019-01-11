@@ -398,11 +398,12 @@ export default class TrafficRenderer {
   }
 
   private getTrafficEdgeType(edge: any) {
-    if (edge.data(CyEdge.http) !== undefined) {
+    if (edge.data(CyEdge.http) > 0) {
       return TrafficEdgeType.HTTP;
-    } else if (edge.data(CyEdge.tcp) !== undefined) {
+    } else if (edge.data(CyEdge.tcp) > 0) {
       return TrafficEdgeType.TCP;
     }
+    // No TCP or HTTP traffic found
     return TrafficEdgeType.NONE;
   }
 
