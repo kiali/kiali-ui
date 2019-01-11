@@ -441,7 +441,7 @@ export default class TrafficRenderer {
     }
 
     if (trafficEdge.getType() === TrafficEdgeType.HTTP) {
-      const timer = this.timerFromRate(edge.data(CyEdge.tcp));
+      const timer = this.timerFromRate(edge.data(CyEdge.http));
       // The edge of the length also affects the speed, include a factor in the speed to even visual speed for
       // long and short edges.
       const speed = this.speedFromResponseTime(edge.data(CyEdge.responseTime)) * edgeLengthFactor;
