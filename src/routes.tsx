@@ -20,42 +20,49 @@ import DefaultSecondaryMasthead from './components/DefaultSecondaryMasthead/Defa
 const navItems: MenuItem[] = [
   {
     iconClass: ICONS().MENU.OVERVIEW,
+    iconNext: 'TachometerAltIcon',
     title: 'Overview',
     to: '/overview',
     pathsActive: [/^\/overview\/(.*)/]
   },
   {
     iconClass: ICONS().MENU.GRAPH,
+    iconNext: 'TopologyIcon',
     title: 'Graph',
     to: '/graph/namespaces/',
     pathsActive: [/^\/graph\/(.*)/]
   },
   {
     iconClass: ICONS().MENU.APPLICATIONS,
+    iconNext: 'ApplicationsIcon',
     title: 'Applications',
     to: '/applications',
     pathsActive: [/^\/namespaces\/(.*)\/applications\/(.*)/]
   },
   {
     iconClass: ICONS().MENU.WORKLOADS,
+    iconNext: 'BundleIcon',
     title: 'Workloads',
     to: '/workloads',
     pathsActive: [/^\/namespaces\/(.*)\/workloads\/(.*)/]
   },
   {
     iconClass: ICONS().MENU.SERVICES,
+    iconNext: 'ServiceIcon',
     title: 'Services',
     to: '/services',
     pathsActive: [/^\/namespaces\/(.*)\/services\/(.*)/]
   },
   {
     iconClass: ICONS().MENU.ISTIO_CONFIG,
+    iconNext: 'PficonTemplateIcon',
     title: 'Istio Config',
     to: '/istio',
     pathsActive: [/^\/namespaces\/(.*)\/istio\/(.*)/]
   },
   {
     iconClass: ICONS().MENU.DISTRIBUTED_TRACING,
+    iconNext: 'PawIcon',
     title: 'Distributed Tracing',
     to: '/jaeger'
   }

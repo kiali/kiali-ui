@@ -1,15 +1,6 @@
 import React from 'react';
 import { Alert, Row, Col, Form, FormGroup, FormControl, Button, HelpBlock } from 'patternfly-react';
 
-// PF 4 Next
-import {
-  LoginForm,
-  LoginPage as LoginNext,
-  LoginFooterItem
-} from '@patternfly/react-core/dist/js/components/LoginPage';
-import { ListItem } from '@patternfly/react-core/dist/js/components/List';
-import { Alert as AlertNext } from '@patternfly/react-core/dist/js/components/Alert';
-
 import { KEY_CODES } from '../../types/Common';
 
 const kialiTitle = require('../../assets/img/logo-login.svg');
@@ -19,7 +10,6 @@ type LoginProps = {
   error: any;
   message: string;
   authenticate: (username: string, password: string) => void;
-  pfNext: boolean;
 };
 
 type LoginState = {
@@ -69,9 +59,7 @@ export default class LoginPage extends React.Component<LoginProps, LoginState> {
   };
 
   render() {
-    const { pfNext } = this.props;
-
-    const login = (
+    return (
       <div className={'login-pf-page'}>
         <div className={'container-fluid'}>
           <Row>
@@ -126,56 +114,5 @@ export default class LoginPage extends React.Component<LoginProps, LoginState> {
         </div>
       </div>
     );
-
-    const loginForm = (
-      <LoginForm
-        usernameLabel="Username"
-        usernameValue={this.state.username}
-        onChangeUsername={(e: any) => {
-          this.setState({ username: e });
-        }}
-        usernameHelperTextInvalid="Unknown Username"
-        isValidUsername={true}
-        passwordLabel="Password"
-        passwordValue={this.state.password}
-        onChangePassword={(e: any) => this.setState({ password: e })}
-        passwordHelperTextInvalid="Password Invalid"
-        isValidPassword={true}
-        rememberMeAriaLabel="Remember me Checkbox"
-        onLoginButtonClick={(e: any) => this.handleSubmit(e)}
-        style={{ marginTop: '10px' }}
-      />
-    );
-    const listItem = (
-      <React.Fragment>
-        <ListItem>
-          <LoginFooterItem href="https://www.kiali.io/">Documentation</LoginFooterItem>
-        </ListItem>
-        <ListItem>
-          <LoginFooterItem href="https://github.com/kiali/kiali">Contribute</LoginFooterItem>
-        </ListItem>
-      </React.Fragment>
-    );
-
-    const loginNext = (
-      <LoginNext
-        footerListVariants="inline"
-        brandImgSrc={kialiTitle}
-        brandImgAlt="pf-logo"
-        backgroundImgAlt="Images"
-        footerListItems={listItem}
-        textContent="Service Mesh Observability."
-        loginTitle="Log in Kiali"
-      >
-        {this.props.error && (
-          <AlertNext variant={'warning'} title="Warning login kiali">
-            {this.props.message}
-          </AlertNext>
-        )}
-        {loginForm}
-      </LoginNext>
-    );
-
-    return pfNext ? loginNext : login;
   }
 }

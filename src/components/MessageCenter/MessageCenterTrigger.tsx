@@ -1,12 +1,17 @@
 import * as React from 'react';
 import * as PfReact from 'patternfly-react';
 
+/** PFNext */
+import { BellIcon } from '@patternfly/react-icons';
+import { Badge } from '@patternfly/react-core/dist/js/components/Badge';
+
 type PropsType = {
   newMessagesCount: number;
   systemErrorsCount: number;
   badgeDanger: boolean;
   toggleMessageCenter: () => void;
   toggleSystemErrorsCenter: () => void;
+  pfNext?: boolean;
 };
 
 export default class MessageCenterTrigger extends React.PureComponent<PropsType, {}> {
@@ -35,7 +40,14 @@ export default class MessageCenterTrigger extends React.PureComponent<PropsType,
   };
 
   private renderMessageCenterBadge = () => {
-    return (
+    return this.props.pfNext ? (
+      <>
+        {this.props.newMessagesCount > 0 && (
+          <Badge isRead>{this.props.newMessagesCount > 0 ? this.props.newMessagesCount : ' '}</Badge>
+        )}
+        <BellIcon onClick={this.props.toggleMessageCenter} />
+      </>
+    ) : (
       <li className="drawer-pf-trigger">
         <a className="nav-item-iconic" onClick={this.props.toggleMessageCenter}>
           <PfReact.Icon name="bell" />

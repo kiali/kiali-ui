@@ -3,6 +3,7 @@ import { Router, withRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import './App.css';
 import NavigationContainer from '../containers/NavigationContainer';
+import NavigationContainerNext from '../containers/NavigationContainerNext';
 import { store, persistor } from '../store/ConfigStore';
 import axios from 'axios';
 import { GlobalActions } from '../actions/GlobalActions';
@@ -83,7 +84,8 @@ const Loading = () => {
 class App extends React.Component {
   render() {
     loadRcueCssIfNeeded();
-    const Sidebar = withRouter(NavigationContainer);
+    const pfNext = new URLSearchParams(history.location.search).get('pfNext') === '1';
+    const Sidebar = pfNext ? withRouter(NavigationContainerNext) : withRouter(NavigationContainer);
     return (
       <Provider store={store}>
         <PersistGate loading={<Loading />} persistor={persistor}>

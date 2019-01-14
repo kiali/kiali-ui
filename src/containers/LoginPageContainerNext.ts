@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
-import LoginPage from '../pages/Login/LoginPage';
+import LoginPageNext from '../pages/Login/LoginPageNext';
 import { KialiAppState } from '../store/Store';
 import { KialiAppAction } from '../actions/KialiAppAction';
 import LoginThunkActions from '../actions/LoginThunkActions';
@@ -20,5 +20,5 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<KialiAppState, void, KialiAp
 const LoginPageConnected = connect(
   mapStateToProps,
   mapDispatchToProps
-)(LoginPage);
+)(LoginPageNext);
 export default LoginPageConnected;

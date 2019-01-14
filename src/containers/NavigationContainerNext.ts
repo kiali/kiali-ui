@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
-import Navigation from '../components/Nav/Navigation';
+import Navigation from '../components/NavNext/Navigation';
 
 import { KialiAppState, Component } from '../store/Store';
 import { KialiAppAction } from '../actions/KialiAppAction';
