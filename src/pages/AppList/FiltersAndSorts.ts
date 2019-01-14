@@ -2,7 +2,6 @@ import { ActiveFilter, FILTER_ACTION_APPEND, FilterType } from '../../types/Filt
 import { AppListItem } from '../../types/AppList';
 import { SortField } from '../../types/SortFilters';
 import { AppHealth, getRequestErrorsStatus } from '../../types/Health';
-import NamespaceFilter from '../../components/Filters/NamespaceFilter';
 import {
   istioSidecarFilter,
   healthFilter,
@@ -84,7 +83,6 @@ export namespace AppListFilters {
   };
 
   export const availableFilters: FilterType[] = [
-    NamespaceFilter.create(),
     appNameFilter,
     istioSidecarFilter,
     healthFilter

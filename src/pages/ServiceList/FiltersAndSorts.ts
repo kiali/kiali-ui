@@ -2,7 +2,6 @@ import { ActiveFilter, FilterType, FILTER_ACTION_APPEND } from '../../types/Filt
 import { getRequestErrorsStatus, ServiceHealth } from '../../types/Health';
 import { ServiceListItem } from '../../types/ServiceList';
 import { SortField } from '../../types/SortFilters';
-import NamespaceFilter from '../../components/Filters/NamespaceFilter';
 import {
   istioSidecarFilter,
   healthFilter,
@@ -80,12 +79,7 @@ export namespace ServiceListFilters {
     filterValues: []
   };
 
-  export const availableFilters: FilterType[] = [
-    NamespaceFilter.create(),
-    serviceNameFilter,
-    istioSidecarFilter,
-    healthFilter
-  ];
+  export const availableFilters: FilterType[] = [serviceNameFilter, istioSidecarFilter, healthFilter];
   export const namespaceFilter = availableFilters[0];
 
   const filterByIstioSidecar = (items: ServiceListItem[], istioSidecar: boolean): ServiceListItem[] => {
