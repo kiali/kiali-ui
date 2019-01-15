@@ -1,4 +1,8 @@
 export const CyEdge = {
+  grpc: 'grpc',
+  grpcErr: 'grpcErr',
+  grpcPercentErr: 'grpcPercentErr',
+  grpcPercentReq: 'grpcPercentReq',
   http: 'http',
   http3XX: 'http3XX',
   http4XX: 'http4XX',
@@ -15,6 +19,9 @@ export const CyEdge = {
 export const CyNode = {
   app: 'app',
   destServices: 'destServices',
+  grpcIn: 'grpcIn',
+  grpcInErr: 'grpcInErr',
+  grpcOut: 'grpcOut',
   hasCB: 'hasCB',
   hasMissingSC: 'hasMissingSC',
   hasVS: 'hasVS',
