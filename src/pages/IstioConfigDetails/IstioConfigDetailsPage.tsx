@@ -116,6 +116,11 @@ class IstioConfigDetailsPage extends React.Component<RouteComponentProps<IstioCo
     }
   }
 
+  componentWillUnmount() {
+    // Reset ask confirmation flag
+    window.onbeforeunload = null;
+  }
+
   backToList = () => {
     // Back to list page
     ListPageLink.navigateTo(TargetPage.ISTIO, [{ name: this.props.match.params.namespace }]);
