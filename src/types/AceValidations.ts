@@ -215,7 +215,7 @@ const parseCheck = (yaml: string, check: ObjectCheck): AceCheck => {
   return { marker: marker, annotation: annotation };
 };
 
-export const parseKialiValidations = (yamlInput: string, kialiValidations?: Validations): AceValidations => {
+export const parseKialiValidations = (yamlInput: string, kialiValidations?: ObjectValidation): AceValidations => {
   const aceValidations: AceValidations = {
     markers: [],
     annotations: []
@@ -225,8 +225,8 @@ export const parseKialiValidations = (yamlInput: string, kialiValidations?: Vali
     return aceValidations;
   }
 
-  validation.checks.forEach(check => {
-    const aceCheck = parseCheck(yaml, check);
+  kialiValidations.checks.forEach(check => {
+    const aceCheck = parseCheck(yamlInput, check);
     aceValidations.markers.push(aceCheck.marker);
     aceValidations.annotations.push(aceCheck.annotation);
   });

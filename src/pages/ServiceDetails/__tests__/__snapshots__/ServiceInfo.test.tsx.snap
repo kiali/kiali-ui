@@ -203,6 +203,29 @@ ShallowWrapper {
         },
       }
     }
+    validations={
+      Object {
+        "destinationrule": Object {
+          "reviews": Object {
+            "checks": Array [
+              Object {
+                "message": "This subset is not found from the host",
+                "path": "spec/subsets[0]/version",
+                "severity": "error",
+              },
+              Object {
+                "message": "This subset is not found from the host",
+                "path": "spec/subsets[1]/version",
+                "severity": "error",
+              },
+            ],
+            "name": "details",
+            "objectType": "destinationrule",
+            "valid": false,
+          },
+        },
+      }
+    }
   />,
   Symbol(enzyme.__renderer__): Object {
     "batchedUpdates": [Function],

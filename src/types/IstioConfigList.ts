@@ -147,7 +147,7 @@ export const filterByConfigValidation = (unfiltered: IstioConfigItem[], configFi
 export const toIstioItems = (istioConfigList: IstioConfigList): IstioConfigItem[] => {
   const istioItems: IstioConfigItem[] = [];
 
-  let hasValidations = (type: string, name: string) =>
+  const hasValidations = (type: string, name: string) =>
     istioConfigList.validations[type] && istioConfigList.validations[type][name];
 
   istioConfigList.gateways.forEach(gw =>

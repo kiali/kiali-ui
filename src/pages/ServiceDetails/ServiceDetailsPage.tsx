@@ -5,7 +5,7 @@ import ServiceId from '../../types/ServiceId';
 import * as API from '../../services/Api';
 import * as MessageCenter from '../../utils/MessageCenter';
 import { ServiceDetailsInfo } from '../../types/ServiceInfo';
-import { ObjectValidation } from '../../types/IstioObjects';
+import { ObjectValidation, Validations } from '../../types/IstioObjects';
 import { authentication } from '../../utils/Authentication';
 import ServiceMetricsContainer from '../../containers/ServiceMetricsContainer';
 import ServiceInfo from './ServiceInfo';
@@ -15,6 +15,7 @@ import { default as DestinationRuleValidator } from './ServiceInfo/types/Destina
 
 type ServiceDetailsState = {
   serviceDetailsInfo: ServiceDetailsInfo;
+  validations: Validations;
 };
 
 interface ServiceDetailsProps extends RouteComponentProps<ServiceId> {
@@ -54,7 +55,8 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
           }
         },
         validations: {}
-      }
+      },
+      validations: {}
     };
   }
 
@@ -82,7 +84,7 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
   }
 
   searchValidation(parsedSearch: ParsedSearch) {
-    const vals: {} as ObjectValidation;
+    let vals;
 
     if (
       this.state.serviceDetailsInfo.validations &&
@@ -92,6 +94,8 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
       this.state.serviceDetailsInfo.validations[parsedSearch.type][parsedSearch.name]
     ) {
       vals = this.state.serviceDetailsInfo.validations[parsedSearch.type][parsedSearch.name];
+    } else {
+      vals = {} as ObjectValidation;
     }
 
     return vals;
@@ -121,7 +125,7 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
       .then(resultDetails => {
         this.setState({
           serviceDetailsInfo: resultDetails,
-          validations: this.addFormatValidation(resultDetails, resultValidations.data)
+          validations: this.addFormatValidation(resultDetails, resultDetails.validations)
         });
       })
       .catch(error => {
