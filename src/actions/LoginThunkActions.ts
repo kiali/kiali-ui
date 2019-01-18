@@ -1,7 +1,7 @@
 import moment from 'moment';
 import { ThunkDispatch } from 'redux-thunk';
 import { HTTP_CODES } from '../types/Common';
-import { KialiAppState, LoginState, LoginSession, LoginStatus } from '../store/Store';
+import { KialiAppState, LoginState, LoginSession } from '../store/Store';
 import { KialiAppAction } from './KialiAppAction';
 import HelpDropdownThunkActions from './HelpDropdownThunkActions';
 import GrafanaThunkActions from './GrafanaThunkActions';
@@ -17,7 +17,7 @@ type KialiDispatch = ThunkDispatch<KialiAppState, void, KialiAppAction>;
 const Dispatcher = new Login.LoginDispatcher();
 
 const shouldRelogin = (state?: LoginState): boolean =>
-  !(state && state.status === LoginStatus.loggedIn && new Date() < moment(state.session!.expiresOn).toDate());
+  !state || !state.session || moment(state.session!.expiresOn).diff(moment()) > 0;
 
 const loginSuccess = async (dispatch: KialiDispatch, session: LoginSession) => {
   const authHeader = `Bearer ${session.token}`;
@@ -42,8 +42,6 @@ const loginSuccess = async (dispatch: KialiDispatch, session: LoginSession) => {
 // The `data` argument is defined as `any` because the dispatchers receive
 // different kinds of data (such as e-mail/password, tokens).
 const performLogin = (dispatch: KialiDispatch, state: KialiAppState, data?: any) => {
-  dispatch(LoginActions.loginRequest());
-
   const bail = (error: Login.LoginResult) =>
     data ? dispatch(LoginActions.loginFailure(error)) : dispatch(LoginActions.logoutSuccess());
 
@@ -69,6 +67,8 @@ const LoginThunkActions = {
   checkCredentials: () => {
     return (dispatch: KialiDispatch, getState: () => KialiAppState) => {
       const state: KialiAppState = getState();
+
+      dispatch(LoginActions.loginRequest());
 
       if (shouldRelogin(state.authentication)) {
         performLogin(dispatch, state);
