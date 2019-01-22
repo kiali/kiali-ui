@@ -329,6 +329,14 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
       //
       case 'app':
         return { target: 'node', selector: `[${CyNode.app} ${op} "${val}"]` };
+      case 'grpcin': {
+        const s = this.getNumericSelector(CyNode.grpcIn, op, val, 1.0, expression);
+        return s ? { target: 'node', selector: s } : undefined;
+      }
+      case 'grpcout': {
+        const s = this.getNumericSelector(CyNode.grpcOut, op, val, 1.0, expression);
+        return s ? { target: 'node', selector: s } : undefined;
+      }
       case 'httpin': {
         const s = this.getNumericSelector(CyNode.httpIn, op, val, expression);
         return s ? { target: 'node', selector: s } : undefined;
@@ -395,17 +403,30 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
       //
       // edges..
       //
+      case 'grpc': {
+        const s = this.getNumericSelector(CyEdge.grpc, op, val, 1.0, expression);
+        return s ? { target: 'edge', selector: s } : undefined;
+      }
+      case '%grpcerror':
+      case '%grpcerr': {
+        const s = this.getNumericSelector(CyEdge.grpcPercentErr, op, val, 1.0, expression);
+        return s ? { target: 'edge', selector: s } : undefined;
+      }
+      case '%grpctraffic': {
+        const s = this.getNumericSelector(CyEdge.grpcPercentReq, op, val, 1.0, expression);
+        return s ? { target: 'edge', selector: s } : undefined;
+      }
       case 'http': {
         const s = this.getNumericSelector(CyEdge.http, op, val, expression);
         return s ? { target: 'edge', selector: s } : undefined;
       }
-      case '%error':
-      case '%err': {
-        const s = this.getNumericSelector(CyEdge.httpPercentErr, op, val, expression);
+      case '%httperror':
+      case '%httperr': {
+        const s = this.getNumericSelector(CyEdge.httpPercentErr, op, val, 1.0, expression);
         return s ? { target: 'edge', selector: s } : undefined;
       }
-      case '%traffic': {
-        const s = this.getNumericSelector(CyEdge.httpPercentReq, op, val, expression);
+      case '%httptraffic': {
+        const s = this.getNumericSelector(CyEdge.httpPercentReq, op, val, 1.0, expression);
         return s ? { target: 'edge', selector: s } : undefined;
       }
       case 'rt':

@@ -115,14 +115,15 @@ export class GraphStyles {
           break;
         }
         case EdgeLabelMode.REQUESTS_PERCENT_OF_TOTAL: {
-          let pReq = 100;
+          let pReq;
           if (ele.data(CyEdge.httpPercentReq) > 0) {
             pReq = Number(ele.data(CyEdge.httpPercentReq));
           } else if (ele.data(CyEdge.grpcPercentReq) > 0) {
             pReq = Number(ele.data(CyEdge.grpcPercentReq));
           }
-
-          content = pReq < 100.0 ? pReq.toFixed(1) + '%' : '100%';
+          if (pReq) {
+            content = pReq < 100.0 ? pReq.toFixed(1) + '%' : '100%';
+          }
           break;
         }
         default:

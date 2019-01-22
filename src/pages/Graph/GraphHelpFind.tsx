@@ -286,8 +286,10 @@ export default class GraphHelpFind extends React.Component<GraphHelpFindProps> {
                     <Table.Body
                       rowKey="id"
                       rows={[
-                        { id: 'nc00', c: 'httpin <op> <number>', n: 'unit: requests per second' },
-                        { id: 'nc10', c: 'httpout <op> <number>', n: 'unit: requests per second' },
+                        { id: 'nc00', c: 'grpcin <op> <number>', n: 'unit: requests per second' },
+                        { id: 'nc10', c: 'grpcout <op> <number>', n: 'unit: requests per second' },
+                        { id: 'nc12', c: 'httpin <op> <number>', n: 'unit: requests per second' },
+                        { id: 'nc13', c: 'httpout <op> <number>', n: 'unit: requests per second' },
                         {
                           id: 'nc15',
                           c: 'name <op> <string>',
@@ -323,9 +325,12 @@ export default class GraphHelpFind extends React.Component<GraphHelpFindProps> {
                     <Table.Body
                       rowKey="id"
                       rows={[
-                        { id: 'ec00', c: 'http <op> <number>', n: 'unit: requests per second' },
-                        { id: 'ec10', c: '%err <op> <number>', n: 'range: [0..100]' },
-                        { id: 'ec20', c: '%traffic <op> <number>', n: 'range: [0..100]' },
+                        { id: 'ec00', c: 'grpc <op> <number>', n: 'unit: requests per second' },
+                        { id: 'ec10', c: '%grpcerr <op> <number>', n: 'range: [0..100]' },
+                        { id: 'ec20', c: '%grpctraffic <op> <number>', n: 'range: [0..100]' },
+                        { id: 'ec23', c: 'http <op> <number>', n: 'unit: requests per second' },
+                        { id: 'ec24', c: '%httperr <op> <number>', n: 'range: [0..100]' },
+                        { id: 'ec25', c: '%httptraffic <op> <number>', n: 'range: [0..100]' },
                         {
                           id: 'ec30',
                           c: 'responsetime <op> <number>',

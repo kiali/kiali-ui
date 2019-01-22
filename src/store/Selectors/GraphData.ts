@@ -12,14 +12,17 @@ const decorateGraphData = (graphData: any) => {
     edges: {
       grpc: '0',
       grpcErr: '0',
+      grpcPercentErr: '0',
+      grpcPercentReq: '0',
       http: '0',
       http3xx: '0',
       http4xx: '0',
       http5xx: '0',
       httpPercentErr: '0',
-      httpPercentReq: '100.0',
+      httpPercentReq: '0',
       isMTLS: undefined,
       isUnused: undefined,
+      protocol: undefined,
       responseTime: '0',
       tcp: '0'
     },
@@ -73,9 +76,7 @@ const decorateGraphData = (graphData: any) => {
         if (edge.data.traffic) {
           const traffic = edge.data.traffic;
           edge.data.traffic = undefined;
-          traffic.map(protocol => {
-            decoratedEdge.data = { ...protocol.rates, ...decoratedEdge.data };
-          });
+          decoratedEdge.data = { protocol: traffic.protocol, ...traffic.rates, ...decoratedEdge.data };
         }
         decoratedEdge.data = { ...elementsDefaults.edges, ...decoratedEdge.data };
         return decoratedEdge;
