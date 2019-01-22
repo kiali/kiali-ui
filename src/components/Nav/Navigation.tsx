@@ -20,9 +20,6 @@ import { KialiLogo } from '../../config';
 import { isKioskMode } from '../../utils/SearchParamUtils';
 import { MessageCenterContainer } from '../../containers/MessageCenterContainer';
 
-export const istioConfigTitle = 'Istio Config';
-export const servicesTitle = 'Services';
-
 type PropsType = RouteComponentProps & {
   authenticated: boolean;
   navCollapsed: boolean;
