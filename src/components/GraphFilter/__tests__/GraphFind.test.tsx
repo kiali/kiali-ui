@@ -13,6 +13,7 @@ describe('Parse find value test', () => {
     const wrapper = shallow(
       <GraphFind
         cyData={{ updateTimestamp: 123, cyRef: 'dummyRef' }}
+        layout={{ name: 'dagre' }}
         showFindHelp={false}
         toggleFindHelp={testHandler}
       />

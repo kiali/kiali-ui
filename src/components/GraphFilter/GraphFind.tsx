@@ -10,11 +10,13 @@ import { GraphFilterActions } from '../../actions/GraphFilterActions';
 import { KialiAppAction } from '../../actions/KialiAppAction';
 import * as MessageCenterUtils from '../../utils/MessageCenter';
 import GraphHelpFind from '../../pages/Graph/GraphHelpFind';
-import { CyNode, CyEdge } from '../CytoscapeGraph/CytoscapeGraphUtils';
+import { CyNode, CyEdge, runLayout } from '../CytoscapeGraph/CytoscapeGraphUtils';
 import { CyData } from '../../types/Graph';
+import { Layout } from '../../types/GraphFilter';
 
 type ReduxProps = {
   cyData: CyData;
+  layout: Layout;
   showFindHelp: boolean;
 
   toggleFindHelp: () => void;
@@ -32,6 +34,10 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
     router: () => null
   };
 
+  private filterInputRef;
+  private filterInputValue: string;
+  private filterValue: string;
+  private filteredElements: any | undefined;
   private findInputRef;
   private findInputValue: string;
   private findValue: string;
@@ -42,6 +48,12 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
     if (props.showFindHelp) {
       props.toggleFindHelp();
     }
+
+    this.filterInputRef = React.createRef();
+    this.filterInputValue = '';
+    this.filterValue = '';
+    this.filteredElements = undefined;
+
     this.findInputRef = React.createRef();
     this.findInputValue = '';
     this.findValue = '';
@@ -51,13 +63,17 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
     if (this.findValue.length > 0 && this.props.cyData.updateTimestamp !== prevProps.cyData.updateTimestamp) {
       this.handleFind();
     }
+    if (this.filterValue.length > 0 && this.props.cyData.updateTimestamp !== prevProps.cyData.updateTimestamp) {
+      this.filteredElements = undefined;
+      this.handleFilter();
+    }
   }
 
   render() {
     return (
       <>
-        <FormGroup>
-          <Form onSubmit={this.handleFindSubmit} inline="true">
+        <FormGroup style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
+          <Form inline="true">
             <InputGroup>
               <FormControl
                 type="text"
@@ -66,6 +82,7 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
                   this.findInputRef = ref;
                 }}
                 onChange={this.updateFind}
+                onKeyPress={this.checkSubmitFind}
                 placeholder="Find..."
               />
               <InputGroup.Button>
@@ -73,9 +90,24 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
                   <Icon name="close" type="fa" />
                 </Button>
               </InputGroup.Button>
+              <FormControl
+                type="text"
+                style={{ width: '18em' }}
+                inputRef={ref => {
+                  this.filterInputRef = ref;
+                }}
+                onChange={this.updateFilter}
+                onKeyPress={this.checkSubmitFilter}
+                placeholder="Filter..."
+              />
+              <InputGroup.Button>
+                <Button onClick={this.clearFilter}>
+                  <Icon name="close" type="fa" />
+                </Button>
+              </InputGroup.Button>
             </InputGroup>
             <Button bsStyle="link" style={{ paddingLeft: '6px' }} onClick={this.toggleFindHelp}>
-              <Icon name="help" type="pf" title="Help Find..." />
+              <Icon name="help" type="pf" title="Help Find/Filter..." />
             </Button>
           </Form>
         </FormGroup>
@@ -88,8 +120,42 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
     this.props.toggleFindHelp();
   };
 
+  private updateFilter = event => {
+    this.filterInputValue = event.target.value;
+  };
+
   private updateFind = event => {
     this.findInputValue = event.target.value;
+  };
+
+  private checkSubmitFilter = event => {
+    const keyCode = event.keyCode ? event.keyCode : event.which;
+    if (keyCode === 13) {
+      event.preventDefault();
+      if (this.filterValue !== this.filterInputValue) {
+        this.filterValue = this.filterInputValue;
+        this.handleFilter();
+      }
+    }
+  };
+
+  private checkSubmitFind = event => {
+    const keyCode = event.keyCode ? event.keyCode : event.which;
+    if (keyCode === 13) {
+      event.preventDefault();
+      if (this.findValue !== this.findInputValue) {
+        this.findValue = this.findInputValue;
+        this.handleFind();
+      }
+    }
+  };
+
+  private clearFilter = () => {
+    this.filterInputValue = '';
+    this.filterValue = '';
+    // note, we don't use filterInputRef.current because <FormControl> deals with refs differently than <input>
+    this.filterInputRef.value = '';
+    this.handleFilter();
   };
 
   private clearFind = () => {
@@ -100,10 +166,25 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
     this.handleFind();
   };
 
-  private handleFindSubmit = event => {
-    event.preventDefault();
-    this.findValue = this.findInputValue;
-    this.handleFind();
+  private handleFilter = () => {
+    if (!this.props.cyData) {
+      console.debug('Skip Filter: cy not set.');
+      return;
+    }
+    const cy = this.props.cyData.cyRef;
+    const selector = this.parseFindValue(this.filterValue);
+    cy.startBatch();
+    // restore old filter-hits
+    if (this.filteredElements) {
+      this.filteredElements.restore();
+      this.filteredElements = undefined;
+      runLayout(cy, this.props.layout);
+    }
+    if (selector) {
+      // remove new filter-hits
+      this.filteredElements = cy.remove(selector);
+    }
+    cy.endBatch();
   };
 
   private handleFind = () => {
@@ -243,11 +324,11 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
       case 'app':
         return { target: 'node', selector: `[${CyNode.app} ${op} "${val}"]` };
       case 'httpin': {
-        const s = this.getNumericSelector(CyNode.httpIn, op, val, 1.0, expression);
+        const s = this.getNumericSelector(CyNode.httpIn, op, val, expression);
         return s ? { target: 'node', selector: s } : undefined;
       }
       case 'httpout': {
-        const s = this.getNumericSelector(CyNode.httpOut, op, val, 1.0, expression);
+        const s = this.getNumericSelector(CyNode.httpOut, op, val, expression);
         return s ? { target: 'node', selector: s } : undefined;
       }
       case 'name': {
@@ -293,11 +374,11 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
       case 'service':
         return { target: 'node', selector: `[${CyNode.service} ${op} "${val}"]` };
       case 'tcpin': {
-        const s = this.getNumericSelector(CyNode.tcpIn, op, val, 1.0, expression);
+        const s = this.getNumericSelector(CyNode.tcpIn, op, val, expression);
         return s ? { target: 'node', selector: s } : undefined;
       }
       case 'tcpout': {
-        const s = this.getNumericSelector(CyNode.tcpOut, op, val, 1.0, expression);
+        const s = this.getNumericSelector(CyNode.tcpOut, op, val, expression);
         return s ? { target: 'node', selector: s } : undefined;
       }
       case 'version':
@@ -309,25 +390,25 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
       // edges..
       //
       case 'http': {
-        const s = this.getNumericSelector(CyEdge.http, op, val, 1.0, expression);
+        const s = this.getNumericSelector(CyEdge.http, op, val, expression);
         return s ? { target: 'edge', selector: s } : undefined;
       }
       case '%error':
       case '%err': {
-        const s = this.getNumericSelector(CyEdge.httpPercentErr, op, val, 1.0, expression);
+        const s = this.getNumericSelector(CyEdge.httpPercentErr, op, val, expression);
         return s ? { target: 'edge', selector: s } : undefined;
       }
       case '%traffic': {
-        const s = this.getNumericSelector(CyEdge.httpPercentReq, op, val, 1.0, expression);
+        const s = this.getNumericSelector(CyEdge.httpPercentReq, op, val, expression);
         return s ? { target: 'edge', selector: s } : undefined;
       }
       case 'rt':
       case 'responsetime': {
-        const s = this.getNumericSelector(CyEdge.responseTime, op, val, 0.001, expression);
+        const s = this.getNumericSelector(CyEdge.responseTime, op, val, expression);
         return s ? { target: 'edge', selector: s } : undefined;
       }
       case 'tcp': {
-        const s = this.getNumericSelector(CyEdge.tcp, op, val, 1.0, expression);
+        const s = this.getNumericSelector(CyEdge.tcp, op, val, expression);
         return s ? { target: 'edge', selector: s } : undefined;
       }
       default:
@@ -336,13 +417,7 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
     }
   };
 
-  private getNumericSelector(
-    field: string,
-    op: string,
-    val: any,
-    multiplier: number,
-    expression: string
-  ): string | undefined {
+  private getNumericSelector(field: string, op: string, val: any, expression: string): string | undefined {
     if (isNaN(val)) {
       MessageCenterUtils.add(`Invalid find value, expected a numeric value (use . for decimals):  [${expression}]`);
       return undefined;
@@ -360,12 +435,11 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
         return undefined;
     }
 
-    const numVal = Number(val) * multiplier;
     switch (op) {
       case '=':
-        return numVal === 0 ? `[^${field}]` : `[${field} ${op} "${val}"]`;
       case '!=':
-        return `[${field} ${op} "${val}"]`;
+        // let the user type in 0 in various ways but set to the proper default value
+        return Number(val) !== 0 ? `[${field} ${op} "${val}"]` : `[${field} ${op} "0"]`;
       default:
         return `[${field} ${op} ${val}]`;
     }
@@ -428,6 +502,7 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
 
 const mapStateToProps = (state: KialiAppState) => ({
   cyData: state.graph.cyData,
+  layout: state.graph.layout,
   showFindHelp: state.graph.filterState.showFindHelp
 });
 

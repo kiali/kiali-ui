@@ -304,6 +304,7 @@ export default class GraphHelpFind extends React.Component<GraphHelpFindProps> {
                         { id: 'nc100', c: 'outside', n: 'is outside of requested namespaces' },
                         { id: 'nc110', c: 'sidecar' },
                         { id: 'nc130', c: 'serviceentry' },
+                        { id: 'nc135', c: 'trafficsource', n: `has only outgoing edges` },
                         { id: 'nc150', c: 'unused', n: `'Show Unused' option must be enabled` },
                         { id: 'nc160', c: 'virtualservice' }
                       ]}
