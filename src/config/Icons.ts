@@ -7,13 +7,13 @@ const icons = {
     CIRCUIT_BREAKER: { type: 'fa', name: 'bolt', ascii: '\uf0e7 ' }
   },
   MENU: {
-    OVERVIEW: 'fa fa-tachometer',
-    GRAPH: 'fa pficon-topology',
-    APPLICATIONS: 'fa pficon-applications',
-    WORKLOADS: 'fa pficon-bundle',
-    SERVICES: 'fa pficon-service',
-    ISTIO_CONFIG: 'fa pficon-template',
-    DISTRIBUTED_TRACING: 'fa fa-paw'
+    OVERVIEW: 'TachometerAltIcon',
+    GRAPH: 'TopologyIcon',
+    APPLICATIONS: 'ApplicationsIcon',
+    WORKLOADS: 'BundleIcon',
+    SERVICES: 'ServiceIcon',
+    ISTIO_CONFIG: 'PficonTemplateIcon',
+    DISTRIBUTED_TRACING: 'PawIcon'
   }
 };
 

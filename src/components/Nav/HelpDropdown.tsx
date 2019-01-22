@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { Dropdown, Icon, MenuItem } from 'patternfly-react';
-
 import AboutUIModal from '../About/AboutUIModal';
 import { Component } from '../../store/Store';
+import { Button, ButtonVariant } from '@patternfly/react-core';
+import { HelpIcon } from '@patternfly/react-icons/';
 
 type HelpDropdownProps = {
   status: { [key: string]: string };
@@ -28,14 +28,9 @@ class HelpDropdown extends React.Component<HelpDropdownProps, HelpDropdownState>
           status={this.props.status}
           components={this.props.components}
         />
-        <Dropdown componentClass="li" id="help">
-          <Dropdown.Toggle useAnchor={true} className="nav-item-iconic">
-            <Icon type="pf" name="help" />
-          </Dropdown.Toggle>
-          <Dropdown.Menu>
-            <MenuItem onClick={() => this.about.open()}>About</MenuItem>
-          </Dropdown.Menu>
-        </Dropdown>
+        <Button id={'help_icon'} aria-label={'Help'} onClick={() => this.about.open()} variant={ButtonVariant.plain}>
+          <HelpIcon />
+        </Button>
       </>
     );
   }

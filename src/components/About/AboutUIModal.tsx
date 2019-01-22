@@ -1,7 +1,8 @@
 import * as React from 'react';
-import { AboutModal, Icon } from 'patternfly-react';
+import { AboutModal, TextContent, TextList, TextListItem, Title, Button } from '@patternfly/react-core';
 import { Component } from '../../store/Store';
 import { config, KialiLogo } from '../../config';
+import * as icons from '@patternfly/react-icons';
 
 const KIALI_CORE_COMMIT_HASH = 'Kiali core commit hash';
 const KIALI_CORE_VERSION = 'Kiali core version';
@@ -40,22 +41,49 @@ class AboutUIModal extends React.Component<AboutUIModalProps, AboutUIModalState>
         : `${this.props.status[KIALI_CORE_VERSION]} (${this.props.status[KIALI_CORE_COMMIT_HASH]})`;
 
     return (
-      <AboutModal show={this.state.showModal} onHide={this.close} productTitle={<img src={KialiLogo} />}>
-        <AboutModal.Versions>
-          <AboutModal.VersionItem label="kiali-ui" versionText={uiVersion!} />
-          <AboutModal.VersionItem label="kiali" versionText={coreVersion!} />
-          <h3>Components </h3>
-          {this.props.components &&
-            this.props.components.map(component => (
-              <AboutModal.VersionItem
-                key={component.name}
-                label={component.version ? component.name : `${component.name}URL`}
-                versionText={`${component.version ? component.version : ''} ${
-                  component.version ? (component.url ? `(${component.url})` : '') : component.url
-                }`}
-              />
-            ))}
-        </AboutModal.Versions>
+      <AboutModal
+        isOpen={this.state.showModal}
+        onClose={this.close}
+        productName="Kiali"
+        trademark="Trademark and copyright information here"
+        brandImageSrc={KialiLogo}
+        brandImageAlt="Kiali Logo"
+        logoImageSrc={KialiLogo}
+        logoImageAlt="Kiali Logo"
+        heroImageSrc={KialiLogo}
+      >
+        <TextContent>
+          <TextList component="dl">
+            <TextListItem key={'kiali-ui-name'} component="dt">
+              Kiali-ui
+            </TextListItem>
+            <TextListItem key={'kiali-ui-version'} component="dd">
+              {uiVersion!}
+            </TextListItem>
+            <TextListItem key={'kiali-name'} component="dt">
+              Kiali
+            </TextListItem>
+            <TextListItem key={'kiali-version'} component="dd">
+              {coreVersion!}
+            </TextListItem>
+          </TextList>
+          <Title size="xl" style={{ padding: '20px 0px 20px' }}>
+            Components
+          </Title>
+          <TextList component="dl">
+            {this.props.components &&
+              this.props.components.map(component => (
+                <React.Fragment key={`${component.name}_${component.version}`}>
+                  <TextListItem key={component.name} component="dt">
+                    {component.version ? component.name : `${component.name}URL`}
+                  </TextListItem>
+                  <TextListItem key={component.version} component="dd">{`${
+                    component.version ? component.version : ''
+                  } ${component.version ? (component.url ? `(${component.url})` : '') : component.url}`}</TextListItem>
+                </React.Fragment>
+              ))}
+          </TextList>
+        </TextContent>
         {this.renderWebsiteLink()}
         {this.renderProjectLink()}
       </AboutModal>
@@ -64,18 +92,12 @@ class AboutUIModal extends React.Component<AboutUIModalProps, AboutUIModalState>
 
   private renderWebsiteLink = () => {
     if (config().about && config().about.website) {
+      const Icon = icons[config().about.website.icon];
       return (
-        <div>
-          <a href={config().about.website.url} target="_blank" rel="noopener noreferrer">
-            <Icon
-              name={config().about.website.iconName}
-              type={config().about.website.iconType}
-              size="lg"
-              style={{ color: 'white' }}
-            />{' '}
-            {config().about.website.linkText}
-          </a>
-        </div>
+        <Button href={config().about.website.url} target="_blank">
+          <Icon style={{ marginRight: '10px' }} />
+          {config().about.website.linkText}
+        </Button>
       );
     }
 
@@ -84,18 +106,12 @@ class AboutUIModal extends React.Component<AboutUIModalProps, AboutUIModalState>
 
   private renderProjectLink = () => {
     if (config().about && config().about.project) {
+      const Icon = icons[config().about.project.icon];
       return (
-        <div>
-          <a href={config().about.project.url} target="_blank" rel="noopener noreferrer">
-            <Icon
-              name={config().about.project.iconName}
-              type={config().about.project.iconType}
-              size="lg"
-              style={{ color: 'white' }}
-            />{' '}
-            {config().about.project.linkText}
-          </a>
-        </div>
+        <Button href={config().about.project.url} target="_blank">
+          <Icon style={{ marginRight: '10px' }} />
+          {config().about.project.linkText}
+        </Button>
       );
     }
 

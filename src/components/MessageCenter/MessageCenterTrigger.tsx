@@ -1,5 +1,7 @@
 import * as React from 'react';
 import * as PfReact from 'patternfly-react';
+import { Badge, Button, ButtonVariant } from '@patternfly/react-core';
+import { BellIcon } from '@patternfly/react-icons/';
 
 type PropsType = {
   newMessagesCount: number;
@@ -36,16 +38,19 @@ export default class MessageCenterTrigger extends React.PureComponent<PropsType,
 
   private renderMessageCenterBadge = () => {
     return (
-      <li className="drawer-pf-trigger">
-        <a className="nav-item-iconic" onClick={this.props.toggleMessageCenter}>
-          <PfReact.Icon name="bell" />
-          {this.props.newMessagesCount > 0 && (
-            <PfReact.Badge className={'pf-badge-bodered' + (this.props.badgeDanger ? ' badge-danger' : '')}>
-              {this.props.newMessagesCount > 0 ? this.props.newMessagesCount : ' '}
-            </PfReact.Badge>
-          )}
-        </a>
-      </li>
+      <Button
+        id={'bell_icon_warning'}
+        aria-label={'Notifications'}
+        onClick={this.props.toggleMessageCenter}
+        variant={ButtonVariant.plain}
+      >
+        <BellIcon />
+        {this.props.newMessagesCount > 0 && (
+          <Badge className={'pf-badge-bodered' + (this.props.badgeDanger ? ' badge-danger' : '')}>
+            {this.props.newMessagesCount > 0 ? this.props.newMessagesCount : ' '}
+          </Badge>
+        )}
+      </Button>
     );
   };
 }

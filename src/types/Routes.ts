@@ -1,5 +1,5 @@
 export interface MenuItem {
-  iconClass: string;
+  icon: string;
   title: string;
   to: string;
   pathsActive?: RegExp[];

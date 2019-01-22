@@ -1,5 +1,5 @@
 import React from 'react';
-import { LoginForm, LoginPage as LoginNext, LoginFooterItem, ListItem, Alert } from '@patternfly/react-core/dist/js';
+import { LoginForm, LoginPage as LoginNext, LoginFooterItem, ListItem, Alert } from '@patternfly/react-core';
 
 import { KEY_CODES } from '../../types/Common';
 
@@ -75,14 +75,14 @@ export default class LoginPage extends React.Component<LoginProps, LoginState> {
       />
     );
     const listItem = (
-      <React.Fragment>
+      <>
         <ListItem>
           <LoginFooterItem href="https://www.kiali.io/">Documentation</LoginFooterItem>
         </ListItem>
         <ListItem>
           <LoginFooterItem href="https://github.com/kiali/kiali">Contribute</LoginFooterItem>
         </ListItem>
-      </React.Fragment>
+      </>
     );
 
     return (
@@ -90,6 +90,7 @@ export default class LoginPage extends React.Component<LoginProps, LoginState> {
         footerListVariants="inline"
         brandImgSrc={kialiTitle}
         brandImgAlt="pf-logo"
+        backgroundImgSrc={'http://patternfly-react.surge.sh/assets/images/pfbg_1200.jpg'}
         backgroundImgAlt="Images"
         footerListItems={listItem}
         textContent="Service Mesh Observability."

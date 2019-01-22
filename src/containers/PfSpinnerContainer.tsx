@@ -10,8 +10,8 @@ type PfSpinnerProps = {
 
 const spinnerStyle = style({
   position: 'absolute',
-  left: 200,
-  top: 15
+  left: 230,
+  top: 25
 });
 
 const mapStateToProps = (state: KialiAppState) => ({

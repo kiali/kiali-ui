@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Dropdown, Icon, MenuItem } from 'patternfly-react';
-import { SessionTimeout } from '../SessionTimeout/SessionTimeout';
+import { Dropdown, DropdownItem, DropdownToggle } from '@patternfly/react-core/dist/js';
+// import { SessionTimeout } from '../SessionTimeout/SessionTimeout';
 import { config } from '../../config';
 import { MILLISECONDS } from '../../types/Common';
 import Timer = NodeJS.Timer;
@@ -17,6 +17,7 @@ type UserState = {
   timeCountDownSeconds: number;
   checkSessionTimerId?: Timer;
   timeLeftTimerId?: Timer;
+  isDropdownOpen: boolean;
 };
 
 class UserDropdown extends React.Component<UserProps, UserState> {
@@ -24,7 +25,8 @@ class UserDropdown extends React.Component<UserProps, UserState> {
     super(props);
     this.state = {
       showSessionTimeOut: false,
-      timeCountDownSeconds: this.timeLeft() / MILLISECONDS
+      timeCountDownSeconds: this.timeLeft() / MILLISECONDS,
+      isDropdownOpen: false
     };
   }
   componentDidMount() {
@@ -77,26 +79,34 @@ class UserDropdown extends React.Component<UserProps, UserState> {
     this.setState({ showSessionTimeOut: false });
   };
 
+  onDropdownToggle = isDropdownOpen => {
+    this.setState({
+      isDropdownOpen
+    });
+  };
+
+  onDropdownSelect = event => {
+    this.setState({
+      isDropdownOpen: !this.state.isDropdownOpen
+    });
+  };
+
   render() {
+    const { isDropdownOpen } = this.state;
+    const userDropdownItems = (
+      <DropdownItem key={'user_logout_option'} onClick={() => this.handleLogout()}>
+        Logout
+      </DropdownItem>
+    );
     return (
-      <>
-        <SessionTimeout
-          logout={this.props.logout}
-          extendSession={this.extendSession}
-          show={this.state.showSessionTimeOut}
-          timeOutCountDown={this.state.timeCountDownSeconds}
-        />
-        <Dropdown componentClass="li" id="user">
-          <Dropdown.Toggle useAnchor={true} className="nav-item-iconic">
-            <Icon type="pf" name="user" /> {this.props.username}
-          </Dropdown.Toggle>
-          <Dropdown.Menu>
-            <MenuItem id="usermenu_logout" onClick={() => this.handleLogout()}>
-              Logout
-            </MenuItem>
-          </Dropdown.Menu>
-        </Dropdown>
-      </>
+      <Dropdown
+        isPlain={true}
+        position="right"
+        onSelect={this.onDropdownSelect}
+        isOpen={isDropdownOpen}
+        toggle={<DropdownToggle onToggle={this.onDropdownToggle}>{this.props.username}</DropdownToggle>}
+        dropdownItems={[userDropdownItems]}
+      />
     );
   }
 }
