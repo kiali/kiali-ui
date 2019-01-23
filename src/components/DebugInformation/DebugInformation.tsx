@@ -70,6 +70,9 @@ export default class DebugInformation extends React.PureComponent<DebugInformati
         2
       );
     });
+    if (!this.state.show) {
+      return null;
+    }
 
     return (
       <Modal show={this.state.show} onHide={this.close}>
@@ -87,9 +90,12 @@ export default class DebugInformation extends React.PureComponent<DebugInformati
           )}
           <span>Please include this information when opening a bug.</span>
           <CopyToClipboard onCopy={this.copyCallback} text={renderDebugInformation()}>
-            <textarea ref={this.textareaRef} className={textAreaStyle} readOnly={true}>
-              {renderDebugInformation()}
-            </textarea>
+            <textarea
+              ref={this.textareaRef}
+              className={textAreaStyle}
+              readOnly={true}
+              value={renderDebugInformation()}
+            />
           </CopyToClipboard>
         </Modal.Body>
         <Modal.Footer>
