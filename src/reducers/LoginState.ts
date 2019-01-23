@@ -9,7 +9,7 @@ export const INITIAL_LOGIN_STATE: LoginStateInterface = {
 };
 
 // This Reducer allows changes to the 'loginState' portion of Redux Store
-const loginState = (state: LoginState = INITIAL_LOGIN_STATE, action: KialiAppAction): LoginState => {
+const loginState = (state: LoginStateInterface = INITIAL_LOGIN_STATE, action: KialiAppAction): LoginStateInterface => {
   switch (action.type) {
     case getType(LoginActions.loginRequest):
       return Object.assign({}, INITIAL_LOGIN_STATE, {
