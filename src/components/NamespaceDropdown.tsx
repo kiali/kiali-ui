@@ -63,7 +63,11 @@ export class NamespaceDropdown extends React.PureComponent<NamespaceListType, {}
 
   componentDidUpdate(prevProps: NamespaceListType) {
     if (prevProps.activeNamespaces !== this.props.activeNamespaces) {
-      HistoryManager.setParam(URLParams.NAMESPACES, this.props.activeNamespaces.map(item => item.name).join(','));
+      if (this.props.activeNamespaces.length === 0) {
+        HistoryManager.deleteParam(URLParams.NAMESPACES);
+      } else {
+        HistoryManager.setParam(URLParams.NAMESPACES, this.props.activeNamespaces.map(item => item.name).join(','));
+      }
     }
   }
 
@@ -73,7 +77,7 @@ export class NamespaceDropdown extends React.PureComponent<NamespaceListType, {}
       // We must change the props of namespaces
       const items = namespaces.map(ns => ({ name: ns } as Namespace));
       this.props.setNamespaces(items);
-    } else if (namespaces.length === 0) {
+    } else if (namespaces.length === 0 && this.props.activeNamespaces.length !== 0) {
       HistoryManager.setParam(URLParams.NAMESPACES, this.props.activeNamespaces.map(item => item.name).join(','));
     }
   };

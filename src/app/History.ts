@@ -38,12 +38,8 @@ export enum ParamAction {
 export namespace HistoryManager {
   export const setParam = (name: URLParams, value: string) => {
     const urlParams = new URLSearchParams(history.location.search);
-    if (value) {
-      urlParams.set(name, value);
-      history.replace(history.location.pathname + '?' + urlParams.toString());
-    } else {
-      history.replace(history.location.pathname);
-    }
+    urlParams.set(name, value);
+    history.replace(history.location.pathname + '?' + urlParams.toString());
   };
 
   export const getParam = (name: URLParams): string | null => {
