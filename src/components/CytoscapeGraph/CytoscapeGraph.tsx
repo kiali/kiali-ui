@@ -315,6 +315,7 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
         }, CytoscapeGraph.doubleTapMs);
       }
     });
+
     cy.on('mouseover', 'node,edge', (evt: any) => {
       const cytoscapeEvent = getCytoscapeBaseEvent(evt);
       if (cytoscapeEvent) {

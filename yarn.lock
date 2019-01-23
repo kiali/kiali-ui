@@ -2726,6 +2726,11 @@ cytoscape-cose-bilkent@4.0.0:
   resolved "https://registry.yarnpkg.com/cytoscape-cose-bilkent/-/cytoscape-cose-bilkent-4.0.0.tgz#5f0afbe5c55a7a026442b756ca388ce77c262967"
   integrity sha1-Xwr75cVaegJkQrdWyjiM53wmKWc=
 
+cytoscape-cxtmenu@^3.0.2:
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/cytoscape-cxtmenu/-/cytoscape-cxtmenu-3.0.2.tgz#dcf3fc5b02511384537f40a1768f8ec2ba0db725"
+  integrity sha512-UJIH1BT98MlotUfPgw7r/1V/RXfEHS0EGZy38lu56+OUw5NSBXArSlfHIVZzwrQAmHKIhfnzqJOkajB06IEzAQ==
+
 cytoscape-dagre@2.2.2:
   version "2.2.2"
   resolved "https://registry.yarnpkg.com/cytoscape-dagre/-/cytoscape-dagre-2.2.2.tgz#5f32a85c0ba835f167efee531df9e89ac58ff411"

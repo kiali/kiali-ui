@@ -52,7 +52,11 @@ const NodeWidth = NodeHeight;
 
 export class GraphStyles {
   static options() {
-    return { wheelSensitivity: 0.1, autounselectify: false, autoungrabify: true };
+    return {
+      wheelSensitivity: 0.1,
+      autounselectify: false,
+      autoungrabify: true
+    };
   }
 
   static styles() {

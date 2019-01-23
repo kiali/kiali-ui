@@ -8,11 +8,14 @@ import cycola from 'cytoscape-cola';
 import dagre from 'cytoscape-dagre';
 import coseBilkent from 'cytoscape-cose-bilkent';
 import GroupCompoundLayout from './Layout/GroupCompoundLayout';
+import cxtmenu from 'cytoscape-cxtmenu';
+import { GraphContextMenu } from './graphs/GraphContextMenu';
 
 cytoscape.use(canvas);
 cytoscape.use(cycola);
 cytoscape.use(dagre);
 cytoscape.use(coseBilkent);
+cytoscape.use(cxtmenu);
 cytoscape('layout', 'group-compound-layout', GroupCompoundLayout);
 
 type CytoscapeReactWrapperProps = {};
@@ -32,6 +35,7 @@ type CytoscapeReactWrapperState = {};
  */
 export class CytoscapeReactWrapper extends React.Component<CytoscapeReactWrapperProps, CytoscapeReactWrapperState> {
   cy: any;
+  contextMenu: any;
   divParentRef: any;
 
   constructor(props: CytoscapeReactWrapperProps) {
@@ -81,12 +85,17 @@ export class CytoscapeReactWrapper extends React.Component<CytoscapeReactWrapper
     );
 
     this.cy = cytoscape(opts);
+    this.contextMenu = this.cy.cxtmenu(GraphContextMenu.menuOptions());
   }
 
   destroy() {
     if (this.cy) {
       this.cy.destroy();
       this.cy = null;
+    }
+    if (this.contextMenu) {
+      this.contextMenu.destroy();
+      this.contextMenu = null;
     }
   }
 }
