@@ -192,7 +192,6 @@ export namespace WorkloadListFilters {
     appLabelFilter,
     versionLabelFilter
   ];
-  export const namespaceFilter = availableFilters[0];
 
   /** Filter Method */
   const includeName = (name: string, names: string[]) => {

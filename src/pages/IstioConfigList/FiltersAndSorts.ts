@@ -155,7 +155,6 @@ export namespace IstioConfigListFilters {
   };
 
   export const availableFilters: FilterType[] = [istioTypeFilter, istioNameFilter, configValidationFilter];
-  export const namespaceFilter = availableFilters[0];
 
   export const sortIstioItems = (
     unsorted: IstioConfigItem[],

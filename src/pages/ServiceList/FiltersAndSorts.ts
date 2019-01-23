@@ -80,7 +80,6 @@ export namespace ServiceListFilters {
   };
 
   export const availableFilters: FilterType[] = [serviceNameFilter, istioSidecarFilter, healthFilter];
-  export const namespaceFilter = availableFilters[0];
 
   const filterByIstioSidecar = (items: ServiceListItem[], istioSidecar: boolean): ServiceListItem[] => {
     return items.filter(item => item.istioSidecar === istioSidecar);

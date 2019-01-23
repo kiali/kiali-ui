@@ -82,12 +82,7 @@ export namespace AppListFilters {
     filterValues: []
   };
 
-  export const availableFilters: FilterType[] = [
-    appNameFilter,
-    istioSidecarFilter,
-    healthFilter
-  ];
-  export const namespaceFilter = availableFilters[0];
+  export const availableFilters: FilterType[] = [appNameFilter, istioSidecarFilter, healthFilter];
 
   /** Filter Method */
 

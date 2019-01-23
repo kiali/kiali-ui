@@ -71,9 +71,10 @@ export class NamespaceDropdown extends React.PureComponent<NamespaceListType, {}
     const namespaces = (HistoryManager.getParam(URLParams.NAMESPACES) || '').split(',').filter(Boolean);
     if (namespaces.length > 0 && _.difference(namespaces, this.props.activeNamespaces.map(item => item.name))) {
       // We must change the props of namespaces
-      const items: Namespace[] = [];
-      namespaces.map((ns: string) => items.push({ name: ns }));
+      const items = namespaces.map(ns => ({ name: ns } as Namespace));
       this.props.setNamespaces(items);
+    } else if (namespaces.length === 0) {
+      HistoryManager.setParam(URLParams.NAMESPACES, this.props.activeNamespaces.map(item => item.name).join(','));
     }
   };
 
