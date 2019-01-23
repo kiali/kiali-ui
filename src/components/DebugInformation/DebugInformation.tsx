@@ -4,7 +4,7 @@ import { Modal, Icon, Button, Alert } from 'patternfly-react';
 import { KialiAppState } from '../../store/Store';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { style } from 'typestyle';
-import memoizeOne from 'memoize-one';
+import _ from 'lodash';
 import beautify from 'json-beautify';
 
 enum CopyStatus {
@@ -66,8 +66,7 @@ export default class DebugInformation extends React.PureComponent<DebugInformati
   }
 
   render() {
-    const renderDebugInformation = memoizeOne(() => {
-      console.log('DEBUG: I got called');
+    const renderDebugInformation = _.memoize(() => {
       const debugInformation: DebugInformationData = {
         currentURL: window.location.href,
         reduxState: this.props.appState
