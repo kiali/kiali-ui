@@ -60,7 +60,7 @@ class Slider extends React.Component<Props, State> {
   }
 
   componentDidUpdate(prevProps: Readonly<Props>): void {
-    if (prevProps.value !== this.props.value) {
+    if (prevProps.value !== this.props.value || this.state.value !== this.props.value) {
       this.setState({ value: this.props.value });
     }
   }

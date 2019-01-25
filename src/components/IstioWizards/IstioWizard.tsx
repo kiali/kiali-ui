@@ -211,9 +211,12 @@ class IstioWizard extends React.Component<Props, State> {
               label={'Traffic Weight'}
               value={workload.traffic}
               onSlide={value => {
-                console.log('onSlide value: ' + value);
+                value = Math.round((value as number) || 0);
                 if (value > 100) {
                   value = 100;
+                }
+                if (value < 0) {
+                  value = 0;
                 }
                 this.onWeight(workload.name, value as number);
               }}
