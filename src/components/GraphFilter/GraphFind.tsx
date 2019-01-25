@@ -10,13 +10,11 @@ import { GraphFilterActions } from '../../actions/GraphFilterActions';
 import { KialiAppAction } from '../../actions/KialiAppAction';
 import * as MessageCenterUtils from '../../utils/MessageCenter';
 import GraphHelpFind from '../../pages/Graph/GraphHelpFind';
-import { CyNode, CyEdge, runLayout } from '../CytoscapeGraph/CytoscapeGraphUtils';
+import { CyNode, CyEdge } from '../CytoscapeGraph/CytoscapeGraphUtils';
 import { CyData } from '../../types/Graph';
-import { Layout } from '../../types/GraphFilter';
 
 type ReduxProps = {
   cyData: CyData;
-  layout: Layout;
   showFindHelp: boolean;
 
   toggleFindHelp: () => void;
@@ -174,15 +172,19 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
     const cy = this.props.cyData.cyRef;
     const selector = this.parseFindValue(this.filterValue);
     cy.startBatch();
-    // restore old filter-hits
+    // this could also be done useing cy remove/restore but we had better results
+    // using visible/hidden (i.e. display: 'element'/'none' ).  The latter worked
+    // better when hiding animation, and also prevents the need for running
+    // layout after each update (at least in my tests so far..)
     if (this.filteredElements) {
-      this.filteredElements.restore();
+      // make visible old filter-hits
+      this.filteredElements.style({ display: 'element' });
       this.filteredElements = undefined;
-      runLayout(cy, this.props.layout);
     }
     if (selector) {
-      // remove new filter-hits
-      this.filteredElements = cy.remove(selector);
+      // hide new filter-hits
+      this.filteredElements = cy.$(selector);
+      this.filteredElements.style({ display: 'none' });
     }
     cy.endBatch();
   };
@@ -502,7 +504,6 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
 
 const mapStateToProps = (state: KialiAppState) => ({
   cyData: state.graph.cyData,
-  layout: state.graph.layout,
   showFindHelp: state.graph.filterState.showFindHelp
 });
 
