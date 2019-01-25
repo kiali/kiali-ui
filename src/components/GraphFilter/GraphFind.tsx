@@ -172,19 +172,20 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
     const cy = this.props.cyData.cyRef;
     const selector = this.parseFindValue(this.filterValue);
     cy.startBatch();
-    // this could also be done useing cy remove/restore but we had better results
-    // using visible/hidden (i.e. display: 'element'/'none' ).  The latter worked
-    // better when hiding animation, and also prevents the need for running
-    // layout after each update (at least in my tests so far..)
+    // this could also be done using cy remove/restore but we had better results
+    // using visible/hidden.  The latter worked better when hiding animation, and
+    // also prevents the need for running layout because visible/hidden maintains
+    // the space of the hidden elements.
     if (this.filteredElements) {
       // make visible old filter-hits
-      this.filteredElements.style({ display: 'element' });
+      this.filteredElements.style({ visibility: 'visible' });
       this.filteredElements = undefined;
     }
     if (selector) {
       // hide new filter-hits
       this.filteredElements = cy.$(selector);
-      this.filteredElements.style({ display: 'none' });
+      this.filteredElements = this.filteredElements.add(this.filteredElements.connectedEdges());
+      this.filteredElements.style({ visibility: 'hidden' });
     }
     cy.endBatch();
   };
