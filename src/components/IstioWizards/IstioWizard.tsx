@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, ListView, ListViewIcon, ListViewItem, Wizard } from 'patternfly-react';
+import { Button, Label, ListView, ListViewIcon, ListViewItem, Wizard } from 'patternfly-react';
 import { WorkloadOverview } from '../../types/ServiceInfo';
 import Slider from './Slider/Slider';
 import { DestinationRule, VirtualService } from '../../types/IstioObjects';
@@ -245,6 +245,11 @@ class IstioWizard extends React.Component<Props, State> {
           </Wizard.Row>
         </Wizard.Body>
         <Wizard.Footer>
+          {!this.checkWeight() && (
+            <Label style={{ margin: '0 15px 0 0', paddingTop: '6px' }} bsStyle="danger">
+              Traffic Weights must sum 100%
+            </Label>
+          )}
           <Button bsStyle="default" className="btn-cancel" onClick={this.onClose}>
             Cancel
           </Button>
