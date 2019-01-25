@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Form, FormControl, FormGroup, Icon, InputGroup } from 'patternfly-react';
+import { Button, FormControl, FormGroup, Icon, InputGroup } from 'patternfly-react';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { bindActionCreators } from 'redux';
@@ -71,7 +71,7 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
     return (
       <>
         <FormGroup style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
-          <Form inline="true">
+          <span className={'form-inline'}>
             <InputGroup>
               <FormControl
                 type="text"
@@ -107,7 +107,7 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
             <Button bsStyle="link" style={{ paddingLeft: '6px' }} onClick={this.toggleFindHelp}>
               <Icon name="help" type="pf" title="Help Find/Filter..." />
             </Button>
-          </Form>
+          </span>
         </FormGroup>
         {this.props.showFindHelp && <GraphHelpFind onClose={this.toggleFindHelp} />}{' '}
       </>
