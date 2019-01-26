@@ -31,8 +31,8 @@ class IstioWizardDropdown extends React.Component<Props, State> {
   // Wizard can be opened when there are not existing VS & DR and there are update permissions
   canCreate = () => {
     return (
-      this.props.virtualServices.permissions.update &&
-      this.props.destinationRules.permissions.update &&
+      this.props.virtualServices.permissions.create &&
+      this.props.destinationRules.permissions.create &&
       this.props.virtualServices.items.length === 0 &&
       this.props.destinationRules.items.length === 0
     );
