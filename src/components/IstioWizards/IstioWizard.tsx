@@ -39,8 +39,8 @@ class IstioWizard extends React.Component<Props, State> {
     if (this.props.workloads.length === 0) {
       return;
     }
-    const wkTraffic = Math.round(100 / this.props.workloads.length);
-    const remainTraffic = 100 % this.props.workloads.length;
+    const wkTraffic = this.props.workloads.length < 100 ? Math.round(100 / this.props.workloads.length) : 0;
+    const remainTraffic = this.props.workloads.length < 100 ? 100 % this.props.workloads.length : 0;
     const workloads: WorkloadTraffic[] = this.props.workloads.map(workload => ({
       name: workload.name,
       traffic: wkTraffic
