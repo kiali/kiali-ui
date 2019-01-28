@@ -202,7 +202,7 @@ export default class GraphHelpFind extends React.Component<GraphHelpFindProps> {
             <Button className="close" bsClass="" onClick={this.props.onClose}>
               <Icon title="Close" type="pf" name="close" />
             </Button>
-            <span className="modal-title">Help: Graph Find</span>
+            <span className="modal-title">Help: Graph Find/Hide</span>
           </div>
           <TabContainer id="basic-tabs" defaultActiveKey="examples">
             <div>

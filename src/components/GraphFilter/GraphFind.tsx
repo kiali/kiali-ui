@@ -32,10 +32,10 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
     router: () => null
   };
 
-  private filterInputRef;
-  private filterInputValue: string;
-  private filterValue: string;
-  private filteredElements: any | undefined;
+  private hideInputRef;
+  private hideInputValue: string;
+  private hideValue: string;
+  private hiddenElements: any | undefined;
   private findInputRef;
   private findInputValue: string;
   private findValue: string;
@@ -47,10 +47,10 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
       props.toggleFindHelp();
     }
 
-    this.filterInputRef = React.createRef();
-    this.filterInputValue = '';
-    this.filterValue = '';
-    this.filteredElements = undefined;
+    this.hideInputRef = React.createRef();
+    this.hideInputValue = '';
+    this.hideValue = '';
+    this.hiddenElements = undefined;
 
     this.findInputRef = React.createRef();
     this.findInputValue = '';
@@ -61,9 +61,9 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
     if (this.findValue.length > 0 && this.props.cyData.updateTimestamp !== prevProps.cyData.updateTimestamp) {
       this.handleFind();
     }
-    if (this.filterValue.length > 0 && this.props.cyData.updateTimestamp !== prevProps.cyData.updateTimestamp) {
-      this.filteredElements = undefined;
-      this.handleFilter();
+    if (this.hideValue.length > 0 && this.props.cyData.updateTimestamp !== prevProps.cyData.updateTimestamp) {
+      this.hiddenElements = undefined;
+      this.handleHide();
     }
   }
 
@@ -92,20 +92,20 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
                 type="text"
                 style={{ width: '18em' }}
                 inputRef={ref => {
-                  this.filterInputRef = ref;
+                  this.hideInputRef = ref;
                 }}
-                onChange={this.updateFilter}
-                onKeyPress={this.checkSubmitFilter}
-                placeholder="Filter..."
+                onChange={this.updateHide}
+                onKeyPress={this.checkSubmitHide}
+                placeholder="Hide..."
               />
               <InputGroup.Button>
-                <Button onClick={this.clearFilter}>
+                <Button onClick={this.clearHide}>
                   <Icon name="close" type="fa" />
                 </Button>
               </InputGroup.Button>
             </InputGroup>
             <Button bsStyle="link" style={{ paddingLeft: '6px' }} onClick={this.toggleFindHelp}>
-              <Icon name="help" type="pf" title="Help Find/Filter..." />
+              <Icon name="help" type="pf" title="Help Find/Hide..." />
             </Button>
           </span>
         </FormGroup>
@@ -118,21 +118,21 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
     this.props.toggleFindHelp();
   };
 
-  private updateFilter = event => {
-    this.filterInputValue = event.target.value;
+  private updateHide = event => {
+    this.hideInputValue = event.target.value;
   };
 
   private updateFind = event => {
     this.findInputValue = event.target.value;
   };
 
-  private checkSubmitFilter = event => {
+  private checkSubmitHide = event => {
     const keyCode = event.keyCode ? event.keyCode : event.which;
     if (keyCode === 13) {
       event.preventDefault();
-      if (this.filterValue !== this.filterInputValue) {
-        this.filterValue = this.filterInputValue;
-        this.handleFilter();
+      if (this.hideValue !== this.hideInputValue) {
+        this.hideValue = this.hideInputValue;
+        this.handleHide();
       }
     }
   };
@@ -148,12 +148,12 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
     }
   };
 
-  private clearFilter = () => {
-    this.filterInputValue = '';
-    this.filterValue = '';
-    // note, we don't use filterInputRef.current because <FormControl> deals with refs differently than <input>
-    this.filterInputRef.value = '';
-    this.handleFilter();
+  private clearHide = () => {
+    this.hideInputValue = '';
+    this.hideValue = '';
+    // note, we don't use hideInputRef.current because <FormControl> deals with refs differently than <input>
+    this.hideInputRef.value = '';
+    this.handleHide();
   };
 
   private clearFind = () => {
@@ -164,28 +164,28 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
     this.handleFind();
   };
 
-  private handleFilter = () => {
+  private handleHide = () => {
     if (!this.props.cyData) {
-      console.debug('Skip Filter: cy not set.');
+      console.debug('Skip Hide: cy not set.');
       return;
     }
     const cy = this.props.cyData.cyRef;
-    const selector = this.parseFindValue(this.filterValue);
+    const selector = this.parseFindValue(this.hideValue);
     cy.startBatch();
     // this could also be done using cy remove/restore but we had better results
     // using visible/hidden.  The latter worked better when hiding animation, and
     // also prevents the need for running layout because visible/hidden maintains
     // the space of the hidden elements.
-    if (this.filteredElements) {
-      // make visible old filter-hits
-      this.filteredElements.style({ visibility: 'visible' });
-      this.filteredElements = undefined;
+    if (this.hiddenElements) {
+      // make visible old hide-hits
+      this.hiddenElements.style({ visibility: 'visible' });
+      this.hiddenElements = undefined;
     }
     if (selector) {
-      // hide new filter-hits
-      this.filteredElements = cy.$(selector);
-      this.filteredElements = this.filteredElements.add(this.filteredElements.connectedEdges());
-      this.filteredElements.style({ visibility: 'hidden' });
+      // hide new hide-hits
+      this.hiddenElements = cy.$(selector);
+      this.hiddenElements = this.hiddenElements.add(this.hiddenElements.connectedEdges());
+      this.hiddenElements.style({ visibility: 'hidden' });
     }
     cy.endBatch();
   };
