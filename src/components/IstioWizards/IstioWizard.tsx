@@ -238,7 +238,7 @@ class IstioWizard extends React.Component<Props, State> {
   render() {
     return (
       <Wizard show={this.state.showWizard} onHide={this.onClose}>
-        <Wizard.Header onClose={this.onClose} title="Create A/B Traffic Routing" />
+        <Wizard.Header onClose={this.onClose} title="Create Traffic Routing" />
         <Wizard.Body>
           <Wizard.Row>
             <Wizard.Main>{this.renderContent()}</Wizard.Main>

@@ -105,7 +105,7 @@ class IstioWizardDropdown extends React.Component<Props, State> {
       <>
         <DropdownButton id="service_actions" title="Actions" onSelect={this.onAction} pullRight={true}>
           <MenuItem disabled={!this.canCreate()} key="create_traffic_routing" eventKey="create_traffic_routing">
-            Create A/B Traffic Routing
+            Create Traffic Routing
           </MenuItem>
           <MenuItem divider={true} />
           <MenuItem disabled={!this.canDelete()} key="delete_traffic_routing" eventKey="delete_traffic_routing">
