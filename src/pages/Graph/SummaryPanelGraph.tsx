@@ -179,13 +179,13 @@ export default class SummaryPanelGraph extends React.Component<SummaryPanelPropT
 
   private renderTopologySummary = (numSvc: number, numWorkloads: number, numApps: number, numEdges: number) => (
     <div>
-      <Link key="appsLink" to={`/${Paths.APPLICATIONS}?namespaces=${this.props.namespaces}`}>
+      <Link key="appsLink" to={`/${Paths.APPLICATIONS}?namespaces=${this.props.namespaces[0].name}`}>
         {' applications'}
       </Link>
-      <Link key="servicesLink" to={`/${Paths.SERVICES}?namespaces=${this.props.namespaces}`}>
+      <Link key="servicesLink" to={`/${Paths.SERVICES}?namespaces=${this.props.namespaces[0].name}`}>
         {', services'}
       </Link>
-      <Link key="workloadsLink" to={`/${Paths.WORKLOADS}?namespaces=${this.props.namespaces}`}>
+      <Link key="workloadsLink" to={`/${Paths.WORKLOADS}?namespaces=${this.props.namespaces[0].name}`}>
         {', workloads'}
       </Link>
       <br />
