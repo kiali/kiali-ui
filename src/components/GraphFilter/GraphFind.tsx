@@ -62,7 +62,6 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
       this.handleFind();
     }
     if (this.hideValue.length > 0 && this.props.cyData.updateTimestamp !== prevProps.cyData.updateTimestamp) {
-      this.hiddenElements = undefined;
       this.handleHide();
     }
   }
