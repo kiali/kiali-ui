@@ -161,7 +161,7 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
           : 'destination';
       // For special service dest nodes we want to narrow the data to only TS with 'unknown' workloads (see the related
       // comparator in getNodeDatapoints).
-      const byLabels = this.isSpecialServiceDest(nodeMetricType)
+      const byLabels = this.isServiceDestCornerCase(nodeMetricType)
         ? ['destination_workload', 'request_protocol']
         : ['request_protocol'];
       const promiseRps = getNodeMetrics(
@@ -215,7 +215,7 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
     let comparator = (metric: Metric, protocol?: Protocol) => {
       return protocol ? metric['request_protocol'] === protocol : true;
     };
-    if (this.isSpecialServiceDest(nodeMetricType)) {
+    if (this.isServiceDestCornerCase(nodeMetricType)) {
       comparator = (metric: Metric, protocol?: Protocol) => {
         return (
           (protocol ? metric['request_protocol'] === protocol : true) && metric['destination_workload'] === 'unknown'
@@ -424,6 +424,13 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
             dataErrors={this.state.grpcErrorCountOut}
             hide={isServiceNode}
           />
+          {this.isIstioOutgoingCornerCase(node) && (
+            <>
+              <div>
+                <Icon type="pf" name="info" /> Traffic to istio-system not included. Use edge for details.
+              </div>
+            </>
+          )}
           <hr />
         </>
       );
@@ -450,6 +457,13 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
             dataErrors={this.state.httpErrorCountOut}
             hide={isServiceNode}
           />
+          {this.isIstioOutgoingCornerCase(node) && (
+            <>
+              <div>
+                <Icon type="pf" name="info" /> Traffic to istio-system not included. Use edge for details.
+              </div>
+            </>
+          )}
           <hr />
         </>
       );
@@ -523,13 +537,25 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
 
   // We need to handle the special case of a dest service node showing client failures. These service nodes show up in
   // non-service graphs, even when not injecting service nodes.
-  private isSpecialServiceDest(nodeMetricType: NodeMetricType) {
+  private isServiceDestCornerCase = (nodeMetricType: NodeMetricType): boolean => {
     return (
       nodeMetricType === NodeMetricType.SERVICE &&
       !this.props.injectServiceNodes &&
       this.props.graphType !== GraphType.SERVICE
     );
-  }
+  };
+
+  // We need to handle the special case of a non-istio-system, non-unknown node with outgoing traffic to istio-system.
+  // The traffic is lost because it is dest-only and we use source-reporting.
+  private isIstioOutgoingCornerCase = (node): boolean => {
+    const nodeType = node.data(CyNode.nodeType);
+    const namespace = node.data(CyNode.namespace);
+    const istioNamespace = serverConfig().istioNamespace;
+    if (nodeType === NodeType.UNKNOWN || namespace === istioNamespace) {
+      return false;
+    }
+    return node.edgesTo(`node[${CyNode.namespace} = "${istioNamespace}"]`).size() > 0;
+  };
 
   private hasGrpcTraffic = (node): boolean => {
     return node.data(CyNode.grpcIn) > 0 || node.data(CyNode.grpcOut) > 0;
