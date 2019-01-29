@@ -414,7 +414,12 @@ export class GraphStyles {
       {
         selector: 'edge.mousehighlight',
         style: {
-          'font-size': EdgeTextFontSizeHover,
+          'font-size': EdgeTextFontSizeHover
+        }
+      },
+      {
+        selector: 'edge.mousehover',
+        style: {
           label: (ele: any) => {
             return getEdgeLabel(ele, true);
           }
