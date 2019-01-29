@@ -186,6 +186,10 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
       this.hiddenElements = cy.$(selector);
       this.hiddenElements = this.hiddenElements.add(this.hiddenElements.connectedEdges());
       this.hiddenElements.style({ visibility: 'hidden' });
+      // now hide any appboxes that don't have any visible children
+      const hiddenAppBoxes = cy.$('$node[isGroup]').not(cy.$('$node[isGroup] > :visible'));
+      hiddenAppBoxes.style({ visibility: 'hidden' });
+      this.hiddenElements = this.hiddenElements.add(hiddenAppBoxes);
     }
     cy.endBatch();
   };
