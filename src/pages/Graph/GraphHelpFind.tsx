@@ -267,7 +267,7 @@ export default class GraphHelpFind extends React.Component<GraphHelpFindProps> {
                         },
                         {
                           id: 'e90',
-                          e: '%traffic >= 50.0',
+                          e: '%httptraffic >= 50.0',
                           d: `find edges with >= 50% of the outgoing http request traffic of the parent`
                         }
                       ]}

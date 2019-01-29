@@ -18,7 +18,6 @@ export enum Protocol {
   HTTP = 'http',
   TCP = 'tcp'
 }
-export type ProtocolType = Protocol.GRPC | Protocol.HTTP | Protocol.TCP;
 
 export interface SummaryPanelPropType {
   data: SummaryData;

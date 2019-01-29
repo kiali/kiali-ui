@@ -10,7 +10,7 @@ import {
 } from '../../utils/TrafficRate';
 import { InOutRateTableGrpc, InOutRateTableHttp } from '../../components/SummaryPanel/InOutRateTable';
 import { RpsChart, TcpChart } from '../../components/SummaryPanel/RpsChart';
-import { GraphType, NodeType, SummaryPanelPropType, ProtocolType, Protocol } from '../../types/Graph';
+import { GraphType, NodeType, SummaryPanelPropType, Protocol } from '../../types/Graph';
 import { Metrics, Metric } from '../../types/Metrics';
 import {
   shouldRefreshData,
@@ -212,17 +212,17 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
   }
 
   showRequestCountMetrics(outbound: Metrics, inbound: Metrics, data: NodeData, nodeMetricType: NodeMetricType) {
-    let comparator = (metric: Metric, protocol?: ProtocolType) => {
+    let comparator = (metric: Metric, protocol?: Protocol) => {
       return protocol ? metric['request_protocol'] === protocol : true;
     };
     if (this.isSpecialServiceDest(nodeMetricType)) {
-      comparator = (metric: Metric, protocol?: ProtocolType) => {
+      comparator = (metric: Metric, protocol?: Protocol) => {
         return (
           (protocol ? metric['request_protocol'] === protocol : true) && metric['destination_workload'] === 'unknown'
         );
       };
     } else if (data.isRoot) {
-      comparator = (metric: Metric, protocol?: ProtocolType) => {
+      comparator = (metric: Metric, protocol?: Protocol) => {
         return (
           (protocol ? metric['request_protocol'] === protocol : true) &&
           this.isActiveNamespace(metric['destination_service_namespace'])
@@ -373,6 +373,7 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
         <>
           <div>
             <Icon type="pf" name="info" /> Sparkline charts not supported for unknown node. Use edge for details.
+            <hr />
           </div>
         </>
       );

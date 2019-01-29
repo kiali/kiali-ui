@@ -78,12 +78,12 @@ export default class SummaryPanelGraph extends React.Component<SummaryPanelPropT
       return null;
     }
 
-    const baseQuery = cy.nodes().filter('[!isGroup]');
-    const numSvc = baseQuery.filter(`[nodeType = "${NodeType.SERVICE}"]`).size();
-    const numWorkloads = baseQuery.filter(`[nodeType = "${NodeType.WORKLOAD}"]`).size();
-    const numApps = baseQuery.filter(`[nodeType = "${NodeType.APP}"]`).size();
+    const numSvc = cy.$(`node[nodeType = "${NodeType.SERVICE}"]`).size();
+    const numWorkloads = cy.$(`node[nodeType = "${NodeType.WORKLOAD}"]`).size();
+    const numApps = cy.$(`node[nodeType = "${NodeType.APP}"][!isGroup]`).size();
     const numEdges = cy.edges().size();
-    const nonServiceEdges = baseQuery.filter(`[nodeType != "${NodeType.SERVICE}"]`).edgesTo('*'); // don't count requests from injected service node
+    // when getting accumulated traffic rates don't count requests from injected service nodes
+    const nonServiceEdges = cy.$(`node[nodeType != "${NodeType.SERVICE}"][!isGroup]`).edgesTo('*');
     const trafficRateGrpc = getAccumulatedTrafficRateGrpc(nonServiceEdges);
     const trafficRateHttp = getAccumulatedTrafficRateHttp(nonServiceEdges);
 

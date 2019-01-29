@@ -65,7 +65,7 @@ export class InOutRateChartGrpc extends React.Component<InOutRateChartGrpcPropTy
           }
         }}
         data={{
-          groups: [['OK', '3xx', '4xx', '5xx']],
+          groups: [['OK', 'Err']],
           columns: [
             ['OK', this.props.percentOkIn, this.props.percentOkOut],
             ['Err', this.props.percentErrIn, this.props.percentErrOut]

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Icon } from 'patternfly-react';
-import { NodeType, SummaryPanelPropType, ProtocolType } from '../../types/Graph';
+import { NodeType, SummaryPanelPropType, Protocol } from '../../types/Graph';
 import { Health, healthNotAvailable } from '../../types/Health';
 import { MetricsOptions, Reporter, Direction } from '../../types/MetricsOptions';
 import * as API from '../../services/Api';
@@ -150,8 +150,8 @@ export const mergeMetricsResponses = (promises: Promise<Response<M.Metrics>>[]):
 export const getDatapoints = (
   mg: M.MetricGroup,
   title: string,
-  comparator?: (metric: Metric, protocol?: ProtocolType) => boolean,
-  protocol?: ProtocolType
+  comparator?: (metric: Metric, protocol?: Protocol) => boolean,
+  protocol?: Protocol
 ): [string | number][] => {
   let series: M.TimeSeries[] = [];
   if (mg && mg.matrix) {

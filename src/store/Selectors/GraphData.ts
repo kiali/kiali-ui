@@ -59,6 +59,10 @@ const decorateGraphData = (graphData: any) => {
     if (graphData.nodes) {
       graphData.nodes = graphData.nodes.map(node => {
         const decoratedNode = { ...node };
+        // parse out the traffic data into top level fields for the various protocols. This is done
+        // to be back compatible with our existing ui code that expects the explicit http and tcp fields.
+        // We can then set the 'traffic' field undefined because it is unused in the cy element handling.
+        // TODO: refactor the code to use the traffic structure.
         if (node.data.traffic) {
           const traffic = node.data.traffic;
           node.data.traffic = undefined;
@@ -73,6 +77,7 @@ const decorateGraphData = (graphData: any) => {
     if (graphData.edges) {
       graphData.edges = graphData.edges.map(edge => {
         const decoratedEdge = { ...edge };
+        // see comment above about the 'traffic' data handling
         if (edge.data.traffic) {
           const traffic = edge.data.traffic;
           edge.data.traffic = undefined;
