@@ -1,6 +1,6 @@
 import { KialiAppState } from '../store/Store';
 import { connect } from 'react-redux';
-import GlobalMTLSStatus from '../components/Nav/GlobalMTLSStatus';
+import MeshMTLSStatus from '../components/Nav/MeshMTLSStatus';
 
 const mapStateToProps = (state: KialiAppState) => ({
   status: state.statusState.status,
@@ -8,5 +8,5 @@ const mapStateToProps = (state: KialiAppState) => ({
   warningMessages: state.statusState.warningMessages
 });
 
-const GlobalMTLSSatutsConnected = connect(mapStateToProps)(GlobalMTLSStatus);
+const GlobalMTLSSatutsConnected = connect(mapStateToProps)(MeshMTLSStatus);
 export default GlobalMTLSSatutsConnected;
