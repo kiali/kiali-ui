@@ -67,7 +67,7 @@ describe('Parse find value test', () => {
     // @ts-ignore
     expect(instance.parseFindValue('outside')).toEqual('node[isOutside]');
     // @ts-ignore
-    expect(instance.parseFindValue('outside')).toEqual('node[isOutside]');
+    expect(instance.parseFindValue('outsider')).toEqual('node[isOutside]');
     // @ts-ignore
     expect(instance.parseFindValue('root')).toEqual('node[isRoot]');
     // @ts-ignore
