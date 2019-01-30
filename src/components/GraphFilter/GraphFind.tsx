@@ -50,14 +50,6 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
     if (props.showFindHelp) {
       props.toggleFindHelp();
     }
-
-    this.findInputRef = React.createRef();
-    this.findInputValue = '';
-
-    this.hiddenElements = undefined;
-
-    this.hideInputRef = React.createRef();
-    this.hideInputValue = '';
   }
 
   componentDidUpdate(prevProps: GraphFindProps) {
@@ -67,7 +59,8 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
 
     const findChanged = this.props.findValue !== prevProps.findValue;
     const hideChanged = this.props.hideValue !== prevProps.hideValue;
-    const graphChanged = prevProps.cyData && this.props.cyData.updateTimestamp !== prevProps.cyData.updateTimestamp;
+    const graphChanged =
+      this.props.cyData && prevProps.cyData && this.props.cyData.updateTimestamp !== prevProps.cyData.updateTimestamp;
 
     if (findChanged || (graphChanged && this.props.findValue)) {
       this.handleFind();
