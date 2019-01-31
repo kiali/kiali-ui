@@ -3,21 +3,37 @@ import { TableGrid } from 'patternfly-react-extensions';
 import * as React from 'react';
 import { NodeType } from '../../types/Graph';
 import { REQUESTS_THRESHOLDS } from '../../types/Health';
+import { Direction } from '../../types/MetricsOptions';
 
 type DetailedTrafficProps = {
-  direction: 'inbound' | 'outbound';
+  direction: Direction;
   traffic: TrafficItem[];
 };
 
-export interface TrafficData {
-  http?: {
+export interface TrafficDataHttp {
+  protocol: 'http';
+  rates: {
     http: string;
     httpPercentErr?: string;
   };
-  tcp?: {
+}
+
+export interface TrafficDataGrpc {
+  protocol: 'grpc';
+  rates: {
+    grpc: string;
+    grpcPercentErr?: string;
+  };
+}
+
+export interface TrafficDataTcp {
+  protocol: 'tcp';
+  rates: {
     tcp: string;
   };
 }
+
+export type TrafficData = TrafficDataHttp | TrafficDataTcp | TrafficDataGrpc;
 
 export interface AppNode {
   id: string;
@@ -81,7 +97,7 @@ class DetailedTrafficList extends React.Component<DetailedTrafficProps> {
         <TableGrid.Head>
           <TableGrid.ColumnHeader {...healthColumnSizes}>Health</TableGrid.ColumnHeader>
           <TableGrid.ColumnHeader {...workloadColumnSizes}>
-            {this.props.direction === 'inbound' ? 'Source' : 'Target'}
+            {this.props.direction === 'inbound' ? 'Source' : 'Destination'}
           </TableGrid.ColumnHeader>
           <TableGrid.ColumnHeader {...typeColumnSizes}>Type</TableGrid.ColumnHeader>
           <TableGrid.ColumnHeader {...trafficColumnSizes}>Traffic</TableGrid.ColumnHeader>
@@ -104,14 +120,20 @@ class DetailedTrafficList extends React.Component<DetailedTrafficProps> {
   }
 
   private renderHealthColumn = (traffic: TrafficData) => {
-    if (traffic.tcp) {
+    if (traffic.protocol === 'tcp') {
       return (
         <TableGrid.Col {...healthColumnSizes}>
           <Icon type="pf" name="unknown" />
         </TableGrid.Col>
       );
-    } else if (traffic.http) {
-      const percentError = traffic.http.httpPercentErr ? Number(traffic.http.httpPercentErr) : 0;
+    } else {
+      let percentError: number;
+      if (traffic.protocol === 'http') {
+        percentError = traffic.rates.httpPercentErr ? Number(traffic.rates.httpPercentErr) : 0;
+      } else {
+        percentError = traffic.rates.grpcPercentErr ? Number(traffic.rates.grpcPercentErr) : 0;
+      }
+
       let healthIcon = <Icon type="pf" name="ok" />;
 
       if (percentError > REQUESTS_THRESHOLDS.failure) {
@@ -122,21 +144,25 @@ class DetailedTrafficList extends React.Component<DetailedTrafficProps> {
 
       return <TableGrid.Col {...healthColumnSizes}>{healthIcon}</TableGrid.Col>;
     }
-
-    return <TableGrid.Col {...healthColumnSizes} />;
   };
 
   private renderMinichartColumn = (traffic: TrafficData) => {
-    if (!traffic.http) {
+    if (traffic.protocol !== 'http' && traffic.protocol !== 'grpc') {
       return <TableGrid.Col {...minichartColumnSizes} />;
     }
 
-    const httpPercentError = traffic.http.httpPercentErr ? Number(traffic.http.httpPercentErr) : 0;
+    let percentError: number;
+    if (traffic.protocol === 'http') {
+      percentError = traffic.rates.httpPercentErr ? Number(traffic.rates.httpPercentErr) : 0;
+    } else {
+      percentError = traffic.rates.grpcPercentErr ? Number(traffic.rates.grpcPercentErr) : 0;
+    }
+
     return (
       <TableGrid.Col {...minichartColumnSizes}>
         <svg width="100%" height="1.5em">
           <rect x="0" y="20%" width="100%" height="60%" fill="green" />
-          <rect x={`${100 - httpPercentError}%`} y="20%" width={`${httpPercentError}%`} height="60%" fill="red" />
+          <rect x={`${100 - percentError}%`} y="20%" width={`${percentError}%`} height="60%" fill="red" />
           <rect
             x={`${100 - REQUESTS_THRESHOLDS.failure}%`}
             y="0"
@@ -175,23 +201,30 @@ class DetailedTrafficList extends React.Component<DetailedTrafficProps> {
   };
 
   private renderTrafficColumn = (traffic: TrafficData) => {
-    if (traffic.tcp) {
-      return <TableGrid.Col {...trafficColumnSizes}>{Number(traffic.tcp.tcp).toFixed(2)}</TableGrid.Col>;
-    } else if (traffic.http) {
-      const httpRps = Number(traffic.http.http);
-      const httpPercentError = traffic.http.httpPercentErr ? Number(traffic.http.httpPercentErr) : 0;
+    if (traffic.protocol === 'tcp') {
+      return <TableGrid.Col {...trafficColumnSizes}>{Number(traffic.rates.tcp).toFixed(2)}</TableGrid.Col>;
+    } else {
+      let rps: number;
+      let percentError: number;
+
+      if (traffic.protocol === 'http') {
+        rps = Number(traffic.rates.http);
+        percentError = traffic.rates.httpPercentErr ? Number(traffic.rates.httpPercentErr) : 0;
+      } else {
+        rps = Number(traffic.rates.grpc);
+        percentError = traffic.rates.grpcPercentErr ? Number(traffic.rates.grpcPercentErr) : 0;
+      }
+
       return (
         <TableGrid.Col {...trafficColumnSizes}>
-          {httpRps.toFixed(2)}rps | {(100 - httpPercentError).toFixed(1)}% success
+          {rps.toFixed(2)}rps | {(100 - percentError).toFixed(1)}% success
         </TableGrid.Col>
       );
     }
-
-    return <TableGrid.Col {...trafficColumnSizes} />;
   };
 
   private renderTypeColumn = (traffic: TrafficData) => {
-    return <TableGrid.Col {...typeColumnSizes}>{traffic.tcp ? 'TCP' : 'HTTP'}</TableGrid.Col>;
+    return <TableGrid.Col {...typeColumnSizes}>{traffic.protocol.toUpperCase()}</TableGrid.Col>;
   };
 
   private getSortedTraffic = () => {

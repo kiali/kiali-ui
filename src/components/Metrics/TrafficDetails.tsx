@@ -94,19 +94,7 @@ class TrafficDetails extends React.Component<TrafficDetailsProps, TrafficDetails
     }
   };
 
-  private indexTrafficByProtocol = (edge: any): any => {
-    const traffic = {};
-
-    if (edge.data.traffic && edge.data.traffic.length > 0) {
-      edge.data.traffic.forEach(trafficItem => {
-        traffic[trafficItem.protocol] = trafficItem.rates;
-      });
-    }
-
-    return traffic;
-  };
-
-  private processTrafficSiblings = (edges, serviceTraffic: ServiceTraffic, nodes: any, myNode: any) => {
+  private processTrafficSiblings = (edges: any, serviceTraffic: ServiceTraffic, nodes: any, myNode: any) => {
     const inboundTraffic: TrafficItem[] = [];
     const outboundTraffic: TrafficItem[] = [];
 
@@ -122,7 +110,7 @@ class TrafficDetails extends React.Component<TrafficDetailsProps, TrafficDetails
         const svcId = `in-${targetNode.namespace}-${targetNode.service}`;
         if (serviceTraffic[svcId]) {
           inboundTraffic.push({
-            traffic: this.indexTrafficByProtocol(edge),
+            traffic: edge.data.traffic,
             proxy: serviceTraffic[svcId],
             node: this.buildTrafficNode('in', sourceNode)
           });
@@ -131,7 +119,7 @@ class TrafficDetails extends React.Component<TrafficDetailsProps, TrafficDetails
         const svcId = `out-${sourceNode.namespace}-${sourceNode.service}`;
         if (serviceTraffic[svcId]) {
           outboundTraffic.push({
-            traffic: this.indexTrafficByProtocol(edge),
+            traffic: edge.data.traffic,
             proxy: serviceTraffic[svcId],
             node: this.buildTrafficNode('out', targetNode)
           });
@@ -142,7 +130,7 @@ class TrafficDetails extends React.Component<TrafficDetailsProps, TrafficDetails
     return { inboundTraffic, outboundTraffic };
   };
 
-  private processServicesTraffic = (edges, nodes, myNode) => {
+  private processServicesTraffic = (edges: any, nodes: any, myNode: any) => {
     const serviceTraffic: ServiceTraffic = {};
     const inboundTraffic: TrafficItem[] = [];
     const outboundTraffic: TrafficItem[] = [];
@@ -154,7 +142,7 @@ class TrafficDetails extends React.Component<TrafficDetailsProps, TrafficDetails
         const svcId = `out-${targetNode.namespace}-${targetNode.service}`;
         if (!serviceTraffic[svcId]) {
           serviceTraffic[svcId] = {
-            traffic: this.indexTrafficByProtocol(edge),
+            traffic: edge.data.traffic,
             node: {
               id: `out-${targetNode.id}`,
               type: targetNode.nodeType,
@@ -168,7 +156,7 @@ class TrafficDetails extends React.Component<TrafficDetailsProps, TrafficDetails
         const svcId = `in-${sourceNode.namespace}-${sourceNode.service}`;
         if (!serviceTraffic[svcId]) {
           serviceTraffic[svcId] = {
-            traffic: this.indexTrafficByProtocol(edge),
+            traffic: edge.data.traffic,
             node: {
               id: `in-${sourceNode.id}`,
               type: sourceNode.nodeType,
