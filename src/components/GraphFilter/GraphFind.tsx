@@ -52,6 +52,23 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
     }
   }
 
+  // make sure if we have redux values on mount that we perform any necessary find/hide. We
+  // must do this after render to ensure the ref is set.
+  componentDidMount() {
+    // make sure the input box reflects the redux value
+    this.findInputRef.value = this.props.findValue;
+    this.findInputValue = this.props.findValue;
+    this.hideInputRef.value = this.props.hideValue;
+    this.hideInputValue = this.props.hideValue;
+
+    if (this.props.findValue) {
+      this.handleFind();
+    }
+    if (this.props.hideValue) {
+      this.handleHide();
+    }
+  }
+
   componentDidUpdate(prevProps: GraphFindProps) {
     // make sure the input box reflects the redux value
     this.findInputRef.value = this.props.findValue;
