@@ -1,6 +1,6 @@
 import { CyNode, CyEdge } from '../components/CytoscapeGraph/CytoscapeGraphUtils';
 
-const safeRate = (rate: string) => (rate ? Number(rate) : 0.0);
+const safeRate = (rate: any) => (isNaN(rate) ? 0.0 : Number(rate));
 
 const NODE_GRPC_IN = {
   RATE: CyNode.grpcIn,

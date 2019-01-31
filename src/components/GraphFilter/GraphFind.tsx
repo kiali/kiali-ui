@@ -181,12 +181,15 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
       this.hiddenElements = undefined;
     }
     if (selector) {
-      // hide new hide-hits
+      // select the new hide-hits
       this.hiddenElements = cy.$(selector);
       this.hiddenElements = this.hiddenElements.add(this.hiddenElements.connectedEdges());
+      // remove any appbox hits, we only hide empty appboxes
+      this.hiddenElements = this.hiddenElements.subtract(this.hiddenElements.filter('$node[isGroup]'));
+      // set the remaining hide-hits hidden
       this.hiddenElements.style({ visibility: 'hidden' });
       // now hide any appboxes that don't have any visible children
-      const hiddenAppBoxes = cy.$('$node[isGroup]').not(cy.$('$node[isGroup] > :visible'));
+      const hiddenAppBoxes = cy.$('$node[isGroup]').subtract(cy.$('$node[isGroup] > :visible'));
       hiddenAppBoxes.style({ visibility: 'hidden' });
       this.hiddenElements = this.hiddenElements.add(hiddenAppBoxes);
     }
@@ -237,7 +240,6 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
         return undefined;
       }
     }
-
     return selector;
   };
 
@@ -429,6 +431,9 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
         const s = this.getNumericSelector(CyEdge.httpPercentReq, op, val, expression);
         return s ? { target: 'edge', selector: s } : undefined;
       }
+      case 'protocol': {
+        return { target: 'edge', selector: `[${CyEdge.protocol} ${op} "${val}"]` };
+      }
       case 'rt':
       case 'responsetime': {
         const s = this.getNumericSelector(CyEdge.responseTime, op, val, expression);
@@ -445,30 +450,28 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
   };
 
   private getNumericSelector(field: string, op: string, val: any, expression: string): string | undefined {
-    if (isNaN(val)) {
-      MessageCenterUtils.add(`Invalid find value, expected a numeric value (use . for decimals):  [${expression}]`);
-      return undefined;
-    }
     switch (op) {
       case '>':
       case '<':
       case '>=':
       case '<=':
+        if (isNaN(val)) {
+          MessageCenterUtils.add(`Invalid find value, expected a numeric value (use . for decimals):  [${expression}]`);
+          return undefined;
+        }
+        return `[${field} ${op} ${val}]`;
       case '=':
       case '!=':
-        break;
+        if (val !== 'NaN' && isNaN(val)) {
+          MessageCenterUtils.add(
+            `Invalid find value, expected NaN or a numeric value (use . for decimals):  [${expression}]`
+          );
+          return undefined;
+        }
+        return Number(val) !== 0 ? `[${field} ${op} "${val}"]` : `[${field} ${op} "0"]`;
       default:
         MessageCenterUtils.add(`Invalid operator for numeric condition: [${expression}]`);
         return undefined;
-    }
-
-    switch (op) {
-      case '=':
-      case '!=':
-        // let the user type in 0 in various ways but set to the proper default value
-        return Number(val) !== 0 ? `[${field} ${op} "${val}"]` : `[${field} ${op} "0"]`;
-      default:
-        return `[${field} ${op} ${val}]`;
     }
   }
 

@@ -221,8 +221,9 @@ export default class SummaryPanelEdge extends React.Component<SummaryPanelPropTy
     if (isGrpc || isHttp) {
       const reporterRps =
         sourceData.nodeType === NodeType.UNKNOWN ||
+        sourceData.nodeType === NodeType.SERVICE ||
         sourceData.namespace === serverConfig().istioNamespace ||
-        sourceData.nodeType === NodeType.SERVICE
+        destData.namespace === serverConfig().istioNamespace
           ? 'destination'
           : 'source';
       const filtersRps = ['request_count', 'request_duration', 'request_error_count'];
@@ -351,8 +352,8 @@ export default class SummaryPanelEdge extends React.Component<SummaryPanelPropTy
     this.setState({ loading: true, metricsLoadError: null });
   };
 
-  private safeRate = (s: string) => {
-    return s === undefined ? 0.0 : Number(s);
+  private safeRate = (s: any) => {
+    return isNaN(s) ? 0.0 : Number(s);
   };
 
   private renderCharts = (edge, isGrpc, isHttp, isTcp) => {
