@@ -52,26 +52,10 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
     }
   }
 
-  // make sure if we have redux values on mount that we perform any necessary find/hide. We
-  // must do this after render to ensure the ref is set.
-  componentDidMount() {
-    // make sure the input box reflects the redux value
-    if (this.findInputRef) {
-      this.findInputRef.value = this.props.findValue;
-      this.findInputValue = this.props.findValue;
-      if (this.props.findValue) {
-        this.handleFind();
-      }
-    }
-    if (this.hideInputRef) {
-      this.hideInputRef.value = this.props.hideValue;
-      this.hideInputValue = this.props.hideValue;
-      if (this.props.hideValue) {
-        this.handleHide();
-      }
-    }
-  }
-
+  // Note that we may have redux hide/find values set at mount-time. But because the toolbar mounts prior to
+  // the graph loading, we can't perform this graph "post-processing" until we have a valid cy graph.  We can assume
+  // that applying the find/hide on update is sufficient because  we will be updated after the cy is loaded
+  // due to a change notification for this.props.cyData.
   componentDidUpdate(prevProps: GraphFindProps) {
     // make sure the input box reflects the redux value
     this.findInputRef.value = this.props.findValue;
