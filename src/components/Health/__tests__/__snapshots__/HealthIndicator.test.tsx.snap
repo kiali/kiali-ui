@@ -34,7 +34,7 @@ ShallowWrapper {
               "name": "Healthy",
               "priority": 1,
             },
-            "title": "Workload Status",
+            "title": "Pods Status",
           },
           Object {
             "children": Array [
@@ -151,7 +151,7 @@ ShallowWrapper {
                     "name": "Healthy",
                     "priority": 1,
                   },
-                  "title": "Workload Status",
+                  "title": "Pods Status",
                 },
                 Object {
                   "children": Array [
@@ -287,7 +287,7 @@ ShallowWrapper {
                       "name": "Healthy",
                       "priority": 1,
                     },
-                    "title": "Workload Status",
+                    "title": "Pods Status",
                   },
                   Object {
                     "children": Array [

@@ -198,10 +198,10 @@ export class AppHealth extends Health {
           status: status
         };
       });
-      const workloadStatus = children.map(i => i.status).reduce((prev, cur) => mergeStatus(prev, cur), NA);
+      const podsStatus = children.map(i => i.status).reduce((prev, cur) => mergeStatus(prev, cur), NA);
       const item: HealthItem = {
-        title: 'Workload Status',
-        status: workloadStatus,
+        title: 'Pods Status',
+        status: podsStatus,
         children: children
       };
       if (countInactive > 0 && countInactive === workloadStatuses.length) {
@@ -242,10 +242,10 @@ export class WorkloadHealth extends Health {
     const items: HealthItem[] = [];
     {
       // Pods
-      const workStatus = ratioCheck(workloadStatus.available, workloadStatus.replicas);
+      const podsStatus = ratioCheck(workloadStatus.available, workloadStatus.replicas);
       const item: HealthItem = {
-        title: 'Workloads Status',
-        status: workStatus,
+        title: 'Pods Status',
+        status: podsStatus,
         text: String(workloadStatus.available + ' / ' + workloadStatus.replicas)
       };
       items.push(item);
