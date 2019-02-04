@@ -56,13 +56,13 @@ export class HealthIndicator extends React.PureComponent<Props, HealthState> {
       left: 10
     };
     return (
-      <div>
+      <>
         {this.renderIcon('35px', '24px')}
         <span style={spanStyle}>{this.state.globalStatus.name}</span>
         <br />
         <br />
         <HealthDetails health={health} />
-      </div>
+      </>
     );
   }
 
