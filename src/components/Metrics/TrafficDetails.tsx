@@ -1,4 +1,4 @@
-import { Col, Row } from 'patternfly-react';
+import { Col, Row, Button, Icon } from 'patternfly-react';
 import * as React from 'react';
 import { NodeType } from '../../types/Graph';
 import DetailedTrafficList, { TrafficItem, TrafficNode } from '../Details/DetailedTrafficList';
@@ -21,6 +21,7 @@ type AppProps = {
 type TrafficDetailsProps = {
   rateInterval: DurationInSeconds;
   trafficData: any;
+  onRefresh: () => void;
 } & (AppProps | WorkloadProps);
 
 type TrafficDetailsState = {
@@ -63,6 +64,9 @@ class TrafficDetails extends React.Component<TrafficDetailsProps, TrafficDetails
       <Row className="card-pf-body">
         <Col xs={12}>
           <div>
+            <Button onClick={this.props.onRefresh} style={{ float: 'right' }}>
+              <Icon name="refresh" />
+            </Button>
             <strong>Inbound ({rateIntervalName})</strong>
           </div>
           <DetailedTrafficList direction="inbound" traffic={this.state.inboundTraffic} />

@@ -213,6 +213,7 @@ class WorkloadDetails extends React.Component<RouteComponentProps<WorkloadId>, W
                   itemType={MetricsObjectTypes.WORKLOAD}
                   namespace={this.props.match.params.namespace}
                   workloadName={this.state.workload.name}
+                  onRefresh={this.doRefresh}
                 />
               </TabPane>
               <TabPane eventKey="in_metrics" mountOnEnter={true} unmountOnExit={true}>
