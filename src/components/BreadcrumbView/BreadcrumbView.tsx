@@ -30,6 +30,7 @@ const ItemNames = {
 };
 
 const IstioName = 'Istio Config';
+const ISTIO_TYPES = ['templates', 'adapters'];
 
 export class BreadcrumbView extends React.Component<BreadCumbViewProps, BreadCumbViewState> {
   static capitalize = (str: string) => {
@@ -62,15 +63,16 @@ export class BreadcrumbView extends React.Component<BreadCumbViewProps, BreadCum
   }
 
   updateItem = () => {
-    const namespaceRegex = /namespaces\/([a-z0-9\-]+)\/([a-z0-9\-]+)\/([a-z0-9\-]+)(\/([a-z0-9\-]+))?/;
+    const namespaceRegex = /namespaces\/([a-z0-9\-]+)\/([a-z0-9\-]+)\/([a-z0-9\-]+)(\/([a-z0-9\-]+))?(\/([a-z0-9\-]+))?/;
     const match = this.props.location.pathname.match(namespaceRegex) || [];
+    console.log(match);
     const ns = match[1];
     const page = Paths[match[2].toUpperCase()];
     const istioType = match[3];
     let itemName = match[3];
-    if (page === 'istio') {
-      itemName = match[4];
-    }
+
+    page === 'istio' && ISTIO_TYPES.includes(istioType) ? (itemName = match[7]) : (itemName = match[5]);
+
     return {
       namespace: ns,
       pathItem: page,
