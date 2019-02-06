@@ -79,7 +79,7 @@ const renderSparkline = (series: [string | number][], colors: PfColors[], yTickF
 
   return (
     <AreaChart
-      size={{ height: 45 }}
+      size={{ height: 45, width: 250 }}
       color={{ pattern: colors }}
       legend={{ show: false }}
       grid={{ y: { show: false } }}

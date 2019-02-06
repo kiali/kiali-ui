@@ -10,6 +10,7 @@ type InOutRateChartGrpcPropType = {
   percentOkOut: number;
   percentErrOut: number;
   showLegend?: boolean;
+  width?: number;
 };
 
 export class InOutRateChartGrpc extends React.Component<InOutRateChartGrpcPropType> {
@@ -20,7 +21,8 @@ export class InOutRateChartGrpc extends React.Component<InOutRateChartGrpcPropTy
     percentErrIn: 0,
     percentOkOut: 0,
     percentErrOut: 0,
-    showLegend: true
+    showLegend: true,
+    width: 250
   };
 
   constructor(props: InOutRateChartGrpcPropType) {
@@ -30,7 +32,7 @@ export class InOutRateChartGrpc extends React.Component<InOutRateChartGrpcPropTy
   render() {
     return (
       <StackedBarChart
-        size={{ height: this.props.height }}
+        size={{ height: this.props.height, width: this.props.width }}
         legend={{ show: this.props.showLegend, position: this.props.legendPos }}
         grid={{
           x: {
@@ -82,6 +84,8 @@ export class InOutRateChartGrpc extends React.Component<InOutRateChartGrpcPropTy
 }
 
 type InOutRateChartHttpPropType = {
+  height?: number;
+  legendPos?: string; // e.g. right, left
   percent2xxIn: number;
   percent3xxIn: number;
   percent4xxIn: number;
@@ -90,13 +94,14 @@ type InOutRateChartHttpPropType = {
   percent3xxOut: number;
   percent4xxOut: number;
   percent5xxOut: number;
-  height?: number;
   showLegend?: boolean;
-  legendPos?: string; // e.g. right, left
+  width?: number;
 };
 
 export class InOutRateChartHttp extends React.Component<InOutRateChartHttpPropType> {
   static defaultProps: InOutRateChartHttpPropType = {
+    height: 150,
+    legendPos: 'bottom',
     percent2xxIn: 0,
     percent3xxIn: 0,
     percent4xxIn: 0,
@@ -105,9 +110,8 @@ export class InOutRateChartHttp extends React.Component<InOutRateChartHttpPropTy
     percent3xxOut: 0,
     percent4xxOut: 0,
     percent5xxOut: 0,
-    height: 150,
     showLegend: true,
-    legendPos: 'bottom'
+    width: 250
   };
 
   constructor(props: InOutRateChartHttpPropType) {
@@ -117,7 +121,7 @@ export class InOutRateChartHttp extends React.Component<InOutRateChartHttpPropTy
   render() {
     return (
       <StackedBarChart
-        size={{ height: this.props.height }}
+        size={{ height: this.props.height, width: this.props.width }}
         legend={{ show: this.props.showLegend, position: this.props.legendPos }}
         grid={{
           x: {

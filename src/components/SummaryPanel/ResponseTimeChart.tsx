@@ -74,7 +74,7 @@ export default class ResponseTimeChart extends React.Component<ResponseTimeChart
             </div>
             {this.thereIsTrafficData() ? (
               <AreaChart
-                size={{ height: 80 }}
+                size={{ height: 80, width: 250 }}
                 color={{ pattern: [PfColors.Black, PfColors.Green400, PfColors.Blue, PfColors.Orange400] }}
                 legend={{ show: true }}
                 grid={{ y: { show: false } }}
