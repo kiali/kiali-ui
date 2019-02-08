@@ -108,12 +108,22 @@ export interface GrafanaInfo {
   varWorkload: string;
 }
 
+export interface ServerConfig {
+  istioNamespace: string;
+  istioLabels: { [key: string]: string };
+  prometheus: {
+    globalScrapeInterval?: DurationInSeconds;
+    storageTsdbRetention?: DurationInSeconds;
+  };
+}
+
 // This defines the Kiali Global Application State
 export interface KialiAppState {
   // Global state === across multiple pages
   // could also be session state
   globalState: GlobalState;
   grafanaInfo: GrafanaInfo | null;
+  serverConfig: ServerConfig | null;
   statusState: StatusState;
   /** Page Settings */
   authentication: LoginState;

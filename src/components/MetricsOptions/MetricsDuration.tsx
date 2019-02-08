@@ -4,12 +4,20 @@ import history, { URLParams, HistoryManager } from '../../app/History';
 import { config } from '../../config';
 import { DurationInSeconds } from '../../types/Common';
 import { ToolbarDropdown } from '../ToolbarDropdown/ToolbarDropdown';
+import { KialiAppState, ServerConfig } from '../../store/Store';
+import { serverConfigSelector } from '../../store/Selectors';
+import { connect } from 'react-redux';
+import { pickBy } from 'lodash';
 
-interface Props {
+type ReduxProps = {
+  serverConfig: ServerConfig;
+};
+
+type Props = ReduxProps & {
   onChanged: (duration: DurationInSeconds) => void;
-}
+};
 
-export default class MetricsDuration extends React.Component<Props> {
+export class MetricsDuration extends React.Component<Props> {
   static Durations = config().toolbar.intervalDuration;
   // Default to 10 minutes. Showing timeseries to only 1 minute doesn't make so much sense.
   static DefaultDuration = 600;
@@ -46,6 +54,10 @@ export default class MetricsDuration extends React.Component<Props> {
 
   render() {
     this.processUrlParams();
+    const retention = this.props.serverConfig.prometheus.storageTsdbRetention;
+    const validDurations = pickBy(MetricsDuration.Durations, (value, key) => {
+      return !retention || Number(key) <= retention;
+    });
     return (
       <ToolbarDropdown
         id={'metrics_filter_interval_duration'}
@@ -53,8 +65,8 @@ export default class MetricsDuration extends React.Component<Props> {
         handleSelect={this.onDurationChanged}
         nameDropdown={'Fetching'}
         initialValue={this.duration}
-        initialLabel={MetricsDuration.Durations[this.duration]}
-        options={MetricsDuration.Durations}
+        initialLabel={validDurations[this.duration]}
+        options={validDurations}
       />
     );
   }
@@ -65,3 +77,14 @@ export default class MetricsDuration extends React.Component<Props> {
     this.duration = duration;
   }
 }
+
+const mapStateToProps = (state: KialiAppState) => ({
+  serverConfig: serverConfigSelector(state)
+});
+
+const MetricsDurationContainer = connect(
+  mapStateToProps,
+  null
+)(MetricsDuration);
+
+export default MetricsDurationContainer;
