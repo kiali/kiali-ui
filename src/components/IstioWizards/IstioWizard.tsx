@@ -51,9 +51,11 @@ const lbStyle = style({
   marginRight: 20
 });
 
-const loadBalancerSimple: string[] = ['NONE', 'ROUND_ROBIN', 'LEAST_CONN', 'RANDOM', 'PASSTHROUGH'];
+const NONE = 'NONE';
 
-const mTLSMode: string[] = ['NONE', 'ISTIO_MUTUAL', 'MUTUAL', 'SIMPLE', 'DISABLE'];
+const loadBalancerSimple: string[] = [NONE, 'ROUND_ROBIN', 'LEAST_CONN', 'RANDOM', 'PASSTHROUGH'];
+
+const mTLSMode: string[] = [NONE, 'ISTIO_MUTUAL', 'MUTUAL', 'SIMPLE', 'DISABLE'];
 
 class IstioWizard extends React.Component<Props, State> {
   constructor(props: Props) {
@@ -61,8 +63,8 @@ class IstioWizard extends React.Component<Props, State> {
     this.state = {
       showWizard: false,
       workloads: [],
-      mtlsMode: 'NONE',
-      loadBalancer: 'NONE'
+      mtlsMode: NONE,
+      loadBalancer: NONE
     };
   }
 
@@ -134,14 +136,14 @@ class IstioWizard extends React.Component<Props, State> {
       }
     };
 
-    if (this.state.mtlsMode !== 'NONE' || this.state.loadBalancer !== 'NONE') {
+    if (this.state.mtlsMode !== NONE || this.state.loadBalancer !== NONE) {
       wizardDR.spec.trafficPolicy = {};
-      if (this.state.mtlsMode !== 'NONE') {
+      if (this.state.mtlsMode !== NONE) {
         wizardDR.spec.trafficPolicy.tls = {
           mode: this.state.mtlsMode
         };
       }
-      if (this.state.loadBalancer !== 'NONE') {
+      if (this.state.loadBalancer !== NONE) {
         wizardDR.spec.trafficPolicy.loadBalancer = {
           simple: this.state.loadBalancer
         };
