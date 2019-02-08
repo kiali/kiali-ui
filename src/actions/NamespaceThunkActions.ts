@@ -32,11 +32,14 @@ const NamespaceThunkActions = {
     // a cached value is already available.
     return (dispatch: ThunkDispatch<KialiAppState, void, KialiAppAction>, getState: () => KialiAppState) => {
       if (shouldFetchNamespaces(getState())) {
-        if (getState()['authentication']['token'] === undefined) {
+        const state = getState().authentication;
+
+        if (!state || !state.session) {
           return Promise.resolve();
         }
+
         // Dispatch a thunk from thunk!
-        return dispatch(NamespaceThunkActions.asyncFetchNamespaces(getState().authentication.session!.token));
+        return dispatch(NamespaceThunkActions.asyncFetchNamespaces(state.session.token));
       } else {
         // Let the calling code know there's nothing to wait for.
         return Promise.resolve();
