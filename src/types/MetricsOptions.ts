@@ -18,9 +18,9 @@ export interface MetricsOptions extends BaseMetricsOptions {
 
 export interface CustomMetricsOptions extends BaseMetricsOptions {
   version?: string;
-  rawAggregationOperator?: AggregationOperator;
+  rawDataAggregator?: Aggregator;
 }
 
 export type Reporter = 'source' | 'destination';
 export type Direction = 'inbound' | 'outbound';
-export type AggregationOperator = 'sum' | 'avg' | 'min' | 'max' | 'stddev' | 'stdvar';
+export type Aggregator = 'sum' | 'avg' | 'min' | 'max' | 'stddev' | 'stdvar';

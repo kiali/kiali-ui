@@ -8,7 +8,7 @@ import * as API from '../../services/Api';
 import { KialiAppState } from '../../store/Store';
 import { DurationInSeconds } from '../../types/Common';
 import * as M from '../../types/Metrics';
-import { CustomMetricsOptions, AggregationOperator } from '../../types/MetricsOptions';
+import { CustomMetricsOptions, Aggregator } from '../../types/MetricsOptions';
 import { authentication } from '../../utils/Authentication';
 import * as MessageCenter from '../../utils/MessageCenter';
 
@@ -90,8 +90,8 @@ class CustomMetrics extends React.Component<CustomMetricsProps, MetricsState> {
     this.fetchMetrics();
   };
 
-  onRawAggregationChanged = (operator: AggregationOperator) => {
-    this.options.rawAggregationOperator = operator;
+  onRawAggregationChanged = (aggregator: Aggregator) => {
+    this.options.rawDataAggregator = aggregator;
     this.fetchMetrics();
   };
 

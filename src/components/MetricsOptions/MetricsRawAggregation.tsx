@@ -2,14 +2,14 @@ import * as React from 'react';
 
 import history, { URLParams, HistoryManager } from '../../app/History';
 import { ToolbarDropdown } from '../ToolbarDropdown/ToolbarDropdown';
-import { AggregationOperator } from '../../types/MetricsOptions';
+import { Aggregator } from '../../types/MetricsOptions';
 
 interface Props {
-  onChanged: (operator: AggregationOperator) => void;
+  onChanged: (aggregator: Aggregator) => void;
 }
 
 export default class MetricsRawAggregation extends React.Component<Props> {
-  static Operators: { [key: string]: string } = {
+  static Aggregators: { [key: string]: string } = {
     sum: 'Sum',
     avg: 'Average',
     min: 'Min',
@@ -19,13 +19,13 @@ export default class MetricsRawAggregation extends React.Component<Props> {
   };
 
   private shouldReportOptions: boolean;
-  private operator: AggregationOperator;
+  private aggregator: Aggregator;
 
-  static initialOperator = (): AggregationOperator => {
+  static initialAggregator = (): Aggregator => {
     const urlParams = new URLSearchParams(history.location.search);
-    const opParam = urlParams.get(URLParams.AGG_OPERATOR);
+    const opParam = urlParams.get(URLParams.AGGREGATOR);
     if (opParam != null) {
-      return opParam as AggregationOperator;
+      return opParam as Aggregator;
     }
     return 'sum';
   };
@@ -37,32 +37,32 @@ export default class MetricsRawAggregation extends React.Component<Props> {
   componentDidUpdate() {
     if (this.shouldReportOptions) {
       this.shouldReportOptions = false;
-      this.props.onChanged(this.operator);
+      this.props.onChanged(this.aggregator);
     }
   }
 
-  onOperatorChanged = (operator: string) => {
-    HistoryManager.setParam(URLParams.AGG_OPERATOR, operator);
+  onAggregatorChanged = (aggregator: string) => {
+    HistoryManager.setParam(URLParams.AGGREGATOR, aggregator);
   };
 
   render() {
     this.processUrlParams();
     return (
       <ToolbarDropdown
-        id={'metrics_filter_operator'}
+        id={'metrics_filter_aggregator'}
         disabled={false}
-        handleSelect={this.onOperatorChanged}
+        handleSelect={this.onAggregatorChanged}
         nameDropdown={'Pods aggregation'}
-        value={this.operator}
-        initialLabel={MetricsRawAggregation.Operators[this.operator]}
-        options={MetricsRawAggregation.Operators}
+        value={this.aggregator}
+        initialLabel={MetricsRawAggregation.Aggregators[this.aggregator]}
+        options={MetricsRawAggregation.Aggregators}
       />
     );
   }
 
   processUrlParams() {
-    const op = MetricsRawAggregation.initialOperator();
-    this.shouldReportOptions = op !== this.operator;
-    this.operator = op;
+    const op = MetricsRawAggregation.initialAggregator();
+    this.shouldReportOptions = op !== this.aggregator;
+    this.aggregator = op;
   }
 }
