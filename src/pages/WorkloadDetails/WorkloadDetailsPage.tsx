@@ -13,8 +13,8 @@ import { MetricsObjectTypes } from '../../types/Metrics';
 import CustomMetricsContainer from '../../components/Metrics/CustomMetrics';
 import { serverConfig } from '../../config';
 import BreadcrumbView from '../../components/BreadcrumbView/BreadcrumbView';
-import { GraphType, NodeParamsType, NodeType } from '../../types/Graph';
-import { fetchTrafficDetails } from '../../helpers/TrafficDetailsHelper.tsx';
+import { GraphDefinition, GraphType, NodeParamsType, NodeType } from '../../types/Graph';
+import { fetchTrafficDetails } from '../../helpers/TrafficDetailsHelper';
 import TrafficDetails from '../../components/Metrics/TrafficDetails';
 
 type WorkloadDetailsState = {
@@ -22,7 +22,7 @@ type WorkloadDetailsState = {
   validations: Validations;
   istioEnabled: boolean;
   health?: WorkloadHealth;
-  trafficData: any;
+  trafficData: GraphDefinition | null;
 };
 
 class WorkloadDetails extends React.Component<RouteComponentProps<WorkloadId>, WorkloadDetailsState> {

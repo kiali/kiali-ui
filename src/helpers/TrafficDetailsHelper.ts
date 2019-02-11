@@ -1,9 +1,12 @@
 import { authentication } from '../utils/Authentication';
 import * as MessageCenter from '../utils/MessageCenter';
 import * as API from '../services/Api';
-import { NodeParamsType } from '../types/Graph';
+import { GraphDefinition, NodeParamsType } from '../types/Graph';
 
-export const fetchTrafficDetails = (node: NodeParamsType, restParams: any) => {
+export const fetchTrafficDetails = (
+  node: NodeParamsType,
+  restParams: any
+): Promise<GraphDefinition | undefined | null> => {
   return API.getNodeGraphElements(authentication(), node, restParams).then(
     (response: any) => {
       // Check that response is formed as expected.

@@ -2,7 +2,7 @@ import { Icon } from 'patternfly-react';
 import { TableGrid } from 'patternfly-react-extensions';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
-import { NodeType } from '../../types/Graph';
+import { NodeType, ProtocolTraffic } from '../../types/Graph';
 import { REQUESTS_THRESHOLDS } from '../../types/Health';
 import { Direction } from '../../types/MetricsOptions';
 
@@ -10,35 +10,6 @@ type DetailedTrafficProps = {
   direction: Direction;
   traffic: TrafficItem[];
 };
-
-export interface TrafficNoData {
-  protocol: '';
-}
-
-export interface TrafficDataHttp {
-  protocol: 'http';
-  rates: {
-    http: string;
-    httpPercentErr?: string;
-  };
-}
-
-export interface TrafficDataGrpc {
-  protocol: 'grpc';
-  rates: {
-    grpc: string;
-    grpcPercentErr?: string;
-  };
-}
-
-export interface TrafficDataTcp {
-  protocol: 'tcp';
-  rates: {
-    tcp: string;
-  };
-}
-
-export type TrafficData = TrafficDataHttp | TrafficDataTcp | TrafficDataGrpc | TrafficNoData;
 
 export interface AppNode {
   id: string;
@@ -74,7 +45,7 @@ export type TrafficNode = WorkloadNode | ServiceNode | UnknownNode | AppNode;
 export interface TrafficItem {
   node: TrafficNode;
   proxy?: TrafficItem;
-  traffic: TrafficData;
+  traffic: ProtocolTraffic;
 }
 
 const minichartColumnSizes = {
@@ -96,6 +67,8 @@ const trafficColumnSizes = workloadColumnSizes;
 
 class DetailedTrafficList extends React.Component<DetailedTrafficProps> {
   render() {
+    const sortedTraffic = this.getSortedTraffic();
+
     return (
       <TableGrid id="table-grid" bordered={true} selectType="none" style={{ clear: 'both' }}>
         <TableGrid.Head>
@@ -106,7 +79,14 @@ class DetailedTrafficList extends React.Component<DetailedTrafficProps> {
           <TableGrid.ColumnHeader {...trafficColumnSizes}>Traffic</TableGrid.ColumnHeader>
         </TableGrid.Head>
         <TableGrid.Body>
-          {this.getSortedTraffic().map(item => {
+          {sortedTraffic.length === 0 && (
+            <TableGrid.Row>
+              <TableGrid.Col md={10} sm={10} xs={10}>
+                <Icon type="pf" name="info" /> Not enough {this.props.direction} traffic to generate info
+              </TableGrid.Col>
+            </TableGrid.Row>
+          )}
+          {sortedTraffic.map(item => {
             return (
               <TableGrid.Row key={item.node.id}>
                 {this.renderWorkloadColumn(item.node)}
@@ -121,7 +101,7 @@ class DetailedTrafficList extends React.Component<DetailedTrafficProps> {
     );
   }
 
-  private renderMinichartColumn = (traffic: TrafficData) => {
+  private renderMinichartColumn = (traffic: ProtocolTraffic) => {
     if (traffic.protocol !== 'http' && traffic.protocol !== 'grpc') {
       return <TableGrid.Col {...minichartColumnSizes} />;
     }
@@ -194,7 +174,7 @@ class DetailedTrafficList extends React.Component<DetailedTrafficProps> {
     );
   };
 
-  private renderTrafficColumn = (traffic: TrafficData) => {
+  private renderTrafficColumn = (traffic: ProtocolTraffic) => {
     if (traffic.protocol === 'tcp') {
       return <TableGrid.Col {...trafficColumnSizes}>{Number(traffic.rates.tcp).toFixed(2)}</TableGrid.Col>;
     } else if (traffic.protocol === '') {
@@ -219,7 +199,7 @@ class DetailedTrafficList extends React.Component<DetailedTrafficProps> {
     }
   };
 
-  private renderTypeColumn = (traffic: TrafficData) => {
+  private renderTypeColumn = (traffic: ProtocolTraffic) => {
     if (traffic.protocol === '') {
       return <TableGrid.Col {...typeColumnSizes}>N/A</TableGrid.Col>;
     }

@@ -1,6 +1,6 @@
 import { Col, Row, Button, Icon } from 'patternfly-react';
 import * as React from 'react';
-import { NodeType } from '../../types/Graph';
+import { GraphDefinition, GraphEdgeWrapper, GraphNodeData, NodeType } from '../../types/Graph';
 import DetailedTrafficList, { TrafficItem, TrafficNode } from '../Details/DetailedTrafficList';
 import { DurationInSeconds } from '../../types/Common';
 import { getName } from '../../utils/RateIntervals';
@@ -20,7 +20,7 @@ type AppProps = {
 
 type TrafficDetailsProps = {
   rateInterval: DurationInSeconds;
-  trafficData: any;
+  trafficData: GraphDefinition | null;
   onRefresh: () => void;
 } & (AppProps | WorkloadProps);
 
@@ -85,14 +85,14 @@ class TrafficDetails extends React.Component<TrafficDetailsProps, TrafficDetails
         id: `${prefix}-${node.id}`,
         type: node.nodeType,
         namespace: node.namespace,
-        name: node.workload
+        name: node.workload || ''
       };
     } else {
       return {
         id: `${prefix}-${node.id}`,
         type: node.nodeType,
         namespace: node.namespace,
-        name: node.app,
+        name: node.app || '',
         version: node.version
       };
     }
@@ -134,7 +134,11 @@ class TrafficDetails extends React.Component<TrafficDetailsProps, TrafficDetails
     return { inboundTraffic, outboundTraffic };
   };
 
-  private processServicesTraffic = (edges: any, nodes: any, myNode: any) => {
+  private processServicesTraffic = (
+    edges: GraphEdgeWrapper[],
+    nodes: { [key: string]: GraphNodeData },
+    myNode: GraphNodeData
+  ) => {
     const serviceTraffic: ServiceTraffic = {};
     const inboundTraffic: TrafficItem[] = [];
     const outboundTraffic: TrafficItem[] = [];
@@ -146,12 +150,12 @@ class TrafficDetails extends React.Component<TrafficDetailsProps, TrafficDetails
         const svcId = `out-${targetNode.namespace}-${targetNode.service}`;
         if (!serviceTraffic[svcId]) {
           serviceTraffic[svcId] = {
-            traffic: edge.data.traffic,
+            traffic: edge.data.traffic!,
             node: {
               id: `out-${targetNode.id}`,
               type: targetNode.nodeType,
               namespace: targetNode.namespace,
-              name: targetNode.service
+              name: targetNode.service!
             }
           };
           outboundTraffic.push(serviceTraffic[svcId]);
@@ -160,12 +164,12 @@ class TrafficDetails extends React.Component<TrafficDetailsProps, TrafficDetails
         const svcId = `in-${sourceNode.namespace}-${sourceNode.service}`;
         if (!serviceTraffic[svcId]) {
           serviceTraffic[svcId] = {
-            traffic: edge.data.traffic,
+            traffic: edge.data.traffic!,
             node: {
               id: `in-${sourceNode.id}`,
               type: sourceNode.nodeType,
               namespace: sourceNode.namespace,
-              name: sourceNode.service
+              name: sourceNode.service!
             }
           };
           inboundTraffic.push(serviceTraffic[svcId]);
@@ -176,15 +180,15 @@ class TrafficDetails extends React.Component<TrafficDetailsProps, TrafficDetails
     return { serviceTraffic, inboundTraffic, outboundTraffic };
   };
 
-  private processTrafficData = (traffic: any) => {
-    if (!traffic) {
+  private processTrafficData = (traffic: GraphDefinition | null) => {
+    if (!traffic || !traffic.elements.nodes) {
       this.setState({ inboundTraffic: [], outboundTraffic: [] });
       return;
     }
 
     // Index nodes by id and find the node of the queried item
-    const nodes: any = {};
-    let myNode: any = {};
+    const nodes: { [key: string]: GraphNodeData } = {};
+    let myNode: GraphNodeData = { id: '', nodeType: NodeType.UNKNOWN, namespace: '' };
 
     traffic.elements.nodes.forEach(element => {
       nodes['id-' + element.data.id] = element.data;
@@ -199,13 +203,19 @@ class TrafficDetails extends React.Component<TrafficDetailsProps, TrafficDetails
       }
     });
 
+    if (myNode.id === '') {
+      // Graph endpoint didn't return a graph for the current node.
+      this.setState({ inboundTraffic: [], outboundTraffic: [] });
+      return;
+    }
+
     // It's assumed that traffic is sent/received through services.
     // So, process traffic to/from services first.
     const {
       serviceTraffic,
       inboundTraffic: servicesInbound,
       outboundTraffic: servicesOutbound
-    } = this.processServicesTraffic(traffic.elements.edges, nodes, myNode);
+    } = this.processServicesTraffic(traffic.elements.edges!, nodes, myNode);
 
     // Then, process traffic going/originating to/from workloads|apps
     const { inboundTraffic: workloadsInbound, outboundTraffic: workloadsOutbound } = this.processTrafficSiblings(
