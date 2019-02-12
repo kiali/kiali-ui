@@ -3,7 +3,6 @@ import { TableGrid } from 'patternfly-react-extensions';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { NodeType, ProtocolTraffic } from '../../types/Graph';
-import { REQUESTS_THRESHOLDS } from '../../types/Health';
 import { Direction } from '../../types/MetricsOptions';
 
 type DetailedTrafficProps = {
@@ -118,16 +117,6 @@ class DetailedTrafficList extends React.Component<DetailedTrafficProps> {
         <svg width="100%" height="1.5em">
           <rect x="0" y="20%" width="100%" height="60%" fill="green" />
           <rect x={`${100 - percentError}%`} y="20%" width={`${percentError}%`} height="60%" fill="red" />
-          <rect
-            x={`${100 - REQUESTS_THRESHOLDS.failure}%`}
-            y="0"
-            width="0.4em"
-            height="100%"
-            fill="silver"
-            stroke="white"
-            strokeWidth="0.2em"
-            strokeDasharray="0,0.4em,1.5em,0.4em,1.5em"
-          />
         </svg>
       </TableGrid.Col>
     );
@@ -210,10 +199,8 @@ class DetailedTrafficList extends React.Component<DetailedTrafficProps> {
   private getSortedTraffic = () => {
     const sortFn = (a: TrafficItem, b: TrafficItem) => {
       if (!a.proxy && !b.proxy) {
-        // Comparing two first level items
         return a.node.name.localeCompare(b.node.name);
       } else if (a.proxy && b.proxy) {
-        // Comparing two second level items
         const proxyCompare = a.proxy.node.name.localeCompare(b.proxy.node.name);
         if (proxyCompare === 0) {
           return a.node.name.localeCompare(b.node.name);
@@ -221,7 +208,6 @@ class DetailedTrafficList extends React.Component<DetailedTrafficProps> {
 
         return proxyCompare;
       } else {
-        // Comparing first level item vs second level
         const proxyedItem: TrafficItem = a.proxy ? a : b;
         const proxyItem: TrafficItem = a.proxy ? b : a;
 

@@ -48,7 +48,7 @@ class WorkloadDetails extends React.Component<RouteComponentProps<WorkloadId>, W
         istioEnabled: false,
         health: undefined
       });
-      this.fetchWorkload();
+      this.doRefresh();
     }
   }
 
