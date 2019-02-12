@@ -24,8 +24,8 @@ export const computePrometheusRateParams = (
     actualDataPoints = defaultDataPoints;
   }
 
-  const actualScrapeInterval =
-    scrapeInterval || serverConfig().prometheus.globalScrapeInterval || defaultScrapeInterval;
+  const configuredScrapeInterval = serverConfig() && serverConfig().prometheus.globalScrapeInterval;
+  const actualScrapeInterval = scrapeInterval || configuredScrapeInterval || defaultScrapeInterval;
   const minStep = 2 * actualScrapeInterval;
   let step = Math.floor(duration / actualDataPoints);
   step = step < minStep ? minStep : step;
