@@ -42,13 +42,15 @@ class WorkloadDetails extends React.Component<RouteComponentProps<WorkloadId>, W
       this.props.match.params.namespace !== prevProps.match.params.namespace ||
       this.props.match.params.workload !== prevProps.match.params.workload
     ) {
-      this.setState({
-        workload: emptyWorkload,
-        validations: {},
-        istioEnabled: false,
-        health: undefined
-      });
-      this.doRefresh();
+      this.setState(
+        {
+          workload: emptyWorkload,
+          validations: {},
+          istioEnabled: false,
+          health: undefined
+        },
+        () => this.doRefresh()
+      );
     }
   }
 
@@ -89,8 +91,16 @@ class WorkloadDetails extends React.Component<RouteComponentProps<WorkloadId>, W
   }
 
   doRefresh = () => {
-    this.fetchWorkload();
-    this.fetchTrafficData();
+    const currentTab = this.activeTab('tab', 'info');
+
+    if (this.state.workload === emptyWorkload || currentTab === 'info') {
+      this.setState({ trafficData: null });
+      this.fetchWorkload();
+    }
+
+    if (currentTab === 'traffic') {
+      this.fetchTrafficData();
+    }
   };
 
   fetchTrafficData = () => {
@@ -167,7 +177,11 @@ class WorkloadDetails extends React.Component<RouteComponentProps<WorkloadId>, W
     return (
       <>
         <BreadcrumbView location={this.props.location} />
-        <TabContainer id="basic-tabs" activeKey={this.activeTab('tab', 'info')} onSelect={this.tabSelectHandler('tab')}>
+        <TabContainer
+          id="basic-tabs"
+          activeKey={this.activeTab('tab', 'info')}
+          onSelect={this.tabSelectHandler('tab', this.tabChangeHandler)}
+        >
           <div>
             <Nav bsClass="nav nav-tabs nav-tabs-pf">
               <NavItem eventKey="info">
@@ -263,7 +277,13 @@ class WorkloadDetails extends React.Component<RouteComponentProps<WorkloadId>, W
     return new URLSearchParams(this.props.location.search).get(tabName) || whenEmpty;
   };
 
-  private tabSelectHandler = (tabName: string) => {
+  private tabChangeHandler = (tabName: string) => {
+    if (tabName === 'traffic' && this.state.trafficData === null) {
+      this.fetchTrafficData();
+    }
+  };
+
+  private tabSelectHandler = (tabName: string, postHandler?: (tabName: string) => void) => {
     return (tabKey?: string) => {
       if (!tabKey) {
         return;
@@ -273,6 +293,10 @@ class WorkloadDetails extends React.Component<RouteComponentProps<WorkloadId>, W
       urlParams.set(tabName, tabKey);
 
       this.props.history.push(this.props.location.pathname + '?' + urlParams.toString());
+
+      if (postHandler) {
+        postHandler(tabKey);
+      }
     };
   };
 }

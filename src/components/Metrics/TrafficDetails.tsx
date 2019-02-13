@@ -60,6 +60,10 @@ class TrafficDetails extends React.Component<TrafficDetailsProps, TrafficDetails
   render() {
     const rateIntervalName = getName(this.props.rateInterval).toLowerCase();
 
+    if (this.props.trafficData === null) {
+      return null;
+    }
+
     return (
       <Row className="card-pf-body">
         <Col xs={12}>
