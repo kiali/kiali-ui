@@ -2,9 +2,11 @@
 
 import React from 'react';
 import BootstrapSlider from './BootstrapSlider';
-import { Icon, ControlLabel, FormControl } from 'patternfly-react';
+import { Button, Icon, ControlLabel, FormControl } from 'patternfly-react';
 import Boundaries from './Boundaries';
 import DropdownMenu from './DropdownMenu';
+import { style } from 'typestyle';
+import { rotate } from 'csx';
 
 export const noop = Function.prototype;
 
@@ -24,12 +26,25 @@ type Props = {
   sliderClass: string;
   dropdownList: string[];
   inputFormat: string;
+  locked: boolean;
+  onLock: (locked: boolean) => void;
 };
 
 type State = {
   value: number[] | number;
   tooltipFormat: string;
 };
+
+const lockStyle = style({
+  width: 11,
+  height: 11
+});
+
+const unLockStyle = style({
+  width: 11,
+  height: 11,
+  transform: rotate('25deg')
+});
 
 class Slider extends React.Component<Props, State> {
   static defaultProps = {
@@ -47,7 +62,9 @@ class Slider extends React.Component<Props, State> {
     sliderClass: null,
     icon: null,
     dropdownList: null,
-    inputFormat: ''
+    inputFormat: '',
+    locked: false,
+    onLock: noop
   };
 
   constructor(props: Props) {
@@ -70,7 +87,13 @@ class Slider extends React.Component<Props, State> {
   };
 
   onInputChange = event => {
-    const newValue = Number(event.target.value || 0);
+    let newValue = Number(event.target.value || 0);
+    if (newValue > this.props.max) {
+      newValue = this.props.max;
+    }
+    if (newValue < 0) {
+      newValue = 0;
+    }
     this.setState({ value: newValue }, () => this.props.onSlide(newValue));
   };
 
@@ -114,14 +137,28 @@ class Slider extends React.Component<Props, State> {
         value={this.state.value}
         min={this.props.min}
         max={this.props.max}
+        // Trick to fix InputText when slider is locked and refreshed/resized
+        style={{ width: '4em' }}
         onChange={this.onInputChange}
+        disabled={this.props.locked}
       />
     );
 
-    const BSSlider = (
-      <BootstrapSlider {...this.props} formatter={this.formatter} value={this.state.value} onSlide={this.onSlide} />
+    const lockElement = (
+      <Button bsSize="xsmall" onClick={() => this.props.onLock(!this.props.locked)}>
+        <Icon type="pf" name="thumb-tack-o" className={this.props.locked ? lockStyle : unLockStyle} />
+      </Button>
     );
 
+    const BSSlider = (
+      <BootstrapSlider
+        {...this.props}
+        locked={this.props.locked}
+        formatter={this.formatter}
+        value={this.state.value}
+        onSlide={this.onSlide}
+      />
+    );
     return (
       <div>
         {label}
@@ -129,6 +166,7 @@ class Slider extends React.Component<Props, State> {
           <Boundaries slider={BSSlider} {...this.props}>
             {inputElement}
             {formatElement}
+            {lockElement}
           </Boundaries>
         </div>
       </div>
