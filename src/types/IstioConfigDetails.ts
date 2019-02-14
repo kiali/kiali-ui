@@ -16,7 +16,8 @@ import {
   VirtualService,
   ObjectValidation,
   RbacConfig,
-  ServiceRole
+  ServiceRole,
+  ServiceRoleBinding
 } from './IstioObjects';
 
 export interface IstioConfigId {
@@ -43,6 +44,7 @@ export interface IstioConfigDetails {
   meshPolicy: Policy;
   rbacConfig: RbacConfig;
   serviceRole: ServiceRole;
+  serviceRoleBinding: ServiceRoleBinding;
   permissions: ResourcePermissions;
   validation: ObjectValidation;
 }

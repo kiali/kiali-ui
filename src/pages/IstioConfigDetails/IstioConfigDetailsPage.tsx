@@ -228,6 +228,8 @@ class IstioConfigDetailsPage extends React.Component<RouteComponentProps<IstioCo
         istioObject = this.state.istioObjectDetails.rbacConfig;
       } else if (this.state.istioObjectDetails.serviceRole) {
         istioObject = this.state.istioObjectDetails.serviceRole;
+      } else if (this.state.istioObjectDetails.serviceRoleBinding) {
+        istioObject = this.state.istioObjectDetails.serviceRoleBinding;
       }
     }
     return istioObject ? jsYaml.safeDump(istioObject, safeDumpOptions) : '';

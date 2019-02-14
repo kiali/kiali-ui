@@ -15,7 +15,8 @@ import {
   VirtualServices,
   Validations,
   RbacConfig,
-  ServiceRole
+  ServiceRole,
+  ServiceRoleBinding
 } from './IstioObjects';
 import { ResourcePermissions } from './Permissions';
 
@@ -36,6 +37,7 @@ export interface IstioConfigItem {
   meshPolicy?: Policy;
   rbacConfig?: RbacConfig;
   serviceRole?: ServiceRole;
+  serviceRoleBinding?: ServiceRoleBinding;
   validation?: ObjectValidation;
 }
 
@@ -54,6 +56,7 @@ export interface IstioConfigList {
   meshPolicies: Policy[];
   rbacConfigs: RbacConfig[];
   serviceRoles: ServiceRole[];
+  serviceRoleBindings: ServiceRoleBinding[];
   permissions: { [key: string]: ResourcePermissions };
   validations: Validations;
 }
@@ -133,6 +136,7 @@ export const filterByName = (unfiltered: IstioConfigList, names: string[]): Isti
     meshPolicies: unfiltered.meshPolicies.filter(p => includeName(p.metadata.name, names)),
     rbacConfigs: unfiltered.rbacConfigs.filter(rc => includeName(rc.metadata.name, names)),
     serviceRoles: unfiltered.serviceRoles.filter(sr => includeName(sr.metadata.name, names)),
+    serviceRoleBindings: unfiltered.serviceRoleBindings.filter(srb => includeName(srb.metadata.name, names)),
     validations: unfiltered.validations,
     permissions: unfiltered.permissions
   };
@@ -274,6 +278,14 @@ export const toIstioItems = (istioConfigList: IstioConfigList): IstioConfigItem[
       type: 'servicerole',
       name: sr.metadata.name,
       serviceRole: sr
+    })
+  );
+  istioConfigList.serviceRoleBindings.forEach(srb =>
+    istioItems.push({
+      namespace: istioConfigList.namespace.name,
+      type: 'servicerolebinding',
+      name: srb.metadata.name,
+      serviceRoleBinding: srb
     })
   );
   return istioItems;

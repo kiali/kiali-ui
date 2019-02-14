@@ -632,3 +632,18 @@ export interface AccessRuleConstraint {
   key: string;
   values: string[];
 }
+
+export interface ServiceRoleBinding {
+  metadata: K8sMetadata;
+  spec: ServiceRoleBindingSpec;
+}
+
+export interface ServiceRoleBindingSpec {
+  subjects?: ServiceRoleBindingSubject[];
+  roleRef?: Reference;
+}
+
+export interface ServiceRoleBindingSubject {
+  user: string;
+  properties: Map<string, string>;
+}
