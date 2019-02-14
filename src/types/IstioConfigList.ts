@@ -13,7 +13,8 @@ import {
   ServiceEntry,
   VirtualService,
   VirtualServices,
-  Validations
+  Validations,
+  RbacConfig
 } from './IstioObjects';
 import { ResourcePermissions } from './Permissions';
 
@@ -32,6 +33,7 @@ export interface IstioConfigItem {
   quotaSpecBinding?: QuotaSpecBinding;
   policy?: Policy;
   meshPolicy?: Policy;
+  rbacConfig?: RbacConfig;
   validation?: ObjectValidation;
 }
 
@@ -48,6 +50,7 @@ export interface IstioConfigList {
   quotaSpecBindings: QuotaSpecBinding[];
   policies: Policy[];
   meshPolicies: Policy[];
+  rbacConfigs: RbacConfig[];
   permissions: { [key: string]: ResourcePermissions };
   validations: Validations;
 }
@@ -72,6 +75,9 @@ export const dicIstioType = {
   QuotaSpecBinding: 'quotaspecbindings',
   Policy: 'policies',
   MeshPolicy: 'meshpolicies',
+  RbacConfig: 'rbacconfigs',
+  ServiceRole: 'serviceroles',
+  ServiceRoleBinding: 'servicerolebindings',
   gateways: 'Gateway',
   virtualservices: 'VirtualService',
   destinationrules: 'DestinationRule',
@@ -84,7 +90,10 @@ export const dicIstioType = {
   instance: 'Instance',
   handler: 'Handler',
   policies: 'Policy',
-  meshpolicies: 'MeshPolicy'
+  meshpolicies: 'MeshPolicy',
+  rbacconfigs: 'RbacConfig',
+  serviceroles: 'ServiceRole',
+  servicerolebindings: 'ServiceRoleBinding'
 };
 
 const includeName = (name: string, names: string[]) => {
@@ -119,6 +128,7 @@ export const filterByName = (unfiltered: IstioConfigList, names: string[]): Isti
     quotaSpecBindings: unfiltered.quotaSpecBindings.filter(qsb => includeName(qsb.metadata.name, names)),
     policies: unfiltered.policies.filter(p => includeName(p.metadata.name, names)),
     meshPolicies: unfiltered.meshPolicies.filter(p => includeName(p.metadata.name, names)),
+    rbacConfigs: unfiltered.rbacConfigs.filter(p => includeName(p.metadata.name, names)),
     validations: unfiltered.validations,
     permissions: unfiltered.permissions
   };
@@ -244,6 +254,14 @@ export const toIstioItems = (istioConfigList: IstioConfigList): IstioConfigItem[
       type: 'meshpolicy',
       name: p.metadata.name,
       policy: p
+    })
+  );
+  istioConfigList.rbacConfigs.forEach(rc =>
+    istioItems.push({
+      namespace: istioConfigList.namespace.name,
+      type: 'rbacconfig',
+      name: rc.metadata.name,
+      rbacConfig: rc
     })
   );
   return istioItems;

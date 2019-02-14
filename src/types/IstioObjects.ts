@@ -595,3 +595,19 @@ export interface Policy {
   metadata: K8sMetadata;
   spec: PolicySpec;
 }
+
+export interface RbacConfig {
+  metadata: K8sMetadata;
+  spec: RbacConfigSpec;
+}
+
+export interface RbacConfigSpec {
+  mode?: string;
+  inclusion?: RbacConfigTarget;
+  exclusion?: RbacConfigTarget;
+}
+
+export interface RbacConfigTarget {
+  services: string[];
+  namespaces: string[];
+}

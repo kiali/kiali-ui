@@ -233,6 +233,18 @@ class IstioConfigListComponent extends ListComponent.Component<
       iconName = 'locked';
       iconType = 'pf';
       type = 'MeshPolicy';
+    } else if (istioItem.type === 'rbacconfig') {
+      iconName = 'locked';
+      iconType = 'pf';
+      type = 'RbacConfig';
+    } else if (istioItem.type === 'servicerole') {
+      iconName = 'locked';
+      iconType = 'pf';
+      type = 'ServiceRole';
+    } else if (istioItem.type === 'servicerolebinding') {
+      iconName = 'locked';
+      iconType = 'pf';
+      type = 'ServiceRoleBinding';
     }
 
     // Adapters and Templates need to pass subtype

@@ -18,6 +18,7 @@ const mockIstioConfigList = (names: string[]): IstioConfigList => {
     quotaSpecBindings: [],
     policies: [],
     meshPolicies: [],
+    rbacConfigs: [],
     validations: {},
     permissions: {}
   };
@@ -43,6 +44,7 @@ const mockIstioConfigList = (names: string[]): IstioConfigList => {
     testData.quotaSpecBindings.push({ metadata: { name: name + '8' }, spec: {} });
     testData.policies.push({ metadata: { name: name + '9' }, spec: {} });
     testData.meshPolicies.push({ metadata: { name: name + '10' }, spec: {} });
+    testData.rbacConfigs.push({ metadata: { name: name + '11' }, spec: {} });
   });
   return testData;
 };
@@ -64,6 +66,7 @@ describe('IstioConfigListComponent#filterByName', () => {
     expect(filtered.quotaSpecBindings.length).toBe(2);
     expect(filtered.policies.length).toBe(2);
     expect(filtered.meshPolicies.length).toBe(2);
+    expect(filtered.rbacConfigs.length).toBe(2);
 
     expect(filtered.virtualServices.items[0].metadata.name).toBe('white1');
     expect(filtered.destinationRules.items[0].metadata.name).toBe('white2');
@@ -75,6 +78,7 @@ describe('IstioConfigListComponent#filterByName', () => {
     expect(filtered.quotaSpecBindings[0].metadata.name).toBe('white8');
     expect(filtered.policies[0].metadata.name).toBe('white9');
     expect(filtered.meshPolicies[0].metadata.name).toBe('white10');
+    expect(filtered.rbacConfigs[0].metadata.name).toBe('white11');
 
     filtered = filterByName(unfiltered, ['bad']);
     expect(filtered).toBeDefined();
@@ -89,6 +93,7 @@ describe('IstioConfigListComponent#filterByName', () => {
     expect(filtered.quotaSpecBindings.length).toBe(0);
     expect(filtered.policies.length).toBe(0);
     expect(filtered.meshPolicies.length).toBe(0);
+    expect(filtered.rbacConfigs.length).toBe(0);
   });
 });
 
@@ -97,7 +102,7 @@ describe('IstioConfigListComponent#toIstioItems', () => {
     const istioItems = toIstioItems(unfiltered);
 
     expect(istioItems).toBeDefined();
-    expect(istioItems.length).toBe(33);
+    expect(istioItems.length).toBe(36);
     expect(istioItems[0].gateway).toBeDefined();
     expect(istioItems[0].destinationRule).toBeUndefined();
     expect(istioItems[3].virtualService).toBeDefined();
@@ -115,7 +120,7 @@ describe('IstioConfigComponent#sortIstioItems', () => {
 
     return IstioConfigListFilters.sortIstioItems(istioItems, sortField, isAscending).then(sorted => {
       expect(sorted).toBeDefined();
-      expect(sorted.length).toBe(33);
+      expect(sorted.length).toBe(36);
 
       const first = sorted[0];
       expect(first.gateway).toBeDefined();
@@ -125,7 +130,7 @@ describe('IstioConfigComponent#sortIstioItems', () => {
       expect(second.virtualService).toBeDefined();
       expect(second.virtualService!.metadata.name).toBe('blue1');
 
-      const last = sorted[32];
+      const last = sorted[35];
       expect(last.policy).toBeDefined();
       expect(last.policy!.metadata.name).toBe('white9');
     });
@@ -139,13 +144,13 @@ describe('IstioConfigComponent#sortIstioItems', () => {
     // Descending
     return IstioConfigListFilters.sortIstioItems(istioItems, sortField, isAscending).then(sorted => {
       expect(sorted).toBeDefined();
-      expect(sorted.length).toBe(33);
+      expect(sorted.length).toBe(36);
 
       const first = sorted[0];
       expect(first.policy).toBeDefined();
       expect(first.policy!.metadata.name).toBe('white9');
 
-      const last = sorted[32];
+      const last = sorted[35];
       expect(last.gateway).toBeDefined();
       expect(last.gateway!.metadata.name).toBe('blue0');
     });
@@ -158,7 +163,7 @@ describe('IstioConfigComponent#sortIstioItems', () => {
 
     return IstioConfigListFilters.sortIstioItems(istioItems, sortField, isAscending).then(sorted => {
       expect(sorted).toBeDefined();
-      expect(sorted.length).toBe(33);
+      expect(sorted.length).toBe(36);
 
       const first = sorted[0];
       expect(first.adapter).toBeDefined();
@@ -168,7 +173,7 @@ describe('IstioConfigComponent#sortIstioItems', () => {
       expect(second.destinationRule).toBeDefined();
       expect(second.destinationRule!.metadata.name).toBe('blue2');
 
-      const last = sorted[32];
+      const last = sorted[35];
       expect(last.virtualService).toBeDefined();
       expect(last.virtualService!.metadata.name).toBe('white1');
     });
@@ -181,7 +186,7 @@ describe('IstioConfigComponent#sortIstioItems', () => {
 
     return IstioConfigListFilters.sortIstioItems(istioItems, sortField, isAscending).then(sorted => {
       expect(sorted).toBeDefined();
-      expect(sorted.length).toBe(33);
+      expect(sorted.length).toBe(36);
 
       const first = sorted[0];
       expect(first.virtualService).toBeDefined();
