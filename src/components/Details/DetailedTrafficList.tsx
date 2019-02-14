@@ -16,6 +16,7 @@ export interface AppNode {
   namespace: string;
   name: string;
   version: string;
+  isInaccessible: boolean;
 }
 
 export interface WorkloadNode {
@@ -23,6 +24,7 @@ export interface WorkloadNode {
   type: NodeType.WORKLOAD;
   namespace: string;
   name: string;
+  isInaccessible: boolean;
 }
 
 export interface ServiceNode {
@@ -30,6 +32,8 @@ export interface ServiceNode {
   type: NodeType.SERVICE;
   namespace: string;
   name: string;
+  isServiceEntry?: string;
+  isInaccessible: boolean;
 }
 
 export interface UnknownNode {
@@ -128,31 +132,39 @@ class DetailedTrafficList extends React.Component<DetailedTrafficProps> {
 
     if (NodeType.WORKLOAD === node.type) {
       icon = <Icon type="pf" name="bundle" style={{ paddingLeft: '2em' }} />;
-      name = (
-        <Link to={`/namespaces/${encodeURIComponent(node.namespace)}/workloads/${encodeURIComponent(node.name)}`}>
-          {node.name}
-        </Link>
-      );
-    } else if (NodeType.SERVICE === node.type) {
-      icon = <Icon type="pf" name="service" />;
-      name = (
-        <Link to={`/namespaces/${encodeURIComponent(node.namespace)}/services/${encodeURIComponent(node.name)}`}>
-          {node.name}
-        </Link>
-      );
-    } else if (NodeType.APP === node.type) {
-      icon = <Icon type="pf" name="applications" style={{ paddingLeft: '2em' }} />;
-      name = (
-        <Link to={`/namespaces/${encodeURIComponent(node.namespace)}/applications/${encodeURIComponent(node.name)}`}>
-          {node.name}
-        </Link>
-      );
-      if (node.version) {
+      if (!node.isInaccessible) {
         name = (
-          <Link to={`/namespaces/${encodeURIComponent(node.namespace)}/applications/${encodeURIComponent(node.name)}`}>
-            `${node.name} / ${node.version}`
+          <Link to={`/namespaces/${encodeURIComponent(node.namespace)}/workloads/${encodeURIComponent(node.name)}`}>
+            {node.name}
           </Link>
         );
+      }
+    } else if (NodeType.SERVICE === node.type) {
+      icon = <Icon type="pf" name="service" />;
+      if (!node.isServiceEntry || !node.isInaccessible) {
+        name = (
+          <Link to={`/namespaces/${encodeURIComponent(node.namespace)}/services/${encodeURIComponent(node.name)}`}>
+            {node.name}
+          </Link>
+        );
+      }
+    } else if (NodeType.APP === node.type) {
+      icon = <Icon type="pf" name="applications" style={{ paddingLeft: '2em' }} />;
+      if (!node.isInaccessible) {
+        name = (
+          <Link to={`/namespaces/${encodeURIComponent(node.namespace)}/applications/${encodeURIComponent(node.name)}`}>
+            {node.name}
+          </Link>
+        );
+        if (node.version) {
+          name = (
+            <Link
+              to={`/namespaces/${encodeURIComponent(node.namespace)}/applications/${encodeURIComponent(node.name)}`}
+            >
+              `${node.name} / ${node.version}`
+            </Link>
+          );
+        }
       }
     }
 

@@ -89,7 +89,8 @@ class TrafficDetails extends React.Component<TrafficDetailsProps, TrafficDetails
         id: `${prefix}-${node.id}`,
         type: node.nodeType,
         namespace: node.namespace,
-        name: node.workload || ''
+        name: node.workload || '',
+        isInaccessible: node.isInaccessible || false
       };
     } else {
       return {
@@ -97,7 +98,8 @@ class TrafficDetails extends React.Component<TrafficDetailsProps, TrafficDetails
         type: node.nodeType,
         namespace: node.namespace,
         name: node.app || '',
-        version: node.version
+        version: node.version,
+        isInaccessible: node.isInaccessible || false
       };
     }
   };
@@ -159,7 +161,9 @@ class TrafficDetails extends React.Component<TrafficDetailsProps, TrafficDetails
               id: `out-${targetNode.id}`,
               type: targetNode.nodeType,
               namespace: targetNode.namespace,
-              name: targetNode.service!
+              name: targetNode.service!,
+              isServiceEntry: targetNode.isServiceEntry,
+              isInaccessible: targetNode.isInaccessible || false
             }
           };
           outboundTraffic.push(serviceTraffic[svcId]);
@@ -173,7 +177,9 @@ class TrafficDetails extends React.Component<TrafficDetailsProps, TrafficDetails
               id: `in-${sourceNode.id}`,
               type: sourceNode.nodeType,
               namespace: sourceNode.namespace,
-              name: sourceNode.service!
+              name: sourceNode.service!,
+              isServiceEntry: sourceNode.isServiceEntry,
+              isInaccessible: sourceNode.isInaccessible || false
             }
           };
           inboundTraffic.push(serviceTraffic[svcId]);
