@@ -611,3 +611,24 @@ export interface RbacConfigTarget {
   services: string[];
   namespaces: string[];
 }
+
+export interface ServiceRole {
+  metadata: K8sMetadata;
+  spec: ServiceRoleSpec;
+}
+
+export interface ServiceRoleSpec {
+  rules?: AccessRules[];
+}
+
+export interface AccessRules {
+  service: string[];
+  path: string[];
+  methods: string[];
+  constraints: AccessRuleConstraint;
+}
+
+export interface AccessRuleConstraint {
+  key: string;
+  values: string[];
+}
