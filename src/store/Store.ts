@@ -108,9 +108,11 @@ export interface GrafanaInfo {
   varWorkload: string;
 }
 
+export type IstioLabelKey = 'AppLabelName' | 'VersionLabelName';
+
 export interface ServerConfig {
   istioNamespace: string;
-  istioLabels: { [key: string]: string };
+  istioLabels: { [key in IstioLabelKey]: string };
   prometheus: {
     globalScrapeInterval?: DurationInSeconds;
     storageTsdbRetention?: DurationInSeconds;

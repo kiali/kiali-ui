@@ -7,7 +7,7 @@ import { ToolbarDropdown } from '../ToolbarDropdown/ToolbarDropdown';
 import { KialiAppState, ServerConfig } from '../../store/Store';
 import { serverConfigSelector } from '../../store/Selectors';
 import { connect } from 'react-redux';
-import { pickBy } from 'lodash';
+import { getValidDurations, getValidDuration } from '../../config/ServerConfig';
 
 type ReduxProps = {
   serverConfig: ServerConfig;
@@ -55,17 +55,17 @@ export class MetricsDuration extends React.Component<Props> {
   render() {
     this.processUrlParams();
     const retention = this.props.serverConfig.prometheus.storageTsdbRetention;
-    const validDurations = pickBy(MetricsDuration.Durations, (value, key) => {
-      return !retention || Number(key) <= retention;
-    });
+    const validDurations = getValidDurations(MetricsDuration.Durations, retention);
+    const validDuration = getValidDuration(validDurations, this.duration);
+
     return (
       <ToolbarDropdown
         id={'metrics_filter_interval_duration'}
         disabled={false}
         handleSelect={this.onDurationChanged}
         nameDropdown={'Fetching'}
-        initialValue={this.duration}
-        initialLabel={validDurations[this.duration]}
+        initialValue={validDuration}
+        initialLabel={validDurations[validDuration]}
         options={validDurations}
       />
     );

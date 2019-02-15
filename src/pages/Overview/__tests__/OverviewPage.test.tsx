@@ -42,8 +42,8 @@ const mockNamespaceHealth = (obj: NamespaceAppHealth): Promise<void> => {
 
 const mockServerConfig = () => {
   const config: ServerConfig = {
-    istioNamespace: 'foo',
-    istioLabels: {},
+    istioNamespace: 'istio-system',
+    istioLabels: { AppLabelName: 'app', VersionLabelName: 'version' },
     prometheus: { storageTsdbRetention: 31 * 24 * 60 * 60 }
   };
   store.dispatch(ServerConfigActions.setServerConfig(config));

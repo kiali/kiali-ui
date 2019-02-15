@@ -20,7 +20,7 @@ import { HistoryManager, URLParams } from '../../app/History';
 import RefreshContainer from '../../containers/RefreshContainer';
 import { KialiAppAction } from '../../actions/KialiAppAction';
 import { ThunkDispatch } from 'redux-thunk';
-import { pickBy } from 'lodash';
+import { getValidDurations, getValidDuration } from '../../config/ServerConfig';
 
 type ReduxProps = {
   duration: DurationInSeconds;
@@ -128,9 +128,9 @@ export class OverviewToolbar extends React.Component<Props, State> {
 
   render() {
     const retention = this.props.serverConfig.prometheus.storageTsdbRetention;
-    const validDurations = pickBy(DURATIONS, (value, key) => {
-      return !retention || Number(key) <= retention;
-    });
+    const validDurations = getValidDurations(DURATIONS, retention);
+    const validDuration = getValidDuration(validDurations, this.props.duration);
+
     return (
       <StatefulFilters initialFilters={FiltersAndSorts.availableFilters} onFilterChange={this.props.onRefresh}>
         <Sort>
@@ -160,8 +160,8 @@ export class OverviewToolbar extends React.Component<Props, State> {
             disabled={false}
             handleSelect={this.updateDuration}
             nameDropdown="Displaying"
-            value={this.props.duration}
-            label={validDurations[this.props.duration]}
+            value={validDuration}
+            label={validDurations[validDuration]}
             options={validDurations}
           />
         </FormGroup>

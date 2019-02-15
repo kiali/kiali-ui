@@ -4,8 +4,8 @@ import { ServerConfig } from '../../store/Store';
 import { store } from '../../store/ConfigStore';
 
 const mockServerConfig: ServerConfig = {
-  istioNamespace: 'foo',
-  istioLabels: {},
+  istioNamespace: 'istio-system',
+  istioLabels: { AppLabelName: 'app', VersionLabelName: 'version' },
   prometheus: { globalScrapeInterval: 15 }
 };
 

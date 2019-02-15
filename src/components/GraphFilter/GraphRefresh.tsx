@@ -16,7 +16,7 @@ import { config } from '../../config/Config';
 import { HistoryManager, URLParams } from '../../app/History';
 import { ListPagesHelper } from '../../components/ListPage/ListPagesHelper';
 import ToolbarDropdown from '../ToolbarDropdown/ToolbarDropdown';
-import { pickBy } from 'lodash';
+import { getValidDurations, getValidDuration } from '../../config/ServerConfig';
 
 //
 // GraphRefresh actually handles the Duration dropdown, the RefreshInterval dropdown and the Refresh button.
@@ -74,9 +74,8 @@ export class GraphRefresh extends React.PureComponent<GraphRefreshProps> {
 
   render() {
     const retention = this.props.serverConfig.prometheus.storageTsdbRetention;
-    const validDurations = pickBy(GraphRefresh.DURATION_LIST, (value, key) => {
-      return !retention || Number(key) <= retention;
-    });
+    const validDurations = getValidDurations(GraphRefresh.DURATION_LIST, retention);
+    const validDuration = getValidDuration(validDurations, this.props.duration);
 
     return (
       <>
@@ -85,8 +84,8 @@ export class GraphRefresh extends React.PureComponent<GraphRefreshProps> {
           id={'graph_filter_duration'}
           disabled={this.props.disabled}
           handleSelect={this.props.setDuration}
-          value={this.props.duration}
-          label={String(validDurations[this.props.duration])}
+          value={validDuration}
+          label={String(validDurations[validDuration])}
           options={validDurations}
         />
         <DropdownButton
