@@ -17,7 +17,10 @@ type KialiDispatch = ThunkDispatch<KialiAppState, void, KialiAppAction>;
 const Dispatcher = new Login.LoginDispatcher();
 
 const shouldRelogin = (state?: LoginState): boolean =>
-  !state || !state.session || moment(state.session!.expiresOn).diff(moment()) > 0;
+  !state ||
+  !state.session ||
+  moment(state.session!.expiresOn).diff(moment()) > 0 ||
+  moment(state.uiExpiresOn).diff(moment()) > 0;
 
 const loginSuccess = async (dispatch: KialiDispatch, session: LoginSession) => {
   const authHeader = `Bearer ${session.token}`;

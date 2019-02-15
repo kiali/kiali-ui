@@ -1,3 +1,5 @@
+import moment from 'moment';
+
 import { getType } from 'typesafe-actions';
 import { LoginState as LoginStateInterface, LoginStatus } from '../store/Store';
 import { KialiAppAction } from '../actions/KialiAppAction';
@@ -5,7 +7,13 @@ import { LoginActions } from '../actions/LoginActions';
 
 export const INITIAL_LOGIN_STATE: LoginStateInterface = {
   status: LoginStatus.loggedOut,
-  session: undefined
+  session: undefined,
+
+  // We define a small expiration date for the UI so it does not block the
+  // session handling on login.
+  uiExpiresOn: moment()
+    .add(10, 'minute')
+    .toISOString()
 };
 
 // This Reducer allows changes to the 'loginState' portion of Redux Store
@@ -20,7 +28,8 @@ const loginState = (state: LoginStateInterface = INITIAL_LOGIN_STATE, action: Ki
     case getType(LoginActions.loginExtend):
       return Object.assign({}, INITIAL_LOGIN_STATE, {
         status: LoginStatus.loggedIn,
-        session: action.payload.session
+        session: action.payload.session,
+        uiExpiresOn: action.payload.uiExpiresOn
       });
     case getType(LoginActions.loginFailure):
       let message = 'Error connecting to Kiali';

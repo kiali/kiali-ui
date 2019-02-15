@@ -80,6 +80,7 @@ export interface LoginState {
   status: LoginStatus;
   session?: LoginSession;
   error?: any;
+  uiExpiresOn: RawDate;
 }
 
 export interface Component {
