@@ -60,7 +60,7 @@ describe('Health', () => {
     const health = new H.AppHealth(
       [{ available: 0, replicas: 1, name: 'a' }],
       { errorRatio: 1, inboundErrorRatio: 1, outboundErrorRatio: 1 },
-      60
+      { rateInterval: 60, hasSidecar: true }
     );
     expect(health.getGlobalStatus()).toEqual(H.FAILURE);
   });
@@ -68,7 +68,7 @@ describe('Health', () => {
     const health = new H.AppHealth(
       [{ available: 1, replicas: 1, name: 'a' }, { available: 2, replicas: 2, name: 'b' }],
       { errorRatio: 0, inboundErrorRatio: 0, outboundErrorRatio: 0 },
-      60
+      { rateInterval: 60, hasSidecar: true }
     );
     expect(health.getGlobalStatus()).toEqual(H.HEALTHY);
   });
@@ -76,7 +76,7 @@ describe('Health', () => {
     const health = new H.AppHealth(
       [{ available: 1, replicas: 1, name: 'a' }, { available: 1, replicas: 2, name: 'b' }],
       { errorRatio: 0, inboundErrorRatio: 0, outboundErrorRatio: 0 },
-      60
+      { rateInterval: 60, hasSidecar: true }
     );
     expect(health.getGlobalStatus()).toEqual(H.DEGRADED);
   });
@@ -84,7 +84,7 @@ describe('Health', () => {
     const health = new H.AppHealth(
       [{ available: 1, replicas: 1, name: 'a' }, { available: 2, replicas: 2, name: 'b' }],
       { errorRatio: 0.2, inboundErrorRatio: 0.3, outboundErrorRatio: 0.1 },
-      60
+      { rateInterval: 60, hasSidecar: true }
     );
     expect(health.getGlobalStatus()).toEqual(H.FAILURE);
   });
@@ -92,7 +92,7 @@ describe('Health', () => {
     const health = new H.AppHealth(
       [{ available: 0, replicas: 0, name: 'a' }, { available: 0, replicas: 0, name: 'b' }],
       { errorRatio: 0.2, inboundErrorRatio: 0.3, outboundErrorRatio: 0.1 },
-      60
+      { rateInterval: 60, hasSidecar: true }
     );
     expect(health.getGlobalStatus()).toEqual(H.FAILURE);
   });
