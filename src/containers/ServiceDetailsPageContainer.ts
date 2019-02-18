@@ -11,7 +11,7 @@ const getJaegerSupportMulns = (components: Component[]) => {
   const istioComponent = components.find(comp => comp.name === 'Istio');
   if (istioComponent && istioComponent.version) {
     const versions = istioComponent.version.split('.');
-    if (+versions[0] >= 1 && +versions[1] >= 1) {
+    if ((+versions[0] >= 1 && +versions[1] >= 1) || +versions[0] > 1) {
       return true;
     }
   }
