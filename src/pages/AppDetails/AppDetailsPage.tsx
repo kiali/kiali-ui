@@ -11,14 +11,14 @@ import { AppHealth } from '../../types/Health';
 import { MetricsObjectTypes } from '../../types/Metrics';
 import CustomMetricsContainer from '../../components/Metrics/CustomMetrics';
 import BreadcrumbView from '../../components/BreadcrumbView/BreadcrumbView';
-import { GraphType, NodeParamsType, NodeType } from '../../types/Graph';
+import { GraphDefinition, GraphType, NodeParamsType, NodeType } from '../../types/Graph';
 import { fetchTrafficDetails } from '../../helpers/TrafficDetailsHelper';
 import TrafficDetails from '../../components/Metrics/TrafficDetails';
 
 type AppDetailsState = {
   app: App;
   health?: AppHealth;
-  trafficData: any;
+  trafficData: GraphDefinition | null;
 };
 
 const emptyApp = {
@@ -44,17 +44,27 @@ class AppDetails extends React.Component<RouteComponentProps<AppId>, AppDetailsS
       this.props.match.params.namespace !== prevProps.match.params.namespace ||
       this.props.match.params.app !== prevProps.match.params.app
     ) {
-      this.setState({
-        app: emptyApp,
-        health: undefined
-      });
-      this.fetchApp();
+      this.setState(
+        {
+          app: emptyApp,
+          health: undefined
+        },
+        () => this.doRefresh()
+      );
     }
   }
 
   doRefresh = () => {
-    this.fetchApp();
-    this.fetchTrafficData();
+    const currentTab = this.activeTab('tab', 'info');
+
+    if (this.state.app === emptyApp || currentTab === 'info') {
+      this.setState({ trafficData: null });
+      this.fetchApp();
+    }
+
+    if (currentTab === 'traffic') {
+      this.fetchTrafficData();
+    }
   };
 
   fetchApp = () => {
@@ -105,7 +115,11 @@ class AppDetails extends React.Component<RouteComponentProps<AppId>, AppDetailsS
     return (
       <>
         <BreadcrumbView location={this.props.location} />
-        <TabContainer id="basic-tabs" activeKey={this.activeTab('tab', 'info')} onSelect={this.tabSelectHandler('tab')}>
+        <TabContainer
+          id="basic-tabs"
+          activeKey={this.activeTab('tab', 'info')}
+          onSelect={this.tabSelectHandler('tab', this.tabChangeHandler)}
+        >
           <div>
             <Nav bsClass="nav nav-tabs nav-tabs-pf">
               <NavItem eventKey="info">
@@ -148,6 +162,7 @@ class AppDetails extends React.Component<RouteComponentProps<AppId>, AppDetailsS
                   itemType={MetricsObjectTypes.APP}
                   namespace={this.state.app.namespace.name}
                   appName={this.state.app.name}
+                  onRefresh={this.doRefresh}
                 />
               </TabPane>
               <TabPane eventKey="in_metrics" mountOnEnter={true} unmountOnExit={true}>
@@ -195,7 +210,13 @@ class AppDetails extends React.Component<RouteComponentProps<AppId>, AppDetailsS
     return new URLSearchParams(this.props.location.search).get(tabName) || whenEmpty;
   };
 
-  private tabSelectHandler = (tabName: string) => {
+  private tabChangeHandler = (tabName: string) => {
+    if (tabName === 'traffic' && this.state.trafficData === null) {
+      this.fetchTrafficData();
+    }
+  };
+
+  private tabSelectHandler = (tabName: string, postHandler?: (tabName: string) => void) => {
     return (tabKey?: string) => {
       if (!tabKey) {
         return;
@@ -205,6 +226,10 @@ class AppDetails extends React.Component<RouteComponentProps<AppId>, AppDetailsS
       urlParams.set(tabName, tabKey);
 
       this.props.history.push(this.props.location.pathname + '?' + urlParams.toString());
+
+      if (postHandler) {
+        postHandler(tabKey);
+      }
     };
   };
 }
