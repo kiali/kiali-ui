@@ -20,6 +20,7 @@ type ServiceDetailsState = {
 
 interface ServiceDetailsProps extends RouteComponentProps<ServiceId> {
   jaegerUrl: string;
+  jaegerSupportMulns: boolean;
 }
 
 interface ParsedSearch {
@@ -153,7 +154,11 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
   }
 
   navigateToJaeger = () => {
-    window.open(this.props.jaegerUrl + `/search?service=${this.props.match.params.service}`, '_blank');
+    let url = `${this.props.jaegerUrl}/search?service=${this.props.match.params.service}`;
+    if (this.props.jaegerSupportMulns) {
+      url += `.${this.props.match.params.namespace}`;
+    }
+    window.open(url, '_blank');
   };
 
   render() {
