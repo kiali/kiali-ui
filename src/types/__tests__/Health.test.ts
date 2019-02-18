@@ -96,4 +96,20 @@ describe('Health', () => {
     );
     expect(health.getGlobalStatus()).toEqual(H.FAILURE);
   });
+  it('should not ignore error rates when has sidecar', () => {
+    const health = new H.AppHealth(
+      [{ available: 1, replicas: 1, name: 'a' }],
+      { errorRatio: 0, inboundErrorRatio: 0, outboundErrorRatio: 0 },
+      { rateInterval: 60, hasSidecar: true }
+    );
+    expect(health.items).toHaveLength(2);
+  });
+  it('should ignore error rates when no sidecar', () => {
+    const health = new H.AppHealth(
+      [{ available: 1, replicas: 1, name: 'a' }],
+      { errorRatio: 0, inboundErrorRatio: 0, outboundErrorRatio: 0 },
+      { rateInterval: 60, hasSidecar: false }
+    );
+    expect(health.items).toHaveLength(1);
+  });
 });
