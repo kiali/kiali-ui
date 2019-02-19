@@ -18,7 +18,7 @@ const mockIstioConfigList = (names: string[]): IstioConfigList => {
     quotaSpecBindings: [],
     policies: [],
     meshPolicies: [],
-    rbacConfigs: [],
+    clusterRbacConfigs: [],
     serviceRoles: [],
     serviceRoleBindings: [],
     validations: {},
@@ -46,7 +46,7 @@ const mockIstioConfigList = (names: string[]): IstioConfigList => {
     testData.quotaSpecBindings.push({ metadata: { name: name + '8' }, spec: {} });
     testData.policies.push({ metadata: { name: name + '9' }, spec: {} });
     testData.meshPolicies.push({ metadata: { name: name + '10' }, spec: {} });
-    testData.rbacConfigs.push({ metadata: { name: name + '11' }, spec: {} });
+    testData.clusterRbacConfigs.push({ metadata: { name: name + '11' }, spec: {} });
     testData.serviceRoles.push({ metadata: { name: name + '12' }, spec: {} });
     testData.serviceRoleBindings.push({ metadata: { name: name + '13' }, spec: {} });
   });
@@ -70,7 +70,7 @@ describe('IstioConfigListComponent#filterByName', () => {
     expect(filtered.quotaSpecBindings.length).toBe(2);
     expect(filtered.policies.length).toBe(2);
     expect(filtered.meshPolicies.length).toBe(2);
-    expect(filtered.rbacConfigs.length).toBe(2);
+    expect(filtered.clusterRbacConfigs.length).toBe(2);
     expect(filtered.serviceRoles.length).toBe(2);
     expect(filtered.serviceRoleBindings.length).toBe(2);
 
@@ -84,7 +84,7 @@ describe('IstioConfigListComponent#filterByName', () => {
     expect(filtered.quotaSpecBindings[0].metadata.name).toBe('white8');
     expect(filtered.policies[0].metadata.name).toBe('white9');
     expect(filtered.meshPolicies[0].metadata.name).toBe('white10');
-    expect(filtered.rbacConfigs[0].metadata.name).toBe('white11');
+    expect(filtered.clusterRbacConfigs[0].metadata.name).toBe('white11');
     expect(filtered.serviceRoles[0].metadata.name).toBe('white12');
     expect(filtered.serviceRoleBindings[0].metadata.name).toBe('white13');
 
@@ -101,7 +101,7 @@ describe('IstioConfigListComponent#filterByName', () => {
     expect(filtered.quotaSpecBindings.length).toBe(0);
     expect(filtered.policies.length).toBe(0);
     expect(filtered.meshPolicies.length).toBe(0);
-    expect(filtered.rbacConfigs.length).toBe(0);
+    expect(filtered.clusterRbacConfigs.length).toBe(0);
     expect(filtered.serviceRoles.length).toBe(0);
   });
 });
@@ -179,8 +179,8 @@ describe('IstioConfigComponent#sortIstioItems', () => {
       expect(first.adapter!.metadata.name).toBe('blue5');
 
       const second = sorted[3];
-      expect(second.destinationRule).toBeDefined();
-      expect(second.destinationRule!.metadata.name).toBe('blue2');
+      expect(second.clusterRbacConfig).toBeDefined();
+      expect(second.clusterRbacConfig!.metadata.name).toBe('blue11');
 
       const last = sorted[41];
       expect(last.virtualService).toBeDefined();

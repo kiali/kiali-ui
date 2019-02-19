@@ -596,12 +596,12 @@ export interface Policy {
   spec: PolicySpec;
 }
 
-export interface RbacConfig {
+export interface ClusterRbacConfig {
   metadata: K8sMetadata;
-  spec: RbacConfigSpec;
+  spec: ClusterRbacConfigSpec;
 }
 
-export interface RbacConfigSpec {
+export interface ClusterRbacConfigSpec {
   mode?: string;
   inclusion?: RbacConfigTarget;
   exclusion?: RbacConfigTarget;

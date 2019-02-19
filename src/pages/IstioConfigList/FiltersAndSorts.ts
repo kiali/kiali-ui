@@ -134,8 +134,8 @@ export namespace IstioConfigListFilters {
         title: 'MeshPolicy'
       },
       {
-        id: 'RbacConfig',
-        title: 'RbacConfig'
+        id: 'ClusterRbacConfig',
+        title: 'ClusterRbacConfig'
       },
       {
         id: 'ServiceRole',

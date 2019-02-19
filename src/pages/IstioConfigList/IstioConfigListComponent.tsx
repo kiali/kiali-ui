@@ -233,10 +233,10 @@ class IstioConfigListComponent extends ListComponent.Component<
       iconName = 'locked';
       iconType = 'pf';
       type = 'MeshPolicy';
-    } else if (istioItem.type === 'rbacconfig') {
+    } else if (istioItem.type === 'clusterrbacconfig') {
       iconName = 'locked';
       iconType = 'pf';
-      type = 'RbacConfig';
+      type = 'ClusterRbacConfig';
     } else if (istioItem.type === 'servicerole') {
       iconName = 'locked';
       iconType = 'pf';
@@ -245,6 +245,12 @@ class IstioConfigListComponent extends ListComponent.Component<
       iconName = 'locked';
       iconType = 'pf';
       type = 'ServiceRoleBinding';
+    } else {
+      console.warn('Istio Object ' + istioItem.type + ' not supported');
+    }
+
+    if (type === 'No type found') {
+      return undefined;
     }
 
     // Adapters and Templates need to pass subtype
