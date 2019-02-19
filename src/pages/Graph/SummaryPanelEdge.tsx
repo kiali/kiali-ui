@@ -21,6 +21,7 @@ import { Response } from '../../services/Api';
 import { CancelablePromise, makeCancelablePromise } from '../../utils/CancelablePromises';
 import { serverConfig } from '../../config/serverConfig';
 import { CyEdge } from '../../components/CytoscapeGraph/CytoscapeGraphUtils';
+import { icons } from '../../config';
 
 type SummaryPanelEdgeState = {
   loading: boolean;
@@ -87,6 +88,7 @@ export default class SummaryPanelEdge extends React.Component<SummaryPanelPropTy
     const edge = this.props.data.summaryTarget;
     const source = edge.source();
     const dest = edge.target();
+    const isMtls = edge.data(CyEdge.isMTLS);
     const protocol = edge.data(CyEdge.protocol);
     const isGrpc = protocol === Protocol.GRPC;
     const isHttp = protocol === Protocol.HTTP;
@@ -103,10 +105,15 @@ export default class SummaryPanelEdge extends React.Component<SummaryPanelPropTy
       );
     };
 
+    const MTLSBlock = () => {
+      return <div className="panel-heading label-collection">{this.renderBadgeSummary(isMtls)}</div>;
+    };
+
     return (
       <div className="panel panel-default" style={SummaryPanelEdge.panelStyle}>
         <HeadingBlock prefix="From" node={source} />
         <HeadingBlock prefix="To" node={dest} />
+        {isMtls && <MTLSBlock />}
         <div className="panel-body">
           {isGrpc && (
             <>
@@ -435,4 +442,21 @@ export default class SummaryPanelEdge extends React.Component<SummaryPanelPropTy
       this.props.graphType !== GraphType.SERVICE
     );
   }
+
+  private renderBadgeSummary = (isMtls: string) => {
+    let mtls = 'mTLS Enabled';
+    if (isMtls && Number(isMtls) < 100.0) {
+      mtls = `${mtls} [${isMtls}% of graph period]`;
+    }
+    return (
+      <>
+        {isMtls && (
+          <div>
+            <Icon name={icons.istio.mtls.name} type={icons.istio.mtls.type} style={{ width: '10px' }} />
+            <span style={{ paddingLeft: '6px' }}>{mtls}</span>
+          </div>
+        )}
+      </>
+    );
+  };
 }
