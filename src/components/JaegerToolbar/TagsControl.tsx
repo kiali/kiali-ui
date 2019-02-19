@@ -49,7 +49,7 @@ export class TagsControl extends React.PureComponent<TagsControlProps, {}> {
           type="text"
           disabled={fetching}
           defaultValue={tags}
-          placeholder={'http.status_code=200 error=true'}
+          placeholder={'e.g. http.status_code=200 error=true'}
           style={{ width: '400px', marginLeft: '10px' }}
           onChange={e => this.props.onChange(e)}
         />

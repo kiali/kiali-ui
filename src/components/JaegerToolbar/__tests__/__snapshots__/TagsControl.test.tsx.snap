@@ -85,7 +85,7 @@ ShallowWrapper {
           defaultValue=""
           disabled={false}
           onChange={[Function]}
-          placeholder="http.status_code=200 error=true"
+          placeholder="e.g. http.status_code=200 error=true"
           style={
             Object {
               "marginLeft": "10px",
@@ -235,7 +235,7 @@ ShallowWrapper {
           "defaultValue": "",
           "disabled": false,
           "onChange": [Function],
-          "placeholder": "http.status_code=200 error=true",
+          "placeholder": "e.g. http.status_code=200 error=true",
           "style": Object {
             "marginLeft": "10px",
             "width": "400px",
@@ -319,7 +319,7 @@ ShallowWrapper {
             defaultValue=""
             disabled={false}
             onChange={[Function]}
-            placeholder="http.status_code=200 error=true"
+            placeholder="e.g. http.status_code=200 error=true"
             style={
               Object {
                 "marginLeft": "10px",
@@ -469,7 +469,7 @@ ShallowWrapper {
             "defaultValue": "",
             "disabled": false,
             "onChange": [Function],
-            "placeholder": "http.status_code=200 error=true",
+            "placeholder": "e.g. http.status_code=200 error=true",
             "style": Object {
               "marginLeft": "10px",
               "width": "400px",
