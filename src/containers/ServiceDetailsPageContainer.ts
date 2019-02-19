@@ -8,10 +8,18 @@ const getJaegerUrl = (components: Component[]) => {
 };
 
 const getJaegerSupportMulns = (components: Component[]) => {
-  const istioComponent = components.find(comp => comp.name === 'Istio');
+  let istioComponent = components.find(comp => comp.name === 'Istio');
   if (istioComponent && istioComponent.version) {
     const versions = istioComponent.version.split('.');
     if ((+versions[0] >= 1 && +versions[1] >= 1) || +versions[0] > 1) {
+      return true;
+    }
+  }
+  // Check if Maistra environment
+  istioComponent = components.find(comp => comp.name === 'Maistra Project');
+  if (istioComponent && istioComponent.version) {
+    const versions = istioComponent.version.split('.');
+    if (+versions[1] >= 8 || +versions[0] > 0) {
       return true;
     }
   }
