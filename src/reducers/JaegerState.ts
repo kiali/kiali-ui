@@ -27,7 +27,8 @@ export const INITIAL_JAEGER_STATE: JaegerState = {
     hideSummary: false,
     hideMinimap: false
   },
-  jaegerURL: ''
+  jaegerURL: '',
+  enableIntegration: false
 };
 
 export const converToTimestamp = (lookback: string): number => {
@@ -40,6 +41,10 @@ export const converToTimestamp = (lookback: string): number => {
 
 const JaegerState = (state: JaegerState = INITIAL_JAEGER_STATE, action: KialiAppAction): JaegerState => {
   switch (action.type) {
+    case getType(JaegerActions.setEnableIntegration):
+      return updateState(state, {
+        enableIntegration: action.payload
+      });
     case getType(JaegerActions.setUrl):
       return updateState(state, {
         jaegerURL: action.payload.url

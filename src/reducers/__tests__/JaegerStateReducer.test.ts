@@ -24,7 +24,8 @@ const initialState = {
     hideSummary: false,
     hideMinimap: false
   },
-  jaegerURL: ''
+  jaegerURL: '',
+  enableIntegration: false
 };
 
 describe('JaegerState reducer', () => {
