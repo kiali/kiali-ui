@@ -446,7 +446,7 @@ export default class SummaryPanelEdge extends React.Component<SummaryPanelPropTy
   private renderBadgeSummary = (isMtls: string) => {
     let mtls = 'mTLS Enabled';
     if (isMtls && Number(isMtls) < 100.0) {
-      mtls = `${mtls} [${isMtls}% of graph period]`;
+      mtls = `${mtls} [${isMtls}% of request traffic]`;
     }
     return (
       <>
