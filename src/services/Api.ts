@@ -7,7 +7,7 @@ import { IstioConfigList } from '../types/IstioConfigList';
 import { Workload, WorkloadNamespaceResponse } from '../types/Workload';
 import { ServiceDetailsInfo } from '../types/ServiceInfo';
 import JaegerInfo from '../types/JaegerInfo';
-import { GrafanaInfo, ServerConfig } from '../store/Store';
+import { GrafanaInfo } from '../store/Store';
 import {
   AppHealth,
   ServiceHealth,
@@ -387,10 +387,6 @@ export const getNodeGraphElements = (auth: AuthToken, node: NodeParamsType, para
       // default to namespace graph
       return getGraphElements(auth, { namespaces: node.namespace.name, ...params });
   }
-};
-
-export const getServerConfig = (auth: AuthToken) => {
-  return newRequest<ServerConfig>(HTTP_VERBS.GET, urls.serverConfig, {}, {}, auth);
 };
 
 export const getServiceDetail = (

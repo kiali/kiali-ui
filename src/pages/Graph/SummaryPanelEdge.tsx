@@ -231,8 +231,8 @@ export default class SummaryPanelEdge extends React.Component<SummaryPanelPropTy
       const reporterRps =
         sourceData.nodeType === NodeType.UNKNOWN ||
         sourceData.nodeType === NodeType.SERVICE ||
-        sourceData.namespace === serverConfig().istioNamespace ||
-        destData.namespace === serverConfig().istioNamespace
+        sourceData.namespace === serverConfig.istioNamespace ||
+        destData.namespace === serverConfig.istioNamespace
           ? 'destination'
           : 'source';
       const filtersRps = ['request_count', 'request_duration', 'request_error_count'];
@@ -250,7 +250,7 @@ export default class SummaryPanelEdge extends React.Component<SummaryPanelPropTy
     } else {
       // TCP uses slightly different reporting
       const reporterTCP =
-        sourceData.nodeType === NodeType.UNKNOWN || sourceData.namespace === serverConfig().istioNamespace
+        sourceData.nodeType === NodeType.UNKNOWN || sourceData.namespace === serverConfig.istioNamespace
           ? 'destination'
           : 'source';
       const filtersTCP = ['tcp_sent', 'tcp_received'];

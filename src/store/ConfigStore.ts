@@ -17,14 +17,14 @@ import { INITIAL_MESSAGE_CENTER_STATE } from '../reducers/MessageCenter';
 import { INITIAL_STATUS_STATE } from '../reducers/HelpDropdownState';
 import { INITIAL_NAMESPACE_STATE } from '../reducers/NamespaceState';
 import { INITIAL_GRAFANA_STATE } from '../reducers/GrafanaState';
-
-import { INITIAL_SERVER_CONFIG } from '../reducers/ServerConfigState';
 import { INITIAL_JAEGER_STATE } from '../reducers/JaegerState';
+
+import { serverConfig } from '../config/serverConfig';
 
 declare const window;
 
-const webRoot = (window as any).WEB_ROOT ? (window as any).WEB_ROOT : undefined;
-const persistKey = 'kiali-' + (webRoot && webRoot !== '/' ? webRoot.substring(1) : 'root');
+const persistKey =
+  'kiali-' + (serverConfig.webRoot && serverConfig.webRoot !== '/' ? serverConfig.webRoot.substring(1) : 'root');
 
 // Needed to be able to whitelist fields but allowing to keep an initialState
 const whitelistInputWithInitialState = (reducerName: string, inboundPaths: string[], initialState: any) =>
@@ -43,7 +43,7 @@ const namespacePersistFilter = whitelistInputWithInitialState(
 const persistConfig = {
   key: persistKey,
   storage: storage,
-  whitelist: ['authentication', 'namespaces', 'serverConfig'],
+  whitelist: ['authentication', 'namespaces'],
   transforms: [namespacePersistFilter]
 };
 
@@ -73,7 +73,6 @@ const initialStore: KialiAppState = {
   graph: INITIAL_GRAPH_STATE,
   userSettings: INITIAL_USER_SETTINGS_STATE,
   grafanaInfo: INITIAL_GRAFANA_STATE,
-  serverConfig: INITIAL_SERVER_CONFIG,
   jaegerState: INITIAL_JAEGER_STATE
 };
 

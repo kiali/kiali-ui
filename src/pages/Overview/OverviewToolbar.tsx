@@ -1,31 +1,27 @@
 import * as React from 'react';
 import { FormGroup, Sort, ToolbarRightContent } from 'patternfly-react';
 import { connect } from 'react-redux';
+import { ThunkDispatch } from 'redux-thunk';
 
-import { KialiAppState, ServerConfig } from '../../store/Store';
-import { durationSelector, refreshIntervalSelector, serverConfigSelector } from '../../store/Selectors';
+import { KialiAppAction } from '../../actions/KialiAppAction';
 import { UserSettingsActions } from '../../actions/UserSettingsActions';
-
+import { HistoryManager, URLParams } from '../../app/History';
 import { StatefulFilters } from '../../components/Filters/StatefulFilters';
 import { ListPagesHelper } from '../../components/ListPage/ListPagesHelper';
 import { ToolbarDropdown } from '../../components/ToolbarDropdown/ToolbarDropdown';
-import { config } from '../../config';
-
+import { serverConfig } from '../../config/serverConfig';
+import RefreshContainer from '../../containers/RefreshContainer';
+import { KialiAppState } from '../../store/Store';
+import { durationSelector, refreshIntervalSelector } from '../../store/Selectors';
 import { PollIntervalInMs, DurationInSeconds } from '../../types/Common';
 import { SortField } from '../../types/SortFilters';
 
 import { FiltersAndSorts } from './FiltersAndSorts';
 import NamespaceInfo from './NamespaceInfo';
-import { HistoryManager, URLParams } from '../../app/History';
-import RefreshContainer from '../../containers/RefreshContainer';
-import { KialiAppAction } from '../../actions/KialiAppAction';
-import { ThunkDispatch } from 'redux-thunk';
-import { getValidDurations, getValidDuration } from '../../config/serverConfig';
 
 type ReduxProps = {
   duration: DurationInSeconds;
   refreshInterval: PollIntervalInMs;
-  serverConfig: ServerConfig;
   setDuration: (duration: DurationInSeconds) => void;
   setRefreshInterval: (refresh: PollIntervalInMs) => void;
 };
@@ -49,8 +45,6 @@ type State = {
   overviewType: OverviewType;
   sortField: SortField<NamespaceInfo>;
 };
-
-const DURATIONS = config.toolbar.intervalDuration;
 
 export class OverviewToolbar extends React.Component<Props, State> {
   static currentOverviewType(): OverviewType {
@@ -127,10 +121,6 @@ export class OverviewToolbar extends React.Component<Props, State> {
   };
 
   render() {
-    const retention = this.props.serverConfig.prometheus.storageTsdbRetention;
-    const validDurations = getValidDurations(DURATIONS, retention);
-    const validDuration = getValidDuration(validDurations, this.props.duration);
-
     return (
       <StatefulFilters initialFilters={FiltersAndSorts.availableFilters} onFilterChange={this.props.onRefresh}>
         <Sort>
@@ -160,9 +150,9 @@ export class OverviewToolbar extends React.Component<Props, State> {
             disabled={false}
             handleSelect={this.updateDuration}
             nameDropdown="Displaying"
-            value={validDuration}
-            label={validDurations[validDuration]}
-            options={validDurations}
+            value={this.props.duration}
+            label={serverConfig.durations[this.props.duration]}
+            options={serverConfig.durations}
           />
         </FormGroup>
         <ToolbarRightContent>
@@ -175,8 +165,7 @@ export class OverviewToolbar extends React.Component<Props, State> {
 
 const mapStateToProps = (state: KialiAppState) => ({
   duration: durationSelector(state),
-  refreshInterval: refreshIntervalSelector(state),
-  serverConfig: serverConfigSelector(state)
+  refreshInterval: refreshIntervalSelector(state)
 });
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<KialiAppState, void, KialiAppAction>) => {

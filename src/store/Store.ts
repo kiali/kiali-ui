@@ -108,17 +108,6 @@ export interface GrafanaInfo {
   varWorkload: string;
 }
 
-export type IstioLabelKey = 'appLabelName' | 'versionLabelName';
-
-export interface ServerConfig {
-  istioNamespace: string;
-  istioLabels: { [key in IstioLabelKey]: string };
-  prometheus: {
-    globalScrapeInterval?: DurationInSeconds;
-    storageTsdbRetention?: DurationInSeconds;
-  };
-}
-
 export interface JaegerState {
   toolbar: {
     services: string[];
@@ -151,7 +140,6 @@ export interface KialiAppState {
   // could also be session state
   globalState: GlobalState;
   grafanaInfo: GrafanaInfo | null;
-  serverConfig: ServerConfig | null;
   statusState: StatusState;
   /** Page Settings */
   authentication: LoginState;

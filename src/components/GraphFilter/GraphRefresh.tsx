@@ -5,8 +5,8 @@ import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { bindActionCreators } from 'redux';
 
-import { KialiAppState, ServerConfig } from '../../store/Store';
-import { durationSelector, refreshIntervalSelector, serverConfigSelector } from '../../store/Selectors';
+import { KialiAppState } from '../../store/Store';
+import { durationSelector, refreshIntervalSelector } from '../../store/Selectors';
 import { KialiAppAction } from '../../actions/KialiAppAction';
 import { UserSettingsActions } from '../../actions/UserSettingsActions';
 
@@ -16,7 +16,7 @@ import { config } from '../../config/config';
 import { HistoryManager, URLParams } from '../../app/History';
 import { ListPagesHelper } from '../../components/ListPage/ListPagesHelper';
 import ToolbarDropdown from '../ToolbarDropdown/ToolbarDropdown';
-import { getValidDurations, getValidDuration } from '../../config/serverConfig';
+import { serverConfig } from '../../config/serverConfig';
 
 //
 // GraphRefresh actually handles the Duration dropdown, the RefreshInterval dropdown and the Refresh button.
@@ -25,7 +25,6 @@ import { getValidDurations, getValidDuration } from '../../config/serverConfig';
 type ReduxProps = {
   duration: DurationInSeconds;
   refreshInterval: PollIntervalInMs;
-  serverConfig: ServerConfig;
 
   setDuration: (duration: DurationInSeconds) => void;
   setRefreshInterval: (refreshInterval: PollIntervalInMs) => void;
@@ -38,7 +37,6 @@ type GraphRefreshProps = ReduxProps & {
 };
 
 export class GraphRefresh extends React.PureComponent<GraphRefreshProps> {
-  static readonly DURATION_LIST = config.toolbar.intervalDuration;
   static readonly POLL_INTERVAL_LIST = config.toolbar.pollInterval;
 
   static readonly durationLabelStyle = style({
@@ -73,20 +71,16 @@ export class GraphRefresh extends React.PureComponent<GraphRefreshProps> {
   }
 
   render() {
-    const retention = this.props.serverConfig.prometheus.storageTsdbRetention;
-    const validDurations = getValidDurations(GraphRefresh.DURATION_LIST, retention);
-    const validDuration = getValidDuration(validDurations, this.props.duration);
-
     return (
       <>
         <label className={GraphRefresh.durationLabelStyle}>Fetching</label>
         <ToolbarDropdown
           id={'graph_filter_duration'}
           disabled={this.props.disabled}
-          handleSelect={this.handleDurationChange}
-          value={validDuration}
-          label={String(validDurations[validDuration])}
-          options={validDurations}
+          handleSelect={key => this.props.setDuration(Number(key))}
+          value={this.props.duration}
+          label={String(serverConfig.durations[this.props.duration])}
+          options={serverConfig.durations}
         />
         <DropdownButton
           id="graph_refresh_dropdown"
@@ -114,16 +108,11 @@ export class GraphRefresh extends React.PureComponent<GraphRefreshProps> {
       </>
     );
   }
-
-  private handleDurationChange = (duration: string) => {
-    this.props.setDuration(Number(duration));
-  };
 }
 
 const mapStateToProps = (state: KialiAppState) => ({
   duration: durationSelector(state),
-  refreshInterval: refreshIntervalSelector(state),
-  serverConfig: serverConfigSelector(state)
+  refreshInterval: refreshIntervalSelector(state)
 });
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<KialiAppState, void, KialiAppAction>) => {

@@ -1,42 +1,67 @@
 import deepFreeze from 'deep-freeze';
-import { store } from '../store/ConfigStore';
-import { KialiAppState, ServerConfig } from '../store/Store';
-import { PersistPartial } from 'redux-persist';
 import { DurationInSeconds } from '../types/Common';
-import { forOwn, pickBy } from 'lodash';
 
-// It's not great to access the store directly for convenience but the alternative is
-// a huge code ripple just to access some server config. better to just have this one utility.
-export const serverConfig = (): ServerConfig => {
-  const actualState = store.getState() || ({} as KialiAppState & PersistPartial);
-  return deepFreeze(actualState.serverConfig);
-};
+export type IstioLabelKey = 'appLabelName' | 'versionLabelName';
+export type Durations = { [key: number]: string };
 
-// getValidDurations returns a new object with only the durations <= retention
-export const getValidDurations = (
-  durations: { [key: number]: string },
-  retention?: DurationInSeconds
-): { [key: number]: string } => {
-  const validDurations = pickBy(durations, (_, key: number) => {
-    return !retention || key <= retention;
+export interface ServerConfig {
+  istioNamespace: string;
+  istioLabels: { [key in IstioLabelKey]: string };
+  prometheus: {
+    globalScrapeInterval?: DurationInSeconds;
+    storageTsdbRetention?: DurationInSeconds;
+  };
+  webRoot?: string;
+  durations: Durations;
+}
+
+const toDurations = (tupleArray: [number, string][]): Durations => {
+  const obj = {};
+  tupleArray.forEach(tuple => {
+    obj[tuple[0]] = tuple[1];
   });
-  return validDurations as { [key: number]: string };
+  return obj;
 };
 
-// getValidDuration returns duration if it is a valid property key in durations, otherwise it return the first property
-// key in durations.  It is assumed that durations has at least one property.
-export const getValidDuration = (
-  durations: { [key: number]: string },
-  duration: DurationInSeconds
-): DurationInSeconds => {
-  let validDuration = 0;
-  forOwn(durations, (_, key) => {
-    const d = Number(key);
-    if (d === duration) {
-      validDuration = d;
-    } else if (!validDuration) {
-      validDuration = d;
+const computeValidDurations = (cfg: ServerConfig) => {
+  const defaultDurations: [number, string][] = [
+    [60, 'Last min'],
+    [300, 'Last 5 min'],
+    [600, 'Last 10 min'],
+    [1800, 'Last 30 min'],
+    [3600, 'Last hour'],
+    [10800, 'Last 3 hours'],
+    [21600, 'Last 6 hours'],
+    [43200, 'Last 12 hours'],
+    [86400, 'Last day'],
+    [604800, 'Last 7 days'],
+    [2592000, 'Last 30 days']
+  ];
+  if (cfg.prometheus.storageTsdbRetention) {
+    const filtered = defaultDurations.filter(d => d[0] <= cfg.prometheus.storageTsdbRetention!);
+    cfg.durations = toDurations(filtered);
+  } else {
+    cfg.durations = toDurations(defaultDurations);
+  }
+};
+
+const tmpConfig: ServerConfig = process.env.TEST_RUNNER
+  ? {
+      istioNamespace: 'istio-system',
+      istioLabels: {
+        appLabelName: 'app',
+        versionLabelName: 'version'
+      },
+      prometheus: {
+        globalScrapeInterval: 15,
+        storageTsdbRetention: 21600
+      },
+      durations: {}
     }
-  });
-  return validDuration;
-};
+  : (window as any).serverConfig;
+if (tmpConfig) {
+  computeValidDurations(tmpConfig);
+} else {
+  console.error('serverConfig object is missing');
+}
+export const serverConfig: ServerConfig = deepFreeze(tmpConfig);

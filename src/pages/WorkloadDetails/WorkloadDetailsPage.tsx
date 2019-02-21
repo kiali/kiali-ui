@@ -163,9 +163,8 @@ class WorkloadDetails extends React.Component<RouteComponentProps<WorkloadId>, W
   };
 
   render() {
-    const cfg = serverConfig();
-    const app = this.state.workload.labels[cfg.istioLabels.appLabelName];
-    const version = this.state.workload.labels[cfg.istioLabels.versionLabelName];
+    const app = this.state.workload.labels[serverConfig.istioLabels.appLabelName];
+    const version = this.state.workload.labels[serverConfig.istioLabels.versionLabelName];
     const isLabeled = app && version;
 
     return (

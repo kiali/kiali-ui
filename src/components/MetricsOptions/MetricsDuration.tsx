@@ -1,24 +1,15 @@
 import * as React from 'react';
 
 import history, { URLParams, HistoryManager } from '../../app/History';
-import { config } from '../../config';
 import { DurationInSeconds } from '../../types/Common';
 import { ToolbarDropdown } from '../ToolbarDropdown/ToolbarDropdown';
-import { KialiAppState, ServerConfig } from '../../store/Store';
-import { serverConfigSelector } from '../../store/Selectors';
-import { connect } from 'react-redux';
-import { getValidDurations, getValidDuration } from '../../config/serverConfig';
+import { serverConfig } from '../../config/serverConfig';
 
-type ReduxProps = {
-  serverConfig: ServerConfig;
-};
-
-type Props = ReduxProps & {
+type Props = {
   onChanged: (duration: DurationInSeconds) => void;
 };
 
-export class MetricsDuration extends React.Component<Props> {
-  static Durations = config.toolbar.intervalDuration;
+export default class MetricsDuration extends React.Component<Props> {
   // Default to 10 minutes. Showing timeseries to only 1 minute doesn't make so much sense.
   static DefaultDuration = 600;
 
@@ -54,19 +45,15 @@ export class MetricsDuration extends React.Component<Props> {
 
   render() {
     this.processUrlParams();
-    const retention = this.props.serverConfig.prometheus.storageTsdbRetention;
-    const validDurations = getValidDurations(MetricsDuration.Durations, retention);
-    const validDuration = getValidDuration(validDurations, this.duration);
-
     return (
       <ToolbarDropdown
         id={'metrics_filter_interval_duration'}
         disabled={false}
         handleSelect={this.onDurationChanged}
         nameDropdown={'Fetching'}
-        initialValue={validDuration}
-        initialLabel={validDurations[validDuration]}
-        options={validDurations}
+        initialValue={this.duration}
+        initialLabel={serverConfig.durations[this.duration]}
+        options={serverConfig.durations}
       />
     );
   }
@@ -77,14 +64,3 @@ export class MetricsDuration extends React.Component<Props> {
     this.duration = duration;
   }
 }
-
-const mapStateToProps = (state: KialiAppState) => ({
-  serverConfig: serverConfigSelector(state)
-});
-
-const MetricsDurationContainer = connect(
-  mapStateToProps,
-  null
-)(MetricsDuration);
-
-export default MetricsDurationContainer;

@@ -1,12 +1,10 @@
 import { ThunkDispatch } from 'redux-thunk';
-import { HTTP_CODES } from '../types/Common';
-import { KialiAppState, Token, ServerConfig } from '../store/Store';
+import { KialiAppState, Token } from '../store/Store';
 import { KialiAppAction } from './KialiAppAction';
 import HelpDropdownThunkActions from './HelpDropdownThunkActions';
 import GrafanaThunkActions from './GrafanaThunkActions';
 import { LoginActions } from './LoginActions';
 import * as API from '../services/Api';
-import { ServerConfigActions } from './ServerConfigActions';
 
 const ANONYMOUS: string = 'anonymous';
 
@@ -19,31 +17,12 @@ const completeLogin = (
   timeout?: number
 ) => {
   const auth = `Bearer ${token['token']}`;
-  API.getServerConfig(auth).then(
-    response => {
-      // set the serverConfig before completing login so that it is available for
-      // anything needing it to render properly.
-      const serverConfig: ServerConfig = {
-        istioNamespace: response.data.istioNamespace,
-        istioLabels: response.data.istioLabels,
-        prometheus: response.data.prometheus
-      };
-      dispatch(ServerConfigActions.setServerConfig(serverConfig));
+  // complete the login process
+  dispatch(LoginActions.loginSuccess(token, username, timeout));
 
-      // complete the login process
-      dispatch(LoginActions.loginSuccess(token, username, timeout));
-
-      // dispatch requests to be done now but not necessarily requiring immediate completion
-      dispatch(HelpDropdownThunkActions.refresh());
-      dispatch(GrafanaThunkActions.getInfo(auth));
-    },
-    error => {
-      /** Logout user */
-      if (error.response && error.response.status === HTTP_CODES.UNAUTHORIZED) {
-        dispatch(LoginActions.logoutSuccess());
-      }
-    }
-  );
+  // dispatch requests to be done now but not necessarily requiring immediate completion
+  dispatch(HelpDropdownThunkActions.refresh());
+  dispatch(GrafanaThunkActions.getInfo(auth));
 };
 
 // performLogin performs only the authentication part of login. If successful
