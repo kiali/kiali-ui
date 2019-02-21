@@ -27,6 +27,7 @@ type Props = {
   dropdownList: string[];
   inputFormat: string;
   locked: boolean;
+  showLock: boolean;
   onLock: (locked: boolean) => void;
 };
 
@@ -64,6 +65,7 @@ class Slider extends React.Component<Props, State> {
     dropdownList: null,
     inputFormat: '',
     locked: false,
+    showLock: true,
     onLock: noop
   };
 
@@ -166,7 +168,7 @@ class Slider extends React.Component<Props, State> {
           <Boundaries slider={BSSlider} {...this.props}>
             {inputElement}
             {formatElement}
-            {lockElement}
+            {this.props.showLock && lockElement}
           </Boundaries>
         </div>
       </div>
