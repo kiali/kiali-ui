@@ -98,7 +98,7 @@ class AppDetails extends React.Component<RouteComponentProps<AppId>, AppDetailsS
       version: ''
     };
     const restParams = {
-      duration: '600s',
+      duration: `${TrafficDetails.defaultDuration}s`,
       graphType: GraphType.APP,
       injectServiceNodes: true,
       appenders: 'deadNode'
@@ -157,7 +157,7 @@ class AppDetails extends React.Component<RouteComponentProps<AppId>, AppDetailsS
               </TabPane>
               <TabPane eventKey="traffic">
                 <TrafficDetails
-                  rateInterval={600}
+                  duration={TrafficDetails.defaultDuration}
                   trafficData={this.state.trafficData}
                   itemType={MetricsObjectTypes.APP}
                   namespace={this.state.app.namespace.name}
