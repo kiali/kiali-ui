@@ -12,7 +12,7 @@ import { Response } from '../../services/Api';
 import { Metrics } from '../../types/Metrics';
 import { MetricsOptions } from '../../types/MetricsOptions';
 import { CancelablePromise, makeCancelablePromise } from '../../utils/CancelablePromises';
-import { paths } from '../../config';
+import { Paths } from '../../config';
 
 type SummaryPanelGraphState = {
   loading: boolean;
@@ -189,19 +189,19 @@ export default class SummaryPanelGraph extends React.Component<SummaryPanelPropT
     <div>
       <Link
         key="appsLink"
-        to={`/${paths.applications}?namespaces=${this.props.namespaces.map(ns => ns.name).join(',')}`}
+        to={`/${Paths.APPLICATIONS}?namespaces=${this.props.namespaces.map(ns => ns.name).join(',')}`}
       >
         {' applications'}
       </Link>
       <Link
         key="servicesLink"
-        to={`/${paths.services}?namespaces=${this.props.namespaces.map(ns => ns.name).join(',')}`}
+        to={`/${Paths.SERVICES}?namespaces=${this.props.namespaces.map(ns => ns.name).join(',')}`}
       >
         {', services'}
       </Link>
       <Link
         key="workloadsLink"
-        to={`/${paths.workloads}?namespaces=${this.props.namespaces.map(ns => ns.name).join(',')}`}
+        to={`/${Paths.WORKLOADS}?namespaces=${this.props.namespaces.map(ns => ns.name).join(',')}`}
       >
         {', workloads'}
       </Link>

@@ -26,7 +26,7 @@ import OverviewToolbarContainer, { OverviewToolbar, OverviewType } from './Overv
 import NamespaceInfo, { NamespaceStatus } from './NamespaceInfo';
 import OverviewStatuses from './OverviewStatuses';
 import { switchType } from './OverviewHelper';
-import { paths } from '../../config';
+import { Paths } from '../../config';
 
 type State = {
   namespaces: NamespaceInfo[];
@@ -232,13 +232,13 @@ class OverviewPage extends React.Component<OverviewProps, State> {
                             <Link to={`/graph/namespaces?namespaces=` + ns.name} title="Graph">
                               <Icon type="pf" name="topology" style={{ paddingLeft: 10, paddingRight: 10 }} />
                             </Link>
-                            <Link to={`/${paths.applications}?namespaces=` + ns.name} title="Applications list">
+                            <Link to={`/${Paths.APPLICATIONS}?namespaces=` + ns.name} title="Applications list">
                               <Icon type="pf" name="applications" style={{ paddingLeft: 10, paddingRight: 10 }} />
                             </Link>
-                            <Link to={`/${paths.workloads}?namespaces=` + ns.name} title="Workloads list">
+                            <Link to={`/${Paths.WORKLOADS}?namespaces=` + ns.name} title="Workloads list">
                               <Icon type="pf" name="bundle" style={{ paddingLeft: 10, paddingRight: 10 }} />
                             </Link>
-                            <Link to={`/${paths.services}?namespaces=` + ns.name} title="Services list">
+                            <Link to={`/${Paths.SERVICES}?namespaces=` + ns.name} title="Services list">
                               <Icon type="pf" name="service" style={{ paddingLeft: 10, paddingRight: 10 }} />
                             </Link>
                           </div>

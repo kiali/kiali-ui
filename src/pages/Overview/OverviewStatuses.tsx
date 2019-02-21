@@ -6,7 +6,7 @@ import OverviewStatus from './OverviewStatus';
 import { OverviewType } from './OverviewToolbar';
 import { NamespaceStatus } from './NamespaceInfo';
 import { switchType } from './OverviewHelper';
-import { paths } from '../../config';
+import { Paths } from '../../config';
 
 type Props = {
   name: string;
@@ -20,7 +20,7 @@ class OverviewStatuses extends React.Component<Props> {
   }
 
   render() {
-    const targetPage = switchType(this.props.type, paths.applications, paths.services, paths.workloads);
+    const targetPage = switchType(this.props.type, Paths.APPLICATIONS, Paths.SERVICES, Paths.WORKLOADS);
     const name = this.props.name;
     const status = this.props.status;
     const nbItems =
