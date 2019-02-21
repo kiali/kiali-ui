@@ -9,9 +9,9 @@ import { icons } from './icons';
 import { kialiLogo } from './logos';
 
 // Paths
-import { Paths } from './Paths';
+import { paths } from './paths';
 
 // Jaeger Query
-import { JAEGER_QUERY } from './jaegerQuery';
+import { jaegerQuery } from './jaegerQuery';
 
-export { config, Paths, icons, kialiLogo, JAEGER_QUERY };
+export { config, paths, icons, kialiLogo, jaegerQuery };

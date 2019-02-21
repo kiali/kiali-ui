@@ -2,7 +2,6 @@ import * as React from 'react';
 import { AggregateStatusNotification, Icon, OverlayTrigger, Popover } from 'patternfly-react';
 import { Link } from 'react-router-dom';
 import { Status } from '../../types/Health';
-import { Paths } from '../../config';
 import { ActiveFilter } from '../../types/Filters';
 import { healthFilter } from '../../components/Filters/CommonFilters';
 import { FilterSelected } from '../../components/Filters/StatefulFilters';
@@ -12,7 +11,7 @@ type Props = {
   namespace: string;
   status: Status;
   items: string[];
-  targetPage: Paths;
+  targetPage: string;
 };
 
 class OverviewStatus extends React.Component<Props, {}> {

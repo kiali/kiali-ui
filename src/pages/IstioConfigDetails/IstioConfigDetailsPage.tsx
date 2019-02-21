@@ -23,7 +23,7 @@ import BreadcrumbView from '../../components/BreadcrumbView/BreadcrumbView';
 import VirtualServiceDetail from '../ServiceDetails/ServiceInfo/IstioObjectDetails/VirtualServiceDetail';
 import DestinationRuleDetail from '../ServiceDetails/ServiceInfo/IstioObjectDetails/DestinationRuleDetail';
 import history from '../../app/History';
-import { Paths } from '../../config';
+import { paths } from '../../config';
 
 interface IstioConfigDetailsState {
   istioObjectDetails?: IstioConfigDetails;
@@ -105,7 +105,7 @@ class IstioConfigDetailsPage extends React.Component<RouteComponentProps<IstioCo
 
   backToList = () => {
     // Back to list page
-    history.push(`/${Paths.ISTIO}?namespaces=${this.props.match.params.namespace}`);
+    history.push(`/${paths.istio}?namespaces=${this.props.match.params.namespace}`);
   };
 
   canDelete = () => {

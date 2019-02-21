@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Paths } from '../../config';
+import { paths } from '../../config';
 import { Link } from 'react-router-dom';
 import { Breadcrumb } from 'patternfly-react';
 import { ActiveFilter } from '../../types/Filters';
@@ -69,7 +69,7 @@ export class BreadcrumbView extends React.Component<BreadCumbViewProps, BreadCum
     const namespaceRegex = /namespaces\/([a-z0-9\-]+)\/([a-z0-9\-]+)\/([a-z0-9\-]+)(\/([a-z0-9\-]+))?(\/([a-z0-9\-]+))?/;
     const match = this.props.location.pathname.match(namespaceRegex) || [];
     const ns = match[1];
-    const page = Paths[match[2].toUpperCase()];
+    const page = paths[match[2].toUpperCase()];
     const istioType = match[3];
     let itemName = match[3];
     if (page === 'istio') {
