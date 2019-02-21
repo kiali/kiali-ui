@@ -376,7 +376,8 @@ export class GraphStyles {
       {
         selector: 'edge:selected',
         css: {
-          width: EdgeWidthSelected
+          width: EdgeWidthSelected,
+          label: (ele: any) => getEdgeLabel(ele, true)
         }
       },
       {
