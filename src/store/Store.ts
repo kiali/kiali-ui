@@ -79,7 +79,7 @@ export interface LoginSession {
 export interface LoginState {
   status: LoginStatus;
   session?: LoginSession;
-  error?: any;
+  message: string;
   uiExpiresOn: RawDate;
 }
 

@@ -8,7 +8,7 @@ import { LoginActions } from '../actions/LoginActions';
 export const INITIAL_LOGIN_STATE: LoginStateInterface = {
   status: LoginStatus.loggedOut,
   session: undefined,
-
+  message: '',
   // We define a small expiration date for the UI so it does not block the
   // session handling on login.
   uiExpiresOn: moment()
