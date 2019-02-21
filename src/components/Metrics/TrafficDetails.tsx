@@ -60,7 +60,7 @@ class TrafficDetails extends React.Component<TrafficDetailsProps, TrafficDetails
   }
 
   render() {
-    const rateIntervalName = getName(this.props.duration).toLowerCase();
+    const durationName = getName(this.props.duration).toLowerCase();
 
     if (this.props.trafficData === null) {
       return null;
@@ -73,11 +73,11 @@ class TrafficDetails extends React.Component<TrafficDetailsProps, TrafficDetails
             <Button onClick={this.props.onRefresh} style={{ float: 'right' }}>
               <Icon name="refresh" />
             </Button>
-            <strong>Inbound ({rateIntervalName})</strong>
+            <strong>Inbound ({durationName})</strong>
           </div>
           <DetailedTrafficList direction="inbound" traffic={this.state.inboundTraffic} />
           <div style={{ marginTop: '2em' }}>
-            <strong>Outbound ({rateIntervalName})</strong>
+            <strong>Outbound ({durationName})</strong>
           </div>
           <DetailedTrafficList direction="outbound" traffic={this.state.outboundTraffic} />
         </Col>
