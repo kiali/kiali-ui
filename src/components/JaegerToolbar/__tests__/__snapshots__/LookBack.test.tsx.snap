@@ -11,7 +11,7 @@ ShallowWrapper {
       [MockFunction] {
         "calls": Array [
           Array [
-            3600,
+            "3600",
           ],
         ],
       }
@@ -48,7 +48,7 @@ ShallowWrapper {
             [MockFunction] {
               "calls": Array [
                 Array [
-                  3600,
+                  "3600",
                 ],
               ],
             }
@@ -107,7 +107,7 @@ ShallowWrapper {
           "handleSelect": [MockFunction] {
             "calls": Array [
               Array [
-                3600,
+                "3600",
               ],
             ],
           },
@@ -162,7 +162,7 @@ ShallowWrapper {
               [MockFunction] {
                 "calls": Array [
                   Array [
-                    3600,
+                    "3600",
                   ],
                 ],
               }
@@ -221,7 +221,7 @@ ShallowWrapper {
             "handleSelect": [MockFunction] {
               "calls": Array [
                 Array [
-                  3600,
+                  "3600",
                 ],
               ],
             },

@@ -10,7 +10,7 @@ import { config } from '../../config';
 
 interface LookBackProps {
   fetching: boolean;
-  setLookback: (lookback: number) => void;
+  setLookback: (lookback: string) => void;
   lookback: number;
   onChangeCustom: (when: string, dateField: string, timeField: string) => void;
 }
@@ -23,7 +23,7 @@ export class LookBack extends React.PureComponent<LookBackProps, {}> {
   }
 
   componentDidMount() {
-    this.props.setLookback(this.props.lookback);
+    this.props.setLookback(String(this.props.lookback));
   }
 
   render() {
@@ -107,8 +107,8 @@ const mapStateToProps = (state: KialiAppState) => {
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<KialiAppState, void, KialiAppAction>) => {
   return {
-    setLookback: (lookback: number) => {
-      dispatch(JaegerActions.setLookback(lookback));
+    setLookback: (lookback: string) => {
+      dispatch(JaegerActions.setLookback(Number(lookback)));
     }
   };
 };
