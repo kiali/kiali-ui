@@ -139,7 +139,7 @@ export interface JaegerState {
     end: string;
     minDuration: string;
     maxDuration: string;
-    lookback: string;
+    lookback: number;
     url: string;
     tags: string;
   };

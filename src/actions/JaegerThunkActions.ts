@@ -116,7 +116,7 @@ export const JaegerThunkActions = {
   },
   setCustomLookback: (startDate: string, startTime: string, endDate: string, endTime: string) => {
     return (dispatch: ThunkDispatch<KialiAppState, void, KialiAppAction>, getState: () => KialiAppState) => {
-      if (getState().jaegerState.search.lookback === 'custom') {
+      if (getState().jaegerState.search.lookback <= 0) {
         const toTimestamp = getUnixTimeStampInMSFromForm(startDate, startTime, endDate, endTime);
         dispatch(JaegerActions.setCustomLookback(toTimestamp.start, toTimestamp.end));
       }

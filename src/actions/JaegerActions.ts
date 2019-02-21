@@ -41,7 +41,7 @@ export const JaegerActions = {
   setEnableIntegration: createStandardAction(JaegerActionKeys.SET_ENABLE_INTEGRATION)<boolean>(),
   setService: createStandardAction(JaegerActionKeys.SET_SERVICE)<string>(),
   setNamespace: createStandardAction(JaegerActionKeys.SET_NAMESPACE)<string>(),
-  setLookback: createStandardAction(JaegerActionKeys.SET_LOOKBACK)<string>(),
+  setLookback: createStandardAction(JaegerActionKeys.SET_LOOKBACK)<number>(),
   setTags: createStandardAction(JaegerActionKeys.SET_TAGS)<string>(),
   setLimit: createStandardAction(JaegerActionKeys.SET_LIMIT)<number>(),
   setSearchRequest: createStandardAction(JaegerActionKeys.SET_SEARCH_REQUEST)<string>(),
