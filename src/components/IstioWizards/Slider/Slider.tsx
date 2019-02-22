@@ -155,7 +155,7 @@ class Slider extends React.Component<Props, State> {
         type="text"
         value={this.state.value}
         // Trick to fix InputText when slider is locked and refreshed/resized
-        style={{ width: '3em' }}
+        style={{ width: '3.5em' }}
         onChange={this.onInputChange}
         disabled={this.props.locked}
       />
