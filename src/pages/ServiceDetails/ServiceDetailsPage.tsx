@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
-import { Nav, NavItem, TabContainer, TabContent, TabPane, Icon } from 'patternfly-react';
+import { Nav, NavItem, TabContainer, TabContent, TabPane, Icon, OverlayTrigger, Tooltip } from 'patternfly-react';
 import ServiceId from '../../types/ServiceId';
 import * as API from '../../services/Api';
 import * as MessageCenter from '../../utils/MessageCenter';
@@ -177,7 +177,23 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
                   <div>
                     Error Traces{' '}
                     <span>
-                      ({errorTraces}
+                      (
+                      {errorTraces !== -1 ? (
+                        errorTraces
+                      ) : (
+                        <OverlayTrigger
+                          overlay={
+                            <Tooltip id="error-trace-unknown-tooltip">
+                              There was a problem loading the <b>Error Trace</b> count from the server
+                            </Tooltip>
+                          }
+                          placement="top"
+                          trigger={['hover', 'focus']}
+                          rootClose={false}
+                        >
+                          <span>Unknown</span>
+                        </OverlayTrigger>
+                      )}
                       {errorTraces > 0 && (
                         <Icon type={'fa'} name={'exclamation-circle'} style={{ color: 'red', marginLeft: '2px' }} />
                       )}
