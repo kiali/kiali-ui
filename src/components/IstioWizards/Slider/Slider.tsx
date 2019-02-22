@@ -6,7 +6,7 @@ import { Button, Icon, ControlLabel, FormControl } from 'patternfly-react';
 import Boundaries from './Boundaries';
 import DropdownMenu from './DropdownMenu';
 import { style } from 'typestyle';
-import { rotate } from 'csx';
+import { hollowPinIcon, solidPinIcon } from '../../../config/icons';
 
 export const noop = Function.prototype;
 
@@ -37,14 +37,11 @@ type State = {
 };
 
 const lockStyle = style({
-  width: 11,
-  height: 11
-});
-
-const unLockStyle = style({
-  width: 11,
-  height: 11,
-  transform: rotate('25deg')
+  display: 'block',
+  maxHeight: 18,
+  padding: 2,
+  width: 'auto',
+  height: 'auto'
 });
 
 class Slider extends React.Component<Props, State> {
@@ -148,7 +145,11 @@ class Slider extends React.Component<Props, State> {
 
     const lockElement = (
       <Button bsSize="xsmall" onClick={() => this.props.onLock(!this.props.locked)}>
-        <Icon type="pf" name="thumb-tack-o" className={this.props.locked ? lockStyle : unLockStyle} />
+        {this.props.locked ? (
+          <img src={solidPinIcon} className={lockStyle} />
+        ) : (
+          <img src={hollowPinIcon} className={lockStyle} />
+        )}
       </Button>
     );
 

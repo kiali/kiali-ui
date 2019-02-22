@@ -51,11 +51,18 @@ class IstioWizardDropdown extends React.Component<Props, State> {
   };
 
   onAction = (key: string) => {
-    if (key === WIZARD_WEIGHTED_ROUTING || key === WIZARD_MATCHING_ROUTING) {
-      this.setState({ showWizard: true, wizardType: key });
-    }
-    if (key === DELETE_TRAFFIC_ROUTING) {
-      this.setState({ showConfirmDelete: true });
+    switch (key) {
+      case WIZARD_WEIGHTED_ROUTING:
+      case WIZARD_MATCHING_ROUTING: {
+        this.setState({ showWizard: true, wizardType: key });
+        break;
+      }
+      case DELETE_TRAFFIC_ROUTING: {
+        this.setState({ showConfirmDelete: true });
+        break;
+      }
+      default:
+        console.log('Unrecognized key');
     }
   };
 

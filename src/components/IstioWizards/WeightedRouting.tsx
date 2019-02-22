@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ListView, ListViewIcon, ListViewItem } from 'patternfly-react';
+import { Button, ListView, ListViewIcon, ListViewItem } from 'patternfly-react';
 import Slider from './Slider/Slider';
 import { WorkloadOverview } from '../../types/ServiceInfo';
 import { style } from 'typestyle';
@@ -29,6 +29,10 @@ const validationStyle = style({
   marginBottom: 10,
   color: PfColors.Red100,
   textAlign: 'right'
+});
+
+const resetStyle = style({
+  marginBottom: 20
 });
 
 class WeightedRouting extends React.Component<Props, State> {
@@ -84,11 +88,9 @@ class WeightedRouting extends React.Component<Props, State> {
           if (prevState.workloads[i].name === workloadName) {
             prevState.workloads[i].weight = newWeight;
             maxWeight -= newWeight;
-          } else {
+          } else if (!prevState.workloads[i].locked) {
             // Only adjust those nodes that are not locked
-            if (!prevState.workloads[i].locked) {
-              nodeId.push(i);
-            }
+            nodeId.push(i);
           }
         }
 
@@ -146,7 +148,7 @@ class WeightedRouting extends React.Component<Props, State> {
   render() {
     const isValid = this.checkTotalWeight();
     return (
-      <div>
+      <>
         <ListView>
           {this.state.workloads.map((workload, id) => {
             return (
@@ -177,8 +179,11 @@ class WeightedRouting extends React.Component<Props, State> {
             );
           })}
         </ListView>
+        <Button className={resetStyle} onClick={() => this.resetState()}>
+          Evenly distribute traffic
+        </Button>
         {!isValid && <div className={validationStyle}>The sum of all weights must be 100 %</div>}
-      </div>
+      </>
     );
   }
 }

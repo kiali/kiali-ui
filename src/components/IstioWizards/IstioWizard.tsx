@@ -159,47 +159,52 @@ class IstioWizard extends React.Component<Props, State> {
       spec: {}
     };
 
-    if (this.props.type === WIZARD_WEIGHTED_ROUTING) {
-      // VirtualService from the weights
-      wizardVS.spec = {
-        hosts: [this.props.serviceName],
-        http: [
-          {
-            route: this.state.workloads.map(workload => {
-              return {
-                destination: {
-                  host: this.props.serviceName,
-                  subset: wkdNameVersion[workload.name]
-                },
-                weight: workload.weight
-              };
-            })
-          }
-        ]
-      };
-    }
-
-    if (this.props.type === WIZARD_MATCHING_ROUTING) {
-      // VirtualService from the routes
-      wizardVS.spec = {
-        hosts: [this.props.serviceName],
-        http: this.state.rules.map(rule => {
-          const httpRoute: HTTPRoute = {};
-          const destW: DestinationWeight = {
-            destination: {
-              host: this.props.serviceName
+    switch (this.props.type) {
+      case WIZARD_WEIGHTED_ROUTING: {
+        // VirtualService from the weights
+        wizardVS.spec = {
+          hosts: [this.props.serviceName],
+          http: [
+            {
+              route: this.state.workloads.map(workload => {
+                return {
+                  destination: {
+                    host: this.props.serviceName,
+                    subset: wkdNameVersion[workload.name]
+                  },
+                  weight: workload.weight
+                };
+              })
             }
-          };
-          if (rule.routeType === ROUTE_TYPE.WORKLOAD) {
-            destW.destination.subset = wkdNameVersion[rule.route];
-          }
-          httpRoute.route = [destW];
-          if (rule.matches.length > 0) {
-            httpRoute.match = this.buildHTTPMatchRequest(rule.matches);
-          }
-          return httpRoute;
-        })
-      };
+          ]
+        };
+        break;
+      }
+      case WIZARD_MATCHING_ROUTING: {
+        // VirtualService from the routes
+        wizardVS.spec = {
+          hosts: [this.props.serviceName],
+          http: this.state.rules.map(rule => {
+            const httpRoute: HTTPRoute = {};
+            const destW: DestinationWeight = {
+              destination: {
+                host: this.props.serviceName
+              }
+            };
+            if (rule.routeType === ROUTE_TYPE.WORKLOAD) {
+              destW.destination.subset = wkdNameVersion[rule.route];
+            }
+            httpRoute.route = [destW];
+            if (rule.matches.length > 0) {
+              httpRoute.match = this.buildHTTPMatchRequest(rule.matches);
+            }
+            return httpRoute;
+          })
+        };
+        break;
+      }
+      default:
+        console.log('Unrecognized type');
     }
 
     if (this.state.mtlsMode !== NONE || this.state.loadBalancer !== NONE) {
