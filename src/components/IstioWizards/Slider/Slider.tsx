@@ -85,8 +85,22 @@ class Slider extends React.Component<Props, State> {
     this.setState({ value }, () => this.props.onSlide(value));
   };
 
+  onPlus = () => {
+    const newValue = Number(this.state.value || 0);
+    this.updateNewValue(newValue + 1);
+  };
+
+  onMinus = () => {
+    const newValue = Number(this.state.value || 0);
+    this.updateNewValue(newValue - 1);
+  };
+
   onInputChange = event => {
-    let newValue = Number(event.target.value || 0);
+    const newValue = Number(event.target.value || 0);
+    this.updateNewValue(newValue);
+  };
+
+  updateNewValue = (newValue: number) => {
     if (newValue > this.props.max) {
       newValue = this.props.max;
     }
@@ -129,18 +143,28 @@ class Slider extends React.Component<Props, State> {
       );
     }
 
+    const leftButton = this.props.input && (
+      <Button bsSize="xsmall" style={{ marginLeft: 5 }} onClick={() => this.onMinus()}>
+        <Icon type="fa" name="minus" />
+      </Button>
+    );
+
     const inputElement = this.props.input && (
       <FormControl
         bsClass="slider-input-pf"
-        type="number"
+        type="text"
         value={this.state.value}
-        min={this.props.min}
-        max={this.props.max}
         // Trick to fix InputText when slider is locked and refreshed/resized
-        style={{ width: '4em' }}
+        style={{ width: '3em' }}
         onChange={this.onInputChange}
         disabled={this.props.locked}
       />
+    );
+
+    const rightButton = this.props.input && (
+      <Button bsSize="xsmall" onClick={() => this.onPlus()}>
+        <Icon type="fa" name="plus" />
+      </Button>
     );
 
     const lockElement = (
@@ -167,8 +191,10 @@ class Slider extends React.Component<Props, State> {
         {label}
         <div className={sliderClass}>
           <Boundaries slider={BSSlider} {...this.props}>
+            {leftButton}
             {inputElement}
             {formatElement}
+            {rightButton}
             {this.props.showLock && lockElement}
           </Boundaries>
         </div>
