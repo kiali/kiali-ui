@@ -191,7 +191,7 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
                           trigger={['hover', 'focus']}
                           rootClose={false}
                         >
-                          <span>Unknown</span>
+                          <span>n/a</span>
                         </OverlayTrigger>
                       )}
                       {errorTraces > 0 && (
