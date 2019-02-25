@@ -13,8 +13,7 @@ import { UserSettingsActions } from '../../actions/UserSettingsActions';
 import { DurationInSeconds, PollIntervalInMs } from '../../types/Common';
 
 import { config } from '../../config/config';
-import { HistoryManager, URLParams } from '../../app/History';
-import { ListPagesHelper } from '../../components/ListPage/ListPagesHelper';
+import { HistoryManager, URLParam } from '../../app/History';
 import ToolbarDropdown from '../ToolbarDropdown/ToolbarDropdown';
 import { serverConfig } from '../../config/serverConfig';
 
@@ -52,22 +51,22 @@ export class GraphRefresh extends React.PureComponent<GraphRefreshProps> {
     super(props);
 
     // Let URL override current redux state at construction time
-    const urlDuration = ListPagesHelper.getSingleIntQueryParam(URLParams.DURATION);
-    const urlPollInterval = ListPagesHelper.getSingleIntQueryParam(URLParams.POLL_INTERVAL);
+    const urlDuration = HistoryManager.getDuration();
+    const urlPollInterval = HistoryManager.getNumericParam(URLParam.POLL_INTERVAL);
     if (urlDuration !== undefined && urlDuration !== props.duration) {
       props.setDuration(urlDuration);
     }
     if (urlPollInterval !== undefined && urlPollInterval !== props.refreshInterval) {
       props.setRefreshInterval(urlPollInterval);
     }
-    HistoryManager.setParam(URLParams.DURATION, String(this.props.duration));
-    HistoryManager.setParam(URLParams.POLL_INTERVAL, String(this.props.refreshInterval));
+    HistoryManager.setParam(URLParam.DURATION, String(this.props.duration));
+    HistoryManager.setParam(URLParam.POLL_INTERVAL, String(this.props.refreshInterval));
   }
 
   componentDidUpdate() {
     // ensure redux state and URL are aligned
-    HistoryManager.setParam(URLParams.DURATION, String(this.props.duration));
-    HistoryManager.setParam(URLParams.POLL_INTERVAL, String(this.props.refreshInterval));
+    HistoryManager.setParam(URLParam.DURATION, String(this.props.duration));
+    HistoryManager.setParam(URLParam.POLL_INTERVAL, String(this.props.refreshInterval));
   }
 
   render() {

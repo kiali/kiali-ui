@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import history, { URLParams, HistoryManager } from '../../app/History';
+import { URLParam, HistoryManager } from '../../app/History';
 import { ToolbarDropdown } from '../ToolbarDropdown/ToolbarDropdown';
 import { Reporter, Direction } from '../../types/MetricsOptions';
 
@@ -19,9 +19,8 @@ export default class MetricsReporter extends React.Component<Props> {
   private reporter: Reporter;
 
   static initialReporter = (direction: Direction): Reporter => {
-    const urlParams = new URLSearchParams(history.location.search);
-    const reporterParam = urlParams.get(URLParams.REPORTER);
-    if (reporterParam != null) {
+    const reporterParam = HistoryManager.getParam(URLParam.REPORTER);
+    if (reporterParam !== undefined) {
       return reporterParam as Reporter;
     }
     return direction === 'inbound' ? 'destination' : 'source';
@@ -39,7 +38,7 @@ export default class MetricsReporter extends React.Component<Props> {
   }
 
   onReporterChanged = (reporter: string) => {
-    HistoryManager.setParam(URLParams.REPORTER, reporter);
+    HistoryManager.setParam(URLParam.REPORTER, reporter);
   };
 
   render() {

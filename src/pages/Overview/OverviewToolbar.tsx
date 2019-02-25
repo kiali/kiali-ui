@@ -5,7 +5,7 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import { KialiAppAction } from '../../actions/KialiAppAction';
 import { UserSettingsActions } from '../../actions/UserSettingsActions';
-import { HistoryManager, URLParams } from '../../app/History';
+import history, { HistoryManager, URLParam } from '../../app/History';
 import { StatefulFilters } from '../../components/Filters/StatefulFilters';
 import { ListPagesHelper } from '../../components/ListPage/ListPagesHelper';
 import { ToolbarDropdown } from '../../components/ToolbarDropdown/ToolbarDropdown';
@@ -48,26 +48,24 @@ type State = {
 
 export class OverviewToolbar extends React.Component<Props, State> {
   static currentOverviewType(): OverviewType {
-    const otype = ListPagesHelper.getSingleQueryParam(URLParams.OVERVIEW_TYPE);
-    if (otype === undefined) {
-      return 'app';
-    }
-    return otype as OverviewType;
+    const otype = HistoryManager.getParam(URLParam.OVERVIEW_TYPE);
+    return (otype as OverviewType) || 'app';
   }
 
   constructor(props: Props) {
     super(props);
     // Let URL override current redux state at construction time
-    const urlDuration = ListPagesHelper.getSingleIntQueryParam(URLParams.DURATION);
-    const urlPollInterval = ListPagesHelper.getSingleIntQueryParam(URLParams.POLL_INTERVAL);
+    const urlParams = new URLSearchParams(history.location.search);
+    const urlDuration = HistoryManager.getDuration(urlParams);
+    const urlPollInterval = HistoryManager.getNumericParam(URLParam.POLL_INTERVAL, urlParams);
     if (urlDuration !== undefined && urlDuration !== props.duration) {
       props.setDuration(urlDuration);
     }
     if (urlPollInterval !== undefined && urlPollInterval !== props.refreshInterval) {
       props.setRefreshInterval(urlPollInterval);
     }
-    HistoryManager.setParam(URLParams.DURATION, String(this.props.duration));
-    HistoryManager.setParam(URLParams.POLL_INTERVAL, String(this.props.refreshInterval));
+    HistoryManager.setParam(URLParam.DURATION, String(this.props.duration));
+    HistoryManager.setParam(URLParam.POLL_INTERVAL, String(this.props.refreshInterval));
 
     this.state = {
       isSortAscending: ListPagesHelper.isCurrentSortAscending(),
@@ -78,8 +76,8 @@ export class OverviewToolbar extends React.Component<Props, State> {
 
   componentDidUpdate() {
     // ensure redux state and URL are aligned
-    HistoryManager.setParam(URLParams.DURATION, String(this.props.duration));
-    HistoryManager.setParam(URLParams.POLL_INTERVAL, String(this.props.refreshInterval));
+    HistoryManager.setParam(URLParam.DURATION, String(this.props.duration));
+    HistoryManager.setParam(URLParam.POLL_INTERVAL, String(this.props.refreshInterval));
 
     const urlSortField = ListPagesHelper.currentSortField(FiltersAndSorts.sortFields);
     const urlIsSortAscending = ListPagesHelper.isCurrentSortAscending();
@@ -98,14 +96,14 @@ export class OverviewToolbar extends React.Component<Props, State> {
 
   updateSortField = (sortField: SortField<NamespaceInfo>) => {
     this.props.sort(sortField, this.state.isSortAscending);
-    HistoryManager.setParam(URLParams.SORT, sortField.param);
+    HistoryManager.setParam(URLParam.SORT, sortField.param);
     this.setState({ sortField: sortField });
   };
 
   updateSortDirection = () => {
     const newDir = !this.state.isSortAscending;
     this.props.sort(this.state.sortField, newDir);
-    HistoryManager.setParam(URLParams.DIRECTION, newDir ? 'asc' : 'desc');
+    HistoryManager.setParam(URLParam.DIRECTION, newDir ? 'asc' : 'desc');
     this.setState({ isSortAscending: newDir });
   };
 
@@ -115,7 +113,7 @@ export class OverviewToolbar extends React.Component<Props, State> {
   };
 
   updateOverviewType = (otype: OverviewType) => {
-    HistoryManager.setParam(URLParams.OVERVIEW_TYPE, otype);
+    HistoryManager.setParam(URLParam.OVERVIEW_TYPE, otype);
     this.setState({ overviewType: otype });
     this.props.onRefresh();
   };

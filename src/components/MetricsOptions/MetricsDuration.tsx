@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import history, { URLParams, HistoryManager } from '../../app/History';
+import { URLParam, HistoryManager } from '../../app/History';
 import { DurationInSeconds } from '../../types/Common';
 import { ToolbarDropdown } from '../ToolbarDropdown/ToolbarDropdown';
 import { serverConfig } from '../../config/serverConfig';
@@ -17,14 +17,13 @@ export default class MetricsDuration extends React.Component<Props> {
   private duration: DurationInSeconds;
 
   static initialDuration = (): DurationInSeconds => {
-    const urlParams = new URLSearchParams(history.location.search);
-    let d = urlParams.get(URLParams.DURATION);
-    if (d !== null) {
-      sessionStorage.setItem(URLParams.DURATION, d);
-      return Number(d);
+    const urlDuration = HistoryManager.getDuration();
+    if (urlDuration !== undefined) {
+      sessionStorage.setItem(URLParam.DURATION, String(urlDuration));
+      return urlDuration;
     }
-    d = sessionStorage.getItem(URLParams.DURATION);
-    return d !== null ? Number(d) : MetricsDuration.DefaultDuration;
+    const storageDuration = sessionStorage.getItem(URLParam.DURATION);
+    return storageDuration !== null ? Number(storageDuration) : MetricsDuration.DefaultDuration;
   };
 
   constructor(props: Props) {
@@ -39,8 +38,8 @@ export default class MetricsDuration extends React.Component<Props> {
   }
 
   onDurationChanged = (key: string) => {
-    sessionStorage.setItem(URLParams.DURATION, key);
-    HistoryManager.setParam(URLParams.DURATION, key);
+    sessionStorage.setItem(URLParam.DURATION, key);
+    HistoryManager.setParam(URLParam.DURATION, key);
   };
 
   render() {
