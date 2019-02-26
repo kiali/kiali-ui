@@ -178,7 +178,7 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
               </NavItem>
               {this.props.enableIntegration ? (
                 <NavItem eventKey="traces">
-                  <div>
+                  <>
                     Error Traces{' '}
                     <span>
                       ({errorTraces}
@@ -187,11 +187,13 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
                       )}
                       )
                     </span>
-                  </div>
+                  </>
                 </NavItem>
               ) : (
                 <NavItem onClick={this.navigateToJaeger}>
-                  <div>Traces</div>
+                  <>
+                    <Icon type={'fa'} name={'external-link'} /> Traces
+                  </>
                 </NavItem>
               )}
             </Nav>
