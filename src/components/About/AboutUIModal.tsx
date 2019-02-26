@@ -13,6 +13,7 @@ type AboutUIModalState = {
 type AboutUIModalProps = {
   status: { [key: string]: string };
   components: Component[];
+  refresh: () => void;
 };
 
 class AboutUIModal extends React.Component<AboutUIModalProps, AboutUIModalState> {
@@ -23,6 +24,7 @@ class AboutUIModal extends React.Component<AboutUIModalProps, AboutUIModalState>
 
   open = () => {
     this.setState({ showModal: true });
+    this.props.refresh();
   };
 
   close = () => {
