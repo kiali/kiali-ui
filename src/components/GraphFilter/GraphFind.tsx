@@ -36,6 +36,16 @@ type ParsedExpression = {
   selector: string;
 };
 
+const inputWidth = {
+  width: '15em'
+};
+
+// reduce toolbar padding from 20px to 10px to save space
+const thinGroupStyle = {
+  paddingLeft: '10px',
+  paddingRight: '10px'
+};
+
 export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindState> {
   static contextTypes = {
     router: () => null
@@ -84,12 +94,12 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
   render() {
     return (
       <>
-        <FormGroup style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
+        <FormGroup style={{ flexDirection: 'row', alignItems: 'flex-start', ...thinGroupStyle }}>
           <span className={'form-inline'}>
             <InputGroup>
               <FormControl
                 type="text"
-                style={{ width: '18em' }}
+                style={{ ...inputWidth }}
                 inputRef={ref => {
                   this.findInputRef = ref;
                 }}
@@ -105,7 +115,7 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
               </InputGroup.Button>
               <FormControl
                 type="text"
-                style={{ width: '18em' }}
+                style={{ ...inputWidth }}
                 inputRef={ref => {
                   this.hideInputRef = ref;
                 }}

@@ -79,7 +79,6 @@ export class GraphRefresh extends React.PureComponent<GraphRefreshProps> {
 
     return (
       <>
-        <label className={GraphRefresh.durationLabelStyle}>Display</label>
         <ToolbarDropdown
           id={'graph_filter_duration'}
           disabled={this.props.disabled}

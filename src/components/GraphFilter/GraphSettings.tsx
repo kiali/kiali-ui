@@ -175,16 +175,17 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps> {
       </Popover>
     );
 
-    const alignWithGraphHeaderStyle = style({ marginLeft: -40, paddingRight: '0.8em' });
+    // const alignWithGraphHeaderStyle = style({ marginLeft: -60, paddingRight: '0.5em' });
 
     return (
-      <span className={alignWithGraphHeaderStyle}>
-        <OverlayTrigger overlay={graphSettingsPopover} placement="bottom" trigger={['click']} rootClose={true}>
-          <Button id="graph_settings">
-            Display <Icon name="angle-down" />
-          </Button>
-        </OverlayTrigger>
-      </span>
+      // <span className={alignWithGraphHeaderStyle}>
+      // <span className={alignWithGraphHeaderStyle}>
+      <OverlayTrigger overlay={graphSettingsPopover} placement="bottom" trigger={['click']} rootClose={true}>
+        <Button className="dropdown button-group" id="graph_settings">
+          Display <Icon name="angle-down" />
+        </Button>
+      </OverlayTrigger>
+      // </span>
     );
   }
 }

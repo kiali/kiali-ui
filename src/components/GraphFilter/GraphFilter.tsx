@@ -41,15 +41,19 @@ type GraphFilterProps = ReduxProps & {
   onRefresh: () => void;
 };
 
-const zeroPaddingLeft = style({
-  marginLeft: '20px',
-  paddingLeft: '0px'
+// align under the Graph breadcrumb
+const breadcrumbStyle = style({
+  marginLeft: '-30px',
+  marginRight: '0px',
+  paddingLeft: '0px',
+  paddingRight: '0px'
 });
 
-const namespaceStyle = style({
-  marginLeft: '-40px',
-  marginRight: '5px'
-});
+// reduce toolbar padding from 20px to 10px to save space
+const thinGroupStyle = {
+  paddingLeft: '10px',
+  paddingRight: '10px'
+};
 
 export class GraphFilter extends React.PureComponent<GraphFilterProps> {
   /**
@@ -132,22 +136,11 @@ export class GraphFilter extends React.PureComponent<GraphFilterProps> {
       <>
         <Toolbar>
           {this.props.node && (
-            <FormGroup className={zeroPaddingLeft}>
-              <Button className={namespaceStyle} onClick={this.handleNamespaceReturn}>
-                Back to Full Graph...
-              </Button>
+            <FormGroup className={breadcrumbStyle}>
+              <Button onClick={this.handleNamespaceReturn}>Back...</Button>
             </FormGroup>
           )}
-          <FormGroup className={zeroPaddingLeft}>
-            <GraphSettingsContainer edgeLabelMode={this.props.edgeLabelMode} graphType={this.props.graphType} />
-            <ToolbarDropdown
-              id={'graph_filter_edge_labels'}
-              disabled={false}
-              handleSelect={this.setEdgeLabelMode}
-              value={edgeLabelModeKey}
-              label={GraphFilter.EDGE_LABEL_MODES[edgeLabelModeKey]}
-              options={GraphFilter.EDGE_LABEL_MODES}
-            />
+          <FormGroup className={breadcrumbStyle} style={{ ...thinGroupStyle }}>
             <ToolbarDropdown
               id={'graph_filter_view_type'}
               disabled={this.props.node !== undefined || this.props.disabled}
@@ -156,6 +149,15 @@ export class GraphFilter extends React.PureComponent<GraphFilterProps> {
               label={GraphFilter.GRAPH_TYPES[graphTypeKey]}
               options={GraphFilter.GRAPH_TYPES}
             />
+            <ToolbarDropdown
+              id={'graph_filter_edge_labels'}
+              disabled={false}
+              handleSelect={this.setEdgeLabelMode}
+              value={edgeLabelModeKey}
+              label={GraphFilter.EDGE_LABEL_MODES[edgeLabelModeKey]}
+              options={GraphFilter.EDGE_LABEL_MODES}
+            />
+            <GraphSettingsContainer edgeLabelMode={this.props.edgeLabelMode} graphType={this.props.graphType} />
           </FormGroup>
           <GraphFindContainer />
           <Toolbar.RightContent>
