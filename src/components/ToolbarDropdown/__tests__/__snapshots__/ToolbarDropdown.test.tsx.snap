@@ -43,7 +43,6 @@ ShallowWrapper {
         <label
           style={
             Object {
-              "paddingLeft": "0.5em",
               "paddingRight": "0.5em",
             }
           }
@@ -179,7 +178,6 @@ ShallowWrapper {
         "props": Object {
           "children": "graph_filter_interval_duration",
           "style": Object {
-            "paddingLeft": "0.5em",
             "paddingRight": "0.5em",
           },
         },
@@ -515,7 +513,6 @@ ShallowWrapper {
           <label
             style={
               Object {
-                "paddingLeft": "0.5em",
                 "paddingRight": "0.5em",
               }
             }
@@ -651,7 +648,6 @@ ShallowWrapper {
           "props": Object {
             "children": "graph_filter_interval_duration",
             "style": Object {
-              "paddingLeft": "0.5em",
               "paddingRight": "0.5em",
             },
           },
@@ -1037,7 +1033,6 @@ ShallowWrapper {
         <label
           style={
             Object {
-              "paddingLeft": "0.5em",
               "paddingRight": "0.5em",
             }
           }
@@ -1133,7 +1128,6 @@ ShallowWrapper {
         "props": Object {
           "children": "metrics_filter_poll_interval",
           "style": Object {
-            "paddingLeft": "0.5em",
             "paddingRight": "0.5em",
           },
         },
@@ -1361,7 +1355,6 @@ ShallowWrapper {
           <label
             style={
               Object {
-                "paddingLeft": "0.5em",
                 "paddingRight": "0.5em",
               }
             }
@@ -1457,7 +1450,6 @@ ShallowWrapper {
           "props": Object {
             "children": "metrics_filter_poll_interval",
             "style": Object {
-              "paddingLeft": "0.5em",
               "paddingRight": "0.5em",
             },
           },
@@ -1731,7 +1723,6 @@ ShallowWrapper {
         <label
           style={
             Object {
-              "paddingLeft": "0.5em",
               "paddingRight": "0.5em",
             }
           }
@@ -1787,7 +1778,6 @@ ShallowWrapper {
         "props": Object {
           "children": "graph_filter_layouts",
           "style": Object {
-            "paddingLeft": "0.5em",
             "paddingRight": "0.5em",
           },
         },
@@ -1907,7 +1897,6 @@ ShallowWrapper {
           <label
             style={
               Object {
-                "paddingLeft": "0.5em",
                 "paddingRight": "0.5em",
               }
             }
@@ -1963,7 +1952,6 @@ ShallowWrapper {
           "props": Object {
             "children": "graph_filter_layouts",
             "style": Object {
-              "paddingLeft": "0.5em",
               "paddingRight": "0.5em",
             },
           },
@@ -2137,7 +2125,6 @@ ShallowWrapper {
         <label
           style={
             Object {
-              "paddingLeft": "0.5em",
               "paddingRight": "0.5em",
             }
           }
@@ -2273,7 +2260,6 @@ ShallowWrapper {
         "props": Object {
           "children": "graph_filter_interval_duration",
           "style": Object {
-            "paddingLeft": "0.5em",
             "paddingRight": "0.5em",
           },
         },
@@ -2609,7 +2595,6 @@ ShallowWrapper {
           <label
             style={
               Object {
-                "paddingLeft": "0.5em",
                 "paddingRight": "0.5em",
               }
             }
@@ -2745,7 +2730,6 @@ ShallowWrapper {
           "props": Object {
             "children": "graph_filter_interval_duration",
             "style": Object {
-              "paddingLeft": "0.5em",
               "paddingRight": "0.5em",
             },
           },
@@ -3131,7 +3115,6 @@ ShallowWrapper {
         <label
           style={
             Object {
-              "paddingLeft": "0.5em",
               "paddingRight": "0.5em",
             }
           }
@@ -3227,7 +3210,6 @@ ShallowWrapper {
         "props": Object {
           "children": "metrics_filter_poll_interval",
           "style": Object {
-            "paddingLeft": "0.5em",
             "paddingRight": "0.5em",
           },
         },
@@ -3455,7 +3437,6 @@ ShallowWrapper {
           <label
             style={
               Object {
-                "paddingLeft": "0.5em",
                 "paddingRight": "0.5em",
               }
             }
@@ -3551,7 +3532,6 @@ ShallowWrapper {
           "props": Object {
             "children": "metrics_filter_poll_interval",
             "style": Object {
-              "paddingLeft": "0.5em",
               "paddingRight": "0.5em",
             },
           },
@@ -3825,7 +3805,6 @@ ShallowWrapper {
         <label
           style={
             Object {
-              "paddingLeft": "0.5em",
               "paddingRight": "0.5em",
             }
           }
@@ -3881,7 +3860,6 @@ ShallowWrapper {
         "props": Object {
           "children": "graph_filter_layouts",
           "style": Object {
-            "paddingLeft": "0.5em",
             "paddingRight": "0.5em",
           },
         },
@@ -4001,7 +3979,6 @@ ShallowWrapper {
           <label
             style={
               Object {
-                "paddingLeft": "0.5em",
                 "paddingRight": "0.5em",
               }
             }
@@ -4057,7 +4034,6 @@ ShallowWrapper {
           "props": Object {
             "children": "graph_filter_layouts",
             "style": Object {
-              "paddingLeft": "0.5em",
               "paddingRight": "0.5em",
             },
           },
