@@ -6,7 +6,7 @@ import { KialiAppAction } from '../actions/KialiAppAction';
 import { LoginSession, KialiAppState } from '../store/Store';
 import { AuthStrategy, AuthResult, AuthConfig } from '../types/Auth';
 import { TimeInMilliseconds } from '../types/Common';
-import AppConfigs from '../app/AppConfigs';
+import AppConfigs from '../types/AppConfigs';
 
 type Dispatch = ThunkDispatch<KialiAppState, void, KialiAppAction>;
 

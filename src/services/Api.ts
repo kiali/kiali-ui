@@ -16,13 +16,14 @@ import {
   NamespaceServiceHealth,
   NamespaceWorkloadHealth
 } from '../types/Health';
-import { ServiceList } from '../types/ServiceList';
-import { AuthInfo } from '../types/Auth';
-import { AppList } from '../types/AppList';
 import { App } from '../types/App';
-import { NodeParamsType, NodeType, GraphDefinition } from '../types/Graph';
-import { config } from '../config';
+import { StatusInfo } from '../types/AppConfigs';
+import { AppList } from '../types/AppList';
+import { AuthInfo } from '../types/Auth';
 import { HTTP_VERBS, UserName, Password } from '../types/Common';
+import { NodeParamsType, NodeType, GraphDefinition } from '../types/Graph';
+import { ServiceList } from '../types/ServiceList';
+import { config } from '../config';
 
 export const ANONYMOUS_USER = 'anonymous';
 
@@ -87,7 +88,7 @@ export const checkOpenshiftAuth = async (data: any): Promise<Response<LoginSessi
 };
 
 export const getStatus = () => {
-  return newRequest(HTTP_VERBS.GET, urls.status, {}, {});
+  return newRequest<StatusInfo>(HTTP_VERBS.GET, urls.status, {}, {});
 };
 
 export const getNamespaces = () => {

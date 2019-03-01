@@ -5,7 +5,7 @@ import * as API from '../services/Api';
 import { LoginSession } from '../store/Store';
 import { KialiDispatch } from '../types/Redux';
 import InitializingScreen from './InitializingScreen';
-import AppConfigs from './AppConfigs';
+import AppConfigs from '../types/AppConfigs';
 
 interface InitializerComponentProps {
   setInitialAuthentication: (session: LoginSession) => void;
