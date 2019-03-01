@@ -1,6 +1,48 @@
 import Namespace from './Namespace';
 import { ResourcePermissions } from './Permissions';
 
+// Common types
+
+export interface K8sInitializer {
+  name?: string;
+}
+
+export interface K8sStatus {
+  status?: string;
+  message?: string;
+  reason?: string;
+}
+
+export interface K8sInitializers {
+  pending?: K8sInitializer[];
+  result?: K8sStatus;
+}
+
+export interface K8sMetadata {
+  name: string;
+  generateName?: string;
+  namespace?: string;
+  selfLink?: string;
+  uid?: string;
+  resourceVersion?: string;
+  generation?: string;
+  creationTimestamp?: string;
+  deletionTimestamp?: string;
+  deletionGracePeriodSeconds?: string;
+  labels?: { [key: string]: string };
+  annotations?: { [key: string]: string };
+  ownerReferences?: K8sOwnerReference[];
+  initializers?: K8sInitializers[];
+  finalizers?: string[];
+  clusterName?: string;
+}
+
+export interface IstioObject {
+  kind?: string;
+  apiVersion?: string;
+  metadata: K8sMetadata;
+}
+
 // validations are grouped per 'objectType' first in the first map and 'name' in the inner map
 export type Validations = { [key1: string]: { [key2: string]: ObjectValidation } };
 
@@ -377,10 +419,7 @@ export interface VirtualServiceSpec {
   tls?: TLSRoute[];
 }
 
-export interface VirtualService {
-  kind?: string;
-  apiVersion?: string;
-  metadata: K8sMetadata;
+export interface VirtualService extends IstioObject {
   spec: VirtualServiceSpec;
 }
 
@@ -398,49 +437,12 @@ export interface K8sOwnerReference {
   blockOwnerDeletion?: string;
 }
 
-export interface K8sInitializer {
-  name?: string;
-}
-
-export interface K8sStatus {
-  status?: string;
-  message?: string;
-  reason?: string;
-}
-
-export interface K8sInitializers {
-  pending?: K8sInitializer[];
-  result?: K8sStatus;
-}
-
-export interface K8sMetadata {
-  name: string;
-  generateName?: string;
-  namespace?: string;
-  selfLink?: string;
-  uid?: string;
-  resourceVersion?: string;
-  generation?: string;
-  creationTimestamp?: string;
-  deletionTimestamp?: string;
-  deletionGracePeriodSeconds?: string;
-  labels?: { [key: string]: string };
-  annotations?: { [key: string]: string };
-  ownerReferences?: K8sOwnerReference[];
-  initializers?: K8sInitializers[];
-  finalizers?: string[];
-  clusterName?: string;
-}
-
 export interface GatewaySpec {
   servers?: Server[];
   selector?: { [key: string]: string };
 }
 
-export interface Gateway {
-  kind?: string;
-  apiVersion?: string;
-  metadata: K8sMetadata;
+export interface Gateway extends IstioObject {
   spec: GatewaySpec;
 }
 export interface Server {
@@ -473,10 +475,7 @@ export interface ServiceEntrySpec {
   endpoints?: Endpoint[];
 }
 
-export interface ServiceEntry {
-  kind?: string;
-  apiVersion?: string;
-  metadata: K8sMetadata;
+export interface ServiceEntry extends IstioObject {
   spec: ServiceEntrySpec;
 }
 
@@ -491,10 +490,7 @@ export interface IstioRuleSpec {
   actions: IstioRuleActionItem[];
 }
 
-export interface IstioRule {
-  kind?: string;
-  apiVersion?: string;
-  metadata: K8sMetadata;
+export interface IstioRule extends IstioObject {
   spec: IstioRuleSpec;
 }
 
@@ -503,19 +499,13 @@ export interface IstioRuleActionItem {
   instances: string[];
 }
 
-export interface IstioAdapter {
-  kind?: string;
-  apiVersion?: string;
-  metadata: K8sMetadata;
+export interface IstioAdapter extends IstioObject {
   spec: any;
   adapter: string;
   adapters: string;
 }
 
-export interface IstioTemplate {
-  kind?: string;
-  apiVersion?: string;
-  metadata: K8sMetadata;
+export interface IstioTemplate extends IstioObject {
   spec: any;
   template: string;
   templates: string;
@@ -525,10 +515,7 @@ export interface QuotaSpecSpec {
   rules?: MatchQuota[];
 }
 
-export interface QuotaSpec {
-  kind?: string;
-  apiVersion?: string;
-  metadata: K8sMetadata;
+export interface QuotaSpec extends IstioObject {
   spec: QuotaSpecSpec;
 }
 
@@ -551,10 +538,7 @@ export interface QuotaSpecBindingSpec {
   services?: IstioService[];
 }
 
-export interface QuotaSpecBinding {
-  kind?: string;
-  apiVersion?: string;
-  metadata: K8sMetadata;
+export interface QuotaSpecBinding extends IstioObject {
   spec: QuotaSpecBindingSpec;
 }
 
@@ -613,17 +597,11 @@ export interface PolicySpec {
   principalBinding?: PrincipalBinding;
 }
 
-export interface Policy {
-  kind?: string;
-  apiVersion?: string;
-  metadata: K8sMetadata;
+export interface Policy extends IstioObject {
   spec: PolicySpec;
 }
 
-export interface ClusterRbacConfig {
-  kind?: string;
-  apiVersion?: string;
-  metadata: K8sMetadata;
+export interface ClusterRbacConfig extends IstioObject {
   spec: ClusterRbacConfigSpec;
 }
 
@@ -638,10 +616,7 @@ export interface RbacConfigTarget {
   namespaces: string[];
 }
 
-export interface ServiceRole {
-  kind?: string;
-  apiVersion?: string;
-  metadata: K8sMetadata;
+export interface ServiceRole extends IstioObject {
   spec: ServiceRoleSpec;
 }
 
@@ -661,10 +636,7 @@ export interface AccessRuleConstraint {
   values: string[];
 }
 
-export interface ServiceRoleBinding {
-  kind?: string;
-  apiVersion?: string;
-  metadata: K8sMetadata;
+export interface ServiceRoleBinding extends IstioObject {
   spec: ServiceRoleBindingSpec;
 }
 
