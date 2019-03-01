@@ -311,6 +311,8 @@ export interface DestinationRuleSpec {
 }
 
 export interface DestinationRule {
+  kind?: string;
+  apiVersion?: string;
   metadata: K8sMetadata;
   spec: DestinationRuleSpec;
 }
@@ -376,6 +378,8 @@ export interface VirtualServiceSpec {
 }
 
 export interface VirtualService {
+  kind?: string;
+  apiVersion?: string;
   metadata: K8sMetadata;
   spec: VirtualServiceSpec;
 }
@@ -434,6 +438,8 @@ export interface GatewaySpec {
 }
 
 export interface Gateway {
+  kind?: string;
+  apiVersion?: string;
   metadata: K8sMetadata;
   spec: GatewaySpec;
 }
@@ -468,6 +474,8 @@ export interface ServiceEntrySpec {
 }
 
 export interface ServiceEntry {
+  kind?: string;
+  apiVersion?: string;
   metadata: K8sMetadata;
   spec: ServiceEntrySpec;
 }
@@ -484,6 +492,8 @@ export interface IstioRuleSpec {
 }
 
 export interface IstioRule {
+  kind?: string;
+  apiVersion?: string;
   metadata: K8sMetadata;
   spec: IstioRuleSpec;
 }
@@ -494,6 +504,8 @@ export interface IstioRuleActionItem {
 }
 
 export interface IstioAdapter {
+  kind?: string;
+  apiVersion?: string;
   metadata: K8sMetadata;
   spec: any;
   adapter: string;
@@ -501,6 +513,8 @@ export interface IstioAdapter {
 }
 
 export interface IstioTemplate {
+  kind?: string;
+  apiVersion?: string;
   metadata: K8sMetadata;
   spec: any;
   template: string;
@@ -512,6 +526,8 @@ export interface QuotaSpecSpec {
 }
 
 export interface QuotaSpec {
+  kind?: string;
+  apiVersion?: string;
   metadata: K8sMetadata;
   spec: QuotaSpecSpec;
 }
@@ -536,6 +552,8 @@ export interface QuotaSpecBindingSpec {
 }
 
 export interface QuotaSpecBinding {
+  kind?: string;
+  apiVersion?: string;
   metadata: K8sMetadata;
   spec: QuotaSpecBindingSpec;
 }
@@ -596,11 +614,15 @@ export interface PolicySpec {
 }
 
 export interface Policy {
+  kind?: string;
+  apiVersion?: string;
   metadata: K8sMetadata;
   spec: PolicySpec;
 }
 
 export interface ClusterRbacConfig {
+  kind?: string;
+  apiVersion?: string;
   metadata: K8sMetadata;
   spec: ClusterRbacConfigSpec;
 }
@@ -617,6 +639,8 @@ export interface RbacConfigTarget {
 }
 
 export interface ServiceRole {
+  kind?: string;
+  apiVersion?: string;
   metadata: K8sMetadata;
   spec: ServiceRoleSpec;
 }
@@ -638,6 +662,8 @@ export interface AccessRuleConstraint {
 }
 
 export interface ServiceRoleBinding {
+  kind?: string;
+  apiVersion?: string;
   metadata: K8sMetadata;
   spec: ServiceRoleBindingSpec;
 }
