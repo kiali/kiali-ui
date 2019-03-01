@@ -37,7 +37,7 @@ type ParsedExpression = {
 };
 
 const inputWidth = {
-  width: '15em'
+  width: '10em'
 };
 
 // reduce toolbar padding from 20px to 10px to save space
