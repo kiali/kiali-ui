@@ -24,6 +24,8 @@ import { NodeParamsType, NodeType, GraphDefinition } from '../types/Graph';
 import { config } from '../config';
 import { HTTP_VERBS, UserName, Password } from '../types/Common';
 
+export const ANONYMOUS_USER = 'anonymous';
+
 export interface Response<T> {
   data: T;
 }
@@ -62,7 +64,7 @@ interface LoginRequest {
 
 /** Requests */
 export const login = async (
-  request: LoginRequest = { username: 'anonymous', password: 'anonymous' }
+  request: LoginRequest = { username: ANONYMOUS_USER, password: 'anonymous' }
 ): Promise<Response<LoginSession>> => {
   return axios({
     method: HTTP_VERBS.GET,

@@ -1,5 +1,6 @@
 import * as API from './Api';
 import { ThunkDispatch } from 'redux-thunk';
+import moment from 'moment';
 
 import { KialiAppAction } from '../actions/KialiAppAction';
 import { LoginSession, KialiAppState } from '../store/Store';
@@ -34,11 +35,14 @@ class AnonymousLogin implements LoginStrategy {
   }
 
   public async perform(_request: NullDispatch): Promise<LoginResult> {
-    const session: LoginSession = (await API.login()).data;
-
     return {
-      status: AuthResult.SUCCESS,
-      session: session
+      status: AuthResult.FAILURE,
+      session: {
+        username: API.ANONYMOUS_USER,
+        expiresOn: moment()
+          .add(1, 'd')
+          .toISOString()
+      }
     };
   }
 }
