@@ -86,7 +86,7 @@ export class InOutRateChartGrpc extends React.Component<InOutRateChartGrpcPropTy
 
 type InOutRateChartHttpPropType = {
   height?: number;
-  legendPos?: string; // e.g. right, left
+  legendPos?: LegendPosition;
   percent2xxIn: number;
   percent3xxIn: number;
   percent4xxIn: number;

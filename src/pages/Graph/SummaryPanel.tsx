@@ -36,10 +36,10 @@ const toggleSidePanelStyle = style({
   borderRadius: '3px',
   cursor: 'pointer',
   left: '-1.7em',
-  minWidth: '7em',
+  minWidth: '5em',
   position: 'absolute',
   textAlign: 'center',
-  top: '8.5em',
+  top: '6.5em',
   transform: 'rotate(-90deg)',
   transformOrigin: 'left top 0'
 });
@@ -67,11 +67,11 @@ export default class SummaryPanel extends React.Component<MainSummaryPanelPropTy
         <div className={toggleSidePanelStyle} onClick={this.togglePanel}>
           {this.state.isVisible ? (
             <>
-              <Icon name="angle-double-down" /> Hide info
+              <Icon name="angle-double-down" /> Hide
             </>
           ) : (
             <>
-              <Icon name="angle-double-up" /> Show info
+              <Icon name="angle-double-up" /> Show
             </>
           )}
         </div>
