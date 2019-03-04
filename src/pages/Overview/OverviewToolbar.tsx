@@ -161,7 +161,7 @@ export class OverviewToolbar extends React.Component<Props, State> {
             id="overview-duration"
             disabled={false}
             handleSelect={this.updateDuration}
-            nameDropdown="Fetch"
+            nameDropdown="Display"
             value={validDuration}
             label={validDurations[validDuration]}
             options={validDurations}
