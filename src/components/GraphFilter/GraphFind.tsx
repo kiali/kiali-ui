@@ -98,6 +98,7 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
           <span className={'form-inline'}>
             <InputGroup>
               <FormControl
+                id="graph_find"
                 type="text"
                 style={{ ...inputWidth }}
                 inputRef={ref => {
@@ -116,6 +117,7 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
                 </InputGroup.Button>
               )}
               <FormControl
+                id="graph_hide"
                 type="text"
                 style={{ ...inputWidth }}
                 inputRef={ref => {
