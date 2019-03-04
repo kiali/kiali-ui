@@ -108,11 +108,13 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
                 onKeyPress={this.checkSubmitFind}
                 placeholder="Find..."
               />
-              <InputGroup.Button>
-                <Button onClick={this.clearFind}>
-                  <Icon name="close" type="fa" />
-                </Button>
-              </InputGroup.Button>
+              {this.findInputValue && (
+                <InputGroup.Button>
+                  <Button onClick={this.clearFind}>
+                    <Icon name="close" type="fa" />
+                  </Button>
+                </InputGroup.Button>
+              )}
               <FormControl
                 type="text"
                 style={{ ...inputWidth }}
@@ -124,11 +126,13 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
                 onKeyPress={this.checkSubmitHide}
                 placeholder="Hide..."
               />
-              <InputGroup.Button>
-                <Button onClick={this.clearHide}>
-                  <Icon name="close" type="fa" />
-                </Button>
-              </InputGroup.Button>
+              {this.hideInputValue && (
+                <InputGroup.Button>
+                  <Button onClick={this.clearHide}>
+                    <Icon name="close" type="fa" />
+                  </Button>
+                </InputGroup.Button>
+              )}
             </InputGroup>
             <Button bsStyle="link" style={{ paddingLeft: '6px' }} onClick={this.toggleFindHelp}>
               <Icon name="help" type="pf" title="Help Find/Hide..." />
