@@ -31,6 +31,7 @@ const collapsedStyle = style({
 });
 
 const toggleSidePanelStyle = style({
+  backgroundColor: 'white',
   border: '1px #ddd solid',
   borderRadius: '3px',
   cursor: 'pointer',
@@ -49,6 +50,12 @@ export default class SummaryPanel extends React.Component<MainSummaryPanelPropTy
     this.state = {
       isVisible: true
     };
+  }
+
+  componentDidUpdate(prevProps: Readonly<MainSummaryPanelPropType>): void {
+    if (prevProps.data.summaryTarget !== this.props.data.summaryTarget) {
+      this.setState({ isVisible: true });
+    }
   }
 
   render() {
