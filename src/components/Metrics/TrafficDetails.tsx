@@ -5,6 +5,7 @@ import DetailedTrafficList, { TrafficItem, TrafficNode } from '../Details/Detail
 import { DurationInSeconds } from '../../types/Common';
 import { getName } from '../../utils/RateIntervals';
 import { MetricsObjectTypes } from '../../types/Metrics';
+import MetricsDurationContainer from '../MetricsOptions/MetricsDuration';
 
 type WorkloadProps = {
   itemType: MetricsObjectTypes.WORKLOAD;
@@ -20,8 +21,9 @@ type AppProps = {
 
 type TrafficDetailsProps = {
   duration: DurationInSeconds;
-  trafficData: GraphDefinition | null;
+  onDurationChanged: (duration: DurationInSeconds) => void;
   onRefresh: () => void;
+  trafficData: GraphDefinition | null;
 } & (AppProps | WorkloadProps);
 
 type TrafficDetailsState = {
@@ -34,8 +36,6 @@ type ServiceTraffic = {
 };
 
 class TrafficDetails extends React.Component<TrafficDetailsProps, TrafficDetailsState> {
-  static readonly defaultDuration = 600;
-
   constructor(props: TrafficDetailsProps) {
     super(props);
     this.state = {
@@ -70,9 +70,12 @@ class TrafficDetails extends React.Component<TrafficDetailsProps, TrafficDetails
       <Row className="card-pf-body">
         <Col xs={12}>
           <div>
-            <Button onClick={this.props.onRefresh} style={{ float: 'right' }}>
-              <Icon name="refresh" />
-            </Button>
+            <div style={{ float: 'right', paddingRight: '2em' }}>
+              <MetricsDurationContainer onChanged={this.props.onDurationChanged} />{' '}
+              <Button onClick={this.props.onRefresh}>
+                <Icon name="refresh" />
+              </Button>
+            </div>
             <strong>Inbound ({durationName})</strong>
           </div>
           <DetailedTrafficList direction="inbound" traffic={this.state.inboundTraffic} />

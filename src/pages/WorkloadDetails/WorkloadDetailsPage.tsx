@@ -16,6 +16,7 @@ import BreadcrumbView from '../../components/BreadcrumbView/BreadcrumbView';
 import { GraphDefinition, GraphType, NodeParamsType, NodeType } from '../../types/Graph';
 import { fetchTrafficDetails } from '../../helpers/TrafficDetailsHelper';
 import TrafficDetails from '../../components/Metrics/TrafficDetails';
+import MetricsHelper from '../../components/Metrics/Helper';
 
 type WorkloadDetailsState = {
   workload: Workload;
@@ -115,7 +116,7 @@ class WorkloadDetails extends React.Component<RouteComponentProps<WorkloadId>, W
       version: ''
     };
     const restParams = {
-      duration: `${TrafficDetails.defaultDuration}s`,
+      duration: `${MetricsHelper.initDuration({}).duration!}s`,
       graphType: GraphType.WORKLOAD,
       injectServiceNodes: true,
       appenders: 'deadNode'
@@ -216,11 +217,12 @@ class WorkloadDetails extends React.Component<RouteComponentProps<WorkloadId>, W
               </TabPane>
               <TabPane eventKey={'traffic'}>
                 <TrafficDetails
-                  duration={TrafficDetails.defaultDuration}
+                  duration={MetricsHelper.initDuration({}).duration!}
                   trafficData={this.state.trafficData}
                   itemType={MetricsObjectTypes.WORKLOAD}
                   namespace={this.props.match.params.namespace}
                   workloadName={this.state.workload.name}
+                  onDurationChanged={this.handleTrafficDurationChange}
                   onRefresh={this.doRefresh}
                 />
               </TabPane>
@@ -269,6 +271,10 @@ class WorkloadDetails extends React.Component<RouteComponentProps<WorkloadId>, W
 
   private activeTab = (tabName: string, whenEmpty: string) => {
     return new URLSearchParams(this.props.location.search).get(tabName) || whenEmpty;
+  };
+
+  private handleTrafficDurationChange = () => {
+    this.fetchTrafficData();
   };
 
   private tabChangeHandler = (tabName: string) => {
