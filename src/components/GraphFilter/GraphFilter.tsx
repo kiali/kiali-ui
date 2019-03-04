@@ -135,20 +135,19 @@ export class GraphFilter extends React.PureComponent<GraphFilterProps> {
     return (
       <>
         <Toolbar>
-          {this.props.node && (
-            <FormGroup className={breadcrumbStyle}>
-              <Button onClick={this.handleNamespaceReturn}>Back...</Button>
-            </FormGroup>
-          )}
           <FormGroup className={breadcrumbStyle} style={{ ...thinGroupStyle }}>
-            <ToolbarDropdown
-              id={'graph_filter_view_type'}
-              disabled={this.props.node !== undefined || this.props.disabled}
-              handleSelect={this.setGraphType}
-              value={graphTypeKey}
-              label={GraphFilter.GRAPH_TYPES[graphTypeKey]}
-              options={GraphFilter.GRAPH_TYPES}
-            />
+            {this.props.node ? (
+              <Button onClick={this.handleNamespaceReturn}>Back to full {GraphFilter.GRAPH_TYPES[graphTypeKey]}</Button>
+            ) : (
+              <ToolbarDropdown
+                id={'graph_filter_view_type'}
+                disabled={this.props.disabled}
+                handleSelect={this.setGraphType}
+                value={graphTypeKey}
+                label={GraphFilter.GRAPH_TYPES[graphTypeKey]}
+                options={GraphFilter.GRAPH_TYPES}
+              />
+            )}
             <ToolbarDropdown
               id={'graph_filter_edge_labels'}
               disabled={false}
