@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { StackedBarChart } from 'patternfly-react';
 import { PfColors } from '../../components/Pf/PfColors';
+import { LegendPosition, SUMMARY_PANEL_CHART_WIDTH } from '../../types/Graph';
 
 type RateChartGrpcPropType = {
   height?: number;
-  legendPos?: string; // e.g. right, left
+  legendPos?: LegendPosition;
   percentErr: number;
   percentOK: number;
   showLegend?: boolean;
@@ -18,7 +19,7 @@ export class RateChartGrpc extends React.Component<RateChartGrpcPropType> {
     percentErr: 0,
     percentOK: 0,
     showLegend: true,
-    width: 250
+    width: SUMMARY_PANEL_CHART_WIDTH
   };
 
   constructor(props: RateChartGrpcPropType) {
@@ -96,7 +97,7 @@ export class RateChartHttp extends React.Component<RateChartHttpPropType> {
     percent4xx: 0,
     percent5xx: 0,
     showLegend: true,
-    width: 250
+    width: SUMMARY_PANEL_CHART_WIDTH
   };
 
   constructor(props: RateChartHttpPropType) {

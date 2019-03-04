@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { StackedBarChart } from 'patternfly-react';
 import { PfColors } from '../../components/Pf/PfColors';
+import { LegendPosition, SUMMARY_PANEL_CHART_WIDTH } from '../../types/Graph';
 
 type InOutRateChartGrpcPropType = {
   height?: number;
-  legendPos?: string; // e.g. right, left
+  legendPos?: LegendPosition;
   percentOkIn: number;
   percentErrIn: number;
   percentOkOut: number;
@@ -22,7 +23,7 @@ export class InOutRateChartGrpc extends React.Component<InOutRateChartGrpcPropTy
     percentOkOut: 0,
     percentErrOut: 0,
     showLegend: true,
-    width: 250
+    width: SUMMARY_PANEL_CHART_WIDTH
   };
 
   constructor(props: InOutRateChartGrpcPropType) {
@@ -111,7 +112,7 @@ export class InOutRateChartHttp extends React.Component<InOutRateChartHttpPropTy
     percent4xxOut: 0,
     percent5xxOut: 0,
     showLegend: true,
-    width: 250
+    width: SUMMARY_PANEL_CHART_WIDTH
   };
 
   constructor(props: InOutRateChartHttpPropType) {
