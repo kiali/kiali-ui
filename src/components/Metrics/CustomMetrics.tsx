@@ -116,6 +116,12 @@ class CustomMetrics extends React.Component<CustomMetricsProps, MetricsState> {
   }
 
   renderOptionsBar() {
+    const hasHistograms = this.state.dashboard !== undefined && this.state.dashboard.charts.some(chart => {
+      if (chart.histogram) {
+        return Object.keys(chart.histogram).length > 0;
+      }
+      return false;
+    });
     return (
       <Toolbar>
         <FormGroup>
@@ -123,6 +129,7 @@ class CustomMetrics extends React.Component<CustomMetricsProps, MetricsState> {
             onChanged={this.onMetricsSettingsChanged}
             onLabelsFiltersChanged={this.onLabelsFiltersChanged}
             labelValues={this.state.labelValues}
+            hasHistograms={hasHistograms}
           />
         </FormGroup>
         <FormGroup>

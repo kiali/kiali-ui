@@ -163,6 +163,7 @@ class IstioMetrics extends React.Component<IstioMetricsProps, MetricsState> {
             onChanged={this.onMetricsSettingsChanged}
             onLabelsFiltersChanged={this.onLabelsFiltersChanged}
             labelValues={this.state.labelValues}
+            hasHistograms={true}
           />
         </FormGroup>
         <FormGroup>
