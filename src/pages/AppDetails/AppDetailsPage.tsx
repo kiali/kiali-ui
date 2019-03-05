@@ -14,7 +14,7 @@ import BreadcrumbView from '../../components/BreadcrumbView/BreadcrumbView';
 import { GraphDefinition, GraphType, NodeParamsType, NodeType } from '../../types/Graph';
 import { fetchTrafficDetails } from '../../helpers/TrafficDetailsHelper';
 import TrafficDetails from '../../components/Metrics/TrafficDetails';
-import MetricsHelper from '../../components/Metrics/Helper';
+import { MetricsDuration } from '../../components/MetricsOptions/MetricsDuration';
 
 type AppDetailsState = {
   app: App;
@@ -99,7 +99,7 @@ class AppDetails extends React.Component<RouteComponentProps<AppId>, AppDetailsS
       version: ''
     };
     const restParams = {
-      duration: `${MetricsHelper.initDuration({}).duration!}s`,
+      duration: `${MetricsDuration.initialDuration()}s`,
       graphType: GraphType.APP,
       injectServiceNodes: true,
       appenders: 'deadNode'
@@ -158,7 +158,7 @@ class AppDetails extends React.Component<RouteComponentProps<AppId>, AppDetailsS
               </TabPane>
               <TabPane eventKey="traffic">
                 <TrafficDetails
-                  duration={MetricsHelper.initDuration({}).duration!}
+                  duration={MetricsDuration.initialDuration()}
                   trafficData={this.state.trafficData}
                   itemType={MetricsObjectTypes.APP}
                   namespace={this.state.app.namespace.name}

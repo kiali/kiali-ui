@@ -3,7 +3,6 @@ import * as React from 'react';
 import { GraphDefinition, GraphEdgeWrapper, GraphNodeData, NodeType } from '../../types/Graph';
 import DetailedTrafficList, { TrafficItem, TrafficNode } from '../Details/DetailedTrafficList';
 import { DurationInSeconds } from '../../types/Common';
-import { getName } from '../../utils/RateIntervals';
 import { MetricsObjectTypes } from '../../types/Metrics';
 import MetricsDurationContainer from '../MetricsOptions/MetricsDuration';
 
@@ -60,8 +59,6 @@ class TrafficDetails extends React.Component<TrafficDetailsProps, TrafficDetails
   }
 
   render() {
-    const durationName = getName(this.props.duration).toLowerCase();
-
     if (this.props.trafficData === null) {
       return null;
     }
@@ -76,11 +73,11 @@ class TrafficDetails extends React.Component<TrafficDetailsProps, TrafficDetails
                 <Icon name="refresh" />
               </Button>
             </div>
-            <strong>Inbound ({durationName})</strong>
+            <strong>Inbound</strong>
           </div>
           <DetailedTrafficList direction="inbound" traffic={this.state.inboundTraffic} />
           <div style={{ marginTop: '2em' }}>
-            <strong>Outbound ({durationName})</strong>
+            <strong>Outbound</strong>
           </div>
           <DetailedTrafficList direction="outbound" traffic={this.state.outboundTraffic} />
         </Col>

@@ -16,7 +16,7 @@ import BreadcrumbView from '../../components/BreadcrumbView/BreadcrumbView';
 import { GraphDefinition, GraphType, NodeParamsType, NodeType } from '../../types/Graph';
 import { fetchTrafficDetails } from '../../helpers/TrafficDetailsHelper';
 import TrafficDetails from '../../components/Metrics/TrafficDetails';
-import MetricsHelper from '../../components/Metrics/Helper';
+import { MetricsDuration } from '../../components/MetricsOptions/MetricsDuration';
 
 type WorkloadDetailsState = {
   workload: Workload;
@@ -116,7 +116,7 @@ class WorkloadDetails extends React.Component<RouteComponentProps<WorkloadId>, W
       version: ''
     };
     const restParams = {
-      duration: `${MetricsHelper.initDuration({}).duration!}s`,
+      duration: `${MetricsDuration.initialDuration()}s`,
       graphType: GraphType.WORKLOAD,
       injectServiceNodes: true,
       appenders: 'deadNode'
@@ -217,7 +217,7 @@ class WorkloadDetails extends React.Component<RouteComponentProps<WorkloadId>, W
               </TabPane>
               <TabPane eventKey={'traffic'}>
                 <TrafficDetails
-                  duration={MetricsHelper.initDuration({}).duration!}
+                  duration={MetricsDuration.initialDuration()}
                   trafficData={this.state.trafficData}
                   itemType={MetricsObjectTypes.WORKLOAD}
                   namespace={this.props.match.params.namespace}
