@@ -233,7 +233,7 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
     const conjunctive = validVal.includes(' AND ');
     const disjunctive = validVal.includes(' OR ');
     if (conjunctive && disjunctive) {
-      MessageCenterUtils.add(`Expression can not contain both 'and' and 'or'`);
+      MessageCenterUtils.add(`Expression can not contain both 'AND' and 'OR'`);
       return undefined;
     }
     const separator = disjunctive ? ',' : '';
@@ -360,10 +360,10 @@ export class GraphFind extends React.PureComponent<GraphFindProps> {
       case 'name': {
         const isNegation = op.startsWith('!');
         if (disjunctive && isNegation) {
-          MessageCenterUtils.add(`Can not use 'OR' with 'not find by name'`);
+          MessageCenterUtils.add(`Can not use 'OR' with negated 'name' operand`);
           return undefined;
         } else if (conjunctive) {
-          MessageCenterUtils.add(`Can not use 'AND' with 'find by name'`);
+          MessageCenterUtils.add(`Can not use 'AND' with 'name' operand`);
           return undefined;
         }
         const wl = `[${CyNode.workload} ${op} "${val}"]`;
