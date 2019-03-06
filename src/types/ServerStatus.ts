@@ -1,14 +1,4 @@
-import { AuthConfig } from './Auth';
-
-interface Configs {
-  authenticationConfig?: AuthConfig;
-}
-
-const AppConfigs: Configs = {};
-
-export default AppConfigs;
-
-export interface StatusInfo {
+export interface ServerStatus {
   status: { [key: string]: string };
   externalServices: ExternalServiceInfo[];
   warningMessages: string[];

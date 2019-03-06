@@ -8,7 +8,7 @@ import { JaegerActions } from '../actions/JaegerActions';
 import { MessageCenterActions } from '../actions/MessageCenterActions';
 import { MessageType } from '../types/MessageCenter';
 import { KialiDispatch } from '../types/Redux';
-import { StatusInfo } from '../types/AppConfigs';
+import { ServerStatus } from '../types/ServerStatus';
 import { bindActionCreators } from 'redux';
 import { GrafanaActions } from '../actions/GrafanaActions';
 import InitializingScreen from './InitializingScreen';
@@ -21,7 +21,7 @@ interface AuthenticationFlowProps {
   publicAreaComponent: React.ReactNode;
   setGrafanaInfo: (grafanaInfo: GrafanaInfo) => void;
   setServerConfig: (serverConfig: ServerConfig) => void;
-  setServerStatus: (serverStatus: StatusInfo) => void;
+  setServerStatus: (serverStatus: ServerStatus) => void;
 }
 
 interface AuthenticationFlowState {
@@ -107,7 +107,7 @@ class AuthenticationController extends React.Component<AuthenticationFlowProps, 
   };
 }
 
-const processServerStatus = (dispatch: KialiDispatch, serverStatus: StatusInfo) => {
+const processServerStatus = (dispatch: KialiDispatch, serverStatus: ServerStatus) => {
   dispatch(
     HelpDropdownActions.statusRefresh(serverStatus.status, serverStatus.externalServices, serverStatus.warningMessages)
   );
@@ -135,7 +135,7 @@ const mapDispatchToProps = (dispatch: KialiDispatch) => {
   return {
     setGrafanaInfo: bindActionCreators(GrafanaActions.setinfo, dispatch),
     setServerConfig: bindActionCreators(ServerConfigActions.setServerConfig, dispatch),
-    setServerStatus: (serverStatus: StatusInfo) => processServerStatus(dispatch, serverStatus)
+    setServerStatus: (serverStatus: ServerStatus) => processServerStatus(dispatch, serverStatus)
   };
 };
 

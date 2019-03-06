@@ -17,7 +17,7 @@ import {
   NamespaceWorkloadHealth
 } from '../types/Health';
 import { App } from '../types/App';
-import { StatusInfo } from '../types/AppConfigs';
+import { ServerStatus } from '../types/ServerStatus';
 import { AppList } from '../types/AppList';
 import { AuthInfo } from '../types/Auth';
 import { HTTP_VERBS, UserName, Password } from '../types/Common';
@@ -88,7 +88,7 @@ export const checkOpenshiftAuth = async (data: any): Promise<Response<LoginSessi
 };
 
 export const getStatus = () => {
-  return newRequest<StatusInfo>(HTTP_VERBS.GET, urls.status, {}, {});
+  return newRequest<ServerStatus>(HTTP_VERBS.GET, urls.status, {}, {});
 };
 
 export const getNamespaces = () => {
