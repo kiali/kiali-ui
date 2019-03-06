@@ -60,7 +60,8 @@ export class ToolbarDropdown extends React.Component<ToolbarDropdownProps, Toolb
           <OverlayTrigger
             key={'ot-' + this.props.id}
             placement="top"
-            delay={1000}
+            trigger="hover"
+            delayShow={1000}
             overlay={<Tooltip id={'tt-' + this.props.id}>{this.props.tooltip}</Tooltip>}
           >
             {dropdownButton}

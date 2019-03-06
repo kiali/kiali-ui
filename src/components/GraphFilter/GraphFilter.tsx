@@ -23,6 +23,7 @@ import Namespace, { namespacesToString, namespacesFromString } from '../../types
 import { NamespaceActions } from '../../actions/NamespaceAction';
 import { GraphActions } from '../../actions/GraphActions';
 import { KialiAppAction } from '../../actions/KialiAppAction';
+import { AlignRightStyle, ThinStyle } from '../../components/Filters/FilterStyles';
 
 type ReduxProps = {
   activeNamespaces: Namespace[];
@@ -41,19 +42,10 @@ type GraphFilterProps = ReduxProps & {
   onRefresh: () => void;
 };
 
-// align under the Graph breadcrumb
-const breadcrumbStyle = style({
-  marginLeft: '-30px',
-  marginRight: '0px',
-  paddingLeft: '0px',
-  paddingRight: '0px'
+// align with separator start / Graph breadcrumb
+const alignLeftStyle = style({
+  marginLeft: '-30px'
 });
-
-// reduce toolbar padding from 20px to 10px to save space
-const thinGroupStyle = {
-  paddingLeft: '10px',
-  paddingRight: '10px'
-};
 
 export class GraphFilter extends React.PureComponent<GraphFilterProps> {
   /**
@@ -135,7 +127,7 @@ export class GraphFilter extends React.PureComponent<GraphFilterProps> {
     return (
       <>
         <Toolbar>
-          <FormGroup className={breadcrumbStyle} style={{ ...thinGroupStyle }}>
+          <FormGroup className={alignLeftStyle} style={{ ...ThinStyle }}>
             {this.props.node ? (
               <Button onClick={this.handleNamespaceReturn}>Back to full {GraphFilter.GRAPH_TYPES[graphTypeKey]}</Button>
             ) : (
@@ -159,7 +151,7 @@ export class GraphFilter extends React.PureComponent<GraphFilterProps> {
             <GraphSettingsContainer edgeLabelMode={this.props.edgeLabelMode} graphType={this.props.graphType} />
           </FormGroup>
           <GraphFindContainer />
-          <Toolbar.RightContent>
+          <Toolbar.RightContent style={{ ...AlignRightStyle }}>
             <GraphRefreshContainer
               id="graph_refresh_container"
               disabled={this.props.disabled}
