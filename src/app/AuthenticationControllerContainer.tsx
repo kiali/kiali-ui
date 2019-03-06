@@ -13,6 +13,7 @@ import { bindActionCreators } from 'redux';
 import { GrafanaActions } from '../actions/GrafanaActions';
 import InitializingScreen from './InitializingScreen';
 import { isKioskMode } from '../utils/SearchParamUtils';
+import * as MessageCenter from '../utils/MessageCenter';
 
 interface AuthenticationFlowProps {
   authenticated: boolean;
@@ -25,13 +26,19 @@ interface AuthenticationFlowProps {
 
 interface AuthenticationFlowState {
   stage: 'login' | 'post-login' | 'logged-in';
+  isPostLoginError: boolean;
 }
 
-class AuthenticationFlow extends React.Component<AuthenticationFlowProps, AuthenticationFlowState> {
+class AuthenticationController extends React.Component<AuthenticationFlowProps, AuthenticationFlowState> {
+  static readonly PostLoginErrorMsg =
+    'You are logged in, but there was a problem when fetching some required server ' +
+    'configurations. Please, try refreshing the page.';
+
   constructor(props: AuthenticationFlowProps) {
     super(props);
     this.state = {
-      stage: this.props.authenticated ? 'post-login' : 'login'
+      stage: this.props.authenticated ? 'post-login' : 'login',
+      isPostLoginError: false
     };
   }
 
@@ -58,7 +65,11 @@ class AuthenticationFlow extends React.Component<AuthenticationFlowProps, Authen
     if (this.state.stage === 'logged-in') {
       return this.props.protectedAreaComponent;
     } else if (this.state.stage === 'post-login') {
-      return <InitializingScreen />;
+      return !this.state.isPostLoginError ? (
+        <InitializingScreen />
+      ) : (
+        <InitializingScreen errorMsg={AuthenticationController.PostLoginErrorMsg} />
+      );
     } else {
       return this.props.publicAreaComponent;
     }
@@ -66,34 +77,23 @@ class AuthenticationFlow extends React.Component<AuthenticationFlowProps, Authen
 
   private doPostLoginActions = async () => {
     try {
-      const configs = await Promise.all([API.getStatus(), API.getGrafanaInfo(), API.getServerConfig()]);
+      const getStatusPromise = API.getStatus()
+        .then(response => this.props.setServerStatus(response.data))
+        .catch(error => {
+          MessageCenter.add(API.getErrorMsg('Error fetching status.', error), 'default', MessageType.WARNING);
+        });
+      const getGrafanaInfoPromise = API.getGrafanaInfo()
+        .then(response => this.props.setGrafanaInfo(response.data))
+        .catch(error => {
+          MessageCenter.add(API.getErrorMsg('Error fetching Grafana Info.', error), 'default', MessageType.WARNING);
+        });
 
-      this.props.setServerStatus(configs[0].data);
-      this.props.setGrafanaInfo(configs[1].data);
-      this.props.setServerConfig(configs[2].data);
+      const configs = await Promise.all([API.getServerConfig(), getStatusPromise, getGrafanaInfoPromise]);
+      this.props.setServerConfig(configs[0].data);
 
       this.setState({ stage: 'logged-in' });
     } catch (err) {
-      // Here, we should handle errors
-      console.error(err);
-
-      /* GrafanaThunkActions
-      dispatch(
-            MessageCenterActions.addMessage(
-              API.getErrorMsg('Error fetching Grafana Info.', error),
-              'default',
-              MessageType.WARNING
-            )
-          );*/
-      /* HelpDropDownActions
-      dispatch(
-            MessageCenterActions.addMessage(
-              API.getErrorMsg('Error fetching status.', error),
-              'default',
-              MessageType.WARNING
-            )
-          );
-       */
+      this.setState({ isPostLoginError: true });
     }
   };
 
@@ -139,8 +139,8 @@ const mapDispatchToProps = (dispatch: KialiDispatch) => {
   };
 };
 
-const AuthenticationController = connect(
+const AuthenticationControllerContainer = connect(
   mapStateToProps,
   mapDispatchToProps
-)(AuthenticationFlow);
-export default AuthenticationController;
+)(AuthenticationController);
+export default AuthenticationControllerContainer;

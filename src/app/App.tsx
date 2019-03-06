@@ -8,7 +8,7 @@ import { GlobalActions } from '../actions/GlobalActions';
 import NavigationContainer from '../containers/NavigationContainer';
 import { store, persistor } from '../store/ConfigStore';
 import './App.css';
-import AuthenticationController from './AuthenticationController';
+import AuthenticationControllerContainer from './AuthenticationControllerContainer';
 import history from './History';
 import InitializingScreen from './InitializingScreen';
 import StartupInitializer from './StartupInitializer';
@@ -107,7 +107,7 @@ class App extends React.Component<{}, AppState> {
       <Provider store={store}>
         <PersistGate loading={<InitializingScreen />} persistor={persistor}>
           {this.state.isInitialized ? (
-            <AuthenticationController
+            <AuthenticationControllerContainer
               publicAreaComponent={<LoginPageConnected />}
               protectedAreaComponent={this.protectedArea}
             />
