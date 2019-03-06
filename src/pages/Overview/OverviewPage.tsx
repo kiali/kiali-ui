@@ -26,6 +26,7 @@ import NamespaceInfo, { NamespaceStatus } from './NamespaceInfo';
 import OverviewStatuses from './OverviewStatuses';
 import { switchType } from './OverviewHelper';
 import { Paths } from '../../config';
+import GlobalMTLSStatus from '../../containers/GlobalMTLSContainer';
 
 type State = {
   namespaces: NamespaceInfo[];
@@ -196,6 +197,12 @@ class OverviewPage extends React.Component<OverviewProps, State> {
 
   render() {
     const { showInError, showInWarning, showInSuccess, noFilter } = OverviewPage.summarizeHealthFilters();
+    const iconStyle = style({
+      marginTop: -2,
+      marginRight: 6,
+      width: 10
+    });
+
     return (
       <>
         <Breadcrumb title={true}>
@@ -219,10 +226,19 @@ class OverviewPage extends React.Component<OverviewProps, State> {
                   return (
                     <Col xs={6} sm={3} md={3} key={ns.name}>
                       <Card matchHeight={true} accented={true} aggregated={true}>
-                        <CardTitle>{ns.name}</CardTitle>
+                        <CardTitle>
+                          <GlobalMTLSStatus className={iconStyle} overlayPosition={'right'} />
+                          {ns.name}
+                        </CardTitle>
                         <CardBody>
                           {ns.status ? (
-                            <OverviewStatuses key={ns.name} name={ns.name} status={ns.status} type={this.state.type} />
+                            <OverviewStatuses
+                              key={ns.name}
+                              name={ns.name}
+                              status={ns.status}
+                              type={this.state.type}
+                              tlsStatus={true}
+                            />
                           ) : (
                             <div style={{ height: 70 }} />
                           )}

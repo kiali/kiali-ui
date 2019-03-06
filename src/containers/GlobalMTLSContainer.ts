@@ -1,6 +1,6 @@
 import { KialiAppState } from '../store/Store';
 import { connect } from 'react-redux';
-import MeshMTLSStatus from '../components/Nav/MeshMTLSStatus';
+import MeshMTLSStatus from '../components/MTls/MeshMTLSStatus';
 
 const mapStateToProps = (state: KialiAppState) => ({
   status: state.statusState.status,

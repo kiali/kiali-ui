@@ -1,24 +1,22 @@
 import * as React from 'react';
 
 import { Component } from '../../store/Store';
-import { OverlayTrigger, Tooltip } from 'patternfly-react';
-import { style } from 'typestyle';
-
-const partialIcon = require('../../assets/img/mtls-status-partial.svg');
-const fullIcon = require('../../assets/img/mtls-status-full.svg');
+import { default as MTLSIcon, MTLSIconTypes } from './MTLSIcon';
 
 type Props = {
   status: { [key: string]: string };
   components: Component[];
   warningMessages: string[];
+  className?: string;
+  overlayPosition?: string;
 };
 
 const statusName = 'Istio mTLS';
 
 enum MTLSStatus {
-  ENABLED = 'MESH_MTLS_ENABLED',
-  PARTIALLY = 'MESH_MTLS_PARTIALLY_ENABLED',
-  NOT_ENABLED = 'MESH_MTLS_NOT_ENABLED'
+  ENABLED = 'MTLS_ENABLED',
+  PARTIALLY = 'MTLS_PARTIALLY_ENABLED',
+  NOT_ENABLED = 'MTLS_NOT_ENABLED'
 }
 
 type StatusDescriptor = {
@@ -37,16 +35,16 @@ const StatusDescriptors = new Map<string, StatusDescriptor>([
   [
     MTLSStatus.ENABLED,
     {
-      message: 'Mesh-wide mTLS is enabled',
-      icon: fullIcon,
+      message: 'Namespace-wide mTLS is enabled',
+      icon: MTLSIconTypes.LOCKED_FULL,
       showStatus: true
     }
   ],
   [
     MTLSStatus.PARTIALLY,
     {
-      message: 'Mesh-wide TLS is partially enabled',
-      icon: partialIcon,
+      message: 'Namespace-wide TLS is partially enabled',
+      icon: MTLSIconTypes.LOCKED_HOLLOW,
       showStatus: true
     }
   ],
@@ -70,31 +68,23 @@ class MeshMTLSStatus extends React.Component<Props> {
     return this.statusDescriptor().showStatus;
   }
 
-  iconStyle() {
-    return style({
-      marginTop: 18,
-      marginRight: 8,
-      width: 13
-    });
+  overlayPosition() {
+    return this.props.overlayPosition || 'left';
   }
 
-  infotipContent() {
-    return <Tooltip id={'mtls-status-masthead'}>{this.message()}</Tooltip>;
+  iconClassName() {
+    return this.props.className || '';
   }
 
   render() {
     if (this.showStatus()) {
       return (
-        <li className={this.iconStyle()}>
-          <OverlayTrigger
-            placement={'left'}
-            overlay={this.infotipContent()}
-            trigger={['hover', 'focus']}
-            rootClose={false}
-          >
-            <img src={this.icon()} alt={this.message()} />
-          </OverlayTrigger>
-        </li>
+        <MTLSIcon
+          icon={this.icon()}
+          iconClassName={this.iconClassName()}
+          overlayText={this.message()}
+          overlayPosition={this.overlayPosition()}
+        />
       );
     }
 

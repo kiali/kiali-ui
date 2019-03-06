@@ -11,6 +11,7 @@ import UserDropdown from '../../containers/UserDropdownContainer';
 import GlobalMTLSStatus from '../../containers/GlobalMTLSContainer';
 import PfSpinnerContainer from '../../containers/PfSpinnerContainer';
 import { kialiLogo } from '../../config';
+import { style } from 'typestyle';
 
 export const istioConfigTitle = 'Istio Config';
 export const servicesTitle = 'Services';
@@ -39,6 +40,20 @@ class Navigation extends React.Component<PropsType> {
 
   goTojaeger() {
     window.open(this.props.jaegerUrl, '_blank');
+  }
+
+  rendermTLSStatus() {
+    const iconStyle = style({
+      marginTop: 18,
+      marginRight: 8,
+      width: 13
+    });
+
+    return (
+      <li className={iconStyle}>
+        <GlobalMTLSStatus />
+      </li>
+    );
   }
 
   renderMenuItems() {
@@ -88,7 +103,7 @@ class Navigation extends React.Component<PropsType> {
             <VerticalNav.Brand iconImg={kialiLogo} />
             <PfSpinnerContainer />
             <VerticalNav.IconBar>
-              <GlobalMTLSStatus />
+              {this.rendermTLSStatus()}
               <MessageCenterTriggerContainer />
               <HelpDropdown />
               <UserDropdown />
