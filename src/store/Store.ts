@@ -79,7 +79,6 @@ export interface LoginState {
   status: LoginStatus;
   session?: LoginSession;
   message: string;
-  uiExpiresOn: RawDate;
 }
 
 export interface Component {

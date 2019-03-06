@@ -1,5 +1,3 @@
-import { RawDate } from '../types/Common';
-
 import { ActionType, createAction } from 'typesafe-actions';
 import { LoginSession, LoginStatus } from '../store/Store';
 
@@ -15,7 +13,6 @@ export interface LoginPayload {
   status: LoginStatus;
   session?: LoginSession;
   error?: any;
-  uiExpiresOn: RawDate;
 }
 
 // synchronous action creators

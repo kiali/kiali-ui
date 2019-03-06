@@ -2,7 +2,7 @@ import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import UserDropdown from '../components/Nav/UserDropdown';
-import { KialiAppState } from '../store/Store';
+import { KialiAppState, LoginSession } from '../store/Store';
 import { KialiAppAction } from '../actions/KialiAppAction';
 import LoginThunkActions from '../actions/LoginThunkActions';
 
@@ -12,7 +12,7 @@ const mapStateToProps = (state: KialiAppState) => ({
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<KialiAppState, void, KialiAppAction>) => ({
   logout: () => dispatch(LoginThunkActions.logout()),
-  extendSession: () => dispatch(LoginThunkActions.extendSession()),
+  extendSession: (session: LoginSession) => dispatch(LoginThunkActions.extendSession(session)),
   checkCredentials: () => dispatch(LoginThunkActions.checkCredentials())
 });
 

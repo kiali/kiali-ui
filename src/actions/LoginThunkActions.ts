@@ -10,10 +10,7 @@ import { MessageCenterActions } from './MessageCenterActions';
 const Dispatcher = new Login.LoginDispatcher();
 
 const shouldRelogin = (state?: LoginState): boolean =>
-  !state ||
-  !state.session ||
-  moment(state.session!.expiresOn).diff(moment()) > 0 ||
-  moment(state.uiExpiresOn).diff(moment()) > 0;
+  !state || !state.session || moment(state.session!.expiresOn).diff(moment()) > 0;
 
 const loginSuccess = async (dispatch: KialiDispatch, session: LoginSession) => {
   dispatch(LoginActions.loginSuccess(session));
@@ -56,9 +53,8 @@ const LoginThunkActions = {
       }
     };
   },
-  extendSession: () => {
-    return (dispatch: KialiDispatch, getState: () => KialiAppState) => {
-      const session = getState().authentication!.session!;
+  extendSession: (session: LoginSession) => {
+    return (dispatch: KialiDispatch) => {
       dispatch(LoginActions.loginExtend(session));
     };
   },
