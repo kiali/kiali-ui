@@ -1,9 +1,7 @@
 import moment from 'moment';
-import { HTTP_CODES } from '../types/Common';
 import { KialiAppState, LoginState, LoginSession } from '../store/Store';
 import { LoginActions } from './LoginActions';
 import * as API from '../services/Api';
-
 import * as Login from '../services/Login';
 import { AuthResult } from '../types/Auth';
 import { KialiDispatch } from '../types/Redux';
@@ -18,13 +16,7 @@ const shouldRelogin = (state?: LoginState): boolean =>
   moment(state.uiExpiresOn).diff(moment()) > 0;
 
 const loginSuccess = async (dispatch: KialiDispatch, session: LoginSession) => {
-  try {
-    dispatch(LoginActions.loginSuccess(session));
-  } catch (error) {
-    if (error.response && error.response.status === HTTP_CODES.UNAUTHORIZED) {
-      dispatch(LoginActions.logoutSuccess());
-    }
-  }
+  dispatch(LoginActions.loginSuccess(session));
 };
 
 // Performs the user login, dispatching to the proper login implementations.

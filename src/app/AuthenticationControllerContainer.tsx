@@ -1,26 +1,25 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { GrafanaInfo, KialiAppState, LoginStatus, ServerConfig } from '../store/Store';
+import { bindActionCreators } from 'redux';
+import { GrafanaInfo, KialiAppState, LoginStatus } from '../store/Store';
 import * as API from '../services/Api';
-import { ServerConfigActions } from '../actions/ServerConfigActions';
 import { HelpDropdownActions } from '../actions/HelpDropdownActions';
 import { JaegerActions } from '../actions/JaegerActions';
 import { MessageCenterActions } from '../actions/MessageCenterActions';
 import { MessageType } from '../types/MessageCenter';
 import { KialiDispatch } from '../types/Redux';
 import { ServerStatus } from '../types/ServerStatus';
-import { bindActionCreators } from 'redux';
 import { GrafanaActions } from '../actions/GrafanaActions';
 import InitializingScreen from './InitializingScreen';
 import { isKioskMode } from '../utils/SearchParamUtils';
 import * as MessageCenter from '../utils/MessageCenter';
+import { setServerConfig } from '../config/serverConfig';
 
 interface AuthenticationFlowProps {
   authenticated: boolean;
   protectedAreaComponent: React.ReactNode;
   publicAreaComponent: React.ReactNode;
   setGrafanaInfo: (grafanaInfo: GrafanaInfo) => void;
-  setServerConfig: (serverConfig: ServerConfig) => void;
   setServerStatus: (serverStatus: ServerStatus) => void;
 }
 
@@ -89,7 +88,7 @@ class AuthenticationController extends React.Component<AuthenticationFlowProps, 
         });
 
       const configs = await Promise.all([API.getServerConfig(), getStatusPromise, getGrafanaInfoPromise]);
-      this.props.setServerConfig(configs[0].data);
+      setServerConfig(configs[0].data);
 
       this.setState({ stage: 'logged-in' });
     } catch (err) {
@@ -134,7 +133,6 @@ const mapStateToProps = (state: KialiAppState) => ({
 const mapDispatchToProps = (dispatch: KialiDispatch) => {
   return {
     setGrafanaInfo: bindActionCreators(GrafanaActions.setinfo, dispatch),
-    setServerConfig: bindActionCreators(ServerConfigActions.setServerConfig, dispatch),
     setServerStatus: (serverStatus: ServerStatus) => processServerStatus(dispatch, serverStatus)
   };
 };

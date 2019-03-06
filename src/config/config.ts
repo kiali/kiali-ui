@@ -16,20 +16,6 @@ const conf = {
   toolbar: {
     /** Duration default in 1 minute */
     defaultDuration: 1 * UNIT_TIME.MINUTE,
-    /** Options in interval duration */
-    intervalDuration: {
-      60: 'Last min',
-      300: 'Last 5 min',
-      600: 'Last 10 min',
-      1800: 'Last 30 min',
-      3600: 'Last hour',
-      10800: 'Last 3 hours',
-      21600: 'Last 6 hours',
-      43200: 'Last 12 hours',
-      86400: 'Last day',
-      604800: 'Last 7 days',
-      2592000: 'Last 30 days'
-    },
     /** By default refresh is 15 seconds */
     defaultPollInterval: 15 * MILLISECONDS,
     /** Options in refresh */

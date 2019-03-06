@@ -24,7 +24,6 @@ import { ServiceListFilters } from './FiltersAndSorts';
 import './ServiceListComponent.css';
 import { SortField } from '../../types/SortFilters';
 import { ListComponent } from '../../components/ListPage/ListComponent';
-import { HistoryManager, URLParams } from '../../app/History';
 
 interface ServiceListComponentState extends ListComponent.State<ServiceListItem> {
   rateInterval: number;
@@ -85,11 +84,6 @@ class ServiceListComponent extends ListComponent.Component<
       prevProps.currentSortField.title === this.props.currentSortField.title
     );
   }
-
-  rateIntervalChangedHandler = (key: number) => {
-    HistoryManager.setParam(URLParams.DURATION, String(key));
-    this.setState({ rateInterval: key });
-  };
 
   sortItemList(services: ServiceListItem[], sortField: SortField<ServiceListItem>, isAscending: boolean) {
     // Chain promises, as there may be an ongoing fetch/refresh and sort can be called after UI interaction

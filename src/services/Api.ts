@@ -7,7 +7,7 @@ import { IstioConfigList } from '../types/IstioConfigList';
 import { Workload, WorkloadNamespaceResponse } from '../types/Workload';
 import { ServiceDetailsInfo } from '../types/ServiceInfo';
 import JaegerInfo from '../types/JaegerInfo';
-import { GrafanaInfo, LoginSession, ServerConfig } from '../store/Store';
+import { GrafanaInfo, LoginSession } from '../store/Store';
 import {
   AppHealth,
   ServiceHealth,
@@ -24,6 +24,7 @@ import { HTTP_VERBS, UserName, Password } from '../types/Common';
 import { NodeParamsType, NodeType, GraphDefinition } from '../types/Graph';
 import { ServiceList } from '../types/ServiceList';
 import { config } from '../config';
+import { ServerConfig } from '../types/ServerConfig';
 
 export const ANONYMOUS_USER = 'anonymous';
 
