@@ -255,8 +255,10 @@ export default class GraphHelpFind extends React.Component<GraphHelpFindProps> {
                       rows={[
                         { id: 't00', t: 'Expressions can not combine "AND" with "OR".' },
                         { id: 't05', t: 'Parentheses are not supported (or needed).' },
-                        { id: 't10', t: 'The "name" operand expands internally to an "OR" expression.' },
-                        { id: 't20', t: 'The "name" operand expands internally to an "AND" expression when negated.' },
+                        {
+                          id: 't10',
+                          t: 'The "name" operand expands internally to an "OR" expression (an "AND" when negated).'
+                        },
                         { id: 't30', t: 'Expressions can not combine node and edge criteria.' },
                         {
                           id: 't40',
