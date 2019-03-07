@@ -136,7 +136,7 @@ export default class GraphHelpFind extends React.Component<GraphHelpFindProps> {
         {
           property: 't',
           header: {
-            label: 'Note',
+            label: 'Usage Note',
             formatters: [this.headerFormat]
           },
           cell: {
@@ -185,6 +185,11 @@ export default class GraphHelpFind extends React.Component<GraphHelpFindProps> {
 
   render() {
     const className = this.props.className ? this.props.className : '';
+    const preface =
+      'The Find and Hide input boxes are used to highlight or remove graph nodes and edges. Each accepts ' +
+      'expressions using the simple language described below. Hide takes precedence when using highlight and hide ' +
+      'together. To get started click the "Examples" tab. Click "Usage Notes" for restrictions and tips. ' +
+      'The other tabs provide details about the full set of node and edge operands, as well as operators.';
     return (
       <Draggable handle="#helpheader">
         <div
@@ -204,16 +209,17 @@ export default class GraphHelpFind extends React.Component<GraphHelpFindProps> {
             </Button>
             <span className="modal-title">Help: Graph Find/Hide</span>
           </div>
-          <span>
-            The Find and Hide input boxes are used to highlight or remove graph nodes and edges. Each accepts text
-            expressions using the simple language described below. You can highlight and hide elements at the same time,
-            hide takes precedece. Click the <i>Examples</i> tab for a quick introduction. Click the <i>Notes</i> tab for
-            tips and restrictions. The other tabs provide details about the full set of node and edge operands, as well
-            as the supported operators.
-          </span>
-          <TabContainer id="basic-tabs" defaultActiveKey="examples">
+          <textarea
+            style={{ width: '100%', height: '105px', padding: '10px', color: '#fff', backgroundColor: '#003145' }}
+            readOnly={true}
+            value={preface}
+          />
+          <TabContainer id="basic-tabs" defaultActiveKey="notes">
             <div>
               <Nav bsClass="nav nav-tabs nav-tabs-pf" style={{ paddingLeft: '10px' }}>
+                <NavItem eventKey="notes">
+                  <div>Usage Notes</div>
+                </NavItem>
                 <NavItem eventKey="operators">
                   <div>Operators</div>
                 </NavItem>
@@ -226,11 +232,53 @@ export default class GraphHelpFind extends React.Component<GraphHelpFindProps> {
                 <NavItem eventKey="examples">
                   <div>Examples</div>
                 </NavItem>
-                <NavItem eventKey="notes">
-                  <div>Notes</div>
-                </NavItem>
               </Nav>
               <TabContent>
+                <TabPane eventKey="notes" mountOnEnter={true} unmountOnExit={true}>
+                  <TablePfProvider
+                    striped={true}
+                    bordered={true}
+                    hover={true}
+                    dataTable={true}
+                    columns={this.noteColumns().columns}
+                  >
+                    <Table.Header headerRows={resolve.headerRows(this.noteColumns())} />
+                    <Table.Body
+                      rowKey="id"
+                      rows={[
+                        { id: 't00', t: 'Expressions can not combine "AND" with "OR".' },
+                        { id: 't05', t: 'Parentheses are not supported (or needed).' },
+                        { id: 't10', t: 'The "name" operand expands internally to an "OR" expression.' },
+                        { id: 't20', t: 'The "name" operand expands internally to an "AND" expression when negated.' },
+                        { id: 't30', t: 'Expressions can not combine node and edge criteria.' },
+                        {
+                          id: 't40',
+                          t: 'Numeric equality (=,!=) is exact match. Include leading 0 and digits of precision.'
+                        },
+                        {
+                          id: 't45',
+                          t:
+                            'Use "<operand> = NaN" to test for no activity. Use "!= NaN" for any activity. (e.g. httpout = NaN)'
+                        },
+                        { id: 't50', t: 'Numerics use "." decimal notation.' },
+                        { id: 't60', t: 'Percentages use 1 digit of precision, Rates use 2 digits of precision.' },
+                        {
+                          id: 't70',
+                          t: `Unary operands may optionally be prefixed with "is" or "has". (i.e. "has mtls")`
+                        },
+                        {
+                          id: 't80',
+                          t: 'Abbrevations: namespace|ns, service|svc, workload|wl (e.g. is wlnode)'
+                        },
+                        {
+                          id: 't90',
+                          t:
+                            'Abbrevations: circuitbreaker|cb, responsetime|rt, serviceentry->se, sidecar|sc, virtualservice|vs'
+                        }
+                      ]}
+                    />
+                  </TablePfProvider>
+                </TabPane>
                 <TabPane eventKey="operators" mountOnEnter={true} unmountOnExit={true}>
                   <TablePfProvider
                     striped={true}
@@ -374,51 +422,6 @@ export default class GraphHelpFind extends React.Component<GraphHelpFindProps> {
                           id: 'e90',
                           e: '%httptraffic >= 50.0',
                           d: `find edges with >= 50% of the outgoing http request traffic of the parent`
-                        }
-                      ]}
-                    />
-                  </TablePfProvider>
-                </TabPane>
-                <TabPane eventKey="notes" mountOnEnter={true} unmountOnExit={true}>
-                  <TablePfProvider
-                    striped={true}
-                    bordered={true}
-                    hover={true}
-                    dataTable={true}
-                    columns={this.noteColumns().columns}
-                  >
-                    <Table.Header headerRows={resolve.headerRows(this.noteColumns())} />
-                    <Table.Body
-                      rowKey="id"
-                      rows={[
-                        { id: 't00', t: 'Expressions can not combine "and" with "or".' },
-                        { id: 't05', t: 'Parentheses are not supported (or needed).' },
-                        { id: 't10', t: 'Find by name expands to an "or" expression internally.' },
-                        { id: 't20', t: 'Not Find by name expands to an "and" expression internally.' },
-                        { id: 't30', t: 'Expressions can not combine node and edge criteria.' },
-                        {
-                          id: 't40',
-                          t: 'Numeric equality (=,!=) is exact match. Include leading 0 and digits of precision.'
-                        },
-                        {
-                          id: 't45',
-                          t:
-                            'Use "<operand> = NaN" to test for no activity. Use "!= NaN" for any activity. (e.g. httpout = NaN)'
-                        },
-                        { id: 't50', t: 'Numerics use "." decimal notation.' },
-                        { id: 't60', t: 'Percentages use 1 digit of precision, Rates use 2 digits of precision.' },
-                        {
-                          id: 't70',
-                          t: `Unary operands may optionally be prefixed with " is " or " has ". (i.e. "has mtls")`
-                        },
-                        {
-                          id: 't80',
-                          t: 'Abbrevations: namespace|ns, service|svc, workload|wl (e.g. is wlnode)'
-                        },
-                        {
-                          id: 't90',
-                          t:
-                            'Abbrevations: circuitbreaker|cb, responsetime|rt, serviceentry->se, sidecar|sc, virtualservice|vs'
                         }
                       ]}
                     />
