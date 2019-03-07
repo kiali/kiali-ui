@@ -186,9 +186,9 @@ export default class GraphHelpFind extends React.Component<GraphHelpFindProps> {
   render() {
     const className = this.props.className ? this.props.className : '';
     const preface =
-      'The Find and Hide input boxes are used to highlight or remove graph nodes and edges. Each accepts ' +
-      'text expressions using the language described below. Hide takes precedence when using Find and Hide ' +
-      'together. To get started click the "Examples" tab. Click "Usage Notes" for restrictions and tips. ' +
+      'You can use the Find and Hide fields to highlight or hide edges and nodes from the graph. Each field ' +
+      'accepts text expressions using the language described below. Hide takes precedence when using Find and ' +
+      'Hide together. To get started click the "Examples" tab. Click "Usage Notes" for restrictions and tips. ' +
       'The other tabs provide details about the full set of node and edge operands, as well as operators.';
     return (
       <Draggable handle="#helpheader">
