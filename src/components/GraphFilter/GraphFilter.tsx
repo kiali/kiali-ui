@@ -121,6 +121,7 @@ export class GraphFilter extends React.PureComponent<GraphFilterProps> {
     this.context.router.history.push('/graph/namespaces');
   };
 
+  // TODO [jshaughn] Is there a better typescript way than the style attribute with the spread syntax (here and other places)
   render() {
     const graphTypeKey: string = _.findKey(GraphType, val => val === this.props.graphType)!;
     const edgeLabelModeKey: string = _.findKey(EdgeLabelMode, val => val === this.props.edgeLabelMode)!;
