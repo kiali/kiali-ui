@@ -109,7 +109,7 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
                 onKeyPress={this.checkSubmitFind}
                 placeholder="Find..."
               />
-              {this.findInputValue && (
+              {this.props.findValue && (
                 <InputGroup.Button>
                   <Button onClick={this.clearFind}>
                     <Icon name="close" type="fa" />
@@ -128,7 +128,7 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
                 onKeyPress={this.checkSubmitHide}
                 placeholder="Hide..."
               />
-              {this.hideInputValue && (
+              {this.props.hideValue && (
                 <InputGroup.Button>
                   <Button onClick={this.clearHide}>
                     <Icon name="close" type="fa" />
@@ -259,11 +259,11 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
   }
 
   private parseValue = (val: string): string | undefined => {
-    this.setErrorMsg();
     let preparedVal = this.prepareValue(val);
     if (!preparedVal) {
       return undefined;
     }
+
     preparedVal = preparedVal.replace(/ and /gi, ' AND ');
     preparedVal = preparedVal.replace(/ or /gi, ' OR ');
     const conjunctive = preparedVal.includes(' AND ');
@@ -276,7 +276,7 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
     let selector;
 
     for (const expression of expressions) {
-      const parsedExpression = this.parseFindExpression(expression, conjunctive, disjunctive);
+      const parsedExpression = this.parseExpression(expression, conjunctive, disjunctive);
       if (!parsedExpression) {
         return undefined;
       }
@@ -285,6 +285,8 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
         return undefined;
       }
     }
+    // parsed successfully, clear any previous error message
+    this.setErrorMsg();
     return selector;
   };
 
@@ -310,7 +312,7 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
     return val.trim();
   };
 
-  private parseFindExpression = (
+  private parseExpression = (
     expression: string,
     conjunctive: boolean,
     disjunctive: boolean
