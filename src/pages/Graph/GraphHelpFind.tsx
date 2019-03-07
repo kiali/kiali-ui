@@ -130,6 +130,26 @@ export default class GraphHelpFind extends React.Component<GraphHelpFindProps> {
     };
   };
 
+  noteColumns = () => {
+    return {
+      columns: [
+        {
+          property: 't',
+          header: {
+            label: 'Note',
+            formatters: [this.headerFormat]
+          },
+          cell: {
+            formatters: [this.cellFormat],
+            props: {
+              align: 'textleft'
+            }
+          }
+        }
+      ]
+    };
+  };
+
   operatorColumns = () => {
     return {
       columns: [
@@ -163,26 +183,6 @@ export default class GraphHelpFind extends React.Component<GraphHelpFindProps> {
     };
   };
 
-  tipColumns = () => {
-    return {
-      columns: [
-        {
-          property: 't',
-          header: {
-            label: 'Tip',
-            formatters: [this.headerFormat]
-          },
-          cell: {
-            formatters: [this.cellFormat],
-            props: {
-              align: 'textleft'
-            }
-          }
-        }
-      ]
-    };
-  };
-
   render() {
     const className = this.props.className ? this.props.className : '';
     return (
@@ -204,11 +204,18 @@ export default class GraphHelpFind extends React.Component<GraphHelpFindProps> {
             </Button>
             <span className="modal-title">Help: Graph Find/Hide</span>
           </div>
+          <span>
+            The Find and Hide input boxes are used to highlight or remove graph nodes and edges. Each accepts text
+            expressions using the simple language described below. You can highlight and hide elements at the same time,
+            hide takes precedece. Click the <i>Examples</i> tab for a quick introduction. Click the <i>Notes</i> tab for
+            tips and restrictions. The other tabs provide details about the full set of node and edge operands, as well
+            as the supported operators.
+          </span>
           <TabContainer id="basic-tabs" defaultActiveKey="examples">
             <div>
               <Nav bsClass="nav nav-tabs nav-tabs-pf" style={{ paddingLeft: '10px' }}>
-                <NavItem eventKey="examples">
-                  <div>Examples</div>
+                <NavItem eventKey="operators">
+                  <div>Operators</div>
                 </NavItem>
                 <NavItem eventKey="nodes">
                   <div>Nodes</div>
@@ -216,60 +223,39 @@ export default class GraphHelpFind extends React.Component<GraphHelpFindProps> {
                 <NavItem eventKey="edges">
                   <div>Edges</div>
                 </NavItem>
-                <NavItem eventKey="operators">
-                  <div>Operators</div>
+                <NavItem eventKey="examples">
+                  <div>Examples</div>
                 </NavItem>
-                <NavItem eventKey="tips">
-                  <div>Tips</div>
+                <NavItem eventKey="notes">
+                  <div>Notes</div>
                 </NavItem>
               </Nav>
               <TabContent>
-                <TabPane eventKey="examples">
+                <TabPane eventKey="operators" mountOnEnter={true} unmountOnExit={true}>
                   <TablePfProvider
                     striped={true}
                     bordered={true}
                     hover={true}
                     dataTable={true}
-                    columns={this.exampleColumns().columns}
+                    columns={this.operatorColumns().columns}
                   >
-                    <Table.Header headerRows={resolve.headerRows(this.exampleColumns())} />
+                    <Table.Header headerRows={resolve.headerRows(this.operatorColumns())} />
                     <Table.Body
                       rowKey="id"
                       rows={[
-                        {
-                          id: 'e00',
-                          e: 'name = reviews',
-                          d: `"find by name": find nodes with app label, service name or workload name equal to 'reviews'`
-                        },
-                        {
-                          id: 'e10',
-                          e: 'name not contains rev',
-                          d: `"find by name": find nodes with app label, service name and workload name not containing 'rev'`
-                        },
-                        {
-                          id: 'e20',
-                          e: 'app startswith product',
-                          d: `find nodes with app label starting with 'product'`
-                        },
-                        {
-                          id: 'e30',
-                          e: 'app != details and version=v1',
-                          d: `find nodes with app label not equal to 'details' and with version equal to 'v1'`
-                        },
-                        { id: 'e40', e: '!sc', d: `find nodes without a sidecar` },
-                        { id: 'e50', e: 'httpin > 0.5', d: `find nodes with incoming http rate > 0.5 rps` },
-                        { id: 'e60', e: 'tcpout >= 1000', d: `find nodes with outgoing tcp rates >= 1000 bps` },
-                        { id: 'e70', e: 'http > 0.5', d: `find edges with http rate > 0.5 rps` },
-                        {
-                          id: 'e80',
-                          e: 'rt > 500',
-                          d: `find edges with response time > 500ms. (requires response time edge labels)`
-                        },
-                        {
-                          id: 'e90',
-                          e: '%httptraffic >= 50.0',
-                          d: `find edges with >= 50% of the outgoing http request traffic of the parent`
-                        }
+                        { id: 'o0', o: '! | not <unary expression>', d: `negation` },
+                        { id: 'o1', o: '=', d: `equals` },
+                        { id: 'o2', o: '!=', d: `not equals` },
+                        { id: 'o3', o: 'endswith | $=', d: `ends with, strings only` },
+                        { id: 'o4', o: '!endswith | !$=', d: `not ends with, strings only` },
+                        { id: 'o5', o: 'startswith | ^=', d: `starts with, strings only` },
+                        { id: 'o6', o: '!startswith | !^=', d: `not starts with, strings only` },
+                        { id: 'o7', o: 'contains | *=', d: 'contains, strings only' },
+                        { id: 'o8', o: '!contains | !*=', d: 'not contains, strings only' },
+                        { id: 'o9', o: '>', d: `greater than` },
+                        { id: 'o10', o: '>=', d: `greater than or equals` },
+                        { id: 'o11', o: '<', d: `less than` },
+                        { id: 'o12', o: '<=', d: `less than or equals` }
                       ]}
                     />
                   </TablePfProvider>
@@ -343,44 +329,65 @@ export default class GraphHelpFind extends React.Component<GraphHelpFindProps> {
                     />
                   </TablePfProvider>
                 </TabPane>
-                <TabPane eventKey="operators" mountOnEnter={true} unmountOnExit={true}>
+                <TabPane eventKey="examples">
                   <TablePfProvider
                     striped={true}
                     bordered={true}
                     hover={true}
                     dataTable={true}
-                    columns={this.operatorColumns().columns}
+                    columns={this.exampleColumns().columns}
                   >
-                    <Table.Header headerRows={resolve.headerRows(this.operatorColumns())} />
+                    <Table.Header headerRows={resolve.headerRows(this.exampleColumns())} />
                     <Table.Body
                       rowKey="id"
                       rows={[
-                        { id: 'o0', o: '! | not <unary expression>', d: `negation` },
-                        { id: 'o1', o: '=', d: `equals` },
-                        { id: 'o2', o: '!=', d: `not equals` },
-                        { id: 'o3', o: 'endswith | $=', d: `ends with, strings only` },
-                        { id: 'o4', o: '!endswith | !$=', d: `not ends with, strings only` },
-                        { id: 'o5', o: 'startswith | ^=', d: `starts with, strings only` },
-                        { id: 'o6', o: '!startswith | !^=', d: `not starts with, strings only` },
-                        { id: 'o7', o: 'contains | *=', d: 'contains, strings only' },
-                        { id: 'o8', o: '!contains | !*=', d: 'not contains, strings only' },
-                        { id: 'o9', o: '>', d: `greater than` },
-                        { id: 'o10', o: '>=', d: `greater than or equals` },
-                        { id: 'o11', o: '<', d: `less than` },
-                        { id: 'o12', o: '<=', d: `less than or equals` }
+                        {
+                          id: 'e00',
+                          e: 'name = reviews',
+                          d: `"find by name": find nodes with app label, service name or workload name equal to 'reviews'`
+                        },
+                        {
+                          id: 'e10',
+                          e: 'name not contains rev',
+                          d: `"find by name": find nodes with app label, service name and workload name not containing 'rev'`
+                        },
+                        {
+                          id: 'e20',
+                          e: 'app startswith product',
+                          d: `find nodes with app label starting with 'product'`
+                        },
+                        {
+                          id: 'e30',
+                          e: 'app != details and version=v1',
+                          d: `find nodes with app label not equal to 'details' and with version equal to 'v1'`
+                        },
+                        { id: 'e40', e: '!sc', d: `find nodes without a sidecar` },
+                        { id: 'e50', e: 'httpin > 0.5', d: `find nodes with incoming http rate > 0.5 rps` },
+                        { id: 'e60', e: 'tcpout >= 1000', d: `find nodes with outgoing tcp rates >= 1000 bps` },
+                        { id: 'e70', e: 'http > 0.5', d: `find edges with http rate > 0.5 rps` },
+                        {
+                          id: 'e80',
+                          e: 'rt > 500',
+                          d: `find edges with response time > 500ms. (requires response time edge labels)`
+                        },
+                        {
+                          id: 'e90',
+                          e: '%httptraffic >= 50.0',
+                          d: `find edges with >= 50% of the outgoing http request traffic of the parent`
+                        }
                       ]}
                     />
                   </TablePfProvider>
                 </TabPane>
-                <TabPane eventKey="tips" mountOnEnter={true} unmountOnExit={true}>
+                <TabPane eventKey="notes" mountOnEnter={true} unmountOnExit={true}>
                   <TablePfProvider
                     striped={true}
                     bordered={true}
                     hover={true}
                     dataTable={true}
-                    columns={this.tipColumns().columns}
+                    columns={this.noteColumns().columns}
                   >
-                    <Table.Header headerRows={resolve.headerRows(this.tipColumns())} />
+                    <Table.Header headerRows={resolve.headerRows(this.noteColumns())} />
                     <Table.Body
                       rowKey="id"
                       rows={[
