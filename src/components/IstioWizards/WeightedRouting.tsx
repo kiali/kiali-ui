@@ -119,12 +119,14 @@ class WeightedRouting extends React.Component<Props, State> {
   onLock = (workloadName: string, locked: boolean) => {
     this.setState(prevState => {
       let maxWeights = 100;
+      let numLocks = 0;
       for (let i = 0; i < prevState.workloads.length; i++) {
         if (prevState.workloads[i].name === workloadName) {
           prevState.workloads[i].locked = locked;
         }
         // Calculate maxWeights from locked nodes
         if (prevState.workloads[i].locked) {
+          numLocks++;
           maxWeights -= prevState.workloads[i].weight;
         }
       }
@@ -170,8 +172,8 @@ class WeightedRouting extends React.Component<Props, State> {
                     onSlide={value => {
                       this.onWeight(workload.name, value as number);
                     }}
-                    locked={this.state.workloads.length > 1 ? workload.locked : true}
-                    showLock={this.state.workloads.length > 1}
+                    locked={this.state.workloads.length > 2 ? workload.locked : true}
+                    showLock={this.state.workloads.length > 2}
                     onLock={locked => this.onLock(workload.name, locked)}
                   />
                 }
