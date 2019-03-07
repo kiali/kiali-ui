@@ -28,7 +28,9 @@ type ReduxProps = {
 type GraphFindProps = ReduxProps;
 
 type GraphFindState = {
-  errorMessage?: string;
+  errorMessage: string;
+  findInputValue: string;
+  hideInputValue: string;
 };
 
 type ParsedExpression = {
@@ -52,14 +54,12 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
   };
 
   private findInputRef;
-  private findInputValue: string;
   private hiddenElements: any | undefined;
   private hideInputRef;
-  private hideInputValue: string;
 
   constructor(props: GraphFindProps) {
     super(props);
-    this.state = {};
+    this.state = { errorMessage: '', findInputValue: '', hideInputValue: '' };
     if (props.showFindHelp) {
       props.toggleFindHelp();
     }
@@ -77,10 +77,10 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
 
     // make sure the value is updated if there was a change
     if (findChanged) {
-      this.findInputValue = this.props.findValue;
+      this.setState({ findInputValue: this.props.findValue });
     }
     if (hideChanged) {
-      this.hideInputValue = this.props.hideValue;
+      this.setState({ hideInputValue: this.props.hideValue });
     }
 
     if (findChanged || (graphChanged && this.props.findValue)) {
@@ -105,11 +105,11 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
                   this.findInputRef = ref;
                 }}
                 onChange={this.updateFind}
-                defaultValue={this.findInputValue !== undefined ? this.findInputValue : this.props.findValue}
+                defaultValue={this.state.findInputValue ? this.state.findInputValue : this.props.findValue}
                 onKeyPress={this.checkSubmitFind}
                 placeholder="Find..."
               />
-              {this.props.findValue && (
+              {this.state.findInputValue && (
                 <InputGroup.Button>
                   <Button onClick={this.clearFind}>
                     <Icon name="close" type="fa" />
@@ -124,11 +124,11 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
                   this.hideInputRef = ref;
                 }}
                 onChange={this.updateHide}
-                defaultValue={this.hideInputValue !== undefined ? this.hideInputValue : this.props.hideValue}
+                defaultValue={this.state.hideInputValue ? this.state.hideInputValue : this.props.hideValue}
                 onKeyPress={this.checkSubmitHide}
                 placeholder="Hide..."
               />
-              {this.props.hideValue && (
+              {this.state.hideInputValue && (
                 <InputGroup.Button>
                   <Button onClick={this.clearHide}>
                     <Icon name="close" type="fa" />
@@ -155,22 +155,20 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
     this.props.toggleFindHelp();
   };
 
-  private updateHide = event => {
-    this.hideInputValue = event.target.value;
-    this.setErrorMsg();
+  private updateFind = event => {
+    this.setState({ findInputValue: event.target.value, errorMessage: '' });
   };
 
-  private updateFind = event => {
-    this.findInputValue = event.target.value;
-    this.setErrorMsg();
+  private updateHide = event => {
+    this.setState({ hideInputValue: event.target.value, errorMessage: '' });
   };
 
   private checkSubmitHide = event => {
     const keyCode = event.keyCode ? event.keyCode : event.which;
     if (keyCode === 13) {
       event.preventDefault();
-      if (this.props.hideValue !== this.hideInputValue) {
-        this.props.setHideValue(this.hideInputValue);
+      if (this.props.hideValue !== this.state.hideInputValue) {
+        this.props.setHideValue(this.state.hideInputValue);
       }
     }
   };
@@ -179,26 +177,24 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
     const keyCode = event.keyCode ? event.keyCode : event.which;
     if (keyCode === 13) {
       event.preventDefault();
-      if (this.props.findValue !== this.findInputValue) {
-        this.props.setFindValue(this.findInputValue);
+      if (this.props.findValue !== this.state.findInputValue) {
+        this.props.setFindValue(this.state.findInputValue);
       }
     }
-  };
-
-  private clearHide = () => {
-    // note, we don't use hideInputRef.current because <FormControl> deals with refs differently than <input>
-    this.hideInputRef.value = '';
-    this.hideInputValue = '';
-    this.props.setHideValue('');
-    this.setErrorMsg();
   };
 
   private clearFind = () => {
     // note, we don't use findInputRef.current because <FormControl> deals with refs differently than <input>
     this.findInputRef.value = '';
-    this.findInputValue = '';
+    this.setState({ findInputValue: '', errorMessage: '' });
     this.props.setFindValue('');
-    this.setErrorMsg();
+  };
+
+  private clearHide = () => {
+    // note, we don't use hideInputRef.current because <FormControl> deals with refs differently than <input>
+    this.hideInputRef.value = '';
+    this.setState({ hideInputValue: '', errorMessage: '' });
+    this.props.setHideValue('');
   };
 
   private handleHide = () => {
@@ -251,7 +247,7 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
     cy.endBatch();
   };
 
-  private setErrorMsg(errorMessage?: string): undefined {
+  private setErrorMsg(errorMessage: string): undefined {
     if (errorMessage !== this.state.errorMessage) {
       this.setState({ errorMessage: errorMessage });
     }
@@ -286,7 +282,7 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
       }
     }
     // parsed successfully, clear any previous error message
-    this.setErrorMsg();
+    this.setErrorMsg('');
     return selector;
   };
 
