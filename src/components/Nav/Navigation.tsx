@@ -42,20 +42,6 @@ class Navigation extends React.Component<PropsType> {
     window.open(this.props.jaegerUrl, '_blank');
   }
 
-  rendermTLSStatus() {
-    const iconStyle = style({
-      marginTop: 18,
-      marginRight: 8,
-      width: 13
-    });
-
-    return (
-      <li className={iconStyle}>
-        <GlobalMTLSStatus />
-      </li>
-    );
-  }
-
   renderMenuItems() {
     const { location, jaegerIntegration, jaegerUrl } = this.props;
     const activeItem = navItems.find(item => {
@@ -103,7 +89,7 @@ class Navigation extends React.Component<PropsType> {
             <VerticalNav.Brand iconImg={kialiLogo} />
             <PfSpinnerContainer />
             <VerticalNav.IconBar>
-              {this.rendermTLSStatus()}
+              <GlobalMTLSStatus />
               <MessageCenterTriggerContainer />
               <HelpDropdown />
               <UserDropdown />

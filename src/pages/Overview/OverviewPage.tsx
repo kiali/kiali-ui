@@ -11,8 +11,8 @@ import * as API from '../../services/Api';
 import {
   DEGRADED,
   FAILURE,
-  HEALTHY,
   Health,
+  HEALTHY,
   NamespaceAppHealth,
   NamespaceServiceHealth,
   NamespaceWorkloadHealth
@@ -26,7 +26,7 @@ import NamespaceInfo, { NamespaceStatus } from './NamespaceInfo';
 import OverviewStatuses from './OverviewStatuses';
 import { switchType } from './OverviewHelper';
 import { Paths } from '../../config';
-import GlobalMTLSStatus from '../../containers/GlobalMTLSContainer';
+import NamespaceMTLSStatus from '../../components/MTls/NamespaceMTLSStatus';
 
 type State = {
   namespaces: NamespaceInfo[];
@@ -111,15 +111,20 @@ class OverviewPage extends React.Component<OverviewProps, State> {
             const previous = this.state.namespaces.find(prev => prev.name === ns.name);
             return {
               name: ns.name,
-              status: previous ? previous.status : undefined
+              status: previous ? previous.status : undefined,
+              tlsStatus: previous ? previous.tlsStatus : undefined
             };
           });
         const isAscending = ListPagesHelper.isCurrentSortAscending();
         const sortField = ListPagesHelper.currentSortField(FiltersAndSorts.sortFields);
         const type = OverviewToolbar.currentOverviewType();
         // Set state before actually fetching health
-        this.setState({ type: type, namespaces: FiltersAndSorts.sortFunc(allNamespaces, sortField, isAscending) }, () =>
-          this.fetchHealth(isAscending, sortField, type)
+        this.setState(
+          { type: type, namespaces: FiltersAndSorts.sortFunc(allNamespaces, sortField, isAscending) },
+          () => {
+            this.fetchHealth(isAscending, sortField, type);
+            this.fetchTLS(isAscending, sortField);
+          }
         );
       })
       .catch(namespacesError => this.handleAxiosError('Could not fetch namespace list', namespacesError));
@@ -186,6 +191,36 @@ class OverviewPage extends React.Component<OverviewProps, State> {
       .catch(err => this.handleAxiosError('Could not fetch health', err));
   }
 
+  fetchTLS(isAscending: boolean, sortField: SortField<NamespaceInfo>) {
+    _.chunk(this.state.namespaces, 10).forEach(chunk => {
+      this.promises
+        .registerChained('tlschunks', undefined, () => this.fetchTLSChunk(chunk))
+        .then(() => {
+          this.setState(prevState => {
+            let newNamespaces = prevState.namespaces.slice();
+            if (sortField.id === 'tls') {
+              newNamespaces = FiltersAndSorts.sortFunc(newNamespaces, sortField, isAscending);
+            }
+            return { namespaces: newNamespaces };
+          });
+        });
+    });
+  }
+
+  fetchTLSChunk(chunk: NamespaceInfo[]) {
+    return Promise.all(
+      chunk.map(nsInfo => {
+        return API.getNamespaceTls(nsInfo.name).then(rs => ({ status: rs.data, nsInfo: nsInfo }));
+      })
+    )
+      .then(results => {
+        results.forEach(result => {
+          result.nsInfo.tlsStatus = result.status;
+        });
+      })
+      .catch(err => this.handleAxiosError('Could not fetch TLS status', err));
+  }
+
   handleAxiosError(message: string, error: AxiosError) {
     ListPagesHelper.handleError(API.getErrorMsg(message, error));
   }
@@ -197,12 +232,6 @@ class OverviewPage extends React.Component<OverviewProps, State> {
 
   render() {
     const { showInError, showInWarning, showInSuccess, noFilter } = OverviewPage.summarizeHealthFilters();
-    const iconStyle = style({
-      marginTop: -2,
-      marginRight: 6,
-      width: 10
-    });
-
     return (
       <>
         <Breadcrumb title={true}>
@@ -227,7 +256,7 @@ class OverviewPage extends React.Component<OverviewProps, State> {
                     <Col xs={6} sm={3} md={3} key={ns.name}>
                       <Card matchHeight={true} accented={true} aggregated={true}>
                         <CardTitle>
-                          <GlobalMTLSStatus className={iconStyle} overlayPosition={'right'} />
+                          {ns.tlsStatus ? <NamespaceMTLSStatus status={ns.tlsStatus.status} /> : undefined}
                           {ns.name}
                         </CardTitle>
                         <CardBody>

@@ -1,23 +1,18 @@
 import * as React from 'react';
 
-import { Component } from '../../store/Store';
 import { MTLSIconTypes } from './MTLSIcon';
 import { default as MTLSStatus, emptyDescriptor, MTLSStatuses, StatusDescriptor } from './MTLSStatus';
 import { style } from 'typestyle';
 
 type Props = {
-  status: { [key: string]: string };
-  components: Component[];
-  warningMessages: string[];
+  status: string;
 };
-
-const statusName = 'Istio mTLS';
 
 const statusDescriptors = new Map<string, StatusDescriptor>([
   [
     MTLSStatuses.ENABLED,
     {
-      message: 'Mesh-wide mTLS is enabled',
+      message: 'mTLS is enabled for this namespace',
       icon: MTLSIconTypes.LOCK_FULL,
       showStatus: true
     }
@@ -25,7 +20,7 @@ const statusDescriptors = new Map<string, StatusDescriptor>([
   [
     MTLSStatuses.PARTIALLY,
     {
-      message: 'Mesh-wide TLS is partially enabled',
+      message: 'mTLS is partially enabled for this namespace',
       icon: MTLSIconTypes.LOCK_HOLLOW,
       showStatus: true
     }
@@ -33,26 +28,25 @@ const statusDescriptors = new Map<string, StatusDescriptor>([
   [MTLSStatuses.NOT_ENABLED, emptyDescriptor]
 ]);
 
-class MeshMTLSStatus extends React.Component<Props> {
+class NamespaceMTLSStatus extends React.Component<Props> {
   iconStyle() {
     return style({
-      marginTop: 18,
-      marginRight: 8,
-      width: 13
+      marginTop: -2,
+      marginRight: 6,
+      width: 10
     });
   }
 
   render() {
     return (
-      <li className={this.iconStyle()}>
-        <MTLSStatus
-          status={this.props.status[statusName]}
-          statusDescriptors={statusDescriptors}
-          overlayPosition={'left'}
-        />
-      </li>
+      <MTLSStatus
+        status={this.props.status}
+        className={this.iconStyle()}
+        statusDescriptors={statusDescriptors}
+        overlayPosition={'left'}
+      />
     );
   }
 }
 
-export default MeshMTLSStatus;
+export default NamespaceMTLSStatus;

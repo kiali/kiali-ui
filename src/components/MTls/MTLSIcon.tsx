@@ -12,13 +12,13 @@ const fullIcon = require('../../assets/img/mtls-status-full.svg');
 const hollowIcon = require('../../assets/img/mtls-status-partial.svg');
 
 export enum MTLSIconTypes {
-  LOCKED_FULL = 'LOCKED_FULL',
-  LOCKED_HOLLOW = 'LOCKED_HOLLOW'
+  LOCK_FULL = 'LOCK_FULL',
+  LOCK_HOLLOW = 'LOCK_HOLLOW'
 }
 
 const nameToSource = new Map<string, string>([
-  [MTLSIconTypes.LOCKED_FULL, fullIcon],
-  [MTLSIconTypes.LOCKED_HOLLOW, hollowIcon]
+  [MTLSIconTypes.LOCK_FULL, fullIcon],
+  [MTLSIconTypes.LOCK_HOLLOW, hollowIcon]
 ]);
 
 class MTLSIcon extends React.Component<Props> {
