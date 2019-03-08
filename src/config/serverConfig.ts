@@ -15,17 +15,17 @@ const toDurations = (tupleArray: [number, string][]): Durations => {
 };
 
 let durationsTuples: [number, string][] = [
-  [60, 'Last min'],
-  [300, 'Last 5 min'],
-  [600, 'Last 10 min'],
-  [1800, 'Last 30 min'],
-  [3600, 'Last hour'],
-  [10800, 'Last 3 hours'],
-  [21600, 'Last 6 hours'],
-  [43200, 'Last 12 hours'],
-  [86400, 'Last day'],
-  [604800, 'Last 7 days'],
-  [2592000, 'Last 30 days']
+  [60, 'Last 1m'],
+  [300, 'Last 5m'],
+  [600, 'Last 10m'],
+  [1800, 'Last 30m'],
+  [3600, 'Last 1h'],
+  [10800, 'Last 3h'],
+  [21600, 'Last 6h'],
+  [43200, 'Last 12h'],
+  [86400, 'Last 1d'],
+  [604800, 'Last 7d'],
+  [2592000, 'Last 30d']
 ];
 
 const computeValidDurations = (cfg: ComputedServerConfig) => {

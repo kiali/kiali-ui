@@ -18,6 +18,7 @@ import { SortField } from '../../types/SortFilters';
 
 import { FiltersAndSorts } from './FiltersAndSorts';
 import NamespaceInfo from './NamespaceInfo';
+import { AlignRightStyle, ThinStyle } from '../../components/Filters/FilterStyles';
 
 type ReduxProps = {
   duration: DurationInSeconds;
@@ -121,19 +122,21 @@ export class OverviewToolbar extends React.Component<Props, State> {
   render() {
     return (
       <StatefulFilters initialFilters={FiltersAndSorts.availableFilters} onFilterChange={this.props.onRefresh}>
-        <Sort>
+        <Sort style={{ ...ThinStyle }}>
           <Sort.TypeSelector
+            // style={{ ...thinGroupStyle }}
             sortTypes={FiltersAndSorts.sortFields}
             currentSortType={this.state.sortField}
             onSortTypeSelected={this.updateSortField}
           />
           <Sort.DirectionSelector
+            // style={{ ...thinGroupStyle }}
             isNumeric={false}
             isAscending={this.state.isSortAscending}
             onClick={this.updateSortDirection}
           />
         </Sort>
-        <FormGroup>
+        <FormGroup style={{ ...ThinStyle }}>
           <ToolbarDropdown
             id="overview-type"
             disabled={false}
@@ -144,15 +147,15 @@ export class OverviewToolbar extends React.Component<Props, State> {
             options={overviewTypes}
           />
         </FormGroup>
-        <ToolbarRightContent>
+        <ToolbarRightContent style={{ ...AlignRightStyle }}>
           <ToolbarDropdown
             id="overview-duration"
             disabled={false}
             handleSelect={this.updateDuration}
-            nameDropdown="Display"
             value={this.props.duration}
             label={serverConfig.durations[this.props.duration]}
             options={serverConfig.durations}
+            tooltip={'Time range for overview data'}
           />
           <RefreshContainer id="overview-refresh" handleRefresh={this.props.onRefresh} hideLabel={true} />
         </ToolbarRightContent>

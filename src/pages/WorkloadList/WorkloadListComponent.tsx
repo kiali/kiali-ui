@@ -11,6 +11,7 @@ import ItemDescription from './ItemDescription';
 import { ListPagesHelper } from '../../components/ListPage/ListPagesHelper';
 import { SortField } from '../../types/SortFilters';
 import { ListComponent } from '../../components/ListPage/ListComponent';
+import { AlignRightStyle, ThinStyle } from '../../components/Filters/FilterStyles';
 
 interface WorkloadListComponentState extends ListComponent.State<WorkloadListItem> {
   rateInterval: number;
@@ -177,7 +178,7 @@ class WorkloadListComponent extends ListComponent.Component<
     return (
       <>
         <StatefulFilters initialFilters={WorkloadListFilters.availableFilters} onFilterChange={this.onFilterChange}>
-          <Sort>
+          <Sort style={{ ...ThinStyle }}>
             <Sort.TypeSelector
               sortTypes={WorkloadListFilters.sortFields}
               currentSortType={this.state.currentSortField}
@@ -189,7 +190,7 @@ class WorkloadListComponent extends ListComponent.Component<
               onClick={this.updateSortDirection}
             />
           </Sort>
-          <ToolbarRightContent>
+          <ToolbarRightContent style={{ ...AlignRightStyle }}>
             <Button onClick={this.updateListItems}>
               <Icon name="refresh" />
             </Button>
