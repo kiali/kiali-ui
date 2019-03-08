@@ -92,6 +92,7 @@ class AuthenticationController extends React.Component<AuthenticationFlowProps, 
 
       this.setState({ stage: 'logged-in' });
     } catch (err) {
+      console.error('Error on post-login actions.', err);
       this.setState({ isPostLoginError: true });
     }
   };
