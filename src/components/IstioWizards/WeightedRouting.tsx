@@ -181,9 +181,11 @@ class WeightedRouting extends React.Component<Props, State> {
             );
           })}
         </ListView>
-        <Button className={resetStyle} onClick={() => this.resetState()}>
-          Evenly distribute traffic
-        </Button>
+        {this.props.workloads.length > 1 && (
+          <Button className={resetStyle} onClick={() => this.resetState()}>
+            Evenly distribute traffic
+          </Button>
+        )}
         {!isValid && <div className={validationStyle}>The sum of all weights must be 100 %</div>}
       </>
     );
