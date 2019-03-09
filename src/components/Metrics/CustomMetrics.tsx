@@ -115,12 +115,14 @@ class CustomMetrics extends React.Component<CustomMetricsProps, MetricsState> {
   }
 
   renderOptionsBar() {
-    const hasHistograms = this.state.dashboard !== undefined && this.state.dashboard.charts.some(chart => {
-      if (chart.histogram) {
-        return Object.keys(chart.histogram).length > 0;
-      }
-      return false;
-    });
+    const hasHistograms =
+      this.state.dashboard !== undefined &&
+      this.state.dashboard.charts.some(chart => {
+        if (chart.histogram) {
+          return Object.keys(chart.histogram).length > 0;
+        }
+        return false;
+      });
     return (
       <Toolbar>
         <FormGroup>
