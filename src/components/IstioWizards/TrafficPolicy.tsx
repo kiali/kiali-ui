@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Col, ControlLabel, DropdownButton, MenuItem, Row } from 'patternfly-react';
+import { Col, ControlLabel, DropdownButton, ExpandCollapse, MenuItem, Row } from 'patternfly-react';
 import { style } from 'typestyle';
 
 export const NONE = 'NONE';
@@ -23,9 +23,11 @@ type Props = {
   onTlsChange: (mtlsMode: string) => void;
   onLoadbalancerChange: (loadbalancer: string) => void;
   modified: boolean;
+  expanded: boolean;
 };
 
 const tlsStyle = style({
+  marginTop: 20,
   marginLeft: 20,
   marginRight: 20
 });
@@ -54,23 +56,29 @@ class TrafficPolicy extends React.Component<Props> {
       </MenuItem>
     ));
     return (
-      <Row>
-        <Col sm={12}>
-          <ControlLabel className={tlsStyle}>TLS</ControlLabel>
-          <DropdownButton bsStyle="default" title={mtlsMode} id="trafficPolicy-tls" onSelect={this.props.onTlsChange}>
-            {tlsMenuItems}
-          </DropdownButton>
-          <ControlLabel className={lbStyle}>LoadBalancer</ControlLabel>
-          <DropdownButton
-            bsStyle="default"
-            title={this.props.loadBalancer}
-            id="trafficPolicy-lb"
-            onSelect={this.props.onLoadbalancerChange}
-          >
-            {lbMenuItems}
-          </DropdownButton>
-        </Col>
-      </Row>
+      <ExpandCollapse
+        textCollapsed="Show Advanced Options"
+        textExpanded="Hide Advanced Options"
+        expanded={this.props.expanded}
+      >
+        <Row>
+          <Col sm={12}>
+            <ControlLabel className={tlsStyle}>TLS</ControlLabel>
+            <DropdownButton bsStyle="default" title={mtlsMode} id="trafficPolicy-tls" onSelect={this.props.onTlsChange}>
+              {tlsMenuItems}
+            </DropdownButton>
+            <ControlLabel className={lbStyle}>LoadBalancer</ControlLabel>
+            <DropdownButton
+              bsStyle="default"
+              title={this.props.loadBalancer}
+              id="trafficPolicy-lb"
+              onSelect={this.props.onLoadbalancerChange}
+            >
+              {lbMenuItems}
+            </DropdownButton>
+          </Col>
+        </Row>
+      </ExpandCollapse>
     );
   }
 }

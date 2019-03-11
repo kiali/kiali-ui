@@ -314,6 +314,7 @@ class IstioWizard extends React.Component<Props, State> {
                   onTlsChange={this.onTLS}
                   onLoadbalancerChange={this.onLoadBalancer}
                   modified={this.state.tlsModified}
+                  expanded={false}
                 />
               </Wizard.Contents>
             </Wizard.Main>
