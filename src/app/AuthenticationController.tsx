@@ -15,25 +15,28 @@ import { isKioskMode } from '../utils/SearchParamUtils';
 import * as MessageCenter from '../utils/MessageCenter';
 import { setServerConfig } from '../config/serverConfig';
 
-interface AuthenticationFlowProps {
+interface AuthenticationControllerReduxProps {
   authenticated: boolean;
-  protectedAreaComponent: React.ReactNode;
-  publicAreaComponent: React.ReactNode;
   setGrafanaInfo: (grafanaInfo: GrafanaInfo) => void;
   setServerStatus: (serverStatus: ServerStatus) => void;
 }
 
-interface AuthenticationFlowState {
+type AuthenticationControllerProps = AuthenticationControllerReduxProps & {
+  protectedAreaComponent: React.ReactNode;
+  publicAreaComponent: React.ReactNode;
+};
+
+interface AuthenticationControllerState {
   stage: 'login' | 'post-login' | 'logged-in';
   isPostLoginError: boolean;
 }
 
-class AuthenticationController extends React.Component<AuthenticationFlowProps, AuthenticationFlowState> {
+class AuthenticationController extends React.Component<AuthenticationControllerProps, AuthenticationControllerState> {
   static readonly PostLoginErrorMsg =
     'You are logged in, but there was a problem when fetching some required server ' +
     'configurations. Please, try refreshing the page.';
 
-  constructor(props: AuthenticationFlowProps) {
+  constructor(props: AuthenticationControllerProps) {
     super(props);
     this.state = {
       stage: this.props.authenticated ? 'post-login' : 'login',
@@ -49,7 +52,10 @@ class AuthenticationController extends React.Component<AuthenticationFlowProps, 
     this.setDocLayout();
   }
 
-  componentDidUpdate(prevProps: Readonly<AuthenticationFlowProps>, prevState: Readonly<AuthenticationFlowState>): void {
+  componentDidUpdate(
+    prevProps: Readonly<AuthenticationControllerProps>,
+    prevState: Readonly<AuthenticationControllerState>
+  ): void {
     if (!prevProps.authenticated && this.props.authenticated) {
       this.setState({ stage: 'post-login' });
       this.doPostLoginActions();
