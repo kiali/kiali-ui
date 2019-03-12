@@ -2,10 +2,10 @@ import * as React from 'react';
 import { Modal, Button, Icon, Row, Col } from 'patternfly-react';
 import { config } from '../../config';
 import { UNIT_TIME, MILLISECONDS } from '../../types/Common';
-import AppConfigs from '../../app/AppConfigs';
 import { AuthStrategy } from '../../types/Auth';
 import { LoginSession } from '../../store/Store';
 import * as API from '../../services/Api';
+import authenticationConfig from '../../config/authenticationConfig';
 
 type SessionTimeoutProps = {
   onLogout: () => void;
@@ -36,7 +36,7 @@ export class SessionTimeout extends React.Component<SessionTimeoutProps, {}> {
               <Icon name="warning-triangle-o" type="pf" style={{ fontSize: '48px' }} />
             </Col>
             <Col xs={12} sm={10} md={10} lg={10}>
-              {AppConfigs.authenticationConfig!.strategy === AuthStrategy.login
+              {authenticationConfig.strategy === AuthStrategy.login
                 ? this.textForLoginStrategy()
                 : this.textForOpenshiftStrategy()}
             </Col>
@@ -47,7 +47,7 @@ export class SessionTimeout extends React.Component<SessionTimeoutProps, {}> {
             <Button bsStyle={'default'} onClick={this.props.onLogout}>
               Log Out
             </Button>
-            {AppConfigs.authenticationConfig!.strategy === AuthStrategy.login ? (
+            {authenticationConfig.strategy === AuthStrategy.login ? (
               <Button autoFocus={true} bsStyle={'primary'} onClick={this.extendSessionHandler}>
                 Continue Session
               </Button>

@@ -1,11 +1,12 @@
 import moment from 'moment';
-import { KialiAppState, LoginState, LoginSession } from '../store/Store';
+import { KialiAppState, LoginSession, LoginState } from '../store/Store';
 import { LoginActions } from './LoginActions';
 import * as API from '../services/Api';
 import * as Login from '../services/Login';
-import { AuthResult } from '../types/Auth';
+import { AuthResult, AuthStrategy } from '../types/Auth';
 import { KialiDispatch } from '../types/Redux';
 import { MessageCenterActions } from './MessageCenterActions';
+import authenticationConfig from '../config/authenticationConfig';
 
 const Dispatcher = new Login.LoginDispatcher();
 
@@ -37,19 +38,25 @@ const performLogin = (dispatch: KialiDispatch, state: KialiAppState, data?: any)
 
 const LoginThunkActions = {
   authenticate: (username: string, password: string) => {
-    return (dispatch: KialiDispatch, getState: () => KialiAppState) =>
+    return (dispatch: KialiDispatch, getState: () => KialiAppState) => {
+      dispatch(LoginActions.loginRequest());
       performLogin(dispatch, getState(), { username, password });
+    };
   },
   checkCredentials: () => {
     return (dispatch: KialiDispatch, getState: () => KialiAppState) => {
-      const state: KialiAppState = getState();
+      // If Openshift login strategy is enabled, redirect to the cluster login. Else
+      // it doesn't make sense to try to perform the login with blank credentials
+      if (authenticationConfig.strategy === AuthStrategy.openshift) {
+        const state: KialiAppState = getState();
 
-      dispatch(LoginActions.loginRequest());
+        dispatch(LoginActions.loginRequest());
 
-      if (shouldRelogin(state.authentication)) {
-        performLogin(dispatch, state);
-      } else {
-        loginSuccess(dispatch, state.authentication!.session!);
+        if (shouldRelogin(state.authentication)) {
+          performLogin(dispatch, state);
+        } else {
+          loginSuccess(dispatch, state.authentication!.session!);
+        }
       }
     };
   },

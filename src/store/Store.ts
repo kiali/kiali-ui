@@ -67,7 +67,8 @@ export enum LoginStatus {
   logging,
   loggedIn,
   loggedOut,
-  error
+  error,
+  expired
 }
 
 export interface LoginSession {

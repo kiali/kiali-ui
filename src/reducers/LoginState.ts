@@ -35,6 +35,11 @@ const loginState = (state: LoginStateInterface = INITIAL_LOGIN_STATE, action: Ki
       return { ...INITIAL_LOGIN_STATE, status: LoginStatus.error, message: message };
     case getType(LoginActions.logoutSuccess):
       return INITIAL_LOGIN_STATE;
+    case getType(LoginActions.sessionExpired):
+      return {
+        ...INITIAL_LOGIN_STATE,
+        status: LoginStatus.expired
+      };
     default:
       return state;
   }
