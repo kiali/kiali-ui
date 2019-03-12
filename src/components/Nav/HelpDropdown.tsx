@@ -9,7 +9,6 @@ type HelpDropdownProps = {
   status: { [key: string]: string };
   components: Component[];
   warningMessages: string[];
-  refresh: () => void;
 };
 
 class HelpDropdown extends React.Component<HelpDropdownProps> {
@@ -20,7 +19,6 @@ class HelpDropdown extends React.Component<HelpDropdownProps> {
     super(props);
     this.about = React.createRef<AboutUIModal>();
     this.debugInformation = React.createRef();
-    this.props.refresh();
   }
 
   openAbout = () => {
@@ -35,12 +33,7 @@ class HelpDropdown extends React.Component<HelpDropdownProps> {
   render() {
     return (
       <>
-        <AboutUIModal
-          refresh={this.props.refresh}
-          ref={this.about}
-          status={this.props.status}
-          components={this.props.components}
-        />
+        <AboutUIModal ref={this.about} status={this.props.status} components={this.props.components} />
         <DebugInformationContainer ref={this.debugInformation} />
         <Dropdown componentClass="li" id="help">
           <Dropdown.Toggle useAnchor={true} className="nav-item-iconic">

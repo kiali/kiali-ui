@@ -14,7 +14,6 @@ import { Paths } from './Paths';
 // Jaeger Query
 import { jaegerQuery } from './jaegerQuery';
 
-
 // ServerConfig
 import { serverConfig } from './serverConfig';
 

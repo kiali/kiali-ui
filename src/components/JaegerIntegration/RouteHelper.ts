@@ -1,7 +1,7 @@
 import { jaegerQuery } from '../../config';
 import logfmtParser from 'logfmt/lib/logfmt_parser';
 import moment from 'moment';
-import { HistoryManager, URLParams } from '../../app/History';
+import { HistoryManager, URLParam } from '../../app/History';
 
 export interface JaegerSearchOptions {
   serviceSelected: string;
@@ -45,7 +45,7 @@ const convTagsLogfmt = (tags: string) => {
   return JSON.stringify(data);
 };
 
-export const logfmtTagsConv = (tags: string | null) => {
+export const logfmtTagsConv = (tags: string | undefined) => {
   if (!tags) {
     return null;
   }
@@ -98,7 +98,7 @@ export class JaegerURLSearch {
     this.url = `${url}${jaegerQuery().path}?${jaegerQuery().embed.uiEmbed}=${jaegerQuery().embed.version}`;
   }
 
-  addQueryParam(param: URLParams, value: string | number) {
+  addQueryParam(param: URLParam, value: string | number) {
     this.url += `&${param}=${value}`;
   }
 
@@ -115,23 +115,23 @@ export class JaegerURLSearch {
 
     // Add query and set data
 
-    this.setParam(URLParams.JAEGER_START_TIME, startTime);
-    this.setParam(URLParams.JAEGER_END_TIME, endTime);
-    this.setParam(URLParams.JAEGER_LIMIT_TRACES, String(searchOptions.limit));
-    this.setParam(URLParams.JAEGER_LOOKBACK, lookback);
-    this.setParam(URLParams.JAEGER_MAX_DURATION, searchOptions.maxDuration);
-    this.setParam(URLParams.JAEGER_MIN_DURATION, searchOptions.minDuration);
-    this.setParam(URLParams.JAEGER_SERVICE_SELECTOR, searchOptions.serviceSelected);
+    this.setParam(URLParam.JAEGER_START_TIME, startTime);
+    this.setParam(URLParam.JAEGER_END_TIME, endTime);
+    this.setParam(URLParam.JAEGER_LIMIT_TRACES, String(searchOptions.limit));
+    this.setParam(URLParam.JAEGER_LOOKBACK, lookback);
+    this.setParam(URLParam.JAEGER_MAX_DURATION, searchOptions.maxDuration);
+    this.setParam(URLParam.JAEGER_MIN_DURATION, searchOptions.minDuration);
+    this.setParam(URLParam.JAEGER_SERVICE_SELECTOR, searchOptions.serviceSelected);
 
     const logfmtTags = convTagsLogfmt(searchOptions.tags);
     if (logfmtTags) {
-      this.setParam(URLParams.JAEGER_TAGS, logfmtTags);
+      this.setParam(URLParam.JAEGER_TAGS, logfmtTags);
     }
 
     return this.url;
   }
 
-  private setParam(param: URLParams, value: string) {
+  private setParam(param: URLParam, value: string) {
     this.addQueryParam(param, value);
     HistoryManager.setParam(param, value);
   }

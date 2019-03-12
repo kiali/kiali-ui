@@ -11,7 +11,7 @@ import {
   JaegerSearchOptions,
   TracesDate
 } from './RouteHelper';
-import { HistoryManager, URLParams } from '../../app/History';
+import { HistoryManager, URLParam } from '../../app/History';
 
 interface JaegerToolbarProps {
   disableSelectorNs?: boolean;
@@ -37,9 +37,9 @@ export class JaegerToolbar extends React.Component<JaegerToolbarProps, JaegerToo
 
   constructor(props: JaegerToolbarProps) {
     super(props);
-    const start = HistoryManager.getParam(URLParams.JAEGER_START_TIME);
-    const end = HistoryManager.getParam(URLParams.JAEGER_END_TIME);
-    const lookback = HistoryManager.getParam(URLParams.JAEGER_LOOKBACK);
+    const start = HistoryManager.getParam(URLParam.JAEGER_START_TIME);
+    const end = HistoryManager.getParam(URLParam.JAEGER_END_TIME);
+    const lookback = HistoryManager.getParam(URLParam.JAEGER_LOOKBACK);
     const startDateTime =
       start && lookback === 'custom'
         ? getFormFromUnixTimeStamp(Number(start) / 1000)
@@ -48,15 +48,15 @@ export class JaegerToolbar extends React.Component<JaegerToolbarProps, JaegerToo
       end && lookback === 'custom' ? getFormFromUnixTimeStamp(Number(end) / 1000) : getFormFromUnixTimeStamp(0);
 
     this.state = {
-      tags: logfmtTagsConv(HistoryManager.getParam(URLParams.JAEGER_TAGS)) || this.props.tagsValue || '',
-      limit: Number(HistoryManager.getParam(URLParams.JAEGER_LIMIT_TRACES) || '20'),
-      minDuration: HistoryManager.getParam(URLParams.JAEGER_MIN_DURATION) || '',
-      maxDuration: HistoryManager.getParam(URLParams.JAEGER_MAX_DURATION) || '',
-      lookback: HistoryManager.getParam(URLParams.JAEGER_LOOKBACK) || String(this.defaultLookback),
-      serviceSelected: HistoryManager.getParam(URLParams.JAEGER_SERVICE_SELECTOR) || this.props.serviceSelected || '',
+      tags: logfmtTagsConv(HistoryManager.getParam(URLParam.JAEGER_TAGS)) || this.props.tagsValue || '',
+      limit: Number(HistoryManager.getParam(URLParam.JAEGER_LIMIT_TRACES) || '20'),
+      minDuration: HistoryManager.getParam(URLParam.JAEGER_MIN_DURATION) || '',
+      maxDuration: HistoryManager.getParam(URLParam.JAEGER_MAX_DURATION) || '',
+      lookback: HistoryManager.getParam(URLParam.JAEGER_LOOKBACK) || String(this.defaultLookback),
+      serviceSelected: HistoryManager.getParam(URLParam.JAEGER_SERVICE_SELECTOR) || this.props.serviceSelected || '',
       dateTimes: { start: startDateTime, end: endDateTime }
     };
-    if (HistoryManager.getParam(URLParams.JAEGER_SERVICE_SELECTOR) || this.props.serviceSelected) {
+    if (HistoryManager.getParam(URLParam.JAEGER_SERVICE_SELECTOR) || this.props.serviceSelected) {
       this.onRequestTraces();
     }
   }

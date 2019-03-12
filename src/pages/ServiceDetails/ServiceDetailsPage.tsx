@@ -176,7 +176,7 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
               {errorTraces !== undefined &&
                 (this.props.jaegerIntegration ? (
                   <NavItem eventKey="traces">
-                    {errorTraces > -1 ? (
+                    {errorTraces > 0 ? (
                       <>
                         Error Traces{' '}
                         <span>
