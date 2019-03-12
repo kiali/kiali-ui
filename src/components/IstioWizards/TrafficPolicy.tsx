@@ -39,6 +39,14 @@ const lbStyle = style({
 const tlsIconType = 'pf';
 const tlsIconName = 'locked';
 
+const expandStyle = style({
+  $nest: {
+    ['.btn']: {
+      fontSize: '14px'
+    }
+  }
+});
+
 class TrafficPolicy extends React.Component<Props> {
   constructor(props: Props) {
     super(props);
@@ -64,6 +72,7 @@ class TrafficPolicy extends React.Component<Props> {
     ));
     return (
       <ExpandCollapse
+        className={expandStyle}
         textCollapsed="Show Advanced Options"
         textExpanded="Hide Advanced Options"
         expanded={this.props.expanded}
