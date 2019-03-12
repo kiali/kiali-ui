@@ -1,17 +1,15 @@
 import * as React from 'react';
 
-import { Component } from '../../store/Store';
+import { KialiAppState } from '../../store/Store';
 import { MTLSIconTypes } from './MTLSIcon';
 import { default as MTLSStatus, emptyDescriptor, MTLSStatuses, StatusDescriptor } from './MTLSStatus';
 import { style } from 'typestyle';
+import { meshWideMTLSStatusSelector } from '../../store/Selectors';
+import { connect } from 'react-redux';
 
 type Props = {
-  status: { [key: string]: string };
-  components: Component[];
-  warningMessages: string[];
+  status: string;
 };
-
-const statusName = 'Istio mTLS';
 
 const statusDescriptors = new Map<string, StatusDescriptor>([
   [
@@ -45,14 +43,15 @@ class MeshMTLSStatus extends React.Component<Props> {
   render() {
     return (
       <li className={this.iconStyle()}>
-        <MTLSStatus
-          status={this.props.status[statusName]}
-          statusDescriptors={statusDescriptors}
-          overlayPosition={'left'}
-        />
+        <MTLSStatus status={this.props.status} statusDescriptors={statusDescriptors} overlayPosition={'left'} />
       </li>
     );
   }
 }
 
-export default MeshMTLSStatus;
+const mapStateToProps = (state: KialiAppState) => ({
+  status: meshWideMTLSStatusSelector(state)
+});
+
+const MeshMTLSSatutsConnected = connect(mapStateToProps)(MeshMTLSStatus);
+export default MeshMTLSSatutsConnected;

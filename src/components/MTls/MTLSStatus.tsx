@@ -12,7 +12,8 @@ type Props = {
 export enum MTLSStatuses {
   ENABLED = 'MTLS_ENABLED',
   PARTIALLY = 'MTLS_PARTIALLY_ENABLED',
-  NOT_ENABLED = 'MTLS_NOT_ENABLED'
+  NOT_ENABLED = 'MTLS_NOT_ENABLED',
+  DISABLED = 'MTLS_DISABLED'
 }
 
 export type StatusDescriptor = {

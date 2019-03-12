@@ -26,7 +26,7 @@ import NamespaceInfo, { NamespaceStatus } from './NamespaceInfo';
 import OverviewStatuses from './OverviewStatuses';
 import { switchType } from './OverviewHelper';
 import { Paths } from '../../config';
-import NamespaceMTLSStatus from '../../components/MTls/NamespaceMTLSStatus';
+import { default as NamespaceMTLSStatusContainer } from '../../components/MTls/NamespaceMTLSStatus';
 
 type State = {
   namespaces: NamespaceInfo[];
@@ -256,7 +256,7 @@ class OverviewPage extends React.Component<OverviewProps, State> {
                     <Col xs={6} sm={3} md={3} key={ns.name}>
                       <Card matchHeight={true} accented={true} aggregated={true}>
                         <CardTitle>
-                          {ns.tlsStatus ? <NamespaceMTLSStatus status={ns.tlsStatus.status} /> : undefined}
+                          {ns.tlsStatus ? <NamespaceMTLSStatusContainer status={ns.tlsStatus.status} /> : undefined}
                           {ns.name}
                         </CardTitle>
                         <CardBody>
