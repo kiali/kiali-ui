@@ -6,7 +6,11 @@ toc::[]
 
 == Introduction
 
-A UI for the Kiali Istio Observability Project
+A UI for the Kiali Istio Observability Project image:https://img.shields.io/twitter/url/http/shields.io.svg?style=social["Tweet about Kiali", link="https://twitter.com/intent/tweet?text=Learn%20what%20your%20Istio-Mesh%20is%20doing.%20Visit%20https://www.kiali.io/%20and%20@kiali_project"]
+
+Kiali provides answers to the questions: _What microservices are part of my Istio service mesh and how are they connected?_
+
+image::https://raw.githubusercontent.com/kiali/kiali.io/master/static/images/features/graph-overview.png[Kiali Graph, width=480]
 
 == Technologies
 * React.js
