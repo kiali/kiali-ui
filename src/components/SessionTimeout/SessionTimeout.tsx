@@ -1,7 +1,5 @@
 import * as React from 'react';
 import { Modal, Button, Icon, Row, Col } from 'patternfly-react';
-import { config } from '../../config';
-import { UNIT_TIME, MILLISECONDS } from '../../types/Common';
 import { AuthStrategy } from '../../types/Auth';
 import { LoginSession } from '../../store/Store';
 import * as API from '../../services/Api';
@@ -23,9 +21,9 @@ export class SessionTimeout extends React.Component<SessionTimeoutProps, {}> {
   render() {
     return (
       <Modal
+        backdrop="static"
         className={'message-dialog-pf'}
         show={this.props.show}
-        onHide={this.props.onLogout}
         enforceFocus={true}
         aria-modal={true}
       >
@@ -72,15 +70,11 @@ export class SessionTimeout extends React.Component<SessionTimeoutProps, {}> {
   };
 
   private textForLoginStrategy = () => {
-    const extendedTime = config.session.extendedSessionTimeOut
-      ? config.session.extendedSessionTimeOut / (MILLISECONDS * UNIT_TIME.MINUTE)
-      : 30;
-
     return (
       <p className={'lead'}>
         Your session will timeout in {this.props.timeOutCountDown.toFixed()} seconds.
         <br />
-        Would you like to extend your session for another {extendedTime} minutes?
+        Would you like to extend your session?
       </p>
     );
   };
