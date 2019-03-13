@@ -20,7 +20,7 @@ const statusDescriptors = new Map<string, StatusDescriptor>([
     MTLSStatuses.ENABLED,
     {
       message: 'mTLS is enabled for this namespace',
-      icon: MTLSIconTypes.LOCK_FULL,
+      icon: MTLSIconTypes.LOCK_FULL_DARK,
       showStatus: true
     }
   ],
@@ -28,7 +28,7 @@ const statusDescriptors = new Map<string, StatusDescriptor>([
     MTLSStatuses.PARTIALLY,
     {
       message: 'mTLS is partially enabled for this namespace',
-      icon: MTLSIconTypes.LOCK_HOLLOW,
+      icon: MTLSIconTypes.LOCK_HOLLOW_DARK,
       showStatus: true
     }
   ],
