@@ -106,7 +106,7 @@ class IstioWizard extends React.Component<Props, State> {
         // match follows format:  headers [<header-name>] <op> <value>
         const i0 = match.indexOf('[');
         const j0 = match.indexOf(']');
-        const headerName = match.substring(i0 + 1, j0);
+        const headerName = match.substring(i0 + 1, j0).trim();
         const i1 = match.indexOf(' ', j0 + 1);
         const j1 = match.indexOf(' ', i1 + 1);
         const op = match.substring(i1 + 1, j1).trim();
