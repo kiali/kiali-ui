@@ -1,11 +1,12 @@
 import * as React from 'react';
 
 import { MTLSIconTypes } from './MTLSIcon';
-import { default as MTLSStatus, emptyDescriptor, MTLSStatuses, StatusDescriptor } from './MTLSStatus';
+import { default as MTLSStatus, emptyDescriptor, StatusDescriptor } from './MTLSStatus';
 import { style } from 'typestyle';
 import { KialiAppState } from '../../store/Store';
 import { connect } from 'react-redux';
 import { meshWideMTLSStatusSelector } from '../../store/Selectors';
+import { MTLSStatuses, nsWideMTLSStatus } from '../../types/TLSStatus';
 
 type ReduxProps = {
   meshStatus: string;
@@ -45,22 +46,10 @@ class NamespaceMTLSStatus extends React.Component<Props> {
     });
   }
 
-  status() {
-    let finalStatus = this.props.status;
-
-    // When mTLS is enabled meshwide but not disabled at ns level
-    // Then the ns has mtls enabled
-    if (this.props.meshStatus === MTLSStatuses.ENABLED && this.props.status === MTLSStatuses.NOT_ENABLED) {
-      finalStatus = MTLSStatuses.ENABLED;
-    }
-
-    return finalStatus;
-  }
-
   render() {
     return (
       <MTLSStatus
-        status={this.status()}
+        status={nsWideMTLSStatus(this.props.status, this.props.meshStatus)}
         className={this.iconStyle()}
         statusDescriptors={statusDescriptors}
         overlayPosition={'left'}

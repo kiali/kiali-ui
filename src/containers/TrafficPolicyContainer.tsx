@@ -4,7 +4,7 @@ import TrafficPolicy from '../components/IstioWizards/TrafficPolicy';
 import { meshWideMTLSStatusSelector } from '../store/Selectors';
 
 const mapStateToProps = (state: KialiAppState) => ({
-  status: meshWideMTLSStatusSelector(state)
+  meshWideStatus: meshWideMTLSStatusSelector(state)
 });
 
 const TraffiPolicyConnected = connect(mapStateToProps)(TrafficPolicy);

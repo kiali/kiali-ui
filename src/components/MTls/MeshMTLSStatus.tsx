@@ -2,10 +2,11 @@ import * as React from 'react';
 
 import { KialiAppState } from '../../store/Store';
 import { MTLSIconTypes } from './MTLSIcon';
-import { default as MTLSStatus, emptyDescriptor, MTLSStatuses, StatusDescriptor } from './MTLSStatus';
+import { default as MTLSStatus, emptyDescriptor, StatusDescriptor } from './MTLSStatus';
 import { style } from 'typestyle';
 import { meshWideMTLSStatusSelector } from '../../store/Selectors';
 import { connect } from 'react-redux';
+import { MTLSStatuses } from '../../types/TLSStatus';
 
 type Props = {
   status: string;
