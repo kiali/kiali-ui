@@ -35,7 +35,7 @@ export interface IstioConfigItem {
   quotaSpecBinding?: QuotaSpecBinding;
   policy?: Policy;
   meshPolicy?: Policy;
-  clusterRbacConfig?: RbacConfig;
+  clusterRbacConfig?: ClusterRbacConfig;
   rbacConfig?: RbacConfig;
   serviceRole?: ServiceRole;
   serviceRoleBinding?: ServiceRoleBinding;
@@ -55,7 +55,7 @@ export interface IstioConfigList {
   quotaSpecBindings: QuotaSpecBinding[];
   policies: Policy[];
   meshPolicies: Policy[];
-  clusterRbacConfigs: RbacConfig[];
+  clusterRbacConfigs: ClusterRbacConfig[];
   rbacConfigs: RbacConfig[];
   serviceRoles: ServiceRole[];
   serviceRoleBindings: ServiceRoleBinding[];

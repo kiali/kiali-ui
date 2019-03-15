@@ -17,7 +17,8 @@ import {
   ObjectValidation,
   RbacConfig,
   ServiceRole,
-  ServiceRoleBinding
+  ServiceRoleBinding,
+  ClusterRbacConfig
 } from './IstioObjects';
 
 export interface IstioConfigId {
@@ -42,7 +43,7 @@ export interface IstioConfigDetails {
   quotaSpecBinding: QuotaSpecBinding;
   policy: Policy;
   meshPolicy: Policy;
-  clusterRbacConfig: RbacConfig;
+  clusterRbacConfig: ClusterRbacConfig;
   rbacConfig: RbacConfig;
   serviceRole: ServiceRole;
   serviceRoleBinding: ServiceRoleBinding;
