@@ -14,7 +14,7 @@ import {
   VirtualService,
   VirtualServices,
   Validations,
-  ClusterRbacConfig,
+  RbacConfig,
   ServiceRole,
   ServiceRoleBinding
 } from './IstioObjects';
@@ -35,7 +35,8 @@ export interface IstioConfigItem {
   quotaSpecBinding?: QuotaSpecBinding;
   policy?: Policy;
   meshPolicy?: Policy;
-  clusterRbacConfig?: ClusterRbacConfig;
+  clusterRbacConfig?: RbacConfig;
+  rbacConfig?: RbacConfig;
   serviceRole?: ServiceRole;
   serviceRoleBinding?: ServiceRoleBinding;
   validation?: ObjectValidation;
@@ -54,7 +55,8 @@ export interface IstioConfigList {
   quotaSpecBindings: QuotaSpecBinding[];
   policies: Policy[];
   meshPolicies: Policy[];
-  clusterRbacConfigs: ClusterRbacConfig[];
+  clusterRbacConfigs: RbacConfig[];
+  rbacConfigs: RbacConfig[];
   serviceRoles: ServiceRole[];
   serviceRoleBindings: ServiceRoleBinding[];
   permissions: { [key: string]: ResourcePermissions };
@@ -82,6 +84,7 @@ export const dicIstioType = {
   Policy: 'policies',
   MeshPolicy: 'meshpolicies',
   ClusterRbacConfig: 'clusterrbacconfigs',
+  RbacConfig: 'rbacconfigs',
   ServiceRole: 'serviceroles',
   ServiceRoleBinding: 'servicerolebindings',
   gateways: 'Gateway',
@@ -98,6 +101,7 @@ export const dicIstioType = {
   policies: 'Policy',
   meshpolicies: 'MeshPolicy',
   clusterrbacconfigs: 'ClusterRbacConfig',
+  rbacconfigs: 'RbacConfig',
   serviceroles: 'ServiceRole',
   servicerolebindings: 'ServiceRoleBinding'
 };
@@ -135,6 +139,7 @@ export const filterByName = (unfiltered: IstioConfigList, names: string[]): Isti
     policies: unfiltered.policies.filter(p => includeName(p.metadata.name, names)),
     meshPolicies: unfiltered.meshPolicies.filter(p => includeName(p.metadata.name, names)),
     clusterRbacConfigs: unfiltered.clusterRbacConfigs.filter(rc => includeName(rc.metadata.name, names)),
+    rbacConfigs: unfiltered.rbacConfigs.filter(rc => includeName(rc.metadata.name, names)),
     serviceRoles: unfiltered.serviceRoles.filter(sr => includeName(sr.metadata.name, names)),
     serviceRoleBindings: unfiltered.serviceRoleBindings.filter(srb => includeName(srb.metadata.name, names)),
     validations: unfiltered.validations,
@@ -276,6 +281,14 @@ export const toIstioItems = (istioConfigList: IstioConfigList): IstioConfigItem[
       type: 'clusterrbacconfig',
       name: rc.metadata.name,
       clusterRbacConfig: rc
+    })
+  );
+  istioConfigList.rbacConfigs.forEach(rc =>
+    istioItems.push({
+      namespace: istioConfigList.namespace.name,
+      type: 'rbacconfig',
+      name: rc.metadata.name,
+      rbacConfig: rc
     })
   );
   istioConfigList.serviceRoles.forEach(sr =>

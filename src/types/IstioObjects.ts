@@ -607,11 +607,11 @@ export interface Policy extends IstioObject {
   spec: PolicySpec;
 }
 
-export interface ClusterRbacConfig extends IstioObject {
-  spec: ClusterRbacConfigSpec;
+export interface RbacConfig extends IstioObject {
+  spec: RbacConfigSpec;
 }
 
-export interface ClusterRbacConfigSpec {
+export interface RbacConfigSpec {
   mode?: string;
   inclusion?: RbacConfigTarget;
   exclusion?: RbacConfigTarget;
