@@ -16,7 +16,8 @@ import {
   Validations,
   RbacConfig,
   ServiceRole,
-  ServiceRoleBinding
+  ServiceRoleBinding,
+  ClusterRbacConfig
 } from './IstioObjects';
 import { ResourcePermissions } from './Permissions';
 
