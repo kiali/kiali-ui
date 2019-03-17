@@ -34,20 +34,12 @@ export class ResponseTable extends React.PureComponent<ResponseTableProps> {
   }
 
   render() {
-    const TableRow = ({ row }) => (
-      <tr>
-        <td>{row.code}</td>
-        <td title={this.getTitle(row.flags)}>{row.flags}</td>
-        <td>{row.val}</td>
-      </tr>
-    );
-
     return (
       <>
         <strong>{this.props.title}</strong>
         <table className="table">
           <thead>
-            <tr>
+            <tr key="table-header">
               <th>Code</th>
               <th>Flags</th>
               <th>% of Requests</th>
@@ -55,7 +47,11 @@ export class ResponseTable extends React.PureComponent<ResponseTableProps> {
           </thead>
           <tbody>
             {this.getRows(this.props.responses).map(row => (
-              <TableRow row={row} />
+              <tr key={row['key']}>
+                <td>{row['code']}</td>
+                <td title={this.getTitle(row['flags'])}>{row['flags']}</td>
+                <td>{row['val']}</td>
+              </tr>
             ))}
           </tbody>
         </table>
@@ -67,7 +63,7 @@ export class ResponseTable extends React.PureComponent<ResponseTableProps> {
     const rows: Object[] = [];
     Object.keys(responses).map(code => {
       Object.keys(responses[code]).map(f => {
-        rows.push({ code: code, flags: f, val: responses[code][f] });
+        rows.push({ key: `${code} ${f}`, code: code, flags: f, val: responses[code][f] });
       });
     });
     return rows;
