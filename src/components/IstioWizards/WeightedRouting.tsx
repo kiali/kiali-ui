@@ -198,6 +198,7 @@ class WeightedRouting extends React.Component<Props, State> {
                     value={workload.weight}
                     min={0}
                     max={workload.maxWeight}
+                    maxLimit={100}
                     onSlide={value => {
                       this.onWeight(workload.name, value as number);
                     }}
