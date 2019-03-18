@@ -75,7 +75,45 @@ abstract class MetricsChartBase<Props extends MetricsChartBaseProps> extends Rea
     };
   }
 
-  formatYAxis = (val: any): string => {
+  formatYAxis = (val: number): string => {
+    switch (this.props.unit) {
+      case 'bytes':
+      case 'bytes-si':
+        return this.formatDataSI(val, 'B');
+      case 'bytes-iec':
+        return this.formatDataIEC(val, 'B');
+      case 'bitrate':
+      case 'bitrate-si':
+        return this.formatDataSI(val, 'bit/s');
+      case 'bitrate-iec':
+        return this.formatDataIEC(val, 'bit/s');
+      default:
+        // Fallback to default SI scaler:
+        return this.formatSI(val);
+    }
+  };
+
+  formatDataSI = (val: number, suffix: string): string => {
+    return this.formatData(val, 1000, ['k', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y']) + suffix;
+  };
+
+  formatDataIEC = (val: number, suffix: string): string => {
+    return this.formatData(val, 1024, ['Ki', 'Mi', 'Gi', 'Ti', 'Pi', 'Ei', 'Zi', 'Yi']) + suffix;
+  };
+
+  formatData = (val: number, threshold: number, units: string[]): string => {
+    if (Math.abs(val) < threshold) {
+      return val + ' ';
+    }
+    let u = -1;
+    do {
+      val /= threshold;
+      ++u;
+    } while (Math.abs(val) >= threshold && u < units.length - 1);
+    return val.toFixed(1) + ' ' + units[u];
+  };
+
+  formatSI = (val: number): string => {
     const fmt = format('~s')(val);
     let si = '';
     // Insert space before SI
