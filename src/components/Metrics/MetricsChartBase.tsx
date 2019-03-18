@@ -77,6 +77,8 @@ abstract class MetricsChartBase<Props extends MetricsChartBaseProps> extends Rea
 
   formatYAxis = (val: number): string => {
     switch (this.props.unit) {
+      case 'seconds':
+        return this.formatSI(val, 's');
       case 'bytes':
       case 'bytes-si':
         return this.formatDataSI(val, 'B');
@@ -89,7 +91,7 @@ abstract class MetricsChartBase<Props extends MetricsChartBaseProps> extends Rea
         return this.formatDataIEC(val, 'bit/s');
       default:
         // Fallback to default SI scaler:
-        return this.formatSI(val);
+        return this.formatDataSI(val, this.props.unit);
     }
   };
 
@@ -113,7 +115,7 @@ abstract class MetricsChartBase<Props extends MetricsChartBaseProps> extends Rea
     return val.toFixed(1) + ' ' + units[u];
   };
 
-  formatSI = (val: number): string => {
+  formatSI = (val: number, suffix: string): string => {
     const fmt = format('~s')(val);
     let si = '';
     // Insert space before SI
@@ -123,12 +125,12 @@ abstract class MetricsChartBase<Props extends MetricsChartBaseProps> extends Rea
     for (let i = fmt.length - 1; i >= 0; i--) {
       const c = fmt.charAt(i);
       if (c >= '0' && c <= '9') {
-        return fmt.substr(0, i + 1) + ' ' + si + this.props.unit;
+        return fmt.substr(0, i + 1) + ' ' + si + suffix;
       }
       si = c + si;
     }
     // Weird: no number found?
-    return fmt + this.props.unit;
+    return fmt + suffix;
   };
 
   protected onExpandHandler = (event: React.MouseEvent<HTMLAnchorElement>) => {
