@@ -154,13 +154,17 @@ class IstioWizardDropdown extends React.Component<Props, State> {
     let deleteMessage = 'Are you sure you want to delete ';
     deleteMessage +=
       this.props.virtualServices.items.length > 0
-        ? `VirtualServices: '${this.props.virtualServices.items.map(vs => vs.metadata.name)}'`
+        ? `VirtualService${
+            this.props.virtualServices.items.length > 1 ? 's' : ''
+          }: '${this.props.virtualServices.items.map(vs => vs.metadata.name)}'`
         : '';
     deleteMessage +=
       this.props.virtualServices.items.length > 0 && this.props.destinationRules.items.length > 0 ? ' and ' : '';
     deleteMessage +=
       this.props.destinationRules.items.length > 0
-        ? `DestinationRules : '${this.props.destinationRules.items.map(dr => dr.metadata.name)}'`
+        ? `DestinationRule${
+            this.props.destinationRules.items.length > 1 ? 's' : ''
+          }: '${this.props.destinationRules.items.map(dr => dr.metadata.name)}'`
         : '';
     deleteMessage += ' ?.  ';
     return (
