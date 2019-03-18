@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { DropdownButton, MenuItem, MessageDialog } from 'patternfly-react';
+import { DropdownButton, MenuItem, MessageDialog, OverlayTrigger, Tooltip } from 'patternfly-react';
 import IstioWizard, { WIZARD_MATCHING_ROUTING, WIZARD_TITLES, WIZARD_WEIGHTED_ROUTING } from './IstioWizard';
 import { WorkloadOverview } from '../../types/ServiceInfo';
 import { DestinationRules, VirtualServices } from '../../types/IstioObjects';
@@ -36,20 +36,15 @@ class IstioWizardDropdown extends React.Component<Props, State> {
 
   // Wizard can be opened when there are not existing VS & DR and there are update permissions
   canCreate = () => {
-    return (
-      this.props.virtualServices.permissions.create &&
-      this.props.destinationRules.permissions.create &&
-      this.props.virtualServices.items.length === 0 &&
-      this.props.destinationRules.items.length === 0
-    );
+    return this.props.virtualServices.permissions.create && this.props.destinationRules.permissions.create;
   };
 
   canDelete = () => {
-    return (
-      this.props.virtualServices.permissions.delete &&
-      this.props.destinationRules.permissions.delete &&
-      (this.props.virtualServices.items.length > 0 || this.props.destinationRules.items.length > 0)
-    );
+    return this.props.virtualServices.permissions.delete && this.props.destinationRules.permissions.delete;
+  };
+
+  hasTrafficRouting = () => {
+    return this.props.virtualServices.items.length > 0 || this.props.destinationRules.items.length > 0;
   };
 
   onAction = (key: string) => {
@@ -111,6 +106,50 @@ class IstioWizardDropdown extends React.Component<Props, State> {
     }
   };
 
+  renderMenuItem = (eventKey: string) => {
+    switch (eventKey) {
+      case WIZARD_WEIGHTED_ROUTING:
+      case WIZARD_MATCHING_ROUTING:
+        const menuItem = (
+          <MenuItem disabled={this.hasTrafficRouting()} key={eventKey} eventKey={eventKey}>
+            {WIZARD_TITLES[eventKey]}
+          </MenuItem>
+        );
+        return this.hasTrafficRouting() ? (
+          <OverlayTrigger
+            placement={'left'}
+            overlay={<Tooltip id={'mtls-status-masthead'}>Traffic routing already exists for this service</Tooltip>}
+            trigger={['hover', 'focus']}
+            rootClose={false}
+          >
+            {menuItem}
+          </OverlayTrigger>
+        ) : (
+          menuItem
+        );
+      case DELETE_TRAFFIC_ROUTING:
+        const deleteMenuItem = (
+          <MenuItem disabled={!this.hasTrafficRouting() || this.state.isDeleting} key={eventKey} eventKey={eventKey}>
+            Delete ALL Traffic Routing
+          </MenuItem>
+        );
+        return !this.hasTrafficRouting() ? (
+          <OverlayTrigger
+            placement={'left'}
+            overlay={<Tooltip id={'mtls-status-masthead'}>Traffic routing doesn't exist for this service</Tooltip>}
+            trigger={['hover', 'focus']}
+            rootClose={false}
+          >
+            {deleteMenuItem}
+          </OverlayTrigger>
+        ) : (
+          deleteMenuItem
+        );
+      default:
+        return <>Unsupported</>;
+    }
+  };
+
   render() {
     let deleteMessage = 'Are you sure you want to delete ';
     deleteMessage +=
@@ -127,20 +166,10 @@ class IstioWizardDropdown extends React.Component<Props, State> {
     return (
       <>
         <DropdownButton id="service_actions" title="Actions" onSelect={this.onAction} pullRight={true}>
-          <MenuItem disabled={!this.canCreate()} key={WIZARD_WEIGHTED_ROUTING} eventKey={WIZARD_WEIGHTED_ROUTING}>
-            {WIZARD_TITLES[WIZARD_WEIGHTED_ROUTING]}
-          </MenuItem>
-          <MenuItem disabled={!this.canCreate()} key={WIZARD_MATCHING_ROUTING} eventKey={WIZARD_MATCHING_ROUTING}>
-            {WIZARD_TITLES[WIZARD_MATCHING_ROUTING]}
-          </MenuItem>
+          {this.canCreate() && this.renderMenuItem(WIZARD_WEIGHTED_ROUTING)}
+          {this.canCreate() && this.renderMenuItem(WIZARD_MATCHING_ROUTING)}
           <MenuItem divider={true} />
-          <MenuItem
-            disabled={!this.canDelete() || this.state.isDeleting}
-            key={DELETE_TRAFFIC_ROUTING}
-            eventKey={DELETE_TRAFFIC_ROUTING}
-          >
-            Delete ALL Traffic Routing
-          </MenuItem>
+          {this.canDelete() && this.renderMenuItem(DELETE_TRAFFIC_ROUTING)}
         </DropdownButton>
         <IstioWizard
           show={this.state.showWizard}
