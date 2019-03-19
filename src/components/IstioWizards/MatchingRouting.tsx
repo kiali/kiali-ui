@@ -5,6 +5,7 @@ import {
   DropdownKebab,
   Form,
   FormControl,
+  FormGroup,
   Icon,
   Label,
   ListView,
@@ -73,6 +74,7 @@ const matchStyle = style({
 });
 
 const createStyle = style({
+  marginTop: 70,
   marginLeft: 20
 });
 
@@ -269,13 +271,22 @@ class MatchingRouting extends React.Component<Props, State> {
 
   onHeaderNameChange = (event: any) => {
     this.setState({
-      headerName: event.target.value
+      headerName: event.target.value,
+      validationMsg: ''
     });
   };
 
   onMatchValueChange = (event: any) => {
+    let validationMsg = '';
+    if (this.state.category === HEADERS && this.state.headerName === '') {
+      validationMsg = 'Header name must be non empty';
+    }
+    if (event.target.value === '') {
+      validationMsg = '';
+    }
     this.setState({
-      matchValue: event.target.value
+      matchValue: event.target.value,
+      validationMsg: validationMsg
     });
   };
 
@@ -307,6 +318,10 @@ class MatchingRouting extends React.Component<Props, State> {
     return matchAll;
   };
 
+  matchBuilderValidation = (): string => {
+    return 'success';
+  };
+
   renderRuleBuilder = () => {
     return (
       <ListView>
@@ -328,7 +343,12 @@ class MatchingRouting extends React.Component<Props, State> {
           }
           // tslint:disable
           actions={
-            <Button bsStyle="primary" className={createStyle} onClick={this.onAddRule}>
+            <Button
+              bsStyle="primary"
+              className={createStyle}
+              disabled={this.state.validationMsg !== ''}
+              onClick={this.onAddRule}
+            >
               Add Rule
             </Button>
           }
@@ -350,41 +370,48 @@ class MatchingRouting extends React.Component<Props, State> {
     ));
     return (
       <Form inline={true}>
-        <DropdownButton
-          bsStyle="default"
-          title={this.state.category}
-          id="match-dropdown"
-          onSelect={this.onSelectCategory}
-        >
-          {matchItems}
-        </DropdownButton>
-        {this.state.category === HEADERS && (
+        <FormGroup validationState={this.matchBuilderValidation()}>
+          <DropdownButton
+            bsStyle="default"
+            title={this.state.category}
+            id="match-dropdown"
+            onSelect={this.onSelectCategory}
+          >
+            {matchItems}
+          </DropdownButton>
+          {this.state.category === HEADERS && (
+            <FormControl
+              type="text"
+              id="header-name-text"
+              placeholder={'Header name...'}
+              value={this.state.headerName}
+              onChange={this.onHeaderNameChange}
+            />
+          )}
+          <DropdownButton
+            bsStyle="default"
+            title={this.state.operator}
+            id="operator-dropdown"
+            onSelect={this.onSelectOperator}
+          >
+            {opItems}
+          </DropdownButton>
           <FormControl
             type="text"
-            id="header-name-text"
-            placeholder={'Header name...'}
-            value={this.state.headerName}
-            onChange={this.onHeaderNameChange}
+            id="header-value-text"
+            placeholder={placeholderText[this.state.category]}
+            value={this.state.matchValue}
+            onChange={this.onMatchValueChange}
           />
-        )}
-        <DropdownButton
-          bsStyle="default"
-          title={this.state.operator}
-          id="operator-dropdown"
-          onSelect={this.onSelectOperator}
-        >
-          {opItems}
-        </DropdownButton>
-        <FormControl
-          type="text"
-          id="header-value-text"
-          placeholder={placeholderText[this.state.category]}
-          value={this.state.matchValue}
-          onChange={this.onMatchValueChange}
-        />
-        <Button bsStyle="default" className={matchStyle} onClick={this.onAddMatch}>
-          Add Match
-        </Button>
+          <Button
+            bsStyle="default"
+            className={matchStyle}
+            disabled={this.state.validationMsg !== ''}
+            onClick={this.onAddMatch}
+          >
+            Add Match
+          </Button>
+        </FormGroup>
       </Form>
     );
   };
