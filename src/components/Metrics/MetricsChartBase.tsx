@@ -76,6 +76,8 @@ abstract class MetricsChartBase<Props extends MetricsChartBaseProps> extends Rea
   }
 
   formatYAxis = (val: number): string => {
+    // Round to dismiss float imprecision
+    val = Math.round(val * 10000) / 10000;
     switch (this.props.unit) {
       case 'seconds':
         return this.formatSI(val, 's');
@@ -112,7 +114,7 @@ abstract class MetricsChartBase<Props extends MetricsChartBaseProps> extends Rea
       val /= threshold;
       ++u;
     } while (Math.abs(val) >= threshold && u < units.length - 1);
-    return val.toFixed(1) + ' ' + units[u];
+    return format('~r')(val) + ' ' + units[u];
   };
 
   formatSI = (val: number, suffix: string): string => {
