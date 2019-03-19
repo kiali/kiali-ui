@@ -6,7 +6,6 @@ import {
   Form,
   FormControl,
   FormGroup,
-  Icon,
   Label,
   ListView,
   ListViewIcon,
@@ -97,6 +96,22 @@ const validationStyle = style({
   color: PfColors.Red100
 });
 
+const ruleItemStyle = style({
+  $nest: {
+    ['.list-group-item-heading']: {
+      flexBasis: 'calc(50% - 20px)',
+      width: 'calc(50% - 20px)'
+    }
+  }
+});
+
+const matchValueStyle = style({
+  fontWeight: 300,
+  whiteSpace: 'nowrap',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis'
+});
+
 enum MOVE_TYPE {
   UP,
   DOWN
@@ -110,9 +125,6 @@ const svcIconName = 'service';
 
 const wkIconType = 'pf';
 const wkIconName = 'bundle';
-
-const valIconType = 'pf';
-const valIconName = 'error-circle-o';
 
 class MatchingRouting extends React.Component<Props, State> {
   constructor(props: Props) {
@@ -319,7 +331,7 @@ class MatchingRouting extends React.Component<Props, State> {
   };
 
   matchBuilderValidation = (): string => {
-    return 'success';
+    return this.state.validationMsg === '' ? 'success' : 'error';
   };
 
   renderRuleBuilder = () => {
@@ -468,7 +480,11 @@ class MatchingRouting extends React.Component<Props, State> {
       const rule = this.state.rules[index];
       isValid = matchAll === -1 || index <= matchAll;
       const matches: any[] = rule.matches.map((map, index) => {
-        return <small key={'match-' + map + '-' + index}>{map}</small>;
+        return (
+          <div key={'match-' + map + '-' + index} className={matchValueStyle}>
+            {map}
+          </div>
+        );
       });
       const ruleActions = (
         <div>
@@ -486,11 +502,12 @@ class MatchingRouting extends React.Component<Props, State> {
       ruleItems.push(
         <ListViewItem
           key={'match-rule-' + index}
+          className={ruleItemStyle}
           leftContent={<ListViewIcon type={vsIconType} name={vsIconName} />}
           heading={
             <div>
               Matches:
-              {rule.matches.length === 0 && <small>Any request</small>}
+              {rule.matches.length === 0 && <div className={matchValueStyle}>Any request</div>}
               {rule.matches.length !== 0 && matches}
             </div>
           }
@@ -508,8 +525,9 @@ class MatchingRouting extends React.Component<Props, State> {
               </div>
               {!isValid && (
                 <div className={validationStyle}>
-                  <Icon type={valIconType} name={valIconName} /> Match 'Any request' is defined in a previous rule. This
-                  rule is not accessible.
+                  Match 'Any request' is defined in a previous rule.
+                  <br />
+                  This rule is not accessible.
                 </div>
               )}
             </div>
