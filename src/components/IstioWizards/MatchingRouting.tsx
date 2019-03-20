@@ -106,7 +106,7 @@ const ruleItemStyle = style({
 });
 
 const matchValueStyle = style({
-  fontWeight: 300,
+  fontWeight: 'normal',
   whiteSpace: 'nowrap',
   overflow: 'hidden',
   textOverflow: 'ellipsis'
