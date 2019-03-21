@@ -20,7 +20,8 @@ import {
   edgeLabelModeSelector,
   refreshIntervalSelector,
   graphTypeSelector,
-  graphDataSelector
+  graphDataSelector,
+  meshWideMTLSEnabledSelector
 } from '../../store/Selectors';
 import {
   CytoscapeBaseEvent,
@@ -55,6 +56,7 @@ type ReduxProps = {
   layout: Layout;
   node?: NodeParamsType;
   refreshInterval: PollIntervalInMs;
+  mtlsEnabled: boolean;
   showCircuitBreakers: boolean;
   showMissingSidecars: boolean;
   showNodeLabels: boolean;
@@ -370,6 +372,7 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
       activeNamespaces: this.props.activeNamespaces,
       edgeLabelMode: this.props.edgeLabelMode,
       graphType: this.props.graphType,
+      mtlsEnabled: this.props.mtlsEnabled,
       showCircuitBreakers: this.props.showCircuitBreakers,
       showMissingSidecars: this.props.showMissingSidecars,
       showSecurity: this.props.showSecurity,
@@ -670,6 +673,7 @@ const mapStateToProps = (state: KialiAppState) => ({
   layout: state.graph.layout,
   node: state.graph.node,
   refreshInterval: refreshIntervalSelector(state),
+  mtlsEnabled: meshWideMTLSEnabledSelector(state),
   showCircuitBreakers: state.graph.filterState.showCircuitBreakers,
   showMissingSidecars: state.graph.filterState.showMissingSidecars,
   showNodeLabels: state.graph.filterState.showNodeLabels,
