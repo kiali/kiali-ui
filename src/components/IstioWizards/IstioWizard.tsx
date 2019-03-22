@@ -242,11 +242,11 @@ class IstioWizard extends React.Component<Props, State> {
             const suspendedRoute = this.state.suspendedRoutes[i];
             const destW: DestinationWeight = {
               destination: {
-                host: this.props.serviceName
+                host: this.props.serviceName,
+                subset: wkdNameVersion[suspendedRoute.workload]
               }
             };
             if (suspendedRoute.suspended) {
-              destW.destination.subset = wkdNameVersion[suspendedRoute.workload];
               // A suspended route has a 0 weight
               destW.weight = 0;
             } else {
