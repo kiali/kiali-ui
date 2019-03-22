@@ -23,11 +23,11 @@ import { PromisesRegistry } from '../../utils/CancelablePromises';
 import { FiltersAndSorts } from './FiltersAndSorts';
 import OverviewToolbarContainer, { OverviewToolbar, OverviewType, OverviewDisplayMode } from './OverviewToolbar';
 import NamespaceInfo, { NamespaceStatus } from './NamespaceInfo';
-import OverviewStatuses from './OverviewStatuses';
+import OverviewCardContent from './OverviewCardContent';
 import { switchType } from './OverviewHelper';
 import { Paths } from '../../config';
 import { default as NamespaceMTLSStatusContainer } from '../../components/MTls/NamespaceMTLSStatus';
-import OverviewStatusesExpanded from './OverviewStatusesExpanded';
+import OverviewCardContentExpanded from './OverviewCardContentExpanded';
 import { MetricsOptions } from '../../types/MetricsOptions';
 import { computePrometheusRateParams } from '../../services/Prometheus';
 
@@ -118,7 +118,8 @@ class OverviewPage extends React.Component<OverviewProps, State> {
             return {
               name: ns.name,
               status: previous ? previous.status : undefined,
-              tlsStatus: previous ? previous.tlsStatus : undefined
+              tlsStatus: previous ? previous.tlsStatus : undefined,
+              metrics: previous ? previous.metrics : undefined
             };
           });
         const isAscending = ListPagesHelper.isCurrentSortAscending();
@@ -348,18 +349,15 @@ class OverviewPage extends React.Component<OverviewProps, State> {
   renderStatuses(ns: NamespaceInfo): JSX.Element {
     if (ns.status) {
       if (this.state.displayMode === OverviewDisplayMode.COMPACT) {
-        return (
-          <OverviewStatuses key={ns.name} name={ns.name} status={ns.status} type={this.state.type} tlsStatus={true} />
-        );
+        return <OverviewCardContent key={ns.name} name={ns.name} status={ns.status} type={this.state.type} />;
       }
       return (
-        <OverviewStatusesExpanded
+        <OverviewCardContentExpanded
           key={ns.name}
           name={ns.name}
           duration={ListPagesHelper.currentDuration()}
           status={ns.status}
           type={this.state.type}
-          tlsStatus={true}
           metrics={ns.metrics}
         />
       );

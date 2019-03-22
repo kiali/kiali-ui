@@ -22,11 +22,10 @@ type Props = {
   type: OverviewType;
   duration: DurationInSeconds;
   status: NamespaceStatus;
-  tlsStatus: boolean;
   metrics?: TimeSeries[];
 };
 
-class OverviewStatusesExpanded extends React.Component<Props> {
+class OverviewCardContentExpanded extends React.Component<Props> {
   constructor(props: Props) {
     super(props);
   }
@@ -98,7 +97,7 @@ class OverviewStatusesExpanded extends React.Component<Props> {
           bar={{ width: 20 }}
           legend={{ hide: true }}
         />
-        <AggregateStatusNotifications style={{ marginTop: -30 }}>
+        <AggregateStatusNotifications style={{ marginTop: -20, position: 'relative' }}>
           {status.inError.length > 0 && (
             <OverviewStatus
               id={name + '-failure'}
@@ -152,4 +151,4 @@ class OverviewStatusesExpanded extends React.Component<Props> {
   }
 }
 
-export default OverviewStatusesExpanded;
+export default OverviewCardContentExpanded;
