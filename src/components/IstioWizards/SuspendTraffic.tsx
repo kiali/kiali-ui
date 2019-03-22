@@ -136,7 +136,7 @@ class SuspendTraffic extends React.Component<Props, State> {
                   <Row>
                     <Col xs={12} sm={12} md={4} lg={4} />
                     <Col xs={12} sm={12} md={2} lg={2}>
-                      {route.suspended ? 'Suspended' : 'Open'}
+                      {route.suspended ? 'Suspended' : 'Connected'}
                     </Col>
                     <Col xs={12} sm={12} md={2} lg={2}>
                       <Button bsSize="xsmall" onClick={() => this.updateRoute(route.workload, !route.suspended)}>
@@ -153,7 +153,7 @@ class SuspendTraffic extends React.Component<Props, State> {
         {this.props.workloads.length > 1 && (
           <div className={evenlyButtonStyle}>
             <Button className={allButtonStyle} onClick={() => this.resetState()}>
-              Open All
+              Connect All
             </Button>
             <Button className={allButtonStyle} onClick={() => this.suspendAll()}>
               Suspend All
