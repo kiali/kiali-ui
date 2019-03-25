@@ -77,6 +77,7 @@ class RuleBuilder extends React.Component<Props> {
                   clearButton={true}
                   placeholder="Select workloads"
                   labelKey="workloadName"
+                  defaultSelected={this.props.routes}
                   options={this.props.workloads.map(wk => wk.name)}
                   onChange={(r: string[]) => this.props.onSelectRoutes(r)}
                 />

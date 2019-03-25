@@ -27,7 +27,7 @@ class MatchingRouting extends React.Component<Props, State> {
     this.state = {
       category: HEADERS,
       operator: EXACT,
-      routes: [],
+      routes: this.props.workloads.filter((_, i) => i === 0).map(w => w.name),
       matches: [],
       headerName: '',
       matchValue: '',
@@ -146,6 +146,17 @@ class MatchingRouting extends React.Component<Props, State> {
     );
   };
 
+  onHeaderNameChange = (event: any) => {
+    let validationMsg = '';
+    if (this.state.matchValue !== '' && event.target.value === '') {
+      validationMsg = 'Header name must be non empty';
+    }
+    this.setState({
+      headerName: event.target.value,
+      validationMsg: validationMsg
+    });
+  };
+
   onMatchValueChange = (event: any) => {
     let validationMsg = '';
     if (this.state.category === HEADERS && this.state.headerName === '') {
@@ -156,6 +167,17 @@ class MatchingRouting extends React.Component<Props, State> {
     }
     this.setState({
       matchValue: event.target.value,
+      validationMsg: validationMsg
+    });
+  };
+
+  onSelectRoutes = (routes: string[]) => {
+    let validationMsg = '';
+    if (routes.length === 0) {
+      validationMsg = 'Routes must be non empty';
+    }
+    this.setState({
+      routes: routes,
       validationMsg: validationMsg
     });
   };
@@ -198,7 +220,7 @@ class MatchingRouting extends React.Component<Props, State> {
           matchValue={this.state.matchValue}
           isValid={this.state.validationMsg === ''}
           onSelectCategory={(category: string) => this.setState({ category: category })}
-          onHeaderNameChange={(event: any) => this.setState({ headerName: event.target.value, validationMsg: '' })}
+          onHeaderNameChange={this.onHeaderNameChange}
           onSelectOperator={(operator: string) => this.setState({ operator: operator })}
           onMatchValueChange={this.onMatchValueChange}
           onAddMatch={this.onAddMatch}
@@ -206,7 +228,7 @@ class MatchingRouting extends React.Component<Props, State> {
           onRemoveMatch={this.onRemoveMatch}
           workloads={this.props.workloads}
           routes={this.state.routes}
-          onSelectRoutes={(routes: string[]) => this.setState({ routes: routes })}
+          onSelectRoutes={this.onSelectRoutes}
           validationMsg={this.state.validationMsg}
           onAddRule={this.onAddRule}
         />

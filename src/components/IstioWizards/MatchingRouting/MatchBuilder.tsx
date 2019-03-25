@@ -38,8 +38,7 @@ const placeholderText = {
 };
 
 const matchStyle = style({
-  marginLeft: 20,
-  marginRight: 20
+  marginLeft: 20
 });
 
 class MatchBuilder extends React.Component<Props> {
