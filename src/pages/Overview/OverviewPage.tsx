@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { Link } from 'react-router-dom';
-import { Breadcrumb, Card, CardBody, CardGrid, CardTitle, Col, Icon, Row } from 'patternfly-react';
+import { Breadcrumb, Card, CardBody, CardGrid, CardTitle, Col, Row } from 'patternfly-react';
 import { style } from 'typestyle';
 import { AxiosError } from 'axios';
 import _ from 'lodash';
@@ -24,12 +23,12 @@ import { FiltersAndSorts } from './FiltersAndSorts';
 import OverviewToolbarContainer, { OverviewToolbar, OverviewType, OverviewDisplayMode } from './OverviewToolbar';
 import NamespaceInfo, { NamespaceStatus } from './NamespaceInfo';
 import OverviewCardContent from './OverviewCardContent';
-import { switchType } from './OverviewHelper';
-import { Paths } from '../../config';
+import { summarizeHealthFilters, switchType } from './OverviewHelper';
 import { default as NamespaceMTLSStatusContainer } from '../../components/MTls/NamespaceMTLSStatus';
 import OverviewCardContentExpanded from './OverviewCardContentExpanded';
 import { MetricsOptions } from '../../types/MetricsOptions';
 import { computePrometheusRateParams } from '../../services/Prometheus';
+import OverviewCardLinks from './OverviewCardLinks';
 
 type State = {
   namespaces: NamespaceInfo[];
@@ -37,52 +36,13 @@ type State = {
   displayMode: OverviewDisplayMode;
 };
 
-type OverviewProps = {};
+const cardGridStyle = style({ width: '100%' });
 
-const cardGridStyle = style({
-  width: '100%'
-});
-
-class OverviewPage extends React.Component<OverviewProps, State> {
+class OverviewPage extends React.Component<{}, State> {
   private promises = new PromisesRegistry();
   private displayModeSet = false;
 
-  private static summarizeHealthFilters() {
-    const healthFilters = FilterSelected.getSelected().filter(f => f.category === FiltersAndSorts.healthFilter.title);
-    if (healthFilters.length === 0) {
-      return {
-        noFilter: true,
-        showInError: true,
-        showInWarning: true,
-        showInSuccess: true
-      };
-    }
-    let showInError = false,
-      showInWarning = false,
-      showInSuccess = false;
-    healthFilters.forEach(f => {
-      switch (f.value) {
-        case FAILURE.name:
-          showInError = true;
-          break;
-        case DEGRADED.name:
-          showInWarning = true;
-          break;
-        case HEALTHY.name:
-          showInSuccess = true;
-          break;
-        default:
-      }
-    });
-    return {
-      noFilter: false,
-      showInError: showInError,
-      showInWarning: showInWarning,
-      showInSuccess: showInSuccess
-    };
-  }
-
-  constructor(props: OverviewProps) {
+  constructor(props: {}) {
     super(props);
     this.state = {
       namespaces: [],
@@ -141,7 +101,7 @@ class OverviewPage extends React.Component<OverviewProps, State> {
             this.fetchHealth(isAscending, sortField, type);
             this.fetchTLS(isAscending, sortField);
             if (displayMode === OverviewDisplayMode.EXPAND) {
-              this.fetchMetrics(type);
+              this.fetchMetrics();
             }
           }
         );
@@ -210,7 +170,7 @@ class OverviewPage extends React.Component<OverviewProps, State> {
       .catch(err => this.handleAxiosError('Could not fetch health', err));
   }
 
-  fetchMetrics(type: OverviewType) {
+  fetchMetrics() {
     const duration = ListPagesHelper.currentDuration();
     // debounce async for back-pressure, ten by ten
     _.chunk(this.state.namespaces, 10).forEach(chunk => {
@@ -291,12 +251,12 @@ class OverviewPage extends React.Component<OverviewProps, State> {
     this.setState({ displayMode: mode });
     if (mode === OverviewDisplayMode.EXPAND) {
       // Load metrics
-      this.fetchMetrics(this.state.type);
+      this.fetchMetrics();
     }
   };
 
   render() {
-    const { showInError, showInWarning, showInSuccess, noFilter } = OverviewPage.summarizeHealthFilters();
+    const { showInError, showInWarning, showInSuccess, noFilter } = summarizeHealthFilters();
     const [xs, sm, md] = this.state.displayMode === OverviewDisplayMode.COMPACT ? [6, 3, 3] : [12, 6, 4];
     return (
       <>
@@ -333,7 +293,7 @@ class OverviewPage extends React.Component<OverviewProps, State> {
                         </CardTitle>
                         <CardBody>
                           {this.renderStatuses(ns)}
-                          {this.renderCardLinks(ns)}
+                          <OverviewCardLinks name={ns.name} />
                         </CardBody>
                       </Card>
                     </Col>
@@ -363,28 +323,6 @@ class OverviewPage extends React.Component<OverviewProps, State> {
       );
     }
     return <div style={{ height: 70 }} />;
-  }
-
-  renderCardLinks(ns: NamespaceInfo): JSX.Element {
-    return (
-      <div>
-        <Link to={`/graph/namespaces?namespaces=` + ns.name} title="Graph">
-          <Icon type="pf" name="topology" style={{ paddingLeft: 10, paddingRight: 10 }} />
-        </Link>
-        <Link to={`/${Paths.APPLICATIONS}?namespaces=` + ns.name} title="Applications list">
-          <Icon type="pf" name="applications" style={{ paddingLeft: 10, paddingRight: 10 }} />
-        </Link>
-        <Link to={`/${Paths.WORKLOADS}?namespaces=` + ns.name} title="Workloads list">
-          <Icon type="pf" name="bundle" style={{ paddingLeft: 10, paddingRight: 10 }} />
-        </Link>
-        <Link to={`/${Paths.SERVICES}?namespaces=` + ns.name} title="Services list">
-          <Icon type="pf" name="service" style={{ paddingLeft: 10, paddingRight: 10 }} />
-        </Link>
-        <Link to={`/${Paths.ISTIO}?namespaces=` + ns.name} title="Istio Config list">
-          <Icon type="pf" name="template" style={{ paddingLeft: 10, paddingRight: 10 }} />
-        </Link>
-      </div>
-    );
   }
 }
 
