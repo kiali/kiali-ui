@@ -85,7 +85,7 @@ class Rules extends React.Component<Props> {
         );
       });
       const ruleActions = (
-        <div>
+        <>
           <Button onClick={() => this.props.onRemoveRule(index)}>Remove</Button>
           {this.props.rules.length > 1 && (
             <DropdownKebab key={'move-rule-actions-' + index} id={'move-rule-actions-' + index} pullRight={true}>
@@ -95,7 +95,7 @@ class Rules extends React.Component<Props> {
               )}
             </DropdownKebab>
           )}
-        </div>
+        </>
       );
       ruleItems.push(
         <ListViewItem
@@ -103,14 +103,14 @@ class Rules extends React.Component<Props> {
           className={ruleItemStyle}
           leftContent={<ListViewIcon type={vsIconType} name={vsIconName} />}
           heading={
-            <div>
+            <>
               Matches:
               {rule.matches.length === 0 && <div className={matchValueStyle}>Any request</div>}
               {rule.matches.length !== 0 && matches}
-            </div>
+            </>
           }
           description={
-            <div>
+            <>
               <b>Route to:</b>
               {rule.routes.map(route => (
                 <div key={'route-to-' + route}>
@@ -127,16 +127,16 @@ class Rules extends React.Component<Props> {
                   This rule is not accessible.
                 </div>
               )}
-            </div>
+            </>
           }
           actions={ruleActions}
         />
       );
     }
     return (
-      <div>
+      <>
         <ListView>{ruleItems}</ListView>
-      </div>
+      </>
     );
   }
 }

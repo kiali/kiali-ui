@@ -63,12 +63,12 @@ class RuleBuilder extends React.Component<Props> {
         <ListViewItem
           key={'match-builder'}
           description={
-            <div>
-              <div>
+            <>
+              <>
                 Matches:
                 <MatchBuilder {...this.props} />
                 <Matches {...this.props} />
-              </div>
+              </>
               <div className={routeStyle}>
                 Routes:
                 <Form>
@@ -87,7 +87,7 @@ class RuleBuilder extends React.Component<Props> {
                 </Form>
               </div>
               {!this.props.isValid && <div className={validationStyle}>{this.props.validationMsg}</div>}
-            </div>
+            </>
           }
           // tslint:disable
           actions={
