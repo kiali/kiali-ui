@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, ListView, ListViewItem, TypeAheadSelect } from 'patternfly-react';
+import { Button, Form, FormGroup, ListView, ListViewItem, TypeAheadSelect } from 'patternfly-react';
 import MatchBuilder from './MatchBuilder';
 import Matches from './Matches';
 import { style } from 'typestyle';
@@ -71,16 +71,20 @@ class RuleBuilder extends React.Component<Props> {
               </div>
               <div className={routeStyle}>
                 Routes:
-                <TypeAheadSelect
-                  id="workloads-selector"
-                  multiple={true}
-                  clearButton={true}
-                  placeholder="Select workloads"
-                  labelKey="workloadName"
-                  defaultSelected={this.props.routes}
-                  options={this.props.workloads.map(wk => wk.name)}
-                  onChange={(r: string[]) => this.props.onSelectRoutes(r)}
-                />
+                <Form>
+                  <FormGroup validationState={this.props.isValid ? 'success' : 'error'}>
+                    <TypeAheadSelect
+                      id="workloads-selector"
+                      multiple={true}
+                      clearButton={true}
+                      placeholder="Select workloads"
+                      labelKey="workloadName"
+                      defaultSelected={this.props.routes}
+                      options={this.props.workloads.map(wk => wk.name)}
+                      onChange={(r: string[]) => this.props.onSelectRoutes(r)}
+                    />
+                  </FormGroup>
+                </Form>
               </div>
               {!this.props.isValid && <div className={validationStyle}>{this.props.validationMsg}</div>}
             </div>

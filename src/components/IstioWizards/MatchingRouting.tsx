@@ -21,13 +21,18 @@ type State = {
   validationMsg: string;
 };
 
+const MSG_SAME_MATCHING = 'A Rule with same matching criteria is already added.';
+const MSG_HEADER_NAME_NON_EMPTY = 'Header name must be non empty';
+const MSG_HEADER_VALUE_NON_EMPTY = 'Header value must be non empty';
+const MSG_ROUTES_NON_EMPTY = 'Routes must be non empty';
+
 class MatchingRouting extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
       category: HEADERS,
       operator: EXACT,
-      routes: this.props.workloads.filter((_, i) => i === 0).map(w => w.name),
+      routes: this.props.workloads.map(w => w.name),
       matches: [],
       headerName: '',
       matchValue: '',
@@ -118,7 +123,7 @@ class MatchingRouting extends React.Component<Props, State> {
             headerName: prevState.headerName,
             matchValue: prevState.matchValue,
             rules: prevState.rules,
-            validationMsg: 'A Rule with same matching criteria is already added.'
+            validationMsg: MSG_SAME_MATCHING
           };
         }
       },
@@ -149,7 +154,10 @@ class MatchingRouting extends React.Component<Props, State> {
   onHeaderNameChange = (event: any) => {
     let validationMsg = '';
     if (this.state.matchValue !== '' && event.target.value === '') {
-      validationMsg = 'Header name must be non empty';
+      validationMsg = MSG_HEADER_NAME_NON_EMPTY;
+    }
+    if (this.state.matchValue === '' && event.target.value !== '') {
+      validationMsg = MSG_HEADER_VALUE_NON_EMPTY;
     }
     this.setState({
       headerName: event.target.value,
@@ -159,8 +167,13 @@ class MatchingRouting extends React.Component<Props, State> {
 
   onMatchValueChange = (event: any) => {
     let validationMsg = '';
-    if (this.state.category === HEADERS && this.state.headerName === '') {
-      validationMsg = 'Header name must be non empty';
+    if (this.state.category === HEADERS) {
+      if (this.state.headerName === '' && event.target.value !== '') {
+        validationMsg = MSG_HEADER_NAME_NON_EMPTY;
+      }
+      if (this.state.headerName !== '' && event.target.value === '') {
+        validationMsg = MSG_HEADER_VALUE_NON_EMPTY;
+      }
     }
     if (event.target.value === '') {
       validationMsg = '';
@@ -174,7 +187,7 @@ class MatchingRouting extends React.Component<Props, State> {
   onSelectRoutes = (routes: string[]) => {
     let validationMsg = '';
     if (routes.length === 0) {
-      validationMsg = 'Routes must be non empty';
+      validationMsg = MSG_ROUTES_NON_EMPTY;
     }
     this.setState({
       routes: routes,

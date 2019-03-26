@@ -46,10 +46,6 @@ class MatchBuilder extends React.Component<Props> {
     super(props);
   }
 
-  matchBuilderValidation = (): string => {
-    return this.props.isValid ? 'success' : 'error';
-  };
-
   render() {
     const matchItems: any[] = matchOptions.map((mode, index) => (
       <MenuItem key={mode + '-' + index} eventKey={mode} active={mode === this.props.category}>
@@ -63,7 +59,7 @@ class MatchBuilder extends React.Component<Props> {
     ));
     return (
       <Form inline={true}>
-        <FormGroup validationState={this.matchBuilderValidation()}>
+        <FormGroup validationState={this.props.isValid ? 'success' : 'error'}>
           <DropdownButton
             bsStyle="default"
             title={this.props.category}
