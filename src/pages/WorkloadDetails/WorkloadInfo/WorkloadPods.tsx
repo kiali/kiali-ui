@@ -1,9 +1,11 @@
 import * as React from 'react';
 import { ContainerInfo, Pod, Reference, ObjectValidation } from '../../../types/IstioObjects';
-import { Col, Row, OverlayTrigger, Tooltip, Table } from 'patternfly-react';
+import { Button, Col, Icon, Row, OverlayTrigger, Tooltip, Table } from 'patternfly-react';
 import Label from '../../../components/Label/Label';
 import * as resolve from 'table-resolver';
 import { ConfigIndicator } from '../../../components/ConfigValidation/ConfigIndicator';
+import { icons } from '../../../config';
+import WorkloadPodLogs from './WorkloadPodLogs';
 
 interface PodsGroup {
   commonPrefix: string;
@@ -20,12 +22,14 @@ interface PodsGroup {
 }
 
 type WorkloadPodsProps = {
+  namespace: string;
   pods: Pod[];
   validations: { [key: string]: ObjectValidation };
 };
 
 type WorkloadPodsState = {
   groups: PodsGroup[];
+  logsDialogPodName: string | undefined;
 };
 
 class WorkloadPods extends React.Component<WorkloadPodsProps, WorkloadPodsState> {
@@ -116,7 +120,8 @@ class WorkloadPods extends React.Component<WorkloadPodsProps, WorkloadPodsState>
   constructor(props: WorkloadPodsProps) {
     super(props);
     this.state = {
-      groups: WorkloadPods.updateGroups(props)
+      groups: WorkloadPods.updateGroups(props),
+      logsDialogPodName: undefined
     };
   }
 
@@ -246,6 +251,19 @@ class WorkloadPods extends React.Component<WorkloadPodsProps, WorkloadPodsState>
           cell: {
             formatters: [this.cellFormat]
           }
+        },
+        {
+          property: 'logs',
+          header: {
+            label: 'Logs',
+            formatters: [this.headerFormat]
+          },
+          cell: {
+            formatters: [this.cellFormat],
+            props: {
+              align: 'text-center'
+            }
+          }
         }
       ]
     };
@@ -268,7 +286,22 @@ class WorkloadPods extends React.Component<WorkloadPodsProps, WorkloadPodsState>
           ? group.istioInitContainers.map(c => `${c.image}`).join(', ')
           : '',
         istioContainers: group.istioContainers ? group.istioContainers.map(c => `${c.image}`).join(', ') : '',
-        podStatus: group.status
+        podStatus: group.status,
+        logs: (
+          <OverlayTrigger
+            key={`${vsIdx}-pod-logs`}
+            placement="top"
+            overlay={<Tooltip id={'graph-find-help-tt'}>Pod logs dialog...</Tooltip>}
+          >
+            <Button
+              bsStyle="link"
+              style={{ paddingLeft: '6px' }}
+              onClick={() => this.openLogsDialog(group.commonPrefix)}
+            >
+              <Icon name="catalog" type="pf" />
+            </Button>
+          </OverlayTrigger>
+        )
       };
 
       return generateRows;
@@ -277,22 +310,41 @@ class WorkloadPods extends React.Component<WorkloadPodsProps, WorkloadPodsState>
 
   render() {
     return (
-      <Row className="card-pf-body">
-        <Col xs={12}>
-          <Table.PfProvider
-            columns={this.columns().columns}
-            striped={true}
-            bordered={true}
-            hover={true}
-            dataTable={true}
-          >
-            <Table.Header headerRows={resolve.headerRows(this.columns())} />
-            <Table.Body rows={this.rows()} rowKey="id" />
-          </Table.PfProvider>
-        </Col>
-      </Row>
+      <>
+        <Row className="card-pf-body">
+          <Col xs={12}>
+            <Table.PfProvider
+              columns={this.columns().columns}
+              striped={true}
+              bordered={true}
+              hover={true}
+              dataTable={true}
+            >
+              <Table.Header headerRows={resolve.headerRows(this.columns())} />
+              <Table.Body rows={this.rows()} rowKey="id" />
+            </Table.PfProvider>
+          </Col>
+        </Row>
+        {this.state.logsDialogPodName && (
+          <WorkloadPodLogs
+            namespace={this.props.namespace}
+            podName={this.state.logsDialogPodName}
+            onClose={this.closeLogsDialog}
+          />
+        )}{' '}
+      </>
     );
   }
+
+  private openLogsDialog = (podName: string) => {
+    console.log('LOGS ON');
+    this.setState({ logsDialogPodName: podName });
+  };
+
+  private closeLogsDialog = () => {
+    console.log('LOGS OFF');
+    this.setState({ logsDialogPodName: undefined });
+  };
 }
 
 export default WorkloadPods;

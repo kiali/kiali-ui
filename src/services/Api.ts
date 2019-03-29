@@ -26,6 +26,7 @@ import { ServiceList } from '../types/ServiceList';
 import { config } from '../config';
 import { ServerConfig } from '../types/ServerConfig';
 import { TLSStatus } from '../types/TLSStatus';
+import { Pod, PodLogs } from '../types/IstioObjects';
 
 export const ANONYMOUS_USER = 'anonymous';
 
@@ -396,6 +397,21 @@ export const getWorkloads = (namespace: string) => {
 
 export const getWorkload = (namespace: string, name: string) => {
   return newRequest<Workload>(HTTP_VERBS.GET, urls.workload(namespace, name), {}, {});
+};
+
+export const getPod = (namespace: string, name: string) => {
+  return newRequest<Pod>(HTTP_VERBS.GET, urls.pod(namespace, name), {}, {});
+};
+
+export const getPodLogs = (namespace: string, name: string, container?: string, sinceTime?: number) => {
+  const params: Object = {};
+  if (container) {
+    params['container'] = container;
+  }
+  if (sinceTime) {
+    params['sinceTime'] = sinceTime;
+  }
+  return newRequest<PodLogs>(HTTP_VERBS.GET, urls.pod(namespace, name), params, {});
 };
 
 export const getErrorMsg = (msg: string, error: AxiosError) => {
