@@ -4,7 +4,6 @@ import { Button, Col, Icon, Row, OverlayTrigger, Tooltip, Table } from 'patternf
 import Label from '../../../components/Label/Label';
 import * as resolve from 'table-resolver';
 import { ConfigIndicator } from '../../../components/ConfigValidation/ConfigIndicator';
-import { icons } from '../../../config';
 import WorkloadPodLogs from './WorkloadPodLogs';
 
 interface PodsGroup {

@@ -411,7 +411,7 @@ export const getPodLogs = (namespace: string, name: string, container?: string, 
   if (sinceTime) {
     params['sinceTime'] = sinceTime;
   }
-  return newRequest<PodLogs>(HTTP_VERBS.GET, urls.pod(namespace, name), params, {});
+  return newRequest<PodLogs>(HTTP_VERBS.GET, urls.podLogs(namespace, name), params, {});
 };
 
 export const getErrorMsg = (msg: string, error: AxiosError) => {

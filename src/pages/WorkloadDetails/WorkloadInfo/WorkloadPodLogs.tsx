@@ -5,7 +5,7 @@ import { Pod, PodLogs } from '../../../types/IstioObjects';
 import { getPod, getPodLogs, Response } from '../../../services/Api';
 import { CancelablePromise, makeCancelablePromise } from '../../../utils/CancelablePromises';
 import { ToolbarDropdown } from '../../../components/ToolbarDropdown/ToolbarDropdown';
-import * as _ from 'lodash';
+import MetricsDuration from '../../../components/MetricsOptions/MetricsDuration';
 
 export interface WorkloadPodLogsProps {
   className?: string;
@@ -47,6 +47,12 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
 
   componentDidMount() {
     this.fetchPod(this.props.namespace, this.props.podName);
+  }
+
+  componentDidUpdate(prevProps: WorkloadPodLogsProps, prevState: WorkloadPodLogsState) {
+    if (this.state.container && prevState.container !== this.state.container) {
+      this.fetchLogs(this.props.namespace, this.props.podName, this.state.container, MetricsDuration.initialDuration());
+    }
   }
 
   render() {
@@ -96,6 +102,20 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
               />
             </Toolbar>
           )}
+          {this.state.podLogs && (
+            <textarea
+              style={{
+                width: '100%',
+                height: '105px',
+                padding: '10px',
+                // resize: 'vertical',
+                color: '#fff',
+                backgroundColor: '#003145'
+              }}
+              readOnly={true}
+              value={this.state.podLogs.logs}
+            />
+          )}
         </div>
       </Draggable>
     );
@@ -124,35 +144,70 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
         }
         const container = containers.length > 0 ? containers[0] : undefined;
         this.setState({
-          loadingPodLogs: false,
-          pod: pod,
-          containers: containers,
           container: container,
-          loadingPodError: undefined
+          containers: containers,
+          loadingPod: false,
+          loadingPodError: undefined,
+          pod: pod
         });
         return;
       })
       .catch(error => {
         if (error.isCanceled) {
-          console.debug('WorkloadPodLogs: Ignore fetch error (canceled).');
+          console.debug('Pod: Ignore fetch error (canceled).');
           return;
         }
         const errorMsg = error.response && error.response.data.error ? error.response.data.error : error.message;
         this.setState({
+          container: undefined,
+          containers: undefined,
           loadingPod: false,
           loadingPodError: errorMsg,
-          pod: undefined,
-          containers: undefined,
-          container: undefined
+          pod: undefined
         });
       });
 
     this.setState({
-      loadingPod: true,
-      pod: undefined,
-      containers: undefined,
       container: undefined,
-      loadingPodError: undefined
+      containers: undefined,
+      loadingPod: true,
+      loadingPodError: undefined,
+      pod: undefined,
+      podLogs: undefined
+    });
+  };
+
+  private fetchLogs = (namespace: string, podName: string, container: string, duration: number) => {
+    const sinceTime = Math.floor(Date.now() / 1000) - duration;
+    const promise: Promise<Response<PodLogs>> = getPodLogs(namespace, podName, container, sinceTime);
+    this.loadPodLogsPromise = makeCancelablePromise(Promise.all([promise]));
+    this.loadPodLogsPromise.promise
+      .then(response => {
+        const podLogs = response[0].data;
+        this.setState({
+          loadingPodLogs: false,
+          loadingPodLogsError: undefined,
+          podLogs: podLogs
+        });
+        return;
+      })
+      .catch(error => {
+        if (error.isCanceled) {
+          console.debug('PodLogs: Ignore fetch error (canceled).');
+          return;
+        }
+        const errorMsg = error.response && error.response.data.error ? error.response.data.error : error.message;
+        this.setState({
+          loadingPodLogs: false,
+          loadingPodLogsError: errorMsg,
+          podLogs: undefined
+        });
+      });
+
+    this.setState({
+      loadingPodLogs: true,
+      loadingPodLogsError: undefined,
+      podLogs: undefined
     });
   };
 }
