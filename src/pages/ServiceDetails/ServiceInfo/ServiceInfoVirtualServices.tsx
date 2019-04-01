@@ -87,10 +87,7 @@ class ServiceInfoVirtualServices extends React.Component<ServiceInfoVirtualServi
 
   hasValidations(virtualService: VirtualService): boolean {
     // This is insane, but doing return to the clause inside the if will cause compiler failure
-    if (this.props.validations && this.props.validations[virtualService.metadata.name]) {
-      return true;
-    }
-    return false;
+    return !!this.props.validations && !!this.props.validations[virtualService.metadata.name];
   }
 
   validation(virtualService: VirtualService): ObjectValidation {

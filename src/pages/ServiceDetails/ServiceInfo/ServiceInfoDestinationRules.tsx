@@ -134,10 +134,7 @@ class ServiceInfoDestinationRules extends React.Component<ServiceInfoDestination
   }
 
   hasValidations(destinationRule: DestinationRule): boolean {
-    if (this.props.validations && this.props.validations[destinationRule.metadata.name]) {
-      return true;
-    }
-    return false;
+    return !!this.props.validations && !!this.props.validations[destinationRule.metadata.name];
   }
 
   validation(destinationRule: DestinationRule): ObjectValidation {
