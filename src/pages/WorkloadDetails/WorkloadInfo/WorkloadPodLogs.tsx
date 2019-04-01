@@ -206,8 +206,6 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
   };
 
   private fetchLogs = (namespace: string, podName: string, container: string, duration: number) => {
-    console.log(`Fetch Logs for container ${container} duration ${duration}`);
-
     const sinceTime = Math.floor(Date.now() / 1000) - duration;
     const promise: Promise<Response<PodLogs>> = getPodLogs(namespace, podName, container, sinceTime);
     this.loadPodLogsPromise = makeCancelablePromise(Promise.all([promise]));
