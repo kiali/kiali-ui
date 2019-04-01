@@ -1,6 +1,6 @@
 import * as React from 'react';
-import Draggable from 'react-draggable';
 import { Button, Icon, Table, Toolbar } from 'patternfly-react';
+import Draggable from 'react-draggable';
 import { Pod, PodLogs } from '../../../types/IstioObjects';
 import { getPod, getPodLogs, Response } from '../../../services/Api';
 import { CancelablePromise, makeCancelablePromise } from '../../../utils/CancelablePromises';
@@ -20,7 +20,6 @@ interface WorkloadPodLogsState {
   loadingPod: boolean;
   loadingPodError?: string;
   loadingPodLogs: boolean;
-  loadingPodLogsError?: string;
   pod?: Pod;
   podLogs?: PodLogs;
 }
@@ -65,8 +64,10 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
   }
 
   componentDidUpdate(prevProps: WorkloadPodLogsProps, prevState: WorkloadPodLogsState) {
-    if (this.state.container && prevState.container !== this.state.container) {
-      this.fetchLogs(this.props.namespace, this.props.podName, this.state.container, Number(this.state.duration));
+    const newContainer = this.state.container && prevState.container !== this.state.container;
+    const newDuration = this.state.duration && prevState.duration !== this.state.duration;
+    if (newContainer || newDuration) {
+      this.fetchLogs(this.props.namespace, this.props.podName, this.state.container!, Number(this.state.duration));
     }
   }
 
@@ -78,10 +79,11 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
         <div
           className={`modal-content ${className}`}
           style={{
-            width: '1000px',
-            height: 'auto',
+            width: '75%',
+            height: '600px',
+            top: '-300px',
             right: '0',
-            top: '10px',
+            position: 'absolute',
             zIndex: 9999
           }}
         >
@@ -92,45 +94,47 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
             <span className="modal-title">Pod Logs: {this.props.podName}</span>
           </div>
           {this.state.container && (
-            <Toolbar>
-              <ToolbarDropdown
-                id={'wpl_containers'}
-                nameDropdown="Container"
-                tooltip="Display logs for the selected pod container"
-                handleSelect={key => this.setContainer(key)}
-                value={this.state.container}
-                label={this.state.container}
-                options={this.state.containers!}
-              />
-              <Toolbar.RightContent>
+            <>
+              <Toolbar>
                 <ToolbarDropdown
-                  id={'wpl_duration'}
-                  handleSelect={key => this.setDuration(key)}
-                  value={this.state.duration}
-                  label={Durations[this.state.duration]}
-                  options={Durations}
-                  tooltip={'Time range for graph data'}
+                  id={'wpl_containers'}
+                  nameDropdown="Container"
+                  tooltip="Display logs for the selected pod container"
+                  handleSelect={key => this.setContainer(key)}
+                  value={this.state.container}
+                  label={this.state.container}
+                  options={this.state.containers!}
                 />
-                <span style={{ paddingLeft: '0.5em' }}>
-                  <Button id={'wpl_refresh'} disabled={!this.state.podLogs} onClick={() => this.handleRefresh}>
-                    <Icon name="refresh" />
-                  </Button>
-                </span>
-              </Toolbar.RightContent>
-            </Toolbar>
+                <Toolbar.RightContent>
+                  <ToolbarDropdown
+                    id={'wpl_duration'}
+                    handleSelect={key => this.setDuration(key)}
+                    value={this.state.duration}
+                    label={Durations[this.state.duration]}
+                    options={Durations}
+                    tooltip={'Time range for graph data'}
+                  />
+                  <span style={{ paddingLeft: '0.5em' }}>
+                    <Button id={'wpl_refresh'} disabled={!this.state.podLogs} onClick={() => this.handleRefresh()}>
+                      <Icon name="refresh" />
+                    </Button>
+                  </span>
+                </Toolbar.RightContent>
+              </Toolbar>
+              <textarea
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  resize: 'vertical',
+                  color: '#fff',
+                  backgroundColor: '#003145'
+                }}
+                readOnly={true}
+                value={this.state.podLogs ? this.state.podLogs.logs : 'Loading logs...'}
+              />
+            </>
           )}
-          <textarea
-            style={{
-              width: '100%',
-              height: '500px',
-              padding: '10px',
-              // resize: 'vertical',
-              color: '#fff',
-              backgroundColor: '#003145'
-            }}
-            readOnly={true}
-            value={this.state.podLogs ? this.state.podLogs.logs : 'Loading logs...'}
-          />
+          {this.state.loadingPodError && <div>{this.state.loadingPodError}</div>}
         </div>
       </Draggable>
     );
@@ -142,6 +146,10 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
 
   private setDuration = (duration: string) => {
     this.setState({ duration: duration });
+  };
+
+  private handleRefresh = () => {
+    this.fetchLogs(this.props.namespace, this.props.podName, this.state.container!, Number(this.state.duration));
   };
 
   private fetchPod = (namespace: string, podName: string) => {
@@ -198,6 +206,8 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
   };
 
   private fetchLogs = (namespace: string, podName: string, container: string, duration: number) => {
+    console.log(`Fetch Logs for container ${container} duration ${duration}`);
+
     const sinceTime = Math.floor(Date.now() / 1000) - duration;
     const promise: Promise<Response<PodLogs>> = getPodLogs(namespace, podName, container, sinceTime);
     this.loadPodLogsPromise = makeCancelablePromise(Promise.all([promise]));
@@ -206,8 +216,7 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
         const podLogs = response[0].data;
         this.setState({
           loadingPodLogs: false,
-          loadingPodLogsError: undefined,
-          podLogs: podLogs
+          podLogs: podLogs.logs ? podLogs : { logs: 'No logs found for the time period.' }
         });
         return;
       })
@@ -219,19 +228,13 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
         const errorMsg = error.response && error.response.data.error ? error.response.data.error : error.message;
         this.setState({
           loadingPodLogs: false,
-          loadingPodLogsError: errorMsg,
-          podLogs: undefined
+          podLogs: { logs: `Failed to fetch pod logs: ${errorMsg}` }
         });
       });
 
     this.setState({
       loadingPodLogs: true,
-      loadingPodLogsError: undefined,
       podLogs: undefined
     });
-  };
-
-  private handleRefresh = () => {
-    this.fetchLogs(this.props.namespace, this.props.podName, this.state.container!, Number(this.state.duration));
   };
 }

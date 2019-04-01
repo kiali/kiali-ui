@@ -336,12 +336,10 @@ class WorkloadPods extends React.Component<WorkloadPodsProps, WorkloadPodsState>
   }
 
   private openLogsDialog = (podName: string) => {
-    console.log('LOGS ON');
     this.setState({ logsDialogPodName: podName });
   };
 
   private closeLogsDialog = () => {
-    console.log('LOGS OFF');
     this.setState({ logsDialogPodName: undefined });
   };
 }
