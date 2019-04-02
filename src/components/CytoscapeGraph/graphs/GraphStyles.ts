@@ -143,10 +143,11 @@ export class GraphStyles {
         content = protocol ? `${protocol} ${content}` : content;
       }
 
-      if (cyGlobal.showSecurity) {
-        if (ele.data(CyEdge.isMTLS) && !cyGlobal.mtlsEnabled) {
+      const mtlsPercentage = Number(ele.data(CyEdge.isMTLS));
+      if (cyGlobal.showSecurity && mtlsPercentage >= 0) {
+        if (mtlsPercentage > 0 && !cyGlobal.mtlsEnabled) {
           content = EdgeIconMTLS + ' ' + content;
-        } else if (!ele.data(CyEdge.isMTLS) && cyGlobal.mtlsEnabled) {
+        } else if (mtlsPercentage === 0 && cyGlobal.mtlsEnabled) {
           content = EdgeIconDisabledMTLS + ' ' + content;
         }
       }
