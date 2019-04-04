@@ -1,10 +1,9 @@
 import * as React from 'react';
 import { ContainerInfo, Pod, Reference, ObjectValidation } from '../../../types/IstioObjects';
-import { Button, Col, Icon, Row, OverlayTrigger, Tooltip, Table } from 'patternfly-react';
+import { Col, Row, OverlayTrigger, Tooltip, Table } from 'patternfly-react';
 import Label from '../../../components/Label/Label';
 import * as resolve from 'table-resolver';
 import { ConfigIndicator } from '../../../components/ConfigValidation/ConfigIndicator';
-import WorkloadPodLogs from './WorkloadPodLogs';
 
 interface PodsGroup {
   commonPrefix: string;
@@ -28,7 +27,6 @@ type WorkloadPodsProps = {
 
 type WorkloadPodsState = {
   groups: PodsGroup[];
-  logsDialogPodName: string | undefined;
 };
 
 class WorkloadPods extends React.Component<WorkloadPodsProps, WorkloadPodsState> {
@@ -119,8 +117,7 @@ class WorkloadPods extends React.Component<WorkloadPodsProps, WorkloadPodsState>
   constructor(props: WorkloadPodsProps) {
     super(props);
     this.state = {
-      groups: WorkloadPods.updateGroups(props),
-      logsDialogPodName: undefined
+      groups: WorkloadPods.updateGroups(props)
     };
   }
 
@@ -250,19 +247,6 @@ class WorkloadPods extends React.Component<WorkloadPodsProps, WorkloadPodsState>
           cell: {
             formatters: [this.cellFormat]
           }
-        },
-        {
-          property: 'logs',
-          header: {
-            label: 'Logs',
-            formatters: [this.headerFormat]
-          },
-          cell: {
-            formatters: [this.cellFormat],
-            props: {
-              align: 'text-center'
-            }
-          }
         }
       ]
     };
@@ -285,22 +269,7 @@ class WorkloadPods extends React.Component<WorkloadPodsProps, WorkloadPodsState>
           ? group.istioInitContainers.map(c => `${c.image}`).join(', ')
           : '',
         istioContainers: group.istioContainers ? group.istioContainers.map(c => `${c.image}`).join(', ') : '',
-        podStatus: group.status,
-        logs: (
-          <OverlayTrigger
-            key={`${vsIdx}-pod-logs`}
-            placement="top"
-            overlay={<Tooltip id={'graph-find-help-tt'}>Pod logs dialog...</Tooltip>}
-          >
-            <Button
-              bsStyle="link"
-              style={{ paddingLeft: '6px' }}
-              onClick={() => this.openLogsDialog(group.commonPrefix)}
-            >
-              <Icon name="catalog" type="pf" />
-            </Button>
-          </OverlayTrigger>
-        )
+        podStatus: group.status
       };
 
       return generateRows;
@@ -324,24 +293,9 @@ class WorkloadPods extends React.Component<WorkloadPodsProps, WorkloadPodsState>
             </Table.PfProvider>
           </Col>
         </Row>
-        {this.state.logsDialogPodName && (
-          <WorkloadPodLogs
-            namespace={this.props.namespace}
-            podName={this.state.logsDialogPodName}
-            onClose={this.closeLogsDialog}
-          />
-        )}{' '}
       </>
     );
   }
-
-  private openLogsDialog = (podName: string) => {
-    this.setState({ logsDialogPodName: podName });
-  };
-
-  private closeLogsDialog = () => {
-    this.setState({ logsDialogPodName: undefined });
-  };
 }
 
 export default WorkloadPods;
