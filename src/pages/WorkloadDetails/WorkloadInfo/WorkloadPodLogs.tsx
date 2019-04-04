@@ -73,9 +73,8 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
   }
 
   componentDidMount() {
-    // this.fetchPod(this.props.namespace, this.props.pods[0].name);
-    if (this.state.podValue && this.state.containerInfo) {
-      const pod = this.props.pods[this.state.podValue];
+    if (this.state.containerInfo) {
+      const pod = this.props.pods[this.state.podValue!];
       this.fetchLogs(this.props.namespace, pod.name, this.state.containerInfo.container, Number(this.state.duration));
     }
   }
