@@ -4,6 +4,7 @@ import { Pod, PodLogs } from '../../../types/IstioObjects';
 import { getPodLogs, Response } from '../../../services/Api';
 import { CancelablePromise, makeCancelablePromise } from '../../../utils/CancelablePromises';
 import { ToolbarDropdown } from '../../../components/ToolbarDropdown/ToolbarDropdown';
+import { DurationInSeconds } from '../../../types/Common';
 
 export interface WorkloadPodLogsProps {
   namespace: string;
@@ -189,7 +190,7 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
     return { container: containers[0], containerOptions: options };
   };
 
-  private fetchLogs = (namespace: string, podName: string, container: string, duration: number) => {
+  private fetchLogs = (namespace: string, podName: string, container: string, duration: DurationInSeconds) => {
     const sinceTime = Math.floor(Date.now() / 1000) - duration;
     const promise: Promise<Response<PodLogs>> = getPodLogs(namespace, podName, container, sinceTime);
     this.loadPodLogsPromise = makeCancelablePromise(Promise.all([promise]));
