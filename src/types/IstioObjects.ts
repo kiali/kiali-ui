@@ -88,8 +88,10 @@ export interface Pod {
   versionLabel: boolean;
 }
 
+export type Logs = string;
+
 export interface PodLogs {
-  logs?: string;
+  logs?: Logs;
 }
 
 export interface Service {

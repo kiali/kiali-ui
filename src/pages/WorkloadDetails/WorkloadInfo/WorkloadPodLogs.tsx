@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Button, Icon, Toolbar } from 'patternfly-react';
+import { style } from 'typestyle';
 import { Pod, PodLogs } from '../../../types/IstioObjects';
 import { getPodLogs, Response } from '../../../services/Api';
 import { CancelablePromise, makeCancelablePromise } from '../../../utils/CancelablePromises';
@@ -38,6 +39,19 @@ const DurationOptions = {
   '86400': 'Last 1d',
   '604800': 'Last 7d'
 };
+
+const logsTextarea = style({
+  width: '100%',
+  height: '100%',
+  overflow: 'auto',
+  resize: 'vertical',
+  color: '#fff',
+  backgroundColor: '#003145'
+});
+
+const leftPaddedSpan = style({
+  paddingLeft: '0.5em'
+});
 
 export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodLogsState> {
   private loadPodLogsPromise?: CancelablePromise<Response<PodLogs>[]>;
@@ -124,7 +138,7 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
                   options={DurationOptions}
                   tooltip={'Time range for graph data'}
                 />
-                <span style={{ paddingLeft: '0.5em' }}>
+                <span className={leftPaddedSpan}>
                   <Button id={'wpl_refresh'} disabled={!this.state.podLogs} onClick={() => this.handleRefresh()}>
                     <Icon name="refresh" />
                   </Button>
@@ -132,14 +146,7 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
               </Toolbar.RightContent>
             </Toolbar>
             <textarea
-              style={{
-                width: '100%',
-                height: '100%',
-                overflow: 'auto',
-                resize: 'vertical',
-                color: '#fff',
-                backgroundColor: '#003145'
-              }}
+              className={logsTextarea}
               readOnly={true}
               value={this.state.podLogs ? this.state.podLogs.logs : 'Loading logs...'}
             />
@@ -172,22 +179,14 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
   };
 
   private getContainerInfo = (pod: Pod): ContainerInfo => {
-    const containers: string[] = [];
-    if (pod.containers) {
-      pod.containers.forEach(c => {
-        containers.push(c.name);
-      });
-    }
-    if (pod.istioContainers) {
-      pod.istioContainers.forEach(c => {
-        containers.push(c.name);
-      });
-    }
+    const containers = pod.containers ? pod.containers : [];
+    containers.push(...(pod.istioContainers ? pod.istioContainers : []));
+    const containerNames: string[] = containers.map(c => c.name);
     const options: object = {};
-    containers.forEach(c => {
+    containerNames.forEach(c => {
       options[c] = c;
     });
-    return { container: containers[0], containerOptions: options };
+    return { container: containerNames[0], containerOptions: options };
   };
 
   private fetchLogs = (namespace: string, podName: string, container: string, duration: DurationInSeconds) => {

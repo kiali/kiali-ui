@@ -404,7 +404,7 @@ export const getPod = (namespace: string, name: string) => {
 };
 
 export const getPodLogs = (namespace: string, name: string, container?: string, sinceTime?: number) => {
-  const params: Object = {};
+  const params: object = {};
   if (container) {
     params['container'] = container;
   }
