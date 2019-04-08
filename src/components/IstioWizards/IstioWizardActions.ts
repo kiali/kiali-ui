@@ -5,16 +5,21 @@ import { Rule } from './MatchingRouting/Rules';
 import { SuspendedRoute } from './SuspendTraffic';
 import {
   DestinationRule,
+  DestinationRules,
   DestinationWeight,
   HTTPMatchRequest,
   HTTPRoute,
-  VirtualService
+  StringMatch,
+  VirtualService,
+  VirtualServices
 } from '../../types/IstioObjects';
 import { serverConfig } from '../../config';
 
-export const WIZARD_WEIGHTED_ROUTING = 'create_weighted_routing';
-export const WIZARD_MATCHING_ROUTING = 'create_matching_routing';
+export const WIZARD_WEIGHTED_ROUTING = 'weighted_routing';
+export const WIZARD_MATCHING_ROUTING = 'matching_routing';
 export const WIZARD_SUSPEND_TRAFFIC = 'suspend_traffic';
+
+export const WIZARD_ACTIONS = [WIZARD_WEIGHTED_ROUTING, WIZARD_MATCHING_ROUTING, WIZARD_SUSPEND_TRAFFIC];
 
 export const WIZARD_TITLES = {
   [WIZARD_WEIGHTED_ROUTING]: 'Create Weighted Routing',
@@ -22,13 +27,22 @@ export const WIZARD_TITLES = {
   [WIZARD_SUSPEND_TRAFFIC]: 'Suspend Traffic'
 };
 
+export const WIZARD_UPDATE_TITLES = {
+  [WIZARD_WEIGHTED_ROUTING]: 'Update Weighted Routing',
+  [WIZARD_MATCHING_ROUTING]: 'Update Matching Routing',
+  [WIZARD_SUSPEND_TRAFFIC]: 'Update Suspended Traffic'
+};
+
 export type WizardProps = {
   show: boolean;
   type: string;
+  update: boolean;
   namespace: string;
   serviceName: string;
   tlsStatus?: TLSStatus;
   workloads: WorkloadOverview[];
+  virtualServices: VirtualServices;
+  destinationRules: DestinationRules;
   onClose: (changed: boolean) => void;
 };
 
@@ -45,6 +59,8 @@ export type WizardState = {
 };
 
 const SERVICE_UNAVAILABLE = 503;
+
+export const KIALI_WIZARD_LABEL = 'kiali_wizard';
 
 const buildHTTPMatchRequest = (matches: string[]): HTTPMatchRequest[] => {
   const matchRequests: HTTPMatchRequest[] = [];
@@ -85,14 +101,54 @@ const buildHTTPMatchRequest = (matches: string[]): HTTPMatchRequest[] => {
   return matchRequests;
 };
 
-export const createIstioTraffic = (wProps: WizardProps, wState: WizardState): [DestinationRule, VirtualService] => {
+const parseStringMatch = (value: StringMatch): string => {
+  if (value.exact) {
+    return 'exact ' + value.exact;
+  }
+  if (value.prefix) {
+    return 'prefix ' + value.prefix;
+  }
+  if (value.regex) {
+    return 'regex ' + value.regex;
+  }
+  return '';
+};
+
+const parseHttpMatchRequest = (httpMatchRequest: HTTPMatchRequest): string[] => {
+  const matches: string[] = [];
+  // Headers
+  if (httpMatchRequest.headers) {
+    Object.keys(httpMatchRequest.headers).forEach(headerName => {
+      const value = httpMatchRequest.headers![headerName];
+      matches.push('headers [' + headerName + '] ' + parseStringMatch(value));
+    });
+  }
+  if (httpMatchRequest.uri) {
+    matches.push('uri ' + parseStringMatch(httpMatchRequest.uri));
+  }
+  if (httpMatchRequest.scheme) {
+    matches.push('scheme ' + parseStringMatch(httpMatchRequest.scheme));
+  }
+  if (httpMatchRequest.method) {
+    matches.push('method ' + parseStringMatch(httpMatchRequest.method));
+  }
+  if (httpMatchRequest.authority) {
+    matches.push('authority ' + parseStringMatch(httpMatchRequest.authority));
+  }
+  return matches;
+};
+
+export const buildIstioConfig = (wProps: WizardProps, wState: WizardState): [DestinationRule, VirtualService] => {
   const wkdNameVersion: { [key: string]: string } = {};
 
   // DestinationRule from the labels
   const wizardDR: DestinationRule = {
     metadata: {
       namespace: wProps.namespace,
-      name: wProps.serviceName
+      name: wProps.serviceName,
+      labels: {
+        [KIALI_WIZARD_LABEL]: wProps.type
+      }
     },
     spec: {
       host: wProps.serviceName,
@@ -115,7 +171,10 @@ export const createIstioTraffic = (wProps: WizardProps, wState: WizardState): [D
   const wizardVS: VirtualService = {
     metadata: {
       namespace: wProps.namespace,
-      name: wProps.serviceName
+      name: wProps.serviceName,
+      labels: {
+        [KIALI_WIZARD_LABEL]: wProps.type
+      }
     },
     spec: {}
   };
@@ -245,4 +304,99 @@ export const createIstioTraffic = (wProps: WizardProps, wState: WizardState): [D
     }
   }
   return [wizardDR, wizardVS];
+};
+
+const getWorkloadsByVersion = (workloads: WorkloadOverview[]): { [key: string]: string } => {
+  const versionLabelName = serverConfig.istioLabels.versionLabelName;
+  const wkdVersionName: { [key: string]: string } = {};
+  workloads.forEach(workload => (wkdVersionName[workload.labels![versionLabelName]] = workload.name));
+  return wkdVersionName;
+};
+
+export const getInitWeights = (workloads: WorkloadOverview[], virtualServices: VirtualServices): WorkloadWeight[] => {
+  const wkdVersionName = getWorkloadsByVersion(workloads);
+  const wkdWeights: WorkloadWeight[] = [];
+  if (virtualServices.items.length === 1 && virtualServices.items[0].spec.http!.length === 1) {
+    // Populate WorkloadWeights from a VirtualService
+    virtualServices.items[0].spec.http![0].route!.forEach(route => {
+      if (route.destination.subset) {
+        wkdWeights.push({
+          name: wkdVersionName[route.destination.subset],
+          weight: route.weight || 0,
+          locked: false,
+          maxWeight: 100
+        });
+      }
+    });
+  }
+  return wkdWeights;
+};
+
+export const getInitRules = (workloads: WorkloadOverview[], virtualServices: VirtualServices): Rule[] => {
+  const wkdVersionName = getWorkloadsByVersion(workloads);
+  const rules: Rule[] = [];
+  if (virtualServices.items.length === 1) {
+    virtualServices.items[0].spec.http!.forEach(httpRoute => {
+      const rule: Rule = {
+        matches: [],
+        routes: []
+      };
+      if (httpRoute.match) {
+        httpRoute.match.forEach(m => (rule.matches = rule.matches.concat(parseHttpMatchRequest(m))));
+      }
+      if (httpRoute.route) {
+        httpRoute.route.forEach(r => rule.routes.push(wkdVersionName[r.destination.subset || '']));
+      }
+      rules.push(rule);
+    });
+  }
+  return rules;
+};
+
+export const getInitSuspendedRoutes = (
+  workloads: WorkloadOverview[],
+  virtualServices: VirtualServices
+): SuspendedRoute[] => {
+  const wkdVersionName = getWorkloadsByVersion(workloads);
+  const routes: SuspendedRoute[] = workloads.map(wk => ({
+    workload: wk.name,
+    suspended: true,
+    httpStatus: SERVICE_UNAVAILABLE
+  }));
+  if (virtualServices.items.length === 1 && virtualServices.items[0].spec.http!.length === 1) {
+    // All routes are suspended default value is correct
+    if (virtualServices.items[0].spec.http![0].fault) {
+      return routes;
+    }
+    // Iterate on route weights to identify the suspended routes
+    virtualServices.items[0].spec.http![0].route!.forEach(route => {
+      if (route.weight && route.weight > 0) {
+        const workloadName = wkdVersionName[route.destination.subset || ''];
+        routes.filter(w => w.workload === workloadName).forEach(w => (w.suspended = false));
+      }
+    });
+  }
+  return routes;
+};
+
+export const getInitTlsMode = (destinationRules: DestinationRules): string => {
+  if (
+    destinationRules.items.length === 1 &&
+    destinationRules.items[0].spec.trafficPolicy &&
+    destinationRules.items[0].spec.trafficPolicy.tls
+  ) {
+    return destinationRules.items[0].spec.trafficPolicy.tls.mode || '';
+  }
+  return '';
+};
+
+export const getInitLoadBalancer = (destinationRules: DestinationRules): string => {
+  if (
+    destinationRules.items.length === 1 &&
+    destinationRules.items[0].spec.trafficPolicy &&
+    destinationRules.items[0].spec.trafficPolicy.loadBalancer
+  ) {
+    return destinationRules.items[0].spec.trafficPolicy.loadBalancer.simple || '';
+  }
+  return '';
 };

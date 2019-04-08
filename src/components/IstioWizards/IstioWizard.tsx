@@ -10,14 +10,22 @@ import { DISABLE, ROUND_ROBIN } from './TrafficPolicy';
 import SuspendTraffic, { SuspendedRoute } from './SuspendTraffic';
 import { Rule } from './MatchingRouting/Rules';
 import {
-  createIstioTraffic,
+  buildIstioConfig,
+  getInitLoadBalancer,
+  getInitRules,
+  getInitSuspendedRoutes,
+  getInitTlsMode,
+  getInitWeights,
   WIZARD_MATCHING_ROUTING,
   WIZARD_SUSPEND_TRAFFIC,
   WIZARD_TITLES,
+  WIZARD_UPDATE_TITLES,
   WIZARD_WEIGHTED_ROUTING,
   WizardProps,
   WizardState
 } from './IstioWizardActions';
+import { Response } from '../../services/Api';
+import { MessageType } from '../../types/MessageCenter';
 
 class IstioWizard extends React.Component<WizardProps, WizardState> {
   constructor(props: WizardProps) {
@@ -52,13 +60,15 @@ class IstioWizard extends React.Component<WizardProps, WizardState> {
           isValid = true;
           break;
       }
+      const initMtlsMode = getInitTlsMode(prevProps.destinationRules);
+      const initLoadBalancer = getInitLoadBalancer(prevProps.destinationRules);
       this.setState({
         showWizard: this.props.show,
         workloads: [],
         rules: [],
         valid: isValid,
-        mtlsMode: DISABLE,
-        loadBalancer: ROUND_ROBIN
+        mtlsMode: initMtlsMode !== '' ? initMtlsMode : DISABLE,
+        loadBalancer: initLoadBalancer !== '' ? initLoadBalancer : ROUND_ROBIN
       });
     }
   }
@@ -82,20 +92,41 @@ class IstioWizard extends React.Component<WizardProps, WizardState> {
     this.props.onClose(false);
   };
 
-  onCreate = () => {
-    const [dr, vr] = createIstioTraffic(this.props, this.state);
-    const createDR = API.createIstioConfigDetail(this.props.namespace, 'destinationrules', JSON.stringify(dr));
-    const createVS = API.createIstioConfigDetail(this.props.namespace, 'virtualservices', JSON.stringify(vr));
+  onCreateUpdate = () => {
+    const [dr, vs] = buildIstioConfig(this.props, this.state);
+    const promises: Promise<Response<string>>[] = [];
+    if (this.props.update) {
+      promises.push(
+        API.updateIstioConfigDetail(this.props.namespace, 'destinationrules', dr.metadata.name, JSON.stringify(dr))
+      );
+      promises.push(
+        API.updateIstioConfigDetail(this.props.namespace, 'virtualservices', vs.metadata.name, JSON.stringify(vs))
+      );
+    } else {
+      promises.push(API.createIstioConfigDetail(this.props.namespace, 'destinationrules', JSON.stringify(dr)));
+      promises.push(API.createIstioConfigDetail(this.props.namespace, 'virtualservices', JSON.stringify(vs)));
+    }
     // Disable button before promise is completed. Then Wizard is closed.
     this.setState({
       valid: false
     });
-    Promise.all([createDR, createVS])
+    Promise.all(promises)
       .then(results => {
+        MessageCenter.add(
+          'Istio Config ' +
+            (this.props.update ? 'updated' : 'created') +
+            ' for ' +
+            this.props.serviceName +
+            ' service.',
+          'default',
+          MessageType.SUCCESS
+        );
         this.props.onClose(true);
       })
       .catch(error => {
-        MessageCenter.add(API.getErrorMsg('Could not create Istio config objects', error));
+        MessageCenter.add(
+          API.getErrorMsg('Could not ' + (this.props.update ? 'update' : 'create') + ' Istio config objects.', error)
+        );
         this.props.onClose(true);
       });
   };
@@ -114,7 +145,7 @@ class IstioWizard extends React.Component<WizardProps, WizardState> {
     });
   };
 
-  onWeightsChange = (valid: boolean, workloads: WorkloadWeight[], reset: boolean) => {
+  onWeightsChange = (valid: boolean, workloads: WorkloadWeight[]) => {
     this.setState({
       valid: valid,
       workloads: workloads
@@ -138,7 +169,10 @@ class IstioWizard extends React.Component<WizardProps, WizardState> {
   render() {
     return (
       <Wizard show={this.state.showWizard} onHide={this.onClose}>
-        <Wizard.Header onClose={this.onClose} title={WIZARD_TITLES[this.props.type]} />
+        <Wizard.Header
+          onClose={this.onClose}
+          title={this.props.update ? WIZARD_UPDATE_TITLES[this.props.type] : WIZARD_TITLES[this.props.type]}
+        />
         <Wizard.Body>
           <Wizard.Row>
             <Wizard.Main>
@@ -147,6 +181,7 @@ class IstioWizard extends React.Component<WizardProps, WizardState> {
                   <WeightedRouting
                     serviceName={this.props.serviceName}
                     workloads={this.props.workloads}
+                    initWeights={getInitWeights(this.props.workloads, this.props.virtualServices)}
                     onChange={this.onWeightsChange}
                   />
                 )}
@@ -154,6 +189,7 @@ class IstioWizard extends React.Component<WizardProps, WizardState> {
                   <MatchingRouting
                     serviceName={this.props.serviceName}
                     workloads={this.props.workloads}
+                    initRules={getInitRules(this.props.workloads, this.props.virtualServices)}
                     onChange={this.onRulesChange}
                   />
                 )}
@@ -161,6 +197,7 @@ class IstioWizard extends React.Component<WizardProps, WizardState> {
                   <SuspendTraffic
                     serviceName={this.props.serviceName}
                     workloads={this.props.workloads}
+                    initSuspendedRoutes={getInitSuspendedRoutes(this.props.workloads, this.props.virtualServices)}
                     onChange={this.onSuspendedChange}
                   />
                 )}
@@ -180,8 +217,8 @@ class IstioWizard extends React.Component<WizardProps, WizardState> {
           <Button bsStyle="default" className="btn-cancel" onClick={this.onClose}>
             Cancel
           </Button>
-          <Button disabled={!this.state.valid} bsStyle="primary" onClick={this.onCreate}>
-            Create
+          <Button disabled={!this.state.valid} bsStyle="primary" onClick={this.onCreateUpdate}>
+            {this.props.update ? 'Update' : 'Create'}
           </Button>
         </Wizard.Footer>
       </Wizard>
