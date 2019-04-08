@@ -1,17 +1,18 @@
 import * as React from 'react';
 import { DropdownButton, MenuItem, MessageDialog, OverlayTrigger, Tooltip } from 'patternfly-react';
-import IstioWizard, {
-  WIZARD_MATCHING_ROUTING,
-  WIZARD_TITLES,
-  WIZARD_WEIGHTED_ROUTING,
-  WIZARD_SUSPEND_TRAFFIC
-} from './IstioWizard';
 import { WorkloadOverview } from '../../types/ServiceInfo';
 import { DestinationRules, VirtualServices } from '../../types/IstioObjects';
 import * as MessageCenter from '../../utils/MessageCenter';
 import * as API from '../../services/Api';
 import { serverConfig } from '../../config/ServerConfig';
 import { TLSStatus } from '../../types/TLSStatus';
+import {
+  WIZARD_MATCHING_ROUTING,
+  WIZARD_SUSPEND_TRAFFIC,
+  WIZARD_TITLES,
+  WIZARD_WEIGHTED_ROUTING
+} from './IstioWizardActions';
+import IstioWizard from './IstioWizard';
 
 type Props = {
   namespace: string;
