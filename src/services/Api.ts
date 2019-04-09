@@ -404,12 +404,12 @@ export const getPod = (namespace: string, name: string) => {
 };
 
 export const getPodLogs = (namespace: string, name: string, container?: string, sinceTime?: number) => {
-  const params: object = {};
+  const params: any = {};
   if (container) {
-    params['container'] = container;
+    params.container = container;
   }
   if (sinceTime) {
-    params['sinceTime'] = sinceTime;
+    params.sinceTime = sinceTime;
   }
   return newRequest<PodLogs>(HTTP_VERBS.GET, urls.podLogs(namespace, name), params, {});
 };
