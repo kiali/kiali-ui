@@ -37,7 +37,7 @@ class AppListComponent extends ListComponent.Component<AppListComponentProps, Ap
   }
 
   componentDidMount() {
-    this.updateListItems();
+    this.setState({});
   }
 
   componentDidUpdate(prevProps: AppListComponentProps, prevState: AppListComponentState, snapshot: any) {

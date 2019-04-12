@@ -41,7 +41,7 @@ class WorkloadListComponent extends ListComponent.Component<
   }
 
   componentDidMount() {
-    this.updateListItems();
+    this.setState({});
   }
 
   componentDidUpdate(prevProps: WorkloadListComponentProps, prevState: WorkloadListComponentState, snapshot: any) {

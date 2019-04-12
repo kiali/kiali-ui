@@ -54,7 +54,7 @@ class ServiceListComponent extends ListComponent.Component<
   }
 
   componentDidMount() {
-    this.updateListItems();
+    this.setState({});
   }
 
   componentDidUpdate(prevProps: ServiceListComponentProps, prevState: ServiceListComponentState, snapshot: any) {

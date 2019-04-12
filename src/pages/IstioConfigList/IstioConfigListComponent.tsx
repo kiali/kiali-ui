@@ -54,7 +54,7 @@ class IstioConfigListComponent extends ListComponent.Component<
   }
 
   componentDidMount() {
-    this.updateListItems();
+    this.setState({});
   }
 
   componentDidUpdate(
