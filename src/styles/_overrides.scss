@@ -310,3 +310,12 @@ Fix icon in buttons of pagination pages
 .pagination > li > a > .i {
   margin-top: 5px;
 }
+
+.namespace-selector {
+  width: 20%;
+}
+
+.namespace-selector .pf-c-select {
+  --pf-c-select__toggle--BorderWidth: 0px !important;
+  width: auto !important;
+}
