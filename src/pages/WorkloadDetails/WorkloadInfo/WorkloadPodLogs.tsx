@@ -146,11 +146,7 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
                   tooltip={'Show up to last N log lines'}
                 />
                 {'   '}
-                <MetricsDurationContainer
-                  disabled={this.state.tailLines > 0}
-                  tooltip="Time range for log messages"
-                  onChanged={this.setDuration}
-                />
+                <MetricsDurationContainer tooltip="Time range for log messages" onChanged={this.setDuration} />
                 {'  '}
                 <Button id={'wpl_refresh'} disabled={!this.state.podLogs} onClick={() => this.handleRefresh()}>
                   <Icon name="refresh" />
