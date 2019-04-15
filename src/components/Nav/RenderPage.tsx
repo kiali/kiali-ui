@@ -4,8 +4,8 @@ import SwitchErrorBoundary from '../SwitchErrorBoundary/SwitchErrorBoundary';
 import { pathRoutes, defaultRoute, secondaryMastheadRoutes } from '../../routes';
 import { Path } from '../../types/Routes';
 
-class RenderPage extends React.Component<{ isGraph: boolean }> {
-  constructor(props: { isGraph: boolean }) {
+class RenderPage extends React.Component<{ needScroll: boolean }> {
+  constructor(props: { needScroll: boolean }) {
     super(props);
   }
 
@@ -37,7 +37,7 @@ class RenderPage extends React.Component<{ isGraph: boolean }> {
     return (
       <>
         <div>{this.renderSecondaryMastheadRoutes()}</div>
-        {this.props.isGraph ? component : <div id="content-scrollable">{component}</div>}
+        {this.props.needScroll ? <div id="content-scrollable">{component}</div> : component}
       </>
     );
   }

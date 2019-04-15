@@ -45,6 +45,15 @@ class Navigation extends React.Component<PropsType> {
     this.props.setNavCollapsed(!this.props.navCollapsed);
   };
 
+  isContentScrollable = () => {
+    const urlParams = new URLSearchParams(this.props.location.search);
+    let isMetricTab = false;
+    if (urlParams.has('tab')) {
+      isMetricTab = urlParams.get('tab') === 'metrics';
+    }
+    return !this.props.location.pathname.startsWith('/graph') && !isMetricTab;
+  };
+
   render() {
     const Header = (
       <PageHeader
@@ -64,13 +73,11 @@ class Navigation extends React.Component<PropsType> {
       />
     );
 
-    const isGraph = this.props.location.pathname.startsWith('/graph');
-
     return (
       <Page header={Header} sidebar={Sidebar}>
         <MessageCenterContainer drawerTitle="Message Center" />
         <PageSection variant={'light'}>
-          <RenderPage isGraph={isGraph} />
+          <RenderPage needScroll={this.isContentScrollable()} />
         </PageSection>
       </Page>
     );
