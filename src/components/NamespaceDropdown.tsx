@@ -13,8 +13,7 @@ import Namespace from '../types/Namespace';
 import { HistoryManager, URLParam } from '../app/History';
 
 const namespaceListStyle = style({
-  marginLeft: '7%',
-  marginTop: '40px'
+  margin: '40px 0 20px 7%'
 });
 
 const buttonClearStyle = style({
