@@ -311,6 +311,16 @@ Fix icon in buttons of pagination pages
   margin-top: 5px;
 }
 
+/*
+
+Namespace Selector style
+
+*/
+
 .namespace-selector .pf-c-context-selector {
   --pf-c-context-selector__toggle--BorderWidth: 0px !important;
+}
+
+.namespace-selector .pf-c-input-group {
+  margin-left: -6px;
 }
