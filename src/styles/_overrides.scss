@@ -311,11 +311,6 @@ Fix icon in buttons of pagination pages
   margin-top: 5px;
 }
 
-.namespace-selector {
-  width: 20%;
-}
-
-.namespace-selector .pf-c-select {
-  --pf-c-select__toggle--BorderWidth: 0px !important;
-  width: auto !important;
+.namespace-selector .pf-c-context-selector {
+  --pf-c-context-selector__toggle--BorderWidth: 0px !important;
 }
