@@ -3,7 +3,8 @@ import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 import _ from 'lodash';
 import { style } from 'typestyle';
-import { Button, Checkbox, ContextSelector } from '@patternfly/react-core';
+import { Button, Checkbox, TextInput, Select, InputGroup } from '@patternfly/react-core';
+import { CloseIcon } from '@patternfly/react-icons';
 import { KialiAppState } from '../store/Store';
 import { activeNamespacesSelector, namespaceItemsSelector, namespaceFilterSelector } from '../store/Selectors';
 import { KialiAppAction } from '../actions/KialiAppAction';
@@ -33,13 +34,13 @@ interface NamespaceListType {
 }
 
 interface NamespaceListState {
-  isOpen: boolean;
+  isExpanded: boolean;
 }
 
 export class NamespaceDropdown extends React.PureComponent<NamespaceListType, NamespaceListState> {
   constructor(props: NamespaceListType) {
     super(props);
-    this.state = { isOpen: false };
+    this.state = { isExpanded: false };
   }
 
   componentDidMount() {
@@ -116,44 +117,65 @@ export class NamespaceDropdown extends React.PureComponent<NamespaceListType, Na
     );
   };
 
-  onToggle = isOpen => {
+  onToggle = isExpanded => {
     this.setState({
-      isOpen
+      isExpanded
     });
   };
 
-  onButtonSearch = event => {
-    this.onFilterChange(this.props.filter);
+  onClearAll = () => {
+    this.setState({ isExpanded: false });
+    this.clearFilter();
+    this.props.clearAll();
   };
 
   render() {
-    const { isOpen } = this.state;
+    const { isExpanded } = this.state;
 
     const namespaces = this.props.items.length > 0 ? this.getNamespaces() : [];
 
     return (
       <div className="namespace-selector">
-        <ContextSelector
-          toggleText={this.namespaceButtonText()}
-          onSearchInputChange={this.onFilterChange}
-          isOpen={isOpen}
-          searchInputValue={this.props.filter}
+        <Select
           onToggle={this.onToggle}
-          onSearchButtonClick={this.onButtonSearch}
-          screenReaderLabel="Selected Namespace:"
+          onSelect={this.syncNamespacesURLParam}
+          isExpanded={isExpanded}
+          aria-label="Select Input"
+          placeholderText={this.namespaceButtonText()}
+          variant="single"
         >
+          <div className="filter-selector-namespace">
+            Filter by :
+            <InputGroup>
+              <TextInput
+                value={this.props.filter}
+                type="text"
+                onChange={this.onFilterChange}
+                aria-label="text input filter"
+              />
+              {this.props.filter !== '' && (
+                <Button
+                  variant={'tertiary'}
+                  aria-label="search button for search namespaces"
+                  onClick={() => this.clearFilter()}
+                >
+                  <CloseIcon />
+                </Button>
+              )}
+            </InputGroup>
+          </div>
           <Button
             variant="plain"
             key="clear_all_dropdown_ns"
             aria-label="Action"
             className={buttonClearStyle}
             isDisabled={this.props.activeNamespaces.length === 0}
-            onClick={this.props.clearAll}
+            onClick={this.onClearAll}
           >
             Clear all
           </Button>
           {namespaces}
-        </ContextSelector>
+        </Select>
       </div>
     );
   }
