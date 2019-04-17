@@ -70,9 +70,13 @@ export class SessionTimeout extends React.Component<SessionTimeoutProps, {}> {
   };
 
   private textForLoginStrategy = () => {
+    const message =
+      this.props.timeOutCountDown <= 0
+        ? 'Your session has expired.'
+        : `Your session will expire in ${this.props.timeOutCountDown.toFixed()} seconds.`;
     return (
       <p className={'lead'}>
-        Your session will timeout in {this.props.timeOutCountDown.toFixed()} seconds.
+        {message}
         <br />
         Would you like to extend your session?
       </p>
@@ -80,9 +84,13 @@ export class SessionTimeout extends React.Component<SessionTimeoutProps, {}> {
   };
 
   private textForOpenshiftStrategy = () => {
+    const message =
+      this.props.timeOutCountDown <= 0
+        ? 'Your session has expired.'
+        : `Your session will expire in ${this.props.timeOutCountDown.toFixed()} seconds.`;
     return (
       <p className={'lead'}>
-        Your session will timeout in {this.props.timeOutCountDown.toFixed()} seconds.
+        {message}
         <br />
         You will need to re-login with your cluster credentials. Please, save your changes, if any.
       </p>
