@@ -5,7 +5,6 @@ import { ServiceHealth } from '../../types/Health';
 import { DisplayMode, HealthIndicator } from '../../components/Health/HealthIndicator';
 import MissingSidecar from '../../components/MissingSidecar/MissingSidecar';
 import { PromisesRegistry } from '../../utils/CancelablePromises';
-import { ObjectValidation } from '../../types/IstioObjects';
 import { ConfigIndicator } from '../../components/ConfigValidation/ConfigIndicator';
 
 interface Props {
@@ -13,7 +12,6 @@ interface Props {
 }
 interface State {
   health?: ServiceHealth;
-  validation: ObjectValidation;
 }
 
 export default class ItemDescription extends React.PureComponent<Props, State> {
@@ -21,7 +19,7 @@ export default class ItemDescription extends React.PureComponent<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    this.state = { health: undefined, validation: {} as ObjectValidation };
+    this.state = { health: undefined };
   }
 
   componentDidMount() {
@@ -64,7 +62,7 @@ export default class ItemDescription extends React.PureComponent<Props, State> {
           <strong>Config: </strong>{' '}
           <ConfigIndicator
             id={this.props.item.name + '-config-validation'}
-            validations={[this.state.validation]}
+            validations={[this.props.item.validation]}
             size="medium"
           />
         </Col>
