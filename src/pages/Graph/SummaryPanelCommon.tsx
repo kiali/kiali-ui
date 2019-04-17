@@ -127,23 +127,29 @@ export const getNodeMetrics = (
 };
 
 export const mergeMetricsResponses = (promises: Promise<Response<M.Metrics>>[]): Promise<Response<M.Metrics>> => {
-  return Promise.all(promises).then(responses => {
-    const metrics: M.Metrics = {
-      metrics: {},
-      histograms: {}
-    };
-    responses.forEach(r => {
-      Object.keys(r.data.metrics).forEach(k => {
-        metrics.metrics[k] = r.data.metrics[k];
+  const metrics: M.Metrics = {
+    metrics: {},
+    histograms: {}
+  };
+  return Promise.all(promises)
+    .then(responses => {
+      responses.forEach(r => {
+        Object.keys(r.data.metrics).forEach(k => {
+          metrics.metrics[k] = r.data.metrics[k];
+        });
+        Object.keys(r.data.histograms).forEach(k => {
+          metrics.histograms[k] = r.data.histograms[k];
+        });
       });
-      Object.keys(r.data.histograms).forEach(k => {
-        metrics.histograms[k] = r.data.histograms[k];
-      });
+      return {
+        data: metrics
+      };
+    })
+    .catch(error => {
+      return {
+        data: metrics
+      };
     });
-    return {
-      data: metrics
-    };
-  });
 };
 
 export const getDatapoints = (
