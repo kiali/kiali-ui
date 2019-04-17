@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 import _ from 'lodash';
 import { style } from 'typestyle';
-import { Button, Checkbox, TextInput, Select, InputGroup } from '@patternfly/react-core';
+import { Button, TextInput, Select, InputGroup } from '@patternfly/react-core';
 import { CloseIcon } from '@patternfly/react-icons';
 import { KialiAppState } from '../store/Store';
 import { activeNamespacesSelector, namespaceItemsSelector, namespaceFilterSelector } from '../store/Selectors';
@@ -35,12 +35,13 @@ interface NamespaceListType {
 
 interface NamespaceListState {
   isExpanded: boolean;
+  namespaces: object;
 }
 
 export class NamespaceDropdown extends React.PureComponent<NamespaceListType, NamespaceListState> {
   constructor(props: NamespaceListType) {
     super(props);
-    this.state = { isExpanded: false };
+    this.state = { isExpanded: false, namespaces: [] };
   }
 
   componentDidMount() {
@@ -69,8 +70,8 @@ export class NamespaceDropdown extends React.PureComponent<NamespaceListType, Na
     }
   };
 
-  onNamespaceToggled = (isChecked, event) => {
-    this.props.toggleNamespace({ name: event.target.name });
+  onNamespaceToggled = (event: any) => {
+    this.props.toggleNamespace({ name: event.target.value });
   };
 
   onFilterChange = value => {
@@ -93,28 +94,34 @@ export class NamespaceDropdown extends React.PureComponent<NamespaceListType, Na
   }
 
   getNamespaces = () => {
-    const activeMap = this.props.activeNamespaces.reduce((map, namespace) => {
-      map[namespace.name] = namespace.name;
-      return map;
-    }, {});
+    if (this.props.items.length > 0) {
+      const activeMap = this.props.activeNamespaces.reduce((map, namespace) => {
+        map[namespace.name] = namespace.name;
+        return map;
+      }, {});
 
-    return (
-      <div key={'div_namespace_selector'} className={namespaceListStyle}>
-        {this.props.items
-          .filter((namespace: Namespace) => namespace.name.includes(this.props.filter))
-          .map((namespace: Namespace) => (
-            <Checkbox
-              key={namespace.name}
-              name={namespace.name}
-              id={namespace.name}
-              isChecked={!!activeMap[namespace.name]}
-              onChange={this.onNamespaceToggled}
-              label={namespace.name}
-              aria-label={namespace.name}
-            />
-          ))}
-      </div>
-    );
+      return (
+        <div key={'div_namespace_selector'} className={namespaceListStyle}>
+          {this.props.items
+            .filter((namespace: Namespace) => namespace.name.includes(this.props.filter))
+            .map((namespace: Namespace) => (
+              <div id={`namespace-list-item[${namespace.name}]`} key={`namespace-list-item[${namespace.name}]`}>
+                <label>
+                  <input
+                    type="checkbox"
+                    value={namespace.name}
+                    checked={!!activeMap[namespace.name]}
+                    onChange={this.onNamespaceToggled}
+                  />
+                  <span>{namespace.name}</span>
+                </label>
+              </div>
+            ))}
+        </div>
+      );
+    } else {
+      return <>No namespaces found or they haven't loaded yet</>;
+    }
   };
 
   onToggle = isExpanded => {
@@ -124,15 +131,12 @@ export class NamespaceDropdown extends React.PureComponent<NamespaceListType, Na
   };
 
   onClearAll = () => {
-    this.setState({ isExpanded: false });
     this.clearFilter();
     this.props.clearAll();
   };
 
   render() {
     const { isExpanded } = this.state;
-
-    const namespaces = this.props.items.length > 0 ? this.getNamespaces() : [];
 
     return (
       <div className="namespace-selector">
@@ -174,7 +178,7 @@ export class NamespaceDropdown extends React.PureComponent<NamespaceListType, Na
           >
             Clear all
           </Button>
-          {namespaces}
+          {this.getNamespaces()}
         </Select>
       </div>
     );
