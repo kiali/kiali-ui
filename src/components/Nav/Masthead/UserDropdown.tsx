@@ -5,8 +5,6 @@ import { config } from '../../../config';
 import { MILLISECONDS } from '../../../types/Common';
 import Timer = NodeJS.Timer;
 import { KialiAppState, LoginSession } from 'src/store/Store';
-import authenticationConfig from '../../../config/AuthenticationConfig';
-import { AuthStrategy } from '../../../types/Auth';
 import moment from 'moment';
 import { ThunkDispatch } from 'redux-thunk';
 import { KialiAppAction } from '../../../actions/KialiAppAction';
@@ -79,11 +77,7 @@ class UserDropdownConnected extends React.Component<UserProps, UserState> {
 
   handleLogout = e => {
     e.preventDefault();
-    if (authenticationConfig.logoutEndpoint) {
-      (document.getElementById('openshiftlogout') as HTMLFormElement).submit();
-    } else {
-      this.props.logout();
-    }
+    this.props.logout();
   };
 
   extendSession = (session: LoginSession) => {
@@ -127,11 +121,6 @@ class UserDropdownConnected extends React.Component<UserProps, UserState> {
           toggle={<DropdownToggle onToggle={this.onDropdownToggle}>{this.props.session.username}</DropdownToggle>}
           dropdownItems={[userDropdownItems]}
         />
-        {authenticationConfig.strategy === AuthStrategy.openshift && authenticationConfig.logoutEndpoint && (
-          <form id="openshiftlogout" action={authenticationConfig.logoutEndpoint} method="post">
-            <input type="hidden" name="then" value={authenticationConfig.logoutRedirect} />
-          </form>
-        )}
       </>
     );
   }

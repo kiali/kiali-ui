@@ -7,6 +7,7 @@ import { AuthResult, AuthStrategy } from '../types/Auth';
 import { KialiDispatch } from '../types/Redux';
 import { MessageCenterActions } from './MessageCenterActions';
 import authenticationConfig from '../config/AuthenticationConfig';
+import axios from 'axios';
 
 const Dispatcher = new Login.LoginDispatcher();
 
@@ -73,14 +74,27 @@ const LoginThunkActions = {
   },
   logout: () => {
     return async (dispatch: KialiDispatch) => {
-      try {
-        const response = await API.logout();
+      if (authenticationConfig.strategy === AuthStrategy.openshift && authenticationConfig.logoutEndpoint) {
+        axios
+          .post(authenticationConfig.logoutEndpoint)
+          .then(() => {
+            if (authenticationConfig.logoutRedirect) {
+              window.location.assign(authenticationConfig.logoutRedirect);
+            }
+          })
+          .catch(err => {
+            dispatch(MessageCenterActions.addMessage(API.getErrorMsg('Openshift logout failed', err)));
+          });
+      } else {
+        try {
+          const response = await API.logout();
 
-        if (response.status === 204) {
-          dispatch(LoginActions.logoutSuccess());
+          if (response.status === 204) {
+            dispatch(LoginActions.logoutSuccess());
+          }
+        } catch (err) {
+          dispatch(MessageCenterActions.addMessage(API.getErrorMsg('Logout failed', err)));
         }
-      } catch (err) {
-        dispatch(MessageCenterActions.addMessage(API.getErrorMsg('Logout failed', err)));
       }
     };
   }
