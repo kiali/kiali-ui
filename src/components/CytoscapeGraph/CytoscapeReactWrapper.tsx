@@ -22,12 +22,12 @@ type CytoscapeReactWrapperProps = any;
 
 type CytoscapeReactWrapperState = {};
 
-const styleContainer = {
+const styleContainer: React.CSSProperties = {
   height: '100%'
 };
 
 // Keep the browser right-click menu from popping up since have our own context menu
-// @todo: Should turn off browser right-click menus only on Graph page
+// @todo: Should turn off browser right-click menus on Graph page only?
 window.oncontextmenu = () => {
   return false;
 };
@@ -42,6 +42,10 @@ window.oncontextmenu = () => {
  * Other than creating and initializing the cy graph, this component should do nothing else. Parent components
  * should get a ref to this component can call getCy() in order to perform additional processing on the graph.
  * It is the job of the parent component to manipulate and update the cy graph during runtime.
+ *
+ * NOTE: The context menu stuff is defined in the CytoscapeReactWrapper because that is
+ * where the cytoscape plugins are defined. And the context menu functions are defined in
+ * here because they are not normal Cytoscape defined functions like those found in CytoscapeGraph.
  */
 export class CytoscapeReactWrapper extends React.Component<CytoscapeReactWrapperProps, CytoscapeReactWrapperState> {
   cy: any;
@@ -130,21 +134,20 @@ export class CytoscapeReactWrapper extends React.Component<CytoscapeReactWrapper
           // Remember we on Tippy.js which is html over the cytoscape canvas -- not React JSX
           // @todo: Refactor this to ReactDOM.render() to use JSX
           const tippyDiv = document.createElement('div');
-          tippyDiv.setAttribute('align', 'left');
+          tippyDiv.setAttribute('class', 'kiali-graph-context-menu-container');
           const divTitle = document.createElement('div');
-          divTitle.setAttribute('align', 'center');
-          divTitle.setAttribute('style', 'font-size: 12px');
+          divTitle.setAttribute('class', 'kiali-graph-context-menu-title');
           const nodeData = node.data();
-          const version = nodeData.version ? `:${nodeData.version}` : '';
+          const version = nodeData.version ? `${nodeData.version}` : '';
           divTitle.innerHTML = `<strong>${nodeData.app}</strong>:${version}`;
 
           const detailsPageUrl = CytoscapeReactWrapper.makeDetailsPageUrl(node);
-          const divDetails = document.createElement('div');
-          divDetails.setAttribute('style', 'color: #363636; text-decoration: none; font-size: 12px');
-          divDetails.innerHTML = `<a style='color: #363636' href="${detailsPageUrl}" >Show Details</a>`;
+          const divDetailsItem = document.createElement('div');
+          divDetailsItem.setAttribute('class', 'kiali-graph-context-menu-item');
+          divDetailsItem.innerHTML = `<a class='kiali-graph-context-menu-item-link' href="${detailsPageUrl}" >Show Details</a>`;
 
           tippyDiv.append(divTitle);
-          tippyDiv.append(divDetails);
+          tippyDiv.append(divDetailsItem);
 
           return tippyDiv;
         })(),
@@ -170,7 +173,7 @@ export class CytoscapeReactWrapper extends React.Component<CytoscapeReactWrapper
             const tipNode = makeTippyForNode(appNode).instances[0];
             // hide the tip after 6 seconds otherwise we can get a bunch of persistent tips
             setTimeout(() => {
-              tipNode./**/ hide();
+              tipNode.hide();
             }, 6000);
             tipNode.show();
           }
