@@ -4,6 +4,7 @@ import { Col, Row, OverlayTrigger, Tooltip, Table } from 'patternfly-react';
 import Label from '../../../components/Label/Label';
 import * as resolve from 'table-resolver';
 import { ConfigIndicator } from '../../../components/ConfigValidation/ConfigIndicator';
+import Labels from '../../../components/Label/Labels';
 
 interface PodsGroup {
   commonPrefix: string;
@@ -152,15 +153,6 @@ class WorkloadPods extends React.Component<WorkloadPodsProps, WorkloadPodsState>
       <>{new Date(group.createdAtStart).toLocaleString() + ' and ' + new Date(group.createdAtEnd).toLocaleString()}</>
     );
   }
-  renderLabels(labels: { [key: string]: string }, u: Number) {
-    return (
-      <div key="labels" className="label-collection">
-        {Object.keys(labels).map((key, i) => (
-          <Label key={'pod_' + u + '_' + i} name={key} value={labels[key]} />
-        ))}
-      </div>
-    );
-  }
 
   columns() {
     return {
@@ -264,7 +256,7 @@ class WorkloadPods extends React.Component<WorkloadPodsProps, WorkloadPodsState>
           group.createdBy && group.createdBy.length > 0
             ? group.createdBy.map(ref => ref.name + ' (' + ref.kind + ')').join(', ')
             : '',
-        labels: this.renderLabels(group.commonLabels, vsIdx),
+        labels: <Labels key={'labels' + vsIdx} labels={group.commonLabels} />,
         istioInitContainers: group.istioInitContainers
           ? group.istioInitContainers.map(c => `${c.image}`).join(', ')
           : '',
