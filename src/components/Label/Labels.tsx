@@ -5,7 +5,7 @@ import { style } from 'typestyle';
 const SHOW_MORE_TRESHOLD = 3;
 
 interface Props {
-  labels: { [key: string]: string };
+  labels?: { [key: string]: string };
 }
 
 interface State {

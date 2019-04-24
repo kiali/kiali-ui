@@ -8,6 +8,7 @@ import { WorkloadOverview } from '../../../types/ServiceInfo';
 import Label from '../../../components/Label/Label';
 import LocalTime from '../../../components/Time/LocalTime';
 import MissingSidecar from '../../../components/MissingSidecar/MissingSidecar';
+import Labels from '../../../components/Label/Labels';
 
 interface ServiceInfoWorkloadProps {
   workloads?: WorkloadOverview[];
@@ -94,16 +95,6 @@ class ServiceInfoWorkload extends React.Component<ServiceInfoWorkloadProps> {
     );
   }
 
-  renderLabels(workload: WorkloadOverview) {
-    return (
-      <div key="labels" className="label-collection">
-        {Object.keys(workload.labels || {}).map((key, i) => (
-          <Label key={'workload_' + i} name={key} value={workload.labels ? workload.labels[key] : ''} />
-        ))}
-      </div>
-    );
-  }
-
   rows() {
     return (this.props.workloads || []).map((workload, vsIdx) => ({
       id: vsIdx,
@@ -111,7 +102,7 @@ class ServiceInfoWorkload extends React.Component<ServiceInfoWorkloadProps> {
       name: this.overviewLink(workload),
       createdAt: <LocalTime time={workload.createdAt} />,
       resourceVersion: workload.resourceVersion,
-      labels: this.renderLabels(workload)
+      labels: <Labels labels={workload.labels} />
     }));
   }
 

@@ -157,12 +157,18 @@ ShallowWrapper {
       "key": undefined,
       "nodeType": "host",
       "props": Object {
-        "children": " More labels...",
+        "children": Array [
+          " ",
+          "More labels...",
+        ],
         "className": "fqiflux",
         "onClick": [Function],
       },
       "ref": null,
-      "rendered": " More labels...",
+      "rendered": Array [
+        " ",
+        "More labels...",
+      ],
       "type": "a",
     },
   ],
