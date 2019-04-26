@@ -10,6 +10,9 @@ import { style } from 'typestyle';
 
 import './ServiceInfoDescription.css';
 import Labels from '../../../components/Label/Labels';
+import { Link } from 'react-router-dom';
+import { encode } from 'punycode';
+import { CytoscapeGraphSelectorBuilder } from '../../../components/CytoscapeGraph/CytoscapeGraphSelector';
 
 interface ServiceInfoDescriptionProps {
   name: string;
@@ -35,6 +38,12 @@ const ExternalNameType = 'ExternalName';
 class ServiceInfoDescription extends React.Component<ServiceInfoDescriptionProps> {
   constructor(props: ServiceInfoDescriptionProps) {
     super(props);
+  }
+
+  showOnGraphLink(serviceName: string) {
+    return `/graph/namespaces?focusSelector=${encode(
+      new CytoscapeGraphSelectorBuilder().service(serviceName).build()
+    )}`;
   }
 
   render() {
@@ -70,6 +79,9 @@ class ServiceInfoDescription extends React.Component<ServiceInfoDescriptionProps
               </div>
               <div>
                 <strong>Resource Version</strong> {this.props.resourceVersion}
+              </div>
+              <div>
+                <Link to={this.showOnGraphLink(this.props.name)}>Show on graph</Link>
               </div>
             </Col>
             <Col xs={12} sm={4} md={2} lg={2}>

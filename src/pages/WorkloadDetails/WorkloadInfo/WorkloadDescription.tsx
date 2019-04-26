@@ -7,6 +7,9 @@ import { DisplayMode, HealthIndicator } from '../../../components/Health/HealthI
 import { WorkloadHealth } from '../../../types/Health';
 import { runtimesLogoProviders } from '../../../config/Logos';
 import Labels from '../../../components/Label/Labels';
+import { Link } from 'react-router-dom';
+import { CytoscapeGraphSelectorBuilder } from '../../../components/CytoscapeGraph/CytoscapeGraphSelector';
+import { encode } from 'punycode';
 
 type WorkloadDescriptionProps = {
   workload: Workload;
@@ -28,6 +31,12 @@ class WorkloadDescription extends React.Component<WorkloadDescriptionProps, Work
       return <img key={'logo-' + idx} src={logoProvider()} alt={name} title={name} />;
     }
     return <span key={'runtime-' + idx}>{name}</span>;
+  }
+
+  showOnGraphLink(workloadName: string) {
+    return `/graph/namespaces?focusSelector=${encode(
+      new CytoscapeGraphSelectorBuilder().workload(workloadName).build()
+    )}`;
   }
 
   render() {
@@ -72,6 +81,9 @@ class WorkloadDescription extends React.Component<WorkloadDescriptionProps, Work
                     )}
                 </div>
               )}
+              <div>
+                <Link to={this.showOnGraphLink(this.props.workload.name)}>Show on graph</Link>
+              </div>
             </Col>
             <Col xs={12} sm={4} md={3} lg={3} />
             <Col xs={12} sm={4} md={3} lg={3}>

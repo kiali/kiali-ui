@@ -121,6 +121,14 @@ ShallowWrapper {
              
             1234
           </div>
+          <div>
+            <Link
+              replace={false}
+              to="/graph/namespaces?focusSelector=node[service=\\"reviews\\"]-"
+            >
+              Show on graph
+            </Link>
+          </div>
         </Col>
         <Col
           bsClass="col"
@@ -296,6 +304,14 @@ ShallowWrapper {
               </strong>
                
               1234
+            </div>
+            <div>
+              <Link
+                replace={false}
+                to="/graph/namespaces?focusSelector=node[service=\\"reviews\\"]-"
+              >
+                Show on graph
+              </Link>
             </div>
           </Col>
           <Col

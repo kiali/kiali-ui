@@ -7,6 +7,8 @@ import { AppHealth } from '../../../types/Health';
 import { App, AppWorkload } from '../../../types/App';
 import { WorkloadIcon } from '../../../types/Workload';
 import { Link } from 'react-router-dom';
+import { encode } from 'punycode';
+import { CytoscapeGraphSelectorBuilder } from '../../../components/CytoscapeGraph/CytoscapeGraphSelector';
 
 type AppDescriptionProps = {
   app: App;
@@ -27,6 +29,10 @@ class AppDescription extends React.Component<AppDescriptionProps, AppDescription
       istioSidecar = istioSidecar && wkd.istioSidecar;
     });
     return istioSidecar;
+  }
+
+  showOnGraphLink(application: string) {
+    return `/graph/namespaces?focusSelector=${encode(new CytoscapeGraphSelectorBuilder().app(application).build())}`;
   }
 
   serviceLink(namespace: string, service: string) {
@@ -126,26 +132,31 @@ class AppDescription extends React.Component<AppDescriptionProps, AppDescription
         title={app.name}
         istio={this.istioSidecar()}
         items={
-          <Row>
-            <Col xs={12} sm={6} md={4} lg={4}>
-              <ListView>{this.workloadList()}</ListView>
-            </Col>
-            <Col xs={12} sm={6} md={4} lg={4}>
-              <ListView>{this.serviceList()}</ListView>
-            </Col>
-            <Col xs={0} sm={0} md={1} lg={1} />
-            <Col xs={12} sm={6} md={3} lg={3}>
-              <div className="progress-description">
-                <strong>Health</strong>
-              </div>
-              <HealthIndicator
-                id={app.name}
-                health={this.props.health}
-                mode={DisplayMode.LARGE}
-                tooltipPlacement="left"
-              />
-            </Col>
-          </Row>
+          <>
+            <Row>
+              <Link to={this.showOnGraphLink(app.name)}>Show on graph</Link>
+            </Row>
+            <Row>
+              <Col xs={12} sm={6} md={4} lg={4}>
+                <ListView>{this.workloadList()}</ListView>
+              </Col>
+              <Col xs={12} sm={6} md={4} lg={4}>
+                <ListView>{this.serviceList()}</ListView>
+              </Col>
+              <Col xs={0} sm={0} md={1} lg={1} />
+              <Col xs={12} sm={6} md={3} lg={3}>
+                <div className="progress-description">
+                  <strong>Health</strong>
+                </div>
+                <HealthIndicator
+                  id={app.name}
+                  health={this.props.health}
+                  mode={DisplayMode.LARGE}
+                  tooltipPlacement="left"
+                />
+              </Col>
+            </Row>
+          </>
         }
       />
     ) : (

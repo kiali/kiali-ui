@@ -111,6 +111,14 @@ ShallowWrapper {
               42
             </span>
           </div>
+          <div>
+            <Link
+              replace={false}
+              to="/graph/namespaces?focusSelector=node[workload=\\"myworkload\\"]-"
+            >
+              Show on graph
+            </Link>
+          </div>
         </Col>
         <Col
           bsClass="col"
@@ -220,6 +228,14 @@ ShallowWrapper {
               <span>
                 42
               </span>
+            </div>
+            <div>
+              <Link
+                replace={false}
+                to="/graph/namespaces?focusSelector=node[workload=\\"myworkload\\"]-"
+              >
+                Show on graph
+              </Link>
             </div>
           </Col>
           <Col

@@ -76,6 +76,7 @@ type CytoscapeGraphProps = ReduxProps & {
   isMTLSEnabled: boolean;
   containerClassName?: string;
   refresh: () => void;
+  focusSelector?: string;
 };
 
 type CytoscapeGraphState = {};
@@ -346,7 +347,15 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
   }
 
   private safeFit(cy: any) {
-    CytoscapeGraphUtils.safeFit(cy);
+    let centerElements;
+    if (this.props.focusSelector) {
+      const elements = cy.$(this.props.focusSelector);
+      if (!elements.empty()) {
+        centerElements = elements;
+      }
+    }
+
+    CytoscapeGraphUtils.safeFit(cy, centerElements);
     this.initialValues.position = { ...cy.pan() };
     this.initialValues.zoom = cy.zoom();
   }
