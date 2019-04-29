@@ -189,11 +189,7 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
       }
       const eles = cy.nodes(selector);
       if (eles.length > 0) {
-        this.selectTarget(eles[0]);
-        this.props.updateSummary({
-          summaryType: eles[0].data(CyNode.isGroup) ? 'group' : 'node',
-          summaryTarget: eles[0]
-        });
+        this.selectTargetAndUpdateSummary(eles[0]);
       }
     }
     if (this.props.elements !== prevProps.elements) {
@@ -348,20 +344,42 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
     });
   }
 
-  private safeFit(cy: any) {
-    let centerElements;
-    if (this.props.focusSelector) {
-      const elements = cy.$(this.props.focusSelector);
-      if (!elements.empty()) {
-        centerElements = elements;
-        if (this.focusAnimation) {
-          this.focusAnimation.stop();
+  private focus(cy: any, elements?: any) {
+    let focusElements = elements;
+    if (!focusElements) {
+      if (this.props.focusSelector) {
+        const selectorResult = cy.$(this.props.focusSelector);
+        if (!selectorResult.empty()) {
+          focusElements = selectorResult;
         }
-        this.focusAnimation = new FocusAnimation(cy);
-        this.focusAnimation.start(centerElements);
       }
     }
 
+    if (focusElements) {
+      // If there is only one, select it
+      if (focusElements.length === 1) {
+        this.selectTargetAndUpdateSummary(focusElements[0]);
+      } else {
+        // If we have many elements, try to check if a compound in this query contains everything, if so, select it.
+        const compound = focusElements.filter('$node > node');
+        if (compound && compound.length === 1 && focusElements.subtract(compound).same(compound.children())) {
+          this.selectTargetAndUpdateSummary(compound[0]);
+          focusElements = compound;
+        }
+      }
+
+      // Start animation
+      if (this.focusAnimation) {
+        this.focusAnimation.stop();
+      }
+      this.focusAnimation = new FocusAnimation(cy);
+      this.focusAnimation.start(focusElements);
+    }
+    return focusElements;
+  }
+
+  private safeFit(cy: any) {
+    const centerElements = this.focus(cy);
     CytoscapeGraphUtils.safeFit(cy, centerElements);
     this.initialValues.position = { ...cy.pan() };
     this.initialValues.zoom = cy.zoom();
@@ -455,6 +473,14 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
         .select()
         .unselectify();
     }
+  };
+
+  private selectTargetAndUpdateSummary = (target: any) => {
+    this.selectTarget(target);
+    this.props.updateSummary({
+      summaryType: target.data(CyNode.isGroup) ? 'group' : 'node',
+      summaryTarget: target
+    });
   };
 
   private handleDoubleTap = (event: CytoscapeClickEvent) => {
