@@ -1,7 +1,9 @@
 import axios, { AxiosError } from 'axios';
+import { DashboardModel } from 'k-charted-react';
+
 import Namespace from '../types/Namespace';
 import { CustomMetricsOptions, MetricsOptions } from '../types/MetricsOptions';
-import { MonitoringDashboard, Metrics } from '../types/Metrics';
+import { Metrics } from '../types/Metrics';
 import { IstioConfigDetails } from '../types/IstioConfigDetails';
 import { IstioConfigList } from '../types/IstioConfigList';
 import { Workload, WorkloadNamespaceResponse } from '../types/Workload';
@@ -214,7 +216,7 @@ export const getServiceMetrics = (namespace: string, service: string, params: Me
 };
 
 export const getServiceDashboard = (namespace: string, service: string, params: MetricsOptions) => {
-  return newRequest<MonitoringDashboard>(HTTP_VERBS.GET, urls.serviceDashboard(namespace, service), params, {});
+  return newRequest<DashboardModel>(HTTP_VERBS.GET, urls.serviceDashboard(namespace, service), params, {});
 };
 
 export const getApp = (namespace: string, app: string) => {
@@ -230,7 +232,7 @@ export const getAppMetrics = (namespace: string, app: string, params: MetricsOpt
 };
 
 export const getAppDashboard = (namespace: string, app: string, params: MetricsOptions) => {
-  return newRequest<MonitoringDashboard>(HTTP_VERBS.GET, urls.appDashboard(namespace, app), params, {});
+  return newRequest<DashboardModel>(HTTP_VERBS.GET, urls.appDashboard(namespace, app), params, {});
 };
 
 export const getWorkloadMetrics = (namespace: string, workload: string, params: MetricsOptions) => {
@@ -238,11 +240,11 @@ export const getWorkloadMetrics = (namespace: string, workload: string, params: 
 };
 
 export const getWorkloadDashboard = (namespace: string, workload: string, params: MetricsOptions) => {
-  return newRequest<MonitoringDashboard>(HTTP_VERBS.GET, urls.workloadDashboard(namespace, workload), params, {});
+  return newRequest<DashboardModel>(HTTP_VERBS.GET, urls.workloadDashboard(namespace, workload), params, {});
 };
 
 export const getCustomDashboard = (ns: string, app: string, tpl: string, params: CustomMetricsOptions) => {
-  return newRequest<MonitoringDashboard>(HTTP_VERBS.GET, urls.customDashboard(ns, app, tpl), params, {});
+  return newRequest<DashboardModel>(HTTP_VERBS.GET, urls.customDashboard(ns, app, tpl), params, {});
 };
 
 export const getServiceHealth = (
