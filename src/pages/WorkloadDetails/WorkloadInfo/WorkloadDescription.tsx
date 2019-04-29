@@ -80,9 +80,11 @@ class WorkloadDescription extends React.Component<WorkloadDescriptionProps, Work
                     )}
                 </div>
               )}
-              <div>
-                <Link to={this.showOnGraphLink(this.props.workload.name)}>Show on graph</Link>
-              </div>
+              {workload && (
+                <div>
+                  <Link to={this.showOnGraphLink(this.props.workload.name)}>Show on graph</Link>
+                </div>
+              )}
             </Col>
             <Col xs={12} sm={4} md={3} lg={3} />
             <Col xs={12} sm={4} md={3} lg={3}>

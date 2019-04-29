@@ -132,9 +132,11 @@ class AppDescription extends React.Component<AppDescriptionProps, AppDescription
         istio={this.istioSidecar()}
         items={
           <>
-            <Row>
-              <Link to={this.showOnGraphLink(app.name)}>Show on graph</Link>
-            </Row>
+            {app.name && (
+              <Row>
+                <Link to={this.showOnGraphLink(app.name)}>Show on graph</Link>
+              </Row>
+            )}
             <Row>
               <Col xs={12} sm={6} md={4} lg={4}>
                 <ListView>{this.workloadList()}</ListView>

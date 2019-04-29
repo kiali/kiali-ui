@@ -79,9 +79,11 @@ class ServiceInfoDescription extends React.Component<ServiceInfoDescriptionProps
               <div>
                 <strong>Resource Version</strong> {this.props.resourceVersion}
               </div>
-              <div>
-                <Link to={this.showOnGraphLink(this.props.name)}>Show on graph</Link>
-              </div>
+              {this.props.name && (
+                <div>
+                  <Link to={this.showOnGraphLink(this.props.name)}>Show on graph</Link>
+                </div>
+              )}
             </Col>
             <Col xs={12} sm={4} md={2} lg={2}>
               <div className="progress-description">
