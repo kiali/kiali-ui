@@ -45,6 +45,7 @@ import { NamespaceActions } from '../../actions/NamespaceAction';
 import { DurationInSeconds, PollIntervalInMs } from '../../types/Common';
 import GraphThunkActions from '../../actions/GraphThunkActions';
 import * as MessageCenterUtils from '../../utils/MessageCenter';
+import FocusAnimation from './FocusAnimation';
 
 type ReduxProps = {
   activeNamespaces: Namespace[];
@@ -104,6 +105,7 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
 
   private graphHighlighter: GraphHighlighter;
   private trafficRenderer: TrafficRender;
+  private focusAnimation?: FocusAnimation;
   private cytoscapeReactWrapperRef: any;
   private namespaceChanged: boolean;
   private nodeChanged: boolean;
@@ -352,6 +354,11 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
       const elements = cy.$(this.props.focusSelector);
       if (!elements.empty()) {
         centerElements = elements;
+        if (this.focusAnimation) {
+          this.focusAnimation.stop();
+        }
+        this.focusAnimation = new FocusAnimation(cy);
+        this.focusAnimation.start(centerElements);
       }
     }
 
