@@ -9,7 +9,6 @@ import { runtimesLogoProviders } from '../../../config/Logos';
 import Labels from '../../../components/Label/Labels';
 import { Link } from 'react-router-dom';
 import { CytoscapeGraphSelectorBuilder } from '../../../components/CytoscapeGraph/CytoscapeGraphSelector';
-import { encode } from 'punycode';
 
 type WorkloadDescriptionProps = {
   workload: Workload;
@@ -34,7 +33,7 @@ class WorkloadDescription extends React.Component<WorkloadDescriptionProps, Work
   }
 
   showOnGraphLink(workloadName: string) {
-    return `/graph/namespaces?focusSelector=${encode(
+    return `/graph/namespaces?focusSelector=${encodeURI(
       new CytoscapeGraphSelectorBuilder().workload(workloadName).build()
     )}`;
   }

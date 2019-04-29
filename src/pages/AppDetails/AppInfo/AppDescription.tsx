@@ -7,7 +7,6 @@ import { AppHealth } from '../../../types/Health';
 import { App, AppWorkload } from '../../../types/App';
 import { WorkloadIcon } from '../../../types/Workload';
 import { Link } from 'react-router-dom';
-import { encode } from 'punycode';
 import { CytoscapeGraphSelectorBuilder } from '../../../components/CytoscapeGraph/CytoscapeGraphSelector';
 
 type AppDescriptionProps = {
@@ -32,7 +31,7 @@ class AppDescription extends React.Component<AppDescriptionProps, AppDescription
   }
 
   showOnGraphLink(application: string) {
-    return `/graph/namespaces?focusSelector=${encode(new CytoscapeGraphSelectorBuilder().app(application).build())}`;
+    return `/graph/namespaces?focusSelector=${encodeURI(new CytoscapeGraphSelectorBuilder().app(application).build())}`;
   }
 
   serviceLink(namespace: string, service: string) {
