@@ -7,12 +7,9 @@ import SummaryPanelGraph from './SummaryPanelGraph';
 import SummaryPanelGroup from './SummaryPanelGroup';
 import SummaryPanelNode from './SummaryPanelNode';
 
-type SummaryPanelState = {
-  isVisible: boolean;
-};
-
 type MainSummaryPanelPropType = SummaryPanelPropType & {
   isPageVisible: boolean;
+  onToggle: (isCollapsed: boolean) => void;
 };
 
 const expandedStyle = style({
@@ -44,16 +41,16 @@ const toggleSidePanelStyle = style({
   transformOrigin: 'left top 0'
 });
 
-export default class SummaryPanel extends React.Component<MainSummaryPanelPropType, SummaryPanelState> {
+export default class SummaryPanel extends React.Component<MainSummaryPanelPropType> {
+  private isCollapsed: boolean = false;
+
   constructor(props: MainSummaryPanelPropType) {
     super(props);
-    this.state = {
-      isVisible: true
-    };
   }
 
   componentDidUpdate(prevProps: Readonly<MainSummaryPanelPropType>): void {
-    if (prevProps.data.summaryTarget !== this.props.data.summaryTarget) {
+    const summaryTarget = this.props.data.summaryTarget;
+    if (prevProps.data.summaryTarget !== summaryTarget) {
       this.setState({ isVisible: true });
     }
   }
@@ -63,9 +60,9 @@ export default class SummaryPanel extends React.Component<MainSummaryPanelPropTy
       return null;
     }
     return (
-      <div className={this.state.isVisible ? expandedStyle : collapsedStyle}>
+      <div className={this.isCollapsed ? collapsedStyle : expandedStyle}>
         <div className={toggleSidePanelStyle} onClick={this.togglePanel}>
-          {this.state.isVisible ? (
+          {this.isCollapsed ? (
             <>
               <Icon name="angle-double-down" /> Hide
             </>
@@ -117,8 +114,7 @@ export default class SummaryPanel extends React.Component<MainSummaryPanelPropTy
   }
 
   private togglePanel = () => {
-    this.setState((state: SummaryPanelState) => ({
-      isVisible: !state.isVisible
-    }));
+    this.isCollapsed = !this.isCollapsed;
+    this.props.onToggle(this.isCollapsed);
   };
 }

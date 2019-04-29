@@ -12,6 +12,7 @@ import { computePrometheusRateParams } from '../../services/Prometheus';
 import { CancelablePromise, makeCancelablePromise } from '../../utils/CancelablePromises';
 import * as MessageCenterUtils from '../../utils/MessageCenter';
 import CytoscapeGraphContainer from '../../components/CytoscapeGraph/CytoscapeGraph';
+import { safeFit } from '../../components/CytoscapeGraph/CytoscapeGraphUtils';
 import CytoscapeToolbarContainer from '../../components/CytoscapeGraph/CytoscapeToolbar';
 import ErrorBoundary from '../../components/ErrorBoundary/ErrorBoundary';
 import GraphFilterContainer from '../../components/GraphFilter/GraphFilter';
@@ -76,6 +77,7 @@ export type GraphPageProps = RouteComponentProps<GraphURLPathProps> &
   };
 
 type GraphPageState = {
+  isSummaryPanelCollapsed: boolean;
   showHelp: boolean;
 };
 
@@ -194,6 +196,7 @@ export default class GraphPage extends React.Component<GraphPageProps, GraphPage
     this.errorBoundaryRef = React.createRef();
     this.cytoscapeGraphRef = React.createRef();
     this.state = {
+      isSummaryPanelCollapsed: false,
       showHelp: false
     };
 
@@ -220,7 +223,7 @@ export default class GraphPage extends React.Component<GraphPageProps, GraphPage
     this.removePollingIntervalTimer();
   }
 
-  componentDidUpdate(prev: GraphPageProps) {
+  componentDidUpdate(prev: GraphPageProps, prevState: GraphPageState) {
     // schedule an immediate graph fetch if needed
     const curr = this.props;
 
@@ -257,6 +260,13 @@ export default class GraphPage extends React.Component<GraphPageProps, GraphPage
 
     if (curr.showLegend && this.state.showHelp) {
       this.setState({ showHelp: false });
+    }
+
+    if (prevState.isSummaryPanelCollapsed !== this.state.isSummaryPanelCollapsed) {
+      // don't resize if the user has some element selected, assume he has it the way he wants
+      if (this.props.summaryData && this.props.summaryData.summaryType === 'graph') {
+        safeFit(this.cytoscapeGraphRef.current.getCy());
+      }
     }
   }
 
@@ -338,6 +348,7 @@ export default class GraphPage extends React.Component<GraphPageProps, GraphPage
                 queryTime={this.props.graphTimestamp}
                 duration={this.props.graphDuration}
                 isPageVisible={this.props.isPageVisible}
+                onToggle={this.toggleSummaryPanel}
                 {...computePrometheusRateParams(this.props.duration, NUMBER_OF_DATAPOINTS)}
               />
             )}
@@ -357,6 +368,10 @@ export default class GraphPage extends React.Component<GraphPageProps, GraphPage
   private setCytoscapeGraph(cytoscapeGraph: any) {
     this.cytoscapeGraphRef.current = cytoscapeGraph ? cytoscapeGraph.getWrappedInstance() : null;
   }
+
+  private toggleSummaryPanel = (isCollapsed: boolean) => {
+    this.setState({ isSummaryPanelCollapsed: isCollapsed });
+  };
 
   private loadGraphDataFromBackend = () => {
     const promise = this.props.fetchGraphData(
