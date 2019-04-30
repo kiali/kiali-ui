@@ -114,7 +114,7 @@ ShallowWrapper {
           <div>
             <Link
               replace={false}
-              to="/graph/namespaces?focusSelector=node[workload=\\"myworkload\\"]-"
+              to="/graph/namespaces?focusSelector=node%5Bworkload=%22myworkload%22%5D"
             >
               Show on graph
             </Link>
@@ -232,7 +232,7 @@ ShallowWrapper {
             <div>
               <Link
                 replace={false}
-                to="/graph/namespaces?focusSelector=node[workload=\\"myworkload\\"]-"
+                to="/graph/namespaces?focusSelector=node%5Bworkload=%22myworkload%22%5D"
               >
                 Show on graph
               </Link>

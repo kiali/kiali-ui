@@ -124,7 +124,7 @@ ShallowWrapper {
           <div>
             <Link
               replace={false}
-              to="/graph/namespaces?focusSelector=node[service=\\"reviews\\"]-"
+              to="/graph/namespaces?focusSelector=node%5Bservice=%22reviews%22%5D"
             >
               Show on graph
             </Link>
@@ -308,7 +308,7 @@ ShallowWrapper {
             <div>
               <Link
                 replace={false}
-                to="/graph/namespaces?focusSelector=node[service=\\"reviews\\"]-"
+                to="/graph/namespaces?focusSelector=node%5Bservice=%22reviews%22%5D"
               >
                 Show on graph
               </Link>
