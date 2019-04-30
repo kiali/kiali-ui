@@ -132,14 +132,6 @@ export interface TLSMatchAttributes {
   gateways: string[];
 }
 
-export interface MatchRequest {
-  headers?: { [key: string]: StringMatch };
-  uri?: StringMatch;
-  scheme?: StringMatch;
-  method?: StringMatch;
-  authority?: StringMatch;
-}
-
 export interface StringMatch {
   exact?: string;
   prefix?: string;
@@ -203,11 +195,6 @@ export interface Throttle {
   throttleForPeriod: string;
 }
 
-export interface Terminate {
-  percent: number;
-  terminateAfterPeriod: string;
-}
-
 export interface CorsPolicy {
   allowOrigin: string[];
   allowMethods: string[];
@@ -215,39 +202,6 @@ export interface CorsPolicy {
   exposeHeaders: string[];
   maxAge: string;
   allowCredentials: string;
-}
-
-// Destination Policy
-
-export interface LoadBalancing {
-  name: string;
-}
-
-export interface CircuitBreakerPolicy {
-  maxConnections?: number;
-  httpMaxPendingRequests?: number;
-  httpMaxRequests?: number;
-  sleepWindow?: string;
-  httpConsecutiveErrors?: string;
-  httpDetectionInterval?: string;
-  httpMaxRequestsPerConnection?: number;
-  httpMaxEjectionPercent?: number;
-  httpMaxRetries?: number;
-}
-
-export interface CircuitBreaker {
-  simpleCb: CircuitBreakerPolicy;
-  custom: string;
-}
-
-export interface DestinationPolicy {
-  name: string;
-  createdAt: string;
-  resourceVersion: string;
-  destination?: IstioService;
-  source?: IstioService;
-  loadbalancing?: LoadBalancing;
-  circuitBreaker?: CircuitBreaker;
 }
 
 // Destination Rule
@@ -318,10 +272,7 @@ export interface DestinationRuleSpec {
   subsets?: Subset[];
 }
 
-export interface DestinationRule {
-  kind?: string;
-  apiVersion?: string;
-  metadata: K8sMetadata;
+export interface DestinationRule extends IstioObject {
   spec: DestinationRuleSpec;
 }
 

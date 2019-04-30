@@ -2,7 +2,6 @@ import Namespace from './Namespace';
 import { AceOptions } from 'react-ace';
 import { ResourcePermissions } from './Permissions';
 import {
-  DestinationPolicy,
   DestinationRule,
   Gateway,
   IstioAdapter,
@@ -30,7 +29,6 @@ export interface IstioConfigId {
 export interface IstioConfigDetails {
   namespace: Namespace;
   gateway: Gateway;
-  destinationPolicy: DestinationPolicy;
   virtualService: VirtualService;
   destinationRule: DestinationRule;
   serviceEntry: ServiceEntry;
