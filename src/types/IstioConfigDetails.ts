@@ -11,7 +11,6 @@ import {
   Policy,
   QuotaSpec,
   QuotaSpecBinding,
-  RouteRule,
   ServiceEntry,
   VirtualService,
   ObjectValidation,
@@ -31,7 +30,6 @@ export interface IstioConfigId {
 export interface IstioConfigDetails {
   namespace: Namespace;
   gateway: Gateway;
-  routeRule: RouteRule;
   destinationPolicy: DestinationPolicy;
   virtualService: VirtualService;
   destinationRule: DestinationRule;

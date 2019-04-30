@@ -202,8 +202,6 @@ class IstioConfigDetailsPage extends React.Component<RouteComponentProps<IstioCo
     if (this.state.istioObjectDetails) {
       if (this.state.istioObjectDetails.gateway) {
         istioObject = this.state.istioObjectDetails.gateway;
-      } else if (this.state.istioObjectDetails.routeRule) {
-        istioObject = this.state.istioObjectDetails.routeRule;
       } else if (this.state.istioObjectDetails.destinationPolicy) {
         istioObject = this.state.istioObjectDetails.destinationPolicy;
       } else if (this.state.istioObjectDetails.virtualService) {

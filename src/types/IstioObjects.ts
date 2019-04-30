@@ -111,41 +111,12 @@ export interface Host {
   cluster?: string;
 }
 
-// RouteRule type
-
-export interface RouteRule {
-  name: string;
-  createdAt: string;
-  resourceVersion: string;
-  destination?: IstioService;
-  precedence?: number;
-  match?: MatchCondition;
-  route?: DestinationWeightV1Alpha1[];
-  redirect?: HTTPRedirect;
-  rewrite?: HTTPRewrite;
-  websocketUpgrade?: string;
-  httpReqTimeout?: HTTPTimeout;
-  httpReqRetries?: HTTPRetry;
-  httpFault?: HTTPFaultInjection;
-  l4Fault?: L4FaultInjection;
-  mirror?: IstioService;
-  corsPolicy?: CorsPolicy;
-  appendHeaders?: { [key: string]: string };
-}
-
 export interface IstioService {
   name?: string;
   namespace?: string;
   domain?: string;
   service?: string;
   labels?: { [key: string]: string };
-}
-
-export interface MatchCondition {
-  source?: IstioService;
-  tcp?: L4MatchAttributes;
-  udp?: L4MatchAttributes;
-  request?: MatchRequest;
 }
 
 export interface L4MatchAttributes {
@@ -175,11 +146,6 @@ export interface StringMatch {
   regex?: string;
 }
 
-export interface DestinationWeightV1Alpha1 {
-  labels: { [key: string]: string };
-  weight?: number;
-}
-
 export interface DestinationWeight {
   destination: Destination;
   weight?: number;
@@ -193,16 +159,6 @@ export interface HTTPRedirect {
 export interface HTTPRewrite {
   uri: string;
   authority: string;
-}
-
-export interface HTTPTimeout {
-  simpleTimeout: SimpleTimeoutPolicy;
-  custom: string;
-}
-
-export interface SimpleTimeoutPolicy {
-  timeout: string;
-  overrideHeaderName: string;
 }
 
 export interface HTTPRetry {
@@ -236,11 +192,6 @@ export interface Abort {
   percent?: number;
   httpStatus?: number;
   percentage?: Percent;
-}
-
-export interface L4FaultInjection {
-  throttle: Throttle;
-  terminate: Terminate;
 }
 
 export interface Throttle {
