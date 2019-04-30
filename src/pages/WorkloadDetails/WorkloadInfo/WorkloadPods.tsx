@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { ContainerInfo, Pod, Reference, ObjectValidation } from '../../../types/IstioObjects';
-import { Col, Row, OverlayTrigger, Tooltip, Table } from 'patternfly-react';
-import Label from '../../../components/Label/Label';
+import { ContainerInfo, ObjectValidation, Pod, Reference } from '../../../types/IstioObjects';
+import { Col, OverlayTrigger, Row, Table, Tooltip } from 'patternfly-react';
 import * as resolve from 'table-resolver';
 import { ConfigIndicator } from '../../../components/ConfigValidation/ConfigIndicator';
 import Labels from '../../../components/Label/Labels';

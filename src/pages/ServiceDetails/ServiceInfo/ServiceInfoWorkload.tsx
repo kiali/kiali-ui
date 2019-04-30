@@ -4,8 +4,6 @@ import { Link } from 'react-router-dom';
 import * as resolve from 'table-resolver';
 
 import { WorkloadOverview } from '../../../types/ServiceInfo';
-
-import Label from '../../../components/Label/Label';
 import LocalTime from '../../../components/Time/LocalTime';
 import MissingSidecar from '../../../components/MissingSidecar/MissingSidecar';
 import Labels from '../../../components/Label/Labels';

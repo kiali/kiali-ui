@@ -1,8 +1,7 @@
 import * as React from 'react';
-import { Service, Port } from '../../../types/IstioObjects';
-import { Row, Col, Table } from 'patternfly-react';
+import { Port, Service } from '../../../types/IstioObjects';
+import { Col, Row, Table } from 'patternfly-react';
 import { Link } from 'react-router-dom';
-import Label from '../../../components/Label/Label';
 import LocalTime from '../../../components/Time/LocalTime';
 import * as resolve from 'table-resolver';
 import Labels from '../../../components/Label/Labels';
