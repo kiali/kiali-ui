@@ -61,7 +61,7 @@ export default class GraphLegend extends React.Component<GraphLegendProps, Graph
     }
     const className = this.props.className ? this.props.className : '';
     return (
-      <Draggable>
+      <Draggable bounds="#root">
         <div className={`modal-content ${className}`}>
           <div className="modal-header">
             <Button className="close" bsClass="" onClick={this.props.closeLegend}>

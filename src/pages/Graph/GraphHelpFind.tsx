@@ -191,7 +191,7 @@ export default class GraphHelpFind extends React.Component<GraphHelpFindProps> {
       'Hide together. To get started click the "Examples" tab. Click "Usage Notes" for restrictions and tips. ' +
       'The other tabs provide details about the full set of node and edge operands, as well as operators.';
     return (
-      <Draggable handle="#helpheader">
+      <Draggable handle="#helpheader" bounds="#root">
         <div
           className={`modal-content ${className}`}
           style={{
