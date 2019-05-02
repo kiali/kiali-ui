@@ -219,7 +219,7 @@ export class GraphStyles {
         } else {
           const contentArray: string[] = [];
           if ((isMultiNamespace || isOutside) && !(isServiceEntry || nodeType === NodeType.UNKNOWN)) {
-            contentArray.push(namespace);
+            contentArray.push('(' + namespace + ')');
           }
           switch (nodeType) {
             case NodeType.APP:
@@ -350,9 +350,10 @@ export class GraphStyles {
         css: {
           'text-valign': 'top',
           'text-halign': 'right',
-          'text-margin-x': '2px',
-          'text-margin-y': '8px',
-          'text-rotation': '90deg',
+          'text-margin-x': (ele: any) => {
+            return '-' + (+ele.width() + +ele.style('padding').slice(0, -2) * 2) + 'px';
+          },
+          'text-margin-y': '-2px',
           'background-color': NodeColorFillBox
         }
       },
