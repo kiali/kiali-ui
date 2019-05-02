@@ -134,7 +134,9 @@ class AppDescription extends React.Component<AppDescriptionProps, AppDescription
           <>
             {app.name && (
               <Row>
-                <Link to={this.showOnGraphLink(app.name)}>Show on graph</Link>
+                <Col xs={12} sm={6} md={4} lg={4}>
+                  <Link to={this.showOnGraphLink(app.name)}>Show on graph</Link>
+                </Col>
               </Row>
             )}
             <Row>
