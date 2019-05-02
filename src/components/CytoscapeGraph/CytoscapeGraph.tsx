@@ -550,7 +550,8 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
       graphType: this.props.graphType,
       node: targetNode,
       refreshInterval: this.props.refreshInterval,
-      showServiceNodes: this.props.showServiceNodes
+      showServiceNodes: this.props.showServiceNodes,
+      showUnusedNodes: this.props.showUnusedNodes
     };
 
     // To ensure updated components get the updated URL, update the URL first and then the state
