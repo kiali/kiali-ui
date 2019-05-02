@@ -477,10 +477,12 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
 
   private selectTargetAndUpdateSummary = (target: any) => {
     this.selectTarget(target);
-    this.props.updateSummary({
+    const event: CytoscapeClickEvent = {
       summaryType: target.data(CyNode.isGroup) ? 'group' : 'node',
       summaryTarget: target
-    });
+    };
+    this.props.updateSummary(event);
+    this.graphHighlighter.onClick(event);
   };
 
   private handleDoubleTap = (event: CytoscapeClickEvent) => {
