@@ -40,7 +40,7 @@ class ServiceInfoDescription extends React.Component<ServiceInfoDescriptionProps
   }
 
   showOnGraphLink(serviceName: string) {
-    return `/graph/namespaces?focusSelector=${encodeURI(
+    return `/graph/namespaces?graphType=workload&injectServiceNodes=true&unusedNodes=true&focusSelector=${encodeURI(
       new CytoscapeGraphSelectorBuilder().service(serviceName).build()
     )}`;
   }
@@ -79,7 +79,7 @@ class ServiceInfoDescription extends React.Component<ServiceInfoDescriptionProps
               <div>
                 <strong>Resource Version</strong> {this.props.resourceVersion}
               </div>
-              {this.props.name && (
+              {this.props.name && this.props.istioEnabled && (
                 <div>
                   <Link to={this.showOnGraphLink(this.props.name)}>Show on graph</Link>
                 </div>

@@ -31,7 +31,9 @@ class AppDescription extends React.Component<AppDescriptionProps, AppDescription
   }
 
   showOnGraphLink(application: string) {
-    return `/graph/namespaces?focusSelector=${encodeURI(new CytoscapeGraphSelectorBuilder().app(application).build())}`;
+    return `/graph/namespaces?graphType=workload&injectServiceNodes=true&unusedNodes=true&focusSelector=${encodeURI(
+      new CytoscapeGraphSelectorBuilder().app(application).build()
+    )}`;
   }
 
   serviceLink(namespace: string, service: string) {
@@ -124,15 +126,16 @@ class AppDescription extends React.Component<AppDescriptionProps, AppDescription
 
   render() {
     const app = this.props.app;
+    const istioSidecar = this.istioSidecar();
     return app ? (
       <PfInfoCard
         iconType="pf"
         iconName="applications"
         title={app.name}
-        istio={this.istioSidecar()}
+        istio={istioSidecar}
         items={
           <>
-            {app.name && (
+            {app && istioSidecar && (
               <Row>
                 <Col xs={12} sm={6} md={4} lg={4}>
                   <Link to={this.showOnGraphLink(app.name)}>Show on graph</Link>

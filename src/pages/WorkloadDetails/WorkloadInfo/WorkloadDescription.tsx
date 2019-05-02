@@ -33,7 +33,7 @@ class WorkloadDescription extends React.Component<WorkloadDescriptionProps, Work
   }
 
   showOnGraphLink(workloadName: string) {
-    return `/graph/namespaces?focusSelector=${encodeURI(
+    return `/graph/namespaces?graphType=workload&injectServiceNodes=true&unusedNodes=true&focusSelector=${encodeURI(
       new CytoscapeGraphSelectorBuilder().workload(workloadName).build()
     )}`;
   }
@@ -80,7 +80,7 @@ class WorkloadDescription extends React.Component<WorkloadDescriptionProps, Work
                     )}
                 </div>
               )}
-              {workload && (
+              {workload && this.props.istioEnabled && (
                 <div>
                   <Link to={this.showOnGraphLink(this.props.workload.name)}>Show on graph</Link>
                 </div>
