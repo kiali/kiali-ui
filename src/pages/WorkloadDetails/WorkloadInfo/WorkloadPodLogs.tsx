@@ -43,7 +43,7 @@ const TailLinesOptions = {
 
 const logsTextarea = style({
   width: '100%',
-  height: '100%',
+  height: 'calc(100% - 75px)',
   overflow: 'auto',
   resize: 'vertical',
   color: '#fff',
