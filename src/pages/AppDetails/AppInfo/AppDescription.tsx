@@ -8,6 +8,7 @@ import { App, AppWorkload } from '../../../types/App';
 import { WorkloadIcon } from '../../../types/Workload';
 import { Link } from 'react-router-dom';
 import { CytoscapeGraphSelectorBuilder } from '../../../components/CytoscapeGraph/CytoscapeGraphSelector';
+import { NodeType } from '../../../types/Graph';
 
 type AppDescriptionProps = {
   app: App;
@@ -34,7 +35,7 @@ class AppDescription extends React.Component<AppDescriptionProps, AppDescription
     return `/graph/namespaces?graphType=app&injectServiceNodes=true&unusedNodes=true&focusSelector=${encodeURI(
       new CytoscapeGraphSelectorBuilder()
         .app(application)
-        .nodeType('app')
+        .nodeType(NodeType.APP)
         .isGroup(null)
         .build()
     )}`;

@@ -1,3 +1,5 @@
+import { NodeType } from '../../types/Graph';
+
 export type CytoscapeGraphSelector = string;
 
 interface CytoscapeElementData {
@@ -34,7 +36,7 @@ export class CytoscapeGraphSelectorBuilder {
     return this;
   }
 
-  nodeType(nodeType: string) {
+  nodeType(nodeType: NodeType) {
     this.data.nodeType = nodeType;
     return this;
   }

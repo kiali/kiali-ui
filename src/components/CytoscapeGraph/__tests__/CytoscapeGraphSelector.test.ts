@@ -1,4 +1,5 @@
 import { CytoscapeGraphSelectorBuilder } from '../CytoscapeGraphSelector';
+import { NodeType } from '../../../types/Graph';
 
 describe('CytoscapeGraphSelector test', () => {
   it('Generates selector for app', () => {
@@ -17,8 +18,8 @@ describe('CytoscapeGraphSelector test', () => {
   });
 
   it('Generates selector for nodeType', () => {
-    const selector = new CytoscapeGraphSelectorBuilder().nodeType('mynodeType').build();
-    expect(selector).toEqual('node[nodeType="mynodeType"]');
+    const selector = new CytoscapeGraphSelectorBuilder().nodeType(NodeType.APP).build();
+    expect(selector).toEqual('node[nodeType="app"]');
   });
 
   it('Generates selector for service', () => {
