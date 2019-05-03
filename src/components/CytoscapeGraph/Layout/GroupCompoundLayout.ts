@@ -222,13 +222,6 @@ export default class GroupCompoundLayout {
         // Discard the saved values
         parent.removeScratch(CHILDREN_KEY);
         parent.removeScratch(STYLES_KEY);
-
-        // This will fix the label width issue when the layout changes, but it
-        // doesn't work well when the node is selected or hovered. It also prevents
-        // the label from being properly aligned when the graph is first loaded
-        /* parent.style('text-margin-x', (ele: any) => {
-                return '-' + (+ele.width() + +ele.style('padding').slice(0,-2) * 2 )+ "px";
-        }); */
       });
       // (4.a) Add the real edges, we already added the children nodes.
       this.cy.add(
