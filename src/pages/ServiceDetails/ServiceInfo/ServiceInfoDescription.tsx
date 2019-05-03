@@ -10,7 +10,6 @@ import { style } from 'typestyle';
 
 import './ServiceInfoDescription.css';
 import Labels from '../../../components/Label/Labels';
-import { Link } from 'react-router-dom';
 import { CytoscapeGraphSelectorBuilder } from '../../../components/CytoscapeGraph/CytoscapeGraphSelector';
 
 interface ServiceInfoDescriptionProps {
@@ -40,7 +39,7 @@ class ServiceInfoDescription extends React.Component<ServiceInfoDescriptionProps
   }
 
   showOnGraphLink(serviceName: string) {
-    return `/graph/namespaces?graphType=workload&injectServiceNodes=true&unusedNodes=true&focusSelector=${encodeURI(
+    return `/graph/namespaces?graphType=service&injectServiceNodes=true&unusedNodes=true&focusSelector=${encodeURI(
       new CytoscapeGraphSelectorBuilder().service(serviceName).build()
     )}`;
   }
@@ -52,6 +51,7 @@ class ServiceInfoDescription extends React.Component<ServiceInfoDescriptionProps
         iconName="service"
         title={this.props.name}
         istio={this.props.istioEnabled}
+        showOnGraphLink={this.showOnGraphLink(this.props.name)}
         items={
           <Row>
             <Col xs={12} sm={6} md={5} lg={5}>
@@ -79,11 +79,6 @@ class ServiceInfoDescription extends React.Component<ServiceInfoDescriptionProps
               <div>
                 <strong>Resource Version</strong> {this.props.resourceVersion}
               </div>
-              {this.props.name && this.props.istioEnabled && (
-                <div>
-                  <Link to={this.showOnGraphLink(this.props.name)}>Show on graph</Link>
-                </div>
-              )}
             </Col>
             <Col xs={12} sm={4} md={2} lg={2}>
               <div className="progress-description">

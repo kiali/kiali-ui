@@ -36,6 +36,16 @@ describe('CytoscapeGraphSelector test', () => {
     expect(selector).toEqual('node[workload="myworkload"]');
   });
 
+  it('Generates selector for isGroup', () => {
+    const selector = new CytoscapeGraphSelectorBuilder().isGroup('mygroup').build();
+    expect(selector).toEqual('node[isGroup="mygroup"]');
+  });
+
+  it('Generates falsy selector for isGroup', () => {
+    const selector = new CytoscapeGraphSelectorBuilder().isGroup(null).build();
+    expect(selector).toEqual('node[!isGroup]');
+  });
+
   it('Generates selector for two properties', () => {
     const selector = new CytoscapeGraphSelectorBuilder()
       .workload('myworkload')

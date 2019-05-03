@@ -7,7 +7,6 @@ import { DisplayMode, HealthIndicator } from '../../../components/Health/HealthI
 import { WorkloadHealth } from '../../../types/Health';
 import { runtimesLogoProviders } from '../../../config/Logos';
 import Labels from '../../../components/Label/Labels';
-import { Link } from 'react-router-dom';
 import { CytoscapeGraphSelectorBuilder } from '../../../components/CytoscapeGraph/CytoscapeGraphSelector';
 
 type WorkloadDescriptionProps = {
@@ -50,6 +49,7 @@ class WorkloadDescription extends React.Component<WorkloadDescriptionProps, Work
         iconName={WorkloadIcon}
         title={workload.name}
         istio={this.props.istioEnabled}
+        showOnGraphLink={this.showOnGraphLink(this.props.workload.name)}
         items={
           <Row>
             <Col xs={12} sm={8} md={6} lg={6}>
@@ -78,11 +78,6 @@ class WorkloadDescription extends React.Component<WorkloadDescriptionProps, Work
                       (list: JSX.Element[], elem) => (list ? [...list, <span key="sep"> | </span>, elem] : [elem]),
                       undefined
                     )}
-                </div>
-              )}
-              {workload && this.props.istioEnabled && (
-                <div>
-                  <Link to={this.showOnGraphLink(this.props.workload.name)}>Show on graph</Link>
                 </div>
               )}
             </Col>

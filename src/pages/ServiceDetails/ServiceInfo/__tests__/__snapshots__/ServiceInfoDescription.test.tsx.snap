@@ -222,6 +222,7 @@ ShallowWrapper {
           />
         </Col>
       </Row>,
+      "showOnGraphLink": "/graph/namespaces?graphType=service&injectServiceNodes=true&unusedNodes=true&focusSelector=node%5Bservice=%22reviews%22%5D",
       "title": "reviews",
     },
     "ref": null,
@@ -398,6 +399,7 @@ ShallowWrapper {
             />
           </Col>
         </Row>,
+        "showOnGraphLink": "/graph/namespaces?graphType=service&injectServiceNodes=true&unusedNodes=true&focusSelector=node%5Bservice=%22reviews%22%5D",
         "title": "reviews",
       },
       "ref": null,

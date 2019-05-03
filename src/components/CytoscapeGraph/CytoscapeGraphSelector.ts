@@ -3,6 +3,7 @@ export type CytoscapeGraphSelector = string;
 interface CytoscapeElementData {
   app?: string;
   id?: string;
+  isGroup?: string | null;
   namespace?: string;
   nodeType?: string;
   service?: string;
@@ -20,6 +21,11 @@ export class CytoscapeGraphSelectorBuilder {
 
   id(id: string) {
     this.data.id = id;
+    return this;
+  }
+
+  isGroup(isGroup: string | null) {
+    this.data.isGroup = isGroup;
     return this;
   }
 
@@ -48,13 +54,13 @@ export class CytoscapeGraphSelectorBuilder {
     return this;
   }
 
-  build() {
+  build(): CytoscapeGraphSelector {
     return 'node' + this.buildDataSelector();
   }
 
   private buildDataSelector() {
     return Object.keys(this.data).reduce((dataSelector: string, key: string) => {
-      return dataSelector + `[${key}="${this.data[key]}"]`;
+      return dataSelector + (this.data[key] == null ? `[!${key}]` : `[${key}="${this.data[key]}"]`);
     }, '');
   }
 }

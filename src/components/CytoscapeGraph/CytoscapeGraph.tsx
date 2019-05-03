@@ -106,6 +106,7 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
   private graphHighlighter: GraphHighlighter;
   private trafficRenderer: TrafficRender;
   private focusAnimation?: FocusAnimation;
+  private focusFinished: boolean;
   private cytoscapeReactWrapperRef: any;
   private namespaceChanged: boolean;
   private nodeChanged: boolean;
@@ -115,6 +116,7 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
 
   constructor(props: CytoscapeGraphProps) {
     super(props);
+    this.focusFinished = false;
     this.namespaceChanged = false;
     this.nodeChanged = false;
     this.initialValues = {
@@ -345,6 +347,10 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
   }
 
   private focus(cy: any, elements?: any) {
+    // We only want to focus once, but allow the url to be shared.
+    if (this.focusFinished) {
+      return;
+    }
     let focusElements = elements;
     if (!focusElements) {
       if (this.props.focusSelector) {
@@ -373,14 +379,17 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
         this.focusAnimation.stop();
       }
       this.focusAnimation = new FocusAnimation(cy);
+      this.focusAnimation.onFinished(() => {
+        this.focusFinished = true;
+      });
       this.focusAnimation.start(focusElements);
     }
     return focusElements;
   }
 
   private safeFit(cy: any) {
-    const centerElements = this.focus(cy);
-    CytoscapeGraphUtils.safeFit(cy, centerElements);
+    this.focus(cy);
+    CytoscapeGraphUtils.safeFit(cy);
     this.initialValues.position = { ...cy.pan() };
     this.initialValues.zoom = cy.zoom();
   }

@@ -6,10 +6,13 @@ const LINE_WIDTH = 1;
 
 const ANIMATION_DURATION = 800;
 
+type OnFinishedCallback = () => void;
+
 export default class FocusAnimation {
   private animationTimer;
   private startTimestamp;
   private elements;
+  private onFinishedCallback: OnFinishedCallback;
 
   private readonly layer;
   private readonly context;
@@ -18,6 +21,10 @@ export default class FocusAnimation {
     this.layer = cy.cyCanvas();
     this.context = this.layer.getCanvas().getContext('2d');
     cy.one('destroy', () => this.stop());
+  }
+
+  onFinished(onFinishedCallback: OnFinishedCallback) {
+    this.onFinishedCallback = onFinishedCallback;
   }
 
   start(elements: any) {
@@ -50,6 +57,9 @@ export default class FocusAnimation {
 
       if (step >= 1) {
         this.stop();
+        if (this.onFinishedCallback) {
+          this.onFinishedCallback();
+        }
         return;
       }
 
