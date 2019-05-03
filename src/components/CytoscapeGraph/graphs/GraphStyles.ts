@@ -351,7 +351,10 @@ export class GraphStyles {
           'text-valign': 'top',
           'text-halign': 'right',
           'text-margin-x': (ele: any) => {
-            return '-' + (+ele.width() + +ele.style('padding').slice(0, -2) * 2) + 'px';
+            // numericStyle returns the size in the "preferred" units
+            // numericStyleUnits return the "preferred" unit
+            // Preferred unit for elements is model dimensions (px) (the same unit used for ele.width)
+            return '-' + (ele.width() + ele.numericStyle('padding') * 2) + ele.numericStyleUnits('padding');
           },
           'text-margin-y': '-2px',
           'background-color': NodeColorFillBox
