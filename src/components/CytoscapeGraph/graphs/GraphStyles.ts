@@ -226,8 +226,8 @@ export class GraphStyles {
               if (cyGlobal.graphType === GraphType.APP || isGroup || version === 'unknown') {
                 contentArray.unshift(app);
               } else {
+                contentArray.unshift(version);
                 contentArray.unshift(app);
-                contentArray.push(version);
               }
               break;
             case NodeType.SERVICE:
