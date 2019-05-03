@@ -406,7 +406,7 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
       // There seems to be something odd when drawing the group compound layout.
       // It looks like it draws the labels of the compound node a bit off
       // Forcing a redraw fixes the issue.
-      cy.json({ elements: this.props.elements });
+      cy.nodes('$node > node').toggleClass('dummyClass');
     }
 
     // We need to fit outside of the batch operation for it to take effect on the new nodes
