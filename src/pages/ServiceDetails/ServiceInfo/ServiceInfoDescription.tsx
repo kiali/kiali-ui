@@ -14,6 +14,7 @@ import { CytoscapeGraphSelectorBuilder } from '../../../components/CytoscapeGrap
 
 interface ServiceInfoDescriptionProps {
   name: string;
+  namespace: string;
   createdAt: string;
   resourceVersion: string;
   istioEnabled?: boolean;
@@ -38,9 +39,12 @@ class ServiceInfoDescription extends React.Component<ServiceInfoDescriptionProps
     super(props);
   }
 
-  showOnGraphLink(serviceName: string) {
+  showOnGraphLink(serviceName: string, namespace: string) {
     return `/graph/namespaces?graphType=service&injectServiceNodes=true&unusedNodes=true&focusSelector=${encodeURI(
-      new CytoscapeGraphSelectorBuilder().service(serviceName).build()
+      new CytoscapeGraphSelectorBuilder()
+        .service(serviceName)
+        .namespace(namespace)
+        .build()
     )}`;
   }
 
@@ -51,7 +55,7 @@ class ServiceInfoDescription extends React.Component<ServiceInfoDescriptionProps
         iconName="service"
         title={this.props.name}
         istio={this.props.istioEnabled}
-        showOnGraphLink={this.showOnGraphLink(this.props.name)}
+        showOnGraphLink={this.showOnGraphLink(this.props.name, this.props.namespace)}
         items={
           <Row>
             <Col xs={12} sm={6} md={5} lg={5}>

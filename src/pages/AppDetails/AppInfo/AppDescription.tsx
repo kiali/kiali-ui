@@ -9,6 +9,7 @@ import { WorkloadIcon } from '../../../types/Workload';
 import { Link } from 'react-router-dom';
 import { CytoscapeGraphSelectorBuilder } from '../../../components/CytoscapeGraph/CytoscapeGraphSelector';
 import { NodeType } from '../../../types/Graph';
+import Namespace from '../../../types/Namespace';
 
 type AppDescriptionProps = {
   app: App;
@@ -31,12 +32,13 @@ class AppDescription extends React.Component<AppDescriptionProps, AppDescription
     return istioSidecar;
   }
 
-  showOnGraphLink(application: string) {
+  showOnGraphLink(application: string, namespace: Namespace) {
     return `/graph/namespaces?graphType=app&injectServiceNodes=true&unusedNodes=true&focusSelector=${encodeURI(
       new CytoscapeGraphSelectorBuilder()
         .app(application)
         .nodeType(NodeType.APP)
         .isGroup(null)
+        .namespace(namespace.name)
         .build()
     )}`;
   }
@@ -138,7 +140,7 @@ class AppDescription extends React.Component<AppDescriptionProps, AppDescription
         iconName="applications"
         title={app.name}
         istio={istioSidecar}
-        showOnGraphLink={this.showOnGraphLink(app.name)}
+        showOnGraphLink={this.showOnGraphLink(app.name, app.namespace)}
         items={
           <>
             <Row>
