@@ -13,6 +13,12 @@
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
     <link rel="shortcut icon" href="%PUBLIC_URL%/kiali_icon_lightbkg_16px.png" />
     <!--
+      Preload the icon webfonts used for badging in graph labels. Cytoscape can render prior to the font
+      bring loaed. (Kiali-2817)
+    -->
+    <link rel="preload" href="static/media/fontawesome-webfont.af7ae505.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="static/media/PatternFlyIcons-webfont.b6469681.ttf" as="font" type="font/ttf" crossorigin />
+    <!--
       Notice the use of %PUBLIC_URL% in the tags above.
       It will be replaced with the URL of the `public` folder during the build.
       Only files inside the `public` folder can be referenced from the HTML.
