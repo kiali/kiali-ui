@@ -101,8 +101,7 @@
     "ssri": "6.0.1",
     "typesafe-actions": "3.2.1",
     "typestyle": "2.0.1",
-    "visibilityjs": "2.0.2",
-    "snyk": "^1.161.1"
+    "visibilityjs": "2.0.2"
   },
   "devDependencies": {
     "@types/enzyme": "3.1.15",
@@ -124,6 +123,7 @@
     "prettier": "1.16.4",
     "pretty-quick": "1.10.0",
     "redux-mock-store": "1.5.3",
+    "snyk": "^1.161.1",
     "source-map-explorer": "1.8.0",
     "tslint-no-circular-imports": "0.6.2",
     "typescript": "3.4.5"
