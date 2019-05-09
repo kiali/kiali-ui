@@ -27,14 +27,14 @@ export const WIZARD_TITLES = {
   [WIZARD_WEIGHTED_ROUTING]: 'Create Weighted Routing',
   [WIZARD_MATCHING_ROUTING]: 'Create Matching Routing',
   [WIZARD_SUSPEND_TRAFFIC]: 'Suspend Traffic',
-  [WIZARD_THREESCALE_INTEGRATION]: 'Add 3Scale API Management Rule'
+  [WIZARD_THREESCALE_INTEGRATION]: 'Add 3scale API Management Rule'
 };
 
 export const WIZARD_UPDATE_TITLES = {
   [WIZARD_WEIGHTED_ROUTING]: 'Update Weighted Routing',
   [WIZARD_MATCHING_ROUTING]: 'Update Matching Routing',
   [WIZARD_SUSPEND_TRAFFIC]: 'Update Suspended Traffic',
-  [WIZARD_THREESCALE_INTEGRATION]: 'Update 3Scale API Management Rule'
+  [WIZARD_THREESCALE_INTEGRATION]: 'Update 3scale API Management Rule'
 };
 
 export type WizardProps = {

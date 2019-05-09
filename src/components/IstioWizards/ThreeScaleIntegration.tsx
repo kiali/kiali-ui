@@ -314,14 +314,14 @@ class ThreeScaleIntegration extends React.Component<Props, State> {
                   <div>
                     {handler.name} {handler.modified && '*'}
                   </div>
-                  <div className={headingStyle}>3Scale Handler</div>
+                  <div className={headingStyle}>3scale Handler</div>
                 </>
               }
               description={
                 <>
                   {isLinked && (
                     <div>
-                      Service <b>{this.props.serviceName}</b> will be linked with 3Scale API
+                      Service <b>{this.props.serviceName}</b> will be linked with 3scale API
                     </div>
                   )}
                   <i>{handler.systemUrl}</i>

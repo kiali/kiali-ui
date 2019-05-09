@@ -216,7 +216,7 @@ class IstioWizardDropdown extends React.Component<Props, State> {
             {updateLabel === eventKey ? WIZARD_UPDATE_TITLES[eventKey] : WIZARD_TITLES[eventKey]}
           </MenuItem>
         );
-        const toolTipMsgExists = '3Scale API Integration Rule already exists for this service';
+        const toolTipMsgExists = '3scale API Integration Rule already exists for this service';
         return !threeScaleEnabledItem ? (
           <OverlayTrigger
             placement={'left'}
@@ -239,7 +239,7 @@ class IstioWizardDropdown extends React.Component<Props, State> {
             Delete 3Scale API Management Rule
           </MenuItem>
         );
-        const toolTipMsgDelete = 'There is not a 3Scale API Integration Rule for this service';
+        const toolTipMsgDelete = 'There is not a 3scale API Integration Rule for this service';
         return !this.props.threeScaleServiceRule ? (
           <OverlayTrigger
             placement={'left'}
@@ -277,7 +277,7 @@ class IstioWizardDropdown extends React.Component<Props, State> {
             : '';
         break;
       case DELETE_THREESCALE_INTEGRATION:
-        deleteMessage += ' 3Scale API Management Integration Rule ';
+        deleteMessage += ' 3scale API Management Integration Rule ';
         break;
       default:
     }
