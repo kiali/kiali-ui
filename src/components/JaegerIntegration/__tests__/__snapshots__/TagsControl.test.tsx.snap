@@ -59,11 +59,7 @@ ShallowWrapper {
               closeBtnAriaLabel="Close"
               enableFlip={true}
               footerContent={null}
-              headerContent={
-                <div>
-                  Popover Header
-                </div>
-              }
+              headerContent={null}
               hideOnOutsideClick={true}
               isVisible={null}
               maxWidth="calc(1.5rem + 18.75rem)"
@@ -174,11 +170,7 @@ ShallowWrapper {
             closeBtnAriaLabel="Close"
             enableFlip={true}
             footerContent={null}
-            headerContent={
-              <div>
-                Popover Header
-              </div>
-            }
+            headerContent={null}
             hideOnOutsideClick={true}
             isVisible={null}
             maxWidth="calc(1.5rem + 18.75rem)"
@@ -288,11 +280,7 @@ ShallowWrapper {
                 closeBtnAriaLabel="Close"
                 enableFlip={true}
                 footerContent={null}
-                headerContent={
-                  <div>
-                    Popover Header
-                  </div>
-                }
+                headerContent={null}
                 hideOnOutsideClick={true}
                 isVisible={null}
                 maxWidth="calc(1.5rem + 18.75rem)"
@@ -403,11 +391,7 @@ ShallowWrapper {
               closeBtnAriaLabel="Close"
               enableFlip={true}
               footerContent={null}
-              headerContent={
-                <div>
-                  Popover Header
-                </div>
-              }
+              headerContent={null}
               hideOnOutsideClick={true}
               isVisible={null}
               maxWidth="calc(1.5rem + 18.75rem)"
