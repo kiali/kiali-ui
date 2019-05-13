@@ -4,7 +4,7 @@ import { shallow } from 'enzyme';
 import { CytoscapeGraph } from '../CytoscapeGraph';
 import * as GRAPH_DATA from '../../../services/__mockData__/getGraphElements';
 import { Layout, EdgeLabelMode } from '../../../types/GraphFilter';
-import EmptyGraphLayout from '../../../containers/EmptyGraphLayoutContainer';
+import EmptyGraphLayout from '../../EmptyGraphLayout';
 import { GraphType } from '../../../types/Graph';
 import { decorateGraphData } from '../../../store/Selectors/GraphData';
 
