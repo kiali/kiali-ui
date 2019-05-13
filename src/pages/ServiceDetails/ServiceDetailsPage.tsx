@@ -17,8 +17,10 @@ import BreadcrumbView from '../../components/BreadcrumbView/BreadcrumbView';
 import MetricsDuration from '../../components/MetricsOptions/MetricsDuration';
 import { fetchTrafficDetails } from '../../helpers/TrafficDetailsHelper';
 import TrafficDetails from '../../components/Metrics/TrafficDetails';
+
 import { ThreeScaleInfo, ThreeScaleServiceRule } from '../../types/ThreeScale';
 import { KialiAppState } from '../../store/Store';
+import PfTitle from '../../components/Pf/PfTitle';
 
 type ServiceDetailsState = {
   serviceDetailsInfo: ServiceDetailsInfo;
@@ -252,6 +254,7 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
     return (
       <>
         <BreadcrumbView location={this.props.location} />
+        <PfTitle location={this.props.location} istio={this.state.serviceDetailsInfo.istioSidecar} />
         <TabContainer
           id="basic-tabs"
           activeKey={this.activeTab('tab', 'info')}
