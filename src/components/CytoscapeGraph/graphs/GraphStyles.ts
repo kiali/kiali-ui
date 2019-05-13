@@ -342,7 +342,7 @@ export class GraphStyles {
       },
       // Node is an App Box
       {
-        selector: `node[$isGroup]`,
+        selector: `node[?isGroup]`,
         css: {
           'background-color': NodeColorFillBox,
           'text-margin-y': '-2px'
