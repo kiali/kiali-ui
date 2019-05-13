@@ -184,11 +184,19 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
   };
 
   private updateFind = event => {
-    this.setState({ findInputValue: event.target.value, errorMessage: '' });
+    if ('' === event.target.value) {
+      this.clearFind();
+    } else {
+      this.setState({ findInputValue: event.target.value, errorMessage: '' });
+    }
   };
 
   private updateHide = event => {
-    this.setState({ hideInputValue: event.target.value, errorMessage: '' });
+    if ('' === event.target.value) {
+      this.clearHide();
+    } else {
+      this.setState({ hideInputValue: event.target.value, errorMessage: '' });
+    }
   };
 
   private checkSubmitFind = event => {
