@@ -85,9 +85,9 @@ class ServiceInfoDescription extends React.Component<ServiceInfoDescriptionProps
               <div>
                 <strong>Resource Version</strong> {this.props.resourceVersion}
               </div>
-              {this.props.threeScaleServiceRule && this.props.threeScaleServiceRule.threeScaleHandlerName !== '' && (
-                <div>Service linked with 3scale API</div>
-              )}
+              {this.props.threeScaleServiceRule &&
+                this.props.threeScaleServiceRule.threeScaleHandlerName !== '' &&
+                'Service linked with 3scale API'}
             </Col>
             <Col xs={12} sm={4} md={2} lg={2}>
               <div className="progress-description">
