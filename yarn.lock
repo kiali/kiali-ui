@@ -101,33 +101,47 @@
   resolved "https://registry.yarnpkg.com/@emotion/utils/-/utils-0.8.2.tgz#576ff7fb1230185b619a75d258cbc98f0867a8dc"
   integrity sha512-rLu3wcBWH4P5q1CGoSSH/i9hrXs7SlbRLkoq9IGuoPYNGQvDJ3pt/wmOM+XgYjIDRMVIdkUWt0RsfzF50JfnCw==
 
+"@fortawesome/fontawesome-common-types@^0.2.18":
+  version "0.2.18"
+  resolved "https://registry.yarnpkg.com/@fortawesome/fontawesome-common-types/-/fontawesome-common-types-0.2.18.tgz#c0d8f073a5116b2de0a2c8a7aba66093a6956ce7"
+  integrity sha512-834DrzO2Ne3upCW+mJJPC/E6BsFcj+2Z1HmPIhbpbj8UaKmXWum4NClqLpUiMetugRlHuG4jbIHNdv2/lc3c1Q==
+
+"@fortawesome/free-brands-svg-icons@^5.8.1":
+  version "5.8.2"
+  resolved "https://registry.yarnpkg.com/@fortawesome/free-brands-svg-icons/-/free-brands-svg-icons-5.8.2.tgz#e68a509c986d5d197cc5bd9ae8d966eff513468d"
+  integrity sha512-nhEWctDOP6f+Ka10LXAFoF+6mtWidC2iQgTBGRGgydmhBtcIEwyxWVx5wQHa86A1zAMi5TnipDAYQs2qn7DD6A==
+  dependencies:
+    "@fortawesome/fontawesome-common-types" "^0.2.18"
+
 "@patternfly/patternfly@2.4.1":
   version "2.4.1"
   resolved "https://registry.yarnpkg.com/@patternfly/patternfly/-/patternfly-2.4.1.tgz#2b82e946ec2cdf5a78535ba2b9d514151688dc2d"
   integrity sha512-VoL6Fsid7scdsf1w8TZ9JckTjVIHzWQBMHptOv2jHjrLlxTwMGPmyh8AnvRYhqWa5nUSA//jZaR8vMyliJl9TQ==
 
-"@patternfly/react-core@3.2.6":
-  version "3.2.6"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-core/-/react-core-3.2.6.tgz#8cc2ca0d16084e4437a6c1b25d399a2db6129b2c"
-  integrity sha512-58GBM8SfhoggQldGArUR3LwvcMe+GaW/uTjB1/a3RTG6HXTfFfs33UXnQnN2IgWZmHOyxpjnWq2yEh5xwJs5HQ==
+"@patternfly/react-core@3.18.1":
+  version "3.18.1"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-core/-/react-core-3.18.1.tgz#9f87b26d6fdac03b5961a5166448efb16605d37d"
+  integrity sha512-4B84MtecOsT/xf49JTm9VuxETiDKPN1HYonVzIvsh9CvbTUyILwwFBAPMonS1BC2eDOHttTUNxCaNlLUEwNbbw==
   dependencies:
-    "@patternfly/react-icons" "^3.7.4"
-    "@patternfly/react-styles" "^3.0.2"
-    "@patternfly/react-tokens" "^2.3.3"
+    "@patternfly/react-icons" "^3.9.2"
+    "@patternfly/react-styles" "^3.2.2"
+    "@patternfly/react-tokens" "^2.5.2"
     "@tippy.js/react" "^1.1.1"
     emotion "^9.2.9"
     exenv "^1.2.2"
     focus-trap-react "^4.0.1"
 
-"@patternfly/react-icons@^3.7.4":
-  version "3.7.5"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-icons/-/react-icons-3.7.5.tgz#fc84079b8f9c1b283195d306841eec9a786e855a"
-  integrity sha512-Bejd6GAWfcDgA7YxvIcrohcBPVZUG34E3LWaJSHLUf8XADf33q7UvQ4YQ1eWk477o/GjZA3AX/71Y6op71WdDA==
+"@patternfly/react-icons@^3.9.2":
+  version "3.9.2"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-icons/-/react-icons-3.9.2.tgz#8a4959a6cdf59929e89f2627a2e3a97e4cb5d798"
+  integrity sha512-EwPB+Nodd7zwiFh7R3Qq6Dif+xUR3WOwaJ+SRbP5NsxEAJf3CyYyrd7rbN8yFrFLTMKzknT2ez9XrP/5Lgr5LQ==
+  dependencies:
+    "@fortawesome/free-brands-svg-icons" "^5.8.1"
 
-"@patternfly/react-styles@^3.0.2":
-  version "3.0.2"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-styles/-/react-styles-3.0.2.tgz#39e453dc895a05062f32187163c831c94f4021a0"
-  integrity sha512-JiGxDkC4JArQJ13RQOjSUE4jPmwrAq8f5E+qg0tVws1A9BQ2l3uGCRFMVbfa57qqjqk0jXNmIVdFSeCG18qwJQ==
+"@patternfly/react-styles@^3.2.2":
+  version "3.2.2"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-styles/-/react-styles-3.2.2.tgz#9c9cc5e2ada4c020a8bf06a137f90711a90a62c8"
+  integrity sha512-PYAeET+h+tEF6BKkaKRderHqg0GyzA4RULrynW8cUKhP4dgbsylScZQm7JPCkEYXFQlzeRFqgFxCfbv/8mg3ig==
   dependencies:
     "@babel/helper-plugin-utils" "^7.0.0-beta.48"
     camel-case "^3.0.0"
@@ -142,10 +156,10 @@
     relative "^3.0.2"
     resolve-from "^4.0.0"
 
-"@patternfly/react-tokens@^2.3.3":
-  version "2.3.3"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-tokens/-/react-tokens-2.3.3.tgz#6fea36b284a36d4404b4bd75ddcc3fa5a833654f"
-  integrity sha512-+2SSGvOV1rZr1l6+p2QzORVJhpOKjrHqCBfkp10La7O93+mVLYU0vugTp1elhxeh32IuLCJAPDLrCJPBAfmYKw==
+"@patternfly/react-tokens@^2.5.2":
+  version "2.5.2"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-tokens/-/react-tokens-2.5.2.tgz#268348551b91dc2ad38403ef342892aff0b38b82"
+  integrity sha512-N2J50hVXXlcObHLYc5tXeCWolkZcqa9oDIFFDmdHuJpH4+Sh3sZf1iRtixnN5VdE8+MAKv9p+kkgpuPKkUroMw==
 
 "@snyk/dep-graph@1.4.1":
   version "1.4.1"
