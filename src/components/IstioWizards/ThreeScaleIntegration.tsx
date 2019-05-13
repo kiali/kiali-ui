@@ -13,6 +13,8 @@ import {
   ListViewIcon,
   ListViewItem,
   MenuItem,
+  OverlayTrigger,
+  Tooltip,
   Row
 } from 'patternfly-react';
 import { style } from 'typestyle';
@@ -330,48 +332,86 @@ class ThreeScaleIntegration extends React.Component<Props, State> {
               actions={handlerActions}
             >
               <Form horizontal={true}>
-                <FormGroup controlId="serviceId" disabled={false}>
+                <FormGroup
+                  controlId="serviceId"
+                  disabled={false}
+                  validationState={handler.serviceId !== '' ? 'success' : 'error'}
+                >
                   <Col componentClass={ControlLabel} sm={2}>
                     Service Id:
                   </Col>
                   <Col sm={8}>
-                    <FormControl
-                      type="text"
-                      disabled={false}
-                      value={handler.serviceId}
-                      onChange={e => this.onChangeHandler(id, 'serviceId', e.target.value)}
-                    />
+                    <OverlayTrigger
+                      placement={'right'}
+                      overlay={<Tooltip id={'mtls-status-masthead'}>3scale ID for API calls</Tooltip>}
+                      trigger={['hover', 'focus']}
+                      rootClose={false}
+                    >
+                      <FormControl
+                        type="text"
+                        disabled={false}
+                        value={handler.serviceId}
+                        onChange={e => this.onChangeHandler(id, 'serviceId', e.target.value)}
+                      />
+                    </OverlayTrigger>
                   </Col>
                 </FormGroup>
-                <FormGroup controlId="systemUrl" disabled={false}>
+                <FormGroup
+                  controlId="systemUrl"
+                  disabled={false}
+                  validationState={handler.systemUrl !== '' ? 'success' : 'error'}
+                >
                   <Col componentClass={ControlLabel} sm={2}>
                     System Url:
                   </Col>
                   <Col sm={8}>
-                    <FormControl
-                      type="text"
-                      disabled={false}
-                      value={handler.systemUrl}
-                      onChange={e => this.onChangeHandler(id, 'systemUrl', e.target.value)}
-                    />
+                    <OverlayTrigger
+                      placement={'right'}
+                      overlay={<Tooltip id={'mtls-status-masthead'}>3scale System Url for API</Tooltip>}
+                      trigger={['hover', 'focus']}
+                      rootClose={false}
+                    >
+                      <FormControl
+                        type="text"
+                        disabled={false}
+                        value={handler.systemUrl}
+                        onChange={e => this.onChangeHandler(id, 'systemUrl', e.target.value)}
+                      />
+                    </OverlayTrigger>
                   </Col>
                 </FormGroup>
-                <FormGroup controlId="accessToken" disabled={false}>
+                <FormGroup
+                  controlId="accessToken"
+                  disabled={false}
+                  validationState={handler.accessToken !== '' ? 'success' : 'error'}
+                >
                   <Col componentClass={ControlLabel} sm={2}>
                     Access Token:
                   </Col>
                   <Col sm={8}>
-                    <FormControl
-                      type="text"
-                      disabled={false}
-                      value={handler.accessToken}
-                      onChange={e => this.onChangeHandler(id, 'accessToken', e.target.value)}
-                    />
+                    <OverlayTrigger
+                      placement={'right'}
+                      overlay={<Tooltip id={'mtls-status-masthead'}>3scale access token</Tooltip>}
+                      trigger={['hover', 'focus']}
+                      rootClose={false}
+                    >
+                      <FormControl
+                        type="text"
+                        disabled={false}
+                        value={handler.accessToken}
+                        onChange={e => this.onChangeHandler(id, 'accessToken', e.target.value)}
+                      />
+                    </OverlayTrigger>
                   </Col>
                 </FormGroup>
                 <Row style={{ paddingTop: '10px', paddingBottom: '10px' }}>
                   <Col smOffset={10} sm={2}>
-                    <Button bsStyle="primary" style={{ marginLeft: '-10px' }} onClick={() => this.onUpdateHandler(id)}>
+                    <Button
+                      bsStyle="primary"
+                      style={{ marginLeft: '-10px' }}
+                      onClick={() => this.onUpdateHandler(id)}
+                      disabled={handler.serviceId === '' || handler.systemUrl === '' || handler.accessToken === ''}
+                    >
                       Update Handler
                     </Button>
                   </Col>
@@ -384,6 +424,15 @@ class ThreeScaleIntegration extends React.Component<Props, State> {
     );
   };
 
+  isValidCreateHandler = () => {
+    return (
+      this.state.newThreeScaleHandler.name !== '' &&
+      this.state.newThreeScaleHandler.serviceId !== '' &&
+      this.state.newThreeScaleHandler.systemUrl !== '' &&
+      this.state.newThreeScaleHandler.accessToken !== ''
+    );
+  };
+
   renderCreateHandler = () => {
     return (
       <Form className={createHandlerStyle} horizontal={true}>
@@ -392,6 +441,7 @@ class ThreeScaleIntegration extends React.Component<Props, State> {
           disabled={false}
           value={this.state.newThreeScaleHandler.name}
           onChange={e => this.onChangeHandler(-1, 'name', e.target.value)}
+          validationState={this.state.newThreeScaleHandler.name !== '' ? 'success' : 'error'}
         >
           <Col componentClass={ControlLabel} sm={2}>
             Handler Name:
@@ -405,25 +455,41 @@ class ThreeScaleIntegration extends React.Component<Props, State> {
           disabled={false}
           value={this.state.newThreeScaleHandler.serviceId}
           onChange={e => this.onChangeHandler(-1, 'serviceId', e.target.value)}
+          validationState={this.state.newThreeScaleHandler.serviceId !== '' ? 'success' : 'error'}
         >
           <Col componentClass={ControlLabel} sm={2}>
             Service Id:
           </Col>
           <Col sm={8}>
-            <FormControl type="text" disabled={false} />
+            <OverlayTrigger
+              placement={'right'}
+              overlay={<Tooltip id={'mtls-status-masthead'}>3scale ID for API calls</Tooltip>}
+              trigger={['hover', 'focus']}
+              rootClose={false}
+            >
+              <FormControl type="text" disabled={false} />
+            </OverlayTrigger>
           </Col>
         </FormGroup>
         <FormGroup
           controlId="systemUrl"
           disabled={false}
-          value={this.state.newThreeScaleHandler.accessToken}
+          value={this.state.newThreeScaleHandler.systemUrl}
           onChange={e => this.onChangeHandler(-1, 'systemUrl', e.target.value)}
+          validationState={this.state.newThreeScaleHandler.systemUrl !== '' ? 'success' : 'error'}
         >
           <Col componentClass={ControlLabel} sm={2}>
             System Url:
           </Col>
           <Col sm={8}>
-            <FormControl type="text" disabled={false} />
+            <OverlayTrigger
+              placement={'right'}
+              overlay={<Tooltip id={'mtls-status-masthead'}>3scale System Url for API</Tooltip>}
+              trigger={['hover', 'focus']}
+              rootClose={false}
+            >
+              <FormControl type="text" disabled={false} />
+            </OverlayTrigger>
           </Col>
         </FormGroup>
         <FormGroup
@@ -431,17 +497,25 @@ class ThreeScaleIntegration extends React.Component<Props, State> {
           disabled={false}
           value={this.state.newThreeScaleHandler.accessToken}
           onChange={e => this.onChangeHandler(-1, 'accessToken', e.target.value)}
+          validationState={this.state.newThreeScaleHandler.accessToken !== '' ? 'success' : 'error'}
         >
           <Col componentClass={ControlLabel} sm={2}>
             Access Token:
           </Col>
           <Col sm={8}>
-            <FormControl type="text" disabled={false} />
+            <OverlayTrigger
+              placement={'right'}
+              overlay={<Tooltip id={'mtls-status-masthead'}>3scale access token</Tooltip>}
+              trigger={['hover', 'focus']}
+              rootClose={false}
+            >
+              <FormControl type="text" disabled={false} />
+            </OverlayTrigger>
           </Col>
         </FormGroup>
         <Row style={{ paddingTop: '10px', paddingBottom: '10px' }}>
           <Col smOffset={10} sm={2}>
-            <Button bsStyle="primary" onClick={this.onCreateHandler}>
+            <Button bsStyle="primary" onClick={this.onCreateHandler} disabled={!this.isValidCreateHandler()}>
               Create Handler
             </Button>
           </Col>
