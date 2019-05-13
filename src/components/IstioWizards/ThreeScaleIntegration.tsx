@@ -322,11 +322,14 @@ class ThreeScaleIntegration extends React.Component<Props, State> {
               description={
                 <>
                   {isLinked && (
-                    <div>
+                    <>
                       Service <b>{this.props.serviceName}</b> will be linked with 3scale API
-                    </div>
+                    </>
                   )}
-                  <i>{handler.systemUrl}</i>
+                  <br />
+                  Service Id: <i>{handler.serviceId}</i>
+                  <br />
+                  System Url: <i>{handler.systemUrl}</i>
                 </>
               }
               actions={handlerActions}
