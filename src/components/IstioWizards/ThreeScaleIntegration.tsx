@@ -9,6 +9,7 @@ import {
   Form,
   FormControl,
   FormGroup,
+  HelpBlock,
   ListView,
   ListViewIcon,
   ListViewItem,
@@ -57,6 +58,8 @@ const headingStyle = style({
   overflow: 'hidden',
   textOverflow: 'ellipsis'
 });
+
+const k8sRegExpName = /^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[-a-z0-9]([-a-z0-9]*[a-z0-9])?)*$/;
 
 class ThreeScaleIntegration extends React.Component<Props, State> {
   constructor(props: Props) {
@@ -191,51 +194,48 @@ class ThreeScaleIntegration extends React.Component<Props, State> {
   };
 
   onChangeHandler = (selectedId: number, field: string, value: string) => {
-    this.setState(
-      prevState => {
-        const newThreeScaleHandler = prevState.newThreeScaleHandler;
-        if (selectedId === -1) {
-          switch (field) {
-            case 'name':
-              newThreeScaleHandler.name = value.trim();
-              break;
-            case 'serviceId':
-              newThreeScaleHandler.serviceId = value.trim();
-              break;
-            case 'accessToken':
-              newThreeScaleHandler.accessToken = value.trim();
-              break;
-            case 'systemUrl':
-              newThreeScaleHandler.systemUrl = value.trim();
-              break;
-            default:
-          }
+    this.setState(prevState => {
+      const newThreeScaleHandler = prevState.newThreeScaleHandler;
+      if (selectedId === -1) {
+        switch (field) {
+          case 'name':
+            newThreeScaleHandler.name = value.trim();
+            break;
+          case 'serviceId':
+            newThreeScaleHandler.serviceId = value.trim();
+            break;
+          case 'accessToken':
+            newThreeScaleHandler.accessToken = value.trim();
+            break;
+          case 'systemUrl':
+            newThreeScaleHandler.systemUrl = value.trim();
+            break;
+          default:
         }
-        return {
-          threeScaleServiceRule: prevState.threeScaleServiceRule,
-          threeScaleHandlers: prevState.threeScaleHandlers.map((handler, id) => {
-            if (selectedId === id) {
-              handler.modified = true;
-              switch (field) {
-                case 'serviceId':
-                  handler.serviceId = value.trim();
-                  break;
-                case 'accessToken':
-                  handler.accessToken = value.trim();
-                  break;
-                case 'systemUrl':
-                  handler.systemUrl = value.trim();
-                  break;
-                default:
-              }
+      }
+      return {
+        threeScaleServiceRule: prevState.threeScaleServiceRule,
+        threeScaleHandlers: prevState.threeScaleHandlers.map((handler, id) => {
+          if (selectedId === id) {
+            handler.modified = true;
+            switch (field) {
+              case 'serviceId':
+                handler.serviceId = value.trim();
+                break;
+              case 'accessToken':
+                handler.accessToken = value.trim();
+                break;
+              case 'systemUrl':
+                handler.systemUrl = value.trim();
+                break;
+              default:
             }
-            return handler;
-          }),
-          newThreeScaleHandler: newThreeScaleHandler
-        };
-      },
-      () => this.props.onChange(this.isValid(), this.state.threeScaleServiceRule)
-    );
+          }
+          return handler;
+        }),
+        newThreeScaleHandler: newThreeScaleHandler
+      };
+    });
   };
 
   onCreateHandler = () => {
@@ -429,14 +429,19 @@ class ThreeScaleIntegration extends React.Component<Props, State> {
 
   isValidCreateHandler = () => {
     return (
-      this.state.newThreeScaleHandler.name !== '' &&
+      this.isValidK8SName(this.state.newThreeScaleHandler.name) &&
       this.state.newThreeScaleHandler.serviceId !== '' &&
       this.state.newThreeScaleHandler.systemUrl !== '' &&
       this.state.newThreeScaleHandler.accessToken !== ''
     );
   };
 
+  isValidK8SName = (name: string) => {
+    return name === '' ? false : name.search(k8sRegExpName) === 0;
+  };
+
   renderCreateHandler = () => {
+    const isValidName = this.isValidK8SName(this.state.newThreeScaleHandler.name);
     return (
       <Form className={createHandlerStyle} horizontal={true}>
         <FormGroup
@@ -444,13 +449,19 @@ class ThreeScaleIntegration extends React.Component<Props, State> {
           disabled={false}
           value={this.state.newThreeScaleHandler.name}
           onChange={e => this.onChangeHandler(-1, 'name', e.target.value)}
-          validationState={this.state.newThreeScaleHandler.name !== '' ? 'success' : 'error'}
+          validationState={isValidName ? 'success' : 'error'}
         >
           <Col componentClass={ControlLabel} sm={2}>
             Handler Name:
           </Col>
           <Col sm={8}>
             <FormControl type="text" disabled={false} />
+            {!isValidName && (
+              <HelpBlock>
+                Name must consist of lower case alphanumeric characters, '-' or '.', and must start and end with an
+                alphanumeric character.
+              </HelpBlock>
+            )}
           </Col>
         </FormGroup>
         <FormGroup
