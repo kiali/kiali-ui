@@ -445,7 +445,7 @@ export class GraphStyles {
         }
       },
       {
-        selector: `edge${DimClass}`,
+        selector: `edge.${DimClass}`,
         style: {
           opacity: '0.3'
         }
