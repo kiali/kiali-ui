@@ -345,7 +345,8 @@ export class GraphStyles {
         selector: `node[?isGroup]`,
         css: {
           'background-color': NodeColorFillBox,
-          'text-margin-y': '-2px'
+          'text-margin-y': '2px',
+          'text-valign': 'bottom'
         }
       },
       // Node is selected
