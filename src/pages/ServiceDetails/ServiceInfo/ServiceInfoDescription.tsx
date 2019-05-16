@@ -7,7 +7,12 @@ import { Endpoints } from '../../../types/ServiceInfo';
 import { Port, ObjectValidation } from '../../../types/IstioObjects';
 import PfInfoCard from '../../../components/Pf/PfInfoCard';
 import { style } from 'typestyle';
-import { ConfigIndicator } from '../../../components/ConfigValidation/ConfigIndicator';
+import {
+  ConfigIndicator,
+  NOT_VALID,
+  SMALL_SIZE,
+  MEDIUM_SIZE
+} from '../../../components/ConfigValidation/ConfigIndicator';
 import { Popover, OverlayTrigger, Icon } from 'patternfly-react';
 import './ServiceInfoDescription.css';
 import Labels from '../../../components/Label/Labels';
@@ -58,11 +63,7 @@ class ServiceInfoDescription extends React.Component<ServiceInfoDescriptionProps
 
   getPortOver(portId: number): Popover {
     return (
-      <Popover
-        id={portId + '-config-validation'}
-        // title={this.getValid().name}
-        // style={showDefinitions && { maxWidth: '80%', minWidth: '200px' }}
-      >
+      <Popover id={portId + '-config-validation'} title={NOT_VALID.name} style={{ maxWidth: '80%', minWidth: '200px' }}>
         <div>{this.getPortIssue(portId)}</div>
       </Popover>
     );
@@ -71,11 +72,10 @@ class ServiceInfoDescription extends React.Component<ServiceInfoDescriptionProps
   getPortIssue(portId: number): string {
     let message = '';
     if (this.props.validations) {
-      this.props.validations.checks.forEach(c => {
-        if (c.path === 'spec/ports[' + portId + ']') {
-          message = c.message;
-        }
-      });
+      message = this.props.validations.checks
+        .filter(c => c.path === 'spec/ports[' + portId + ']')
+        .map(c => c.message)
+        .join(',');
     }
     return message;
   }
@@ -130,7 +130,7 @@ class ServiceInfoDescription extends React.Component<ServiceInfoDescriptionProps
                 <ConfigIndicator
                   id={this.props.name + '-config-validation'}
                   validations={[this.getValidations()]}
-                  size="medium"
+                  size={MEDIUM_SIZE}
                 />
                 <strong>Ports</strong>
               </div>
@@ -144,11 +144,11 @@ class ServiceInfoDescription extends React.Component<ServiceInfoDescriptionProps
                         trigger={['hover', 'focus']}
                         rootClose={false}
                       >
-                        <span style={{ color: 'red' }}>
+                        <span style={{ color: NOT_VALID.color }}>
                           <Icon
                             type="pf"
                             name="error-circle-o"
-                            style={{ fontSize: 'small' }}
+                            style={{ fontSize: SMALL_SIZE }}
                             className="health-icon"
                             tabIndex="0"
                           />
