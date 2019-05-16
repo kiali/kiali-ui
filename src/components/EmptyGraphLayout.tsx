@@ -64,6 +64,12 @@ export class EmptyGraphLayout extends React.Component<EmptyGraphLayoutProps, Emp
     if (currentIsEmpty !== nextIsEmpty) {
       return true;
     }
+
+    // Don't update if we still don't have any elements
+    if (currentIsEmpty && nextIsEmpty) {
+      return false;
+    }
+
     // Do not update if we have elements and the namespace didn't change, as this means we are refreshing
     return !(!nextIsEmpty && this.props.namespaces === nextProps.namespaces);
   }
