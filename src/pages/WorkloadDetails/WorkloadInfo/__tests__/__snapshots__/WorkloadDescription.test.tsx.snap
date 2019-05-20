@@ -144,7 +144,7 @@ ShallowWrapper {
           />
         </Col>
       </Row>,
-      "showOnGraphLink": "/graph/namespaces?graphType=workload&injectServiceNodes=true&unusedNodes=true&focusSelector=node%5Bworkload=%22myworkload%22%5D%5Bnamespace=%22my-namespace%22%5D",
+      "showOnGraphLink": "/graph/namespaces?graphType=workload&namespaces=my-namespace&injectServiceNodes=true&unusedNodes=true&focusSelector=node%5Bnamespace=%22my-namespace%22%5D%5Bworkload=%22myworkload%22%5D",
       "title": "myworkload",
     },
     "ref": null,
@@ -255,7 +255,7 @@ ShallowWrapper {
             />
           </Col>
         </Row>,
-        "showOnGraphLink": "/graph/namespaces?graphType=workload&injectServiceNodes=true&unusedNodes=true&focusSelector=node%5Bworkload=%22myworkload%22%5D%5Bnamespace=%22my-namespace%22%5D",
+        "showOnGraphLink": "/graph/namespaces?graphType=workload&namespaces=my-namespace&injectServiceNodes=true&unusedNodes=true&focusSelector=node%5Bnamespace=%22my-namespace%22%5D%5Bworkload=%22myworkload%22%5D",
         "title": "myworkload",
       },
       "ref": null,
