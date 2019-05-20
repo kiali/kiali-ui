@@ -42,12 +42,13 @@ class ServiceInfoDescription extends React.Component<ServiceInfoDescriptionProps
   }
 
   showOnGraphLink(serviceName: string, namespace: string) {
-    return `/graph/namespaces?graphType=service&injectServiceNodes=true&unusedNodes=true&focusSelector=${encodeURI(
+    const focusSelector = encodeURI(
       new CytoscapeGraphSelectorBuilder()
-        .service(serviceName)
         .namespace(namespace)
+        .service(serviceName)
         .build()
-    )}`;
+    );
+    return `/graph/namespaces?graphType=service&namespaces=${namespace}&injectServiceNodes=true&unusedNodes=true&focusSelector=${focusSelector}`;
   }
 
   render() {

@@ -33,12 +33,13 @@ class WorkloadDescription extends React.Component<WorkloadDescriptionProps, Work
   }
 
   showOnGraphLink(workloadName: string, namespace: string) {
-    return `/graph/namespaces?graphType=workload&injectServiceNodes=true&unusedNodes=true&focusSelector=${encodeURI(
+    const focusSelector = encodeURI(
       new CytoscapeGraphSelectorBuilder()
-        .workload(workloadName)
         .namespace(namespace)
+        .workload(workloadName)
         .build()
-    )}`;
+    );
+    return `/graph/namespaces?graphType=workload&namespaces=${namespace}&injectServiceNodes=true&unusedNodes=true&focusSelector=${focusSelector}`;
   }
 
   render() {

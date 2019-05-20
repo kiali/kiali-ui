@@ -33,14 +33,17 @@ class AppDescription extends React.Component<AppDescriptionProps, AppDescription
   }
 
   showOnGraphLink(application: string, namespace: Namespace) {
-    return `/graph/namespaces?graphType=app&injectServiceNodes=true&unusedNodes=true&focusSelector=${encodeURI(
+    const focusSelector = encodeURI(
       new CytoscapeGraphSelectorBuilder()
-        .app(application)
-        .nodeType(NodeType.APP)
-        .isGroup(null)
         .namespace(namespace.name)
+        .nodeType(NodeType.APP)
+        .app(application)
+        .isGroup(null)
         .build()
-    )}`;
+    );
+    return `/graph/namespaces?graphType=app&namespaces=${
+      namespace.name
+    }&injectServiceNodes=true&unusedNodes=true&focusSelector=${focusSelector}`;
   }
 
   serviceLink(namespace: string, service: string) {

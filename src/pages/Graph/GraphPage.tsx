@@ -216,7 +216,7 @@ export class GraphPage extends React.Component<GraphPageProps, GraphPageState> {
     };
 
     // Let URL override current redux state at construction time
-    // Note that state updates will not be posted until until after the first render
+    // Note that state updates will not be posted until after the first render
     const urlNode = GraphPage.getNodeParamsFromProps(props);
     if (GraphPage.isNodeChanged(urlNode, props.node)) {
       props.setNode(urlNode);
