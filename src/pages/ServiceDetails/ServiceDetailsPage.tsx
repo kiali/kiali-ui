@@ -263,7 +263,7 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
           <div>
             <Nav bsClass="nav nav-tabs nav-tabs-pf">
               <NavItem eventKey="info">
-                <div>Info</div>
+                <div>Overview</div>
               </NavItem>
               <NavItem eventKey="traffic">
                 <div>Traffic</div>
