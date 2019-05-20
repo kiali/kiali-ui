@@ -19,7 +19,6 @@ interface PfTitleProps {
     search: string;
   };
   istio?: boolean;
-  hideGraphLink?: boolean;
 }
 
 interface PfTitleState {
