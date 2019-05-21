@@ -180,6 +180,16 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
           validations: this.addFormatValidation(results[0], results[0].validations),
           threeScaleInfo: results[1].data
         });
+
+        if (results[0].errorTraces === -1) {
+          MessageCenter.add(
+            'Could not fetch Traces in the service ' +
+              this.props.match.params.service +
+              ' in namespace ' +
+              this.props.match.params.namespace
+          );
+        }
+
         if (results[1].data.enabled) {
           API.getThreeScaleServiceRule(this.props.match.params.namespace, this.props.match.params.service)
             .then(result => {
@@ -271,7 +281,7 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
               <NavItem eventKey="traffic">Traffic</NavItem>
               <NavItem eventKey="metrics">Inbound Metrics</NavItem>
               {errorTraces !== undefined &&
-                errorTraces > -1 &&
+                this.props.jaegerUrl !== '' &&
                 (this.props.jaegerIntegration ? (
                   <NavItem eventKey="traces">
                     {errorTraces > 0 ? (
@@ -290,11 +300,11 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
                     )}
                   </NavItem>
                 ) : (
-                  this.props.jaegerUrl && (
-                    <NavItem onClick={this.navigateToJaeger}>
+                  <NavItem onClick={this.navigateToJaeger}>
+                    <>
                       Traces <Icon type={'fa'} name={'external-link'} />
-                    </NavItem>
-                  )
+                    </>
+                  </NavItem>
                 ))}
             </Nav>
             <TabContent>
