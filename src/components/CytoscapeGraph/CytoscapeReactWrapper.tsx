@@ -27,9 +27,9 @@ const styleContainer: React.CSSProperties = {
 };
 
 // Keep the browser right-click menu from popping up since have our own context menu
-// @todo: Should turn off browser right-click menus on Graph page only?
 window.oncontextmenu = () => {
-  return false;
+  // turn off browser right-click menus on Graph page only
+  return !window.location.pathname.includes('graph');
 };
 
 /**
