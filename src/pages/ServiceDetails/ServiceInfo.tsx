@@ -19,7 +19,7 @@ import { ServiceDetailsInfo, severityToIconName, validationToSeverity } from '..
 import ServiceInfoVirtualServices from './ServiceInfo/ServiceInfoVirtualServices';
 import ServiceInfoDestinationRules from './ServiceInfo/ServiceInfoDestinationRules';
 import ServiceInfoWorkload from './ServiceInfo/ServiceInfoWorkload';
-import { Validations, ObjectValidation } from '../../types/IstioObjects';
+import { Validations, ObjectValidation, Gateway } from '../../types/IstioObjects';
 import { TabPaneWithErrorBoundary } from '../../components/ErrorBoundary/WithErrorBoundary';
 import IstioWizardDropdown from '../../components/IstioWizards/IstioWizardDropdown';
 import { ThreeScaleInfo, ThreeScaleServiceRule } from '../../types/ThreeScale';
@@ -27,6 +27,7 @@ import { DurationDropdownContainer } from '../../components/DurationDropdown/Dur
 
 interface ServiceDetails extends ServiceId {
   serviceDetails: ServiceDetailsInfo;
+  gateways: Gateway[];
   validations: Validations;
   onRefresh: () => void;
   onSelectTab: (tabName: string, postHandler?: (tabName: string) => void) => void;
@@ -146,6 +147,7 @@ class ServiceInfo extends React.Component<ServiceDetails, ServiceInfoState> {
                   workloads={workloads}
                   virtualServices={virtualServices}
                   destinationRules={destinationRules}
+                  gateways={this.props.gateways}
                   tlsStatus={this.props.serviceDetails.namespaceMTLS}
                   onChange={this.props.onRefresh}
                   threeScaleInfo={this.props.threeScaleInfo}

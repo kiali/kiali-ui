@@ -7,6 +7,7 @@ import {
   DestinationRule,
   DestinationRules,
   DestinationWeight,
+  Gateway,
   HTTPMatchRequest,
   HTTPRoute,
   StringMatch,
@@ -15,6 +16,7 @@ import {
 } from '../../types/IstioObjects';
 import { serverConfig } from '../../config';
 import { ThreeScaleServiceRule } from '../../types/ThreeScale';
+import { GatewaySelectorState } from './GatewaySelector';
 
 export const WIZARD_WEIGHTED_ROUTING = 'weighted_routing';
 export const WIZARD_MATCHING_ROUTING = 'matching_routing';
@@ -47,6 +49,7 @@ export type WizardProps = {
   workloads: WorkloadOverview[];
   virtualServices: VirtualServices;
   destinationRules: DestinationRules;
+  gateways: Gateway[];
   threeScaleServiceRule?: ThreeScaleServiceRule;
   onClose: (changed: boolean) => void;
 };
@@ -61,6 +64,7 @@ export type WizardState = {
   tlsModified: boolean;
   loadBalancer: string;
   lbModified: boolean;
+  gateway?: GatewaySelectorState;
   threeScaleServiceRule?: ThreeScaleServiceRule;
 };
 
@@ -144,7 +148,33 @@ const parseHttpMatchRequest = (httpMatchRequest: HTTPMatchRequest): string[] => 
   return matches;
 };
 
-export const buildIstioConfig = (wProps: WizardProps, wState: WizardState): [DestinationRule, VirtualService] => {
+export const getGatewayName = (serviceName: string, gatewayNames: string[]): string => {
+  let gatewayName = serviceName + '-gateway';
+  if (gatewayNames.length === 0) {
+    return gatewayName;
+  }
+  let goodName = false;
+  while (!goodName) {
+    if (!gatewayNames.includes(gatewayName)) {
+      goodName = true;
+    } else {
+      // Iterate until we find a good gatewayName
+      if (gatewayName.charAt(gatewayName.length - 2) === '-') {
+        let version = +gatewayName.charAt(gatewayName.length - 1);
+        version = version + 1;
+        gatewayName = gatewayName.substr(0, gatewayName.length - 1) + version;
+      } else {
+        gatewayName = gatewayName + '-1';
+      }
+    }
+  }
+  return gatewayName;
+};
+
+export const buildIstioConfig = (
+  wProps: WizardProps,
+  wState: WizardState
+): [DestinationRule, VirtualService, Gateway?] => {
   const wkdNameVersion: { [key: string]: string } = {};
 
   // DestinationRule from the labels
@@ -185,11 +215,42 @@ export const buildIstioConfig = (wProps: WizardProps, wState: WizardState): [Des
     spec: {}
   };
 
+  // Wizard is optional, only when user has explicitly selected "Create a Gateway"
+  const newGatewayName = getGatewayName(wProps.serviceName, wProps.gateways.map(gw => gw.metadata.name));
+  const wizardGW: Gateway | undefined =
+    wState.gateway && wState.gateway.addGateway && wState.gateway.newGateway
+      ? {
+          metadata: {
+            namespace: wProps.namespace,
+            name: newGatewayName,
+            labels: {
+              [KIALI_WIZARD_LABEL]: wProps.type
+            }
+          },
+          spec: {
+            selector: {
+              istio: 'ingressgateway'
+            },
+            servers: [
+              {
+                port: {
+                  number: wState.gateway.port,
+                  name: 'http',
+                  protocol: 'HTTP'
+                },
+                hosts: wState.gateway.gwHosts.split(',')
+              }
+            ]
+          }
+        }
+      : undefined;
+
+  const vsHosts = wState.gateway ? wState.gateway.vsHosts.split(',') : [wProps.serviceName];
   switch (wProps.type) {
     case WIZARD_WEIGHTED_ROUTING: {
       // VirtualService from the weights
       wizardVS.spec = {
-        hosts: [wProps.serviceName],
+        hosts: vsHosts,
         http: [
           {
             route: wState.workloads.map(workload => {
@@ -209,7 +270,7 @@ export const buildIstioConfig = (wProps: WizardProps, wState: WizardState): [Des
     case WIZARD_MATCHING_ROUTING: {
       // VirtualService from the routes
       wizardVS.spec = {
-        hosts: [wProps.serviceName],
+        hosts: vsHosts,
         http: wState.rules.map(rule => {
           const httpRoute: HTTPRoute = {};
           httpRoute.route = [];
@@ -287,7 +348,7 @@ export const buildIstioConfig = (wProps: WizardProps, wState: WizardState): [Des
         };
       }
       wizardVS.spec = {
-        hosts: [wProps.serviceName],
+        hosts: vsHosts,
         http: [httpRoute]
       };
       break;
@@ -309,7 +370,18 @@ export const buildIstioConfig = (wProps: WizardProps, wState: WizardState): [Des
       };
     }
   }
-  return [wizardDR, wizardVS];
+
+  if (wState.gateway && wState.gateway.vsHosts) {
+    wizardVS.spec.hosts = wState.gateway.vsHosts.split(',');
+  }
+
+  if (wState.gateway && wState.gateway.addGateway) {
+    wizardVS.spec.gateways = [wState.gateway.newGateway ? newGatewayName : wState.gateway.selectedGateway];
+  } else {
+    wizardVS.spec.gateways = null;
+  }
+
+  return [wizardDR, wizardVS, wizardGW];
 };
 
 const getWorkloadsByVersion = (workloads: WorkloadOverview[]): { [key: string]: string } => {
@@ -403,6 +475,38 @@ export const getInitLoadBalancer = (destinationRules: DestinationRules): string 
     destinationRules.items[0].spec.trafficPolicy.loadBalancer
   ) {
     return destinationRules.items[0].spec.trafficPolicy.loadBalancer.simple || '';
+  }
+  return '';
+};
+
+export const hasGateway = (virtualServices: VirtualServices): boolean => {
+  // We need to if sentence, otherwise a potential undefined is not well handled
+  if (
+    virtualServices.items.length === 1 &&
+    virtualServices.items[0] &&
+    virtualServices.items[0].spec.gateways &&
+    virtualServices.items[0].spec.gateways.length > 0
+  ) {
+    return true;
+  }
+  return false;
+};
+
+export const getInitHosts = (virtualServices: VirtualServices): string[] => {
+  if (virtualServices.items.length === 1 && virtualServices.items[0] && virtualServices.items[0].spec.hosts) {
+    return virtualServices.items[0].spec.hosts;
+  }
+  return [];
+};
+
+export const getInitGateway = (virtualServices: VirtualServices): string => {
+  if (
+    virtualServices.items.length === 1 &&
+    virtualServices.items[0] &&
+    virtualServices.items[0].spec.gateways &&
+    virtualServices.items[0].spec.gateways.length === 1
+  ) {
+    return virtualServices.items[0].spec.gateways[0];
   }
   return '';
 };

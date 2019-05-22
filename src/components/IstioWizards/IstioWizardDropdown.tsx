@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { DropdownButton, MenuItem, MessageDialog, OverlayTrigger, Tooltip } from 'patternfly-react';
 import { WorkloadOverview } from '../../types/ServiceInfo';
-import { DestinationRules, VirtualServices } from '../../types/IstioObjects';
+import { DestinationRules, Gateway, VirtualServices } from '../../types/IstioObjects';
 import * as MessageCenter from '../../utils/MessageCenter';
 import * as API from '../../services/Api';
 import { serverConfig } from '../../config/ServerConfig';
@@ -27,6 +27,7 @@ type Props = {
   workloads: WorkloadOverview[];
   virtualServices: VirtualServices;
   destinationRules: DestinationRules;
+  gateways: Gateway[];
   tlsStatus?: TLSStatus;
   threeScaleInfo: ThreeScaleInfo;
   threeScaleServiceRule?: ThreeScaleServiceRule;
@@ -328,6 +329,7 @@ class IstioWizardDropdown extends React.Component<Props, State> {
           })}
           virtualServices={this.props.virtualServices}
           destinationRules={this.props.destinationRules}
+          gateways={this.props.gateways}
           threeScaleServiceRule={this.props.threeScaleServiceRule}
           tlsStatus={this.props.tlsStatus}
           onClose={this.onClose}

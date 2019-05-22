@@ -6,7 +6,7 @@ import ServiceId from '../../types/ServiceId';
 import * as API from '../../services/Api';
 import * as MessageCenter from '../../utils/MessageCenter';
 import { ServiceDetailsInfo } from '../../types/ServiceInfo';
-import { ObjectValidation, Validations } from '../../types/IstioObjects';
+import { Gateway, ObjectValidation, Validations } from '../../types/IstioObjects';
 import IstioMetricsContainer from '../../components/Metrics/IstioMetrics';
 import ServiceTraces from './ServiceTraces';
 import ServiceInfo from './ServiceInfo';
@@ -26,6 +26,7 @@ import { durationSelector } from '../../store/Selectors';
 
 type ServiceDetailsState = {
   serviceDetailsInfo: ServiceDetailsInfo;
+  gateways: Gateway[];
   trafficData: GraphDefinition | null;
   validations: Validations;
   threeScaleInfo: ThreeScaleInfo;
@@ -77,6 +78,7 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
     super(props);
     this.state = {
       serviceDetailsInfo: emptyService,
+      gateways: [],
       trafficData: null,
       validations: {},
       threeScaleInfo: {
@@ -173,10 +175,12 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
       this.props.duration
     );
     const promiseThreeScale = API.getThreeScaleInfo();
-    Promise.all([promiseDetails, promiseThreeScale])
+    const promiseGateways = API.getIstioConfig(this.props.match.params.namespace, ['gateways'], false);
+    Promise.all([promiseDetails, promiseThreeScale, promiseGateways])
       .then(results => {
         this.setState({
           serviceDetailsInfo: results[0],
+          gateways: results[2].data.gateways,
           validations: this.addFormatValidation(results[0], results[0].validations),
           threeScaleInfo: results[1].data
         });
@@ -303,6 +307,7 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
                   namespace={this.props.match.params.namespace}
                   service={this.props.match.params.service}
                   serviceDetails={this.state.serviceDetailsInfo}
+                  gateways={this.state.gateways}
                   validations={this.state.validations}
                   onRefresh={this.doRefresh}
                   activeTab={this.activeTab}
