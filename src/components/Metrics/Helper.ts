@@ -6,10 +6,10 @@ import {
   SingleLabelValues,
   LabelDisplayName,
   AllPromLabelsValues,
-  PromLabel
+  PromLabel,
+  MetricsQuery
 } from 'k-charted-react';
 
-import { BaseMetricsOptions } from '../../types/MetricsOptions';
 import { MetricsSettingsDropdown, MetricsSettings } from '../MetricsOptions/MetricsSettings';
 import MetricsDuration from '../MetricsOptions/MetricsDuration';
 import { DurationInSeconds } from '../../types/Common';
@@ -100,7 +100,7 @@ import { AllLabelsValues } from '../../types/Metrics';
 
   export const settingsToOptions = (
     settings: MetricsSettings,
-    opts: BaseMetricsOptions,
+    opts: MetricsQuery,
     aggregations?: AggregationModel[]
   ) => {
     opts.avg = settings.showAverage;
@@ -116,18 +116,18 @@ import { AllLabelsValues } from '../../types/Metrics';
     }
   };
 
-  export const initMetricsSettings = (opts: BaseMetricsOptions, aggregations?: AggregationModel[]) => {
+  export const initMetricsSettings = (opts: MetricsQuery, aggregations?: AggregationModel[]) => {
     settingsToOptions(MetricsSettingsDropdown.initialMetricsSettings(), opts, aggregations);
   };
 
-  export const durationToOptions = (duration: DurationInSeconds, opts: BaseMetricsOptions) => {
+  export const durationToOptions = (duration: DurationInSeconds, opts: MetricsQuery) => {
     opts.duration = duration;
     const intervalOpts = computePrometheusRateParams(duration);
     opts.step = intervalOpts.step;
     opts.rateInterval = intervalOpts.rateInterval;
   };
 
-  export const initDuration = (opts: BaseMetricsOptions): BaseMetricsOptions => {
+  export const initDuration = (opts: MetricsQuery): MetricsQuery => {
     durationToOptions(MetricsDuration.initialDuration(), opts);
     return opts;
   };

@@ -2,14 +2,14 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { Toolbar, ToolbarRightContent, FormGroup } from 'patternfly-react';
-import { PF3Dashboard, DashboardModel, LabelDisplayName } from 'k-charted-react';
+import { PF3Dashboard, DashboardModel, LabelDisplayName, DashboardQuery, Aggregator } from 'k-charted-react';
 
+import { serverConfig } from '../../config/ServerConfig';
 import history from '../../app/History';
 import RefreshContainer from '../../components/Refresh/Refresh';
 import * as API from '../../services/Api';
 import { KialiAppState } from '../../store/Store';
 import { DurationInSeconds } from '../../types/Common';
-import { CustomMetricsOptions, Aggregator } from '../../types/MetricsOptions';
 import * as MessageCenter from '../../utils/MessageCenter';
 
 import * as MetricsHelper from './Helper';
@@ -36,7 +36,7 @@ class CustomMetrics extends React.Component<CustomMetricsProps, MetricsState> {
     isPageVisible: true
   };
 
-  options: CustomMetricsOptions;
+  options: DashboardQuery;
 
   constructor(props: CustomMetricsProps) {
     super(props);
@@ -47,9 +47,13 @@ class CustomMetrics extends React.Component<CustomMetricsProps, MetricsState> {
     };
   }
 
-  initOptions(): CustomMetricsOptions {
-    const options: CustomMetricsOptions = {
-      version: this.props.version
+  initOptions(): DashboardQuery {
+    let filters = `${serverConfig.istioLabels.appLabelName}:${this.props.app}`;
+    if (this.props.version) {
+      filters += `,${serverConfig.istioLabels.versionLabelName}:${this.props.version}`;
+    }
+    const options: DashboardQuery = {
+      labelsFilters: filters
     };
     MetricsHelper.initMetricsSettings(options);
     MetricsHelper.initDuration(options);
@@ -61,7 +65,7 @@ class CustomMetrics extends React.Component<CustomMetricsProps, MetricsState> {
   }
 
   fetchMetrics = () => {
-    API.getCustomDashboard(this.props.namespace, this.props.app, this.props.template, this.options)
+    API.getCustomDashboard(this.props.namespace, this.props.template, this.options)
       .then(response => {
         const labelValues = MetricsHelper.extractLabelValues(response.data, this.state.labelValues);
         this.setState({

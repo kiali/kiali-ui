@@ -1,8 +1,8 @@
 import axios, { AxiosError } from 'axios';
-import { DashboardModel } from 'k-charted-react';
+import { DashboardModel, DashboardQuery } from 'k-charted-react';
 
 import Namespace from '../types/Namespace';
-import { CustomMetricsOptions, MetricsOptions } from '../types/MetricsOptions';
+import { IstioMetricsOptions } from '../types/MetricsOptions';
 import { Metrics } from '../types/Metrics';
 import { IstioConfigDetails } from '../types/IstioConfigDetails';
 import { IstioConfigList } from '../types/IstioConfigList';
@@ -105,7 +105,7 @@ export const getNamespaces = () => {
   return newRequest<Namespace[]>(HTTP_VERBS.GET, urls.namespaces, {}, {});
 };
 
-export const getNamespaceMetrics = (namespace: string, params: MetricsOptions) => {
+export const getNamespaceMetrics = (namespace: string, params: IstioMetricsOptions) => {
   return newRequest<Readonly<Metrics>>(HTTP_VERBS.GET, urls.namespaceMetrics(namespace), params, {});
 };
 
@@ -211,11 +211,11 @@ export const getServices = (namespace: string) => {
   return newRequest<ServiceList>(HTTP_VERBS.GET, urls.services(namespace), {}, {});
 };
 
-export const getServiceMetrics = (namespace: string, service: string, params: MetricsOptions) => {
+export const getServiceMetrics = (namespace: string, service: string, params: IstioMetricsOptions) => {
   return newRequest<Metrics>(HTTP_VERBS.GET, urls.serviceMetrics(namespace, service), params, {});
 };
 
-export const getServiceDashboard = (namespace: string, service: string, params: MetricsOptions) => {
+export const getServiceDashboard = (namespace: string, service: string, params: IstioMetricsOptions) => {
   return newRequest<DashboardModel>(HTTP_VERBS.GET, urls.serviceDashboard(namespace, service), params, {});
 };
 
@@ -227,24 +227,24 @@ export const getApps = (namespace: string) => {
   return newRequest<AppList>(HTTP_VERBS.GET, urls.apps(namespace), {}, {});
 };
 
-export const getAppMetrics = (namespace: string, app: string, params: MetricsOptions) => {
+export const getAppMetrics = (namespace: string, app: string, params: IstioMetricsOptions) => {
   return newRequest<Metrics>(HTTP_VERBS.GET, urls.appMetrics(namespace, app), params, {});
 };
 
-export const getAppDashboard = (namespace: string, app: string, params: MetricsOptions) => {
+export const getAppDashboard = (namespace: string, app: string, params: IstioMetricsOptions) => {
   return newRequest<DashboardModel>(HTTP_VERBS.GET, urls.appDashboard(namespace, app), params, {});
 };
 
-export const getWorkloadMetrics = (namespace: string, workload: string, params: MetricsOptions) => {
+export const getWorkloadMetrics = (namespace: string, workload: string, params: IstioMetricsOptions) => {
   return newRequest<Metrics>(HTTP_VERBS.GET, urls.workloadMetrics(namespace, workload), params, {});
 };
 
-export const getWorkloadDashboard = (namespace: string, workload: string, params: MetricsOptions) => {
+export const getWorkloadDashboard = (namespace: string, workload: string, params: IstioMetricsOptions) => {
   return newRequest<DashboardModel>(HTTP_VERBS.GET, urls.workloadDashboard(namespace, workload), params, {});
 };
 
-export const getCustomDashboard = (ns: string, app: string, tpl: string, params: CustomMetricsOptions) => {
-  return newRequest<DashboardModel>(HTTP_VERBS.GET, urls.customDashboard(ns, app, tpl), params, {});
+export const getCustomDashboard = (ns: string, tpl: string, params: DashboardQuery) => {
+  return newRequest<DashboardModel>(HTTP_VERBS.GET, urls.customDashboard(ns, tpl), params, {});
 };
 
 export const getServiceHealth = (

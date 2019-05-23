@@ -6536,10 +6536,10 @@ jszip@^3.1.5:
     pako "~1.0.2"
     readable-stream "~2.0.6"
 
-k-charted-react@0.1.0-rc4:
-  version "0.1.0-rc4"
-  resolved "https://registry.yarnpkg.com/k-charted-react/-/k-charted-react-0.1.0-rc4.tgz#e706a6d75f182fa7baaa20f8f2359fd2270d6d7d"
-  integrity sha512-o4Xnhq3fhVeZuFVU0apIcpp3sH65Sb5ac9QvbNl64/EztwIPuVdK7CZ+Hljaz4xJ3QDjxE5hYgDeryhyCzTmFA==
+k-charted-react@0.1.0-rc7:
+  version "0.1.0-rc7"
+  resolved "https://registry.yarnpkg.com/k-charted-react/-/k-charted-react-0.1.0-rc7.tgz#3893ebf85ae846dd59e86781a5dc82dcc5c8668f"
+  integrity sha512-DEv4aM0TMERrkWFgldL4mxgJoht9JfSY2DF3AXwlgy7H+h1kGsp9PcW4Ux41HOSrpSYrolbCx1Zs3s2RYRo/VQ==
 
 keycode@^2.2.0:
   version "2.2.0"

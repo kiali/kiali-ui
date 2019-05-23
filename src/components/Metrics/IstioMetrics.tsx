@@ -8,7 +8,7 @@ import RefreshContainer from '../../components/Refresh/Refresh';
 import * as API from '../../services/Api';
 import { GrafanaInfo, KialiAppState } from '../../store/Store';
 import { DurationInSeconds } from '../../types/Common';
-import { Direction, MetricsOptions, Reporter } from '../../types/MetricsOptions';
+import { Direction, IstioMetricsOptions, Reporter } from '../../types/MetricsOptions';
 import * as MessageCenter from '../../utils/MessageCenter';
 
 import * as MetricsHelper from './Helper';
@@ -41,7 +41,7 @@ class IstioMetrics extends React.Component<IstioMetricsProps, MetricsState> {
     isPageVisible: true
   };
 
-  options: MetricsOptions;
+  options: IstioMetricsOptions;
   grafanaLink: string | undefined;
 
   constructor(props: IstioMetricsProps) {
@@ -54,8 +54,8 @@ class IstioMetrics extends React.Component<IstioMetricsProps, MetricsState> {
     };
   }
 
-  initOptions(): MetricsOptions {
-    const options: MetricsOptions = {
+  initOptions(): IstioMetricsOptions {
+    const options: IstioMetricsOptions = {
       reporter: MetricsReporter.initialReporter(this.props.direction),
       direction: this.props.direction
     };
