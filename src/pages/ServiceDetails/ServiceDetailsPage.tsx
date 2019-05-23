@@ -181,7 +181,7 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
           threeScaleInfo: results[1].data
         });
 
-        if (results[0].errorTraces === -1 && this.props.jaegerUrl !== '' && this.props.jaegerIntegration) {
+        if (results[0].errorTraces === -1 && this.props.jaegerUrl !== '') {
           MessageCenter.add(
             'Could not fetch Traces in the service ' +
               this.props.match.params.service +
