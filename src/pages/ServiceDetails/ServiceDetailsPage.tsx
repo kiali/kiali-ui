@@ -186,7 +186,10 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
             'Could not fetch Traces in the service ' +
               this.props.match.params.service +
               ' in namespace ' +
-              this.props.match.params.namespace
+              this.props.match.params.namespace +
+              '. Check if ' +
+              this.props.jaegerUrl +
+              ' is available.'
           );
         }
 
