@@ -6330,6 +6330,11 @@ json-beautify@1.0.1:
   resolved "https://registry.yarnpkg.com/json-beautify/-/json-beautify-1.0.1.tgz#598b50d4c8ea9b8fca5abbb40b7e2cbd3ad4c2fc"
   integrity sha1-WYtQ1Mjqm4/KWru0C34svTrUwvw=
 
+json-format@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/json-format/-/json-format-1.0.1.tgz#143f67e62af129d6bffed288a46265ea23d0df0c"
+  integrity sha1-FD9n5irxKda//tKIpGJl6iPQ3ww=
+
 json-loader@^0.5.4:
   version "0.5.7"
   resolved "https://registry.yarnpkg.com/json-loader/-/json-loader-0.5.7.tgz#dca14a70235ff82f0ac9a3abeb60d337a365185d"
@@ -7468,6 +7473,14 @@ npm-bundled@^1.0.1:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/npm-bundled/-/npm-bundled-1.0.5.tgz#3c1732b7ba936b3a10325aef616467c0ccbcc979"
   integrity sha512-m/e6jgWu8/v5niCUKQi9qQl8QdeEduFA96xHDDzFGqly0OOjI7c+60KM/2sppfnUU9JJagf+zs+yGhqSOFj71g==
+
+npm-force-resolutions@0.0.2:
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/npm-force-resolutions/-/npm-force-resolutions-0.0.2.tgz#91450d07a03b658f71b36efc5e034416b6a42830"
+  integrity sha512-2F1FxxDvoatn+OwBxrUGahnEECOpr5RDuF/jqfyy5dI87KmHI3zmb+cCcKDnhR7wnhaTH54/KyPlLTtUTL0Qpw==
+  dependencies:
+    json-format "^1.0.1"
+    source-map-support "^0.5.5"
 
 npm-packlist@^1.1.6:
   version "1.2.0"
@@ -10418,7 +10431,7 @@ source-map-support@^0.5.0, source-map-support@^0.5.7, source-map-support@^0.5.9:
     buffer-from "^1.0.0"
     source-map "^0.6.0"
 
-source-map-support@^0.5.11:
+source-map-support@^0.5.11, source-map-support@^0.5.5:
   version "0.5.12"
   resolved "https://registry.yarnpkg.com/source-map-support/-/source-map-support-0.5.12.tgz#b4f3b10d51857a5af0138d3ce8003b201613d599"
   integrity sha512-4h2Pbvyy15EE02G+JOZpUCmqWJuqrs+sEkzewTm++BPi7Hvn/HwcqLAcNxYAyI0x13CpPPn+kMjl+hplXMHITQ==
