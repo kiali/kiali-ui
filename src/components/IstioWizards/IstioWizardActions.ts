@@ -268,6 +268,8 @@ export const buildIstioConfig = (
       break;
     }
     case WIZARD_MATCHING_ROUTING: {
+      console.log('TODELETE wState.rules ');
+      console.log(wState.rules);
       // VirtualService from the routes
       wizardVS.spec = {
         hosts: vsHosts,

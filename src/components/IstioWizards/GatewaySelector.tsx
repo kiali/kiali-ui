@@ -176,7 +176,7 @@ class GatewaySelector extends React.Component<Props, GatewaySelectorState> {
             <Radio
               name="selectGateway"
               className={labelStyle}
-              disabled={!this.state.addGateway}
+              disabled={!this.state.addGateway || this.props.gateways.length === 0}
               checked={!this.state.newGateway}
               onChange={() => this.onFormChange(GatewayForm.SELECT, 'false')}
             >
@@ -190,15 +190,18 @@ class GatewaySelector extends React.Component<Props, GatewaySelectorState> {
             Gateway
           </Col>
           <Col sm={9}>
-            <DropdownButton
-              id="trafficPolicy-tls"
-              bsStyle="default"
-              title={this.state.selectedGateway}
-              disabled={!this.state.addGateway || this.state.newGateway}
-              onSelect={(gw: string) => this.onFormChange(GatewayForm.GATEWAY_SELECTED, gw)}
-            >
-              {gatewayItems}
-            </DropdownButton>
+            {this.props.gateways.length > 0 && (
+              <DropdownButton
+                id="trafficPolicy-tls"
+                bsStyle="default"
+                title={this.state.selectedGateway}
+                disabled={!this.state.addGateway || this.state.newGateway || this.props.gateways.length === 0}
+                onSelect={(gw: string) => this.onFormChange(GatewayForm.GATEWAY_SELECTED, gw)}
+              >
+                {gatewayItems}
+              </DropdownButton>
+            )}
+            {this.props.gateways.length === 0 && <HelpBlock>There are no gateways to select.</HelpBlock>}
           </Col>
         </FormGroup>
         <FormGroup>
@@ -231,7 +234,7 @@ class GatewaySelector extends React.Component<Props, GatewaySelectorState> {
         <FormGroup
           controlId="gwHosts"
           disabled={!this.state.addGateway}
-          validationState={this.state.gwHostsValid ? '' : 'error'}
+          validationState={this.state.gwHostsValid ? null : 'error'}
         >
           <Col componentClass={ControlLabel} sm={3}>
             Gateway Hosts
