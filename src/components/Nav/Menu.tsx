@@ -2,6 +2,7 @@ import _ from 'lodash';
 import * as React from 'react';
 import { matchPath } from 'react-router';
 import { Link } from 'react-router-dom';
+import { style } from 'typestyle';
 import { Nav, NavList, NavItem, PageSidebar } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 
@@ -15,6 +16,12 @@ const ExternalLink = ({ href, name }) => (
     </a>
   </NavItem>
 );
+
+const sidebarStyle = style({
+  borderTopStyle: 'solid',
+  borderTopWidth: '1px',
+  borderTopColor: '#19506d'
+});
 
 type MenuProps = {
   isNavOpen: boolean;
@@ -74,7 +81,7 @@ class Menu extends React.Component<MenuProps, MenuState> {
       </Nav>
     );
 
-    return <PageSidebar isNavOpen={isNavOpen} nav={PageNav} />;
+    return <PageSidebar className={sidebarStyle} isNavOpen={isNavOpen} nav={PageNav} />;
   }
 }
 

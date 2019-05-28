@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
+import { style } from 'typestyle';
 import RenderPage from './RenderPage';
 import { RouteComponentProps } from 'react-router';
 import Masthead from './Masthead/Masthead';
@@ -13,8 +14,7 @@ import { KialiAppState } from '../../store/Store';
 import { KialiAppAction } from '../../actions/KialiAppAction';
 import UserSettingsThunkActions from '../../actions/UserSettingsThunkActions';
 
-export const istioConfigTitle = 'Istio Config';
-export const servicesTitle = 'Services';
+const kialiBlueBg = require('../../img/kiali-blue-bg.png');
 
 type PropsType = RouteComponentProps & {
   navCollapsed: boolean;
@@ -28,6 +28,11 @@ type NavigationState = {
   isNavOpenDesktop: boolean;
   isNavOpenMobile: boolean;
 };
+
+const headerStyle = style({
+  backgroundImage: `url(${kialiBlueBg})`,
+  backgroundColor: '#003145'
+});
 
 class Navigation extends React.Component<PropsType, NavigationState> {
   static contextTypes = {
@@ -89,6 +94,7 @@ class Navigation extends React.Component<PropsType, NavigationState> {
 
     const Header = (
       <PageHeader
+        className={headerStyle}
         logo={<Brand src={kialiLogo} alt="Kiali Logo" />}
         toolbar={<Masthead />}
         showNavToggle={true}

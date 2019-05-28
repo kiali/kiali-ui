@@ -62,9 +62,9 @@ $grid-float-breakpoint: $screen-sm-min !default;
 }
 
 .pf-c-page__sidebar {
-  --pf-c-page__sidebar--BackgroundColor: #{$color-pf-black-900};
-  --pf-c-page__sidebar--PaddingBottom: 0;
-  --pf-c-page__sidebar--PaddingTop: 0;
+  --pf-c-page__sidebar--BackgroundColor: #003145;
+  --pf-c-page__sidebar-body--PaddingBottom: 0;
+  --pf-c-page__sidebar-body--PaddingTop: 0;
   --pf-c-page__sidebar--md--Width: 210px; // TODO: Remove. Test enlarged message center when removing.
   min-height: 100vh;
   position: relative; // fix z-index bug in Edge
@@ -94,7 +94,7 @@ $grid-float-breakpoint: $screen-sm-min !default;
     --pf-c-nav__list-link--focus--BackgroundColor: var(--pf-c-nav__list-link--hover--BackgroundColor);
     --pf-c-nav__list-link--focus--Color: var(--pf-c-nav__list-link--hover--Color);
     --pf-c-nav__list-link--hover--after--BackgroundColor: transparent;
-    --pf-c-nav__list-link--hover--BackgroundColor: #{$color-pf-black-700};
+    --pf-c-nav__list-link--hover--BackgroundColor: #003f5f;
     --pf-c-nav__list-link--hover--Color: #{$color-pf-white};
     --pf-c-nav__list-link--m-current--after--BackgroundColor: #{$color-pf-blue-300};
     --pf-c-nav__list-link--m-current--Color: var(--pf-c-nav__list-link--hover--Color);
@@ -136,7 +136,7 @@ $grid-float-breakpoint: $screen-sm-min !default;
   .pf-c-nav__list {
     list-style: none; // turn off list-styles to fix bug in Edge
     > .pf-c-nav__item {
-      border-bottom: 1px solid #{$color-pf-black};
+      border-bottom: 1px solid #19506d;
       margin-top: 0;
 
       &:not(.pf-m-current) > .pf-c-nav__link {
@@ -211,6 +211,14 @@ $grid-float-breakpoint: $screen-sm-min !default;
     color: var(--pf-c-nav__list-link--Color);
     display: none;
   }
+}
+
+.pf-c-background-image::before {
+  filter: unset;
+}
+
+.pf-c-login {
+  background-image: none;
 }
 
 /**

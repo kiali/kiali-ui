@@ -19,6 +19,7 @@ type initializingScreenProps = {
 };
 
 const kialiTitle = require('../assets/img/logo-login.svg');
+const kialiBlueBg = require('../img/kiali-blue-bg.png');
 
 const defaultErrorStyle = style({
   $nest: {
@@ -58,7 +59,7 @@ const InitializingScreen: React.FC<initializingScreenProps> = (props: initializi
   }
 
   return (
-    <LoginPageContainer style={{ backgroundImage: 'none' }}>
+    <LoginPageContainer backgroundUrl={kialiBlueBg}>
       <BasicLoginPageLayout>
         <LoginPageHeader logoSrc={kialiTitle} />
         <BasicLoginCardLayout>
