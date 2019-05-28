@@ -75,14 +75,14 @@ ShallowWrapper {
             xs={12}
           >
             <div
-              className="progress-description"
+              className="progress-description f2zkptl"
             >
               <strong>
                 Labels
               </strong>
             </div>
             <div
-              className="label-collection"
+              className="label-collection f3lrwsf"
             >
               <Labels
                 labels={
@@ -90,6 +90,20 @@ ShallowWrapper {
                     "app": "reviews",
                   }
                 }
+              />
+            </div>
+            <div
+              className="progress-description f2zkptl"
+            >
+              <strong>
+                Selectors
+              </strong>
+            </div>
+            <div
+              className="label-collection f3lrwsf"
+            >
+              <Labels
+                labels={Object {}}
               />
             </div>
             <div>
@@ -254,14 +268,14 @@ ShallowWrapper {
             xs={12}
           >
             <div
-              className="progress-description"
+              className="progress-description f2zkptl"
             >
               <strong>
                 Labels
               </strong>
             </div>
             <div
-              className="label-collection"
+              className="label-collection f3lrwsf"
             >
               <Labels
                 labels={
@@ -269,6 +283,20 @@ ShallowWrapper {
                     "app": "reviews",
                   }
                 }
+              />
+            </div>
+            <div
+              className="progress-description f2zkptl"
+            >
+              <strong>
+                Selectors
+              </strong>
+            </div>
+            <div
+              className="label-collection f3lrwsf"
+            >
+              <Labels
+                labels={Object {}}
               />
             </div>
             <div>
@@ -430,14 +458,14 @@ ShallowWrapper {
               xs={12}
             >
               <div
-                className="progress-description"
+                className="progress-description f2zkptl"
               >
                 <strong>
                   Labels
                 </strong>
               </div>
               <div
-                className="label-collection"
+                className="label-collection f3lrwsf"
               >
                 <Labels
                   labels={
@@ -445,6 +473,20 @@ ShallowWrapper {
                       "app": "reviews",
                     }
                   }
+                />
+              </div>
+              <div
+                className="progress-description f2zkptl"
+              >
+                <strong>
+                  Selectors
+                </strong>
+              </div>
+              <div
+                className="label-collection f3lrwsf"
+              >
+                <Labels
+                  labels={Object {}}
                 />
               </div>
               <div>
@@ -599,14 +641,14 @@ ShallowWrapper {
               "bsClass": "col",
               "children": Array [
                 <div
-                  className="progress-description"
+                  className="progress-description f2zkptl"
                 >
                   <strong>
                     Labels
                   </strong>
                 </div>,
                 <div
-                  className="label-collection"
+                  className="label-collection f3lrwsf"
                 >
                   <Labels
                     labels={
@@ -614,6 +656,20 @@ ShallowWrapper {
                         "app": "reviews",
                       }
                     }
+                  />
+                </div>,
+                <div
+                  className="progress-description f2zkptl"
+                >
+                  <strong>
+                    Selectors
+                  </strong>
+                </div>,
+                <div
+                  className="label-collection f3lrwsf"
+                >
+                  <Labels
+                    labels={Object {}}
                   />
                 </div>,
                 <div>
@@ -664,7 +720,7 @@ ShallowWrapper {
                   "children": <strong>
                     Labels
                   </strong>,
-                  "className": "progress-description",
+                  "className": "progress-description f2zkptl",
                 },
                 "ref": null,
                 "rendered": Object {
@@ -692,7 +748,7 @@ ShallowWrapper {
                       }
                     }
                   />,
-                  "className": "label-collection",
+                  "className": "label-collection f3lrwsf",
                 },
                 "ref": null,
                 "rendered": Object {
@@ -703,6 +759,54 @@ ShallowWrapper {
                     "labels": Object {
                       "app": "reviews",
                     },
+                  },
+                  "ref": null,
+                  "rendered": null,
+                  "type": [Function],
+                },
+                "type": "div",
+              },
+              Object {
+                "instance": null,
+                "key": undefined,
+                "nodeType": "host",
+                "props": Object {
+                  "children": <strong>
+                    Selectors
+                  </strong>,
+                  "className": "progress-description f2zkptl",
+                },
+                "ref": null,
+                "rendered": Object {
+                  "instance": null,
+                  "key": undefined,
+                  "nodeType": "host",
+                  "props": Object {
+                    "children": "Selectors",
+                  },
+                  "ref": null,
+                  "rendered": "Selectors",
+                  "type": "strong",
+                },
+                "type": "div",
+              },
+              Object {
+                "instance": null,
+                "key": undefined,
+                "nodeType": "host",
+                "props": Object {
+                  "children": <Labels
+                    labels={Object {}}
+                  />,
+                  "className": "label-collection f3lrwsf",
+                },
+                "ref": null,
+                "rendered": Object {
+                  "instance": null,
+                  "key": undefined,
+                  "nodeType": "class",
+                  "props": Object {
+                    "labels": Object {},
                   },
                   "ref": null,
                   "rendered": null,
@@ -1388,14 +1492,14 @@ ShallowWrapper {
               xs={12}
             >
               <div
-                className="progress-description"
+                className="progress-description f2zkptl"
               >
                 <strong>
                   Labels
                 </strong>
               </div>
               <div
-                className="label-collection"
+                className="label-collection f3lrwsf"
               >
                 <Labels
                   labels={
@@ -1403,6 +1507,20 @@ ShallowWrapper {
                       "app": "reviews",
                     }
                   }
+                />
+              </div>
+              <div
+                className="progress-description f2zkptl"
+              >
+                <strong>
+                  Selectors
+                </strong>
+              </div>
+              <div
+                className="label-collection f3lrwsf"
+              >
+                <Labels
+                  labels={Object {}}
                 />
               </div>
               <div>
@@ -1567,14 +1685,14 @@ ShallowWrapper {
               xs={12}
             >
               <div
-                className="progress-description"
+                className="progress-description f2zkptl"
               >
                 <strong>
                   Labels
                 </strong>
               </div>
               <div
-                className="label-collection"
+                className="label-collection f3lrwsf"
               >
                 <Labels
                   labels={
@@ -1582,6 +1700,20 @@ ShallowWrapper {
                       "app": "reviews",
                     }
                   }
+                />
+              </div>
+              <div
+                className="progress-description f2zkptl"
+              >
+                <strong>
+                  Selectors
+                </strong>
+              </div>
+              <div
+                className="label-collection f3lrwsf"
+              >
+                <Labels
+                  labels={Object {}}
                 />
               </div>
               <div>
@@ -1743,14 +1875,14 @@ ShallowWrapper {
                 xs={12}
               >
                 <div
-                  className="progress-description"
+                  className="progress-description f2zkptl"
                 >
                   <strong>
                     Labels
                   </strong>
                 </div>
                 <div
-                  className="label-collection"
+                  className="label-collection f3lrwsf"
                 >
                   <Labels
                     labels={
@@ -1758,6 +1890,20 @@ ShallowWrapper {
                         "app": "reviews",
                       }
                     }
+                  />
+                </div>
+                <div
+                  className="progress-description f2zkptl"
+                >
+                  <strong>
+                    Selectors
+                  </strong>
+                </div>
+                <div
+                  className="label-collection f3lrwsf"
+                >
+                  <Labels
+                    labels={Object {}}
                   />
                 </div>
                 <div>
@@ -1912,14 +2058,14 @@ ShallowWrapper {
                 "bsClass": "col",
                 "children": Array [
                   <div
-                    className="progress-description"
+                    className="progress-description f2zkptl"
                   >
                     <strong>
                       Labels
                     </strong>
                   </div>,
                   <div
-                    className="label-collection"
+                    className="label-collection f3lrwsf"
                   >
                     <Labels
                       labels={
@@ -1927,6 +2073,20 @@ ShallowWrapper {
                           "app": "reviews",
                         }
                       }
+                    />
+                  </div>,
+                  <div
+                    className="progress-description f2zkptl"
+                  >
+                    <strong>
+                      Selectors
+                    </strong>
+                  </div>,
+                  <div
+                    className="label-collection f3lrwsf"
+                  >
+                    <Labels
+                      labels={Object {}}
                     />
                   </div>,
                   <div>
@@ -1977,7 +2137,7 @@ ShallowWrapper {
                     "children": <strong>
                       Labels
                     </strong>,
-                    "className": "progress-description",
+                    "className": "progress-description f2zkptl",
                   },
                   "ref": null,
                   "rendered": Object {
@@ -2005,7 +2165,7 @@ ShallowWrapper {
                         }
                       }
                     />,
-                    "className": "label-collection",
+                    "className": "label-collection f3lrwsf",
                   },
                   "ref": null,
                   "rendered": Object {
@@ -2016,6 +2176,54 @@ ShallowWrapper {
                       "labels": Object {
                         "app": "reviews",
                       },
+                    },
+                    "ref": null,
+                    "rendered": null,
+                    "type": [Function],
+                  },
+                  "type": "div",
+                },
+                Object {
+                  "instance": null,
+                  "key": undefined,
+                  "nodeType": "host",
+                  "props": Object {
+                    "children": <strong>
+                      Selectors
+                    </strong>,
+                    "className": "progress-description f2zkptl",
+                  },
+                  "ref": null,
+                  "rendered": Object {
+                    "instance": null,
+                    "key": undefined,
+                    "nodeType": "host",
+                    "props": Object {
+                      "children": "Selectors",
+                    },
+                    "ref": null,
+                    "rendered": "Selectors",
+                    "type": "strong",
+                  },
+                  "type": "div",
+                },
+                Object {
+                  "instance": null,
+                  "key": undefined,
+                  "nodeType": "host",
+                  "props": Object {
+                    "children": <Labels
+                      labels={Object {}}
+                    />,
+                    "className": "label-collection f3lrwsf",
+                  },
+                  "ref": null,
+                  "rendered": Object {
+                    "instance": null,
+                    "key": undefined,
+                    "nodeType": "class",
+                    "props": Object {
+                      "labels": Object {},
                     },
                     "ref": null,
                     "rendered": null,
