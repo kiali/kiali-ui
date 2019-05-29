@@ -228,6 +228,7 @@ class IstioWizard extends React.Component<WizardProps, WizardState> {
   };
 
   render() {
+    const [gatewaySelected, isMesh] = getInitGateway(this.props.virtualServices);
     return (
       <Wizard show={this.state.showWizard} onHide={this.onClose}>
         <Wizard.Header
@@ -296,8 +297,9 @@ class IstioWizard extends React.Component<WizardProps, WizardState> {
                       serviceName={this.props.serviceName}
                       hasGateway={hasGateway(this.props.virtualServices)}
                       vsHosts={getInitHosts(this.props.virtualServices)}
-                      gateway={getInitGateway(this.props.virtualServices)}
-                      gateways={this.props.gateways.map(gw => gw.metadata.name)}
+                      gateway={gatewaySelected}
+                      isMesh={isMesh}
+                      gateways={this.props.gateways}
                       onGatewayChange={this.onGateway}
                     />
                   </ExpandCollapse>

@@ -19,7 +19,7 @@ import { ServiceDetailsInfo, severityToIconName, validationToSeverity } from '..
 import ServiceInfoVirtualServices from './ServiceInfo/ServiceInfoVirtualServices';
 import ServiceInfoDestinationRules from './ServiceInfo/ServiceInfoDestinationRules';
 import ServiceInfoWorkload from './ServiceInfo/ServiceInfoWorkload';
-import { Validations, ObjectValidation, Gateway } from '../../types/IstioObjects';
+import { Validations, ObjectValidation } from '../../types/IstioObjects';
 import { TabPaneWithErrorBoundary } from '../../components/ErrorBoundary/WithErrorBoundary';
 import IstioWizardDropdown from '../../components/IstioWizards/IstioWizardDropdown';
 import { ThreeScaleInfo, ThreeScaleServiceRule } from '../../types/ThreeScale';
@@ -27,7 +27,7 @@ import { DurationDropdownContainer } from '../../components/DurationDropdown/Dur
 
 interface ServiceDetails extends ServiceId {
   serviceDetails: ServiceDetailsInfo;
-  gateways: Gateway[];
+  gateways: string[];
   validations: Validations;
   onRefresh: () => void;
   onSelectTab: (tabName: string, postHandler?: (tabName: string) => void) => void;

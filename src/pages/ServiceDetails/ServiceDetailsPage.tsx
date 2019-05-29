@@ -6,7 +6,7 @@ import ServiceId from '../../types/ServiceId';
 import * as API from '../../services/Api';
 import * as MessageCenter from '../../utils/MessageCenter';
 import { ServiceDetailsInfo } from '../../types/ServiceInfo';
-import { Gateway, ObjectValidation, Validations } from '../../types/IstioObjects';
+import { ObjectValidation, Validations } from '../../types/IstioObjects';
 import IstioMetricsContainer from '../../components/Metrics/IstioMetrics';
 import ServiceTraces from './ServiceTraces';
 import ServiceInfo from './ServiceInfo';
@@ -23,10 +23,12 @@ import { KialiAppState } from '../../store/Store';
 import PfTitle from '../../components/Pf/PfTitle';
 import { DurationInSeconds } from '../../types/Common';
 import { durationSelector } from '../../store/Selectors';
+import { PromisesRegistry } from '../../utils/CancelablePromises';
+import Namespace from '../../types/Namespace';
 
 type ServiceDetailsState = {
   serviceDetailsInfo: ServiceDetailsInfo;
-  gateways: Gateway[];
+  gateways: string[];
   trafficData: GraphDefinition | null;
   validations: Validations;
   threeScaleInfo: ThreeScaleInfo;
@@ -74,6 +76,8 @@ const emptyService = {
 };
 
 class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetailsState> {
+  private promises = new PromisesRegistry();
+
   constructor(props: ServiceDetailsProps) {
     super(props);
     this.state = {
@@ -90,6 +94,10 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
         }
       }
     };
+  }
+
+  componentWillUnmount() {
+    this.promises.cancelAll();
   }
 
   servicePageURL(parsedSearch?: ParsedSearch) {
@@ -168,6 +176,33 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
   };
 
   fetchBackend = () => {
+    this.promises.cancelAll();
+    this.promises
+      .register('namespaces', API.getNamespaces())
+      .then(namespacesResponse => {
+        const namespaces: Namespace[] = namespacesResponse.data;
+        this.promises
+          .registerAll('gateways', namespaces.map(ns => API.getIstioConfig(ns.name, ['gateways'], false)))
+          .then(responses => {
+            let gatewayList: string[] = [];
+            responses.forEach(response => {
+              const ns = response.data.namespace;
+              response.data.gateways.forEach(gw => {
+                gatewayList = gatewayList.concat(ns.name + '/' + gw.metadata.name);
+              });
+            });
+            this.setState({
+              gateways: gatewayList
+            });
+          })
+          .catch(gwError => {
+            MessageCenter.add(API.getErrorMsg('Could not fetch Namespaces list', gwError));
+          });
+      })
+      .catch(error => {
+        MessageCenter.add(API.getErrorMsg('Could not fetch Namespaces list', error));
+      });
+
     const promiseDetails = API.getServiceDetail(
       this.props.match.params.namespace,
       this.props.match.params.service,
@@ -175,12 +210,10 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
       this.props.duration
     );
     const promiseThreeScale = API.getThreeScaleInfo();
-    const promiseGateways = API.getIstioConfig(this.props.match.params.namespace, ['gateways'], false);
-    Promise.all([promiseDetails, promiseThreeScale, promiseGateways])
+    Promise.all([promiseDetails, promiseThreeScale])
       .then(results => {
         this.setState({
           serviceDetailsInfo: results[0],
-          gateways: results[2].data.gateways,
           validations: this.addFormatValidation(results[0], results[0].validations),
           threeScaleInfo: results[1].data
         });

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import {
+  Checkbox,
   Col,
   ControlLabel,
   DropdownButton,
@@ -18,6 +19,7 @@ type Props = {
   hasGateway: boolean;
   vsHosts: string[];
   gateway: string;
+  isMesh: boolean;
   gateways: string[];
   onGatewayChange: (valid: boolean, gateway: GatewaySelectorState) => void;
 };
@@ -29,11 +31,13 @@ export type GatewaySelectorState = {
   gwHostsValid: boolean;
   newGateway: boolean;
   selectedGateway: string;
+  addMesh: boolean;
   port: number;
 };
 
 enum GatewayForm {
   SWITCH,
+  MESH,
   VS_HOSTS,
   GW_HOSTS,
   SELECT,
@@ -59,6 +63,7 @@ class GatewaySelector extends React.Component<Props, GatewaySelectorState> {
       gwHostsValid: true,
       newGateway: props.gateways.length === 0,
       selectedGateway: props.gateways.length > 0 ? (props.gateway !== '' ? props.gateway : props.gateways[0]) : '',
+      addMesh: props.isMesh,
       port: 80
     };
   }
@@ -83,6 +88,16 @@ class GatewaySelector extends React.Component<Props, GatewaySelectorState> {
           prevState => {
             return {
               addGateway: !prevState.addGateway
+            };
+          },
+          () => this.props.onGatewayChange(true, this.state)
+        );
+        break;
+      case GatewayForm.MESH:
+        this.setState(
+          prevState => {
+            return {
+              addMesh: !prevState.addMesh
             };
           },
           () => this.props.onGatewayChange(true, this.state)
@@ -169,6 +184,18 @@ class GatewaySelector extends React.Component<Props, GatewaySelectorState> {
               onChange={() => this.onFormChange(GatewayForm.SWITCH, '')}
               defaultValue={this.props.hasGateway}
             />
+          </Col>
+        </FormGroup>
+        <FormGroup controlId="checkbox" disabled={false}>
+          <Col sm={3} />
+          <Col sm={9}>
+            <Checkbox
+              disabled={!this.state.addGateway}
+              checked={this.state.addMesh}
+              onChange={() => this.onFormChange(GatewayForm.MESH, '')}
+            >
+              Include <b>mesh</b> gateway
+            </Checkbox>
           </Col>
         </FormGroup>
         <FormGroup>

@@ -49,7 +49,7 @@ export type WizardProps = {
   workloads: WorkloadOverview[];
   virtualServices: VirtualServices;
   destinationRules: DestinationRules;
-  gateways: Gateway[];
+  gateways: string[];
   threeScaleServiceRule?: ThreeScaleServiceRule;
   onClose: (changed: boolean) => void;
 };
@@ -148,8 +148,8 @@ const parseHttpMatchRequest = (httpMatchRequest: HTTPMatchRequest): string[] => 
   return matches;
 };
 
-export const getGatewayName = (serviceName: string, gatewayNames: string[]): string => {
-  let gatewayName = serviceName + '-gateway';
+export const getGatewayName = (namespace: string, serviceName: string, gatewayNames: string[]): string => {
+  let gatewayName = namespace + '/' + serviceName + '-gateway';
   if (gatewayNames.length === 0) {
     return gatewayName;
   }
@@ -216,13 +216,13 @@ export const buildIstioConfig = (
   };
 
   // Wizard is optional, only when user has explicitly selected "Create a Gateway"
-  const newGatewayName = getGatewayName(wProps.serviceName, wProps.gateways.map(gw => gw.metadata.name));
+  const fullNewGatewayName = getGatewayName(wProps.namespace, wProps.serviceName, wProps.gateways);
   const wizardGW: Gateway | undefined =
     wState.gateway && wState.gateway.addGateway && wState.gateway.newGateway
       ? {
           metadata: {
             namespace: wProps.namespace,
-            name: newGatewayName,
+            name: fullNewGatewayName.substr(wProps.namespace.length + 1),
             labels: {
               [KIALI_WIZARD_LABEL]: wProps.type
             }
@@ -268,8 +268,6 @@ export const buildIstioConfig = (
       break;
     }
     case WIZARD_MATCHING_ROUTING: {
-      console.log('TODELETE wState.rules ');
-      console.log(wState.rules);
       // VirtualService from the routes
       wizardVS.spec = {
         hosts: vsHosts,
@@ -378,7 +376,10 @@ export const buildIstioConfig = (
   }
 
   if (wState.gateway && wState.gateway.addGateway) {
-    wizardVS.spec.gateways = [wState.gateway.newGateway ? newGatewayName : wState.gateway.selectedGateway];
+    wizardVS.spec.gateways = [wState.gateway.newGateway ? fullNewGatewayName : wState.gateway.selectedGateway];
+    if (wState.gateway.addMesh) {
+      wizardVS.spec.gateways.push('mesh');
+    }
   } else {
     wizardVS.spec.gateways = null;
   }
@@ -501,14 +502,26 @@ export const getInitHosts = (virtualServices: VirtualServices): string[] => {
   return [];
 };
 
-export const getInitGateway = (virtualServices: VirtualServices): string => {
+// VirtualServices added from the Kiali Wizard only support to add a single gateway
+// and optionally a mesh gateway.
+// This method returns a gateway selected by the user and if mesh is present
+export const getInitGateway = (virtualServices: VirtualServices): [string, boolean] => {
   if (
     virtualServices.items.length === 1 &&
     virtualServices.items[0] &&
     virtualServices.items[0].spec.gateways &&
-    virtualServices.items[0].spec.gateways.length === 1
+    virtualServices.items[0].spec.gateways.length > 0
   ) {
-    return virtualServices.items[0].spec.gateways[0];
+    let selectedGateway = virtualServices.items[0].spec.gateways[0];
+    if (selectedGateway === 'mesh') {
+      // In Kiali Wizard, the first gateway is reserved for user gateway
+      selectedGateway = '';
+    }
+    let meshPresent = false;
+    if (virtualServices.items[0].spec.gateways.includes('mesh')) {
+      meshPresent = true;
+    }
+    return [selectedGateway, meshPresent];
   }
-  return '';
+  return ['', false];
 };
