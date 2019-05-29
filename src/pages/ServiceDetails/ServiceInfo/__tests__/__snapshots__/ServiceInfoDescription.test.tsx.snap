@@ -75,36 +75,44 @@ ShallowWrapper {
             xs={12}
           >
             <div
-              className="progress-description f2zkptl"
+              id="labels"
             >
-              <strong>
-                Labels
-              </strong>
-            </div>
-            <div
-              className="label-collection f3lrwsf"
-            >
-              <Labels
-                labels={
-                  Object {
-                    "app": "reviews",
+              <div
+                className="progress-description f2zkptl"
+              >
+                <strong>
+                  Labels
+                </strong>
+              </div>
+              <div
+                className="label-collection f3lrwsf"
+              >
+                <Labels
+                  labels={
+                    Object {
+                      "app": "reviews",
+                    }
                   }
-                }
-              />
+                />
+              </div>
             </div>
             <div
-              className="progress-description f2zkptl"
+              id="selectors"
             >
-              <strong>
-                Selectors
-              </strong>
-            </div>
-            <div
-              className="label-collection f3lrwsf"
-            >
-              <Labels
-                labels={Object {}}
-              />
+              <div
+                className="progress-description f2zkptl"
+              >
+                <strong>
+                  Selectors
+                </strong>
+              </div>
+              <div
+                className="label-collection f3lrwsf"
+              >
+                <Labels
+                  labels={Object {}}
+                />
+              </div>
             </div>
             <div>
               <strong>
@@ -268,36 +276,44 @@ ShallowWrapper {
             xs={12}
           >
             <div
-              className="progress-description f2zkptl"
+              id="labels"
             >
-              <strong>
-                Labels
-              </strong>
-            </div>
-            <div
-              className="label-collection f3lrwsf"
-            >
-              <Labels
-                labels={
-                  Object {
-                    "app": "reviews",
+              <div
+                className="progress-description f2zkptl"
+              >
+                <strong>
+                  Labels
+                </strong>
+              </div>
+              <div
+                className="label-collection f3lrwsf"
+              >
+                <Labels
+                  labels={
+                    Object {
+                      "app": "reviews",
+                    }
                   }
-                }
-              />
+                />
+              </div>
             </div>
             <div
-              className="progress-description f2zkptl"
+              id="selectors"
             >
-              <strong>
-                Selectors
-              </strong>
-            </div>
-            <div
-              className="label-collection f3lrwsf"
-            >
-              <Labels
-                labels={Object {}}
-              />
+              <div
+                className="progress-description f2zkptl"
+              >
+                <strong>
+                  Selectors
+                </strong>
+              </div>
+              <div
+                className="label-collection f3lrwsf"
+              >
+                <Labels
+                  labels={Object {}}
+                />
+              </div>
             </div>
             <div>
               <strong>
@@ -458,36 +474,44 @@ ShallowWrapper {
               xs={12}
             >
               <div
-                className="progress-description f2zkptl"
+                id="labels"
               >
-                <strong>
-                  Labels
-                </strong>
-              </div>
-              <div
-                className="label-collection f3lrwsf"
-              >
-                <Labels
-                  labels={
-                    Object {
-                      "app": "reviews",
+                <div
+                  className="progress-description f2zkptl"
+                >
+                  <strong>
+                    Labels
+                  </strong>
+                </div>
+                <div
+                  className="label-collection f3lrwsf"
+                >
+                  <Labels
+                    labels={
+                      Object {
+                        "app": "reviews",
+                      }
                     }
-                  }
-                />
+                  />
+                </div>
               </div>
               <div
-                className="progress-description f2zkptl"
+                id="selectors"
               >
-                <strong>
-                  Selectors
-                </strong>
-              </div>
-              <div
-                className="label-collection f3lrwsf"
-              >
-                <Labels
-                  labels={Object {}}
-                />
+                <div
+                  className="progress-description f2zkptl"
+                >
+                  <strong>
+                    Selectors
+                  </strong>
+                </div>
+                <div
+                  className="label-collection f3lrwsf"
+                >
+                  <Labels
+                    labels={Object {}}
+                  />
+                </div>
               </div>
               <div>
                 <strong>
@@ -641,36 +665,44 @@ ShallowWrapper {
               "bsClass": "col",
               "children": Array [
                 <div
-                  className="progress-description f2zkptl"
+                  id="labels"
                 >
-                  <strong>
-                    Labels
-                  </strong>
-                </div>,
-                <div
-                  className="label-collection f3lrwsf"
-                >
-                  <Labels
-                    labels={
-                      Object {
-                        "app": "reviews",
+                  <div
+                    className="progress-description f2zkptl"
+                  >
+                    <strong>
+                      Labels
+                    </strong>
+                  </div>
+                  <div
+                    className="label-collection f3lrwsf"
+                  >
+                    <Labels
+                      labels={
+                        Object {
+                          "app": "reviews",
+                        }
                       }
-                    }
-                  />
+                    />
+                  </div>
                 </div>,
                 <div
-                  className="progress-description f2zkptl"
+                  id="selectors"
                 >
-                  <strong>
-                    Selectors
-                  </strong>
-                </div>,
-                <div
-                  className="label-collection f3lrwsf"
-                >
-                  <Labels
-                    labels={Object {}}
-                  />
+                  <div
+                    className="progress-description f2zkptl"
+                  >
+                    <strong>
+                      Selectors
+                    </strong>
+                  </div>
+                  <div
+                    className="label-collection f3lrwsf"
+                  >
+                    <Labels
+                      labels={Object {}}
+                    />
+                  </div>
                 </div>,
                 <div>
                   <strong>
@@ -717,53 +749,85 @@ ShallowWrapper {
                 "key": undefined,
                 "nodeType": "host",
                 "props": Object {
-                  "children": <strong>
-                    Labels
-                  </strong>,
-                  "className": "progress-description f2zkptl",
+                  "children": Array [
+                    <div
+                      className="progress-description f2zkptl"
+                    >
+                      <strong>
+                        Labels
+                      </strong>
+                    </div>,
+                    <div
+                      className="label-collection f3lrwsf"
+                    >
+                      <Labels
+                        labels={
+                          Object {
+                            "app": "reviews",
+                          }
+                        }
+                      />
+                    </div>,
+                  ],
+                  "id": "labels",
                 },
                 "ref": null,
-                "rendered": Object {
-                  "instance": null,
-                  "key": undefined,
-                  "nodeType": "host",
-                  "props": Object {
-                    "children": "Labels",
-                  },
-                  "ref": null,
-                  "rendered": "Labels",
-                  "type": "strong",
-                },
-                "type": "div",
-              },
-              Object {
-                "instance": null,
-                "key": undefined,
-                "nodeType": "host",
-                "props": Object {
-                  "children": <Labels
-                    labels={
-                      Object {
-                        "app": "reviews",
-                      }
-                    }
-                  />,
-                  "className": "label-collection f3lrwsf",
-                },
-                "ref": null,
-                "rendered": Object {
-                  "instance": null,
-                  "key": undefined,
-                  "nodeType": "class",
-                  "props": Object {
-                    "labels": Object {
-                      "app": "reviews",
+                "rendered": Array [
+                  Object {
+                    "instance": null,
+                    "key": undefined,
+                    "nodeType": "host",
+                    "props": Object {
+                      "children": <strong>
+                        Labels
+                      </strong>,
+                      "className": "progress-description f2zkptl",
                     },
+                    "ref": null,
+                    "rendered": Object {
+                      "instance": null,
+                      "key": undefined,
+                      "nodeType": "host",
+                      "props": Object {
+                        "children": "Labels",
+                      },
+                      "ref": null,
+                      "rendered": "Labels",
+                      "type": "strong",
+                    },
+                    "type": "div",
                   },
-                  "ref": null,
-                  "rendered": null,
-                  "type": [Function],
-                },
+                  Object {
+                    "instance": null,
+                    "key": undefined,
+                    "nodeType": "host",
+                    "props": Object {
+                      "children": <Labels
+                        labels={
+                          Object {
+                            "app": "reviews",
+                          }
+                        }
+                      />,
+                      "className": "label-collection f3lrwsf",
+                    },
+                    "ref": null,
+                    "rendered": Object {
+                      "instance": null,
+                      "key": undefined,
+                      "nodeType": "class",
+                      "props": Object {
+                        "labels": Object {
+                          "app": "reviews",
+                        },
+                      },
+                      "ref": null,
+                      "rendered": null,
+                      "type": [Function],
+                    },
+                    "type": "div",
+                  },
+                ],
                 "type": "div",
               },
               Object {
@@ -771,47 +835,75 @@ ShallowWrapper {
                 "key": undefined,
                 "nodeType": "host",
                 "props": Object {
-                  "children": <strong>
-                    Selectors
-                  </strong>,
-                  "className": "progress-description f2zkptl",
+                  "children": Array [
+                    <div
+                      className="progress-description f2zkptl"
+                    >
+                      <strong>
+                        Selectors
+                      </strong>
+                    </div>,
+                    <div
+                      className="label-collection f3lrwsf"
+                    >
+                      <Labels
+                        labels={Object {}}
+                      />
+                    </div>,
+                  ],
+                  "id": "selectors",
                 },
                 "ref": null,
-                "rendered": Object {
-                  "instance": null,
-                  "key": undefined,
-                  "nodeType": "host",
-                  "props": Object {
-                    "children": "Selectors",
+                "rendered": Array [
+                  Object {
+                    "instance": null,
+                    "key": undefined,
+                    "nodeType": "host",
+                    "props": Object {
+                      "children": <strong>
+                        Selectors
+                      </strong>,
+                      "className": "progress-description f2zkptl",
+                    },
+                    "ref": null,
+                    "rendered": Object {
+                      "instance": null,
+                      "key": undefined,
+                      "nodeType": "host",
+                      "props": Object {
+                        "children": "Selectors",
+                      },
+                      "ref": null,
+                      "rendered": "Selectors",
+                      "type": "strong",
+                    },
+                    "type": "div",
                   },
-                  "ref": null,
-                  "rendered": "Selectors",
-                  "type": "strong",
-                },
-                "type": "div",
-              },
-              Object {
-                "instance": null,
-                "key": undefined,
-                "nodeType": "host",
-                "props": Object {
-                  "children": <Labels
-                    labels={Object {}}
-                  />,
-                  "className": "label-collection f3lrwsf",
-                },
-                "ref": null,
-                "rendered": Object {
-                  "instance": null,
-                  "key": undefined,
-                  "nodeType": "class",
-                  "props": Object {
-                    "labels": Object {},
+                  Object {
+                    "instance": null,
+                    "key": undefined,
+                    "nodeType": "host",
+                    "props": Object {
+                      "children": <Labels
+                        labels={Object {}}
+                      />,
+                      "className": "label-collection f3lrwsf",
+                    },
+                    "ref": null,
+                    "rendered": Object {
+                      "instance": null,
+                      "key": undefined,
+                      "nodeType": "class",
+                      "props": Object {
+                        "labels": Object {},
+                      },
+                      "ref": null,
+                      "rendered": null,
+                      "type": [Function],
+                    },
+                    "type": "div",
                   },
-                  "ref": null,
-                  "rendered": null,
-                  "type": [Function],
-                },
+                ],
                 "type": "div",
               },
               Object {
@@ -1492,36 +1584,44 @@ ShallowWrapper {
               xs={12}
             >
               <div
-                className="progress-description f2zkptl"
+                id="labels"
               >
-                <strong>
-                  Labels
-                </strong>
-              </div>
-              <div
-                className="label-collection f3lrwsf"
-              >
-                <Labels
-                  labels={
-                    Object {
-                      "app": "reviews",
+                <div
+                  className="progress-description f2zkptl"
+                >
+                  <strong>
+                    Labels
+                  </strong>
+                </div>
+                <div
+                  className="label-collection f3lrwsf"
+                >
+                  <Labels
+                    labels={
+                      Object {
+                        "app": "reviews",
+                      }
                     }
-                  }
-                />
+                  />
+                </div>
               </div>
               <div
-                className="progress-description f2zkptl"
+                id="selectors"
               >
-                <strong>
-                  Selectors
-                </strong>
-              </div>
-              <div
-                className="label-collection f3lrwsf"
-              >
-                <Labels
-                  labels={Object {}}
-                />
+                <div
+                  className="progress-description f2zkptl"
+                >
+                  <strong>
+                    Selectors
+                  </strong>
+                </div>
+                <div
+                  className="label-collection f3lrwsf"
+                >
+                  <Labels
+                    labels={Object {}}
+                  />
+                </div>
               </div>
               <div>
                 <strong>
@@ -1685,36 +1785,44 @@ ShallowWrapper {
               xs={12}
             >
               <div
-                className="progress-description f2zkptl"
+                id="labels"
               >
-                <strong>
-                  Labels
-                </strong>
-              </div>
-              <div
-                className="label-collection f3lrwsf"
-              >
-                <Labels
-                  labels={
-                    Object {
-                      "app": "reviews",
+                <div
+                  className="progress-description f2zkptl"
+                >
+                  <strong>
+                    Labels
+                  </strong>
+                </div>
+                <div
+                  className="label-collection f3lrwsf"
+                >
+                  <Labels
+                    labels={
+                      Object {
+                        "app": "reviews",
+                      }
                     }
-                  }
-                />
+                  />
+                </div>
               </div>
               <div
-                className="progress-description f2zkptl"
+                id="selectors"
               >
-                <strong>
-                  Selectors
-                </strong>
-              </div>
-              <div
-                className="label-collection f3lrwsf"
-              >
-                <Labels
-                  labels={Object {}}
-                />
+                <div
+                  className="progress-description f2zkptl"
+                >
+                  <strong>
+                    Selectors
+                  </strong>
+                </div>
+                <div
+                  className="label-collection f3lrwsf"
+                >
+                  <Labels
+                    labels={Object {}}
+                  />
+                </div>
               </div>
               <div>
                 <strong>
@@ -1875,36 +1983,44 @@ ShallowWrapper {
                 xs={12}
               >
                 <div
-                  className="progress-description f2zkptl"
+                  id="labels"
                 >
-                  <strong>
-                    Labels
-                  </strong>
-                </div>
-                <div
-                  className="label-collection f3lrwsf"
-                >
-                  <Labels
-                    labels={
-                      Object {
-                        "app": "reviews",
+                  <div
+                    className="progress-description f2zkptl"
+                  >
+                    <strong>
+                      Labels
+                    </strong>
+                  </div>
+                  <div
+                    className="label-collection f3lrwsf"
+                  >
+                    <Labels
+                      labels={
+                        Object {
+                          "app": "reviews",
+                        }
                       }
-                    }
-                  />
+                    />
+                  </div>
                 </div>
                 <div
-                  className="progress-description f2zkptl"
+                  id="selectors"
                 >
-                  <strong>
-                    Selectors
-                  </strong>
-                </div>
-                <div
-                  className="label-collection f3lrwsf"
-                >
-                  <Labels
-                    labels={Object {}}
-                  />
+                  <div
+                    className="progress-description f2zkptl"
+                  >
+                    <strong>
+                      Selectors
+                    </strong>
+                  </div>
+                  <div
+                    className="label-collection f3lrwsf"
+                  >
+                    <Labels
+                      labels={Object {}}
+                    />
+                  </div>
                 </div>
                 <div>
                   <strong>
@@ -2058,36 +2174,44 @@ ShallowWrapper {
                 "bsClass": "col",
                 "children": Array [
                   <div
-                    className="progress-description f2zkptl"
+                    id="labels"
                   >
-                    <strong>
-                      Labels
-                    </strong>
-                  </div>,
-                  <div
-                    className="label-collection f3lrwsf"
-                  >
-                    <Labels
-                      labels={
-                        Object {
-                          "app": "reviews",
+                    <div
+                      className="progress-description f2zkptl"
+                    >
+                      <strong>
+                        Labels
+                      </strong>
+                    </div>
+                    <div
+                      className="label-collection f3lrwsf"
+                    >
+                      <Labels
+                        labels={
+                          Object {
+                            "app": "reviews",
+                          }
                         }
-                      }
-                    />
+                      />
+                    </div>
                   </div>,
                   <div
-                    className="progress-description f2zkptl"
+                    id="selectors"
                   >
-                    <strong>
-                      Selectors
-                    </strong>
-                  </div>,
-                  <div
-                    className="label-collection f3lrwsf"
-                  >
-                    <Labels
-                      labels={Object {}}
-                    />
+                    <div
+                      className="progress-description f2zkptl"
+                    >
+                      <strong>
+                        Selectors
+                      </strong>
+                    </div>
+                    <div
+                      className="label-collection f3lrwsf"
+                    >
+                      <Labels
+                        labels={Object {}}
+                      />
+                    </div>
                   </div>,
                   <div>
                     <strong>
@@ -2134,53 +2258,85 @@ ShallowWrapper {
                   "key": undefined,
                   "nodeType": "host",
                   "props": Object {
-                    "children": <strong>
-                      Labels
-                    </strong>,
-                    "className": "progress-description f2zkptl",
+                    "children": Array [
+                      <div
+                        className="progress-description f2zkptl"
+                      >
+                        <strong>
+                          Labels
+                        </strong>
+                      </div>,
+                      <div
+                        className="label-collection f3lrwsf"
+                      >
+                        <Labels
+                          labels={
+                            Object {
+                              "app": "reviews",
+                            }
+                          }
+                        />
+                      </div>,
+                    ],
+                    "id": "labels",
                   },
                   "ref": null,
-                  "rendered": Object {
-                    "instance": null,
-                    "key": undefined,
-                    "nodeType": "host",
-                    "props": Object {
-                      "children": "Labels",
-                    },
-                    "ref": null,
-                    "rendered": "Labels",
-                    "type": "strong",
-                  },
-                  "type": "div",
-                },
-                Object {
-                  "instance": null,
-                  "key": undefined,
-                  "nodeType": "host",
-                  "props": Object {
-                    "children": <Labels
-                      labels={
-                        Object {
-                          "app": "reviews",
-                        }
-                      }
-                    />,
-                    "className": "label-collection f3lrwsf",
-                  },
-                  "ref": null,
-                  "rendered": Object {
-                    "instance": null,
-                    "key": undefined,
-                    "nodeType": "class",
-                    "props": Object {
-                      "labels": Object {
-                        "app": "reviews",
+                  "rendered": Array [
+                    Object {
+                      "instance": null,
+                      "key": undefined,
+                      "nodeType": "host",
+                      "props": Object {
+                        "children": <strong>
+                          Labels
+                        </strong>,
+                        "className": "progress-description f2zkptl",
                       },
+                      "ref": null,
+                      "rendered": Object {
+                        "instance": null,
+                        "key": undefined,
+                        "nodeType": "host",
+                        "props": Object {
+                          "children": "Labels",
+                        },
+                        "ref": null,
+                        "rendered": "Labels",
+                        "type": "strong",
+                      },
+                      "type": "div",
                     },
-                    "ref": null,
-                    "rendered": null,
-                    "type": [Function],
-                  },
+                    Object {
+                      "instance": null,
+                      "key": undefined,
+                      "nodeType": "host",
+                      "props": Object {
+                        "children": <Labels
+                          labels={
+                            Object {
+                              "app": "reviews",
+                            }
+                          }
+                        />,
+                        "className": "label-collection f3lrwsf",
+                      },
+                      "ref": null,
+                      "rendered": Object {
+                        "instance": null,
+                        "key": undefined,
+                        "nodeType": "class",
+                        "props": Object {
+                          "labels": Object {
+                            "app": "reviews",
+                          },
+                        },
+                        "ref": null,
+                        "rendered": null,
+                        "type": [Function],
+                      },
+                      "type": "div",
+                    },
+                  ],
                   "type": "div",
                 },
                 Object {
@@ -2188,47 +2344,75 @@ ShallowWrapper {
                   "key": undefined,
                   "nodeType": "host",
                   "props": Object {
-                    "children": <strong>
-                      Selectors
-                    </strong>,
-                    "className": "progress-description f2zkptl",
+                    "children": Array [
+                      <div
+                        className="progress-description f2zkptl"
+                      >
+                        <strong>
+                          Selectors
+                        </strong>
+                      </div>,
+                      <div
+                        className="label-collection f3lrwsf"
+                      >
+                        <Labels
+                          labels={Object {}}
+                        />
+                      </div>,
+                    ],
+                    "id": "selectors",
                   },
                   "ref": null,
-                  "rendered": Object {
-                    "instance": null,
-                    "key": undefined,
-                    "nodeType": "host",
-                    "props": Object {
-                      "children": "Selectors",
+                  "rendered": Array [
+                    Object {
+                      "instance": null,
+                      "key": undefined,
+                      "nodeType": "host",
+                      "props": Object {
+                        "children": <strong>
+                          Selectors
+                        </strong>,
+                        "className": "progress-description f2zkptl",
+                      },
+                      "ref": null,
+                      "rendered": Object {
+                        "instance": null,
+                        "key": undefined,
+                        "nodeType": "host",
+                        "props": Object {
+                          "children": "Selectors",
+                        },
+                        "ref": null,
+                        "rendered": "Selectors",
+                        "type": "strong",
+                      },
+                      "type": "div",
                     },
-                    "ref": null,
-                    "rendered": "Selectors",
-                    "type": "strong",
-                  },
-                  "type": "div",
-                },
-                Object {
-                  "instance": null,
-                  "key": undefined,
-                  "nodeType": "host",
-                  "props": Object {
-                    "children": <Labels
-                      labels={Object {}}
-                    />,
-                    "className": "label-collection f3lrwsf",
-                  },
-                  "ref": null,
-                  "rendered": Object {
-                    "instance": null,
-                    "key": undefined,
-                    "nodeType": "class",
-                    "props": Object {
-                      "labels": Object {},
+                    Object {
+                      "instance": null,
+                      "key": undefined,
+                      "nodeType": "host",
+                      "props": Object {
+                        "children": <Labels
+                          labels={Object {}}
+                        />,
+                        "className": "label-collection f3lrwsf",
+                      },
+                      "ref": null,
+                      "rendered": Object {
+                        "instance": null,
+                        "key": undefined,
+                        "nodeType": "class",
+                        "props": Object {
+                          "labels": Object {},
+                        },
+                        "ref": null,
+                        "rendered": null,
+                        "type": [Function],
+                      },
+                      "type": "div",
                     },
-                    "ref": null,
-                    "rendered": null,
-                    "type": [Function],
-                  },
+                  ],
                   "type": "div",
                 },
                 Object {

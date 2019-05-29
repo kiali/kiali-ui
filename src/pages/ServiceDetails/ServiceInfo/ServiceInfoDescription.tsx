@@ -88,17 +88,21 @@ class ServiceInfoDescription extends React.Component<ServiceInfoDescriptionProps
         <div className="card-pf-body">
           <Row>
             <Col xs={12} sm={6} md={5} lg={5}>
-              <div className={'progress-description ' + labelTitleStyle}>
-                <strong>Labels</strong>
+              <div id="labels">
+                <div className={'progress-description ' + labelTitleStyle}>
+                  <strong>Labels</strong>
+                </div>
+                <div className={'label-collection ' + labelListStyle}>
+                  <Labels labels={this.props.labels || {}} />
+                </div>
               </div>
-              <div className={'label-collection ' + labelListStyle}>
-                <Labels labels={this.props.labels || {}} />
-              </div>
-              <div className={'progress-description ' + labelTitleStyle}>
-                <strong>Selectors</strong>
-              </div>
-              <div className={'label-collection ' + labelListStyle}>
-                <Labels labels={this.props.selectors || {}} />
+              <div id="selectors">
+                <div className={'progress-description ' + labelTitleStyle}>
+                  <strong>Selectors</strong>
+                </div>
+                <div className={'label-collection ' + labelListStyle}>
+                  <Labels labels={this.props.selectors || {}} />
+                </div>
               </div>
               <div>
                 <strong>Type</strong> {this.props.type ? this.props.type : ''}
