@@ -12,7 +12,6 @@ type NodeContextMenuState = {
 export class NodeContextMenu extends React.PureComponent<NodeContextMenuProps, NodeContextMenuState> {
   constructor(props: NodeContextMenuProps) {
     super(props);
-    console.log(this.props);
     let app: string | undefined = '';
     let nodeType = '';
     switch (this.props.nodeType) {
@@ -57,6 +56,21 @@ export class NodeContextMenu extends React.PureComponent<NodeContextMenuProps, N
     return tracesUrl;
   }
 
+  createMenuItem(href: string, title: string, target: string = '_self') {
+    return (
+      <div className="kiali-graph-context-menu-item">
+        <a
+          onClick={this.redirectContextLink}
+          className="kiali-graph-context-menu-item-link"
+          target={target}
+          href={href}
+        >
+          {title}
+        </a>
+      </div>
+    );
+  }
+
   render() {
     const version = this.props.version !== '' ? `:${this.props.version}` : '';
     const detailsPageUrl = this.makeDetailsPageUrl();
@@ -67,63 +81,18 @@ export class NodeContextMenu extends React.PureComponent<NodeContextMenuProps, N
           <strong>{app}</strong>
           {version}
         </div>
-        <div className="kiali-graph-context-menu-item">
-          <a onClick={this.redirectContextLink} className="kiali-graph-context-menu-item-link" href={detailsPageUrl}>
-            Show Details
-          </a>
-        </div>
-        <div className="kiali-graph-context-menu-item">
-          <a
-            onClick={this.redirectContextLink}
-            className="kiali-graph-context-menu-item-link"
-            href={`${detailsPageUrl}?tab=traffic`}
-          >
-            Show Traffic
-          </a>
-        </div>
-        {nodeType === Paths.WORKLOADS && (
-          <div className="kiali-graph-context-menu-item">
-            <a
-              onClick={this.redirectContextLink}
-              className="kiali-graph-context-menu-item-link"
-              href={`${detailsPageUrl}?tab=logs`}
-            >
-              Show Logs
-            </a>
-          </div>
+        {this.createMenuItem(detailsPageUrl, 'Show Details')}
+        {this.createMenuItem(`${detailsPageUrl}?tab=traffic`, 'Show Traffic')}
+        {nodeType === Paths.WORKLOADS && this.createMenuItem(`${detailsPageUrl}?tab=logs`, 'Show Logs')}
+        {this.createMenuItem(
+          `${detailsPageUrl}?tab=${nodeType === Paths.SERVICES ? 'metrics' : 'in_metrics'}`,
+          'Show Inbound Metrics'
         )}
-        <div className="kiali-graph-context-menu-item">
-          <a
-            onClick={this.redirectContextLink}
-            className="kiali-graph-context-menu-item-link"
-            href={`${detailsPageUrl}?tab=${nodeType === Paths.SERVICES ? 'metrics' : 'in_metrics'}`}
-          >
-            Show Inbound Metrics
-          </a>
-        </div>
-        {nodeType !== Paths.SERVICES && (
-          <div className="kiali-graph-context-menu-item">
-            <a
-              onClick={this.redirectContextLink}
-              className="kiali-graph-context-menu-item-link"
-              href={`${detailsPageUrl}?tab=out_metrics`}
-            >
-              Show Outbound Metrics
-            </a>
-          </div>
-        )}
-        {nodeType === Paths.SERVICES && this.props.jaegerURL !== '' && (
-          <div className="kiali-graph-context-menu-item">
-            <a
-              onClick={this.redirectContextLink}
-              className="kiali-graph-context-menu-item-link"
-              target={this.props.jaegerIntegration ? '_self' : '_blank'}
-              href={this.getJaegerURL()}
-            >
-              Show Traces
-            </a>
-          </div>
-        )}
+        {nodeType !== Paths.SERVICES &&
+          this.createMenuItem(`${detailsPageUrl}?tab=out_metrics`, 'Show Outbound Metrics')}
+        {nodeType === Paths.SERVICES &&
+          this.props.jaegerURL !== '' &&
+          this.createMenuItem(this.getJaegerURL(), 'Show Traces', this.props.jaegerIntegration ? '_self' : '_blank')}
       </div>
     );
   }
