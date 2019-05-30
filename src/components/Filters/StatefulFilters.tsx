@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Filter, FormControl, Toolbar } from 'patternfly-react';
 import { ActiveFilter, FILTER_ACTION_UPDATE, FilterType, FilterValue } from '../../types/Filters';
-import { ListPagesHelper } from '../ListPage/ListPagesHelper';
+import * as ListPagesHelper from '../ListPage/ListPagesHelper';
 import { PromisesRegistry } from '../../utils/CancelablePromises';
 
 export interface StatefulFiltersProps {

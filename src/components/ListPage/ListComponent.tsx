@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { AxiosError } from 'axios';
-import { ListPagesHelper } from './ListPagesHelper';
+import * as ListPagesHelper from './ListPagesHelper';
 import { SortField } from '../../types/SortFilters';
 import { Pagination } from '../../types/Pagination';
 import * as API from '../../services/Api';
