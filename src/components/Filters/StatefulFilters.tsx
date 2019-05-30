@@ -16,19 +16,19 @@ export interface StatefulFiltersState {
   currentValue: string;
 }
 
-export namespace FilterSelected {
-  let selectedFilters: ActiveFilter[] | undefined = undefined;
+export class FilterSelected {
+  static selectedFilters: ActiveFilter[] | undefined = undefined;
 
-  export const setSelected = (activeFilters: ActiveFilter[]) => {
-    selectedFilters = activeFilters;
+  static setSelected = (activeFilters: ActiveFilter[]) => {
+    FilterSelected.selectedFilters = activeFilters;
   };
 
-  export const getSelected = (): ActiveFilter[] => {
-    return selectedFilters || [];
+  static getSelected = (): ActiveFilter[] => {
+    return FilterSelected.selectedFilters || [];
   };
 
-  export const isInitialized = () => {
-    return selectedFilters !== undefined;
+  static isInitialized = () => {
+    return FilterSelected.selectedFilters !== undefined;
   };
 }
 

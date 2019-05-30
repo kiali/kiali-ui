@@ -18,7 +18,7 @@ import { ConfigIndicator } from '../../components/ConfigValidation/ConfigIndicat
 import { PromisesRegistry } from '../../utils/CancelablePromises';
 import { ListPagesHelper } from '../../components/ListPage/ListPagesHelper';
 import { IstioConfigListFilters } from './FiltersAndSorts';
-import { ListComponent } from '../../components/ListPage/ListComponent';
+import * as ListComponent from '../../components/ListPage/ListComponent';
 import { SortField } from '../../types/SortFilters';
 import { getFilterSelectedValues } from '../../components/Filters/CommonFilters';
 import { AlignRightStyle, ThinStyle } from '../../components/Filters/FilterStyles';

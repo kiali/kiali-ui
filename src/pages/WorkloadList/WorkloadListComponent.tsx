@@ -11,7 +11,7 @@ import { PromisesRegistry } from '../../utils/CancelablePromises';
 import ItemDescription from './ItemDescription';
 import { ListPagesHelper } from '../../components/ListPage/ListPagesHelper';
 import { SortField } from '../../types/SortFilters';
-import { ListComponent } from '../../components/ListPage/ListComponent';
+import * as ListComponent from '../../components/ListPage/ListComponent';
 import { AlignRightStyle, ThinStyle } from '../../components/Filters/FilterStyles';
 import { arrayEquals } from '../../utils/Common';
 import { KialiAppState } from '../../store/Store';
