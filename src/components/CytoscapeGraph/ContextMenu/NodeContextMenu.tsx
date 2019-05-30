@@ -12,14 +12,17 @@ type NodeContextMenuState = {
 export class NodeContextMenu extends React.PureComponent<NodeContextMenuProps, NodeContextMenuState> {
   constructor(props: NodeContextMenuProps) {
     super(props);
-    let app = this.props.app;
+    console.log(this.props);
+    let app: string | undefined = '';
     let nodeType = '';
     switch (this.props.nodeType) {
       case 'app':
         nodeType = Paths.APPLICATIONS;
+        app = this.props.app;
         break;
       case 'service':
         nodeType = Paths.SERVICES;
+        app = this.props.service;
         break;
       case 'workload':
         app = this.props.workload;
@@ -55,13 +58,14 @@ export class NodeContextMenu extends React.PureComponent<NodeContextMenuProps, N
   }
 
   render() {
-    const version = this.props.version ? `${this.props.version}` : '';
+    const version = this.props.version !== '' ? `:${this.props.version}` : '';
     const detailsPageUrl = this.makeDetailsPageUrl();
-    const nodetype = this.state.nodeType;
+    const { nodeType, app } = this.state;
     return (
       <div className="kiali-graph-context-menu-container">
         <div className="kiali-graph-context-menu-title">
-          <strong>{this.props.app}</strong>:{version}
+          <strong>{app}</strong>
+          {version}
         </div>
         <div className="kiali-graph-context-menu-item">
           <a onClick={this.redirectContextLink} className="kiali-graph-context-menu-item-link" href={detailsPageUrl}>
@@ -77,7 +81,7 @@ export class NodeContextMenu extends React.PureComponent<NodeContextMenuProps, N
             Show Traffic
           </a>
         </div>
-        {nodetype === Paths.WORKLOADS && (
+        {nodeType === Paths.WORKLOADS && (
           <div className="kiali-graph-context-menu-item">
             <a
               onClick={this.redirectContextLink}
@@ -92,12 +96,12 @@ export class NodeContextMenu extends React.PureComponent<NodeContextMenuProps, N
           <a
             onClick={this.redirectContextLink}
             className="kiali-graph-context-menu-item-link"
-            href={`${detailsPageUrl}?tab=${nodetype === Paths.SERVICES ? 'metrics' : 'in_metrics'}`}
+            href={`${detailsPageUrl}?tab=${nodeType === Paths.SERVICES ? 'metrics' : 'in_metrics'}`}
           >
             Show Inbound Metrics
           </a>
         </div>
-        {nodetype !== Paths.SERVICES && (
+        {nodeType !== Paths.SERVICES && (
           <div className="kiali-graph-context-menu-item">
             <a
               onClick={this.redirectContextLink}
@@ -108,7 +112,7 @@ export class NodeContextMenu extends React.PureComponent<NodeContextMenuProps, N
             </a>
           </div>
         )}
-        {nodetype === Paths.SERVICES && this.props.jaegerURL !== '' && (
+        {nodeType === Paths.SERVICES && this.props.jaegerURL !== '' && (
           <div className="kiali-graph-context-menu-item">
             <a
               onClick={this.redirectContextLink}
