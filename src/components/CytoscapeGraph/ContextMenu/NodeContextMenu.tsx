@@ -105,8 +105,8 @@ export class NodeContextMenu extends React.PureComponent<Props> {
   }
 
   render() {
-    // Disable context menu if we are dealing with a unknown node
-    if (this.props.nodeType === 'unknown') {
+    // Disable context menu if we are dealing with a unknown or an inaccessible node
+    if (this.props.nodeType === 'unknown' || this.props.isInaccessible) {
       this.props.contextMenu.disable();
       return null;
     }
