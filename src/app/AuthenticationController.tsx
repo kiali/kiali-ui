@@ -26,11 +26,11 @@ interface AuthenticationControllerReduxProps {
 
 type AuthenticationControllerProps = AuthenticationControllerReduxProps & {
   protectedAreaComponent: React.ReactNode;
-  publicAreaComponent: React.ReactNode;
+  publicAreaComponent: (isPostLoginPerforming: boolean, errorMsg?: string) => React.ReactNode;
 };
 
 interface AuthenticationControllerState {
-  stage: 'login' | 'post-login' | 'logged-in';
+  stage: 'login' | 'post-login' | 'logged-in' | 'logged-in-at-load';
   isPostLoginError: boolean;
 }
 
@@ -42,13 +42,13 @@ class AuthenticationController extends React.Component<AuthenticationControllerP
   constructor(props: AuthenticationControllerProps) {
     super(props);
     this.state = {
-      stage: this.props.authenticated ? 'post-login' : 'login',
+      stage: this.props.authenticated ? 'logged-in-at-load' : 'login',
       isPostLoginError: false
     };
   }
 
   componentDidMount(): void {
-    if (this.state.stage === 'post-login') {
+    if (this.state.stage === 'logged-in-at-load') {
       this.doPostLoginActions();
     }
 
@@ -72,14 +72,18 @@ class AuthenticationController extends React.Component<AuthenticationControllerP
   render() {
     if (this.state.stage === 'logged-in') {
       return this.props.protectedAreaComponent;
-    } else if (this.state.stage === 'post-login') {
+    } else if (this.state.stage === 'logged-in-at-load') {
       return !this.state.isPostLoginError ? (
         <InitializingScreen />
       ) : (
         <InitializingScreen errorMsg={AuthenticationController.PostLoginErrorMsg} />
       );
+    } else if (this.state.stage === 'post-login') {
+      return !this.state.isPostLoginError
+        ? this.props.publicAreaComponent(true)
+        : this.props.publicAreaComponent(false, AuthenticationController.PostLoginErrorMsg);
     } else {
-      return this.props.publicAreaComponent;
+      return this.props.publicAreaComponent(false);
     }
   }
 
