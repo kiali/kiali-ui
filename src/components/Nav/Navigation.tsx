@@ -113,7 +113,7 @@ class Navigation extends React.Component<PropsType, NavigationState> {
     );
 
     return (
-      <Page style={{ backgroundColor: 'purple' }} header={Header} sidebar={Sidebar} onPageResize={this.onPageResize}>
+      <Page header={Header} sidebar={Sidebar} onPageResize={this.onPageResize}>
         <MessageCenterContainer drawerTitle="Message Center" />
         <PageSection className={flexBoxColumnStyle} variant={'light'}>
           <RenderPage needScroll={this.isContentScrollable()} />
