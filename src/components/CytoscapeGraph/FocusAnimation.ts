@@ -23,6 +23,10 @@ export default class FocusAnimation {
   constructor(cy: any) {
     this.layer = cy.cyCanvas();
     this.context = this.layer.getCanvas().getContext('2d');
+    this.onFinishedCallback = () => {
+      return;
+    };
+
     cy.one('destroy', () => this.stop());
   }
 
@@ -48,7 +52,7 @@ export default class FocusAnimation {
     this.layer.clear(this.context);
   }
 
-  processStep = () => {
+  processStep() {
     try {
       if (this.startTimestamp === undefined) {
         this.startTimestamp = Date.now();
@@ -73,7 +77,7 @@ export default class FocusAnimation {
       this.stop();
       throw exception;
     }
-  };
+  }
 
   private easingFunction(t: number) {
     // Do a focus animation in, out and in again.
