@@ -5,7 +5,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import { KialiAppState } from '../../store/Store';
 import { refreshIntervalSelector } from '../../store/Selectors';
 import { config } from '../../config';
-import { PollIntervalInMs } from '../../types/Common';
+import { PollIntervalInMs, TimeInMilliseconds } from '../../types/Common';
 import { UserSettingsActions } from '../../actions/UserSettingsActions';
 import { KialiAppAction } from '../../actions/KialiAppAction';
 import { ToolbarDropdown } from '../ToolbarDropdown/ToolbarDropdown';
@@ -19,6 +19,7 @@ type ComponentProps = {
 type ReduxProps = {
   refreshInterval: PollIntervalInMs;
   setRefreshInterval: (pollInterval: PollIntervalInMs) => void;
+  setLastRefreshAt: (lastRefreshAt: TimeInMilliseconds) => void;
 };
 
 type Props = ComponentProps & ReduxProps;
@@ -34,7 +35,7 @@ class Refresh extends React.Component<Props, State> {
     super(props);
     let pollerRef: number | undefined = undefined;
     if (this.props.refreshInterval) {
-      pollerRef = window.setInterval(this.props.handleRefresh, this.props.refreshInterval);
+      pollerRef = window.setInterval(this.handleRefresh, this.props.refreshInterval);
     }
     this.state = {
       pollerRef: pollerRef
@@ -53,7 +54,7 @@ class Refresh extends React.Component<Props, State> {
       clearInterval(this.state.pollerRef);
     }
     if (pollInterval > 0) {
-      newRefInterval = window.setInterval(this.props.handleRefresh, pollInterval);
+      newRefInterval = window.setInterval(this.handleRefresh, pollInterval);
     }
     this.setState({ pollerRef: newRefInterval });
     this.props.setRefreshInterval(pollInterval); // notify redux of the change
@@ -74,7 +75,7 @@ class Refresh extends React.Component<Props, State> {
             tooltip={'Refresh interval'}
           />
           <span style={{ paddingLeft: '0.5em' }}>
-            <Button id={this.props.id + '_btn'} onClick={this.props.handleRefresh}>
+            <Button id={this.props.id + '_btn'} onClick={this.handleRefresh}>
               <Icon name="refresh" />
             </Button>
           </span>
@@ -87,11 +88,16 @@ class Refresh extends React.Component<Props, State> {
 
   renderButtonOnly() {
     return (
-      <Button id="refresh_button" onClick={this.props.handleRefresh}>
+      <Button id="refresh_button" onClick={this.handleRefresh}>
         <Icon name="refresh" />
       </Button>
     );
   }
+
+  private handleRefresh = () => {
+    this.props.setLastRefreshAt(Date.now());
+    this.props.handleRefresh();
+  };
 }
 
 const mapStateToProps = (state: KialiAppState) => ({
@@ -102,6 +108,9 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<KialiAppState, void, KialiAp
   return {
     setRefreshInterval: (refresh: PollIntervalInMs) => {
       dispatch(UserSettingsActions.setRefreshInterval(refresh));
+    },
+    setLastRefreshAt: (lastRefreshAt: TimeInMilliseconds) => {
+      dispatch(UserSettingsActions.setLastRefreshAt(lastRefreshAt));
     }
   };
 };

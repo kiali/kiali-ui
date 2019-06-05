@@ -1,6 +1,13 @@
 import { NotificationGroup } from '../types/MessageCenter';
 import Namespace from '../types/Namespace';
-import { DurationInSeconds, PollIntervalInMs, TimeInSeconds, UserName, RawDate } from '../types/Common';
+import {
+  DurationInSeconds,
+  PollIntervalInMs,
+  TimeInSeconds,
+  UserName,
+  RawDate,
+  TimeInMilliseconds
+} from '../types/Common';
 import { EdgeLabelMode, Layout } from '../types/GraphFilter';
 import { GraphType, NodeParamsType, SummaryData, CyData, GraphElements } from '../types/Graph';
 import { TLSStatus } from '../types/TLSStatus';
@@ -103,6 +110,7 @@ export interface UserSettings {
   interface: InterfaceSettings;
   refreshInterval: PollIntervalInMs;
   duration: DurationInSeconds;
+  lastRefreshAt: TimeInMilliseconds;
 }
 
 export interface GrafanaInfo {
