@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Button, Icon } from 'patternfly-react';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { KialiAppState } from '../../store/Store';
@@ -9,6 +8,7 @@ import { PollIntervalInMs, TimeInMilliseconds } from '../../types/Common';
 import { UserSettingsActions } from '../../actions/UserSettingsActions';
 import { KialiAppAction } from '../../actions/KialiAppAction';
 import { ToolbarDropdown } from '../ToolbarDropdown/ToolbarDropdown';
+import RefreshButtonContainer from './RefreshButton';
 
 type ComponentProps = {
   id: string;
@@ -75,23 +75,13 @@ class Refresh extends React.Component<Props, State> {
             tooltip={'Refresh interval'}
           />
           <span style={{ paddingLeft: '0.5em' }}>
-            <Button id={this.props.id + '_btn'} onClick={this.handleRefresh}>
-              <Icon name="refresh" />
-            </Button>
+            <RefreshButtonContainer id={this.props.id + '_btn'} handleRefresh={this.props.handleRefresh} />
           </span>
         </>
       );
     } else {
-      return this.renderButtonOnly();
+      return <RefreshButtonContainer handleRefresh={this.props.handleRefresh} />;
     }
-  }
-
-  renderButtonOnly() {
-    return (
-      <Button id="refresh_button" onClick={this.handleRefresh}>
-        <Icon name="refresh" />
-      </Button>
-    );
   }
 
   private handleRefresh = () => {

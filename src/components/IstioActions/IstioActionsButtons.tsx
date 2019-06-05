@@ -1,5 +1,11 @@
 import * as React from 'react';
 import { Button } from 'patternfly-react';
+import { TimeInMilliseconds } from '../../types/Common';
+import { connect } from 'react-redux';
+import { UserSettingsActions } from '../../actions/UserSettingsActions';
+import { ThunkDispatch } from 'redux-thunk';
+import { KialiAppAction } from '../../actions/KialiAppAction';
+import { KialiAppState } from '../../store/Store';
 type Props = {
   objectName: string;
   readOnly: boolean;
@@ -7,10 +13,13 @@ type Props = {
   onCancel: () => void;
   onUpdate: () => void;
   onRefresh: () => void;
+  setLastRefreshAt: (lastRefreshAt: TimeInMilliseconds) => void;
 };
+
 type State = {
   showConfirmModal: boolean;
 };
+
 class IstioActionButtons extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
@@ -31,7 +40,7 @@ class IstioActionButtons extends React.Component<Props, State> {
             </span>
           )}
           <span style={{ paddingRight: '5px' }}>
-            <Button onClick={this.props.onRefresh}>Reload</Button>
+            <Button onClick={this.handleRefresh}>Reload</Button>
           </span>
           <span style={{ paddingRight: '5px' }}>
             <Button onClick={this.props.onCancel}>{this.props.readOnly ? 'Close' : 'Cancel'}</Button>
@@ -40,5 +49,24 @@ class IstioActionButtons extends React.Component<Props, State> {
       </>
     );
   }
+
+  private handleRefresh = () => {
+    this.props.onRefresh();
+    this.props.setLastRefreshAt(Date.now());
+  };
 }
-export default IstioActionButtons;
+
+const mapDispatchToProps = (dispatch: ThunkDispatch<KialiAppState, void, KialiAppAction>) => {
+  return {
+    setLastRefreshAt: (lastRefreshAt: TimeInMilliseconds) => {
+      dispatch(UserSettingsActions.setLastRefreshAt(lastRefreshAt));
+    }
+  };
+};
+
+const IstioActionButtonsContainer = connect(
+  null,
+  mapDispatchToProps
+)(IstioActionButtons);
+
+export default IstioActionButtonsContainer;
