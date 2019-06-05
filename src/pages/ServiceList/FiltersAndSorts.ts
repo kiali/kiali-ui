@@ -1,5 +1,5 @@
 import { ActiveFilter, FilterType, FILTER_ACTION_APPEND } from '../../types/Filters';
-import { getRequestErrorsStatus, ServiceHealth } from '../../types/Health';
+import { getRequestErrorsStatus, WithHealth, hasHealth } from '../../types/Health';
 import { ServiceListItem } from '../../types/ServiceList';
 import { SortField } from '../../types/SortFilters';
 import {
@@ -9,8 +9,6 @@ import {
   getFilterSelectedValues,
   filterByHealth
 } from '../../components/Filters/CommonFilters';
-
-type ServiceItemHealth = ServiceListItem & { health: ServiceHealth };
 
 export namespace ServiceListFilters {
   export const sortFields: SortField<ServiceListItem>[] = [
@@ -54,18 +52,22 @@ export namespace ServiceListFilters {
       title: 'Health',
       isNumeric: false,
       param: 'he',
-      compare: (a: ServiceItemHealth, b: ServiceItemHealth) => {
-        const statusForA = a.health.getGlobalStatus();
-        const statusForB = b.health.getGlobalStatus();
+      compare: (a: ServiceListItem, b: ServiceListItem) => {
+        if (hasHealth(a) && hasHealth(b)) {
+          const statusForA = a.health.getGlobalStatus();
+          const statusForB = b.health.getGlobalStatus();
 
-        if (statusForA.priority === statusForB.priority) {
-          // If both services have same health status, use error rate to determine order.
-          const ratioA = getRequestErrorsStatus(a.health.requests.errorRatio).value;
-          const ratioB = getRequestErrorsStatus(b.health.requests.errorRatio).value;
-          return ratioA === ratioB ? a.name.localeCompare(b.name) : ratioB - ratioA;
+          if (statusForA.priority === statusForB.priority) {
+            // If both services have same health status, use error rate to determine order.
+            const ratioA = getRequestErrorsStatus(a.health.requests.errorRatio).value;
+            const ratioB = getRequestErrorsStatus(b.health.requests.errorRatio).value;
+            return ratioA === ratioB ? a.name.localeCompare(b.name) : ratioB - ratioA;
+          }
+
+          return statusForB.priority - statusForA.priority;
         }
 
-        return statusForB.priority - statusForA.priority;
+        return 0;
       }
     }
   ];
@@ -134,12 +136,8 @@ export namespace ServiceListFilters {
     if (sortField.title === 'Health') {
       // In the case of health sorting, we may not have all health promises ready yet
       // So we need to get them all before actually sorting
-      const allHealthPromises: Promise<ServiceItemHealth>[] = services.map(item => {
-        return item.healthPromise.then(health => {
-          const withHealth: any = item;
-          withHealth.health = health;
-          return withHealth;
-        });
+      const allHealthPromises: Promise<WithHealth<ServiceListItem>>[] = services.map(item => {
+        return item.healthPromise.then((health): WithHealth<ServiceListItem> => ({ ...item, ...{ health } }));
       });
       return Promise.all(allHealthPromises).then(arr => {
         return arr.sort(isAscending ? sortField.compare : (a, b) => sortField.compare(b, a));

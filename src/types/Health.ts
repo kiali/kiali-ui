@@ -151,9 +151,7 @@ export const getRequestErrorsViolations = (reqIn: ThresholdStatus, reqOut: Thres
 };
 
 export abstract class Health {
-  items: HealthItem[];
-
-  constructor(items: HealthItem[]) {
+  constructor(public items: HealthItem[], public requests: RequestHealth, public ctx: HealthContext) {
     this.items = items;
   }
 
@@ -195,9 +193,12 @@ export class ServiceHealth extends Health {
   }
 
   constructor(public requests: RequestHealth, public ctx: HealthContext) {
-    super(ServiceHealth.computeItems(requests, ctx));
+    super(ServiceHealth.computeItems(requests, ctx), requests, ctx);
   }
 }
+
+export type WithHealth<T> = T & { health: Health };
+export const hasHealth = <T extends unknown>(val: T): val is WithHealth<T> => Object.hasOwnProperty('health');
 
 export class AppHealth extends Health {
   public static fromJson = (json: any, ctx: HealthContext) => new AppHealth(json.workloadStatuses, json.requests, ctx);
@@ -251,7 +252,7 @@ export class AppHealth extends Health {
   }
 
   constructor(public workloadStatuses: WorkloadStatus[], public requests: RequestHealth, public ctx: HealthContext) {
-    super(AppHealth.computeItems(workloadStatuses, requests, ctx));
+    super(AppHealth.computeItems(workloadStatuses, requests, ctx), requests, ctx);
   }
 }
 
@@ -319,7 +320,7 @@ export class WorkloadHealth extends Health {
   }
 
   constructor(public workloadStatus: WorkloadStatus, public requests: RequestHealth, public ctx: HealthContext) {
-    super(WorkloadHealth.computeItems(workloadStatus, requests, ctx));
+    super(WorkloadHealth.computeItems(workloadStatus, requests, ctx), requests, ctx);
   }
 }
 

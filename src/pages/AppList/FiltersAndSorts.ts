@@ -1,7 +1,7 @@
 import { ActiveFilter, FILTER_ACTION_APPEND, FilterType } from '../../types/Filters';
 import { AppListItem } from '../../types/AppList';
 import { SortField } from '../../types/SortFilters';
-import { AppHealth, getRequestErrorsStatus } from '../../types/Health';
+import { getRequestErrorsStatus, WithHealth, hasHealth } from '../../types/Health';
 import {
   istioSidecarFilter,
   healthFilter,
@@ -9,8 +9,6 @@ import {
   getFilterSelectedValues,
   filterByHealth
 } from '../../components/Filters/CommonFilters';
-
-type AppListItemHealth = AppListItem & { health: AppHealth };
 
 export namespace AppListFilters {
   export const sortFields: SortField<AppListItem>[] = [
@@ -54,8 +52,8 @@ export namespace AppListFilters {
       title: 'Health',
       isNumeric: false,
       param: 'he',
-      compare: (a: AppListItemHealth, b: AppListItemHealth) => {
-        if (a.health && b.health) {
+      compare: (a: AppListItem, b: AppListItem) => {
+        if (hasHealth(a) && hasHealth(b)) {
           const statusForA = a.health.getGlobalStatus();
           const statusForB = b.health.getGlobalStatus();
 
@@ -68,6 +66,7 @@ export namespace AppListFilters {
 
           return statusForB.priority - statusForA.priority;
         }
+
         return 0;
       }
     }
@@ -140,12 +139,8 @@ export namespace AppListFilters {
     if (sortField.title === 'Health') {
       // In the case of health sorting, we may not have all health promises ready yet
       // So we need to get them all before actually sorting
-      const allHealthPromises: Promise<AppListItemHealth>[] = unsorted.map(item => {
-        return item.healthPromise.then(health => {
-          const withHealth: any = item;
-          withHealth.health = health;
-          return withHealth;
-        });
+      const allHealthPromises: Promise<WithHealth<AppListItem>>[] = unsorted.map(item => {
+        return item.healthPromise.then((health): WithHealth<AppListItem> => ({ ...item, ...{ health } }));
       });
       return Promise.all(allHealthPromises).then(arr => {
         return arr.sort(isAscending ? sortField.compare : (a, b) => sortField.compare(b, a));

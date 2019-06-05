@@ -1,7 +1,7 @@
 import { ActiveFilter, FILTER_ACTION_APPEND, FILTER_ACTION_UPDATE, FilterType } from '../../types/Filters';
 import { WorkloadListItem, WorkloadType } from '../../types/Workload';
 import { SortField } from '../../types/SortFilters';
-import { getRequestErrorsStatus, WorkloadHealth } from '../../types/Health';
+import { getRequestErrorsStatus, WithHealth, hasHealth } from '../../types/Health';
 import {
   presenceValues,
   istioSidecarFilter,
@@ -10,8 +10,6 @@ import {
   getPresenceFilterValue,
   filterByHealth
 } from '../../components/Filters/CommonFilters';
-
-type WorkloadItemHealth = WorkloadListItem & { health: WorkloadHealth };
 
 export namespace WorkloadListFilters {
   export const sortFields: SortField<WorkloadListItem>[] = [
@@ -92,8 +90,8 @@ export namespace WorkloadListFilters {
       title: 'Health',
       isNumeric: false,
       param: 'he',
-      compare: (a: WorkloadItemHealth, b: WorkloadItemHealth) => {
-        if (a.health && b.health) {
+      compare: (a: WorkloadListItem, b: WorkloadListItem) => {
+        if (hasHealth(a) && hasHealth(b)) {
           const statusForA = a.health.getGlobalStatus();
           const statusForB = b.health.getGlobalStatus();
 
@@ -106,6 +104,7 @@ export namespace WorkloadListFilters {
 
           return statusForB.priority - statusForA.priority;
         }
+
         return 0;
       }
     }
@@ -270,12 +269,8 @@ export namespace WorkloadListFilters {
     if (sortField.title === 'Health') {
       // In the case of health sorting, we may not have all health promises ready yet
       // So we need to get them all before actually sorting
-      const allHealthPromises: Promise<WorkloadItemHealth>[] = unsorted.map(item => {
-        return item.healthPromise.then(health => {
-          const withHealth: any = item;
-          withHealth.health = health;
-          return withHealth;
-        });
+      const allHealthPromises: Promise<WithHealth<WorkloadListItem>>[] = unsorted.map(item => {
+        return item.healthPromise.then((health): WithHealth<WorkloadListItem> => ({ ...item, ...{ health } }));
       });
       return Promise.all(allHealthPromises).then(arr => {
         return arr.sort(isAscending ? sortField.compare : (a, b) => sortField.compare(b, a));
