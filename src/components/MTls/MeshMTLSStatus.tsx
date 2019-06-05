@@ -4,7 +4,7 @@ import { KialiAppState } from '../../store/Store';
 import { MTLSIconTypes } from './MTLSIcon';
 import { default as MTLSStatus, emptyDescriptor, StatusDescriptor } from './MTLSStatus';
 import { style } from 'typestyle';
-import { meshWideMTLSStatusSelector, refreshIntervalSelector } from '../../store/Selectors';
+import { lastRefreshAtSelector, meshWideMTLSStatusSelector } from '../../store/Selectors';
 import { connect } from 'react-redux';
 import { MTLSStatuses, TLSStatus } from '../../types/TLSStatus';
 import * as MessageCenter from '../../utils/MessageCenter';
@@ -17,13 +17,12 @@ import { PollIntervalInMs } from '../../types/Common';
 
 type Props = {
   status: string;
-  refreshInterval: PollIntervalInMs;
+  lastRefreshAt: PollIntervalInMs;
   setMeshTlsStatus: (meshStatus: TLSStatus) => void;
 };
 
 type State = {
-  intervalId?: NodeJS.Timeout;
-  refreshInterval: PollIntervalInMs;
+  lastRefreshAt: PollIntervalInMs;
 };
 
 const statusDescriptors = new Map<string, StatusDescriptor>([
@@ -48,25 +47,17 @@ const statusDescriptors = new Map<string, StatusDescriptor>([
 
 class MeshMTLSStatus extends React.Component<Props, State> {
   componentDidMount() {
-    const intervalId = this.setIntervalId(this.props.refreshInterval);
+    this.fetchStatus();
     this.setState({
-      intervalId: intervalId,
-      refreshInterval: this.props.refreshInterval
+      lastRefreshAt: Date.now()
     });
   }
 
-  componentWillUnmount() {
-    this.clearIntervalId();
-  }
-
   componentDidUpdate() {
-    if (this.props.refreshInterval !== this.state.refreshInterval) {
-      this.clearIntervalId();
-
-      const intervalId = this.setIntervalId(this.props.refreshInterval);
+    if (this.props.lastRefreshAt > this.state.lastRefreshAt) {
+      this.fetchStatus();
       this.setState({
-        intervalId: intervalId,
-        refreshInterval: this.props.refreshInterval
+        lastRefreshAt: Date.now()
       });
     }
   }
@@ -96,21 +87,11 @@ class MeshMTLSStatus extends React.Component<Props, State> {
       </div>
     );
   }
-
-  private setIntervalId = (refreshInterval: PollIntervalInMs): NodeJS.Timeout | undefined => {
-    return refreshInterval ? setInterval(this.fetchStatus, refreshInterval) : undefined;
-  };
-
-  private clearIntervalId = () => {
-    if (this.state.intervalId) {
-      clearInterval(this.state.intervalId);
-    }
-  };
 }
 
 const mapStateToProps = (state: KialiAppState) => ({
   status: meshWideMTLSStatusSelector(state),
-  refreshInterval: refreshIntervalSelector(state)
+  lastRefreshAt: lastRefreshAtSelector(state)
 });
 
 const mapDispatchToProps = (dispatch: KialiDispatch) => ({
