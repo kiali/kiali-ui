@@ -151,9 +151,7 @@ export const getRequestErrorsViolations = (reqIn: ThresholdStatus, reqOut: Thres
 };
 
 export abstract class Health {
-  constructor(public items: HealthItem[], public requests: RequestHealth, public ctx: HealthContext) {
-    this.items = items;
-  }
+  constructor(public items: HealthItem[]) {}
 
   getGlobalStatus(): Status {
     return this.items.map(i => i.status).reduce((prev, cur) => mergeStatus(prev, cur), NA);
@@ -192,13 +190,10 @@ export class ServiceHealth extends Health {
     return items;
   }
 
-  constructor(public requests: RequestHealth, public ctx: HealthContext) {
-    super(ServiceHealth.computeItems(requests, ctx), requests, ctx);
+  constructor(public requests: RequestHealth, ctx: HealthContext) {
+    super(ServiceHealth.computeItems(requests, ctx));
   }
 }
-
-export type WithHealth<T> = T & { health: Health };
-export const hasHealth = <T extends unknown>(val: T): val is WithHealth<T> => Object.hasOwnProperty('health');
 
 export class AppHealth extends Health {
   public static fromJson = (json: any, ctx: HealthContext) => new AppHealth(json.workloadStatuses, json.requests, ctx);
@@ -251,8 +246,8 @@ export class AppHealth extends Health {
     return items;
   }
 
-  constructor(public workloadStatuses: WorkloadStatus[], public requests: RequestHealth, public ctx: HealthContext) {
-    super(AppHealth.computeItems(workloadStatuses, requests, ctx), requests, ctx);
+  constructor(workloadStatuses: WorkloadStatus[], public requests: RequestHealth, ctx: HealthContext) {
+    super(AppHealth.computeItems(workloadStatuses, requests, ctx));
   }
 }
 
@@ -319,8 +314,8 @@ export class WorkloadHealth extends Health {
     return items;
   }
 
-  constructor(public workloadStatus: WorkloadStatus, public requests: RequestHealth, public ctx: HealthContext) {
-    super(WorkloadHealth.computeItems(workloadStatus, requests, ctx), requests, ctx);
+  constructor(workloadStatus: WorkloadStatus, public requests: RequestHealth, ctx: HealthContext) {
+    super(WorkloadHealth.computeItems(workloadStatus, requests, ctx));
   }
 }
 
@@ -335,3 +330,7 @@ export const healthNotAvailable = (): AppHealth => {
 export type NamespaceAppHealth = { [app: string]: AppHealth };
 export type NamespaceServiceHealth = { [service: string]: ServiceHealth };
 export type NamespaceWorkloadHealth = { [workload: string]: WorkloadHealth };
+
+export type WithAppHealth<T> = T & { health: AppHealth };
+export type WithServiceHealth<T> = T & { health: ServiceHealth };
+export type WithWorkloadHealth<T> = T & { health: WorkloadHealth };

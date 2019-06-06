@@ -1,7 +1,7 @@
 import { ActiveFilter, FILTER_ACTION_APPEND, FilterType } from '../../types/Filters';
 import { AppListItem } from '../../types/AppList';
 import { SortField } from '../../types/SortFilters';
-import { getRequestErrorsStatus, WithHealth, hasHealth } from '../../types/Health';
+import { getRequestErrorsStatus, WithAppHealth } from '../../types/Health';
 import {
   istioSidecarFilter,
   healthFilter,
@@ -52,22 +52,18 @@ export namespace AppListFilters {
       title: 'Health',
       isNumeric: false,
       param: 'he',
-      compare: (a: AppListItem, b: AppListItem) => {
-        if (hasHealth(a) && hasHealth(b)) {
-          const statusForA = a.health.getGlobalStatus();
-          const statusForB = b.health.getGlobalStatus();
+      compare: (a: WithAppHealth<AppListItem>, b: WithAppHealth<AppListItem>) => {
+        const statusForA = a.health.getGlobalStatus();
+        const statusForB = b.health.getGlobalStatus();
 
-          if (statusForA.priority === statusForB.priority) {
-            // If both apps have same health status, use error rate to determine order.
-            const ratioA = getRequestErrorsStatus(a.health.requests.errorRatio).value;
-            const ratioB = getRequestErrorsStatus(b.health.requests.errorRatio).value;
-            return ratioA === ratioB ? a.name.localeCompare(b.name) : ratioB - ratioA;
-          }
-
-          return statusForB.priority - statusForA.priority;
+        if (statusForA.priority === statusForB.priority) {
+          // If both apps have same health status, use error rate to determine order.
+          const ratioA = getRequestErrorsStatus(a.health.requests.errorRatio).value;
+          const ratioB = getRequestErrorsStatus(b.health.requests.errorRatio).value;
+          return ratioA === ratioB ? a.name.localeCompare(b.name) : ratioB - ratioA;
         }
 
-        return 0;
+        return statusForB.priority - statusForA.priority;
       }
     }
   ];
@@ -139,8 +135,8 @@ export namespace AppListFilters {
     if (sortField.title === 'Health') {
       // In the case of health sorting, we may not have all health promises ready yet
       // So we need to get them all before actually sorting
-      const allHealthPromises: Promise<WithHealth<AppListItem>>[] = unsorted.map(item => {
-        return item.healthPromise.then((health): WithHealth<AppListItem> => ({ ...item, ...{ health } }));
+      const allHealthPromises: Promise<WithAppHealth<AppListItem>>[] = unsorted.map(item => {
+        return item.healthPromise.then((health): WithAppHealth<AppListItem> => ({ ...item, ...{ health } }));
       });
       return Promise.all(allHealthPromises).then(arr => {
         return arr.sort(isAscending ? sortField.compare : (a, b) => sortField.compare(b, a));

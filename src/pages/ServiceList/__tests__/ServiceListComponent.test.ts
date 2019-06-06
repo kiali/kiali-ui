@@ -1,8 +1,8 @@
-import { ServiceHealth, RequestHealth, WithHealth } from '../../../types/Health';
+import { ServiceHealth, RequestHealth, WithServiceHealth } from '../../../types/Health';
 import { ServiceListItem } from '../../../types/ServiceList';
 import { ServiceListFilters } from '../FiltersAndSorts';
 
-const makeService = (name: string, errRatio: number): WithHealth<ServiceListItem> => {
+const makeService = (name: string, errRatio: number): WithServiceHealth<ServiceListItem> => {
   const reqErrs: RequestHealth = { errorRatio: errRatio, inboundErrorRatio: errRatio, outboundErrorRatio: -1 };
   const health = new ServiceHealth(reqErrs, { rateInterval: 60, hasSidecar: true });
 
