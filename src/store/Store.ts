@@ -17,6 +17,7 @@ import { TLSStatus } from '../types/TLSStatus';
 export interface GlobalState {
   readonly loadingCounter: number;
   readonly isPageVisible: boolean;
+  lastRefreshAt: TimeInMilliseconds;
 }
 
 export interface NamespaceState {
@@ -110,7 +111,6 @@ export interface UserSettings {
   interface: InterfaceSettings;
   refreshInterval: PollIntervalInMs;
   duration: DurationInSeconds;
-  lastRefreshAt: TimeInMilliseconds;
 }
 
 export interface GrafanaInfo {

@@ -59,7 +59,7 @@ const refreshInterval = (state: KialiAppState) => state.userSettings.refreshInte
 
 export const refreshIntervalSelector = createIdentitySelector(refreshInterval);
 
-const lastRefreshAt = (state: KialiAppState) => state.userSettings.lastRefreshAt;
+const lastRefreshAt = (state: KialiAppState) => state.globalState.lastRefreshAt;
 
 export const lastRefreshAtSelector = createIdentitySelector(lastRefreshAt);
 

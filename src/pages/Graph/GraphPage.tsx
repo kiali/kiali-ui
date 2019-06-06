@@ -40,7 +40,7 @@ import GraphDataThunkActions from '../../actions/GraphDataThunkActions';
 import { GraphActions } from '../../actions/GraphActions';
 import { GraphFilterActions } from '../../actions/GraphFilterActions';
 import { NodeContextMenuContainer } from '../../components/CytoscapeGraph/ContextMenu/NodeContextMenu';
-import { UserSettingsActions } from '../../actions/UserSettingsActions';
+import { GlobalActions } from '../../actions/GlobalActions';
 
 // GraphURLPathProps holds path variable values.  Currenly all path variables are relevant only to a node graph
 type GraphURLPathProps = {
@@ -517,7 +517,7 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<KialiAppState, void, KialiAp
   graphChanged: bindActionCreators(GraphActions.changed, dispatch),
   setNode: bindActionCreators(GraphActions.setNode, dispatch),
   toggleLegend: bindActionCreators(GraphFilterActions.toggleLegend, dispatch),
-  setLastRefreshAt: bindActionCreators(UserSettingsActions.setLastRefreshAt, dispatch)
+  setLastRefreshAt: bindActionCreators(GlobalActions.setLastRefreshAt, dispatch)
 });
 
 const GraphPageContainer = withRouter<RouteComponentProps<{}>>(

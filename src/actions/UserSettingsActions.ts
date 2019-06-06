@@ -1,5 +1,5 @@
 import { ActionType, createAction, createStandardAction } from 'typesafe-actions';
-import { DurationInSeconds, PollIntervalInMs, TimeInMilliseconds } from '../types/Common';
+import { DurationInSeconds, PollIntervalInMs } from '../types/Common';
 import { ActionKeys } from './ActionKeys';
 
 export const UserSettingsActions = {
@@ -7,8 +7,7 @@ export const UserSettingsActions = {
     resolve({ collapse: collapsed })
   ),
   setDuration: createStandardAction(ActionKeys.SET_DURATION)<DurationInSeconds>(),
-  setRefreshInterval: createStandardAction(ActionKeys.SET_REFRESH_INTERVAL)<PollIntervalInMs>(),
-  setLastRefreshAt: createStandardAction(ActionKeys.SET_LAST_REFRESH)<TimeInMilliseconds>()
+  setRefreshInterval: createStandardAction(ActionKeys.SET_REFRESH_INTERVAL)<PollIntervalInMs>()
 };
 
 export type UserSettingsAction = ActionType<typeof UserSettingsActions>;

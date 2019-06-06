@@ -1,6 +1,6 @@
 import UserSettingsState from '../UserSettingsState';
-import { GlobalActions } from '../../actions/GlobalActions';
 import { UserSettingsActions } from '../../actions/UserSettingsActions';
+import { GlobalActions } from '../../actions/GlobalActions';
 
 describe('UserSettingsState reducer', () => {
   const RealDate = Date.now;
@@ -23,8 +23,7 @@ describe('UserSettingsState reducer', () => {
     expect(UserSettingsState(undefined, GlobalActions.unknown())).toEqual({
       interface: { navCollapse: false },
       duration: 60,
-      refreshInterval: 15000,
-      lastRefreshAt: 0
+      refreshInterval: 15000
     });
   });
 
@@ -34,16 +33,14 @@ describe('UserSettingsState reducer', () => {
         {
           interface: { navCollapse: false },
           duration: 60,
-          refreshInterval: 60,
-          lastRefreshAt: currentDate
+          refreshInterval: 60
         },
         UserSettingsActions.navCollapse(true)
       )
     ).toEqual({
       interface: { navCollapse: true },
       duration: 60,
-      refreshInterval: 60,
-      lastRefreshAt: currentDate
+      refreshInterval: 60
     });
   });
 
@@ -53,16 +50,14 @@ describe('UserSettingsState reducer', () => {
         {
           interface: { navCollapse: false },
           duration: 60,
-          refreshInterval: 60,
-          lastRefreshAt: currentDate
+          refreshInterval: 60
         },
         UserSettingsActions.setDuration(120)
       )
     ).toEqual({
       interface: { navCollapse: false },
       duration: 120,
-      refreshInterval: 60,
-      lastRefreshAt: currentDate
+      refreshInterval: 60
     });
   });
 
@@ -72,16 +67,14 @@ describe('UserSettingsState reducer', () => {
         {
           interface: { navCollapse: false },
           duration: 60,
-          refreshInterval: 60,
-          lastRefreshAt: currentDate
+          refreshInterval: 60
         },
         UserSettingsActions.setRefreshInterval(120)
       )
     ).toEqual({
       interface: { navCollapse: false },
       duration: 60,
-      refreshInterval: 120,
-      lastRefreshAt: currentDate
+      refreshInterval: 120
     });
   });
 });

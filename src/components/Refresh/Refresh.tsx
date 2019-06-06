@@ -9,6 +9,7 @@ import { UserSettingsActions } from '../../actions/UserSettingsActions';
 import { KialiAppAction } from '../../actions/KialiAppAction';
 import { ToolbarDropdown } from '../ToolbarDropdown/ToolbarDropdown';
 import RefreshButtonContainer from './RefreshButton';
+import { GlobalActions } from '../../actions/GlobalActions';
 
 type ComponentProps = {
   id: string;
@@ -100,7 +101,7 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<KialiAppState, void, KialiAp
       dispatch(UserSettingsActions.setRefreshInterval(refresh));
     },
     setLastRefreshAt: (lastRefreshAt: TimeInMilliseconds) => {
-      dispatch(UserSettingsActions.setLastRefreshAt(lastRefreshAt));
+      dispatch(GlobalActions.setLastRefreshAt(lastRefreshAt));
     }
   };
 };

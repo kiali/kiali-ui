@@ -3,9 +3,9 @@ import { connect } from 'react-redux';
 import { Button, Icon } from 'patternfly-react';
 import { TimeInMilliseconds } from '../../types/Common';
 import { KialiAppAction } from '../../actions/KialiAppAction';
-import { UserSettingsActions } from '../../actions/UserSettingsActions';
 import { KialiAppState } from '../../store/Store';
 import { ThunkDispatch } from 'redux-thunk';
+import { GlobalActions } from '../../actions/GlobalActions';
 
 type ComponentProps = {
   id?: string;
@@ -45,7 +45,7 @@ class RefreshButton extends React.Component<Props> {
 const mapDispatchToProps = (dispatch: ThunkDispatch<KialiAppState, void, KialiAppAction>) => {
   return {
     setLastRefreshAt: (lastRefreshAt: TimeInMilliseconds) => {
-      dispatch(UserSettingsActions.setLastRefreshAt(lastRefreshAt));
+      dispatch(GlobalActions.setLastRefreshAt(lastRefreshAt));
     }
   };
 };

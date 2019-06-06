@@ -2,10 +2,10 @@ import * as React from 'react';
 import { Button } from 'patternfly-react';
 import { TimeInMilliseconds } from '../../types/Common';
 import { connect } from 'react-redux';
-import { UserSettingsActions } from '../../actions/UserSettingsActions';
 import { ThunkDispatch } from 'redux-thunk';
 import { KialiAppAction } from '../../actions/KialiAppAction';
 import { KialiAppState } from '../../store/Store';
+import { GlobalActions } from '../../actions/GlobalActions';
 
 type ReduxProps = {
   setLastRefreshAt: (lastRefreshAt: TimeInMilliseconds) => void;
@@ -63,7 +63,7 @@ class IstioActionButtons extends React.Component<Props, State> {
 const mapDispatchToProps = (dispatch: ThunkDispatch<KialiAppState, void, KialiAppAction>) => {
   return {
     setLastRefreshAt: (lastRefreshAt: TimeInMilliseconds) => {
-      dispatch(UserSettingsActions.setLastRefreshAt(lastRefreshAt));
+      dispatch(GlobalActions.setLastRefreshAt(lastRefreshAt));
     }
   };
 };
