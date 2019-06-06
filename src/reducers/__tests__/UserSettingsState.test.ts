@@ -3,11 +3,11 @@ import { GlobalActions } from '../../actions/GlobalActions';
 import { UserSettingsActions } from '../../actions/UserSettingsActions';
 
 describe('UserSettingsState reducer', () => {
-  const RealDate = Date;
+  const RealDate = Date.now;
   const currentDate = Date.now();
 
   const mockDate = date => {
-    global.Date = jest.fn(() => date) as any;
+    global.Date.now = jest.fn(() => date) as any;
     return date;
   };
 
@@ -16,7 +16,7 @@ describe('UserSettingsState reducer', () => {
   });
 
   afterEach(() => {
-    global.Date = RealDate;
+    global.Date.now = RealDate;
   });
 
   it('should return the initial state', () => {
@@ -24,7 +24,7 @@ describe('UserSettingsState reducer', () => {
       interface: { navCollapse: false },
       duration: 60,
       refreshInterval: 15000,
-      lastRefreshAt: currentDate
+      lastRefreshAt: 0
     });
   });
 

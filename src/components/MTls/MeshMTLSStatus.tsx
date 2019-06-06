@@ -15,15 +15,13 @@ import { bindActionCreators } from 'redux';
 import { MeshTlsActions } from '../../actions/MeshTlsActions';
 import { PollIntervalInMs } from '../../types/Common';
 
-type Props = {
-  status: string;
+type ReduxProps = {
   lastRefreshAt: PollIntervalInMs;
   setMeshTlsStatus: (meshStatus: TLSStatus) => void;
+  status: string;
 };
 
-type State = {
-  lastRefreshAt: PollIntervalInMs;
-};
+type Props = ReduxProps & {};
 
 const statusDescriptors = new Map<string, StatusDescriptor>([
   [
@@ -45,20 +43,14 @@ const statusDescriptors = new Map<string, StatusDescriptor>([
   [MTLSStatuses.NOT_ENABLED, emptyDescriptor]
 ]);
 
-class MeshMTLSStatus extends React.Component<Props, State> {
+class MeshMTLSStatus extends React.Component<Props> {
   componentDidMount() {
     this.fetchStatus();
-    this.setState({
-      lastRefreshAt: Date.now()
-    });
   }
 
-  componentDidUpdate() {
-    if (this.props.lastRefreshAt > this.state.lastRefreshAt) {
+  componentDidUpdate(prevProps: Props) {
+    if (this.props.lastRefreshAt !== prevProps.lastRefreshAt) {
       this.fetchStatus();
-      this.setState({
-        lastRefreshAt: Date.now()
-      });
     }
   }
 

@@ -9,7 +9,7 @@ export const INITIAL_USER_SETTINGS_STATE: UserSettings = {
   interface: { navCollapse: false },
   duration: config.toolbar.defaultDuration,
   refreshInterval: config.toolbar.defaultPollInterval,
-  lastRefreshAt: Date.now()
+  lastRefreshAt: 0
 };
 
 const UserSettingsState = (state: UserSettings = INITIAL_USER_SETTINGS_STATE, action: KialiAppAction): UserSettings => {

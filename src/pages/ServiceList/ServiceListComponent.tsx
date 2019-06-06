@@ -16,13 +16,13 @@ import './ServiceListComponent.css';
 import { SortField } from '../../types/SortFilters';
 import { ListComponent } from '../../components/ListPage/ListComponent';
 import { AlignRightStyle, ThinStyle } from '../../components/Filters/FilterStyles';
-import { ObjectValidation, Validations } from 'src/types/IstioObjects';
 import { arrayEquals } from '../../utils/Common';
 import { KialiAppState } from '../../store/Store';
 import { activeNamespacesSelector, durationSelector } from '../../store/Selectors';
 import { DurationInSeconds } from '../../types/Common';
 import { DurationDropdownContainer } from '../../components/DurationDropdown/DurationDropdown';
 import RefreshButtonContainer from '../../components/Refresh/RefreshButton';
+import { ObjectValidation, Validations } from '../../types/IstioObjects';
 
 type ServiceListComponentState = ListComponent.State<ServiceListItem>;
 

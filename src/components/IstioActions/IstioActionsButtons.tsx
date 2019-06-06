@@ -6,14 +6,18 @@ import { UserSettingsActions } from '../../actions/UserSettingsActions';
 import { ThunkDispatch } from 'redux-thunk';
 import { KialiAppAction } from '../../actions/KialiAppAction';
 import { KialiAppState } from '../../store/Store';
-type Props = {
+
+type ReduxProps = {
+  setLastRefreshAt: (lastRefreshAt: TimeInMilliseconds) => void;
+};
+
+type Props = ReduxProps & {
   objectName: string;
   readOnly: boolean;
   canUpdate: boolean;
   onCancel: () => void;
   onUpdate: () => void;
   onRefresh: () => void;
-  setLastRefreshAt: (lastRefreshAt: TimeInMilliseconds) => void;
 };
 
 type State = {
