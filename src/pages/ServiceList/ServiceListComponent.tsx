@@ -23,6 +23,7 @@ import { DurationInSeconds } from '../../types/Common';
 import { DurationDropdownContainer } from '../../components/DurationDropdown/DurationDropdown';
 import RefreshButtonContainer from '../../components/Refresh/RefreshButton';
 import { ObjectValidation, Validations } from '../../types/IstioObjects';
+import { style } from 'typestyle';
 
 type ServiceListComponentState = ListComponent.State<ServiceListItem>;
 
@@ -32,6 +33,10 @@ type ReduxProps = {
 };
 
 type ServiceListComponentProps = ReduxProps & ListComponent.Props<ServiceListItem>;
+
+const refreshButtonStyle = style({
+  paddingLeft: '0.5em'
+});
 
 class ServiceListComponent extends ListComponent.Component<
   ServiceListComponentProps,
@@ -228,7 +233,7 @@ class ServiceListComponent extends ListComponent.Component<
           </Sort>
           <ToolbarRightContent style={{ ...AlignRightStyle }}>
             <DurationDropdownContainer id="service-list-duration-dropdown" />
-            <RefreshButtonContainer handleRefresh={this.updateListItems} />
+            <RefreshButtonContainer handleRefresh={this.updateListItems} className={refreshButtonStyle}/>
           </ToolbarRightContent>
         </StatefulFilters>
         <ListView>{serviceList}</ListView>
