@@ -5,7 +5,7 @@ export namespace Sorts {
   export const sortFields: SortField<NamespaceInfo>[] = [
     {
       id: 'health',
-      title: 'Status',
+      title: 'Health',
       isNumeric: false,
       param: 'h',
       compare: (a: NamespaceInfo, b: NamespaceInfo) => {
@@ -15,6 +15,10 @@ export namespace Sorts {
             return diff;
           }
           diff = b.status.inWarning.length - a.status.inWarning.length;
+          if (diff !== 0) {
+            return diff;
+          }
+          diff = b.status.inSuccess.length - a.status.inSuccess.length;
           if (diff !== 0) {
             return diff;
           }
