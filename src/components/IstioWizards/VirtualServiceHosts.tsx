@@ -13,7 +13,7 @@ class VirtualServiceHosts extends React.Component<Props> {
   render() {
     const vsHosts = this.props.vsHosts.length > 0 ? this.props.vsHosts.join(',') : '';
     return (
-      <Form horizontal={true}>
+      <Form horizontal={true} onSubmit={e => e.preventDefault()}>
         <FormGroup controlId="vsHosts">
           <Col componentClass={ControlLabel} sm={3}>
             VirtualService Hosts

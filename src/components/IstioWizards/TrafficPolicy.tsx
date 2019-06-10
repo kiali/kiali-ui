@@ -7,6 +7,7 @@ import {
   Form,
   FormControl,
   FormGroup,
+  HelpBlock,
   Icon,
   MenuItem,
   Radio,
@@ -309,7 +310,7 @@ class TrafficPolicy extends React.Component<Props, TrafficPolicyState> {
     });
     const isValidLB = this.isValidLB(this.state);
     return (
-      <Form horizontal={true}>
+      <Form horizontal={true} onSubmit={e => e.preventDefault()}>
         <FormGroup controlId="tls" disabled={false}>
           <Col componentClass={ControlLabel} sm={3}>
             <Icon type={tlsIconType} name={tlsIconName} /> TLS
@@ -430,7 +431,7 @@ class TrafficPolicy extends React.Component<Props, TrafficPolicyState> {
                   <FormGroup
                     controlId="httpHeaderName"
                     disabled={!this.state.addLoadBalancer}
-                    validationState={isValidLB ? '' : 'error'}
+                    validationState={isValidLB ? null : 'error'}
                   >
                     <Col componentClass={ControlLabel} sm={3}>
                       HTTP Header Name
@@ -454,7 +455,7 @@ class TrafficPolicy extends React.Component<Props, TrafficPolicyState> {
                     <FormGroup
                       controlId="httpCookieName"
                       disabled={!this.state.addLoadBalancer}
-                      validationState={isValidLB ? '' : 'error'}
+                      validationState={isValidLB ? null : 'error'}
                     >
                       <Col componentClass={ControlLabel} sm={3}>
                         HTTP Cookie Name
@@ -475,7 +476,7 @@ class TrafficPolicy extends React.Component<Props, TrafficPolicyState> {
                     <FormGroup
                       controlId="httpCookieTtl"
                       disabled={!this.state.addLoadBalancer}
-                      validationState={isValidLB ? '' : 'error'}
+                      validationState={isValidLB ? null : 'error'}
                     >
                       <Col componentClass={ControlLabel} sm={3}>
                         HTTP Cookie TTL
@@ -491,6 +492,9 @@ class TrafficPolicy extends React.Component<Props, TrafficPolicyState> {
                           }
                           onChange={e => this.onFormChange(TrafficPolicyForm.LB_HTTP_COOKIE_TTL, e.target.value)}
                         />
+                        <HelpBlock>
+                          TTL is expressed in nanoseconds (i.e. 1000, 2000, etc) or seconds (i.e. 10s, 1.5s, etc).
+                        </HelpBlock>
                       </Col>
                     </FormGroup>
                   </>

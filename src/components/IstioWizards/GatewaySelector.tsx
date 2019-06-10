@@ -140,7 +140,7 @@ class GatewaySelector extends React.Component<Props, GatewaySelectorState> {
       </MenuItem>
     ));
     return (
-      <Form horizontal={true}>
+      <Form horizontal={true} onSubmit={e => e.preventDefault()}>
         <FormGroup controlId="gatewaySwitch" disabled={false}>
           <Col componentClass={ControlLabel} sm={3}>
             Add Gateway

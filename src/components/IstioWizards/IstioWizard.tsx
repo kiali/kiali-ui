@@ -310,7 +310,15 @@ class IstioWizard extends React.Component<WizardProps, WizardState> {
   render() {
     const [gatewaySelected, isMesh] = getInitGateway(this.props.virtualServices);
     return (
-      <Wizard show={this.state.showWizard} onHide={this.onClose}>
+      <Wizard
+        show={this.state.showWizard}
+        onHide={this.onClose}
+        onKeyPress={() => {
+          if (this.isValid(this.state)) {
+            this.onCreateUpdate();
+          }
+        }}
+      >
         <Wizard.Header
           onClose={this.onClose}
           title={this.props.update ? WIZARD_UPDATE_TITLES[this.props.type] : WIZARD_TITLES[this.props.type]}
