@@ -8,7 +8,3 @@ export const ThinStyle = {
 export const AlignRightStyle = {
   marginRight: '-20px'
 };
-
-export const RefreshButtonStyle = {
-  paddingLeft: '0.5em'
-};
