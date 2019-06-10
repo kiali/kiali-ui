@@ -313,8 +313,8 @@ class IstioWizard extends React.Component<WizardProps, WizardState> {
       <Wizard
         show={this.state.showWizard}
         onHide={this.onClose}
-        onKeyPress={() => {
-          if (this.isValid(this.state)) {
+        onKeyPress={e => {
+          if (e.key === 'Enter' && this.isValid(this.state)) {
             this.onCreateUpdate();
           }
         }}
