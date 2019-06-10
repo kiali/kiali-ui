@@ -35,11 +35,6 @@ const tabIconStyle = style({
 const floatRightStyle = style({
   float: 'right'
 });
-const refreshButtonStyle = style({
-  float: 'right',
-  paddingLeft: '0.5em',
-  marginTop: '2px'
-});
 
 class WorkloadInfo extends React.Component<WorkloadInfoProps, WorkloadInfoState> {
   constructor(props: WorkloadInfoProps) {
@@ -95,7 +90,7 @@ class WorkloadInfo extends React.Component<WorkloadInfoProps, WorkloadInfoState>
             <Col xs={12} sm={12} md={12} lg={12}>
               <span className={floatRightStyle}>
                 <DurationDropdownContainer id="workload-info-duration-dropdown" />{' '}
-                <RefreshButtonContainer handleRefresh={this.props.onRefresh} className={refreshButtonStyle}/>
+                <RefreshButtonContainer handleRefresh={this.props.onRefresh} />
               </span>
             </Col>
           </Row>
