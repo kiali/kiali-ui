@@ -41,7 +41,7 @@ const namespaceValueStyle = style({
 
 interface NamespaceListType {
   disabled: boolean;
-  filter?: string;
+  filter: string;
   activeNamespaces: Namespace[];
   items: Namespace[];
   toggleNamespace: (namespace: Namespace) => void;
@@ -124,7 +124,7 @@ export class NamespaceDropdown extends React.PureComponent<NamespaceListType, {}
       }, {});
       const checkboxStyle = style({ marginLeft: 5 });
       const namespaces = this.props.items
-        .filter((namespace: Namespace) => namespace.name.includes(this.props.filter!))
+        .filter((namespace: Namespace) => namespace.name.includes(this.props.filter))
         .map((namespace: Namespace) => (
           <div id={`namespace-list-item[${namespace.name}]`} key={`namespace-list-item[${namespace.name}]`}>
             <label>

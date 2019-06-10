@@ -123,13 +123,13 @@ class UserDropdownConnected extends React.Component<UserProps, UserState> {
           show={this.state.showSessionTimeOut && !this.state.isSessionTimeoutDismissed}
           timeOutCountDown={this.state.timeCountDownSeconds}
         />
-        {this.props.session! && (
+        {this.props.session && (
           <Dropdown
             isPlain={true}
             position="right"
             onSelect={this.onDropdownSelect}
             isOpen={isDropdownOpen}
-            toggle={<DropdownToggle onToggle={this.onDropdownToggle}>{this.props.session!.username}</DropdownToggle>}
+            toggle={<DropdownToggle onToggle={this.onDropdownToggle}>{this.props.session.username}</DropdownToggle>}
             dropdownItems={[userDropdownItems]}
           />
         )}

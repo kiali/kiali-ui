@@ -27,7 +27,7 @@ const secondLevelStyle = style({ marginLeft: 14 });
 const spacerStyle = style({ height: '1em' });
 
 export class MetricsSettingsDropdown extends React.Component<Props> {
-  private shouldReportOptions: boolean = false;
+  private shouldReportOptions = false;
   private settings: MetricsSettings = MetricsSettingsDropdown.initialMetricsSettings();
 
   static initialMetricsSettings = (): MetricsSettings => {
