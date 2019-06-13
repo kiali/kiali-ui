@@ -31,6 +31,7 @@ type CytoscapeToolbarProps = ReduxProps & {
 };
 
 const cytoscapeToolbarStyle = style({
+  marginBottom: '15px',
   padding: '7px 10px',
   borderWidth: '1px',
   borderStyle: 'solid',
