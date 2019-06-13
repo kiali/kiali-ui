@@ -344,6 +344,7 @@ class TrafficPolicy extends React.Component<Props, TrafficPolicyState> {
               bsSize="normal"
               title="normal"
               id="loadbalanacer-form"
+              animate={false}
               onChange={() => this.onFormChange(TrafficPolicyForm.LB_SWITCH, '')}
               defaultValue={this.state.addLoadBalancer}
             />
