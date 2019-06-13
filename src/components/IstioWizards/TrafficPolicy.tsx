@@ -109,7 +109,7 @@ class TrafficPolicy extends React.Component<Props, TrafficPolicyState> {
         },
         () => this.props.onTrafficPolicyChange(true, this.state)
       );
-    } else if (this.props.mtlsMode !== '') {
+    } else if (this.props.mtlsMode !== '' && this.props.mtlsMode !== DISABLE) {
       // Don't forget to update the mtlsMode
       this.setState(
         {
