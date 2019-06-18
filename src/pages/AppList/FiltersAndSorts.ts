@@ -136,7 +136,7 @@ export namespace AppListFilters {
       // In the case of health sorting, we may not have all health promises ready yet
       // So we need to get them all before actually sorting
       const allHealthPromises: Promise<WithAppHealth<AppListItem>>[] = unsorted.map(item => {
-        return item.healthPromise.then((health): WithAppHealth<AppListItem> => ({ ...item, ...{ health } }));
+        return item.healthPromise.then((health): WithAppHealth<AppListItem> => ({ ...item, health }));
       });
       return Promise.all(allHealthPromises).then(arr => {
         return arr.sort(isAscending ? sortField.compare : (a, b) => sortField.compare(b, a));

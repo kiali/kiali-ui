@@ -133,7 +133,7 @@ export namespace ServiceListFilters {
       // In the case of health sorting, we may not have all health promises ready yet
       // So we need to get them all before actually sorting
       const allHealthPromises: Promise<WithServiceHealth<ServiceListItem>>[] = services.map(item => {
-        return item.healthPromise.then((health): WithServiceHealth<ServiceListItem> => ({ ...item, ...{ health } }));
+        return item.healthPromise.then((health): WithServiceHealth<ServiceListItem> => ({ ...item, health }));
       });
       return Promise.all(allHealthPromises).then(arr => {
         return arr.sort(isAscending ? sortField.compare : (a, b) => sortField.compare(b, a));
