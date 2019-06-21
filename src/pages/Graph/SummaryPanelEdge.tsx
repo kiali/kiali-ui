@@ -425,6 +425,13 @@ export default class SummaryPanelEdge extends React.Component<SummaryPanelPropTy
         </>
       );
     }
+    if (data.isServiceEntry) {
+      return (
+        <>
+          <Icon type="pf" name="info" /> Sparkline charts cannot be shown because the destination is a serviceEntry.
+        </>
+      );
+    }
 
     if (this.state.loading && !this.state.reqRates) {
       return <strong>Loading charts...</strong>;
