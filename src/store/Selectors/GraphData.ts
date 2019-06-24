@@ -105,9 +105,9 @@ export const decorateGraphData = (graphData: GraphElements): DecoratedGraphEleme
           });
         }
         // prettier-ignore
-        decoratedNode.data = <DecoratedGraphNodeData> { ...elementsDefaults.nodes, ...decoratedNode.data };
+        decoratedNode.data = { ...elementsDefaults.nodes, ...decoratedNode.data } as DecoratedGraphNodeData;
         // prettier-ignore
-        return <DecoratedGraphNodeWrapper> decoratedNode;
+        return decoratedNode as DecoratedGraphNodeWrapper;
       });
     }
     if (graphData.edges) {
@@ -125,9 +125,9 @@ export const decorateGraphData = (graphData: GraphElements): DecoratedGraphEleme
           };
         }
         // prettier-ignore
-        decoratedEdge.data = <DecoratedGraphEdgeData> { ...elementsDefaults.edges, ...decoratedEdge.data };
+        decoratedEdge.data = { ...elementsDefaults.edges, ...decoratedEdge.data } as DecoratedGraphEdgeData;
         // prettier-ignore
-        return <DecoratedGraphEdgeWrapper> decoratedEdge;
+        return decoratedEdge as DecoratedGraphEdgeWrapper;
       });
     }
   }
