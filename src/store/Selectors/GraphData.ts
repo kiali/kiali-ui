@@ -100,7 +100,7 @@ export const decorateGraphData = (graphData: GraphElements): DecoratedGraphEleme
         if (decoratedNode.data.traffic) {
           const traffic = decoratedNode.data.traffic;
           decoratedNode.data.traffic = undefined;
-          traffic.map(protocol => {
+          traffic.forEach(protocol => {
             decoratedNode.data = { ...protocol.rates, ...decoratedNode.data };
           });
         }
