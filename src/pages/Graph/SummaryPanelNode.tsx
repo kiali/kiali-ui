@@ -411,6 +411,15 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
           </div>
         </>
       );
+    } else if (data.isServiceEntry) {
+      return (
+        <>
+          <div>
+            <Icon type="pf" name="info" /> Sparkline charts cannot be shown because the selected node is a serviceEntry.
+            <hr />
+          </div>
+        </>
+      );
     }
     if (this.state.loading && !this.state.grpcRequestCountIn) {
       return <strong>Loading charts...</strong>;
