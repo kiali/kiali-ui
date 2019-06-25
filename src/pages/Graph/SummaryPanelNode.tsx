@@ -592,7 +592,7 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
       return entries;
     }
 
-    destServices.forEach((ds, index) => {
+    destServices.forEach(ds => {
       const service = ds.name;
       const key = `${ds.namespace}.svc.${service}`;
       const displayName = service;
