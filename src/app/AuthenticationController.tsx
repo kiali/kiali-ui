@@ -121,18 +121,12 @@ class AuthenticationController extends React.Component<AuthenticationControllerP
             MessageType.INFO
           );
         });
-      const getMeshTlsPromise = API.getMeshTls()
-        .then(response => this.props.setMeshTlsStatus(response.data))
-        .catch(error => {
-          MessageCenter.add(API.getErrorMsg('Error fetching TLS Info.', error), 'default', MessageType.WARNING);
-        });
 
       const configs = await Promise.all([
         API.getServerConfig(),
         getStatusPromise,
         getGrafanaInfoPromise,
-        getJaegerInfoPromise,
-        getMeshTlsPromise
+        getJaegerInfoPromise
       ]);
       setServerConfig(configs[0].data);
 
