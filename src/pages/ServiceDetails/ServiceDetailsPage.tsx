@@ -292,6 +292,7 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
         const objectValidations = validations.destinationrule[destinationRule.metadata.name];
         if (
           formatValidation !== null &&
+          objectValidations.checks &&
           !objectValidations.checks.some(check => check.message === formatValidation.message)
         ) {
           objectValidations.checks.push(formatValidation);
