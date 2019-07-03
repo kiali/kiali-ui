@@ -56,7 +56,8 @@
     "snyk": "snyk test",
     "analyze": "source-map-explorer build/static/js/main.*",
     "prettier": "prettier --write \"{src/**/*.{js,jsx,ts,tsx,json,yml,css,scss},travis.yml,*.json}\"",
-    "snyk-protect": "snyk protect"
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
   },
   "dependencies": {
     "@patternfly/patternfly": "2.4.1",
@@ -102,7 +103,8 @@
     "tippy.js": "3.4.1",
     "typesafe-actions": "3.2.1",
     "typestyle": "2.0.1",
-    "visibilityjs": "2.0.2"
+    "visibilityjs": "2.0.2",
+    "snyk": "^1.189.0"
   },
   "devDependencies": {
     "@patternfly/react-charts": "3.1.1",
@@ -126,7 +128,6 @@
     "prettier": "1.16.4",
     "pretty-quick": "1.10.0",
     "redux-mock-store": "1.5.3",
-    "snyk": "^1.161.1",
     "source-map-explorer": "1.8.0",
     "tslint-no-circular-imports": "0.6.2",
     "typescript": "3.5"
