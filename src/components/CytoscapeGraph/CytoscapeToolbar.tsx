@@ -64,16 +64,16 @@ export class CytoscapeToolbar extends React.PureComponent<CytoscapeToolbarProps>
     return (
       <div className={cytoscapeToolbarStyle}>
         <ButtonGroup>
-          <Button onClick={this.zoomIn}>
+          <Button onClick={this.zoomIn} title="zoom in">
             <Icon type="fa" name="plus" />
           </Button>
 
-          <Button onClick={this.zoomOut}>
+          <Button onClick={this.zoomOut} title="zoom out">
             <Icon type="fa" name="minus" />
           </Button>
         </ButtonGroup>
 
-        <Button onClick={this.fit} className={cytoscapeToolbarPadStyle}>
+        <Button onClick={this.fit} className={cytoscapeToolbarPadStyle} title="size to fit">
           <div className="glyphicon glyphicon-fullscreen" />
         </Button>
 
@@ -82,7 +82,7 @@ export class CytoscapeToolbar extends React.PureComponent<CytoscapeToolbarProps>
             onClick={() => {
               this.props.setLayout(DagreGraph.getLayout());
             }}
-            title={DagreGraph.getLayout().name}
+            title={`default layout (${DagreGraph.getLayout().name})`}
             active={this.props.layout.name === DagreGraph.getLayout().name}
           >
             <div className="fa pficon-infrastructure fa-rotate-270" />
@@ -92,7 +92,7 @@ export class CytoscapeToolbar extends React.PureComponent<CytoscapeToolbarProps>
             onClick={() => {
               this.props.setLayout(CoseGraph.getLayout());
             }}
-            title={CoseGraph.getLayout().name}
+            title={`alternate layout 1 (${CoseGraph.getLayout().name})`}
             active={this.props.layout.name === CoseGraph.getLayout().name}
           >
             <div className="fa pficon-topology" /> 1
@@ -102,7 +102,7 @@ export class CytoscapeToolbar extends React.PureComponent<CytoscapeToolbarProps>
             onClick={() => {
               this.props.setLayout(ColaGraph.getLayout());
             }}
-            title={ColaGraph.getLayout().name}
+            title={`alternate layout 2 (${ColaGraph.getLayout().name})`}
             active={this.props.layout.name === ColaGraph.getLayout().name}
           >
             <div className="fa pficon-topology" /> 2
