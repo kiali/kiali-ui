@@ -1,7 +1,17 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
-import { Button, ListItem, LoginFooterItem, LoginForm, LoginPage as LoginNext } from '@patternfly/react-core';
+import {
+  ActionGroup,
+  Button,
+  Form,
+  FormGroup,
+  ListItem,
+  LoginFooterItem,
+  LoginForm,
+  LoginPage as LoginNext,
+  TextInput
+} from '@patternfly/react-core';
 import { ExclamationCircleIcon, ExclamationTriangleIcon } from '@patternfly/react-icons';
 import { KialiAppState, LoginSession, LoginStatus } from '../../store/Store';
 import { AuthStrategy } from '../../types/Auth';
@@ -25,6 +35,7 @@ type LoginState = {
   password: string;
   isValidUsername: boolean;
   isValidPassword: boolean;
+  isValidToken: boolean;
   filledInputs: boolean;
   showHelperText: boolean;
   errorInput?: string;
@@ -42,6 +53,7 @@ export class LoginPage extends React.Component<LoginProps, LoginState> {
       password: '',
       isValidUsername: true,
       isValidPassword: true,
+      isValidToken: true,
       filledInputs: false,
       showHelperText: false,
       errorInput: ''
@@ -72,6 +84,31 @@ export class LoginPage extends React.Component<LoginProps, LoginState> {
     if (authenticationConfig.strategy === AuthStrategy.openshift) {
       // If we are using OpenShift OAuth, take the user back to the OpenShift OAuth login
       window.location.href = authenticationConfig.authorizationEndpoint!;
+    } else if (authenticationConfig.strategy === AuthStrategy.token) {
+      this.setState({
+        isValidToken: !!this.state.password
+      });
+
+      if (!!this.state.password && this.props.authenticate) {
+        this.props.authenticate('', this.state.password);
+        this.setState({ showHelperText: false, errorInput: '' });
+      } else {
+        // let message = 'Invalid login credentials.';
+        // message +=
+        //   !!!this.state.username && !!!this.state.password
+        //     ? 'Username and password are required.'
+        //     : !!this.state.username
+        //     ? 'Password is required.'
+        //     : 'Username is required.';
+        //
+        // this.setState({
+        //   showHelperText: true,
+        //   errorInput: message,
+        //   isValidUsername: false,
+        //   isValidPassword: false
+        // });
+        alert('Something is wrong');
+      }
     } else {
       this.setState({
         isValidUsername: !!this.state.username,
@@ -159,9 +196,9 @@ export class LoginPage extends React.Component<LoginProps, LoginState> {
     // Unfortunately, typescripg typings are wrong in the PatternFly
     // library. So, this casts LoginForm as "any" so that it is
     // possible to use the "isLoginButtonDisabled" property.
-    const Form = LoginForm as any;
+    const CredentialsForm = LoginForm as any;
     const loginForm = (
-      <Form
+      <CredentialsForm
         usernameLabel="Username"
         showHelperText={this.state.showHelperText || this.props.message !== '' || messages.length > 0}
         helperText={<>{messages}</>}
@@ -190,6 +227,31 @@ export class LoginPage extends React.Component<LoginProps, LoginState> {
         </ListItem>
       </>
     );
+
+    let loginPane: React.ReactFragment;
+    if (authenticationConfig.strategy === AuthStrategy.login) {
+      loginPane = loginForm;
+    } else if (authenticationConfig.strategy === AuthStrategy.token) {
+      loginPane = (
+        <Form>
+          <FormGroup fieldId="token" label="Token" isRequired={true}>
+            <TextInput id="token" type="text" onChange={this.handlePasswordChange} isRequired={true} />
+          </FormGroup>
+          <ActionGroup>
+            <Button onClick={this.handleSubmit} style={{ width: '100%' }} variant="primary">
+              Log In
+            </Button>
+          </ActionGroup>
+        </Form>
+      );
+    } else {
+      loginPane = (
+        <Button onClick={this.handleSubmit} style={{ width: '100%' }} variant="primary">
+          {loginLabel}
+        </Button>
+      );
+    }
+
     return (
       <LoginNext
         footerListVariants="inline"
@@ -199,13 +261,7 @@ export class LoginPage extends React.Component<LoginProps, LoginState> {
         textContent="Service Mesh Observability."
         loginTitle="Log in Kiali"
       >
-        {authenticationConfig.strategy === AuthStrategy.login ? (
-          loginForm
-        ) : (
-          <Button onClick={this.handleSubmit} style={{ width: '100%' }} variant="primary">
-            {loginLabel}
-          </Button>
-        )}
+        {loginPane}
       </LoginNext>
     );
   }

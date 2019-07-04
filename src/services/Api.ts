@@ -67,6 +67,7 @@ const newRequest = <P>(method: HTTP_VERBS, url: string, queryParams: any, data: 
 interface LoginRequest {
   username: UserName;
   password: Password;
+  token: Password;
 }
 
 /** Requests */
@@ -75,13 +76,17 @@ export const extendSession = () => {
 };
 
 export const login = async (
-  request: LoginRequest = { username: ANONYMOUS_USER, password: 'anonymous' }
+  request: LoginRequest = { username: ANONYMOUS_USER, password: 'anonymous', token: '' }
 ): Promise<Response<LoginSession>> => {
+  const params = new URLSearchParams();
+  params.append('token', request.token);
+
   return axios({
-    method: HTTP_VERBS.GET,
+    method: HTTP_VERBS.POST,
     url: urls.authenticate,
     headers: getHeaders(),
-    auth: basicAuth(request.username, request.password)
+    auth: basicAuth(request.username, request.password),
+    data: params
   });
 };
 
