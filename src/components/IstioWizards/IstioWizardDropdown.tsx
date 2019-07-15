@@ -55,6 +55,9 @@ const msgDialogStyle = style({
 });
 
 class IstioWizardDropdown extends React.Component<Props, State> {
+  private appLabelName = serverConfig.istioLabels.versionLabelName;
+  private versionLabelName = serverConfig.istioLabels.versionLabelName;
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -95,9 +98,6 @@ class IstioWizardDropdown extends React.Component<Props, State> {
     }
     return hasSidecarWorkloads;
   };
-
-  private appLabelName = serverConfig.istioLabels.versionLabelName;
-  private versionLabelName = serverConfig.istioLabels.versionLabelName;
 
   getValidWorkloads = (): WorkloadOverview[] => {
     return this.props.workloads.filter(workload => {
