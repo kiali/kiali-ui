@@ -65,7 +65,7 @@ describe('Overview page', () => {
   });
 
   it('renders initial layout', () => {
-    const wrapper = shallow(<OverviewPage meshStatus={MTLSStatuses.NOT_ENABLED} />);
+    const wrapper = shallow(<OverviewPage meshStatus={MTLSStatuses.NOT_ENABLED} navCollapse={true} />);
     expect(wrapper).toMatchSnapshot();
   });
 
