@@ -18,7 +18,8 @@ import {
   Sidecar,
   ServiceRole,
   ServiceRoleBinding,
-  ClusterRbacConfig
+  ClusterRbacConfig,
+  EnvoyFilter
 } from './IstioObjects';
 import { ResourcePermissions } from './Permissions';
 
@@ -43,6 +44,7 @@ export interface IstioConfigItem {
   serviceRole?: ServiceRole;
   serviceRoleBinding?: ServiceRoleBinding;
   validation?: ObjectValidation;
+  envoyFilter?: EnvoyFilter;
 }
 
 export interface IstioConfigList {
@@ -65,6 +67,7 @@ export interface IstioConfigList {
   serviceRoleBindings: ServiceRoleBinding[];
   permissions: { [key: string]: ResourcePermissions };
   validations: Validations;
+  envoyFilters: EnvoyFilter[];
 }
 
 export interface IstioService {
@@ -109,7 +112,9 @@ export const dicIstioType = {
   rbacconfigs: 'RbacConfig',
   sidecars: 'Sidecar',
   serviceroles: 'ServiceRole',
-  servicerolebindings: 'ServiceRoleBinding'
+  servicerolebindings: 'ServiceRoleBinding',
+  EnvoyFilter: 'envoyfilters',
+  envoyfilters: 'EnvoyFilter'
 };
 
 const includeName = (name: string, names: string[]) => {
@@ -149,6 +154,7 @@ export const filterByName = (unfiltered: IstioConfigList, names: string[]): Isti
     sidecars: unfiltered.sidecars.filter(sc => includeName(sc.metadata.name, names)),
     serviceRoles: unfiltered.serviceRoles.filter(sr => includeName(sr.metadata.name, names)),
     serviceRoleBindings: unfiltered.serviceRoleBindings.filter(srb => includeName(srb.metadata.name, names)),
+    envoyFilters: unfiltered.envoyFilters.filter(ef => includeName(ef.metadata.name, names)),
     validations: unfiltered.validations,
     permissions: unfiltered.permissions
   };

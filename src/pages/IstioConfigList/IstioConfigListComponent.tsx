@@ -251,6 +251,10 @@ class IstioConfigListComponent extends ListComponent.Component<
       iconName = 'locked';
       iconType = 'pf';
       type = 'ServiceRole';
+    } else if (istioItem.type === 'envoyfilter') {
+      iconName = 'locked';
+      iconType = 'pf';
+      type = 'EnvoyFilter';
     } else if (istioItem.type === 'servicerolebinding') {
       iconName = 'locked';
       iconType = 'pf';

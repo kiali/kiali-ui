@@ -17,7 +17,8 @@ import {
   ServiceRole,
   ServiceRoleBinding,
   ClusterRbacConfig,
-  Sidecar
+  Sidecar,
+  EnvoyFilter
 } from './IstioObjects';
 
 export interface IstioConfigId {
@@ -43,6 +44,7 @@ export interface IstioConfigDetails {
   meshPolicy: Policy;
   clusterRbacConfig: ClusterRbacConfig;
   rbacConfig: RbacConfig;
+  envoyFilter: EnvoyFilter;
   serviceRole: ServiceRole;
   serviceRoleBinding: ServiceRoleBinding;
   permissions: ResourcePermissions;

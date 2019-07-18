@@ -364,6 +364,62 @@ export interface K8sOwnerReference {
   blockOwnerDeletion?: string;
 }
 
+export enum ListenerType {
+  ANY = 'ANY',
+  SIDECAR_INBOUND = 'SIDECAR_INBOUND',
+  SIDECAR_OUTBOUND = 'SIDECAR_OUTBOUND',
+  GATEWAY = 'GATEWAY'
+}
+
+export enum ListenerProtocol {
+  ALL = 'ALL',
+  HTTP = 'HTTP',
+  TCP = 'TCP'
+}
+
+export interface ListenerMatch {
+  portNumber?: number;
+  portNamePrefix?: string;
+  listenerType?: ListenerType;
+  listenerProtocol?: ListenerProtocol;
+  address?: string[];
+}
+
+export enum InsertPositionIndex {
+  FIRST = 'FIRST',
+  LAST = 'LAST',
+  BEFORE = 'BEFORE',
+  AFTER = 'AFTER'
+}
+
+export interface InsertPosition {
+  index?: InsertPositionIndex;
+  relativeTo?: string;
+}
+
+export enum FilterType {
+  INVALID = 'INVALID',
+  HTTP = 'HTTP',
+  NETWORK = 'NETWORK'
+}
+
+export interface EnvoyFilterFilter {
+  listenerMatch?: ListenerMatch;
+  insertPosition?: InsertPosition;
+  filterType: FilterType;
+  filterName: string;
+  filterConfig: { [name: string]: string };
+}
+
+export interface EnvoyFilterSpec {
+  workloads?: { [name: string]: string };
+  filters: EnvoyFilterFilter;
+}
+
+export interface EnvoyFilter extends IstioObject {
+  spec: EnvoyFilterSpec;
+}
+
 export interface GatewaySpec {
   servers?: Server[];
   selector?: { [key: string]: string };

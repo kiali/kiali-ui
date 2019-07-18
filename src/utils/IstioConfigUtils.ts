@@ -54,6 +54,8 @@ export const getIstioObject = (istioObjectDetails?: IstioConfigDetails) => {
       istioObject = istioObjectDetails.serviceRoleBinding;
     } else if (istioObjectDetails.sidecar) {
       istioObject = istioObjectDetails.sidecar;
+    } else if (istioObjectDetails.envoyFilter) {
+      istioObject = istioObjectDetails.envoyFilter;
     }
   }
   return istioObject;

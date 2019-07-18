@@ -146,6 +146,10 @@ export const istioTypeFilter: FilterType = {
       title: 'Sidecar'
     },
     {
+      id: 'EnvoyFilter',
+      title: 'EnvoyFilter'
+    },
+    {
       id: 'ServiceRole',
       title: 'ServiceRole'
     },
