@@ -48,6 +48,10 @@ export const SERVICE_DETAILS: ServiceDetailsInfo = {
       ]
     }
   ],
+  apiDocumentation: {
+    baseUrl: '/kiali/namespace/ns/service/reviews',
+    type: 'rest'
+  },
   virtualServices: {
     items: [
       {

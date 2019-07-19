@@ -131,7 +131,8 @@ class ServiceListComponent extends ListComponent.Component<
         istioSidecar: service.istioSidecar,
         namespace: data.namespace.name,
         healthPromise: API.getServiceHealth(data.namespace.name, service.name, rateInterval, service.istioSidecar),
-        validation: this.getServiceValidation(service.name, data.validations)
+        validation: this.getServiceValidation(service.name, data.validations),
+        apiType: service.apiType
       }));
     }
     return [];
@@ -188,6 +189,14 @@ class ServiceListComponent extends ListComponent.Component<
     const pageStart = (this.state.pagination.page - 1) * this.state.pagination.perPage;
     let pageEnd = pageStart + this.state.pagination.perPage;
     pageEnd = pageEnd < this.state.listItems.length ? pageEnd : this.state.listItems.length;
+    let hasApiColumn = false;
+    for (let i = pageStart; i < pageEnd; i++) {
+      const serviceItem = this.state.listItems[i];
+      if (serviceItem.apiType) {
+         hasApiColumn = true;
+         break;
+      }
+    }
 
     for (let i = pageStart; i < pageEnd; i++) {
       const serviceItem = this.state.listItems[i];
@@ -207,7 +216,7 @@ class ServiceListComponent extends ListComponent.Component<
             }
             // Prettier makes irrelevant line-breaking clashing with tslint
             // prettier-ignore
-            description={<ItemDescription item={serviceItem} />}
+            description={<ItemDescription item={serviceItem} hasApiColumn={hasApiColumn} />}
           />
         </Link>
       );

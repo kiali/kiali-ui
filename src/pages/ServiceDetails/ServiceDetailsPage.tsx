@@ -17,6 +17,7 @@ import BreadcrumbView from '../../components/BreadcrumbView/BreadcrumbView';
 import MetricsDuration from '../../components/MetricsOptions/MetricsDuration';
 import { fetchTrafficDetails } from '../../helpers/TrafficDetailsHelper';
 import TrafficDetails from '../../components/Metrics/TrafficDetails';
+import { ApiDocumentation } from '../../components/ApiDocumentation/ApiDocumentation';
 
 import { ThreeScaleInfo, ThreeScaleServiceRule } from '../../types/ThreeScale';
 import { KialiAppState } from '../../store/Store';
@@ -73,7 +74,11 @@ const emptyService = {
       delete: false
     }
   },
-  validations: {}
+  validations: {},
+  apiDocumentation: {
+    type: '',
+    baseUrl: ''
+  }
 };
 
 class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetailsState> {
@@ -352,6 +357,9 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
                     </>
                   </NavItem>
                 ))}
+              {this.state.serviceDetailsInfo.apiDocumentation.baseUrl && (
+                <NavItem eventKey="api">API Doc</NavItem>
+              )}  
             </Nav>
             <TabContent>
               <TabPane eventKey="info" mountOnEnter={true} unmountOnExit={true}>
@@ -392,6 +400,14 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
                     namespace={this.props.match.params.namespace}
                     service={this.props.match.params.service}
                     errorTags={errorTraces ? errorTraces > -1 : false}
+                  />
+                </TabPane>
+              )}
+              {this.state.serviceDetailsInfo.apiDocumentation.baseUrl && (
+                <TabPane eventKey="api" mountOnEnter={true} unmountOnExit={true}>
+                  <ApiDocumentation
+                    apiType={this.state.serviceDetailsInfo.apiDocumentation.type}
+                    baseUrl={this.state.serviceDetailsInfo.apiDocumentation.baseUrl}
                   />
                 </TabPane>
               )}

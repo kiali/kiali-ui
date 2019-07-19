@@ -6,12 +6,15 @@ import { DisplayMode, HealthIndicator } from '../../components/Health/HealthIndi
 import MissingSidecar from '../../components/MissingSidecar/MissingSidecar';
 import { PromisesRegistry } from '../../utils/CancelablePromises';
 import { ConfigIndicator } from '../../components/ConfigValidation/ConfigIndicator';
+import { ApiTypeIndicator } from '../../components/ApiDocumentation/ApiTypeIndicator';
 
 interface Props {
   item: ServiceListItem;
+  hasApiColumn: boolean;
 }
 interface State {
   health?: ServiceHealth;
+  columnWidth: number;
 }
 
 export default class ItemDescription extends React.PureComponent<Props, State> {
@@ -19,7 +22,7 @@ export default class ItemDescription extends React.PureComponent<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    this.state = { health: undefined };
+    this.state = { health: undefined, columnWidth: props.hasApiColumn?3:4 };
   }
 
   componentDidMount() {
@@ -51,14 +54,14 @@ export default class ItemDescription extends React.PureComponent<Props, State> {
   render() {
     return this.state.health ? (
       <Row>
-        <Col xs={12} sm={12} md={4} lg={4}>
+        <Col xs={12} sm={12} md={this.state.columnWidth} lg={this.state.columnWidth}>
           <strong>Health: </strong>
           <HealthIndicator id={this.props.item.name} health={this.state.health} mode={DisplayMode.SMALL} />
         </Col>
-        <Col xs={12} sm={12} md={4} lg={4}>
+        <Col xs={12} sm={12} md={this.state.columnWidth} lg={this.state.columnWidth}>
           {!this.props.item.istioSidecar && <MissingSidecar />}
         </Col>
-        <Col xs={12} sm={12} md={4} lg={4}>
+        <Col xs={12} sm={12} md={this.state.columnWidth} lg={this.state.columnWidth}>
           <strong>Config: </strong>{' '}
           <ConfigIndicator
             id={this.props.item.name + '-config-validation'}
@@ -66,7 +69,10 @@ export default class ItemDescription extends React.PureComponent<Props, State> {
             size="medium"
           />
         </Col>
-        <Col xs={12} sm={12} md={4} lg={4} />
+        <Col xs={12} sm={12} md={this.state.columnWidth} lg={this.state.columnWidth}>
+          {this.props.item.apiType && <strong>Api: </strong>}
+          {this.props.item.apiType && <ApiTypeIndicator apiType={this.props.item.apiType} />}
+        </Col> 
       </Row>
     ) : (
       <span />
