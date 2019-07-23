@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { AggregateStatusNotification, OverlayTrigger, Popover } from 'patternfly-react';
+import { AggregateStatusNotification, Popover } from 'patternfly-react';
+import { Tooltip, TooltipPosition } from '@patternfly/react-core';
 import { Link } from 'react-router-dom';
 import { Status } from '../../types/Health';
 import { Paths } from '../../config';
@@ -38,17 +39,16 @@ class OverviewStatus extends React.Component<Props, {}> {
       items.push('and ' + (length - items.length) + ' more...');
     }
     return (
-      <OverlayTrigger
+      <Tooltip
+        position={TooltipPosition.top}
         // Prettier makes irrelevant line-breaking clashing withtslint
         // prettier-ignore
-        overlay={<Popover id={this.props.id} title={this.props.status.name}>
+        content={<Popover id={this.props.id} title={this.props.status.name}>
             {items.map((app, idx) => {
               return (<div key={this.props.id + '-' + idx}>{app}</div>);
             })}
           </Popover>}
-        placement="top"
-        trigger={['focus', 'hover']}
-        rootClose={true}
+        trigger={'focus mouseenter click'}
       >
         <AggregateStatusNotification>
           <Link to={`/${this.props.targetPage}?namespaces=${this.props.namespace}`} onClick={() => this.setFilters()}>
@@ -56,7 +56,7 @@ class OverviewStatus extends React.Component<Props, {}> {
             {' ' + length}
           </Link>
         </AggregateStatusNotification>
-      </OverlayTrigger>
+      </Tooltip>
     );
   }
 }
