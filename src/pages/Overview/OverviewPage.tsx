@@ -1,6 +1,5 @@
 import * as React from 'react';
 import {
-  Breadcrumb,
   Card,
   CardBody,
   CardGrid,
@@ -11,6 +10,15 @@ import {
   EmptyStateTitle,
   Row
 } from 'patternfly-react';
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  Card as CardPF,
+  CardHeader as CardHeaderPF,
+  CardBody as CardBodyPF,
+  Grid,
+  GridItem
+} from '@patternfly/react-core';
 import { style } from 'typestyle';
 import { AxiosError } from 'axios';
 import _ from 'lodash';
@@ -300,8 +308,8 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
     const filteredNamespaces = Filters.filterBy(this.state.namespaces, FilterSelected.getSelected());
     return (
       <>
-        <Breadcrumb title={true}>
-          <Breadcrumb.Item active={true}>Namespaces</Breadcrumb.Item>
+        <Breadcrumb>
+          <BreadcrumbItem isActive={true}>Namespaces</BreadcrumbItem>
         </Breadcrumb>
         <OverviewToolbarContainer
           onRefresh={this.load}
@@ -311,28 +319,48 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
           setDisplayMode={this.setDisplayMode}
         />
         {filteredNamespaces.length > 0 ? (
-          <div className="cards-pf">
-            <CardGrid matchHeight={true} className={cardGridStyle}>
-              <Row style={{ marginBottom: '20px', marginTop: '20px' }}>
-                {filteredNamespaces.map(ns => {
-                  return (
-                    <Col xs={xs} sm={sm} md={md} key={ns.name}>
-                      <Card matchHeight={true} accented={true} aggregated={true}>
-                        <CardTitle>
-                          {ns.tlsStatus ? <NamespaceMTLSStatusContainer status={ns.tlsStatus.status} /> : undefined}
-                          {ns.name}
-                        </CardTitle>
-                        <CardBody>
-                          {this.renderStatuses(ns)}
-                          <OverviewCardLinks name={ns.name} />
-                        </CardBody>
-                      </Card>
-                    </Col>
-                  );
-                })}
-              </Row>
-            </CardGrid>
-          </div>
+          <>
+            <Grid gutter={'md'} className={'overview_grid'}>
+              {filteredNamespaces.map(ns => {
+                return (
+                  <GridItem span={4} key={'overview_' + ns.name}>
+                    <CardPF className={'overview_card'}>
+                      <CardHeaderPF className={'overview_card_header'}>
+                        {ns.tlsStatus ? <NamespaceMTLSStatusContainer status={ns.tlsStatus.status} /> : undefined}
+                        {ns.name}
+                      </CardHeaderPF>
+                      <CardBodyPF>
+                        {this.renderStatuses(ns)}
+                        <OverviewCardLinks name={ns.name} />
+                      </CardBodyPF>
+                    </CardPF>
+                  </GridItem>
+                );
+              })}
+            </Grid>
+            <div className="cards-pf">
+              <CardGrid matchHeight={true} className={cardGridStyle}>
+                <Row style={{ marginBottom: '20px', marginTop: '20px' }}>
+                  {filteredNamespaces.map(ns => {
+                    return (
+                      <Col xs={xs} sm={sm} md={md} key={ns.name}>
+                        <Card matchHeight={true} accented={true} aggregated={true}>
+                          <CardTitle>
+                            {ns.tlsStatus ? <NamespaceMTLSStatusContainer status={ns.tlsStatus.status} /> : undefined}
+                            {ns.name}
+                          </CardTitle>
+                          <CardBody>
+                            {this.renderStatuses(ns)}
+                            <OverviewCardLinks name={ns.name} />
+                          </CardBody>
+                        </Card>
+                      </Col>
+                    );
+                  })}
+                </Row>
+              </CardGrid>
+            </div>
+          </>
         ) : (
           <EmptyState className={emptyStateStyle}>
             <EmptyStateTitle>No unfiltered namespaces</EmptyStateTitle>
