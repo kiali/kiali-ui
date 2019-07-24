@@ -68,7 +68,7 @@ class WebLogin implements LoginStrategy<WebLoginData> {
 }
 
 class LdapLogin implements LoginStrategy<WebLoginData> {
-  public async prepare(info: AuthConfig) {
+  public async prepare(_info: AuthConfig) {
     return AuthResult.CONTINUE;
   }
 
