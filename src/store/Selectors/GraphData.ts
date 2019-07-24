@@ -11,7 +11,8 @@ import {
   DecoratedGraphNodeWrapper,
   GraphEdgeWrapper,
   GraphElements,
-  GraphNodeWrapper
+  GraphNodeWrapper,
+  protocolTrafficHasData
 } from '../../types/Graph';
 
 // When updating the cytoscape graph, the element data expects to have all the changes
@@ -20,36 +21,36 @@ import {
 export const decorateGraphData = (graphData: GraphElements): DecoratedGraphElements => {
   const elementsDefaults = {
     edges: {
-      grpc: 'NaN',
-      grpcErr: 'NaN',
-      grpcPercentErr: 'NaN',
-      grpcPercentReq: 'NaN',
-      http: 'NaN',
-      http3xx: 'NaN',
-      http4xx: 'NaN',
-      http5xx: 'NaN',
-      httpPercentErr: 'NaN',
-      httpPercentReq: 'NaN',
-      isMTLS: '-1',
+      grpc: NaN,
+      grpcErr: NaN,
+      grpcPercentErr: NaN,
+      grpcPercentReq: NaN,
+      http: NaN,
+      http3xx: NaN,
+      http4xx: NaN,
+      http5xx: NaN,
+      httpPercentErr: NaN,
+      httpPercentReq: NaN,
+      isMTLS: -1,
       protocol: undefined,
       responses: undefined,
-      responseTime: 'NaN',
-      tcp: 'NaN'
+      responseTime: NaN,
+      tcp: NaN
     },
     nodes: {
       app: undefined,
       destServices: undefined,
-      grpcIn: 'NaN',
-      grpcInErr: 'NaN',
-      grpcOut: 'NaN',
+      grpcIn: NaN,
+      grpcInErr: NaN,
+      grpcOut: NaN,
       hasCB: undefined,
       hasMissingSC: undefined,
       hasVS: undefined,
-      httpIn: 'NaN',
-      httpIn3xx: 'NaN',
-      httpIn4xx: 'NaN',
-      httpIn5xx: 'NaN',
-      httpOut: 'NaN',
+      httpIn: NaN,
+      httpIn3xx: NaN,
+      httpIn4xx: NaN,
+      httpIn5xx: NaN,
+      httpOut: NaN,
       isDead: undefined,
       isGroup: undefined,
       isInaccessible: undefined,
@@ -59,12 +60,46 @@ export const decorateGraphData = (graphData: GraphElements): DecoratedGraphEleme
       isServiceEntry: undefined,
       isUnused: undefined,
       service: undefined,
-      tcpIn: 'NaN',
-      tcpOut: 'NaN',
+      tcpIn: NaN,
+      tcpOut: NaN,
       version: undefined,
       workload: undefined
     }
   };
+  // It's not easy to get find/hide to work exactly as users users may expect.  Because edges represent
+  // traffic for only one protocol it is best to use 0 defaults for that one protocol, and leave the others
+  // as NaN. In that way numerical expressions affect only edges for a desired protocol.  Because nodes
+  // can involve traffic from multiple protocols, it seems (for now) best to only set the values explicitly
+  // supplied in the JSON.
+  const edgeProtocolDefaults = {
+    grpc: {
+      grpc: 0,
+      grpcErr: 0,
+      grpcPercentErr: 0,
+      grpcPercentReq: 0
+    },
+    http: {
+      http: 0,
+      http3xx: 0,
+      http4xx: 0,
+      http5xx: 0,
+      httpPercentErr: 0,
+      httpPercentReq: 0
+    },
+    tcp: {
+      tcp: 0
+    }
+  };
+
+  const propertiesToNumber = (object: Object, keys?: string[]) => {
+    const objectWithNumbers = { ...object };
+    const targetKeys = keys ? keys : Object.keys(objectWithNumbers);
+    for (const key of targetKeys) {
+      objectWithNumbers[key] = Number(objectWithNumbers[key]);
+    }
+    return objectWithNumbers;
+  };
+
   const decoratedGraph: DecoratedGraphElements = {};
   if (graphData) {
     if (graphData.nodes) {
@@ -76,14 +111,14 @@ export const decorateGraphData = (graphData: GraphElements): DecoratedGraphEleme
         if (decoratedNode.data.traffic) {
           const traffic = decoratedNode.data.traffic;
           decoratedNode.data.traffic = undefined;
-          traffic.map(protocol => {
-            decoratedNode.data = { ...protocol.rates, ...decoratedNode.data };
+          traffic.forEach(protocol => {
+            decoratedNode.data = { ...propertiesToNumber(protocol.rates), ...decoratedNode.data };
           });
         }
         // prettier-ignore
-        decoratedNode.data = <DecoratedGraphNodeData> { ...elementsDefaults.nodes, ...decoratedNode.data };
+        decoratedNode.data = { ...elementsDefaults.nodes, ...decoratedNode.data } as DecoratedGraphNodeData;
         // prettier-ignore
-        return <DecoratedGraphNodeWrapper> decoratedNode;
+        return decoratedNode as DecoratedGraphNodeWrapper;
       });
     }
     if (graphData.edges) {
@@ -91,18 +126,22 @@ export const decorateGraphData = (graphData: GraphElements): DecoratedGraphEleme
         const decoratedEdge: any = { ...edge };
         const { traffic, ...edgeData } = edge.data;
         // see comment above about the 'traffic' data handling
-        if (traffic && traffic.protocol !== '') {
-          decoratedEdge.data = {
-            protocol: traffic.protocol,
-            responses: traffic.responses,
-            ...traffic.rates,
-            ...edgeData
-          };
+        if (traffic) {
+          if (protocolTrafficHasData(traffic)) {
+            decoratedEdge.data = {
+              responses: traffic.responses,
+              ...edgeProtocolDefaults[traffic.protocol],
+              ...propertiesToNumber(traffic.rates),
+              // Base properties that need to be cast as number.
+              ...propertiesToNumber(edgeData, ['isMtls', 'responseTime'])
+            };
+          }
+          decoratedEdge.data = { protocol: traffic.protocol, ...decoratedEdge.data };
         }
         // prettier-ignore
-        decoratedEdge.data = <DecoratedGraphEdgeData> { ...elementsDefaults.edges, ...decoratedEdge.data };
+        decoratedEdge.data = { ...elementsDefaults.edges, ...decoratedEdge.data } as DecoratedGraphEdgeData;
         // prettier-ignore
-        return <DecoratedGraphEdgeWrapper> decoratedEdge;
+        return decoratedEdge as DecoratedGraphEdgeWrapper;
       });
     }
   }

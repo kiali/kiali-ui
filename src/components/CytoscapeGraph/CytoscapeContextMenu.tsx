@@ -1,7 +1,11 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { Router } from 'react-router';
 import tippy, { Instance } from 'tippy.js';
 import { DecoratedGraphEdgeData, DecoratedGraphNodeData } from '../../types/Graph';
+import { Provider } from 'react-redux';
+import { store } from '../../store/ConfigStore';
+import history from '../../app/History';
 
 type Props = {
   groupContextMenuContent?: NodeContextMenuType;
@@ -147,18 +151,22 @@ export class CytoscapeContextMenuWrapper extends React.PureComponent<Props> {
       distance: this.tippyDistance(target)
     }).instances[0];
 
-    ReactDOM.render(
-      <ContextMenuComponentClass element={target} contextMenu={tippyInstance} {...target.data()} />,
-      content,
-      () => {
-        this.setCurrentContextMenu(tippyInstance);
-        tippyInstance.show();
-        // Schedule the removal of the contextmenu listener after finishing with the show procedure, so we can
-        // interact with the popper content e.g. select and copy (with right click) values from it.
-        setTimeout(() => {
-          this.removeContextMenuEventListener();
-        }, 0);
-      }
+    const result = (
+      <Provider store={store}>
+        <Router history={history}>
+          <ContextMenuComponentClass element={target} contextMenu={tippyInstance} {...target.data()} />
+        </Router>
+      </Provider>
     );
+
+    ReactDOM.render(result, content, () => {
+      this.setCurrentContextMenu(tippyInstance);
+      tippyInstance.show();
+      // Schedule the removal of the contextmenu listener after finishing with the show procedure, so we can
+      // interact with the popper content e.g. select and copy (with right click) values from it.
+      setTimeout(() => {
+        this.removeContextMenuEventListener();
+      }, 0);
+    });
   }
 }

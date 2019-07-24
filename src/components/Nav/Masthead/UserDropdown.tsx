@@ -3,8 +3,8 @@ import { Dropdown, DropdownItem, DropdownToggle } from '@patternfly/react-core';
 import { SessionTimeout } from '../../SessionTimeout/SessionTimeout';
 import { config } from '../../../config';
 import { MILLISECONDS } from '../../../types/Common';
-import Timer = NodeJS.Timer;
-import { KialiAppState, LoginSession } from 'src/store/Store';
+import { Timer } from 'globals';
+import { KialiAppState, LoginSession } from '../../../store/Store';
 import authenticationConfig from '../../../config/AuthenticationConfig';
 import { AuthStrategy } from '../../../types/Auth';
 import moment from 'moment';
@@ -12,9 +12,10 @@ import { ThunkDispatch } from 'redux-thunk';
 import { KialiAppAction } from '../../../actions/KialiAppAction';
 import LoginThunkActions from '../../../actions/LoginThunkActions';
 import { connect } from 'react-redux';
+import * as API from '../../../services/Api';
 
 type UserProps = {
-  session: LoginSession;
+  session?: LoginSession;
   logout: () => void;
   extendSession: (session: LoginSession) => void;
 };
@@ -62,7 +63,7 @@ class UserDropdownConnected extends React.Component<UserProps, UserState> {
   }
 
   timeLeft = (): number => {
-    const expiresOn = moment(this.props.session.expiresOn);
+    const expiresOn = moment(this.props.session!.expiresOn);
 
     if (expiresOn <= moment()) {
       this.props.logout();
@@ -77,9 +78,9 @@ class UserDropdownConnected extends React.Component<UserProps, UserState> {
     }
   };
 
-  handleLogout = e => {
-    e.preventDefault();
+  handleLogout = () => {
     if (authenticationConfig.logoutEndpoint) {
+      API.logout();
       (document.getElementById('openshiftlogout') as HTMLFormElement).submit();
     } else {
       this.props.logout();
@@ -97,7 +98,7 @@ class UserDropdownConnected extends React.Component<UserProps, UserState> {
     });
   };
 
-  onDropdownSelect = event => {
+  onDropdownSelect = _event => {
     this.setState({
       isDropdownOpen: !this.state.isDropdownOpen
     });
@@ -127,7 +128,11 @@ class UserDropdownConnected extends React.Component<UserProps, UserState> {
             position="right"
             onSelect={this.onDropdownSelect}
             isOpen={isDropdownOpen}
-            toggle={<DropdownToggle onToggle={this.onDropdownToggle}>{this.props.session.username}</DropdownToggle>}
+            toggle={
+              <DropdownToggle id={'user-dropdown-toggle'} onToggle={this.onDropdownToggle}>
+                {this.props.session.username}
+              </DropdownToggle>
+            }
             dropdownItems={[userDropdownItems]}
           />
         )}

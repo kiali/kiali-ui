@@ -28,11 +28,11 @@ const matchValueStyle = style({
 
 const ruleItemStyle = style({
   $nest: {
-    ['.list-group-item-heading']: {
+    '.list-group-item-heading': {
       flexBasis: 'calc(50% - 20px)',
       width: 'calc(50% - 20px)'
     },
-    ['.list-view-pf-actions']: {
+    '.list-view-pf-actions': {
       zIndex: 10
     }
   }
@@ -54,10 +54,6 @@ const wkIconType = 'pf';
 const wkIconName = 'bundle';
 
 class Rules extends React.Component<Props> {
-  constructor(props: Props) {
-    super(props);
-  }
-
   matchAllIndex = (rules: Rule[]): number => {
     let matchAll: number = -1;
     for (let index = 0; index < rules.length; index++) {

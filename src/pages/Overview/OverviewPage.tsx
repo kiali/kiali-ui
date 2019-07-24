@@ -1,11 +1,22 @@
 import * as React from 'react';
-import { Breadcrumb, Card, CardBody, CardGrid, CardTitle, Col, Row } from 'patternfly-react';
+import {
+  Breadcrumb,
+  Card,
+  CardBody,
+  CardGrid,
+  CardTitle,
+  Col,
+  EmptyState,
+  EmptyStateInfo,
+  EmptyStateTitle,
+  Row
+} from 'patternfly-react';
 import { style } from 'typestyle';
 import { AxiosError } from 'axios';
 import _ from 'lodash';
 
 import { FilterSelected } from '../../components/Filters/StatefulFilters';
-import { ListPagesHelper } from '../../components/ListPage/ListPagesHelper';
+import * as ListPagesHelper from '../../components/ListPage/ListPagesHelper';
 import * as API from '../../services/Api';
 import {
   DEGRADED,
@@ -24,7 +35,7 @@ import NamespaceInfo, { NamespaceStatus } from './NamespaceInfo';
 import OverviewCardContent from './OverviewCardContent';
 import NamespaceMTLSStatusContainer from '../../components/MTls/NamespaceMTLSStatus';
 import OverviewCardContentExpanded from './OverviewCardContentExpanded';
-import { MetricsOptions } from '../../types/MetricsOptions';
+import { IstioMetricsOptions } from '../../types/MetricsOptions';
 import { computePrometheusRateParams } from '../../services/Prometheus';
 import OverviewCardLinks from './OverviewCardLinks';
 import { KialiAppState } from '../../store/Store';
@@ -32,10 +43,17 @@ import { connect } from 'react-redux';
 import { meshWideMTLSStatusSelector } from '../../store/Selectors';
 import { nsWideMTLSStatus } from '../../types/TLSStatus';
 import { switchType } from './OverviewHelper';
-import { Sorts } from './Sorts';
-import { Filters } from './Filters';
+import * as Sorts from './Sorts';
+import * as Filters from './Filters';
 
 const cardGridStyle = style({ width: '100%' });
+
+const emptyStateStyle = style({
+  height: '98%',
+  marginRight: 5,
+  marginBottom: 10,
+  marginTop: 10
+});
 
 type State = {
   namespaces: NamespaceInfo[];
@@ -45,6 +63,7 @@ type State = {
 
 type ReduxProps = {
   meshStatus: string;
+  navCollapse: boolean;
 };
 
 type OverviewProps = ReduxProps & {};
@@ -60,6 +79,14 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
       type: OverviewToolbar.currentOverviewType(),
       displayMode: OverviewDisplayMode.EXPAND
     };
+  }
+
+  componentDidUpdate(prevProps: OverviewProps) {
+    if (prevProps.navCollapse !== this.props.navCollapse) {
+      // Reload to avoid graphical glitches with charts
+      // TODO: this workaround should probably be deleted after switch to Patternfly 4, see https://issues.jboss.org/browse/KIALI-3116
+      this.load();
+    }
   }
 
   componentDidMount() {
@@ -197,7 +224,7 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
 
   fetchMetricsChunk(chunk: NamespaceInfo[], duration: number) {
     const rateParams = computePrometheusRateParams(duration, 10);
-    const optionsIn: MetricsOptions = {
+    const optionsIn: IstioMetricsOptions = {
       filters: ['request_count'],
       duration: duration,
       step: rateParams.step,
@@ -283,28 +310,37 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
           displayMode={this.state.displayMode}
           setDisplayMode={this.setDisplayMode}
         />
-        <div className="cards-pf">
-          <CardGrid matchHeight={true} className={cardGridStyle}>
-            <Row style={{ marginBottom: '20px', marginTop: '20px' }}>
-              {filteredNamespaces.map(ns => {
-                return (
-                  <Col xs={xs} sm={sm} md={md} key={ns.name}>
-                    <Card matchHeight={true} accented={true} aggregated={true}>
-                      <CardTitle>
-                        {ns.tlsStatus ? <NamespaceMTLSStatusContainer status={ns.tlsStatus.status} /> : undefined}
-                        {ns.name}
-                      </CardTitle>
-                      <CardBody>
-                        {this.renderStatuses(ns)}
-                        <OverviewCardLinks name={ns.name} />
-                      </CardBody>
-                    </Card>
-                  </Col>
-                );
-              })}
-            </Row>
-          </CardGrid>
-        </div>
+        {filteredNamespaces.length > 0 ? (
+          <div className="cards-pf">
+            <CardGrid matchHeight={true} className={cardGridStyle}>
+              <Row style={{ marginBottom: '20px', marginTop: '20px' }}>
+                {filteredNamespaces.map(ns => {
+                  return (
+                    <Col xs={xs} sm={sm} md={md} key={ns.name}>
+                      <Card matchHeight={true} accented={true} aggregated={true}>
+                        <CardTitle>
+                          {ns.tlsStatus ? <NamespaceMTLSStatusContainer status={ns.tlsStatus.status} /> : undefined}
+                          {ns.name}
+                        </CardTitle>
+                        <CardBody>
+                          {this.renderStatuses(ns)}
+                          <OverviewCardLinks name={ns.name} />
+                        </CardBody>
+                      </Card>
+                    </Col>
+                  );
+                })}
+              </Row>
+            </CardGrid>
+          </div>
+        ) : (
+          <EmptyState className={emptyStateStyle}>
+            <EmptyStateTitle>No unfiltered namespaces</EmptyStateTitle>
+            <EmptyStateInfo>
+              Either all namespaces are being filtered or the user has no permission to access namespaces.
+            </EmptyStateInfo>
+          </EmptyState>
+        )}
       </>
     );
   }
@@ -329,8 +365,9 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
   }
 }
 
-const mapStateToProps = (state: KialiAppState) => ({
-  meshStatus: meshWideMTLSStatusSelector(state)
+const mapStateToProps = (state: KialiAppState): ReduxProps => ({
+  meshStatus: meshWideMTLSStatusSelector(state),
+  navCollapse: state.userSettings.interface.navCollapse
 });
 
 const OverviewPageContainer = connect(mapStateToProps)(OverviewPage);

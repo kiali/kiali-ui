@@ -44,10 +44,6 @@ class VirtualServiceRoute extends React.Component<VirtualServiceRouteProps> {
     );
   };
 
-  constructor(props: VirtualServiceRouteProps) {
-    super(props);
-  }
-
   columns() {
     return {
       columns: [
@@ -218,7 +214,7 @@ class VirtualServiceRoute extends React.Component<VirtualServiceRouteProps> {
     }
   }
 
-  destinationFrom(destinationWeight: DestinationWeight, i: number, isValid: boolean) {
+  destinationFrom(destinationWeight: DestinationWeight, _i: number, isValid: boolean) {
     const destination = destinationWeight.destination;
     if (destination) {
       return {
@@ -314,7 +310,7 @@ class VirtualServiceRoute extends React.Component<VirtualServiceRouteProps> {
     );
   }
 
-  routeStatusMessage(route: HTTPRoute | TCPRoute, routeIndex: number) {
+  routeStatusMessage(_route: HTTPRoute | TCPRoute, routeIndex: number) {
     const checks = checkForPath(
       this.validation(),
       'spec/' + this.props.kind.toLowerCase() + '[' + routeIndex + ']/route'

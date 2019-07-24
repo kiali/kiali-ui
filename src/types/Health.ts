@@ -1,3 +1,5 @@
+import { ErrorCircleOIcon, WarningTriangleIcon, OkIcon, UnknownIcon } from '@patternfly/react-icons';
+import { IconType } from '@patternfly/react-icons/dist/js/createIcon';
 import { PfColors } from '../components/Pf/PfColors';
 import { getName } from '../utils/RateIntervals';
 
@@ -30,33 +32,37 @@ export interface Status {
   name: string;
   color: string;
   priority: number;
-  icon?: string;
-  text?: string;
+  icon: IconType;
+  class: string;
 }
 
 export const FAILURE: Status = {
   name: 'Failure',
   color: PfColors.Red100,
   priority: 3,
-  icon: 'error-circle-o'
+  icon: ErrorCircleOIcon,
+  class: 'icon-failure'
 };
 export const DEGRADED: Status = {
   name: 'Degraded',
   color: PfColors.Orange400,
   priority: 2,
-  icon: 'warning-triangle-o'
+  icon: WarningTriangleIcon,
+  class: 'icon-degraded'
 };
 export const HEALTHY: Status = {
   name: 'Healthy',
   color: PfColors.Green400,
   priority: 1,
-  icon: 'ok'
+  icon: OkIcon,
+  class: 'icon-healthy'
 };
 export const NA: Status = {
   name: 'No health information',
   color: PfColors.Gray,
   priority: 0,
-  text: 'N/A'
+  icon: UnknownIcon,
+  class: 'icon-na'
 };
 
 interface Thresholds {
@@ -151,11 +157,7 @@ export const getRequestErrorsViolations = (reqIn: ThresholdStatus, reqOut: Thres
 };
 
 export abstract class Health {
-  items: HealthItem[];
-
-  constructor(items: HealthItem[]) {
-    this.items = items;
-  }
+  constructor(public items: HealthItem[]) {}
 
   getGlobalStatus(): Status {
     return this.items.map(i => i.status).reduce((prev, cur) => mergeStatus(prev, cur), NA);
@@ -172,29 +174,27 @@ export class ServiceHealth extends Health {
 
   private static computeItems(requests: RequestHealth, ctx: HealthContext): HealthItem[] {
     const items: HealthItem[] = [];
-    {
-      if (ctx.hasSidecar) {
-        // Request errors
-        const reqErrorsRatio = getRequestErrorsStatus(requests.errorRatio);
-        const reqErrorsText = reqErrorsRatio.status === NA ? 'No requests' : reqErrorsRatio.value.toFixed(2) + '%';
-        const item: HealthItem = {
-          title: 'Error Rate over ' + getName(ctx.rateInterval).toLowerCase(),
-          status: reqErrorsRatio.status,
-          text: reqErrorsText
-        };
-        items.push(item);
-      } else {
-        items.push({
-          title: 'Error Rate',
-          status: NA,
-          text: 'No Istio sidecar'
-        });
-      }
+    if (ctx.hasSidecar) {
+      // Request errors
+      const reqErrorsRatio = getRequestErrorsStatus(requests.errorRatio);
+      const reqErrorsText = reqErrorsRatio.status === NA ? 'No requests' : reqErrorsRatio.value.toFixed(2) + '%';
+      const item: HealthItem = {
+        title: 'Error Rate over ' + getName(ctx.rateInterval).toLowerCase(),
+        status: reqErrorsRatio.status,
+        text: reqErrorsText
+      };
+      items.push(item);
+    } else {
+      items.push({
+        title: 'Error Rate',
+        status: NA,
+        text: 'No Istio sidecar'
+      });
     }
     return items;
   }
 
-  constructor(public requests: RequestHealth, public ctx: HealthContext) {
+  constructor(public requests: RequestHealth, ctx: HealthContext) {
     super(ServiceHealth.computeItems(requests, ctx));
   }
 }
@@ -233,24 +233,22 @@ export class AppHealth extends Health {
       }
       items.push(item);
     }
-    {
-      // Request errors
-      if (ctx.hasSidecar) {
-        const reqIn = getRequestErrorsStatus(requests.inboundErrorRatio);
-        const reqOut = getRequestErrorsStatus(requests.outboundErrorRatio);
-        const both = mergeStatus(reqIn.status, reqOut.status);
-        const item: HealthItem = {
-          title: 'Error Rate over ' + getName(ctx.rateInterval).toLowerCase(),
-          status: both,
-          children: [getRequestErrorsSubItem(reqIn, 'Inbound'), getRequestErrorsSubItem(reqOut, 'Outbound')]
-        };
-        items.push(item);
-      }
+    // Request errors
+    if (ctx.hasSidecar) {
+      const reqIn = getRequestErrorsStatus(requests.inboundErrorRatio);
+      const reqOut = getRequestErrorsStatus(requests.outboundErrorRatio);
+      const both = mergeStatus(reqIn.status, reqOut.status);
+      const item: HealthItem = {
+        title: 'Error Rate over ' + getName(ctx.rateInterval).toLowerCase(),
+        status: both,
+        children: [getRequestErrorsSubItem(reqIn, 'Inbound'), getRequestErrorsSubItem(reqOut, 'Outbound')]
+      };
+      items.push(item);
     }
     return items;
   }
 
-  constructor(public workloadStatuses: WorkloadStatus[], public requests: RequestHealth, public ctx: HealthContext) {
+  constructor(workloadStatuses: WorkloadStatus[], public requests: RequestHealth, ctx: HealthContext) {
     super(AppHealth.computeItems(workloadStatuses, requests, ctx));
   }
 }
@@ -301,24 +299,22 @@ export class WorkloadHealth extends Health {
       }
       items.push(item);
     }
-    {
-      // Request errors
-      if (ctx.hasSidecar) {
-        const reqIn = getRequestErrorsStatus(requests.inboundErrorRatio);
-        const reqOut = getRequestErrorsStatus(requests.outboundErrorRatio);
-        const both = mergeStatus(reqIn.status, reqOut.status);
-        const item: HealthItem = {
-          title: 'Error Rate over ' + getName(ctx.rateInterval).toLowerCase(),
-          status: both,
-          children: [getRequestErrorsSubItem(reqIn, 'Inbound'), getRequestErrorsSubItem(reqOut, 'Outbound')]
-        };
-        items.push(item);
-      }
+    // Request errors
+    if (ctx.hasSidecar) {
+      const reqIn = getRequestErrorsStatus(requests.inboundErrorRatio);
+      const reqOut = getRequestErrorsStatus(requests.outboundErrorRatio);
+      const both = mergeStatus(reqIn.status, reqOut.status);
+      const item: HealthItem = {
+        title: 'Error Rate over ' + getName(ctx.rateInterval).toLowerCase(),
+        status: both,
+        children: [getRequestErrorsSubItem(reqIn, 'Inbound'), getRequestErrorsSubItem(reqOut, 'Outbound')]
+      };
+      items.push(item);
     }
     return items;
   }
 
-  constructor(public workloadStatus: WorkloadStatus, public requests: RequestHealth, public ctx: HealthContext) {
+  constructor(workloadStatus: WorkloadStatus, public requests: RequestHealth, ctx: HealthContext) {
     super(WorkloadHealth.computeItems(workloadStatus, requests, ctx));
   }
 }
@@ -334,3 +330,7 @@ export const healthNotAvailable = (): AppHealth => {
 export type NamespaceAppHealth = { [app: string]: AppHealth };
 export type NamespaceServiceHealth = { [service: string]: ServiceHealth };
 export type NamespaceWorkloadHealth = { [workload: string]: WorkloadHealth };
+
+export type WithAppHealth<T> = T & { health: AppHealth };
+export type WithServiceHealth<T> = T & { health: ServiceHealth };
+export type WithWorkloadHealth<T> = T & { health: WorkloadHealth };

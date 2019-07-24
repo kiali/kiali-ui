@@ -32,8 +32,9 @@ const GraphDataThunkActions = {
     showUnusedNodes: boolean,
     node?: NodeParamsType
   ) => {
-    return (dispatch: ThunkDispatch<KialiAppState, undefined, KialiAppAction>, getState: () => KialiAppState) => {
+    return (dispatch: ThunkDispatch<KialiAppState, undefined, KialiAppAction>, _getState: () => KialiAppState) => {
       if (namespaces.length === 0) {
+        dispatch(GraphDataActions.getGraphDataWithoutNamespaces());
         return Promise.resolve();
       }
       dispatch(GraphDataActions.getGraphDataStart());

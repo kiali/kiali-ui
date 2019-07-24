@@ -15,12 +15,12 @@ import {
   VirtualServices,
   Validations,
   RbacConfig,
+  Sidecar,
   ServiceRole,
   ServiceRoleBinding,
   ClusterRbacConfig
 } from './IstioObjects';
 import { ResourcePermissions } from './Permissions';
-import _ from 'lodash';
 
 export interface IstioConfigItem {
   namespace: string;
@@ -39,6 +39,7 @@ export interface IstioConfigItem {
   meshPolicy?: Policy;
   clusterRbacConfig?: ClusterRbacConfig;
   rbacConfig?: RbacConfig;
+  sidecar?: Sidecar;
   serviceRole?: ServiceRole;
   serviceRoleBinding?: ServiceRoleBinding;
   validation?: ObjectValidation;
@@ -59,6 +60,7 @@ export interface IstioConfigList {
   meshPolicies: Policy[];
   clusterRbacConfigs: ClusterRbacConfig[];
   rbacConfigs: RbacConfig[];
+  sidecars: Sidecar[];
   serviceRoles: ServiceRole[];
   serviceRoleBindings: ServiceRoleBinding[];
   permissions: { [key: string]: ResourcePermissions };
@@ -74,6 +76,7 @@ export interface IstioService {
 }
 
 export const dicIstioType = {
+  Sidecar: 'sidecars',
   Gateway: 'gateways',
   VirtualService: 'virtualservices',
   DestinationRule: 'destinationrules',
@@ -104,6 +107,7 @@ export const dicIstioType = {
   meshpolicies: 'MeshPolicy',
   clusterrbacconfigs: 'ClusterRbacConfig',
   rbacconfigs: 'RbacConfig',
+  sidecars: 'Sidecar',
   serviceroles: 'ServiceRole',
   servicerolebindings: 'ServiceRoleBinding'
 };
@@ -142,6 +146,7 @@ export const filterByName = (unfiltered: IstioConfigList, names: string[]): Isti
     meshPolicies: unfiltered.meshPolicies.filter(p => includeName(p.metadata.name, names)),
     clusterRbacConfigs: unfiltered.clusterRbacConfigs.filter(rc => includeName(rc.metadata.name, names)),
     rbacConfigs: unfiltered.rbacConfigs.filter(rc => includeName(rc.metadata.name, names)),
+    sidecars: unfiltered.sidecars.filter(sc => includeName(sc.metadata.name, names)),
     serviceRoles: unfiltered.serviceRoles.filter(sr => includeName(sr.metadata.name, names)),
     serviceRoleBindings: unfiltered.serviceRoleBindings.filter(srb => includeName(srb.metadata.name, names)),
     validations: unfiltered.validations,

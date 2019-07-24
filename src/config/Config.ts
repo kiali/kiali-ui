@@ -1,8 +1,10 @@
 import deepFreeze from 'deep-freeze';
 import { UNIT_TIME, MILLISECONDS } from '../types/Common';
 
+// We assume this is always defined in the .env file
+const documentationUrl = process.env.REACT_APP_KIALI_DOC_URL!;
+
 const conf = {
-  version: '0.1',
   /** Configuration related with session */
   session: {
     /** TimeOut Session remain for warning user default 1 minute */
@@ -39,10 +41,14 @@ const conf = {
       linkText: 'Find us on GitHub'
     },
     website: {
-      url: 'http://kiali.io',
+      url: 'https://www.kiali.io', // Without www, we get an SSL error
       icon: 'HomeIcon',
       linkText: 'Visit our web page'
     }
+  },
+  /** */
+  documentation: {
+    url: documentationUrl
   },
   /**  Login configuration */
   login: {
@@ -66,8 +72,8 @@ const conf = {
       appHealth: (namespace: string, app: string) => `api/namespaces/${namespace}/apps/${app}/health`,
       appMetrics: (namespace: string, app: string) => `api/namespaces/${namespace}/apps/${app}/metrics`,
       appDashboard: (namespace: string, app: string) => `api/namespaces/${namespace}/apps/${app}/dashboard`,
-      customDashboard: (namespace: string, app: string, template: string) =>
-        `api/namespaces/${namespace}/apps/${app}/customdashboard/${template}`,
+      customDashboard: (namespace: string, template: string) =>
+        `api/namespaces/${namespace}/customdashboard/${template}`,
       grafana: 'api/grafana',
       istioConfig: (namespace: string) => `api/namespaces/${namespace}/istio`,
       istioConfigCreate: (namespace: string, objectType: string) => `api/namespaces/${namespace}/istio/${objectType}`,
@@ -84,6 +90,7 @@ const conf = {
       namespaceHealth: (namespace: string) => `api/namespaces/${namespace}/health`,
       namespaceMetrics: (namespace: string) => `api/namespaces/${namespace}/metrics`,
       namespaceTls: (namespace: string) => `api/namespaces/${namespace}/tls`,
+      meshTls: () => 'api/mesh/tls',
       pod: (namespace: string, pod: string) => `api/namespaces/${namespace}/pods/${pod}`,
       podLogs: (namespace: string, pod: string) => `api/namespaces/${namespace}/pods/${pod}/logs`,
       serverConfig: `api/config`,

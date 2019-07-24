@@ -26,10 +26,6 @@ type Props = {
 };
 
 class OverviewCardContentExpanded extends React.Component<Props> {
-  constructor(props: Props) {
-    super(props);
-  }
-
   render() {
     return (
       <>
@@ -136,7 +132,7 @@ class OverviewCardContentExpanded extends React.Component<Props> {
         <>
           {'Traffic, ' + getName(this.props.duration).toLowerCase()}
           <SparklineChart
-            id={'card-sparkline-' + name}
+            id={'card-sparkline-' + this.props.name}
             data={{ x: 'x', columns: graphUtils.toC3Columns(this.props.metrics, 'RPS'), type: 'area' }}
             tooltip={{}}
             axis={{

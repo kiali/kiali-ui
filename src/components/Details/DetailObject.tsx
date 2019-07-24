@@ -18,10 +18,6 @@ interface Validation {
 }
 
 class DetailObject extends React.Component<DetailObjectProps> {
-  constructor(props: DetailObjectProps) {
-    super(props);
-  }
-
   // Pseudo unique ID generator used for keys
   // The recursive nature of buildList() requires uniques list keys.
   // Modified from https://gist.github.com/gordonbrander/2230317
@@ -64,14 +60,14 @@ class DetailObject extends React.Component<DetailObjectProps> {
             this.label(name, value)
           ) : (
             <span>
-              <span className="text-capitalize">{name ? `[${name}]` : name}</span> {value}
+              <span className="text-capitalize">{name ? `[${name}]` : name}</span> {value.toString()}
             </span>
           )}
         </div>
       );
     }
 
-    const childrenList: any = [];
+    const childrenList: any[] = [];
     const listKey = this.generateKey();
     const checkLabel = this.checkLabel(name);
     if (Array.isArray(value)) {
@@ -93,7 +89,7 @@ class DetailObject extends React.Component<DetailObjectProps> {
       });
     }
 
-    return (
+    return childrenList.length > 0 ? (
       <div>
         <strong className="text-capitalize">{name}</strong>
         {depth === 0 && !!this.props.validation && this.props.validation.message ? (
@@ -107,6 +103,8 @@ class DetailObject extends React.Component<DetailObjectProps> {
         )}
         <ul className={'details'}>{childrenList}</ul>
       </div>
+    ) : (
+      ''
     );
   }
 

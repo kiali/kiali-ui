@@ -16,7 +16,7 @@ export interface LoginResult {
   error?: any;
 }
 
-interface LoginStrategy<T = {}> {
+interface LoginStrategy<T extends unknown> {
   prepare: (info: AuthConfig) => Promise<AuthResult>;
   perform: (request: DispatchRequest<T>) => Promise<LoginResult>;
 }
@@ -27,10 +27,10 @@ interface DispatchRequest<T> {
   data: T;
 }
 
-type NullDispatch = DispatchRequest<any>;
+type NullDispatch = DispatchRequest<unknown>;
 
-class AnonymousLogin implements LoginStrategy {
-  public async prepare(info: AuthConfig) {
+class AnonymousLogin implements LoginStrategy<unknown> {
+  public async prepare(_info: AuthConfig) {
     return AuthResult.CONTINUE;
   }
 
@@ -53,7 +53,7 @@ interface WebLoginData {
 }
 
 class WebLogin implements LoginStrategy<WebLoginData> {
-  public async prepare(info: AuthConfig) {
+  public async prepare(_info: AuthConfig) {
     return AuthResult.CONTINUE;
   }
 
@@ -82,7 +82,7 @@ class LdapLogin implements LoginStrategy<WebLoginData> {
   }
 }
 
-class OpenshiftLogin implements LoginStrategy<any> {
+class OpenshiftLogin implements LoginStrategy<unknown> {
   public async prepare(info: AuthConfig) {
     if (!info.authorizationEndpoint) {
       return AuthResult.FAILURE;
@@ -103,7 +103,7 @@ class OpenshiftLogin implements LoginStrategy<any> {
 
     // remove the data that was passed by the OAuth login. In certain error situations this can cause the
     // page to enter a refresh loop since it tries to reload the page which then tries to reuse the bad token again.
-    history.replaceState('', document.title, window.location.pathname + window.location.search);
+    window.history.replaceState('', document.title, window.location.pathname + window.location.search);
 
     return {
       status: AuthResult.SUCCESS,
@@ -113,11 +113,11 @@ class OpenshiftLogin implements LoginStrategy<any> {
 }
 
 export class LoginDispatcher {
-  strategyMapping: Map<AuthStrategy, LoginStrategy>;
+  strategyMapping: Map<AuthStrategy, LoginStrategy<any>>;
   info?: AuthConfig;
 
   constructor() {
-    this.strategyMapping = new Map<AuthStrategy, LoginStrategy>();
+    this.strategyMapping = new Map();
 
     this.strategyMapping.set(AuthStrategy.anonymous, new AnonymousLogin());
     this.strategyMapping.set(AuthStrategy.login, new WebLogin());

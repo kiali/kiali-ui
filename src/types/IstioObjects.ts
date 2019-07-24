@@ -206,14 +206,22 @@ export interface CorsPolicy {
 
 // Destination Rule
 
+export interface HTTPCookie {
+  name: string;
+  path?: string;
+  ttl: string;
+}
+
 export interface ConsistentHashLB {
-  httpHeader: string;
-  minimumRingSize: number;
+  httpHeaderName?: string | null;
+  httpCookie?: HTTPCookie | null;
+  useSourceIp?: boolean | null;
+  minimumRingSize?: number;
 }
 
 export interface LoadBalancerSettings {
-  simple?: string;
-  consistentHash?: ConsistentHashLB;
+  simple?: string | null;
+  consistentHash?: ConsistentHashLB | null;
 }
 
 export interface ConnectionPoolSettingsTCPSettings {
@@ -254,10 +262,10 @@ export interface TLSSettings {
 }
 
 export interface TrafficPolicy {
-  loadBalancer?: LoadBalancerSettings;
+  loadBalancer?: LoadBalancerSettings | null;
   connectionPool?: ConnectionPoolSettings;
   outlierDetection?: OutlierDetection;
-  tls?: TLSSettings;
+  tls?: TLSSettings | null;
 }
 
 export interface Subset {
@@ -268,7 +276,7 @@ export interface Subset {
 
 export interface DestinationRuleSpec {
   host?: string;
-  trafficPolicy?: TrafficPolicy;
+  trafficPolicy?: TrafficPolicy | null;
   subsets?: Subset[];
 }
 
@@ -335,6 +343,7 @@ export interface VirtualServiceSpec {
   http?: HTTPRoute[];
   tcp?: TCPRoute[];
   tls?: TLSRoute[];
+  exportTo?: string[] | null;
 }
 
 export interface VirtualService extends IstioObject {
@@ -363,6 +372,43 @@ export interface GatewaySpec {
 export interface Gateway extends IstioObject {
   spec: GatewaySpec;
 }
+
+// Sidecar resource https://preliminary.istio.io/docs/reference/config/networking/v1alpha3/sidecar
+
+export enum CaptureMode {
+  DEFAULT = 'DEFAULT',
+  IPTABLES = 'IPTABLES',
+  NONE = 'NONE'
+}
+
+export interface IstioEgressListener {
+  port?: Port;
+  bind?: string;
+  captureMode?: CaptureMode;
+  hosts: string[];
+}
+
+export interface IstioIngressListener {
+  port: Port;
+  bind?: string;
+  captureMode?: CaptureMode;
+  defaultEndpoint: string;
+}
+
+export interface WorkloadSelector {
+  labels: { [key: string]: string };
+}
+
+export interface SidecarSpec {
+  workloadSelector?: WorkloadSelector;
+  ingress?: IstioIngressListener;
+  egress?: IstioEgressListener;
+}
+
+export interface Sidecar extends IstioObject {
+  spec: SidecarSpec;
+}
+
 export interface Server {
   port: ServerPort;
   hosts: string[];
@@ -391,6 +437,8 @@ export interface ServiceEntrySpec {
   location?: string;
   resolution?: string;
   endpoints?: Endpoint[];
+  exportTo?: string[];
+  subjectAltNames?: string[];
 }
 
 export interface ServiceEntry extends IstioObject {

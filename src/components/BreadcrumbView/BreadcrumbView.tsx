@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Paths } from '../../config';
 import { Link } from 'react-router-dom';
-import { Breadcrumb } from 'patternfly-react';
+import { Breadcrumb, BreadcrumbItem } from '@patternfly/react-core';
 import { ActiveFilter } from '../../types/Filters';
 import { FilterSelected } from '../Filters/StatefulFilters';
 import { dicIstioType } from '../../types/IstioConfigList';
@@ -42,7 +42,7 @@ export class BreadcrumbView extends React.Component<BreadCumbViewProps, BreadCum
   }
 
   updateItem = () => {
-    const namespaceRegex = /namespaces\/([a-z0-9\-]+)\/([a-z0-9\-]+)\/([a-z0-9\-]+)(\/([a-z0-9\-]+))?(\/([a-z0-9\-]+))?/;
+    const namespaceRegex = /namespaces\/([a-z0-9-]+)\/([a-z0-9-]+)\/([a-z0-9-]+)(\/([a-z0-9-]+))?(\/([a-z0-9-]+))?/;
     const match = this.props.location.pathname.match(namespaceRegex) || [];
     const ns = match[1];
     const page = Paths[match[2].toUpperCase()];
@@ -62,8 +62,8 @@ export class BreadcrumbView extends React.Component<BreadCumbViewProps, BreadCum
 
   componentDidUpdate(
     prevProps: Readonly<BreadCumbViewProps>,
-    prevState: Readonly<BreadCumbViewState>,
-    snapshot?: any
+    _prevState: Readonly<BreadCumbViewState>,
+    _snapshot?: any
   ): void {
     if (prevProps.location !== this.props.location) {
       this.setState(this.updateItem());
@@ -97,37 +97,39 @@ export class BreadcrumbView extends React.Component<BreadCumbViewProps, BreadCum
     const { namespace, itemName, item, istioType, pathItem } = this.state;
     const isIstio = this.isIstio();
     const linkItem = isIstio ? (
-      <Breadcrumb.Item componentClass="span" active={true}>
+      <BreadcrumbItem isActive={true}>
         {itemName}: {item}
-      </Breadcrumb.Item>
+      </BreadcrumbItem>
     ) : (
-      <Breadcrumb.Item componentClass="span">
+      <BreadcrumbItem isActive={true}>
         <Link to={this.getItemPage()} onClick={this.cleanFilters}>
           {itemName}: {item}
         </Link>
-      </Breadcrumb.Item>
+      </BreadcrumbItem>
     );
     return (
-      <Breadcrumb title={true}>
-        <Breadcrumb.Item componentClass="span">
-          <Link to={`/${pathItem}`} onClick={this.cleanFilters}>
-            {isIstio ? IstioName : BreadcrumbView.capitalize(pathItem)}
-          </Link>
-        </Breadcrumb.Item>
-        <Breadcrumb.Item componentClass="span">
-          <Link to={`/${pathItem}?namespaces=${namespace}`} onClick={this.cleanFilters}>
-            Namespace: {namespace}
-          </Link>
-        </Breadcrumb.Item>
-        {isIstio && (
-          <Breadcrumb.Item componentClass="span">
-            <Link to={`/${pathItem}?namespaces=${namespace}`} onClick={this.updateTypeFilter}>
-              {itemName} Type: {istioType}
+      <div className="breadcrumb">
+        <Breadcrumb>
+          <BreadcrumbItem>
+            <Link to={`/${pathItem}`} onClick={this.cleanFilters}>
+              {isIstio ? IstioName : BreadcrumbView.capitalize(pathItem)}
             </Link>
-          </Breadcrumb.Item>
-        )}
-        {linkItem}
-      </Breadcrumb>
+          </BreadcrumbItem>
+          <BreadcrumbItem>
+            <Link to={`/${pathItem}?namespaces=${namespace}`} onClick={this.cleanFilters}>
+              Namespace: {namespace}
+            </Link>
+          </BreadcrumbItem>
+          {isIstio && (
+            <BreadcrumbItem>
+              <Link to={`/${pathItem}?namespaces=${namespace}`} onClick={this.updateTypeFilter}>
+                {itemName} Type: {istioType}
+              </Link>
+            </BreadcrumbItem>
+          )}
+          {linkItem}
+        </Breadcrumb>
+      </div>
     );
   }
 }

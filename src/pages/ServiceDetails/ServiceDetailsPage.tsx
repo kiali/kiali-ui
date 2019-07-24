@@ -25,6 +25,7 @@ import { DurationInSeconds } from '../../types/Common';
 import { durationSelector } from '../../store/Selectors';
 import { PromisesRegistry } from '../../utils/CancelablePromises';
 import Namespace from '../../types/Namespace';
+import { MessageType } from '../../types/MessageCenter';
 
 type ServiceDetailsState = {
   serviceDetailsInfo: ServiceDetailsInfo;
@@ -145,7 +146,7 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
     this.doRefresh();
   }
 
-  componentDidUpdate(prevProps: ServiceDetailsProps, prevState: ServiceDetailsState) {
+  componentDidUpdate(prevProps: ServiceDetailsProps, _prevState: ServiceDetailsState) {
     if (
       prevProps.match.params.namespace !== this.props.match.params.namespace ||
       prevProps.match.params.service !== this.props.match.params.service ||
@@ -203,22 +204,13 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
         MessageCenter.add(API.getErrorMsg('Could not fetch Namespaces list', error));
       });
 
-    const promiseDetails = API.getServiceDetail(
-      this.props.match.params.namespace,
-      this.props.match.params.service,
-      true,
-      this.props.duration
-    );
-    const promiseThreeScale = API.getThreeScaleInfo();
-    Promise.all([promiseDetails, promiseThreeScale])
+    API.getServiceDetail(this.props.match.params.namespace, this.props.match.params.service, true, this.props.duration)
       .then(results => {
         this.setState({
-          serviceDetailsInfo: results[0],
-          validations: this.addFormatValidation(results[0], results[0].validations),
-          threeScaleInfo: results[1].data
+          serviceDetailsInfo: results,
+          validations: this.addFormatValidation(results, results.validations)
         });
-
-        if (results[0].errorTraces === -1 && this.props.jaegerUrl !== '') {
+        if (results.errorTraces === -1 && this.props.jaegerUrl !== '') {
           MessageCenter.add(
             'Could not fetch Traces in the service ' +
               this.props.match.params.service +
@@ -229,8 +221,17 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
               ' is available.'
           );
         }
+      })
+      .catch(error => {
+        MessageCenter.add(API.getErrorMsg('Could not fetch Service Details', error));
+      });
 
-        if (results[1].data.enabled) {
+    API.getThreeScaleInfo()
+      .then(results => {
+        this.setState({
+          threeScaleInfo: results.data
+        });
+        if (results.data.enabled) {
           API.getThreeScaleServiceRule(this.props.match.params.namespace, this.props.match.params.service)
             .then(result => {
               this.setState({
@@ -249,7 +250,11 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
         }
       })
       .catch(error => {
-        MessageCenter.add(API.getErrorMsg('Could not fetch Service Details', error));
+        MessageCenter.add(
+          API.getInfoMsg('Could not fetch 3scale info. Turning off 3scale integration.', error),
+          'default',
+          MessageType.INFO
+        );
       });
   };
 
@@ -279,7 +284,7 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
   };
 
   addFormatValidation(details: ServiceDetailsInfo, validations: Validations): Validations {
-    details.destinationRules.items.forEach((destinationRule, index, ary) => {
+    details.destinationRules.items.forEach((destinationRule, _index, _ary) => {
       const dr = new DestinationRuleValidator(destinationRule);
       const formatValidation = dr.formatValidation();
 
@@ -287,6 +292,7 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
         const objectValidations = validations.destinationrule[destinationRule.metadata.name];
         if (
           formatValidation !== null &&
+          objectValidations.checks &&
           !objectValidations.checks.some(check => check.message === formatValidation.message)
         ) {
           objectValidations.checks.push(formatValidation);
@@ -434,8 +440,8 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
 
 const mapStateToProps = (state: KialiAppState) => ({
   duration: durationSelector(state),
-  jaegerUrl: state.jaegerState.jaegerURL,
-  jaegerIntegration: state.jaegerState.enableIntegration
+  jaegerUrl: state.jaegerState ? state.jaegerState.jaegerURL : '',
+  jaegerIntegration: state.jaegerState ? state.jaegerState.enableIntegration : false
 });
 
 const ServiceDetailsPageContainer = connect(mapStateToProps)(ServiceDetails);

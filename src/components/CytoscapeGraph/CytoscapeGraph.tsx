@@ -97,7 +97,6 @@ type InitialValues = {
   zoom?: number;
 };
 
-// @todo: Move this class to 'containers' folder -- but it effects many other things
 // exporting this class for testing
 export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, CytoscapeGraphState> {
   static contextTypes = {
@@ -108,15 +107,15 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
   static tapTarget: any;
   static tapTimeout: any;
 
-  private graphHighlighter: GraphHighlighter;
-  private trafficRenderer: TrafficRender;
+  private graphHighlighter?: GraphHighlighter;
+  private trafficRenderer?: TrafficRender;
   private focusAnimation?: FocusAnimation;
   private focusFinished: boolean;
   private cytoscapeReactWrapperRef: any;
   private contextMenuRef: React.RefObject<CytoscapeContextMenuWrapper>;
   private namespaceChanged: boolean;
   private nodeChanged: boolean;
-  private resetSelection: boolean;
+  private resetSelection: boolean = false;
   private initialValues: InitialValues;
   private cy: any;
 
@@ -133,7 +132,7 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
     this.contextMenuRef = React.createRef<CytoscapeContextMenuWrapper>();
   }
 
-  shouldComponentUpdate(nextProps: CytoscapeGraphProps, nextState: CytoscapeGraphState) {
+  shouldComponentUpdate(nextProps: CytoscapeGraphProps, _nextState: CytoscapeGraphState) {
     this.nodeChanged = this.nodeChanged || this.props.node !== nextProps.node;
     let result =
       this.props.edgeLabelMode !== nextProps.edgeLabelMode ||
@@ -161,7 +160,7 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
     this.cyInitialization(this.getCy());
   }
 
-  componentDidUpdate(prevProps: CytoscapeGraphProps, prevState: CytoscapeGraphState) {
+  componentDidUpdate(prevProps: CytoscapeGraphProps, _prevState: CytoscapeGraphState) {
     const cy = this.getCy();
     if (!cy) {
       return;
@@ -344,7 +343,7 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
       }
     });
 
-    cy.on('layoutstop', (evt: any) => {
+    cy.on('layoutstop', (_evt: any) => {
       // Don't allow a large zoom if the graph has a few nodes (nodes would look too big).
       this.safeFit(cy);
     });
@@ -354,8 +353,8 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
       this.processGraphUpdate(cy, true);
     });
 
-    cy.on('destroy', (evt: any) => {
-      this.trafficRenderer.stop();
+    cy.on('destroy', (_evt: any) => {
+      this.trafficRenderer!.stop();
       this.cy = undefined;
       this.props.updateSummary({ summaryType: 'graph', summaryTarget: undefined });
     });
@@ -414,7 +413,7 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
       return;
     }
 
-    this.trafficRenderer.stop();
+    this.trafficRenderer!.stop();
 
     const isTheGraphSelected = cy.$(':selected').length === 0;
     if (this.resetSelection) {
@@ -479,9 +478,9 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
     }
 
     // Update TrafficRenderer
-    this.trafficRenderer.setEdges(cy.edges());
+    this.trafficRenderer!.setEdges(cy.edges());
     if (this.props.showTrafficAnimation) {
-      this.trafficRenderer.start();
+      this.trafficRenderer!.start();
     }
   }
 
@@ -509,7 +508,7 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
       summaryTarget: target
     };
     this.props.updateSummary(event);
-    this.graphHighlighter.onClick(event);
+    this.graphHighlighter!.onClick(event);
   };
 
   private handleDoubleTap = (event: CytoscapeClickEvent) => {
@@ -518,10 +517,14 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
     if (targetType !== 'node' && targetType !== 'group') {
       return;
     }
-    if (target.data(CyNode.isInaccessible)) {
+
+    const targetOrGroupChildren = targetType === 'group' ? target.descendants() : target;
+
+    if (target.data(CyNode.isInaccessible) || target.data(CyNode.isServiceEntry)) {
       return;
     }
-    if (target.data(CyNode.hasMissingSC)) {
+
+    if (targetOrGroupChildren.every(t => t.data(CyNode.hasMissingSC))) {
       MessageCenterUtils.add(
         `A node with a missing sidecar provides no node-specific telemetry and can not provide a node detail graph.`,
         undefined,
@@ -529,7 +532,7 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
       );
       return;
     }
-    if (target.data(CyNode.isUnused)) {
+    if (targetOrGroupChildren.every(t => t.data(CyNode.isUnused))) {
       MessageCenterUtils.add(
         `An unused node has no node-specific traffic and can not provide a node detail graph.`,
         undefined,
@@ -597,15 +600,15 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
 
   private handleTap = (event: CytoscapeClickEvent) => {
     this.props.updateSummary(event);
-    this.graphHighlighter.onClick(event);
+    this.graphHighlighter!.onClick(event);
   };
 
   private handleMouseIn = (event: CytoscapeMouseInEvent) => {
-    this.graphHighlighter.onMouseIn(event);
+    this.graphHighlighter!.onMouseIn(event);
   };
 
   private handleMouseOut = (event: CytoscapeMouseOutEvent) => {
-    this.graphHighlighter.onMouseOut(event);
+    this.graphHighlighter!.onMouseOut(event);
   };
 
   private namespaceNeedsRelayout(prevElements: any, nextElements: any) {

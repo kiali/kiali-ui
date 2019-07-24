@@ -52,14 +52,14 @@ const listHeaderStyle = style({
   color: '#72767b',
   borderTop: '0px !important',
   $nest: {
-    ['.list-view-pf-main-info']: {
+    '.list-view-pf-main-info': {
       padding: 5
     },
-    ['.list-group-item-heading']: {
+    '.list-group-item-heading': {
       fontWeight: 300,
       textAlign: 'center'
     },
-    ['.list-group-item-text']: {
+    '.list-group-item-text': {
       textAlign: 'center'
     }
   }
@@ -158,14 +158,12 @@ class WeightedRouting extends React.Component<Props, State> {
   onLock = (workloadName: string, locked: boolean) => {
     this.setState(prevState => {
       let maxWeights = 100;
-      let numLocks = 0;
       for (let i = 0; i < prevState.workloads.length; i++) {
         if (prevState.workloads[i].name === workloadName) {
           prevState.workloads[i].locked = locked;
         }
         // Calculate maxWeights from locked nodes
         if (prevState.workloads[i].locked) {
-          numLocks++;
           maxWeights -= prevState.workloads[i].weight;
         }
       }

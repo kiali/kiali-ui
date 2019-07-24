@@ -50,3 +50,7 @@ body {
 
 @import '_overrides';
 @import '_layout';
+
+// Component
+
+@import '../components/JaegerIntegration/_jaegerIntegration';

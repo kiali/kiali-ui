@@ -2,9 +2,10 @@ import * as React from 'react';
 import { Button, Icon, OverlayTrigger, Popover } from 'patternfly-react';
 import { style } from 'typestyle';
 import isEqual from 'lodash/fp/isEqual';
+import { LabelDisplayName } from '@kiali/k-charted-pf3';
 
 import history, { URLParam } from '../../app/History';
-import { LabelDisplayName, AllLabelsValues } from '../../types/Metrics';
+import { AllLabelsValues } from '../../types/Metrics';
 
 export type Quantiles = '0.5' | '0.95' | '0.99' | '0.999';
 const allQuantiles: Quantiles[] = ['0.5', '0.95', '0.99', '0.999'];
@@ -27,8 +28,8 @@ const secondLevelStyle = style({ marginLeft: 14 });
 const spacerStyle = style({ height: '1em' });
 
 export class MetricsSettingsDropdown extends React.Component<Props> {
-  private shouldReportOptions: boolean;
-  private settings: MetricsSettings;
+  private shouldReportOptions = false;
+  private settings: MetricsSettings = MetricsSettingsDropdown.initialMetricsSettings();
 
   static initialMetricsSettings = (): MetricsSettings => {
     const urlParams = new URLSearchParams(history.location.search);
@@ -51,17 +52,13 @@ export class MetricsSettingsDropdown extends React.Component<Props> {
     }
     const byLabels = urlParams.getAll(URLParam.BY_LABELS);
     if (byLabels.length !== 0) {
-      byLabels.map((val, idx) => {
+      byLabels.forEach((val, idx) => {
         byLabels[idx] = val.split('=', 1)[0];
       });
       settings.activeLabels = byLabels as LabelDisplayName[];
     }
     return settings;
   };
-
-  constructor(props: Props) {
-    super(props);
-  }
 
   componentDidUpdate() {
     if (this.shouldReportOptions) {

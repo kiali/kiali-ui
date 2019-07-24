@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { style } from 'typestyle';
 import {
-  Button,
   Col,
   Icon,
   Nav,
@@ -19,11 +18,12 @@ import { ServiceDetailsInfo, severityToIconName, validationToSeverity } from '..
 import ServiceInfoVirtualServices from './ServiceInfo/ServiceInfoVirtualServices';
 import ServiceInfoDestinationRules from './ServiceInfo/ServiceInfoDestinationRules';
 import ServiceInfoWorkload from './ServiceInfo/ServiceInfoWorkload';
-import { Validations, ObjectValidation } from '../../types/IstioObjects';
+import { ObjectValidation, Validations } from '../../types/IstioObjects';
 import { TabPaneWithErrorBoundary } from '../../components/ErrorBoundary/WithErrorBoundary';
 import IstioWizardDropdown from '../../components/IstioWizards/IstioWizardDropdown';
 import { ThreeScaleInfo, ThreeScaleServiceRule } from '../../types/ThreeScale';
 import { DurationDropdownContainer } from '../../components/DurationDropdown/DurationDropdown';
+import RefreshButtonContainer from '../../components/Refresh/RefreshButton';
 
 interface ServiceDetails extends ServiceId {
   serviceDetails: ServiceDetailsInfo;
@@ -70,6 +70,7 @@ class ServiceInfo extends React.Component<ServiceDetails, ServiceInfoState> {
       virtualService =>
         validations.virtualservice &&
         validations.virtualservice[virtualService.metadata.name] &&
+        validations.virtualservice[virtualService.metadata.name].checks &&
         validations.virtualservice[virtualService.metadata.name].checks.length > 0
     );
 
@@ -78,6 +79,7 @@ class ServiceInfo extends React.Component<ServiceDetails, ServiceInfoState> {
         validations.destinationrule &&
         destinationRule.metadata &&
         validations.destinationrule[destinationRule.metadata.name] &&
+        validations.destinationrule[destinationRule.metadata.name].checks &&
         validations.destinationrule[destinationRule.metadata.name].checks.length > 0
     );
 
@@ -110,7 +112,7 @@ class ServiceInfo extends React.Component<ServiceDetails, ServiceInfoState> {
 
     const getValidationIcon = (keys: string[], type: string) => {
       let severity = 'warning';
-      keys.map(key => {
+      keys.forEach(key => {
         const validationsForIcon = (this.props.validations || {})![type][key];
         if (validationToSeverity(validationsForIcon) === 'error') {
           severity = 'error';
@@ -136,9 +138,7 @@ class ServiceInfo extends React.Component<ServiceDetails, ServiceInfoState> {
             <Col xs={12} sm={12} md={12} lg={12}>
               <span style={{ float: 'right' }}>
                 <DurationDropdownContainer id="service-info-duration-dropdown" />{' '}
-                <Button onClick={this.props.onRefresh}>
-                  <Icon name="refresh" />
-                </Button>
+                <RefreshButtonContainer handleRefresh={this.props.onRefresh} />
                 &nbsp;
                 <IstioWizardDropdown
                   namespace={this.props.namespace}

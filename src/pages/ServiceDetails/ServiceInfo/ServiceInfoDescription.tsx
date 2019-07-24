@@ -12,7 +12,7 @@ import {
   SMALL_SIZE,
   MEDIUM_SIZE
 } from '../../../components/ConfigValidation/ConfigIndicator';
-import { Popover, OverlayTrigger, Icon } from 'patternfly-react';
+import { Popover, OverlayTrigger, Icon, Tooltip } from 'patternfly-react';
 import './ServiceInfoDescription.css';
 import Labels from '../../../components/Label/Labels';
 import { ThreeScaleServiceRule } from '../../../types/ThreeScale';
@@ -51,10 +51,6 @@ const labelListStyle = style({
 const ExternalNameType = 'ExternalName';
 
 class ServiceInfoDescription extends React.Component<ServiceInfoDescriptionProps> {
-  constructor(props: ServiceInfoDescriptionProps) {
-    super(props);
-  }
-
   getValidations(): ObjectValidation {
     return this.props.validations ? this.props.validations : ({} as ObjectValidation);
   }
@@ -69,7 +65,7 @@ class ServiceInfoDescription extends React.Component<ServiceInfoDescriptionProps
 
   getPortIssue(portId: number): string {
     let message = '';
-    if (this.props.validations) {
+    if (this.props.validations && this.props.validations.checks) {
       message = this.props.validations.checks
         .filter(c => c.path === 'spec/ports[' + portId + ']')
         .map(c => c.message)
@@ -173,11 +169,20 @@ class ServiceInfoDescription extends React.Component<ServiceInfoDescriptionProps
                 <Row key={'endpoint_' + i}>
                   <Col xs={12} sm={12} md={12} lg={12}>
                     <ul className={listStyle}>
-                      {(endpoint.addresses || []).map((address, u) => (
-                        <li key={'endpoint_' + i + '_address_' + u}>
-                          <strong>{address.ip} </strong>: {address.name}
-                        </li>
-                      ))}
+                      {(endpoint.addresses || []).map((address, u) => {
+                        const id = 'endpoint_' + i + '_address_' + u;
+                        return (
+                          <li key={id}>
+                            <OverlayTrigger
+                              overlay={<Tooltip id={id + '_tooltip'}>{address.name}</Tooltip>}
+                              trigger={['hover', 'focus']}
+                              rootClose={false}
+                            >
+                              <strong>{address.ip} </strong>
+                            </OverlayTrigger>
+                          </li>
+                        );
+                      })}
                     </ul>
                   </Col>
                 </Row>

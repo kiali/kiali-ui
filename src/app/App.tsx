@@ -30,7 +30,7 @@ const loadRcueCssIfNeeded = async (): Promise<void> => {
   }
 };
 
-Visibility.change((e, state) => {
+Visibility.change((_e, state) => {
   // There are 3 states, visible, hidden and prerender, consider prerender as hidden.
   // https://developer.mozilla.org/en-US/docs/Web/API/Document/visibilityState
   if (state === 'visible') {
@@ -115,7 +115,9 @@ class App extends React.Component<{}, AppState> {
         <PersistGate loading={<InitializingScreen />} persistor={persistor}>
           {this.state.isInitialized ? (
             <AuthenticationControllerContainer
-              publicAreaComponent={<LoginPageContainer />}
+              publicAreaComponent={(isPostLoginPerforming: boolean, errorMsg?: string) => (
+                <LoginPageContainer isPostLoginPerforming={isPostLoginPerforming} postLoginErrorMsg={errorMsg} />
+              )}
               protectedAreaComponent={this.protectedArea}
             />
           ) : (

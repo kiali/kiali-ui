@@ -25,7 +25,7 @@ class WorkloadDescription extends React.Component<WorkloadDescriptionProps, Work
   renderLogo(name: string, idx: number): JSX.Element {
     const logoProvider = runtimesLogoProviders[name];
     if (logoProvider) {
-      return <img key={'logo-' + idx} src={logoProvider()} alt={name} title={name} />;
+      return <img key={'logo-' + idx} src={logoProvider} alt={name} title={name} />;
     }
     return <span key={'runtime-' + idx}>{name}</span>;
   }
@@ -41,11 +41,13 @@ class WorkloadDescription extends React.Component<WorkloadDescriptionProps, Work
         <div className="card-pf-body">
           <Row>
             <Col xs={12} sm={8} md={6} lg={6}>
-              <div className="progress-description">
-                <strong>{isTemplateLabels ? 'Template Labels' : 'Labels'}</strong>
-              </div>
-              <div className="label-collection">
-                <Labels labels={workload.labels} />
+              <div id="labels">
+                <div className="progress-description">
+                  <strong>{isTemplateLabels ? 'Template Labels' : 'Labels'}</strong>
+                </div>
+                <div className="label-collection">
+                  <Labels labels={workload.labels} />
+                </div>
               </div>
               <div>
                 <strong>Type</strong> {workload.type ? workload.type : ''}
@@ -63,8 +65,9 @@ class WorkloadDescription extends React.Component<WorkloadDescriptionProps, Work
                     .filter(r => r.name !== '')
                     .map((rt, idx) => this.renderLogo(rt.name, idx))
                     .reduce(
-                      (list: JSX.Element[], elem) => (list ? [...list, <span key="sep"> | </span>, elem] : [elem]),
-                      undefined
+                      (list: JSX.Element[], elem) =>
+                        list.length > 0 ? [...list, <span key="sep"> | </span>, elem] : [elem],
+                      []
                     )}
                 </div>
               )}

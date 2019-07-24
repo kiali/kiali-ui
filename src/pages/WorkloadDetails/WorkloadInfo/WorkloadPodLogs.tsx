@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Icon, Toolbar } from 'patternfly-react';
+import { Toolbar } from 'patternfly-react';
 import { style } from 'typestyle';
 import { Pod, PodLogs } from '../../../types/IstioObjects';
 import { getPodLogs, Response } from '../../../services/Api';
@@ -8,6 +8,7 @@ import { ToolbarDropdown } from '../../../components/ToolbarDropdown/ToolbarDrop
 import { DurationInSeconds } from '../../../types/Common';
 import MetricsDurationContainer from '../../../components/MetricsOptions/MetricsDuration';
 import MetricsDuration from '../../../components/MetricsOptions/MetricsDuration';
+import RefreshButtonContainer from '../../../components/Refresh/RefreshButton';
 
 export interface WorkloadPodLogsProps {
   namespace: string;
@@ -102,13 +103,14 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
     }
   }
 
-  componentDidUpdate(prevProps: WorkloadPodLogsProps, prevState: WorkloadPodLogsState) {
+  componentDidUpdate(_prevProps: WorkloadPodLogsProps, prevState: WorkloadPodLogsState) {
     const prevContainer = prevState.containerInfo ? prevState.containerInfo.container : undefined;
     const newContainer = this.state.containerInfo ? this.state.containerInfo.container : undefined;
+    const updateContainerInfo = this.state.containerInfo && this.state.containerInfo !== prevState.containerInfo;
     const updateContainer = newContainer && newContainer !== prevContainer;
     const updateDuration = this.state.duration && prevState.duration !== this.state.duration;
     const updateTailLines = this.state.tailLines && prevState.tailLines !== this.state.tailLines;
-    if (updateContainer || updateDuration || updateTailLines) {
+    if (updateContainerInfo || updateContainer || updateDuration || updateTailLines) {
       const pod = this.props.pods[this.state.podValue!];
       this.fetchLogs(this.props.namespace, pod.name, newContainer!, this.state.tailLines, this.state.duration);
     }
@@ -151,9 +153,11 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
                 {'   '}
                 <MetricsDurationContainer tooltip="Time range for log messages" onChanged={this.setDuration} />
                 {'  '}
-                <Button id={'wpl_refresh'} disabled={!this.state.podLogs} onClick={() => this.handleRefresh()}>
-                  <Icon name="refresh" />
-                </Button>
+                <RefreshButtonContainer
+                  id={'wpl_refresh'}
+                  disabled={!this.state.podLogs}
+                  handleRefresh={this.handleRefresh}
+                />
               </Toolbar.RightContent>
             </Toolbar>
             <textarea

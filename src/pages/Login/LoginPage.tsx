@@ -1,34 +1,13 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
-import {
-  Button,
-  LoginPage as LoginNext,
-  LoginForm,
-  ListItem,
-  LoginFooterItem,
-  BackgroundImageSrc
-} from '@patternfly/react-core';
+import { Button, ListItem, LoginFooterItem, LoginForm, LoginPage as LoginNext } from '@patternfly/react-core';
 import { ExclamationCircleIcon, ExclamationTriangleIcon } from '@patternfly/react-icons';
 import { KialiAppState, LoginSession, LoginStatus } from '../../store/Store';
 import { AuthStrategy } from '../../types/Auth';
 import { authenticationConfig, kialiLogo } from '../../config';
 import { KialiAppAction } from '../../actions/KialiAppAction';
 import LoginThunkActions from '../../actions/LoginThunkActions';
-
-/**
- *
- * Background Images
- *
- * Fix for Firefox browser
- */
-
-const bgFilter = require('../../img/background-filter.svg');
-const pfBg576 = require('../../img/pfbg_576.jpg');
-const pfBg576R2x = require('../../img/pfbg_576@2x.jpg');
-const pfBg768 = require('../../img/pfbg_768.jpg');
-const pfBg768R2x = require('../../img/pfbg_768@2x.jpg');
-const pfBg1200 = require('../../img/pfbg_1200.jpg');
 
 type LoginProps = {
   status: LoginStatus;
@@ -37,6 +16,8 @@ type LoginProps = {
   error?: any;
   authenticate: (username: string, password: string) => void;
   checkCredentials: () => void;
+  isPostLoginPerforming: boolean;
+  postLoginErrorMsg?: string;
 };
 
 type LoginState = {
@@ -148,8 +129,8 @@ export class LoginPage extends React.Component<LoginProps, LoginState> {
     if (authenticationConfig.secretMissing) {
       messages.push(
         this.renderMessage(
-          'The Kiali secret is missing. Users are prohibited from accessing Kiali until an administrator \
-      creates a valid secret. Please refer to the Kiali documentation for more details.',
+          `The Kiali secret is missing. Users are prohibited from accessing Kiali until an administrator
+          creates a valid secret. Please refer to the Kiali documentation for more details.`,
           'danger'
         )
       );
@@ -160,6 +141,9 @@ export class LoginPage extends React.Component<LoginProps, LoginState> {
     if (!authenticationConfig.secretMissing && this.props.status === LoginStatus.error) {
       messages.push(this.props.message);
     }
+    if (this.props.postLoginErrorMsg) {
+      messages.push(this.renderMessage(this.props.postLoginErrorMsg));
+    }
     return messages;
   };
 
@@ -168,23 +152,16 @@ export class LoginPage extends React.Component<LoginProps, LoginState> {
     if (authenticationConfig.strategy === AuthStrategy.openshift) {
       loginLabel = 'Log In With OpenShift';
     }
-    /**
-     * Note: When using background-filter.svg, you must also include #image_overlay as the fragment identifier
-     */
-
-    const backgroundLoginImg = {
-      [BackgroundImageSrc.lg]: pfBg1200,
-      [BackgroundImageSrc.sm]: pfBg768,
-      [BackgroundImageSrc.sm2x]: pfBg768R2x,
-      [BackgroundImageSrc.xs]: pfBg576,
-      [BackgroundImageSrc.xs2x]: pfBg576R2x,
-      [BackgroundImageSrc.filter]: `${bgFilter}#image_overlay`
-    };
 
     const messages = this.getHelperMessage();
+    const isLoggingIn = this.props.isPostLoginPerforming || this.props.status === LoginStatus.logging;
 
+    // Unfortunately, typescripg typings are wrong in the PatternFly
+    // library. So, this casts LoginForm as "any" so that it is
+    // possible to use the "isLoginButtonDisabled" property.
+    const Form = LoginForm as any;
     const loginForm = (
-      <LoginForm
+      <Form
         usernameLabel="Username"
         showHelperText={this.state.showHelperText || this.props.message !== '' || messages.length > 0}
         helperText={<>{messages}</>}
@@ -198,6 +175,8 @@ export class LoginPage extends React.Component<LoginProps, LoginState> {
         rememberMeAriaLabel="Remember me Checkbox"
         onLoginButtonClick={(e: any) => this.handleSubmit(e)}
         style={{ marginTop: '10px' }}
+        loginButtonLabel={isLoggingIn ? 'Logging in...' : undefined}
+        isLoginButtonDisabled={isLoggingIn || this.props.postLoginErrorMsg}
       />
     );
 
@@ -215,9 +194,7 @@ export class LoginPage extends React.Component<LoginProps, LoginState> {
       <LoginNext
         footerListVariants="inline"
         brandImgSrc={kialiLogo}
-        brandImgAlt="pf-logo"
-        backgroundImgSrc={backgroundLoginImg}
-        backgroundImgAlt="Images"
+        brandImgAlt="Kiali logo"
         footerListItems={listItem}
         textContent="Service Mesh Observability."
         loginTitle="Log in Kiali"

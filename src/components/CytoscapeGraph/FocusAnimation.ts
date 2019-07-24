@@ -15,7 +15,7 @@ export default class FocusAnimation {
   private animationTimer;
   private startTimestamp;
   private elements;
-  private onFinishedCallback: OnFinishedCallback;
+  private onFinishedCallback?: OnFinishedCallback;
 
   private readonly layer;
   private readonly context;
@@ -23,6 +23,7 @@ export default class FocusAnimation {
   constructor(cy: any) {
     this.layer = cy.cyCanvas();
     this.context = this.layer.getCanvas().getContext('2d');
+
     cy.one('destroy', () => this.stop());
   }
 
@@ -48,6 +49,9 @@ export default class FocusAnimation {
     this.layer.clear(this.context);
   }
 
+  // This methods needs to be an arrow function.
+  // the reason is that we call this method from a window.setInterval and having an arrow function is a way to preserve
+  // "this".
   processStep = () => {
     try {
       if (this.startTimestamp === undefined) {

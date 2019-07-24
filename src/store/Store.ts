@@ -1,14 +1,24 @@
 import { NotificationGroup } from '../types/MessageCenter';
 import Namespace from '../types/Namespace';
-import { DurationInSeconds, PollIntervalInMs, TimeInSeconds, UserName, RawDate } from '../types/Common';
+import {
+  DurationInSeconds,
+  PollIntervalInMs,
+  TimeInSeconds,
+  UserName,
+  RawDate,
+  TimeInMilliseconds
+} from '../types/Common';
 import { EdgeLabelMode, Layout } from '../types/GraphFilter';
 import { GraphType, NodeParamsType, SummaryData, CyData, GraphElements } from '../types/Graph';
+import { TLSStatus } from '../types/TLSStatus';
+import { StatusState } from '../types/StatusState';
 
 // Store is the Redux Data store
 
 export interface GlobalState {
   readonly loadingCounter: number;
   readonly isPageVisible: boolean;
+  lastRefreshAt: TimeInMilliseconds;
 }
 
 export interface NamespaceState {
@@ -16,7 +26,7 @@ export interface NamespaceState {
   readonly items?: Namespace[];
   readonly isFetching: boolean;
   readonly lastUpdated?: Date;
-  readonly filter?: string;
+  readonly filter: string;
 }
 
 // Various pages are described here with their various sections
@@ -82,18 +92,6 @@ export interface LoginState {
   message: string;
 }
 
-export interface Component {
-  name: string;
-  version?: string;
-  url?: string;
-}
-
-export interface StatusState {
-  status: { [key: string]: string };
-  components: Component[];
-  warningMessages: string[];
-}
-
 export interface InterfaceSettings {
   navCollapse: boolean;
 }
@@ -108,9 +106,6 @@ export interface GrafanaInfo {
   url: string;
   serviceDashboardPath: string;
   workloadDashboardPath: string;
-  varNamespace: string;
-  varService: string;
-  varWorkload: string;
 }
 
 export interface JaegerState {
@@ -125,6 +120,7 @@ export interface KialiAppState {
   globalState: GlobalState;
   grafanaInfo: GrafanaInfo | null;
   statusState: StatusState;
+  meshTLSStatus: TLSStatus;
   /** Page Settings */
   authentication: LoginState;
   messageCenter: MessageCenterState;
@@ -133,5 +129,5 @@ export interface KialiAppState {
   /** User Settings */
   userSettings: UserSettings;
   /** Jaeger Integration */
-  jaegerState: JaegerState;
+  jaegerState: JaegerState | null;
 }

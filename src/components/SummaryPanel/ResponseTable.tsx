@@ -37,10 +37,6 @@ const Flags: object = {
 };
 
 export class ResponseTable extends React.PureComponent<ResponseTableProps> {
-  constructor(props: ResponseTableProps) {
-    super(props);
-  }
-
   render() {
     return (
       <>
@@ -69,8 +65,8 @@ export class ResponseTable extends React.PureComponent<ResponseTableProps> {
 
   private getRows = (responses: Responses): Row[] => {
     const rows: Row[] = [];
-    _.keys(responses).map(code => {
-      _.keys(responses[code]).map(f => {
+    _.keys(responses).forEach(code => {
+      _.keys(responses[code]).forEach(f => {
         rows.push({ key: `${code} ${f}`, code: code, flags: f, val: responses[code][f] });
       });
     });

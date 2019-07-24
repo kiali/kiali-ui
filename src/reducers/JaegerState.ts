@@ -4,12 +4,15 @@ import { KialiAppAction } from '../actions/KialiAppAction';
 import { getType } from 'typesafe-actions';
 import { JaegerActions } from '../actions/JaegerActions';
 
-export const INITIAL_JAEGER_STATE: JaegerState = {
+export const INITIAL_JAEGER_STATE: JaegerState | null = {
   jaegerURL: '',
   enableIntegration: false
 };
 
-const JaegerState = (state: JaegerState = INITIAL_JAEGER_STATE, action: KialiAppAction): JaegerState => {
+const JaegerStateGenerator = (
+  state: JaegerState | null = INITIAL_JAEGER_STATE,
+  action: KialiAppAction
+): JaegerState | null => {
   switch (action.type) {
     case getType(JaegerActions.setEnableIntegration):
       return updateState(state, {
@@ -19,9 +22,18 @@ const JaegerState = (state: JaegerState = INITIAL_JAEGER_STATE, action: KialiApp
       return updateState(state, {
         jaegerURL: action.payload.url
       });
+    case getType(JaegerActions.setinfo):
+      if (!action.payload) {
+        return null;
+      }
+
+      return updateState(state, {
+        jaegerURL: action.payload.jaegerURL,
+        enableIntegration: action.payload.enableIntegration
+      });
     default:
       return state;
   }
 };
 
-export default JaegerState;
+export default JaegerStateGenerator;

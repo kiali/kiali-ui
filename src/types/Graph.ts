@@ -95,8 +95,10 @@ export interface CytoscapeMouseOutEvent extends CytoscapeBaseEvent {}
 //   }}
 export type Responses = object;
 
+type ValidProtocols = 'http' | 'grpc' | 'tcp';
+
 export type ProtocolTrafficNoData = {
-  protocol: '';
+  protocol: ValidProtocols;
 };
 
 export type ProtocolTrafficHttp = {
@@ -125,7 +127,17 @@ export type ProtocolTrafficTcp = {
   responses: Responses;
 };
 
-export type ProtocolTraffic = ProtocolTrafficHttp | ProtocolTrafficTcp | ProtocolTrafficGrpc | ProtocolTrafficNoData;
+export type ProtocolTrafficWithData = ProtocolTrafficHttp | ProtocolTrafficTcp | ProtocolTrafficGrpc;
+export type ProtocolTraffic = ProtocolTrafficWithData | ProtocolTrafficNoData;
+
+export const protocolTrafficHasData = (
+  protocolTraffic: ProtocolTraffic
+): protocolTraffic is ProtocolTrafficWithData => {
+  return (
+    (protocolTraffic as ProtocolTrafficWithData).rates !== undefined &&
+    (protocolTraffic as ProtocolTrafficWithData).responses !== undefined
+  );
+};
 
 export interface GraphNodeData {
   id: string;
@@ -156,8 +168,8 @@ export interface GraphEdgeData {
   source: string;
   target: string;
   traffic?: ProtocolTraffic;
-  responseTime?: string;
-  isMTLS?: string;
+  responseTime?: number;
+  isMTLS?: number;
 }
 
 export interface GraphNodeWrapper {
@@ -181,29 +193,41 @@ export interface GraphDefinition {
 }
 
 export interface DecoratedGraphNodeData extends GraphNodeData {
-  grpcIn: string;
-  grpcInErr: string;
-  grpcOut: string;
-  httpIn: string;
-  httpIn3xx: string;
-  httpIn4xx: string;
-  httpIn5xx: string;
-  httpOut: string;
-  tcpIn: string;
-  tcpOut: string;
+  grpcIn: number;
+  grpcInErr: number;
+  grpcOut: number;
+  httpIn: number;
+  httpIn3xx: number;
+  httpIn4xx: number;
+  httpIn5xx: number;
+  httpOut: number;
+  tcpIn: number;
+  tcpOut: number;
+
+  traffic: never;
 }
 
 export interface DecoratedGraphEdgeData extends GraphEdgeData {
-  grpc: string;
-  grpcErr: string;
-  http: string;
-  http3xx: string;
-  http4xx: string;
-  http5xx: string;
-  httpPercentErr: string;
-  httpPercentReq: string;
+  grpc: number;
+  grpcErr: number;
+  grpcPercentErr: number;
+  grpcPercentReq: number;
+  http: number;
+  http3xx: number;
+  http4xx: number;
+  http5xx: number;
+  httpPercentErr: number;
+  httpPercentReq: number;
   responses: Responses;
-  tcp: string;
+  tcp: number;
+  protocol: ValidProtocols;
+
+  // During the decoration process, we make non-optional some number attributes (giving them a default value)
+  // Default value NaN
+  responseTime: number;
+
+  // Default value -1
+  isMTLS: number;
 }
 
 export interface DecoratedGraphNodeWrapper {

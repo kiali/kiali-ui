@@ -3,21 +3,22 @@ import { connect } from 'react-redux';
 import * as API from '../../services/Api';
 import Namespace from '../../types/Namespace';
 import { WorkloadListItem, WorkloadNamespaceResponse } from '../../types/Workload';
-import { WorkloadListFilters } from './FiltersAndSorts';
+import * as WorkloadListFilters from './FiltersAndSorts';
 import { FilterSelected, StatefulFilters } from '../../components/Filters/StatefulFilters';
-import { Button, Icon, ListView, Paginator, Sort, ToolbarRightContent } from 'patternfly-react';
+import { ListView, Paginator, Sort, ToolbarRightContent } from 'patternfly-react';
 import { ActiveFilter } from '../../types/Filters';
 import { PromisesRegistry } from '../../utils/CancelablePromises';
 import ItemDescription from './ItemDescription';
-import { ListPagesHelper } from '../../components/ListPage/ListPagesHelper';
+import * as ListPagesHelper from '../../components/ListPage/ListPagesHelper';
 import { SortField } from '../../types/SortFilters';
-import { ListComponent } from '../../components/ListPage/ListComponent';
+import * as ListComponent from '../../components/ListPage/ListComponent';
 import { AlignRightStyle, ThinStyle } from '../../components/Filters/FilterStyles';
-import { arrayEquals } from '../../utils/Common';
+import { namespaceEquals } from '../../utils/Common';
 import { KialiAppState } from '../../store/Store';
 import { activeNamespacesSelector, durationSelector } from '../../store/Selectors';
 import { DurationInSeconds } from '../../types/Common';
 import { DurationDropdownContainer } from '../../components/DurationDropdown/DurationDropdown';
+import RefreshButtonContainer from '../../components/Refresh/RefreshButton';
 
 type WorkloadListComponentState = ListComponent.State<WorkloadListItem>;
 
@@ -49,8 +50,13 @@ class WorkloadListComponent extends ListComponent.Component<
     this.updateListItems();
   }
 
-  componentDidUpdate(prevProps: WorkloadListComponentProps, prevState: WorkloadListComponentState, snapshot: any) {
-    if (!this.paramsAreSynced(prevProps)) {
+  componentDidUpdate(prevProps: WorkloadListComponentProps, _prevState: WorkloadListComponentState, _snapshot: any) {
+    const [paramsSynced, nsSynced] = this.paramsAreSynced(prevProps);
+    if (!paramsSynced) {
+      if (!nsSynced) {
+        // If there is a change in the namespace selection, page is set to 1
+        this.pageSet(1);
+      }
       this.setState({
         pagination: this.props.pagination,
         currentSortField: this.props.currentSortField,
@@ -65,21 +71,17 @@ class WorkloadListComponent extends ListComponent.Component<
     this.promises.cancelAll();
   }
 
-  paramsAreSynced(prevProps: WorkloadListComponentProps) {
-    const activeNamespacesCompare = arrayEquals(
-      prevProps.activeNamespaces,
-      this.props.activeNamespaces,
-      (n1, n2) => n1.name === n2.name
-    );
-    return (
+  paramsAreSynced = (prevProps: WorkloadListComponentProps): [boolean, boolean] => {
+    const activeNamespacesCompare = namespaceEquals(prevProps.activeNamespaces, this.props.activeNamespaces);
+    const paramsSynced =
       prevProps.pagination.page === this.props.pagination.page &&
       prevProps.pagination.perPage === this.props.pagination.perPage &&
       prevProps.duration === this.props.duration &&
       activeNamespacesCompare &&
       prevProps.isSortAscending === this.props.isSortAscending &&
-      prevProps.currentSortField.title === this.props.currentSortField.title
-    );
-  }
+      prevProps.currentSortField.title === this.props.currentSortField.title;
+    return [paramsSynced, activeNamespacesCompare];
+  };
 
   sortItemList(workloads: WorkloadListItem[], sortField: SortField<WorkloadListItem>, isAscending: boolean) {
     // Chain promises, as there may be an ongoing fetch/refresh and sort can be called after UI interaction
@@ -201,9 +203,7 @@ class WorkloadListComponent extends ListComponent.Component<
           </Sort>
           <ToolbarRightContent style={{ ...AlignRightStyle }}>
             <DurationDropdownContainer id="workload-list-duration-dropdown" />
-            <Button onClick={this.updateListItems}>
-              <Icon name="refresh" />
-            </Button>
+            <RefreshButtonContainer handleRefresh={this.updateListItems} />
           </ToolbarRightContent>
         </StatefulFilters>
         <ListView>{workloadList}</ListView>

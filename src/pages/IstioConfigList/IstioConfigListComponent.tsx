@@ -1,15 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import {
-  Button,
-  Icon,
-  ListView,
-  ListViewIcon,
-  ListViewItem,
-  Paginator,
-  Sort,
-  ToolbarRightContent
-} from 'patternfly-react';
+import { ListView, ListViewIcon, ListViewItem, Paginator, Sort, ToolbarRightContent } from 'patternfly-react';
 import { FilterSelected, StatefulFilters } from '../../components/Filters/StatefulFilters';
 import { ActiveFilter } from '../../types/Filters';
 import * as API from '../../services/Api';
@@ -25,15 +16,16 @@ import { Link } from 'react-router-dom';
 import { PfColors } from '../../components/Pf/PfColors';
 import { ConfigIndicator } from '../../components/ConfigValidation/ConfigIndicator';
 import { PromisesRegistry } from '../../utils/CancelablePromises';
-import { ListPagesHelper } from '../../components/ListPage/ListPagesHelper';
-import { IstioConfigListFilters } from './FiltersAndSorts';
-import { ListComponent } from '../../components/ListPage/ListComponent';
+import * as ListPagesHelper from '../../components/ListPage/ListPagesHelper';
+import * as IstioConfigListFilters from './FiltersAndSorts';
+import * as ListComponent from '../../components/ListPage/ListComponent';
 import { SortField } from '../../types/SortFilters';
 import { getFilterSelectedValues } from '../../components/Filters/CommonFilters';
 import { AlignRightStyle, ThinStyle } from '../../components/Filters/FilterStyles';
-import { arrayEquals } from '../../utils/Common';
+import { namespaceEquals } from '../../utils/Common';
 import { KialiAppState } from '../../store/Store';
 import { activeNamespacesSelector } from '../../store/Selectors';
+import RefreshButtonContainer from '../../components/Refresh/RefreshButton';
 
 interface IstioConfigListComponentState extends ListComponent.State<IstioConfigItem> {}
 interface IstioConfigListComponentProps extends ListComponent.Props<IstioConfigItem> {
@@ -63,10 +55,15 @@ class IstioConfigListComponent extends ListComponent.Component<
 
   componentDidUpdate(
     prevProps: IstioConfigListComponentProps,
-    prevState: IstioConfigListComponentState,
-    snapshot: any
+    _prevState: IstioConfigListComponentState,
+    _snapshot: any
   ) {
-    if (!this.paramsAreSynced(prevProps)) {
+    const [paramsSynced, nsSynced] = this.paramsAreSynced(prevProps);
+    if (!paramsSynced) {
+      if (!nsSynced) {
+        // If there is a change in the namespace selection, page is set to 1
+        this.pageSet(1);
+      }
       this.setState({
         pagination: this.props.pagination,
         currentSortField: this.props.currentSortField,
@@ -81,20 +78,16 @@ class IstioConfigListComponent extends ListComponent.Component<
     this.promises.cancelAll();
   }
 
-  paramsAreSynced(prevProps: IstioConfigListComponentProps) {
-    const activeNamespacesCompare = arrayEquals(
-      prevProps.activeNamespaces,
-      this.props.activeNamespaces,
-      (n1, n2) => n1.name === n2.name
-    );
-    return (
+  paramsAreSynced = (prevProps: IstioConfigListComponentProps): [boolean, boolean] => {
+    const activeNamespacesCompare = namespaceEquals(prevProps.activeNamespaces, this.props.activeNamespaces);
+    const paramsSynced =
       prevProps.pagination.page === this.props.pagination.page &&
       prevProps.pagination.perPage === this.props.pagination.perPage &&
       activeNamespacesCompare &&
       prevProps.isSortAscending === this.props.isSortAscending &&
-      prevProps.currentSortField.title === this.props.currentSortField.title
-    );
-  }
+      prevProps.currentSortField.title === this.props.currentSortField.title;
+    return [paramsSynced, activeNamespacesCompare];
+  };
 
   sortItemList(apps: IstioConfigItem[], sortField: SortField<IstioConfigItem>, isAscending: boolean) {
     return IstioConfigListFilters.sortIstioItems(apps, sortField, isAscending);
@@ -250,6 +243,10 @@ class IstioConfigListComponent extends ListComponent.Component<
       iconName = 'locked';
       iconType = 'pf';
       type = 'RbacConfig';
+    } else if (istioItem.type === 'sidecar') {
+      iconName = 'integration';
+      iconType = 'pf';
+      type = 'Sidecar';
     } else if (istioItem.type === 'servicerole') {
       iconName = 'locked';
       iconType = 'pf';
@@ -342,9 +339,7 @@ class IstioConfigListComponent extends ListComponent.Component<
             />
           </Sort>
           <ToolbarRightContent style={{ ...AlignRightStyle }}>
-            <Button onClick={this.updateListItems}>
-              <Icon name="refresh" />
-            </Button>
+            <RefreshButtonContainer handleRefresh={this.updateListItems} />
           </ToolbarRightContent>
         </StatefulFilters>
         <ListView>{istioList}</ListView>

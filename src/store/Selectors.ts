@@ -4,10 +4,12 @@ import { KialiAppState } from './Store';
 import { isMTLSEnabled } from '../types/TLSStatus';
 // These memoized selectors are from Redux Reselect package
 
-const createIdentitySelector = selector =>
+type Selector<T> = (state: KialiAppState) => T;
+
+const createIdentitySelector = <T extends unknown>(selector: Selector<T>): Selector<T> =>
   createSelector(
     selector,
-    x => x
+    (x: T): T => x
   );
 
 // select the proper field from Redux State
@@ -57,6 +59,10 @@ const refreshInterval = (state: KialiAppState) => state.userSettings.refreshInte
 
 export const refreshIntervalSelector = createIdentitySelector(refreshInterval);
 
+const lastRefreshAt = (state: KialiAppState) => state.globalState.lastRefreshAt;
+
+export const lastRefreshAtSelector = createIdentitySelector(lastRefreshAt);
+
 const showServiceNodes = (state: KialiAppState) => state.graph.filterState.showServiceNodes;
 
 export const showServiceNodesSelector = createIdentitySelector(showServiceNodes);
@@ -67,10 +73,10 @@ export const showUnusedNodesSelector = createIdentitySelector(showUnusedNodes);
 
 export const graphDataSelector = GraphData.graphDataSelector;
 
-const meshwideMTLSStatus = (state: KialiAppState) => state.statusState.status['Istio mTLS'];
+const meshwideMTLSStatus = (state: KialiAppState) => state.meshTLSStatus.status;
 
 export const meshWideMTLSStatusSelector = createIdentitySelector(meshwideMTLSStatus);
 
-const meshwideMTLSEnabled = (state: KialiAppState) => isMTLSEnabled(state.statusState.status['Istio mTLS']);
+const meshwideMTLSEnabled = (state: KialiAppState) => isMTLSEnabled(state.meshTLSStatus.status);
 
 export const meshWideMTLSEnabledSelector = createIdentitySelector(meshwideMTLSEnabled);

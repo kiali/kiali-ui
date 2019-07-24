@@ -1,5 +1,5 @@
 import { filterByName, IstioConfigItem, IstioConfigList, toIstioItems } from '../../../types/IstioConfigList';
-import { IstioConfigListFilters } from '../FiltersAndSorts';
+import * as IstioConfigListFilters from '../FiltersAndSorts';
 import { SortField } from '../../../types/SortFilters';
 
 const mockIstioConfigList = (names: string[]): IstioConfigList => {
@@ -20,6 +20,7 @@ const mockIstioConfigList = (names: string[]): IstioConfigList => {
     meshPolicies: [],
     clusterRbacConfigs: [],
     rbacConfigs: [],
+    sidecars: [],
     serviceRoles: [],
     serviceRoleBindings: [],
     validations: {},

@@ -39,7 +39,8 @@ import { KialiAppAction } from '../../actions/KialiAppAction';
 import GraphDataThunkActions from '../../actions/GraphDataThunkActions';
 import { GraphActions } from '../../actions/GraphActions';
 import { GraphFilterActions } from '../../actions/GraphFilterActions';
-import { NodeContextMenu } from '../../components/CytoscapeGraph/ContextMenu/NodeContextMenu';
+import { NodeContextMenuContainer } from '../../components/CytoscapeGraph/ContextMenu/NodeContextMenu';
+import { GlobalActions } from '../../actions/GlobalActions';
 
 // GraphURLPathProps holds path variable values.  Currenly all path variables are relevant only to a node graph
 type GraphURLPathProps = {
@@ -61,7 +62,6 @@ type ReduxProps = {
   isError: boolean;
   isLoading: boolean;
   isPageVisible: boolean;
-  isReady: boolean;
   layout: Layout;
   node?: NodeParamsType;
   pollInterval: PollIntervalInMs;
@@ -83,15 +83,12 @@ type ReduxProps = {
     node?: NodeParamsType
   ) => any;
   graphChanged: () => void;
-  setlayout: (layout: Layout) => void;
   setNode: (node?: NodeParamsType) => void;
   toggleLegend: () => void;
+  setLastRefreshAt: (lastRefreshAt: TimeInMilliseconds) => void;
 };
 
-export type GraphPageProps = RouteComponentProps<GraphURLPathProps> &
-  ReduxProps & {
-    isReady: boolean;
-  };
+export type GraphPageProps = RouteComponentProps<Partial<GraphURLPathProps>> & ReduxProps;
 
 type GraphPageState = {
   showHelp: boolean;
@@ -151,7 +148,7 @@ export class GraphPage extends React.Component<GraphPageProps, GraphPageState> {
   private readonly errorBoundaryRef: any;
   private cytoscapeGraphRef: any;
 
-  static getNodeParamsFromProps(props: RouteComponentProps<GraphURLPathProps>): NodeParamsType | undefined {
+  static getNodeParamsFromProps(props: RouteComponentProps<Partial<GraphURLPathProps>>): NodeParamsType | undefined {
     const app = props.match.params.app;
     const appOk = app && app !== 'unknown' && app !== 'undefined';
     const namespace = props.match.params.namespace;
@@ -174,12 +171,12 @@ export class GraphPage extends React.Component<GraphPageProps, GraphPageState> {
       version = '';
     }
     const node: NodeParamsType = {
-      app: app,
-      namespace: { name: namespace },
+      app: app!,
+      namespace: { name: namespace! },
       nodeType: nodeType,
-      service: service,
+      service: service!,
       version: version,
-      workload: workload
+      workload: workload!
     };
     return node;
   }
@@ -345,7 +342,8 @@ export class GraphPage extends React.Component<GraphPageProps, GraphPageState> {
                 ref={refInstance => this.setCytoscapeGraph(refInstance)}
                 isMTLSEnabled={this.props.mtlsEnabled}
                 focusSelector={focusSelector}
-                contextMenuNodeComponent={NodeContextMenu}
+                contextMenuNodeComponent={NodeContextMenuContainer}
+                contextMenuGroupComponent={NodeContextMenuContainer}
               />
               {this.props.graphData.nodes && Object.keys(this.props.graphData.nodes).length > 0 && !this.props.isError && (
                 <div className={cytoscapeToolbarWrapperDivStyle}>
@@ -414,6 +412,7 @@ export class GraphPage extends React.Component<GraphPageProps, GraphPageState> {
 
     this.pollPromise.promise
       .then(() => {
+        this.props.setLastRefreshAt(Date.now());
         this.scheduleNextPollingIntervalFromProps();
       })
       .catch(error => {
@@ -512,7 +511,8 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<KialiAppState, void, KialiAp
     ),
   graphChanged: bindActionCreators(GraphActions.changed, dispatch),
   setNode: bindActionCreators(GraphActions.setNode, dispatch),
-  toggleLegend: bindActionCreators(GraphFilterActions.toggleLegend, dispatch)
+  toggleLegend: bindActionCreators(GraphFilterActions.toggleLegend, dispatch),
+  setLastRefreshAt: bindActionCreators(GlobalActions.setLastRefreshAt, dispatch)
 });
 
 const GraphPageContainer = withRouter<RouteComponentProps<{}>>(

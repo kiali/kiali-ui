@@ -6,15 +6,13 @@ import { RouteComponentProps } from 'react-router';
 import Masthead from './Masthead/Masthead';
 import Menu from './Menu';
 import { Page, PageHeader, PageSection, Brand } from '@patternfly/react-core';
+import { style } from 'typestyle';
 
 import MessageCenterContainer from '../../components/MessageCenter/MessageCenter';
 import { kialiLogo, serverConfig } from '../../config';
 import { KialiAppState } from '../../store/Store';
 import { KialiAppAction } from '../../actions/KialiAppAction';
 import UserSettingsThunkActions from '../../actions/UserSettingsThunkActions';
-
-export const istioConfigTitle = 'Istio Config';
-export const servicesTitle = 'Services';
 
 type PropsType = RouteComponentProps & {
   navCollapsed: boolean;
@@ -28,6 +26,11 @@ type NavigationState = {
   isNavOpenDesktop: boolean;
   isNavOpenMobile: boolean;
 };
+
+const flexBoxColumnStyle = style({
+  display: 'flex',
+  flexDirection: 'column'
+});
 
 class Navigation extends React.Component<PropsType, NavigationState> {
   static contextTypes = {
@@ -109,7 +112,7 @@ class Navigation extends React.Component<PropsType, NavigationState> {
     return (
       <Page header={Header} sidebar={Sidebar} onPageResize={this.onPageResize}>
         <MessageCenterContainer drawerTitle="Message Center" />
-        <PageSection variant={'light'}>
+        <PageSection className={flexBoxColumnStyle} variant={'light'}>
           <RenderPage needScroll={this.isContentScrollable()} />
         </PageSection>
       </Page>
@@ -119,8 +122,8 @@ class Navigation extends React.Component<PropsType, NavigationState> {
 
 const mapStateToProps = (state: KialiAppState) => ({
   navCollapsed: state.userSettings.interface.navCollapse,
-  jaegerUrl: state.jaegerState.jaegerURL,
-  jaegerIntegration: state.jaegerState.enableIntegration
+  jaegerUrl: state.jaegerState ? state.jaegerState.jaegerURL : '',
+  jaegerIntegration: state.jaegerState ? state.jaegerState.enableIntegration : false
 });
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<KialiAppState, void, KialiAppAction>) => ({

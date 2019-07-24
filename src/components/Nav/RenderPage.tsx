@@ -1,14 +1,13 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { Redirect, Route } from 'react-router-dom';
 import SwitchErrorBoundary from '../SwitchErrorBoundary/SwitchErrorBoundary';
 import { pathRoutes, defaultRoute, secondaryMastheadRoutes } from '../../routes';
 import { Path } from '../../types/Routes';
+import { style } from 'typestyle';
+
+const containerStyle = style({ marginLeft: 0, marginRight: 0 });
 
 class RenderPage extends React.Component<{ needScroll: boolean }> {
-  constructor(props: { needScroll: boolean }) {
-    super(props);
-  }
-
   renderPaths(paths: Path[]) {
     return paths.map((item, index) => {
       return <Route key={index} path={item.path} component={item.component} />;
@@ -25,13 +24,17 @@ class RenderPage extends React.Component<{ needScroll: boolean }> {
 
   render() {
     const component = (
-      <div className="container-fluid">
-        <SwitchErrorBoundary
-          fallBackComponent={() => <h2>Sorry, there was a problem. Try a refresh or navigate to a different page.</h2>}
-        >
-          {this.renderPathRoutes()}
-          <Redirect from="/" to={defaultRoute} />
-        </SwitchErrorBoundary>
+      <div className={`container-fluid ${containerStyle}`}>
+        <Suspense fallback={<div>Loading...</div>}>
+          <SwitchErrorBoundary
+            fallBackComponent={() => (
+              <h2>Sorry, there was a problem. Try a refresh or navigate to a different page.</h2>
+            )}
+          >
+            {this.renderPathRoutes()}
+            <Redirect from="/" to={defaultRoute} />
+          </SwitchErrorBoundary>
+        </Suspense>
       </div>
     );
     return (
