@@ -1,20 +1,49 @@
-export interface AuthConfig {
-  authorizationEndpoint?: string;
-  logoutEndpoint?: string;
-  logoutRedirect?: string;
-  secretMissing?: boolean;
-  strategy: AuthStrategy;
-}
-
-export type AuthInfo = {
-  sessionInfo: SessionInfo;
-} & AuthConfig;
+import * as t from 'io-ts';
+import * as tutils from '../utils/Io-ts';
 
 export enum AuthStrategy {
   login = 'login',
   anonymous = 'anonymous',
   openshift = 'openshift'
 }
+
+export const AuthStrategyCodec = tutils.enumType<AuthStrategy>(AuthStrategy, 'AuthStrategy');
+
+const AuthConfigCodecRequired = t.interface({
+  strategy: AuthStrategyCodec
+});
+
+const AuthConfigCodecPartial = t.partial({
+  authorizationEndpoint: t.string,
+  logoutEndpoint: t.string,
+  logoutRedirect: t.string,
+  secretMissing: t.boolean
+});
+
+export const AuthConfigCodec = t.exact(t.intersection([AuthConfigCodecRequired, AuthConfigCodecPartial]), 'AuthConfig');
+
+export const SessionInfoCodec = t.exact(
+  t.interface({
+    username: t.string,
+    expiresOn: t.string
+  }),
+  'SessionInfo'
+);
+
+export const AuthInfoCodec = t.exact(
+  t.intersection([
+    t.interface({
+      sessionInfo: SessionInfoCodec
+    }),
+    AuthConfigCodecRequired,
+    AuthConfigCodecPartial
+  ]),
+  'AuthInfo'
+);
+
+export interface AuthConfig extends t.TypeOf<typeof AuthConfigCodec> {}
+export interface AuthInfo extends t.TypeOf<typeof AuthInfoCodec> {}
+export interface SessionInfo extends t.TypeOf<typeof SessionInfoCodec> {}
 
 // Stores the result of a computation:
 // hold = stop all computation and wait for a side-effect, such as a redirect
@@ -26,9 +55,4 @@ export enum AuthResult {
   CONTINUE = 'continue',
   SUCCESS = 'success',
   FAILURE = 'failure'
-}
-
-export interface SessionInfo {
-  username?: string;
-  expiresOn?: string;
 }

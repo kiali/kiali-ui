@@ -1,9 +1,10 @@
-import axios, { AxiosError } from 'axios';
+import axios, { AxiosError, AxiosResponse } from 'axios';
 import { DashboardModel, DashboardQuery } from '@kiali/k-charted-pf3';
+import * as t from 'io-ts';
 
-import Namespace from '../types/Namespace';
+import { NamespaceArrayCodec } from '../types/Namespace';
 import { IstioMetricsOptions } from '../types/MetricsOptions';
-import { Metrics } from '../types/Metrics';
+import { Metrics, MetricsCodec } from '../types/Metrics';
 import { IstioConfigDetails } from '../types/IstioConfigDetails';
 import { IstioConfigList } from '../types/IstioConfigList';
 import { Workload, WorkloadNamespaceResponse } from '../types/Workload';
@@ -19,9 +20,9 @@ import {
   NamespaceWorkloadHealth
 } from '../types/Health';
 import { App } from '../types/App';
-import { ServerStatus } from '../types/ServerStatus';
+import { ServerStatusCodec } from '../types/ServerStatus';
 import { AppList } from '../types/AppList';
-import { AuthInfo } from '../types/Auth';
+import { AuthInfoCodec } from '../types/Auth';
 import { HTTP_VERBS, UserName, Password, DurationInSeconds } from '../types/Common';
 import { NodeParamsType, NodeType, GraphDefinition } from '../types/Graph';
 import { ServiceList } from '../types/ServiceList';
@@ -30,6 +31,8 @@ import { ServerConfig } from '../types/ServerConfig';
 import { TLSStatus } from '../types/TLSStatus';
 import { Pod, PodLogs } from '../types/IstioObjects';
 import { ThreeScaleHandler, ThreeScaleInfo, ThreeScaleServiceRule } from '../types/ThreeScale';
+import { PathReporter } from 'io-ts/lib/PathReporter';
+import { isRight } from 'fp-ts/lib/Either';
 
 export const ANONYMOUS_USER = 'anonymous';
 
@@ -54,6 +57,39 @@ const getHeaders = () => {
 const basicAuth = (username: UserName, password: Password) => {
   return { username: username, password: password };
 };
+
+type ApiResponse<T> = Promise<AxiosResponse<T>>;
+
+const newSafeRequest = <P>(
+  method: HTTP_VERBS,
+  url: string,
+  queryParams: any,
+  data: any,
+  codec: t.Type<P>
+): Promise<AxiosResponse<t.TypeOf<typeof codec>>> =>
+  axios
+    .request<t.TypeOf<typeof codec>>({
+      method: method,
+      url: url,
+      data: data,
+      headers: getHeaders(),
+      params: queryParams
+    })
+    .then((response: AxiosResponse<t.TypeOf<typeof codec>>) => {
+      const decodedData = codec.decode(response.data);
+      if (isRight(decodedData)) {
+        response.data = decodedData.right;
+      } else {
+        // Currently is set to soft-fail: Report the error but try to continue with the raw received data
+        console.error(
+          `Error while decoding data for type ${codec.name}.\nReceived data:`,
+          response.data,
+          '\nReport:',
+          PathReporter.report(decodedData)
+        );
+      }
+      return response;
+    });
 
 const newRequest = <P>(method: HTTP_VERBS, url: string, queryParams: any, data: any) =>
   axios.request<P>({
@@ -90,7 +126,7 @@ export const logout = () => {
 };
 
 export const getAuthInfo = async () => {
-  return newRequest<AuthInfo>(HTTP_VERBS.GET, urls.authInfo, {}, {});
+  return newSafeRequest(HTTP_VERBS.GET, urls.authInfo, {}, {}, AuthInfoCodec);
 };
 
 export const checkOpenshiftAuth = async (data: any): Promise<Response<LoginSession>> => {
@@ -98,15 +134,17 @@ export const checkOpenshiftAuth = async (data: any): Promise<Response<LoginSessi
 };
 
 export const getStatus = () => {
-  return newRequest<ServerStatus>(HTTP_VERBS.GET, urls.status, {}, {});
+  return newSafeRequest(HTTP_VERBS.GET, urls.status, {}, {}, ServerStatusCodec);
 };
 
 export const getNamespaces = () => {
-  return newRequest<Namespace[]>(HTTP_VERBS.GET, urls.namespaces, {}, {});
+  return newSafeRequest(HTTP_VERBS.GET, urls.namespaces, {}, {}, NamespaceArrayCodec);
 };
 
 export const getNamespaceMetrics = (namespace: string, params: IstioMetricsOptions) => {
-  return newRequest<Readonly<Metrics>>(HTTP_VERBS.GET, urls.namespaceMetrics(namespace), params, {});
+  return newSafeRequest(HTTP_VERBS.GET, urls.namespaceMetrics(namespace), params, {}, MetricsCodec) as ApiResponse<
+    Readonly<Metrics>
+  >;
 };
 
 export const getMeshTls = () => {
@@ -212,7 +250,7 @@ export const getServices = (namespace: string) => {
 };
 
 export const getServiceMetrics = (namespace: string, service: string, params: IstioMetricsOptions) => {
-  return newRequest<Metrics>(HTTP_VERBS.GET, urls.serviceMetrics(namespace, service), params, {});
+  return newSafeRequest(HTTP_VERBS.GET, urls.serviceMetrics(namespace, service), params, {}, MetricsCodec);
 };
 
 export const getServiceDashboard = (namespace: string, service: string, params: IstioMetricsOptions) => {
