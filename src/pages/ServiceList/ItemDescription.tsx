@@ -70,8 +70,12 @@ export default class ItemDescription extends React.PureComponent<Props, State> {
           />
         </Col>
         <Col xs={12} sm={12} md={this.state.columnWidth} lg={this.state.columnWidth}>
-          {this.props.item.apiType && <strong>Api: </strong>}
-          {this.props.item.apiType && <ApiTypeIndicator apiType={this.props.item.apiType} />}
+          {this.props.item.apiType && (
+            <>
+              <strong>Api: </strong>
+              <ApiTypeIndicator apiType={this.props.item.apiType} />
+            </>
+          )}
         </Col> 
       </Row>
     ) : (

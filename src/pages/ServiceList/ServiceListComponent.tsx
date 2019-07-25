@@ -189,14 +189,7 @@ class ServiceListComponent extends ListComponent.Component<
     const pageStart = (this.state.pagination.page - 1) * this.state.pagination.perPage;
     let pageEnd = pageStart + this.state.pagination.perPage;
     pageEnd = pageEnd < this.state.listItems.length ? pageEnd : this.state.listItems.length;
-    let hasApiColumn = false;
-    for (let i = pageStart; i < pageEnd; i++) {
-      const serviceItem = this.state.listItems[i];
-      if (serviceItem.apiType) {
-         hasApiColumn = true;
-         break;
-      }
-    }
+    let hasApiColumn = this.state.listItems.slice(pageStart, pageEnd).some(item => item.apiType)
 
     for (let i = pageStart; i < pageEnd; i++) {
       const serviceItem = this.state.listItems[i];

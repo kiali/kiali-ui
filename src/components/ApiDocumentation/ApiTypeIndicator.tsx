@@ -26,14 +26,13 @@ export class ApiTypeIndicator extends React.Component<Props> {
 
   render() {
     if (this.props.apiType) {
-        if (this.props.apiType === 'grpc' || this.props.apiType === 'graphql' || this.props.apiType === 'rest') {
-          return this.renderIcon(this.props.apiType);
-        }
+      return this.renderIcon(this.props.apiType);
     }
     return <span />;
   }
 
   renderIcon(apiType: string) {
+    if (this.props.apiType === 'grpc' || this.props.apiType === 'graphql' || this.props.apiType === 'rest') {
       return (
         <img
           className={this.iconStyle()}
@@ -41,6 +40,9 @@ export class ApiTypeIndicator extends React.Component<Props> {
           alt={apiType}
         />
       );
+    } else {
+      return <span />;
+    }
   }
 
 }
