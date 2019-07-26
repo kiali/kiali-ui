@@ -10,6 +10,16 @@ import {
   EmptyStateTitle,
   EmptyStateIcon
 } from 'patternfly-react';
+import PfNotificationDrawerTitle from 'patternfly-react/dist/esm/components/Notification/NotificationDrawer/NotificationDrawerTitle';
+import PfNotificationDrawerAccordion from 'patternfly-react/dist/esm/components/Notification/NotificationDrawer/NotificationDrawerAccordion/NotificationDrawerAccordion';
+import PfNotificationDrawerPanel from 'patternfly-react/dist/esm/components/Notification/NotificationDrawer/NotificationDrawerAccordion/NotificationDrawerPanel';
+import PfNotificationDrawerPanelAction from 'patternfly-react/dist/esm/components/Notification/NotificationDrawer/NotificationDrawerAccordion/NotificationDrawerPanelAction';
+import PfNotificationDrawerPanelActionLink from 'patternfly-react/dist/esm/components/Notification/NotificationDrawer/NotificationDrawerAccordion/NotificationDrawerPanelActionLink';
+import PfNotificationDrawerPanelBody from 'patternfly-react/dist/esm/components/Notification/NotificationDrawer/NotificationDrawerAccordion/NotificationDrawerPanelBody';
+import PfNotificationDrawerPanelCollapse from 'patternfly-react/dist/esm/components/Notification/NotificationDrawer/NotificationDrawerAccordion/NotificationDrawerPanelCollapse';
+import PfNotificationDrawerPanelCounter from 'patternfly-react/dist/esm/components/Notification/NotificationDrawer/NotificationDrawerAccordion/NotificationDrawerPanelCounter';
+import PfNotificationDrawerPanelHeading from 'patternfly-react/dist/esm/components/Notification/NotificationDrawer/NotificationDrawerAccordion/NotificationDrawerPanelHeading';
+import PfNotificationDrawerPanelTitle from 'patternfly-react/dist/esm/components/Notification/NotificationDrawer/NotificationDrawerAccordion/NotificationDrawerPanelTitle';
 
 import { MessageType, NotificationMessage, NotificationGroup } from '../../types/MessageCenter';
 import moment from 'moment';
@@ -113,41 +123,41 @@ class NotificationGroupWrapper extends React.PureComponent<NotificationGroupWrap
     }
 
     return (
-      <PfNotificationDrawer.Panel expanded={isExpanded}>
-        <PfNotificationDrawer.PanelHeading onClick={() => this.props.onToggle(group)}>
-          <PfNotificationDrawer.PanelTitle>
+      <PfNotificationDrawerPanel expanded={isExpanded}>
+        <PfNotificationDrawerPanelHeading onClick={() => this.props.onToggle(group)}>
+          <PfNotificationDrawerPanelTitle>
             <a className={isExpanded ? '' : 'collapsed'} aria-expanded="true">
               {group.title}
             </a>
-          </PfNotificationDrawer.PanelTitle>
-          <PfNotificationDrawer.PanelCounter text={getUnreadMessageLabel(group.messages)} />
-        </PfNotificationDrawer.PanelHeading>
+          </PfNotificationDrawerPanelTitle>
+          <PfNotificationDrawerPanelCounter text={getUnreadMessageLabel(group.messages)} />
+        </PfNotificationDrawerPanelHeading>
         <Collapse in={isExpanded}>
-          <PfNotificationDrawer.PanelCollapse>
-            <PfNotificationDrawer.PanelBody>
+          <PfNotificationDrawerPanelCollapse>
+            <PfNotificationDrawerPanelBody>
               {group.messages.length === 0 && noNotificationsMessage}
               {this.getMessages().map(message => (
                 <NotificationWrapper key={message.id} message={message} onClick={this.props.onNotificationClick} />
               ))}
-            </PfNotificationDrawer.PanelBody>
+            </PfNotificationDrawerPanelBody>
             {group.showActions && group.messages.length > 0 && (
-              <PfNotificationDrawer.PanelAction>
-                <PfNotificationDrawer.PanelActionLink className="drawer-pf-action-link">
+              <PfNotificationDrawerPanelAction>
+                <PfNotificationDrawerPanelActionLink className="drawer-pf-action-link">
                   <Button bsStyle="link" onClick={() => this.props.onMarkGroupAsRead(group)}>
                     Mark All Read
                   </Button>
-                </PfNotificationDrawer.PanelActionLink>
-                <PfNotificationDrawer.PanelActionLink data-toggle="clear-all">
+                </PfNotificationDrawerPanelActionLink>
+                <PfNotificationDrawerPanelActionLink data-toggle="clear-all">
                   <Button bsStyle="link" onClick={() => this.props.onClearGroup(group)}>
                     <Icon type="pf" name="close" />
                     Clear All
                   </Button>
-                </PfNotificationDrawer.PanelActionLink>
-              </PfNotificationDrawer.PanelAction>
+                </PfNotificationDrawerPanelActionLink>
+              </PfNotificationDrawerPanelAction>
             )}
-          </PfNotificationDrawer.PanelCollapse>
+          </PfNotificationDrawerPanelCollapse>
         </Collapse>
-      </PfNotificationDrawer.Panel>
+      </PfNotificationDrawerPanel>
     );
   }
 }
@@ -174,7 +184,7 @@ export default class NotificationDrawer extends React.PureComponent<PropsType, S
   render() {
     return (
       <PfNotificationDrawer hide={this.props.isHidden} expanded={this.props.isExpanded}>
-        <PfNotificationDrawer.Title
+        <PfNotificationDrawerTitle
           title={this.props.title}
           onExpandClick={this.props.onExpandDrawer}
           onCloseClick={this.props.onHideDrawer}
@@ -183,7 +193,7 @@ export default class NotificationDrawer extends React.PureComponent<PropsType, S
           className={drawerContainerStyle}
           maxHeight={{ type: PropertyType.VIEWPORT_HEIGHT_MINUS_TOP, margin: drawerMarginBottom }}
         >
-          <PfNotificationDrawer.Accordion>
+          <PfNotificationDrawerAccordion>
             {this.props.groups.length === 0 && noNotificationsMessage}
             {this.props.groups.map(group => {
               return (
@@ -199,7 +209,7 @@ export default class NotificationDrawer extends React.PureComponent<PropsType, S
                 />
               );
             })}
-          </PfNotificationDrawer.Accordion>
+          </PfNotificationDrawerAccordion>
         </BoundingClientAwareComponent>
       </PfNotificationDrawer>
     );
