@@ -357,7 +357,7 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
                     </>
                   </NavItem>
                 ))}
-              {this.state.serviceDetailsInfo.apiDocumentation.baseUrl && (
+              { this.state.serviceDetailsInfo.apiDocumentation && this.state.serviceDetailsInfo.apiDocumentation.baseUrl && (
                 <NavItem eventKey="api">API Doc</NavItem>
               )}  
             </Nav>
@@ -403,7 +403,7 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
                   />
                 </TabPane>
               )}
-              {this.state.serviceDetailsInfo.apiDocumentation.baseUrl && (
+              {this.state.serviceDetailsInfo.apiDocumentation && this.state.serviceDetailsInfo.apiDocumentation.baseUrl && (
                 <TabPane eventKey="api" mountOnEnter={true} unmountOnExit={true}>
                   <ApiDocumentation
                     apiType={this.state.serviceDetailsInfo.apiDocumentation.type}

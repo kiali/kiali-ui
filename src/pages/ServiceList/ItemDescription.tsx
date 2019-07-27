@@ -14,7 +14,7 @@ interface Props {
 }
 interface State {
   health?: ServiceHealth;
-  columnWidth: number;
+  nbColumns: number;
 }
 
 export default class ItemDescription extends React.PureComponent<Props, State> {
@@ -22,7 +22,7 @@ export default class ItemDescription extends React.PureComponent<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    this.state = { health: undefined, columnWidth: props.hasApiColumn?3:4 };
+    this.state = { health: undefined, nbColumns: props.hasApiColumn ? 4 : 3 };
   }
 
   componentDidMount() {
@@ -52,16 +52,17 @@ export default class ItemDescription extends React.PureComponent<Props, State> {
   }
 
   render() {
+    var columnSize = 12 / this.state.nbColumns;
     return this.state.health ? (
       <Row>
-        <Col xs={12} sm={12} md={this.state.columnWidth} lg={this.state.columnWidth}>
+        <Col xs={12} sm={12} md={columnSize} lg={columnSize}>
           <strong>Health: </strong>
           <HealthIndicator id={this.props.item.name} health={this.state.health} mode={DisplayMode.SMALL} />
         </Col>
-        <Col xs={12} sm={12} md={this.state.columnWidth} lg={this.state.columnWidth}>
+        <Col xs={12} sm={12} md={columnSize} lg={columnSize}>
           {!this.props.item.istioSidecar && <MissingSidecar />}
         </Col>
-        <Col xs={12} sm={12} md={this.state.columnWidth} lg={this.state.columnWidth}>
+        <Col xs={12} sm={12} md={columnSize} lg={columnSize}>
           <strong>Config: </strong>{' '}
           <ConfigIndicator
             id={this.props.item.name + '-config-validation'}
@@ -69,7 +70,8 @@ export default class ItemDescription extends React.PureComponent<Props, State> {
             size="medium"
           />
         </Col>
-        <Col xs={12} sm={12} md={this.state.columnWidth} lg={this.state.columnWidth}>
+        <Col xs={12} sm={12} md={columnSize} lg={columnSize}>
+          // If no api, the column is empty and not displayed
           {this.props.item.apiType && (
             <>
               <strong>Api: </strong>
