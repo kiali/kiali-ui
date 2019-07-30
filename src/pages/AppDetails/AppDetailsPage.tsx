@@ -19,6 +19,7 @@ import { DurationInSeconds } from '../../types/Common';
 import { KialiAppState } from '../../store/Store';
 import { durationSelector } from '../../store/Selectors';
 import { connect } from 'react-redux';
+import { TabManager } from '../../app/TabManager';
 
 type AppDetailsState = {
   app: App;
@@ -32,6 +33,10 @@ type ReduxProps = {
 
 type AppDetailsProps = RouteComponentProps<AppId> & ReduxProps;
 
+const tabName = 'tab';
+const defaultTab = 'info';
+const trafficTabName = 'traffic';
+
 const emptyApp = {
   namespace: { name: '' },
   name: '',
@@ -40,7 +45,6 @@ const emptyApp = {
   runtimes: []
 };
 
-// TODO: change to sync with @lponce proposal
 const paramToTab: { [key: string]: number } = {
   info: 0,
   traffic: 1,
@@ -48,16 +52,20 @@ const paramToTab: { [key: string]: number } = {
   out_metrics: 3
 };
 
-const tabToParam: { [key: number]: string } = {
-  0: 'info',
-  1: 'traffic',
-  2: 'in_metrics',
-  3: 'out_metrics'
-};
+const tabToParam: { [index: number]: string } = Object.keys(paramToTab).reduce(
+  (result: { [i: number]: string }, name: string) => {
+    result[paramToTab[name]] = name;
+    return result;
+  },
+  {}
+);
 
 class AppDetails extends React.Component<AppDetailsProps, AppDetailsState> {
+  tabManager: TabManager;
+
   constructor(props: AppDetailsProps) {
     super(props);
+    this.tabManager = new TabManager(tabName, defaultTab, trafficTabName, this.fetchTrafficData);
     this.state = {
       app: emptyApp,
       trafficData: null
@@ -84,15 +92,19 @@ class AppDetails extends React.Component<AppDetailsProps, AppDetailsState> {
     }
   }
 
-  doRefresh = () => {
-    const currentTab = this.activeTab('tab', 'info');
+  hasTrafficData = (): boolean => {
+    return this.state.trafficData != null;
+  };
 
-    if (this.state.app === emptyApp || currentTab === 'info') {
+  doRefresh = () => {
+    const currentTab = this.tabManager.activeTab();
+
+    if (this.state.app === emptyApp || this.tabManager.isDefaultTab(currentTab)) {
       this.setState({ trafficData: null });
       this.fetchApp();
     }
 
-    if (currentTab === 'traffic') {
+    if (this.tabManager.isTrafficTab(currentTab)) {
       this.fetchTrafficData();
     }
   };
@@ -175,8 +187,6 @@ class AppDetails extends React.Component<AppDetailsProps, AppDetailsState> {
           app={this.state.app}
           namespace={this.props.match.params.namespace}
           onRefresh={this.doRefresh}
-          activeTab={this.activeTab}
-          onSelectTab={this.tabSelectHandler}
           health={this.state.health}
         />
       </Tab>
@@ -189,7 +199,7 @@ class AppDetails extends React.Component<AppDetailsProps, AppDetailsState> {
           itemType={MetricsObjectTypes.APP}
           namespace={this.state.app.namespace.name}
           appName={this.state.app.name}
-          onDurationChanged={this.handleTrafficDurationChange}
+          onDurationChanged={this.tabManager.handleTrafficDurationChange()}
           onRefresh={this.doRefresh}
         />
       </Tab>
@@ -234,11 +244,10 @@ class AppDetails extends React.Component<AppDetailsProps, AppDetailsState> {
         <Tabs
           id="basic-tabs"
           isFilled={true}
-          activeKey={paramToTab[this.activeTab('tab', 'info')]}
+          activeKey={paramToTab[this.tabManager.activeTab()]}
           onSelect={(_, ek) => {
-            console.log(ek);
-            const tabName = tabToParam[ek];
-            this.tabSelectHandler('tab', this.tabChangeHandler)(tabName);
+            const currentTabName = tabToParam[ek];
+            this.tabManager.tabSelectHandler(this.tabManager.tabChangeHandler)(currentTabName, this.hasTrafficData());
           }}
         >
           {this.renderTabs()}
@@ -246,37 +255,6 @@ class AppDetails extends React.Component<AppDetailsProps, AppDetailsState> {
       </>
     );
   }
-
-  private activeTab = (tabName: string, whenEmpty: string) => {
-    return new URLSearchParams(this.props.location.search).get(tabName) || whenEmpty;
-  };
-
-  private handleTrafficDurationChange = () => {
-    this.fetchTrafficData();
-  };
-
-  private tabChangeHandler = (tabName: string) => {
-    if (tabName === 'traffic' && this.state.trafficData === null) {
-      this.fetchTrafficData();
-    }
-  };
-
-  private tabSelectHandler = (tabName: string, postHandler?: (tabName: string) => void) => {
-    return (tabKey?: string) => {
-      if (!tabKey) {
-        return;
-      }
-
-      const urlParams = new URLSearchParams('');
-      urlParams.set(tabName, tabKey);
-
-      this.props.history.push(this.props.location.pathname + '?' + urlParams.toString());
-
-      if (postHandler) {
-        postHandler(tabKey);
-      }
-    };
-  };
 }
 
 const mapStateToProps = (state: KialiAppState) => ({
