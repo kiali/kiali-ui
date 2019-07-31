@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { style } from 'typestyle';
 
+import apiGrpcIcon from '../../assets/img/api-grpc-logo.svg';
+import apiRestIcon from '../../assets/img/api-rest-logo.svg';
+import apiGraphqlIcon from '../../assets/img/api-graphql-logo.svg';
+
 interface Props {
   apiType: string;
 }
-
-const apiGrpcIcon = require('../../assets/img/api-grpc-logo.svg');
-const apiRestIcon = require('../../assets/img/api-rest-logo.svg');
-const apiGraphqlIcon = require('../../assets/img/api-graphql-logo.svg');
 
 const nameToSource = new Map<string, string>([
   ['grpc', apiGrpcIcon],
@@ -15,34 +15,29 @@ const nameToSource = new Map<string, string>([
   ['graphql', apiGraphqlIcon],
 ]);
 
+const iconStyle = style({
+  marginTop: -2,
+  marginRight: 6,
+  width: 30
+});
+
 export class ApiTypeIndicator extends React.Component<Props> {
-  iconStyle() {
-    return style({
-      marginTop: -2,
-      marginRight: 6,
-      width: 30
-    });
-  }
 
   render() {
-    if (this.props.apiType) {
-      return this.renderIcon(this.props.apiType);
-    }
-    return <span />;
+    return this.props.apiType ? this.renderIcon(this.props.apiType) : <span />;
   }
 
   renderIcon(apiType: string) {
-    if (this.props.apiType === 'grpc' || this.props.apiType === 'graphql' || this.props.apiType === 'rest') {
-      return (
-        <img
-          className={this.iconStyle()}
-          src={nameToSource.get(apiType)}
-          alt={apiType}
-        />
-      );
-    } else {
-      return <span />;
-    }
+    let iconToRender = nameToSource.get(this.props.apiType);
+    return iconToRender ? (
+      <img
+        className={iconStyle}
+        src={iconToRender}
+        alt={apiType}
+      />
+    ) : (
+      <span />
+    )
   }
 
 }
