@@ -25,6 +25,9 @@ type AppDetailsState = {
   app: App;
   health?: AppHealth;
   trafficData: GraphDefinition | null;
+  // currentTab is needed to (un)mount tab components
+  // when the tab is not rendered.
+  currentTab: string;
 };
 
 type ReduxProps = {
@@ -67,6 +70,7 @@ class AppDetails extends React.Component<AppDetailsProps, AppDetailsState> {
     super(props);
     this.tabManager = new TabManager(tabName, defaultTab, trafficTabName, this.fetchTrafficData);
     this.state = {
+      currentTab: this.tabManager.activeTab(),
       app: emptyApp,
       trafficData: null
     };
@@ -183,47 +187,63 @@ class AppDetails extends React.Component<AppDetailsProps, AppDetailsState> {
   staticTabs() {
     const overTab = (
       <Tab title="Overview" eventKey={0}>
-        <AppInfo
-          app={this.state.app}
-          namespace={this.props.match.params.namespace}
-          onRefresh={this.doRefresh}
-          health={this.state.health}
-        />
+        {this.state.currentTab === 'info' ? (
+          <AppInfo
+            app={this.state.app}
+            namespace={this.props.match.params.namespace}
+            onRefresh={this.doRefresh}
+            health={this.state.health}
+          />
+        ) : (
+          undefined
+        )}
       </Tab>
     );
 
     const trafficTab = (
       <Tab title="Traffic" eventKey={1}>
-        <TrafficDetails
-          trafficData={this.state.trafficData}
-          itemType={MetricsObjectTypes.APP}
-          namespace={this.state.app.namespace.name}
-          appName={this.state.app.name}
-          onDurationChanged={this.tabManager.handleTrafficDurationChange()}
-          onRefresh={this.doRefresh}
-        />
+        {this.state.currentTab === 'traffic' ? (
+          <TrafficDetails
+            trafficData={this.state.trafficData}
+            itemType={MetricsObjectTypes.APP}
+            namespace={this.state.app.namespace.name}
+            appName={this.state.app.name}
+            onDurationChanged={this.tabManager.handleTrafficDurationChange()}
+            onRefresh={this.doRefresh}
+          />
+        ) : (
+          undefined
+        )}
       </Tab>
     );
 
     const inTab = (
       <Tab title="Inbound metrics" eventKey={2}>
-        <IstioMetricsContainer
-          namespace={this.props.match.params.namespace}
-          object={this.props.match.params.app}
-          objectType={MetricsObjectTypes.APP}
-          direction={'inbound'}
-        />
+        {this.state.currentTab === 'in_metrics' ? (
+          <IstioMetricsContainer
+            namespace={this.props.match.params.namespace}
+            object={this.props.match.params.app}
+            objectType={MetricsObjectTypes.APP}
+            direction={'inbound'}
+          />
+        ) : (
+          undefined
+        )}
       </Tab>
     );
 
     const outTab = (
       <Tab title="Outbound metrics" eventKey={3}>
-        <IstioMetricsContainer
-          namespace={this.props.match.params.namespace}
-          object={this.props.match.params.app}
-          objectType={MetricsObjectTypes.APP}
-          direction={'outbound'}
-        />
+        {this.state.currentTab === 'out_metrics' ? (
+          <IstioMetricsContainer
+            namespace={this.props.match.params.namespace}
+            object={this.props.match.params.app}
+            objectType={MetricsObjectTypes.APP}
+            direction={'outbound'}
+          />
+        ) : (
+          undefined
+        )}
       </Tab>
     );
 
@@ -231,6 +251,7 @@ class AppDetails extends React.Component<AppDetailsProps, AppDetailsState> {
   }
 
   renderTabs() {
+    // PF4 Tabs doesn't support static tabs followed of an array of tabs created dynamically.
     return this.staticTabs().concat(this.runtimeTabs());
   }
 
@@ -243,10 +264,12 @@ class AppDetails extends React.Component<AppDetailsProps, AppDetailsState> {
         <PfTitle location={this.props.location} istio={istioSidecar} />
         <Tabs
           id="basic-tabs"
-          isFilled={true}
           activeKey={paramToTab[this.tabManager.activeTab()]}
           onSelect={(_, ek) => {
             const currentTabName = tabToParam[ek];
+            this.setState({
+              currentTab: currentTabName
+            });
             this.tabManager.tabSelectHandler(this.tabManager.tabChangeHandler)(currentTabName, this.hasTrafficData());
           }}
         >
