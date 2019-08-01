@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { RouteComponentProps } from 'react-router-dom';
 import { Icon } from 'patternfly-react';
-import { Tabs, Tab } from '@patternfly/react-core';
+import { Tab } from '@patternfly/react-core';
 import ServiceId from '../../types/ServiceId';
 import * as API from '../../services/Api';
 import * as MessageCenter from '../../utils/MessageCenter';
@@ -28,6 +28,7 @@ import { durationSelector } from '../../store/Selectors';
 import { PromisesRegistry } from '../../utils/CancelablePromises';
 import Namespace from '../../types/Namespace';
 import { MessageType } from '../../types/MessageCenter';
+import TabsWithParams, { activeTab } from '../../components/Tab/Tabs';
 
 type ServiceDetailsState = {
   serviceDetailsInfo: ServiceDetailsInfo;
@@ -36,6 +37,7 @@ type ServiceDetailsState = {
   validations: Validations;
   threeScaleInfo: ThreeScaleInfo;
   threeScaleServiceRule?: ThreeScaleServiceRule;
+  currentTab: string;
 };
 
 interface ServiceDetailsProps extends RouteComponentProps<ServiceId> {
@@ -82,6 +84,9 @@ const emptyService = {
   }
 };
 
+const tabName = 'tab';
+const defaultTab = 'info';
+const trafficTabName = 'traffic';
 const tabIndex: { [tab: string]: number } = {
   info: 0,
   traffic: 1,
@@ -89,20 +94,13 @@ const tabIndex: { [tab: string]: number } = {
   traces: 3
 };
 
-const indexTab: { [index: number]: string } = Object.keys(tabIndex).reduce(
-  (result: { [i: number]: string }, name: string) => {
-    result[tabIndex[name]] = name;
-    return result;
-  },
-  {}
-);
-
 class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetailsState> {
   private promises = new PromisesRegistry();
 
   constructor(props: ServiceDetailsProps) {
     super(props);
     this.state = {
+      currentTab: activeTab(tabName, defaultTab),
       serviceDetailsInfo: emptyService,
       gateways: [],
       trafficData: null,
@@ -184,15 +182,21 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
     }
   }
 
+  fetchTrafficDataOnTabChange = (tabValue: string): void => {
+    if (tabValue === trafficTabName && this.state.trafficData == null) {
+      this.fetchTrafficData();
+    }
+  };
+
   doRefresh = () => {
-    const currentTab = this.activeTab('tab', 'info');
+    const currentTab = this.state.currentTab;
 
     if (this.state.serviceDetailsInfo === emptyService || currentTab === 'info') {
       this.setState({ trafficData: null });
       this.fetchBackend();
     }
 
-    if (currentTab === 'traffic') {
+    if (currentTab === trafficTabName) {
       this.fetchTrafficData();
     }
   };
@@ -326,10 +330,10 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
   }
 
   render() {
-    const currentTab = this.activeTab('tab', 'info');
+    const currentTab = this.state.currentTab;
     const errorTraces = this.state.serviceDetailsInfo.errorTraces;
     const overviewTab = (
-      <Tab eventKey={tabIndex['info']} title="Overview" key="Overview">
+      <Tab eventKey={0} title="Overview" key="Overview">
         {currentTab === 'info' && (
           <ServiceInfo
             namespace={this.props.match.params.namespace}
@@ -338,8 +342,6 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
             gateways={this.state.gateways}
             validations={this.state.validations}
             onRefresh={this.doRefresh}
-            activeTab={this.activeTab}
-            onSelectTab={this.tabSelectHandler}
             threeScaleInfo={this.state.threeScaleInfo}
             threeScaleServiceRule={this.state.threeScaleServiceRule}
           />
@@ -347,21 +349,21 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
       </Tab>
     );
     const trafficTab = (
-      <Tab eventKey={tabIndex['traffic']} title="Traffic" key="Traffic">
+      <Tab eventKey={1} title="Traffic" key="Traffic">
         {currentTab === 'traffic' && (
           <TrafficDetails
             trafficData={this.state.trafficData}
             itemType={MetricsObjectTypes.SERVICE}
             namespace={this.props.match.params.namespace}
             serviceName={this.props.match.params.service}
-            onDurationChanged={this.handleTrafficDurationChange}
+            onDurationChanged={this.fetchTrafficData}
             onRefresh={this.doRefresh}
           />
         )}
       </Tab>
     );
     const inboundMetricsTab = (
-      <Tab eventKey={tabIndex['metrics']} title="Inbound Metrics" key="Inbound Metrics">
+      <Tab eventKey={2} title="Inbound Metrics" key="Inbound Metrics">
         {currentTab === 'metrics' && (
           <IstioMetricsContainer
             namespace={this.props.match.params.namespace}
@@ -382,7 +384,7 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
       if (this.props.jaegerIntegration) {
         const jaegerTitle: string = errorTraces > 0 ? 'Error Traces (' + errorTraces + ')' : 'Traces';
         jaegerTag = (
-          <Tab eventKey={tabIndex['traces']} style={{ textAlign: 'center' }} title={jaegerTitle} key="traces">
+          <Tab eventKey={3} style={{ textAlign: 'center' }} title={jaegerTitle} key="traces">
             {currentTab === 'traces' && (
               <ServiceTraces
                 namespace={this.props.match.params.namespace}
@@ -400,6 +402,7 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
         );
         jaegerTag = (
           <Tab
+            eventKey={3}
             href={
               this.props.jaegerUrl +
               `/search?service=${this.props.match.params.service}.${this.props.match.params.namespace}`
@@ -417,54 +420,21 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
       <>
         <BreadcrumbView location={this.props.location} />
         <PfTitle location={this.props.location} istio={this.state.serviceDetailsInfo.istioSidecar} />
-        <Tabs
-          isFilled={true}
-          activeKey={tabIndex[currentTab]}
-          onSelect={(_, ek) => {
-            const tabKey = indexTab[ek];
-            this.tabSelectHandler('tab', this.tabChangeHandler)(tabKey);
+        <TabsWithParams
+          id="basic-tabs"
+          onSelect={tabValue => {
+            this.setState({ currentTab: tabValue });
           }}
+          tabMap={tabIndex}
+          tabName={tabName}
+          defaultTab={defaultTab}
+          postHandler={this.fetchTrafficDataOnTabChange}
         >
           {tabsArray}
-        </Tabs>
+        </TabsWithParams>
       </>
     );
   }
-
-  private activeTab = (tabName: string, whenEmpty: string) => {
-    return new URLSearchParams(this.props.location.search).get(tabName) || whenEmpty;
-  };
-
-  private handleTrafficDurationChange = () => {
-    this.fetchTrafficData();
-  };
-
-  private tabChangeHandler = (tabName: string) => {
-    if (tabName === 'traffic' && this.state.trafficData === null) {
-      this.fetchTrafficData();
-    }
-  };
-
-  private tabSelectHandler = (tabName: string, postHandler?: (tabName: string) => void) => {
-    return (tabKey?: string) => {
-      if (!tabKey) {
-        return;
-      }
-
-      const urlParams = new URLSearchParams('');
-      const parsedSearch = this.parseSearch();
-      if (parsedSearch.type && parsedSearch.name) {
-        urlParams.set(parsedSearch.type, parsedSearch.name);
-      }
-      urlParams.set(tabName, tabKey);
-
-      this.props.history.push(this.props.location.pathname + '?' + urlParams.toString());
-
-      if (postHandler) {
-        postHandler(tabKey);
-      }
-    };
-  };
 }
 
 const mapStateToProps = (state: KialiAppState) => ({

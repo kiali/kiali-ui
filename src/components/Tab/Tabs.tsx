@@ -39,10 +39,6 @@ export default class TabsWithParams extends React.Component<TabsProps, TabsState
     }, {});
   }
 
-  isDefaultTab(currentTab: string) {
-    return currentTab === this.props.defaultTab;
-  }
-
   tabIndexOf(tabName: string) {
     return this.props.tabMap[tabName];
   }
@@ -77,7 +73,7 @@ export default class TabsWithParams extends React.Component<TabsProps, TabsState
   render() {
     return (
       <Tabs
-        id="basic-tabs"
+        id={this.props.id}
         activeKey={this.activeIndex()}
         onSelect={(_, ek) => {
           const currentTabName = this.tabNameOf(ek);
