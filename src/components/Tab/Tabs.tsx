@@ -19,7 +19,7 @@ export const activeTab = (tabName: string, defaultTab: string): string => {
   return new URLSearchParams(history.location.search).get(tabName) || defaultTab;
 };
 
-export default class TabsWithParams extends React.Component<TabsProps, TabsState> {
+export default class ParameterizedTabs extends React.Component<TabsProps, TabsState> {
   private indexMap: { [key: number]: string };
 
   constructor(props: TabsProps) {

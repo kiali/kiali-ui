@@ -22,7 +22,7 @@ import { connect } from 'react-redux';
 import { KialiAppState } from '../../store/Store';
 import { durationSelector } from '../../store/Selectors';
 import { Tab } from '@patternfly/react-core';
-import TabsWithParams, { activeTab } from '../../components/Tab/Tabs';
+import ParameterizedTabs, { activeTab } from '../../components/Tab/Tabs';
 
 type WorkloadDetailsState = {
   workload: Workload;
@@ -341,7 +341,7 @@ class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, Workload
       <>
         <BreadcrumbView location={this.props.location} />
         <PfTitle location={this.props.location} istio={this.state.istioEnabled} />
-        <TabsWithParams
+        <ParameterizedTabs
           id="basic-tabs"
           onSelect={tabValue => {
             this.setState({ currentTab: tabValue });
@@ -352,7 +352,7 @@ class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, Workload
           postHandler={this.fetchTrafficDataOnTabChange}
         >
           {this.renderTabs()}
-        </TabsWithParams>
+        </ParameterizedTabs>
       </>
     );
   }

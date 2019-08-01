@@ -28,7 +28,7 @@ import { durationSelector } from '../../store/Selectors';
 import { PromisesRegistry } from '../../utils/CancelablePromises';
 import Namespace from '../../types/Namespace';
 import { MessageType } from '../../types/MessageCenter';
-import TabsWithParams, { activeTab } from '../../components/Tab/Tabs';
+import ParameterizedTabs, { activeTab } from '../../components/Tab/Tabs';
 
 type ServiceDetailsState = {
   serviceDetailsInfo: ServiceDetailsInfo;
@@ -420,7 +420,7 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
       <>
         <BreadcrumbView location={this.props.location} />
         <PfTitle location={this.props.location} istio={this.state.serviceDetailsInfo.istioSidecar} />
-        <TabsWithParams
+        <ParameterizedTabs
           id="basic-tabs"
           onSelect={tabValue => {
             this.setState({ currentTab: tabValue });
@@ -431,7 +431,7 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
           postHandler={this.fetchTrafficDataOnTabChange}
         >
           {tabsArray}
-        </TabsWithParams>
+        </ParameterizedTabs>
       </>
     );
   }

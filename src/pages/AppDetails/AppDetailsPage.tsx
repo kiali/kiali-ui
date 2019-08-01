@@ -19,7 +19,7 @@ import { DurationInSeconds } from '../../types/Common';
 import { KialiAppState } from '../../store/Store';
 import { durationSelector } from '../../store/Selectors';
 import { connect } from 'react-redux';
-import TabsWithParams, { activeTab } from '../../components/Tab/Tabs';
+import ParameterizedTabs, { activeTab } from '../../components/Tab/Tabs';
 
 type AppDetailsState = {
   app: App;
@@ -259,7 +259,7 @@ class AppDetails extends React.Component<AppDetailsProps, AppDetailsState> {
       <>
         <BreadcrumbView location={this.props.location} />
         <PfTitle location={this.props.location} istio={istioSidecar} />
-        <TabsWithParams
+        <ParameterizedTabs
           id="basic-tabs"
           onSelect={tabValue => {
             this.setState({ currentTab: tabValue });
@@ -270,7 +270,7 @@ class AppDetails extends React.Component<AppDetailsProps, AppDetailsState> {
           postHandler={this.fetchTrafficDataOnTabChange}
         >
           {this.renderTabs()}
-        </TabsWithParams>
+        </ParameterizedTabs>
       </>
     );
   }

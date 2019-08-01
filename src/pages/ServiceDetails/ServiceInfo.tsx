@@ -13,7 +13,7 @@ import IstioWizardDropdown from '../../components/IstioWizards/IstioWizardDropdo
 import { ThreeScaleInfo, ThreeScaleServiceRule } from '../../types/ThreeScale';
 import { DurationDropdownContainer } from '../../components/DurationDropdown/DurationDropdown';
 import RefreshButtonContainer from '../../components/Refresh/RefreshButton';
-import TabsWithParams, { activeTab } from '../../components/Tab/Tabs';
+import ParameterizedTabs, { activeTab } from '../../components/Tab/Tabs';
 import { Tab } from '@patternfly/react-core';
 
 interface ServiceDetails extends ServiceId {
@@ -201,7 +201,7 @@ class ServiceInfo extends React.Component<ServiceDetails, ServiceInfoState> {
           </Row>
           <Row className="row-cards-pf">
             <Col xs={12} sm={12} md={12} lg={12}>
-              <TabsWithParams
+              <ParameterizedTabs
                 id="service-tabs"
                 onSelect={tabValue => {
                   this.setState({ currentTab: tabValue });
@@ -231,7 +231,7 @@ class ServiceInfo extends React.Component<ServiceDetails, ServiceInfoState> {
                     />
                   )}
                 </Tab>
-              </TabsWithParams>
+              </ParameterizedTabs>
             </Col>
           </Row>
         </div>
