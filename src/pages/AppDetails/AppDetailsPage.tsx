@@ -36,10 +36,6 @@ type ReduxProps = {
 
 type AppDetailsProps = RouteComponentProps<AppId> & ReduxProps;
 
-const tabName = 'tab';
-const defaultTab = 'info';
-const trafficTabName = 'traffic';
-
 const emptyApp = {
   namespace: { name: '' },
   name: '',
@@ -48,6 +44,9 @@ const emptyApp = {
   runtimes: []
 };
 
+const tabName = 'tab';
+const defaultTab = 'info';
+const trafficTabName = 'traffic';
 const paramToTab: { [key: string]: number } = {
   info: 0,
   traffic: 1,
@@ -55,20 +54,12 @@ const paramToTab: { [key: string]: number } = {
   out_metrics: 3
 };
 
-const tabToParam: { [index: number]: string } = Object.keys(paramToTab).reduce(
-  (result: { [i: number]: string }, name: string) => {
-    result[paramToTab[name]] = name;
-    return result;
-  },
-  {}
-);
-
 class AppDetails extends React.Component<AppDetailsProps, AppDetailsState> {
   tabManager: TabManager;
 
   constructor(props: AppDetailsProps) {
     super(props);
-    this.tabManager = new TabManager(tabName, defaultTab, trafficTabName, this.fetchTrafficData);
+    this.tabManager = new TabManager(paramToTab, tabName, defaultTab, trafficTabName, this.fetchTrafficData);
     this.state = {
       currentTab: this.tabManager.activeTab(),
       app: emptyApp,
@@ -208,7 +199,7 @@ class AppDetails extends React.Component<AppDetailsProps, AppDetailsState> {
             itemType={MetricsObjectTypes.APP}
             namespace={this.state.app.namespace.name}
             appName={this.state.app.name}
-            onDurationChanged={this.tabManager.handleTrafficDurationChange()}
+            onDurationChanged={this.tabManager.handleTrafficDurationChange}
             onRefresh={this.doRefresh}
           />
         ) : (
@@ -264,9 +255,9 @@ class AppDetails extends React.Component<AppDetailsProps, AppDetailsState> {
         <PfTitle location={this.props.location} istio={istioSidecar} />
         <Tabs
           id="basic-tabs"
-          activeKey={paramToTab[this.tabManager.activeTab()]}
+          activeKey={this.tabManager.activeIndex()}
           onSelect={(_, ek) => {
-            const currentTabName = tabToParam[ek];
+            const currentTabName = this.tabManager.tabNameOf(ek);
             this.setState({
               currentTab: currentTabName
             });

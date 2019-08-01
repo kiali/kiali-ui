@@ -3,7 +3,6 @@ import * as API from '../../services/Api';
 import { RouteComponentProps } from 'react-router-dom';
 import { emptyWorkload, Workload, WorkloadId } from '../../types/Workload';
 import { ObjectCheck, Validations } from '../../types/IstioObjects';
-import { Nav, NavItem, TabContainer, TabContent, TabPane } from 'patternfly-react';
 import WorkloadInfo from './WorkloadInfo';
 import * as MessageCenter from '../../utils/MessageCenter';
 import IstioMetricsContainer from '../../components/Metrics/IstioMetrics';
@@ -22,6 +21,8 @@ import { DurationInSeconds } from '../../types/Common';
 import { connect } from 'react-redux';
 import { KialiAppState } from '../../store/Store';
 import { durationSelector } from '../../store/Selectors';
+import { Tab, Tabs } from '@patternfly/react-core';
+import { TabManager } from '../../app/TabManager';
 
 type WorkloadDetailsState = {
   workload: Workload;
@@ -29,20 +30,37 @@ type WorkloadDetailsState = {
   istioEnabled: boolean;
   health?: WorkloadHealth;
   trafficData: GraphDefinition | null;
+  currentTab: string;
 };
 
 type WorkloadDetailsPageProps = RouteComponentProps<WorkloadId> & {
   duration: DurationInSeconds;
 };
 
+const tabName = 'tab';
+const defaultTab = 'info';
+const trafficTabName = 'traffic';
+
+const paramToTab: { [key: string]: number } = {
+  info: 0,
+  traffic: 1,
+  logs: 2,
+  in_metrics: 3,
+  out_metrics: 4
+};
+
 class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, WorkloadDetailsState> {
+  tabManager: TabManager;
+
   constructor(props: WorkloadDetailsPageProps) {
     super(props);
+    this.tabManager = new TabManager(paramToTab, tabName, defaultTab, trafficTabName, this.fetchTrafficData);
     this.state = {
       workload: emptyWorkload,
       validations: {},
       istioEnabled: true, // true until proven otherwise
-      trafficData: null
+      trafficData: null,
+      currentTab: this.tabManager.activeTab()
     };
   }
 
@@ -67,6 +85,10 @@ class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, Workload
       );
     }
   }
+
+  hasTrafficData = (): boolean => {
+    return this.state.trafficData != null;
+  };
 
   // All information for validations is fetched in the workload, no need to add another call
   workloadValidations(workload: Workload): Validations {
@@ -123,7 +145,7 @@ class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, Workload
   }
 
   doRefresh = () => {
-    const currentTab = this.activeTab('tab', 'info');
+    const currentTab = this.tabManager.activeTab();
 
     if (this.state.workload === emptyWorkload || currentTab === 'info') {
       this.setState({ trafficData: null });
@@ -193,142 +215,144 @@ class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, Workload
     return istioEnabled;
   };
 
-  render() {
+  staticTabs() {
+    const hasPods = this.state.workload.pods && this.state.workload.pods.length > 0;
+
+    const overTab = (
+      <Tab title="Overview" eventKey={0}>
+        {this.state.currentTab === 'info' ? (
+          <WorkloadInfo
+            workload={this.state.workload}
+            namespace={this.props.match.params.namespace}
+            validations={this.state.validations}
+            onRefresh={this.doRefresh}
+            istioEnabled={this.state.istioEnabled}
+            health={this.state.health}
+          />
+        ) : (
+          undefined
+        )}
+      </Tab>
+    );
+
+    const trafficTab = (
+      <Tab title="Traffic" eventKey={1}>
+        {this.state.currentTab === 'traffic' ? (
+          <TrafficDetails
+            trafficData={this.state.trafficData}
+            itemType={MetricsObjectTypes.WORKLOAD}
+            namespace={this.props.match.params.namespace}
+            workloadName={this.state.workload.name}
+            onDurationChanged={this.tabManager.handleTrafficDurationChange}
+            onRefresh={this.doRefresh}
+          />
+        ) : (
+          undefined
+        )}
+      </Tab>
+    );
+
+    const logTab = (
+      <Tab title="Logs" eventKey={2}>
+        {this.state.currentTab === 'logs' && hasPods ? (
+          <WorkloadPodLogs namespace={this.props.match.params.namespace} pods={this.state.workload.pods} />
+        ) : (
+          'There are no logs to display because the workload has no pods.'
+        )}
+        )}
+      </Tab>
+    );
+
+    const inTab = (
+      <Tab title="Inbound Metrics" eventKey={3}>
+        {this.state.currentTab === 'in_metrics' ? (
+          <IstioMetricsContainer
+            namespace={this.props.match.params.namespace}
+            object={this.props.match.params.workload}
+            objectType={MetricsObjectTypes.WORKLOAD}
+            direction={'inbound'}
+          />
+        ) : (
+          undefined
+        )}
+      </Tab>
+    );
+
+    const outTab = (
+      <Tab title="Outbound Metrics" eventKey={4}>
+        {this.state.currentTab === 'out_metrics' ? (
+          <IstioMetricsContainer
+            namespace={this.props.match.params.namespace}
+            object={this.props.match.params.workload}
+            objectType={MetricsObjectTypes.WORKLOAD}
+            direction={'outbound'}
+          />
+        ) : (
+          undefined
+        )}
+      </Tab>
+    );
+
+    return [overTab, trafficTab, logTab, inTab, outTab];
+  }
+
+  runtimeTabs() {
     const app = this.state.workload.labels[serverConfig.istioLabels.appLabelName];
     const version = this.state.workload.labels[serverConfig.istioLabels.versionLabelName];
     const isLabeled = app && version;
-    const hasPods = this.state.workload.pods && this.state.workload.pods.length > 0;
 
+    const tabs: JSX.Element[] = [];
+    if (isLabeled) {
+      this.state.workload.runtimes.forEach(runtime => {
+        runtime.dashboardRefs.forEach((dashboard, i) => {
+          const tab = (
+            <Tab key={dashboard.template} title={dashboard.template} eventKey={i + 5}>
+              {this.state.currentTab === dashboard.template ? (
+                <CustomMetricsContainer
+                  namespace={this.props.match.params.namespace}
+                  app={app}
+                  version={version}
+                  template={dashboard.template}
+                />
+              ) : (
+                undefined
+              )}
+            </Tab>
+          );
+          tabs.push(tab);
+        });
+      });
+    }
+
+    return tabs;
+  }
+
+  renderTabs() {
+    // PF4 Tabs doesn't support static tabs followed of an array of tabs created dynamically.
+    return this.staticTabs().concat(this.runtimeTabs());
+  }
+
+  render() {
     return (
       <>
         <BreadcrumbView location={this.props.location} />
         <PfTitle location={this.props.location} istio={this.state.istioEnabled} />
-        <TabContainer
+        <Tabs
           id="basic-tabs"
-          activeKey={this.activeTab('tab', 'info')}
-          onSelect={this.tabSelectHandler('tab', this.tabChangeHandler)}
+          activeKey={paramToTab[this.tabManager.activeTab()]}
+          onSelect={(_, ek) => {
+            const currentTabName = this.tabManager.tabNameOf(ek);
+            this.setState({
+              currentTab: currentTabName
+            });
+            this.tabManager.tabSelectHandler(this.tabManager.tabChangeHandler)(currentTabName, this.hasTrafficData());
+          }}
         >
-          <div>
-            <Nav bsClass="nav nav-tabs nav-tabs-pf">
-              <NavItem eventKey="info">Overview</NavItem>
-              <NavItem eventKey="traffic">Traffic</NavItem>
-              <NavItem eventKey="logs">Logs</NavItem>
-              <NavItem eventKey="in_metrics">Inbound Metrics</NavItem>
-              <NavItem eventKey="out_metrics">Outbound Metrics</NavItem>
-              {isLabeled &&
-                this.state.workload.runtimes.map(runtime => {
-                  return runtime.dashboardRefs.map(dashboard => {
-                    return (
-                      <NavItem key={dashboard.template} eventKey={dashboard.template}>
-                        {dashboard.title}
-                      </NavItem>
-                    );
-                  });
-                })}
-            </Nav>
-            <TabContent>
-              <TabPane eventKey="info" mountOnEnter={true} unmountOnExit={true}>
-                <WorkloadInfo
-                  workload={this.state.workload}
-                  namespace={this.props.match.params.namespace}
-                  validations={this.state.validations}
-                  onRefresh={this.doRefresh}
-                  activeTab={this.activeTab}
-                  onSelectTab={this.tabSelectHandler}
-                  istioEnabled={this.state.istioEnabled}
-                  health={this.state.health}
-                />
-              </TabPane>
-              <TabPane eventKey="traffic" mountOnEnter={true} unmountOnExit={true}>
-                <TrafficDetails
-                  trafficData={this.state.trafficData}
-                  itemType={MetricsObjectTypes.WORKLOAD}
-                  namespace={this.props.match.params.namespace}
-                  workloadName={this.state.workload.name}
-                  onDurationChanged={this.handleTrafficDurationChange}
-                  onRefresh={this.doRefresh}
-                />
-              </TabPane>
-              <TabPane eventKey="logs" mountOnEnter={true} unmountOnExit={true}>
-                {hasPods ? (
-                  <WorkloadPodLogs namespace={this.props.match.params.namespace} pods={this.state.workload.pods} />
-                ) : (
-                  'There are no logs to display because the workload has no pods.'
-                )}
-              </TabPane>
-              <TabPane eventKey="in_metrics" mountOnEnter={true} unmountOnExit={true}>
-                <IstioMetricsContainer
-                  namespace={this.props.match.params.namespace}
-                  object={this.props.match.params.workload}
-                  objectType={MetricsObjectTypes.WORKLOAD}
-                  direction={'inbound'}
-                />
-              </TabPane>
-              <TabPane eventKey="out_metrics" mountOnEnter={true} unmountOnExit={true}>
-                <IstioMetricsContainer
-                  namespace={this.props.match.params.namespace}
-                  object={this.props.match.params.workload}
-                  objectType={MetricsObjectTypes.WORKLOAD}
-                  direction={'outbound'}
-                />
-              </TabPane>
-              {isLabeled &&
-                this.state.workload.runtimes.map(runtime => {
-                  return runtime.dashboardRefs.map(dashboard => {
-                    return (
-                      <TabPane
-                        key={dashboard.template}
-                        eventKey={dashboard.template}
-                        mountOnEnter={true}
-                        unmountOnExit={true}
-                      >
-                        <CustomMetricsContainer
-                          namespace={this.props.match.params.namespace}
-                          app={app}
-                          version={version}
-                          template={dashboard.template}
-                        />
-                      </TabPane>
-                    );
-                  });
-                })}
-            </TabContent>
-          </div>
-        </TabContainer>
+          {this.renderTabs()}
+        </Tabs>
       </>
     );
   }
-
-  private activeTab = (tabName: string, whenEmpty: string) => {
-    return new URLSearchParams(this.props.location.search).get(tabName) || whenEmpty;
-  };
-
-  private handleTrafficDurationChange = () => {
-    this.fetchTrafficData();
-  };
-
-  private tabChangeHandler = (tabName: string) => {
-    if (tabName === 'traffic' && this.state.trafficData === null) {
-      this.fetchTrafficData();
-    }
-  };
-
-  private tabSelectHandler = (tabName: string, postHandler?: (tabName: string) => void) => {
-    return (tabKey?: string) => {
-      if (!tabKey) {
-        return;
-      }
-
-      const urlParams = new URLSearchParams('');
-      urlParams.set(tabName, tabKey);
-
-      this.props.history.push(this.props.location.pathname + '?' + urlParams.toString());
-
-      if (postHandler) {
-        postHandler(tabKey);
-      }
-    };
-  };
 }
 
 const mapStateToProps = (state: KialiAppState) => ({
