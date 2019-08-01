@@ -10,8 +10,8 @@ import { WorkloadHealth } from '../../types/Health';
 import { Workload } from '../../types/Workload';
 import { DurationDropdownContainer } from '../../components/DurationDropdown/DurationDropdown';
 import RefreshButtonContainer from '../../components/Refresh/RefreshButton';
-import { TabManager } from '../../app/TabManager';
-import { Tab, Tabs } from '@patternfly/react-core';
+import { Tab } from '@patternfly/react-core';
+import ParameterizedTabs, { activeTab } from '../../components/Tab/Tabs';
 
 type WorkloadInfoProps = {
   workload: Workload;
@@ -26,7 +26,9 @@ interface ValidationChecks {
   hasPodsChecks: boolean;
 }
 
-type WorkloadInfoState = {};
+type WorkloadInfoState = {
+  currentTab: string;
+};
 
 const tabIconStyle = style({
   fontSize: '0.9em'
@@ -43,12 +45,11 @@ const paramToTab: { [key: string]: number } = {
 };
 
 class WorkloadInfo extends React.Component<WorkloadInfoProps, WorkloadInfoState> {
-  tabManager: TabManager;
-
   constructor(props: WorkloadInfoProps) {
     super(props);
-    this.tabManager = new TabManager(paramToTab, tabName, defaultTab);
-    this.state = {};
+    this.state = {
+      currentTab: activeTab(tabName, defaultTab)
+    };
   }
 
   validationChecks(): ValidationChecks {
@@ -124,16 +125,14 @@ class WorkloadInfo extends React.Component<WorkloadInfoProps, WorkloadInfoState>
           </Row>
           <Row className="row-cards-pf">
             <Col xs={12} sm={12} md={12} lg={12}>
-              <Tabs
+              <ParameterizedTabs
                 id="service-tabs"
-                activeKey={this.tabManager.activeIndex()}
-                onSelect={(_, ek) => {
-                  const currentTabName = this.tabManager.tabNameOf(ek);
-                  this.setState({
-                    currentTab: currentTabName
-                  });
-                  this.tabManager.tabSelectHandler(this.tabManager.tabChangeHandler)(currentTabName, false);
+                onSelect={tabValue => {
+                  this.setState({ currentTab: tabValue });
                 }}
+                tabMap={paramToTab}
+                tabName={tabName}
+                defaultTab={defaultTab}
               >
                 <Tab title={podTabTitle} eventKey={0}>
                   {pods.length > 0 && (
@@ -147,7 +146,7 @@ class WorkloadInfo extends React.Component<WorkloadInfoProps, WorkloadInfoState>
                 <Tab title={'Services (' + services.length + ')'} eventKey={1}>
                   {services.length > 0 && <WorkloadServices services={services} namespace={this.props.namespace} />}
                 </Tab>
-              </Tabs>
+              </ParameterizedTabs>
             </Col>
           </Row>
         </div>
