@@ -25,7 +25,7 @@ export default class ParameterizedTabs extends React.Component<TabsProps, TabsSt
   constructor(props: TabsProps) {
     super(props);
     this.state = { currentTab: this.activeTab() };
-    this.buildIndexMap();
+    this.indexMap = this.buildIndexMap();
   }
 
   componentDidUpdate(): void {
@@ -33,7 +33,7 @@ export default class ParameterizedTabs extends React.Component<TabsProps, TabsSt
   }
 
   buildIndexMap() {
-    this.indexMap = Object.keys(this.props.tabMap).reduce((result: { [i: number]: string }, name: string) => {
+    return Object.keys(this.props.tabMap).reduce((result: { [i: number]: string }, name: string) => {
       result[this.tabIndexOf(name)] = name;
       return result;
     }, {});
