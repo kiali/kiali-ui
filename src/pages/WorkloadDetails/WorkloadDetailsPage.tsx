@@ -21,8 +21,8 @@ import { DurationInSeconds } from '../../types/Common';
 import { connect } from 'react-redux';
 import { KialiAppState } from '../../store/Store';
 import { durationSelector } from '../../store/Selectors';
-import { Tab, Tabs } from '@patternfly/react-core';
-import { TabManager } from '../../app/TabManager';
+import { Tab } from '@patternfly/react-core';
+import TabsWithParams, { activeTab } from '../../components/Tab/Tabs';
 
 type WorkloadDetailsState = {
   workload: Workload;
@@ -50,17 +50,14 @@ const paramToTab: { [key: string]: number } = {
 };
 
 class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, WorkloadDetailsState> {
-  tabManager: TabManager;
-
   constructor(props: WorkloadDetailsPageProps) {
     super(props);
-    this.tabManager = new TabManager(paramToTab, tabName, defaultTab, trafficTabName, this.fetchTrafficData);
     this.state = {
       workload: emptyWorkload,
       validations: {},
       istioEnabled: true, // true until proven otherwise
       trafficData: null,
-      currentTab: this.tabManager.activeTab()
+      currentTab: activeTab(tabName, defaultTab)
     };
   }
 
@@ -86,8 +83,10 @@ class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, Workload
     }
   }
 
-  hasTrafficData = (): boolean => {
-    return this.state.trafficData != null;
+  fetchTrafficDataOnTabChange = (tabValue: string): void => {
+    if (tabValue === trafficTabName && this.state.trafficData == null) {
+      this.fetchTrafficData();
+    }
   };
 
   // All information for validations is fetched in the workload, no need to add another call
@@ -145,7 +144,7 @@ class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, Workload
   }
 
   doRefresh = () => {
-    const currentTab = this.tabManager.activeTab();
+    const currentTab = this.state.currentTab;
 
     if (this.state.workload === emptyWorkload || currentTab === 'info') {
       this.setState({ trafficData: null });
@@ -243,7 +242,7 @@ class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, Workload
             itemType={MetricsObjectTypes.WORKLOAD}
             namespace={this.props.match.params.namespace}
             workloadName={this.state.workload.name}
-            onDurationChanged={this.tabManager.handleTrafficDurationChange}
+            onDurationChanged={this.fetchTrafficData}
             onRefresh={this.doRefresh}
           />
         ) : (
@@ -300,13 +299,17 @@ class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, Workload
     const app = this.state.workload.labels[serverConfig.istioLabels.appLabelName];
     const version = this.state.workload.labels[serverConfig.istioLabels.versionLabelName];
     const isLabeled = app && version;
+    const staticTabsCount = 5;
 
     const tabs: JSX.Element[] = [];
     if (isLabeled) {
+      let dynamicTabsCount: number = 0;
       this.state.workload.runtimes.forEach(runtime => {
-        runtime.dashboardRefs.forEach((dashboard, i) => {
+        runtime.dashboardRefs.forEach(dashboard => {
+          const tabKey = dynamicTabsCount + staticTabsCount;
+          paramToTab[dashboard.template] = tabKey;
           const tab = (
-            <Tab key={dashboard.template} title={dashboard.template} eventKey={i + 5}>
+            <Tab key={dashboard.template} title={dashboard.template} eventKey={tabKey}>
               {this.state.currentTab === dashboard.template ? (
                 <CustomMetricsContainer
                   namespace={this.props.match.params.namespace}
@@ -320,6 +323,7 @@ class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, Workload
             </Tab>
           );
           tabs.push(tab);
+          dynamicTabsCount = dynamicTabsCount + 1;
         });
       });
     }
@@ -337,19 +341,18 @@ class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, Workload
       <>
         <BreadcrumbView location={this.props.location} />
         <PfTitle location={this.props.location} istio={this.state.istioEnabled} />
-        <Tabs
+        <TabsWithParams
           id="basic-tabs"
-          activeKey={paramToTab[this.tabManager.activeTab()]}
-          onSelect={(_, ek) => {
-            const currentTabName = this.tabManager.tabNameOf(ek);
-            this.setState({
-              currentTab: currentTabName
-            });
-            this.tabManager.tabSelectHandler(this.tabManager.tabChangeHandler)(currentTabName, this.hasTrafficData());
+          onSelect={tabValue => {
+            this.setState({ currentTab: tabValue });
           }}
+          tabMap={paramToTab}
+          tabName={tabName}
+          defaultTab={defaultTab}
+          postHandler={this.fetchTrafficDataOnTabChange}
         >
           {this.renderTabs()}
-        </Tabs>
+        </TabsWithParams>
       </>
     );
   }

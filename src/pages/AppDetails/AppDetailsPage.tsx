@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as API from '../../services/Api';
 import { RouteComponentProps } from 'react-router-dom';
 import { App, AppId } from '../../types/App';
-import { Tab, Tabs } from '@patternfly/react-core';
+import { Tab } from '@patternfly/react-core';
 import AppInfo from './AppInfo';
 import * as MessageCenter from '../../utils/MessageCenter';
 import IstioMetricsContainer from '../../components/Metrics/IstioMetrics';
@@ -19,7 +19,7 @@ import { DurationInSeconds } from '../../types/Common';
 import { KialiAppState } from '../../store/Store';
 import { durationSelector } from '../../store/Selectors';
 import { connect } from 'react-redux';
-import { TabManager } from '../../app/TabManager';
+import TabsWithParams, { activeTab } from '../../components/Tab/Tabs';
 
 type AppDetailsState = {
   app: App;
@@ -55,15 +55,12 @@ const paramToTab: { [key: string]: number } = {
 };
 
 class AppDetails extends React.Component<AppDetailsProps, AppDetailsState> {
-  tabManager: TabManager;
-
   constructor(props: AppDetailsProps) {
     super(props);
-    this.tabManager = new TabManager(paramToTab, tabName, defaultTab, trafficTabName, this.fetchTrafficData);
     this.state = {
-      currentTab: this.tabManager.activeTab(),
       app: emptyApp,
-      trafficData: null
+      trafficData: null,
+      currentTab: activeTab(tabName, defaultTab)
     };
   }
 
@@ -87,19 +84,21 @@ class AppDetails extends React.Component<AppDetailsProps, AppDetailsState> {
     }
   }
 
-  hasTrafficData = (): boolean => {
-    return this.state.trafficData != null;
+  fetchTrafficDataOnTabChange = (tabValue: string): void => {
+    if (tabValue === trafficTabName && this.state.trafficData == null) {
+      this.fetchTrafficData();
+    }
   };
 
   doRefresh = () => {
-    const currentTab = this.tabManager.activeTab();
+    const currentTab = this.state.currentTab;
 
-    if (this.state.app === emptyApp || this.tabManager.isDefaultTab(currentTab)) {
+    if (this.state.app === emptyApp || currentTab === defaultTab) {
       this.setState({ trafficData: null });
       this.fetchApp();
     }
 
-    if (this.tabManager.isTrafficTab(currentTab)) {
+    if (currentTab === trafficTabName) {
       this.fetchTrafficData();
     }
   };
@@ -156,11 +155,17 @@ class AppDetails extends React.Component<AppDetailsProps, AppDetailsState> {
   }
 
   runtimeTabs() {
+    const staticTabsCount = 4;
+    let dynamicTabsCount: number = 0;
+
     const tabs: JSX.Element[] = [];
     this.state.app.runtimes.forEach(runtime => {
-      runtime.dashboardRefs.forEach((dashboard, i) => {
+      runtime.dashboardRefs.forEach(dashboard => {
+        const tabKey = dynamicTabsCount + staticTabsCount;
+        paramToTab[dashboard.template] = tabKey;
+
         const tab = (
-          <Tab title={dashboard.template} key={dashboard.template} eventKey={i + 4}>
+          <Tab title={dashboard.template} key={dashboard.template} eventKey={tabKey}>
             <CustomMetricsContainer
               namespace={this.props.match.params.namespace}
               app={this.props.match.params.app}
@@ -169,6 +174,7 @@ class AppDetails extends React.Component<AppDetailsProps, AppDetailsState> {
           </Tab>
         );
         tabs.push(tab);
+        dynamicTabsCount = dynamicTabsCount + 1;
       });
     });
 
@@ -199,7 +205,7 @@ class AppDetails extends React.Component<AppDetailsProps, AppDetailsState> {
             itemType={MetricsObjectTypes.APP}
             namespace={this.state.app.namespace.name}
             appName={this.state.app.name}
-            onDurationChanged={this.tabManager.handleTrafficDurationChange}
+            onDurationChanged={this.fetchTrafficData}
             onRefresh={this.doRefresh}
           />
         ) : (
@@ -253,19 +259,18 @@ class AppDetails extends React.Component<AppDetailsProps, AppDetailsState> {
       <>
         <BreadcrumbView location={this.props.location} />
         <PfTitle location={this.props.location} istio={istioSidecar} />
-        <Tabs
+        <TabsWithParams
           id="basic-tabs"
-          activeKey={this.tabManager.activeIndex()}
-          onSelect={(_, ek) => {
-            const currentTabName = this.tabManager.tabNameOf(ek);
-            this.setState({
-              currentTab: currentTabName
-            });
-            this.tabManager.tabSelectHandler(this.tabManager.tabChangeHandler)(currentTabName, this.hasTrafficData());
+          onSelect={tabValue => {
+            this.setState({ currentTab: tabValue });
           }}
+          tabMap={paramToTab}
+          tabName={tabName}
+          defaultTab={defaultTab}
+          postHandler={this.fetchTrafficDataOnTabChange}
         >
           {this.renderTabs()}
-        </Tabs>
+        </TabsWithParams>
       </>
     );
   }
