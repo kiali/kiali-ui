@@ -309,7 +309,7 @@ class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, Workload
           const tabKey = dynamicTabsCount + staticTabsCount;
           paramToTab[dashboard.template] = tabKey;
           const tab = (
-            <Tab key={dashboard.template} title={dashboard.template} eventKey={tabKey}>
+            <Tab key={dashboard.template} title={dashboard.title} eventKey={tabKey}>
               {this.state.currentTab === dashboard.template ? (
                 <CustomMetricsContainer
                   namespace={this.props.match.params.namespace}

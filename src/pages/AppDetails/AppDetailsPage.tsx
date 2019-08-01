@@ -165,7 +165,7 @@ class AppDetails extends React.Component<AppDetailsProps, AppDetailsState> {
         paramToTab[dashboard.template] = tabKey;
 
         const tab = (
-          <Tab title={dashboard.template} key={dashboard.template} eventKey={tabKey}>
+          <Tab title={dashboard.title} key={dashboard.template} eventKey={tabKey}>
             <CustomMetricsContainer
               namespace={this.props.match.params.namespace}
               app={this.props.match.params.app}
