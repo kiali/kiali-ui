@@ -3,5 +3,9 @@ import { MessageType } from '../types/MessageCenter';
 import { MessageCenterActions } from '../actions/MessageCenterActions';
 
 export const add = (content: string, group?: string, type?: MessageType) => {
-  store.dispatch(MessageCenterActions.addMessage(content, group, type));
+  store.dispatch(MessageCenterActions.addMessage(content, '', group, type));
+};
+
+export const addDetailed = (content: string, details: string, group?: string, type?: MessageType) => {
+  store.dispatch(MessageCenterActions.addMessage(content, details, group, type));
 };
