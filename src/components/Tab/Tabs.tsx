@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Tabs } from '@patternfly/react-core';
+import { TabProps, Tabs } from '@patternfly/react-core';
 import history from '../../app/History';
 
 type TabsProps = {
@@ -21,15 +21,18 @@ export const activeTab = (tabName: string, defaultTab: string): string => {
 
 export default class ParameterizedTabs extends React.Component<TabsProps, TabsState> {
   private indexMap: { [key: number]: string };
+  private tabLinks: { [key: number]: string };
 
   constructor(props: TabsProps) {
     super(props);
     this.state = { currentTab: this.activeTab() };
     this.indexMap = this.buildIndexMap();
+    this.tabLinks = this.buildTabLinks();
   }
 
   componentDidUpdate(): void {
-    this.buildIndexMap();
+    this.indexMap = this.buildIndexMap();
+    this.tabLinks = this.buildTabLinks();
   }
 
   buildIndexMap() {
@@ -37,6 +40,17 @@ export default class ParameterizedTabs extends React.Component<TabsProps, TabsSt
       result[this.tabIndexOf(name)] = name;
       return result;
     }, {});
+  }
+
+  buildTabLinks() {
+    const tabLinks: { [key: number]: string } = {};
+    React.Children.forEach(this.props.children, (child: React.ReactChild) => {
+      const childComp = child as React.ReactElement<TabProps>;
+      if (childComp.props.href) {
+        tabLinks[childComp.props.eventKey] = childComp.props.href;
+      }
+    });
+    return tabLinks;
   }
 
   tabIndexOf(tabName: string) {
@@ -47,12 +61,20 @@ export default class ParameterizedTabs extends React.Component<TabsProps, TabsSt
     return this.indexMap[index];
   }
 
+  tabLinkOf(index: number) {
+    return this.tabLinks[index];
+  }
+
   activeTab = () => {
     return activeTab(this.props.tabName, this.props.defaultTab);
   };
 
   activeIndex = () => {
     return this.tabIndexOf(this.activeTab());
+  };
+
+  isLinkTab = (index: number) => {
+    return this.tabLinks[index] != null;
   };
 
   tabSelectHandler = (tabKey: string) => {
@@ -70,15 +92,30 @@ export default class ParameterizedTabs extends React.Component<TabsProps, TabsSt
     });
   };
 
+  linkTabHandler = (tabKey: number) => {
+    const link = this.tabLinkOf(tabKey);
+    if (link) {
+      window.open(link, '_blank');
+    }
+  };
+
+  tabTransitionHandler = (tabKey: number) => {
+    const tabName = this.tabNameOf(tabKey);
+    this.tabSelectHandler(tabName);
+    this.props.onSelect(tabName);
+  };
+
   render() {
     return (
       <Tabs
         id={this.props.id}
         activeKey={this.activeIndex()}
         onSelect={(_, ek) => {
-          const currentTabName = this.tabNameOf(ek);
-          this.tabSelectHandler(currentTabName);
-          this.props.onSelect(currentTabName);
+          if (this.isLinkTab(ek)) {
+            this.linkTabHandler(ek);
+          } else {
+            this.tabTransitionHandler(ek);
+          }
         }}
       >
         {this.props.children}

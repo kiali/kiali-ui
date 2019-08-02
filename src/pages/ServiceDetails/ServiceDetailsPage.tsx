@@ -407,8 +407,6 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
               this.props.jaegerUrl +
               `/search?service=${this.props.match.params.service}.${this.props.match.params.namespace}`
             }
-            target={'_blank'}
-            style={{ textAlign: 'center' }}
             title={jaegerTitle}
           />
         );
