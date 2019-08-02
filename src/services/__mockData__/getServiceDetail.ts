@@ -49,7 +49,7 @@ export const SERVICE_DETAILS: ServiceDetailsInfo = {
     }
   ],
   apiDocumentation: {
-    baseUrl: '/kiali/namespace/ns/service/reviews',
+    hasSpec: true,
     type: 'rest'
   },
   virtualServices: {

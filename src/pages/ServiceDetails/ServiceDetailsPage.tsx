@@ -77,7 +77,7 @@ const emptyService = {
   validations: {},
   apiDocumentation: {
     type: '',
-    baseUrl: ''
+    hasSpec: false
   }
 };
 
@@ -357,7 +357,7 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
                     </>
                   </NavItem>
                 ))}
-              { this.state.serviceDetailsInfo.apiDocumentation && (this.state.serviceDetailsInfo.apiDocumentation.baseUrl !=='') && (
+              { this.state.serviceDetailsInfo.apiDocumentation && this.state.serviceDetailsInfo.apiDocumentation.hasSpec && (
                 <NavItem eventKey="api">API Doc</NavItem>
               )}  
             </Nav>
@@ -403,11 +403,12 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
                   />
                 </TabPane>
               )}
-              {this.state.serviceDetailsInfo.apiDocumentation && (this.state.serviceDetailsInfo.apiDocumentation.baseUrl !=='') && (
+              {this.state.serviceDetailsInfo.apiDocumentation && this.state.serviceDetailsInfo.apiDocumentation.hasSpec && (
                 <TabPane eventKey="api" mountOnEnter={true} unmountOnExit={true}>
                   <ApiDocumentation
                     apiType={this.state.serviceDetailsInfo.apiDocumentation.type}
-                    baseUrl={this.state.serviceDetailsInfo.apiDocumentation.baseUrl}
+                    namespace={this.props.match.params.namespace}
+                    service={this.props.match.params.service}
                   />
                 </TabPane>
               )}

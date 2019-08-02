@@ -6,7 +6,7 @@ import { ApiDocumentation } from '../ApiDocumentation';
 
 describe('ApiDocumentation', () => {
   it('renders when not known', () => {
-    let wrapper = shallow(<ApiDocumentation apiType="rest" baseUrl="aaa" />);
+    let wrapper = shallow(<ApiDocumentation apiType="rest" namespace="ns1" service="serv1" />);
     expect(shallowToJson(wrapper)).toMatchSnapshot();
   });
 });

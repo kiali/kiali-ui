@@ -8,7 +8,7 @@ exports[`ApiDocumentation renders when not known 1`] = `
     layout="column"
     show-header="false"
     show-info="false"
-    spec-url="aaa/apispec"
+    spec-url="api/namespaces/ns1/services/serv1/apispec"
   />
 </div>
 `;

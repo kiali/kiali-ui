@@ -71,7 +71,7 @@ export default class ItemDescription extends React.PureComponent<Props, State> {
           />
         </Col>
         <Col xs={12} sm={12} md={columnSize} lg={columnSize}>
-          // If no api, the column is empty and not displayed
+          {/*  If no api, the column is empty and not displayed */}
           {this.props.item.apiType && (
             <>
               <strong>Api: </strong>

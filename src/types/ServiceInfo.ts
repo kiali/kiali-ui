@@ -42,7 +42,7 @@ export const hasIstioSidecar = (pods?: Pod[]) => {
 
 export interface ApiDocumentation {
   type: string;
-  baseUrl: string;
+  hasSpec: boolean;
 }
 
 export interface Service {

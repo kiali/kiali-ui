@@ -7,6 +7,7 @@
 // with an optional proxy to run requests against the service
 
 import * as React from 'react';
+import { config } from '../../config';
 import 'rapidoc/dist/rapidoc-min.js';
 
 /* eslint-disable */
@@ -21,8 +22,11 @@ declare global {
 
 interface ApiDocumentationProps {
     apiType: string;
-    baseUrl: string;
+    namespace: string;
+    service: string;
   };
+
+const urls = config.api.urls;
 
 export class ApiDocumentation extends React.Component<ApiDocumentationProps> {
 
@@ -30,7 +34,7 @@ export class ApiDocumentation extends React.Component<ApiDocumentationProps> {
     return (
       <div>
         <rapi-doc
-           spec-url={this.props.baseUrl + '/apispec'}
+           spec-url={urls.serviceApiDocumentation(this.props.namespace,this.props.service)}
            show-header="false"
            show-info="false"
            allow-authentication="false"
