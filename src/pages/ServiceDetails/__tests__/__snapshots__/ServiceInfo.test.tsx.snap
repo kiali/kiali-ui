@@ -233,10 +233,14 @@ exports[`#ServiceInfo render correctly with data should render serviceInfo with 
             eventKey={0}
             title="Workloads (0)"
           >
-            <ServiceInfoWorkload
-              namespace="istio-system"
-              workloads={Array []}
-            />
+            <ErrorBoundaryWithMessage
+              message="One of the Workloads associated to this service has an invalid format"
+            >
+              <ServiceInfoWorkload
+                namespace="istio-system"
+                workloads={Array []}
+              />
+            </ErrorBoundaryWithMessage>
           </ForwardRef>
           <ForwardRef
             eventKey={1}
@@ -248,38 +252,42 @@ exports[`#ServiceInfo render correctly with data should render serviceInfo with 
               </React.Fragment>
             }
           >
-            <ServiceInfoVirtualServices
-              virtualServices={
-                Array [
-                  Object {
-                    "metadata": Object {
-                      "creationTimestamp": "2018-07-02T13:44:01+02:00",
-                      "name": "reviews",
-                      "resourceVersion": "393057",
-                    },
-                    "spec": Object {
-                      "gateways": undefined,
-                      "hosts": Array [
-                        "reviews",
-                      ],
-                      "http": Array [
-                        Object {
-                          "route": Array [
-                            Object {
-                              "destination": Object {
-                                "host": "reviews",
-                                "subset": "v1",
+            <ErrorBoundaryWithMessage
+              message="One of the Virtual Services associated to this service has an invalid format"
+            >
+              <ServiceInfoVirtualServices
+                virtualServices={
+                  Array [
+                    Object {
+                      "metadata": Object {
+                        "creationTimestamp": "2018-07-02T13:44:01+02:00",
+                        "name": "reviews",
+                        "resourceVersion": "393057",
+                      },
+                      "spec": Object {
+                        "gateways": undefined,
+                        "hosts": Array [
+                          "reviews",
+                        ],
+                        "http": Array [
+                          Object {
+                            "route": Array [
+                              Object {
+                                "destination": Object {
+                                  "host": "reviews",
+                                  "subset": "v1",
+                                },
                               },
-                            },
-                          ],
-                        },
-                      ],
-                      "tcp": undefined,
+                            ],
+                          },
+                        ],
+                        "tcp": undefined,
+                      },
                     },
-                  },
-                ]
-              }
-            />
+                  ]
+                }
+              />
+            </ErrorBoundaryWithMessage>
           </ForwardRef>
           <ForwardRef
             eventKey={2}
@@ -300,64 +308,68 @@ exports[`#ServiceInfo render correctly with data should render serviceInfo with 
               </React.Fragment>
             }
           >
-            <ServiceInfoDestinationRules
-              destinationRules={
-                Array [
-                  Object {
-                    "metadata": Object {
-                      "creationTimestamp": "2018-07-02T13:44:01+02:00",
-                      "name": "reviews",
-                      "resourceVersion": "393061",
+            <ErrorBoundaryWithMessage
+              message="One of the Destination Rules associated to this service has an invalid format"
+            >
+              <ServiceInfoDestinationRules
+                destinationRules={
+                  Array [
+                    Object {
+                      "metadata": Object {
+                        "creationTimestamp": "2018-07-02T13:44:01+02:00",
+                        "name": "reviews",
+                        "resourceVersion": "393061",
+                      },
+                      "spec": Object {
+                        "host": "reviews",
+                        "subsets": Array [
+                          Object {
+                            "labels": Object {
+                              "version": "v1",
+                            },
+                            "name": "v1",
+                          },
+                          Object {
+                            "labels": Object {
+                              "version": "v2",
+                            },
+                            "name": "v2",
+                          },
+                          Object {
+                            "labels": Object {
+                              "version": "v3",
+                            },
+                            "name": "v3",
+                          },
+                        ],
+                        "trafficPolicy": undefined,
+                      },
                     },
-                    "spec": Object {
-                      "host": "reviews",
-                      "subsets": Array [
+                  ]
+                }
+                validations={
+                  Object {
+                    "reviews": Object {
+                      "checks": Array [
                         Object {
-                          "labels": Object {
-                            "version": "v1",
-                          },
-                          "name": "v1",
+                          "message": "This subset is not found from the host",
+                          "path": "spec/subsets[0]/version",
+                          "severity": "error",
                         },
                         Object {
-                          "labels": Object {
-                            "version": "v2",
-                          },
-                          "name": "v2",
-                        },
-                        Object {
-                          "labels": Object {
-                            "version": "v3",
-                          },
-                          "name": "v3",
+                          "message": "This subset is not found from the host",
+                          "path": "spec/subsets[1]/version",
+                          "severity": "error",
                         },
                       ],
-                      "trafficPolicy": undefined,
+                      "name": "details",
+                      "objectType": "destinationrule",
+                      "valid": false,
                     },
-                  },
-                ]
-              }
-              validations={
-                Object {
-                  "reviews": Object {
-                    "checks": Array [
-                      Object {
-                        "message": "This subset is not found from the host",
-                        "path": "spec/subsets[0]/version",
-                        "severity": "error",
-                      },
-                      Object {
-                        "message": "This subset is not found from the host",
-                        "path": "spec/subsets[1]/version",
-                        "severity": "error",
-                      },
-                    ],
-                    "name": "details",
-                    "objectType": "destinationrule",
-                    "valid": false,
-                  },
+                  }
                 }
-              }
-            />
+              />
+            </ErrorBoundaryWithMessage>
           </ForwardRef>
         </ParameterizedTabs>
       </Col>

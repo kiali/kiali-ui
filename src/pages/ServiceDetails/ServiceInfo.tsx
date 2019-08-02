@@ -14,6 +14,7 @@ import { ThreeScaleInfo, ThreeScaleServiceRule } from '../../types/ThreeScale';
 import { DurationDropdownContainer } from '../../components/DurationDropdown/DurationDropdown';
 import RefreshButtonContainer from '../../components/Refresh/RefreshButton';
 import ParameterizedTabs, { activeTab } from '../../components/Tab/Tabs';
+import ErrorBoundaryWithMessage from '../../components/ErrorBoundary/ErrorBoundaryWithMessage';
 import { Tab } from '@patternfly/react-core';
 
 interface ServiceDetails extends ServiceId {
@@ -211,25 +212,31 @@ class ServiceInfo extends React.Component<ServiceDetails, ServiceInfoState> {
                 defaultTab={defaultTab}
               >
                 <Tab eventKey={0} title={'Workloads (' + Object.keys(workloads).length + ')'}>
-                  {(Object.keys(workloads).length > 0 || this.props.serviceDetails.istioSidecar) && (
-                    <ServiceInfoWorkload workloads={workloads} namespace={this.props.namespace} />
-                  )}
+                  <ErrorBoundaryWithMessage message={this.errorBoundaryMessage('Workloads')}>
+                    {(Object.keys(workloads).length > 0 || this.props.serviceDetails.istioSidecar) && (
+                      <ServiceInfoWorkload workloads={workloads} namespace={this.props.namespace} />
+                    )}
+                  </ErrorBoundaryWithMessage>
                 </Tab>
                 <Tab eventKey={1} title={vsTabTitle}>
-                  {(virtualServices.items.length > 0 || this.props.serviceDetails.istioSidecar) && (
-                    <ServiceInfoVirtualServices
-                      virtualServices={virtualServices.items}
-                      validations={validations!.virtualservice}
-                    />
-                  )}
+                  <ErrorBoundaryWithMessage message={this.errorBoundaryMessage('Virtual Services')}>
+                    {(virtualServices.items.length > 0 || this.props.serviceDetails.istioSidecar) && (
+                      <ServiceInfoVirtualServices
+                        virtualServices={virtualServices.items}
+                        validations={validations!.virtualservice}
+                      />
+                    )}
+                  </ErrorBoundaryWithMessage>
                 </Tab>
                 <Tab eventKey={2} title={drTabTitle}>
-                  {(destinationRules.items.length > 0 || this.props.serviceDetails.istioSidecar) && (
-                    <ServiceInfoDestinationRules
-                      destinationRules={destinationRules.items}
-                      validations={validations!.destinationrule}
-                    />
-                  )}
+                  <ErrorBoundaryWithMessage message={this.errorBoundaryMessage('Destination Rules')}>
+                    {(destinationRules.items.length > 0 || this.props.serviceDetails.istioSidecar) && (
+                      <ServiceInfoDestinationRules
+                        destinationRules={destinationRules.items}
+                        validations={validations!.destinationrule}
+                      />
+                    )}
+                  </ErrorBoundaryWithMessage>
                 </Tab>
               </ParameterizedTabs>
             </Col>
