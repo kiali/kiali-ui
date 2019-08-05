@@ -14,10 +14,10 @@ export const MessageCenterActions = {
     ActionKeys.MC_ADD_MESSAGE,
     resolve => (
       content: string,
-      details: string,
+      detail: string,
       groupId: string = DEFAULT_GROUP_ID,
       messageType: MessageType = DEFAULT_MESSAGE_TYPE
-    ) => resolve({ content, details, groupId, messageType })
+    ) => resolve({ content, detail, groupId, messageType })
   ),
   removeMessage: createAction(ActionKeys.MC_REMOVE_MESSAGE, resolve => (messageId: numberOrNumberArray) =>
     resolve({ messageId: toNumberArray(messageId) })
