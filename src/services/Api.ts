@@ -449,7 +449,7 @@ export const getErrorString = (error: AxiosError): string => {
     if (error.response.statusText) {
       let errorString = error.response.statusText;
       if (error.response.status === 401) {
-        errorString += ' Has your session expired? Try logging in again.';
+        errorString += ': Has your session expired? Try logging in again.';
       }
       return errorString;
     }
