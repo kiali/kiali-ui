@@ -76,9 +76,9 @@ class NotificationWrapper extends React.PureComponent<NotificationWrapperPropsTy
   }
 
   onToggle = () => {
-    this.setState({
-      isExpanded: !this.state.isExpanded
-    });
+    this.setState(state => ({
+      isExpanded: !state.isExpanded
+    }));
   };
 
   render() {
