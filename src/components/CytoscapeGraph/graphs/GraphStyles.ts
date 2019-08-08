@@ -6,7 +6,7 @@ import { icons } from '../../../config';
 
 import NodeImageTopology from '../../../assets/img/node-background-topology.png';
 import NodeImageKey from '../../../assets/img/node-background-key.png';
-import { edgeData, nodeData } from '../CytoscapeGraphUtils';
+import { decoratedEdgeData, decoratedNodeData } from '../CytoscapeGraphUtils';
 
 export const DimClass = 'mousedim';
 
@@ -65,7 +65,7 @@ export class GraphStyles {
     const getEdgeColor = (ele: any): string => {
       let rate = 0;
       let pErr = 0;
-      const data = edgeData(ele);
+      const data = decoratedEdgeData(ele);
       if (data.http > 0) {
         rate = data.http;
         pErr = data.httpPercentErr > 0 ? data.httpPercentErr : 0;
@@ -95,7 +95,7 @@ export class GraphStyles {
       const cyGlobal = getCyGlobalData(ele);
       const edgeLabelMode = cyGlobal.edgeLabelMode;
       let content = '';
-      const data = edgeData(ele);
+      const data = decoratedEdgeData(ele);
 
       switch (edgeLabelMode) {
         case EdgeLabelMode.REQUESTS_PER_SECOND: {
@@ -164,7 +164,7 @@ export class GraphStyles {
     };
 
     const getNodeBackgroundImage = (ele: any): string => {
-      const data = nodeData(ele);
+      const data = decoratedNodeData(ele);
       const isInaccessible = data.isInaccessible;
       const isServiceEntry = data.isServiceEntry;
       const isGroup = data.isGroup;
@@ -191,7 +191,7 @@ export class GraphStyles {
     const getNodeLabel = (ele: any): string => {
       let content = '';
       const cyGlobal = getCyGlobalData(ele);
-      const data = nodeData(ele);
+      const data = decoratedNodeData(ele);
 
       if (getCyGlobalData(ele).showNodeLabels) {
         const app = data.app || '';
@@ -270,7 +270,7 @@ export class GraphStyles {
     };
 
     const getNodeShape = (ele: any): string => {
-      const data = nodeData(ele);
+      const data = decoratedNodeData(ele);
       const nodeType = data.nodeType;
       switch (nodeType) {
         case NodeType.APP:
@@ -288,7 +288,7 @@ export class GraphStyles {
 
     const isNodeBadged = (ele: any): boolean => {
       const cyGlobal = getCyGlobalData(ele);
-      const data = nodeData(ele);
+      const data = decoratedNodeData(ele);
       if (cyGlobal.showMissingSidecars && data.hasMissingSC) {
         return true;
       }
@@ -328,7 +328,7 @@ export class GraphStyles {
             return getNodeBorderColor(ele);
           },
           'border-style': (ele: any) => {
-            return nodeData(ele).isUnused ? 'dotted' : 'solid';
+            return decoratedNodeData(ele).isUnused ? 'dotted' : 'solid';
           },
           'border-width': NodeBorderWidth,
           color: (ele: any) => {

@@ -10,7 +10,7 @@ import {
 } from '../../utils/TrafficRate';
 import { InOutRateTableGrpc, InOutRateTableHttp } from '../../components/SummaryPanel/InOutRateTable';
 import { RpsChart, TcpChart } from '../../components/SummaryPanel/RpsChart';
-import { GraphType, NodeType, SummaryPanelPropType, Protocol } from '../../types/Graph';
+import { GraphType, NodeType, SummaryPanelPropType, Protocol, DecoratedGraphNodeData } from '../../types/Graph';
 import { Metrics, Metric } from '../../types/Metrics';
 import {
   shouldRefreshData,
@@ -31,8 +31,7 @@ import { CancelablePromise, makeCancelablePromise } from '../../utils/Cancelable
 import { Response } from '../../services/Api';
 import { Reporter } from '../../types/MetricsOptions';
 import { icons } from '../../config/Icons';
-import { serverConfig } from '../../config/ServerConfig';
-import { CyNode } from '../../components/CytoscapeGraph/CytoscapeGraphUtils';
+import { CyNode, decoratedNodeData } from '../../components/CytoscapeGraph/CytoscapeGraphUtils';
 
 type SummaryPanelStateType = {
   loading: boolean;
@@ -119,7 +118,7 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
 
   updateCharts(props: SummaryPanelPropType) {
     const target = props.data.summaryTarget;
-    const data = nodeData(target);
+    const data = decoratedNodeData(target);
     const nodeMetricType = getNodeMetricType(data);
 
     if (this.metricsPromise) {
@@ -127,7 +126,7 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
       this.metricsPromise = undefined;
     }
 
-    if (!this.hasGrpcTraffic(target) && !this.hasHttpTraffic(target) && !this.hasTcpTraffic(target)) {
+    if (!this.hasGrpcTraffic(data) && !this.hasHttpTraffic(data) && !this.hasTcpTraffic(data)) {
       this.setState({ loading: false });
       return;
     }
@@ -143,13 +142,12 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
 
     // Ignore outgoing traffic if it is a non-root outsider (because they have no outgoing edges) or a
     // service node (because they don't have "real" outgoing edges).
-    if (data.nodeType !== NodeType.SERVICE && (data.isRoot || !data.isOutsider)) {
+    if (data.nodeType !== NodeType.SERVICE && (data.isRoot || !data.isOutside)) {
       const filters = ['request_count', 'request_error_count', 'tcp_sent', 'tcp_received'];
       // use source metrics for outgoing, except for:
       // - unknown nodes (no source telemetry)
       // - istio namespace nodes (no source telemetry)
-      const reporter: Reporter =
-        data.nodeType === NodeType.UNKNOWN || data.namespace === serverConfig.istioNamespace ? 'destination' : 'source';
+      const reporter: Reporter = data.nodeType === NodeType.UNKNOWN || data.isIstio ? 'destination' : 'source';
       // note: request_protocol is not a valid byLabel for tcp filters but it is ignored by prometheus
       const byLabels = data.isRoot ? ['destination_service_namespace', 'request_protocol'] : ['request_protocol'];
       promiseOut = getNodeMetrics(
@@ -169,8 +167,7 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
     if (!data.isRoot) {
       const filtersRps = ['request_count', 'request_error_count'];
       // use dest metrics for incoming, except for service nodes which need source metrics to capture source errors
-      const reporter: Reporter =
-        data.nodeType === NodeType.SERVICE && data.namespace !== serverConfig.istioNamespace ? 'source' : 'destination';
+      const reporter: Reporter = data.nodeType === NodeType.SERVICE && data.isIstio ? 'source' : 'destination';
       // For special service dest nodes we want to narrow the data to only TS with 'unknown' workloads (see the related
       // comparator in getNodeDatapoints).
       const isServiceDestCornerCase = this.isServiceDestCornerCase(nodeMetricType);
@@ -223,7 +220,12 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
     this.setState({ loading: true, metricsLoadError: null });
   }
 
-  showRequestCountMetrics(outbound: Metrics, inbound: Metrics, data: NodeData, nodeMetricType: NodeMetricType) {
+  showRequestCountMetrics(
+    outbound: Metrics,
+    inbound: Metrics,
+    data: DecoratedGraphNodeData,
+    nodeMetricType: NodeMetricType
+  ) {
     let comparator = (metric: Metric, protocol?: Protocol) => {
       return protocol ? metric.request_protocol === protocol : true;
     };
@@ -279,9 +281,10 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
   render() {
     const node = this.props.data.summaryTarget;
     const data: NodeData = nodeData(node);
-    const { nodeType, workload, isServiceEntry } = data;
+    const decoratedData: DecoratedGraphNodeData = decoratedNodeData(node);
+    const { nodeType, workload, isServiceEntry } = decoratedData;
     const servicesList = nodeType !== NodeType.SERVICE && renderDestServicesLinks(node);
-    const destsList = nodeType === NodeType.SERVICE && isServiceEntry && this.renderDestServices(node);
+    const destsList = nodeType === NodeType.SERVICE && isServiceEntry && this.renderDestServices(decoratedData);
 
     const shouldRenderDestsList = destsList && destsList.length > 0;
     const shouldRenderSvcList = servicesList && servicesList.length > 0;
@@ -306,10 +309,10 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
           <span> {renderTitle(data)}</span>
           {renderLabels(data)}
           {this.renderBadgeSummary(
-            node.data(CyNode.hasCB),
-            node.data(CyNode.hasVS),
-            node.data(CyNode.hasMissingSC),
-            node.data(CyNode.isDead)
+            decoratedData.hasCB,
+            decoratedData.hasVS,
+            decoratedData.hasMissingSC,
+            decoratedData.isDead
           )}
         </div>
         <div className="panel-body">
@@ -340,11 +343,11 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
               </Link>
             </p>
           )} */}
-          {this.hasGrpcTraffic(node) && this.renderGrpcRates(node)}
-          {this.hasHttpTraffic(node) && this.renderHttpRates(node)}
+          {this.hasGrpcTraffic(decoratedData) && this.renderGrpcRates(node)}
+          {this.hasHttpTraffic(decoratedData) && this.renderHttpRates(node)}
           <div>{this.renderCharts(node)}</div>
-          {!this.hasGrpcTraffic(node) && renderNoTraffic('GRPC')}
-          {!this.hasHttpTraffic(node) && renderNoTraffic('HTTP')}
+          {!this.hasGrpcTraffic(decoratedData) && renderNoTraffic('GRPC')}
+          {!this.hasHttpTraffic(decoratedData) && renderNoTraffic('HTTP')}
         </div>
       </div>
     );
@@ -391,7 +394,7 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
   };
 
   private renderCharts = node => {
-    const data = nodeData(node);
+    const data = decoratedNodeData(node);
 
     if (NodeType.UNKNOWN === data.nodeType) {
       return (
@@ -433,7 +436,7 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
       );
     }
 
-    const isServiceNode = node.data(CyNode.nodeType) === NodeType.SERVICE;
+    const isServiceNode = data.nodeType === NodeType.SERVICE;
     let serviceWithUnknownSource: boolean = false;
     if (isServiceNode) {
       node.incomers().forEach(n => {
@@ -447,7 +450,7 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
 
     let grpcCharts, httpCharts, tcpCharts;
 
-    if (this.hasGrpcTraffic(node)) {
+    if (this.hasGrpcTraffic(data)) {
       grpcCharts = (
         <>
           <RpsChart
@@ -480,7 +483,7 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
       );
     }
 
-    if (this.hasHttpTraffic(node)) {
+    if (this.hasHttpTraffic(data)) {
       httpCharts = (
         <>
           <RpsChart
@@ -513,7 +516,7 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
       );
     }
 
-    if (this.hasTcpTraffic(node)) {
+    if (this.hasTcpTraffic(data)) {
       tcpCharts = (
         <>
           <TcpChart
@@ -542,7 +545,7 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
   };
 
   // TODO:(see https://github.com/kiali/kiali-design/issues/63) If we want to show an icon for SE uncomment below
-  private renderBadgeSummary = (hasCB: boolean, hasVS: boolean, hasMissingSC: boolean, isDead: boolean) => {
+  private renderBadgeSummary = (hasCB?: boolean, hasVS?: boolean, hasMissingSC?: boolean, isDead?: boolean) => {
     return (
       <>
         {hasCB && (
@@ -585,8 +588,8 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
     );
   };
 
-  private renderDestServices = (node: any) => {
-    const destServices = node.data(CyNode.destServices);
+  private renderDestServices = (data: DecoratedGraphNodeData) => {
+    const destServices = data.destServices;
 
     const entries: any[] = [];
     if (!destServices) {
@@ -618,27 +621,25 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
     );
   };
 
-  // We need to handle the special case of a non-istio-system, non-unknown node with outgoing traffic to istio-system.
+  // We need to handle the special case of a non-istio, non-unknown node with outgoing traffic to istio.
   // The traffic is lost because it is dest-only and we use source-reporting.
   private isIstioOutgoingCornerCase = (node): boolean => {
-    const nodeType = node.data(CyNode.nodeType);
-    const namespace = node.data(CyNode.namespace);
-    const istioNamespace = serverConfig.istioNamespace;
-    if (nodeType === NodeType.UNKNOWN || namespace === istioNamespace) {
+    const data = decoratedNodeData(node);
+    if (data.nodeType === NodeType.UNKNOWN || data.isIstio) {
       return false;
     }
-    return node.edgesTo(`node[${CyNode.namespace} = "${istioNamespace}"]`).size() > 0;
+    return node.edgesTo(`node[?${CyNode.isIstio}]`).size() > 0;
   };
 
-  private hasGrpcTraffic = (node): boolean => {
-    return node.data(CyNode.grpcIn) > 0 || node.data(CyNode.grpcOut) > 0;
+  private hasGrpcTraffic = (data: DecoratedGraphNodeData): boolean => {
+    return data.grpcIn > 0 || data.grpcOut > 0;
   };
 
-  private hasHttpTraffic = (node): boolean => {
-    return node.data(CyNode.httpIn) > 0 || node.data(CyNode.httpOut) > 0;
+  private hasHttpTraffic = (data: DecoratedGraphNodeData): boolean => {
+    return data.httpIn > 0 || data.httpOut > 0;
   };
 
-  private hasTcpTraffic = (node): boolean => {
-    return node.data(CyNode.tcpIn) > 0 || node.data(CyNode.tcpOut) > 0;
+  private hasTcpTraffic = (data: DecoratedGraphNodeData): boolean => {
+    return data.tcpIn > 0 || data.tcpOut > 0;
   };
 }

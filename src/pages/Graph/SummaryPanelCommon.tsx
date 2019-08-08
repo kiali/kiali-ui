@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Icon } from 'patternfly-react';
-import { NodeType, SummaryPanelPropType, Protocol } from '../../types/Graph';
+import { NodeType, SummaryPanelPropType, Protocol, DecoratedGraphNodeData } from '../../types/Graph';
 import { Health, healthNotAvailable } from '../../types/Health';
 import { IstioMetricsOptions, Reporter, Direction } from '../../types/MetricsOptions';
 import * as API from '../../services/Api';
@@ -76,7 +76,7 @@ export const nodeData = (node: any): NodeData => {
   };
 };
 
-export const getNodeMetricType = (data: NodeData): NodeMetricType => {
+export const getNodeMetricType = (data: DecoratedGraphNodeData): NodeMetricType => {
   switch (data.nodeType) {
     case NodeType.APP:
       // treat versioned app like a workload to narrow to the specific version

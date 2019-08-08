@@ -154,6 +154,7 @@ export interface GraphNodeData {
   isDead?: boolean;
   isGroup?: string;
   isInaccessible?: boolean;
+  isIstio?: boolean; // computed, true if has istio namespace
   isMisconfigured?: string;
   isOutside?: boolean;
   isRoot?: boolean;
@@ -167,6 +168,7 @@ export interface GraphEdgeData {
   target: string;
   traffic?: ProtocolTraffic;
   responseTime?: number;
+  hasTraffic?: boolean; // computed, true if traffic rate > 0
   isMTLS?: number;
 }
 

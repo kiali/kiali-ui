@@ -8,6 +8,7 @@ import { IstioConfigItem } from '../../types/IstioConfigList';
 import { serverConfig } from '../../config';
 import * as Renderers from './Renderers';
 import { Health } from '../../types/Health';
+import { isIstioNamespace } from 'config/ServerConfig';
 
 export type SortResource = AppListItem | WorkloadListItem | ServiceListItem;
 export type TResource = SortResource | IstioConfigItem;
@@ -24,7 +25,7 @@ export function hasHealth(r: TResource): r is SortResource {
 }
 
 export const hasMissingSidecar = (r: SortResource): boolean => {
-  return r.namespace !== serverConfig.istioNamespace && !r.istioSidecar;
+  return !isIstioNamespace(r.namespace) && !r.istioSidecar;
 };
 
 type ResourceType<R extends TResource> = {

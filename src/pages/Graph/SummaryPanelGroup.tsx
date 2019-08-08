@@ -23,7 +23,7 @@ import { Metrics } from '../../types/Metrics';
 import { Reporter } from '../../types/MetricsOptions';
 import { CancelablePromise, makeCancelablePromise } from '../../utils/CancelablePromises';
 import { serverConfig } from '../../config/ServerConfig';
-import { CyNode } from '../../components/CytoscapeGraph/CytoscapeGraphUtils';
+import { CyNode, decoratedNodeData } from '../../components/CytoscapeGraph/CytoscapeGraphUtils';
 import { icons } from '../../config';
 
 type SummaryPanelGroupState = {
@@ -160,7 +160,7 @@ export default class SummaryPanelGroup extends React.Component<SummaryPanelPropT
 
   private updateRpsCharts = (props: SummaryPanelPropType) => {
     const target = props.data.summaryTarget;
-    const data = nodeData(target);
+    const data = decoratedNodeData(target);
     const nodeMetricType = getNodeMetricType(data);
 
     if (this.metricsPromise) {
@@ -174,8 +174,7 @@ export default class SummaryPanelGroup extends React.Component<SummaryPanelPropT
     }
 
     const filters = ['request_count', 'request_error_count', 'tcp_sent', 'tcp_received'];
-    const reporter: Reporter =
-      this.props.data.summaryTarget.namespace === serverConfig.istioNamespace ? 'destination' : 'source';
+    const reporter: Reporter = data.isIstio ? 'destination' : 'source';
 
     const promiseOut = getNodeMetrics(nodeMetricType, target, props, filters, 'outbound', reporter);
     // use dest metrics for incoming
