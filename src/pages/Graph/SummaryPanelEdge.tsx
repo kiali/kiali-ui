@@ -10,7 +10,6 @@ import {
   getDatapoints,
   getNodeMetrics,
   getNodeMetricType,
-  nodeData,
   renderNoTraffic,
   NodeMetricType,
   renderLabels
@@ -105,12 +104,12 @@ export default class SummaryPanelEdge extends React.Component<SummaryPanelPropTy
     const isTcp = protocol === Protocol.TCP;
 
     const HeadingBlock = ({ prefix, node }) => {
-      const data = nodeData(node);
+      const nodeData = decoratedNodeData(node);
       return (
         <div className="panel-heading label-collection">
-          <strong>{prefix}</strong> {renderTitle(data)}
+          <strong>{prefix}</strong> {renderTitle(nodeData)}
           <br />
-          {renderLabels(data)}
+          {renderLabels(nodeData)}
         </div>
       );
     };
@@ -239,12 +238,12 @@ export default class SummaryPanelEdge extends React.Component<SummaryPanelPropTy
 
   private updateCharts = (props: SummaryPanelPropType) => {
     const edge = props.data.summaryTarget;
-    const data = decoratedEdgeData(edge);
+    const edgeData = decoratedEdgeData(edge);
     const sourceData = decoratedNodeData(edge.source());
     const destData = decoratedNodeData(edge.target());
     const sourceMetricType = getNodeMetricType(sourceData);
     const destMetricType = getNodeMetricType(destData);
-    const protocol = data.protocol;
+    const protocol = edgeData.protocol;
     const isGrpc = protocol === Protocol.GRPC;
     const isHttp = protocol === Protocol.HTTP;
     const isTcp = protocol === Protocol.TCP;

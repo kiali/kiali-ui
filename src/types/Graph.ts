@@ -137,6 +137,7 @@ export const hasProtocolTraffic = (protocolTraffic: ProtocolTraffic): protocolTr
   );
 };
 
+// Node data expected from server
 export interface GraphNodeData {
   id: string;
   parent?: string;
@@ -154,7 +155,6 @@ export interface GraphNodeData {
   isDead?: boolean;
   isGroup?: string;
   isInaccessible?: boolean;
-  isIstio?: boolean; // computed, true if has istio namespace
   isMisconfigured?: string;
   isOutside?: boolean;
   isRoot?: boolean;
@@ -162,13 +162,13 @@ export interface GraphNodeData {
   isUnused?: boolean;
 }
 
+// Edge data expected from server
 export interface GraphEdgeData {
   id: string;
   source: string;
   target: string;
   traffic?: ProtocolTraffic;
   responseTime?: number;
-  hasTraffic?: boolean; // computed, true if traffic rate > 0
   isMTLS?: number;
 }
 
@@ -192,6 +192,7 @@ export interface GraphDefinition {
   timestamp: number;
 }
 
+// Node data after decorating at fetch-time (what is mainly used by ui code)
 export interface DecoratedGraphNodeData extends GraphNodeData {
   grpcIn: number;
   grpcInErr: number;
@@ -205,8 +206,12 @@ export interface DecoratedGraphNodeData extends GraphNodeData {
   tcpOut: number;
 
   traffic: never;
+
+  // computed, true if has istio namespace
+  isIstio?: boolean;
 }
 
+// Edge data after decorating at fetch-time (what is mainly used by ui code)
 export interface DecoratedGraphEdgeData extends GraphEdgeData {
   grpc: number;
   grpcErr: number;
@@ -228,6 +233,9 @@ export interface DecoratedGraphEdgeData extends GraphEdgeData {
 
   // Default value -1
   isMTLS: number;
+
+  // computed, true if traffic rate > 0
+  hasTraffic?: boolean;
 }
 
 export interface DecoratedGraphNodeWrapper {

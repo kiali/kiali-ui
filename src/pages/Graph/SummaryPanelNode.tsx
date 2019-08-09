@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { renderDestServicesLinks, RenderLink, renderTitle } from './SummaryLink';
 import { Icon } from 'patternfly-react';
-
 import {
   getAccumulatedTrafficRateGrpc,
   getAccumulatedTrafficRateHttp,
@@ -15,8 +14,6 @@ import { Metrics, Metric } from '../../types/Metrics';
 import {
   shouldRefreshData,
   updateHealth,
-  nodeData,
-  NodeData,
   NodeMetricType,
   getDatapoints,
   getNodeMetrics,
@@ -118,21 +115,21 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
 
   updateCharts(props: SummaryPanelPropType) {
     const target = props.data.summaryTarget;
-    const data = decoratedNodeData(target);
-    const nodeMetricType = getNodeMetricType(data);
+    const nodeData = decoratedNodeData(target);
+    const nodeMetricType = getNodeMetricType(nodeData);
 
     if (this.metricsPromise) {
       this.metricsPromise.cancel();
       this.metricsPromise = undefined;
     }
 
-    if (!this.hasGrpcTraffic(data) && !this.hasHttpTraffic(data) && !this.hasTcpTraffic(data)) {
+    if (!this.hasGrpcTraffic(nodeData) && !this.hasHttpTraffic(nodeData) && !this.hasTcpTraffic(nodeData)) {
       this.setState({ loading: false });
       return;
     }
 
     // If destination node is inaccessible, we cannot query the data.
-    if (data.isInaccessible) {
+    if (nodeData.isInaccessible) {
       this.setState({ loading: false });
       return;
     }
@@ -142,14 +139,14 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
 
     // Ignore outgoing traffic if it is a non-root outsider (because they have no outgoing edges) or a
     // service node (because they don't have "real" outgoing edges).
-    if (data.nodeType !== NodeType.SERVICE && (data.isRoot || !data.isOutside)) {
+    if (nodeData.nodeType !== NodeType.SERVICE && (nodeData.isRoot || !nodeData.isOutside)) {
       const filters = ['request_count', 'request_error_count', 'tcp_sent', 'tcp_received'];
       // use source metrics for outgoing, except for:
       // - unknown nodes (no source telemetry)
       // - istio namespace nodes (no source telemetry)
-      const reporter: Reporter = data.nodeType === NodeType.UNKNOWN || data.isIstio ? 'destination' : 'source';
+      const reporter: Reporter = nodeData.nodeType === NodeType.UNKNOWN || nodeData.isIstio ? 'destination' : 'source';
       // note: request_protocol is not a valid byLabel for tcp filters but it is ignored by prometheus
-      const byLabels = data.isRoot ? ['destination_service_namespace', 'request_protocol'] : ['request_protocol'];
+      const byLabels = nodeData.isRoot ? ['destination_service_namespace', 'request_protocol'] : ['request_protocol'];
       promiseOut = getNodeMetrics(
         nodeMetricType,
         target,
@@ -164,10 +161,10 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
     }
 
     // set incoming unless it is a root (because they have no incoming edges)
-    if (!data.isRoot) {
+    if (!nodeData.isRoot) {
       const filtersRps = ['request_count', 'request_error_count'];
       // use dest metrics for incoming, except for service nodes which need source metrics to capture source errors
-      const reporter: Reporter = data.nodeType === NodeType.SERVICE && data.isIstio ? 'source' : 'destination';
+      const reporter: Reporter = nodeData.nodeType === NodeType.SERVICE && nodeData.isIstio ? 'source' : 'destination';
       // For special service dest nodes we want to narrow the data to only TS with 'unknown' workloads (see the related
       // comparator in getNodeDatapoints).
       const isServiceDestCornerCase = this.isServiceDestCornerCase(nodeMetricType);
@@ -202,7 +199,7 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
     this.metricsPromise = makeCancelablePromise(Promise.all([promiseOut, promiseIn]));
     this.metricsPromise.promise
       .then(responses => {
-        this.showRequestCountMetrics(responses[0].data, responses[1].data, data, nodeMetricType);
+        this.showRequestCountMetrics(responses[0].data, responses[1].data, nodeData, nodeMetricType);
       })
       .catch(error => {
         if (error.isCanceled) {
@@ -280,11 +277,10 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
 
   render() {
     const node = this.props.data.summaryTarget;
-    const data: NodeData = nodeData(node);
-    const decoratedData: DecoratedGraphNodeData = decoratedNodeData(node);
-    const { nodeType, workload, isServiceEntry } = decoratedData;
+    const nodeData = decoratedNodeData(node);
+    const { nodeType, workload, isServiceEntry } = nodeData;
     const servicesList = nodeType !== NodeType.SERVICE && renderDestServicesLinks(node);
-    const destsList = nodeType === NodeType.SERVICE && isServiceEntry && this.renderDestServices(decoratedData);
+    const destsList = nodeType === NodeType.SERVICE && isServiceEntry && this.renderDestServices(nodeData);
 
     const shouldRenderDestsList = destsList && destsList.length > 0;
     const shouldRenderSvcList = servicesList && servicesList.length > 0;
@@ -306,14 +302,9 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
               />
             )
           )}
-          <span> {renderTitle(data)}</span>
-          {renderLabels(data)}
-          {this.renderBadgeSummary(
-            decoratedData.hasCB,
-            decoratedData.hasVS,
-            decoratedData.hasMissingSC,
-            decoratedData.isDead
-          )}
+          <span> {renderTitle(nodeData)}</span>
+          {renderLabels(nodeData)}
+          {this.renderBadgeSummary(nodeData.hasCB, nodeData.hasVS, nodeData.hasMissingSC, nodeData.isDead)}
         </div>
         <div className="panel-body">
           {shouldRenderDestsList && (
@@ -331,7 +322,7 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
           {shouldRenderWorkload && (
             <div>
               <strong>Workload: </strong>
-              <RenderLink data={data} nodeType={NodeType.WORKLOAD} />
+              <RenderLink nodeData={nodeData} nodeType={NodeType.WORKLOAD} />
             </div>
           )}
           {(shouldRenderDestsList || shouldRenderSvcList || shouldRenderWorkload) && <hr />}
@@ -343,11 +334,11 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
               </Link>
             </p>
           )} */}
-          {this.hasGrpcTraffic(decoratedData) && this.renderGrpcRates(node)}
-          {this.hasHttpTraffic(decoratedData) && this.renderHttpRates(node)}
+          {this.hasGrpcTraffic(nodeData) && this.renderGrpcRates(node)}
+          {this.hasHttpTraffic(nodeData) && this.renderHttpRates(node)}
           <div>{this.renderCharts(node)}</div>
-          {!this.hasGrpcTraffic(decoratedData) && renderNoTraffic('GRPC')}
-          {!this.hasHttpTraffic(decoratedData) && renderNoTraffic('HTTP')}
+          {!this.hasGrpcTraffic(nodeData) && renderNoTraffic('GRPC')}
+          {!this.hasHttpTraffic(nodeData) && renderNoTraffic('HTTP')}
         </div>
       </div>
     );
@@ -394,9 +385,9 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
   };
 
   private renderCharts = node => {
-    const data = decoratedNodeData(node);
+    const nodeData = decoratedNodeData(node);
 
-    if (NodeType.UNKNOWN === data.nodeType) {
+    if (NodeType.UNKNOWN === nodeData.nodeType) {
       return (
         <>
           <div>
@@ -405,7 +396,7 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
           </div>
         </>
       );
-    } else if (data.isInaccessible) {
+    } else if (nodeData.isInaccessible) {
       return (
         <>
           <div>
@@ -414,7 +405,7 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
           </div>
         </>
       );
-    } else if (data.isServiceEntry) {
+    } else if (nodeData.isServiceEntry) {
       return (
         <>
           <div>
@@ -436,7 +427,7 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
       );
     }
 
-    const isServiceNode = data.nodeType === NodeType.SERVICE;
+    const isServiceNode = nodeData.nodeType === NodeType.SERVICE;
     let serviceWithUnknownSource: boolean = false;
     if (isServiceNode) {
       node.incomers().forEach(n => {
@@ -450,7 +441,7 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
 
     let grpcCharts, httpCharts, tcpCharts;
 
-    if (this.hasGrpcTraffic(data)) {
+    if (this.hasGrpcTraffic(nodeData)) {
       grpcCharts = (
         <>
           <RpsChart
@@ -474,7 +465,7 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
           {this.isIstioOutgoingCornerCase(node) && (
             <>
               <div>
-                <Icon type="pf" name="info" /> Traffic to istio-system not included. Use edge for details.
+                <Icon type="pf" name="info" /> Traffic to Istio namespaces not included. Use edge for details.
               </div>
             </>
           )}
@@ -483,7 +474,7 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
       );
     }
 
-    if (this.hasHttpTraffic(data)) {
+    if (this.hasHttpTraffic(nodeData)) {
       httpCharts = (
         <>
           <RpsChart
@@ -507,7 +498,7 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
           {this.isIstioOutgoingCornerCase(node) && (
             <>
               <div>
-                <Icon type="pf" name="info" /> Traffic to istio-system not included. Use edge for details.
+                <Icon type="pf" name="info" /> Traffic to Istio namespaces not included. Use edge for details.
               </div>
             </>
           )}
@@ -516,7 +507,7 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
       );
     }
 
-    if (this.hasTcpTraffic(data)) {
+    if (this.hasTcpTraffic(nodeData)) {
       tcpCharts = (
         <>
           <TcpChart
@@ -624,8 +615,8 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
   // We need to handle the special case of a non-istio, non-unknown node with outgoing traffic to istio.
   // The traffic is lost because it is dest-only and we use source-reporting.
   private isIstioOutgoingCornerCase = (node): boolean => {
-    const data = decoratedNodeData(node);
-    if (data.nodeType === NodeType.UNKNOWN || data.isIstio) {
+    const nodeData = decoratedNodeData(node);
+    if (nodeData.nodeType === NodeType.UNKNOWN || nodeData.isIstio) {
       return false;
     }
     return node.edgesTo(`node[?${CyNode.isIstio}]`).size() > 0;
