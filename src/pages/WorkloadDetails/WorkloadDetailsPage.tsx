@@ -10,7 +10,7 @@ import IstioMetricsContainer from '../../components/Metrics/IstioMetrics';
 import { WorkloadHealth } from '../../types/Health';
 import { MetricsObjectTypes } from '../../types/Metrics';
 import CustomMetricsContainer from '../../components/Metrics/CustomMetrics';
-import { serverConfig, isIstioNamespace } from '../../config/ServerConfig';
+import { isIstioNamespace, serverConfig } from '../../config/ServerConfig';
 import BreadcrumbView from '../../components/BreadcrumbView/BreadcrumbView';
 import PfTitle from '../../components/Pf/PfTitle';
 import { GraphDefinition, GraphType, NodeParamsType, NodeType } from '../../types/Graph';
