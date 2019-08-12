@@ -235,6 +235,10 @@ class IstioConfigListComponent extends ListComponent.Component<
       iconName = 'locked';
       iconType = 'pf';
       type = 'MeshPolicy';
+    } else if (istioItem.type === 'servicemeshpolicy') {
+      iconName = 'locked';
+      iconType = 'pf';
+      type = 'ServiceMeshPolicy';
     } else if (istioItem.type === 'clusterrbacconfig') {
       iconName = 'locked';
       iconType = 'pf';
@@ -243,6 +247,10 @@ class IstioConfigListComponent extends ListComponent.Component<
       iconName = 'locked';
       iconType = 'pf';
       type = 'RbacConfig';
+    } else if (istioItem.type === 'servicemeshrbacconfig') {
+      iconName = 'locked';
+      iconType = 'pf';
+      type = 'ServiceMeshRbacConfig';
     } else if (istioItem.type === 'sidecar') {
       iconName = 'integration';
       iconType = 'pf';

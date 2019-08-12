@@ -134,12 +134,20 @@ export namespace IstioConfigListFilters {
         title: 'MeshPolicy'
       },
       {
+        id: 'ServiceMeshPolicy',
+        title: 'ServiceMeshPolicy'
+      },
+      {
         id: 'ClusterRbacConfig',
         title: 'ClusterRbacConfig'
       },
       {
         id: 'RbacConfig',
         title: 'RbacConfig'
+      },
+      {
+        id: 'ServiceMeshRbacConfig',
+        title: 'ServiceMeshRbacConfig'
       },
       {
         id: 'Sidecar',
