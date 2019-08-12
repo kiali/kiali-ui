@@ -86,12 +86,7 @@ export const isIstioNamespace = (namespace: string): boolean => {
   if (namespace === serverConfig.istioNamespace) {
     return true;
   }
-  if (serverConfig.istioComponentNamespaces) {
-    for (const ns of Object.values(serverConfig.istioComponentNamespaces)) {
-      if (namespace === ns) {
-        return true;
-      }
-    }
-  }
-  return false;
+  return serverConfig.istioComponentNamespaces
+    ? Object.values(serverConfig.istioComponentNamespaces).includes(namespace)
+    : false;
 };
