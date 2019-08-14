@@ -15,6 +15,7 @@ export interface NotificationMessage {
   firstTriggered?: Date; // when was it first triggered
   count: number; // how many times did this message occur
 
+  showDetail: boolean;
   show_notification?: boolean;
   groupId?: string;
 }

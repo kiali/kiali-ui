@@ -63,26 +63,12 @@ type NotificationWrapperPropsType = {
   onClick: (message: NotificationMessage) => void;
 };
 
-type NotificationWrapperStateType = {
-  isExpanded: boolean;
-};
-
-class NotificationWrapper extends React.PureComponent<NotificationWrapperPropsType, NotificationWrapperStateType> {
-  constructor(props) {
-    super(props);
-    this.state = {
-      isExpanded: false
-    };
-  }
-
-  onToggle = () => {
-    this.setState(state => ({
-      isExpanded: !state.isExpanded
-    }));
+class NotificationWrapper extends React.PureComponent<NotificationWrapperPropsType> {
+  toggleDetail = () => {
+    this.props.message.showDetail = !this.props.message.showDetail;
   };
 
   render() {
-    const { isExpanded } = this.state;
     return (
       <Pf.Notification seen={this.props.message.seen} onClick={() => this.props.onClick(this.props.message)}>
         <Pf.Icon className="pull-left" type="pf" name={typeForPfIcon(this.props.message.type)} />
@@ -91,9 +77,9 @@ class NotificationWrapper extends React.PureComponent<NotificationWrapperPropsTy
             {this.props.message.content}
             {this.props.message.detail && (
               <Expandable
-                toggleText={isExpanded ? 'Hide Detail' : 'Show Detail'}
-                onToggle={this.onToggle}
-                isExpanded={isExpanded}
+                toggleText={this.props.message.showDetail ? 'Hide Detail' : 'Show Detail'}
+                onToggle={this.toggleDetail}
+                isExpanded={this.props.message.showDetail}
               >
                 <pre>{this.props.message.detail}</pre>
               </Expandable>
