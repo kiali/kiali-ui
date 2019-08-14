@@ -140,6 +140,13 @@ const Messages = (
       return updateState(state, { groups });
     }
 
+    case getType(MessageCenterActions.toggleMessageDetail): {
+      return updateMessage(state, action.payload.messageId, message => ({
+        ...message,
+        showDetail: !message.showDetail
+      }));
+    }
+
     case getType(MessageCenterActions.markAsRead): {
       return updateMessage(state, action.payload.messageId, message => ({
         ...message,

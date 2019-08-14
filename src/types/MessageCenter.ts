@@ -41,6 +41,7 @@ export interface MessageCenterPropsType {
   onMarkGroupAsRead: (group: NotificationGroup) => void;
   onClearGroup: (group: NotificationGroup) => void;
   onNotificationClick: (message: NotificationMessage, group: NotificationGroup) => void;
+  onNotificationToggleDetail: (message: NotificationMessage, group: NotificationGroup) => void;
 
   onDismissNotification: (message: NotificationMessage, group: NotificationGroup, userDismissed: boolean) => void;
 

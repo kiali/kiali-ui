@@ -61,11 +61,12 @@ const noNotificationsMessage = (
 type NotificationWrapperPropsType = {
   message: NotificationMessage;
   onClick: (message: NotificationMessage) => void;
+  onToggleDetail: (message: NotificationMessage) => void;
 };
 
 class NotificationWrapper extends React.PureComponent<NotificationWrapperPropsType> {
   toggleDetail = () => {
-    this.props.message.showDetail = !this.props.message.showDetail;
+    this.props.onToggleDetail(this.props.message);
   };
 
   render() {
@@ -105,6 +106,7 @@ type NotificationGroupWrapperPropsType = {
   isExpanded: boolean;
   reverseMessageOrder?: boolean;
   onNotificationClick: (message: NotificationMessage) => void;
+  onNotificationToggleDetail: (message: NotificationMessage) => void;
   onMarkGroupAsRead: (group: NotificationGroup) => void;
   onClearGroup: (group: NotificationGroup) => void;
   onToggle: (group: NotificationGroup) => void;
@@ -138,7 +140,12 @@ class NotificationGroupWrapper extends React.PureComponent<NotificationGroupWrap
             <Pf.NotificationDrawer.PanelBody>
               {group.messages.length === 0 && noNotificationsMessage}
               {this.getMessages().map(message => (
-                <NotificationWrapper key={message.id} message={message} onClick={this.props.onNotificationClick} />
+                <NotificationWrapper
+                  key={message.id}
+                  message={message}
+                  onClick={this.props.onNotificationClick}
+                  onToggleDetail={this.props.onNotificationToggleDetail}
+                />
               ))}
             </Pf.NotificationDrawer.PanelBody>
             {group.showActions && group.messages.length > 0 && (
@@ -177,6 +184,7 @@ type PropsType = {
   onMarkGroupAsRead: (group: NotificationGroup) => void;
   onClearGroup: (group: NotificationGroup) => void;
   onNotificationClick: (message: NotificationMessage, group: NotificationGroup) => void;
+  onNotificationToggleDetail: (message: NotificationMessage, group: NotificationGroup) => void;
 };
 
 type StateType = {};
@@ -205,6 +213,9 @@ export default class NotificationDrawer extends React.PureComponent<PropsType, S
                   isExpanded={group.id === this.props.expandedGroupId}
                   onToggle={this.props.onToggleGroup}
                   onNotificationClick={(message: NotificationMessage) => this.props.onNotificationClick(message, group)}
+                  onNotificationToggleDetail={(message: NotificationMessage) =>
+                    this.props.onNotificationToggleDetail(message, group)
+                  }
                   onMarkGroupAsRead={this.props.onMarkGroupAsRead}
                   onClearGroup={this.props.onClearGroup}
                 />
