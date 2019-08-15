@@ -5,7 +5,6 @@ import { AppListItem } from '../../types/AppList';
 import { WorkloadListItem } from '../../types/Workload';
 import { ServiceListItem } from '../../types/ServiceList';
 import { IstioConfigItem } from '../../types/IstioConfigList';
-import { serverConfig } from '../../config';
 import * as Renderers from './Renderers';
 import { Health } from '../../types/Health';
 import { isIstioNamespace } from 'config/ServerConfig';
