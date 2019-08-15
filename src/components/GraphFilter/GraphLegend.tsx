@@ -41,7 +41,8 @@ export default class GraphLegend extends React.Component<GraphLegendProps, Graph
     const bodyStyle = style({
       width: this.state.width,
       height: this.state.height,
-      overflowY: 'auto'
+      overflowY: 'scroll',
+      overflowX: 'hidden'
     });
 
     const legendListStyle = style({
@@ -74,20 +75,25 @@ export default class GraphLegend extends React.Component<GraphLegendProps, Graph
     });
 
     return (
-      <div>
+      <>
         {legendData.map((legendItem: GraphLegendItem) => (
           <div key={legendItem.title} className={legendColumnHeadingStyle}>
             {legendItem.title}
-            {this.renderLegendRowItems(legendItem.data)}
+            {GraphLegend.renderLegendRowItems(legendItem.data)}
           </div>
         ))}
-      </div>
+      </>
     );
   }
 
-  renderLegendRowItems(legendData: GraphLegendItemRow[]) {
+  static renderLegendRowItems(legendData: GraphLegendItemRow[]) {
+    const legendRowStyle = style({
+      overflowY: 'scroll'
+    });
     return (
-      <>{legendData.map((legendItemRow: GraphLegendItemRow) => GraphLegend.renderLegendIconAndLabel(legendItemRow))}</>
+      <div className={legendRowStyle}>
+        {legendData.map((legendItemRow: GraphLegendItemRow) => GraphLegend.renderLegendIconAndLabel(legendItemRow))}
+      </div>
     );
   }
 
@@ -109,9 +115,7 @@ export default class GraphLegend extends React.Component<GraphLegendProps, Graph
 
     return (
       <div key={legendItemRow.icon} className={legendItemContainerStyle}>
-        <span>
-          <img alt={legendItemRow.label} src={legendItemRow.icon} />
-        </span>
+        <img alt={legendItemRow.label} src={legendItemRow.icon} />
         <span className={legendItemLabelStyle}>{legendItemRow.label}</span>
       </div>
     );
