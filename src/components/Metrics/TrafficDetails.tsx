@@ -81,7 +81,7 @@ class TrafficDetails extends React.Component<TrafficDetailsProps, TrafficDetails
       <Row className="card-pf-body">
         <Col xs={12}>
           <div>
-            <div style={{ float: 'right', paddingRight: '2em' }}>
+            <div style={{ float: 'right', paddingRight: '2em', display: 'flex' }}>
               <MetricsDurationContainer onChanged={this.props.onDurationChanged} />{' '}
               <RefreshButtonContainer handleRefresh={this.props.onRefresh} />
             </div>

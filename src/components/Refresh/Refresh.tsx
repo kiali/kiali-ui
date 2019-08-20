@@ -7,6 +7,7 @@ import { config } from '../../config';
 import { PollIntervalInMs, TimeInMilliseconds } from '../../types/Common';
 import { UserSettingsActions } from '../../actions/UserSettingsActions';
 import { KialiAppAction } from '../../actions/KialiAppAction';
+import { Toolbar, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
 import { ToolbarDropdown } from '../ToolbarDropdown/ToolbarDropdown';
 import RefreshButtonContainer from './RefreshButton';
 import { GlobalActions } from '../../actions/GlobalActions';
@@ -65,20 +66,28 @@ class Refresh extends React.Component<Props, State> {
     if (this.props.refreshInterval !== undefined) {
       const { hideLabel } = this.props;
       return (
-        <>
-          {!hideLabel && <label style={{ paddingRight: '0.5em', marginLeft: '1.5em' }}>Refreshing</label>}
-          <ToolbarDropdown
-            id={this.props.id}
-            handleSelect={value => this.updatePollInterval(Number(value))}
-            value={this.props.refreshInterval}
-            label={POLL_INTERVALS[this.props.refreshInterval]}
-            options={POLL_INTERVALS}
-            tooltip={'Refresh interval'}
-          />
-          <span style={{ paddingLeft: '0.5em' }}>
-            <RefreshButtonContainer id={this.props.id + '_btn'} handleRefresh={this.props.handleRefresh} />
-          </span>
-        </>
+        <Toolbar>
+          <ToolbarGroup>
+            {!hideLabel && (
+              <ToolbarItem>
+                <label style={{ paddingRight: '0.5em', marginLeft: '1.5em' }}>Refreshing</label>
+              </ToolbarItem>
+            )}
+            <ToolbarItem>
+              <ToolbarDropdown
+                id={this.props.id}
+                handleSelect={value => this.updatePollInterval(Number(value))}
+                value={this.props.refreshInterval}
+                label={POLL_INTERVALS[this.props.refreshInterval]}
+                options={POLL_INTERVALS}
+                tooltip={'Refresh interval'}
+              />
+            </ToolbarItem>
+            <ToolbarItem>
+              <RefreshButtonContainer id={this.props.id + '_btn'} handleRefresh={this.props.handleRefresh} />
+            </ToolbarItem>
+          </ToolbarGroup>
+        </Toolbar>
       );
     } else {
       return <RefreshButtonContainer handleRefresh={this.props.handleRefresh} />;

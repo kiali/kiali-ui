@@ -140,7 +140,7 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
                 label={this.state.containerInfo.container}
                 options={this.state.containerInfo.containerOptions!}
               />
-              <Toolbar.RightContent>
+              <Toolbar.RightContent style={{display: 'flex'}}>
                 <ToolbarDropdown
                   id={'wpl_tailLines'}
                   nameDropdown="Tail"

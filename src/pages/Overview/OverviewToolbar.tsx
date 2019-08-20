@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Button, ButtonGroup, FormGroup, Sort, ToolbarRightContent } from 'patternfly-react';
+import { Button, FormSelect, FormSelectOption } from '@patternfly/react-core';
+import { SortAlphaDownIcon, SortAlphaUpIcon } from '@patternfly/react-icons';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
@@ -16,7 +17,6 @@ import { PollIntervalInMs, DurationInSeconds } from '../../types/Common';
 import { SortField } from '../../types/SortFilters';
 
 import NamespaceInfo from './NamespaceInfo';
-import { AlignRightStyle, ThinStyle } from '../../components/Filters/FilterStyles';
 import * as Sorts from './Sorts';
 import * as Filters from './Filters';
 import { DurationDropdownContainer } from '../../components/DurationDropdown/DurationDropdown';
@@ -102,6 +102,13 @@ export class OverviewToolbar extends React.Component<Props, State> {
     this.setState({ sortField: sortField });
   };
 
+  changeSortField = value => {
+    const sortField: SortField<NamespaceInfo> = Sorts.sortFields.filter(sort => sort.id === value)[0];
+    this.props.sort(sortField, this.state.isSortAscending);
+    HistoryManager.setParam(URLParam.SORT, sortField.param);
+    this.setState({ sortField: sortField });
+  };
+
   updateSortDirection = () => {
     const newDir = !this.state.isSortAscending;
     this.props.sort(this.state.sortField, newDir);
@@ -125,21 +132,16 @@ export class OverviewToolbar extends React.Component<Props, State> {
   render() {
     return (
       <StatefulFilters initialFilters={Filters.availableFilters} onFilterChange={this.props.onRefresh}>
-        <Sort style={{ ...ThinStyle }}>
-          <Sort.TypeSelector
-            // style={{ ...thinGroupStyle }}
-            sortTypes={Sorts.sortFields}
-            currentSortType={this.state.sortField}
-            onSortTypeSelected={this.updateSortField}
-          />
-          <Sort.DirectionSelector
-            // style={{ ...thinGroupStyle }}
-            isNumeric={false}
-            isAscending={this.state.isSortAscending}
-            onClick={this.updateSortDirection}
-          />
-        </Sort>
-        <FormGroup style={{ ...ThinStyle }}>
+        <>
+        <FormSelect value={this.state.sortField.id} onChange={this.changeSortField} style={{marginLeft: '-32px'}}>
+          {Sorts.sortFields.map(sortType => (
+            <FormSelectOption key={sortType.id} value={sortType.id} label={sortType.title} />
+          ))}
+        </FormSelect>
+        <Button variant="plain" onClick={this.updateSortDirection}>
+          {this.state.isSortAscending ? <SortAlphaDownIcon /> : <SortAlphaUpIcon />}
+        </Button>
+        </>
           <ToolbarDropdown
             id="overview-type"
             disabled={false}
@@ -149,29 +151,30 @@ export class OverviewToolbar extends React.Component<Props, State> {
             label={overviewTypes[this.state.overviewType]}
             options={overviewTypes}
           />
-        </FormGroup>
-        <FormGroup>
-          <ButtonGroup id="toolbar_layout_group">
+          <>
             <Button
               onClick={() => this.props.setDisplayMode(OverviewDisplayMode.COMPACT)}
               title="Compact mode"
-              active={this.props.displayMode === OverviewDisplayMode.COMPACT}
+              variant="tertiary"
+              isActive={this.props.displayMode === OverviewDisplayMode.COMPACT}
             >
               Compact
             </Button>
             <Button
               onClick={() => this.props.setDisplayMode(OverviewDisplayMode.EXPAND)}
               title="Expanded mode"
-              active={this.props.displayMode === OverviewDisplayMode.EXPAND}
+              variant="tertiary"
+              isActive={this.props.displayMode === OverviewDisplayMode.EXPAND}
             >
               Expand
             </Button>
-          </ButtonGroup>
-        </FormGroup>
-        <ToolbarRightContent style={{ ...AlignRightStyle }}>
+          </>
+        <>
           <DurationDropdownContainer id="overview-duration" disabled={false} tooltip={'Time range for overview data'} />
-          <RefreshContainer id="overview-refresh" handleRefresh={this.props.onRefresh} hideLabel={true} />
-        </ToolbarRightContent>
+          <div style={{marginLeft: '-32px'}}>
+           <RefreshContainer id="overview-refresh" handleRefresh={this.props.onRefresh} hideLabel={true}/>
+          </div>
+        </>
       </StatefulFilters>
     );
   }

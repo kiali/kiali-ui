@@ -159,7 +159,7 @@ class ServiceInfo extends React.Component<ServiceDetails, ServiceInfoState> {
         <div className="container-fluid container-cards-pf">
           <Row className="row-cards-pf">
             <Col xs={12} sm={12} md={12} lg={12}>
-              <span style={{ float: 'right' }}>
+              <span style={{ float: 'right', display: 'flex' }}>
                 <DurationDropdownContainer id="service-info-duration-dropdown" />{' '}
                 <RefreshButtonContainer handleRefresh={this.props.onRefresh} />
                 &nbsp;

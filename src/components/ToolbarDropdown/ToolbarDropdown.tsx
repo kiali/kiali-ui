@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { DropdownButton, MenuItem, OverlayTrigger, Tooltip } from 'patternfly-react';
+import { FormSelect, FormSelectOption, ToolbarGroup, ToolbarItem, Tooltip } from '@patternfly/react-core';
+import { style } from 'typestyle';
 
 type ToolbarDropdownProps = {
   disabled?: boolean;
@@ -22,6 +23,8 @@ type ToolbarDropdownState = {
   currentName?: string;
 };
 
+const dividerStyle = style({borderRight: '1px solid #d1d1d1;'});
+
 export class ToolbarDropdown extends React.Component<ToolbarDropdownProps, ToolbarDropdownState> {
   constructor(props: ToolbarDropdownProps) {
     super(props);
@@ -39,37 +42,31 @@ export class ToolbarDropdown extends React.Component<ToolbarDropdownProps, Toolb
 
   render() {
     const dropdownButton = (
-      <DropdownButton
-        disabled={this.props.disabled}
+      <FormSelect
+        isDisabled={this.props.disabled}
         title={this.props.label || this.state.currentName}
-        onSelect={this.onKeyChanged}
+        onChange={this.onKeyChanged}
         id={this.props.id}
-        onToggle={(isOpen: boolean) => this.props.onToggle && this.props.onToggle(isOpen)}
+        value={this.props.value || this.state.currentValue}
       >
         {Object.keys(this.props.options).map(key => (
-          <MenuItem key={key} active={key === (this.props.value || this.state.currentValue)} eventKey={key}>
-            {this.props.options[key]}
-          </MenuItem>
+          <FormSelectOption key={key} label={this.props.options[key]} value={key} />
         ))}
-      </DropdownButton>
+      </FormSelect>
     );
     return (
-      <>
-        {this.props.nameDropdown && <label style={{ paddingRight: '0.5em' }}>{this.props.nameDropdown}</label>}
-        {this.props.tooltip ? (
-          <OverlayTrigger
-            key={'ot-' + this.props.id}
-            placement="top"
-            trigger={['hover', 'focus']}
-            delayShow={1000}
-            overlay={<Tooltip id={'tt-' + this.props.id}>{this.props.tooltip}</Tooltip>}
-          >
-            {dropdownButton}
-          </OverlayTrigger>
-        ) : (
-          dropdownButton
-        )}
-      </>
+      <ToolbarGroup className={dividerStyle}>
+        {this.props.nameDropdown && <ToolbarItem><label style={{ paddingRight: '0.5em' }}>{this.props.nameDropdown}</label></ToolbarItem>}
+        <ToolbarItem>
+          {this.props.tooltip ? (
+              <Tooltip key={'ot-' + this.props.id} entryDelay={1000} content={<>{this.props.tooltip}</>}>
+                {dropdownButton}
+              </Tooltip>
+          ) : (
+            dropdownButton
+          )}
+        </ToolbarItem>
+      </ToolbarGroup>
     );
   }
 }

@@ -145,7 +145,7 @@ export class GraphFilter extends React.PureComponent<GraphFilterProps> {
     return (
       <>
         <Toolbar>
-          <FormGroup className={alignLeftStyle} style={{ ...ThinStyle }}>
+          <FormGroup className={alignLeftStyle} style={{ ...ThinStyle, display: 'flex' }}>
             {this.props.node ? (
               <Button onClick={this.handleNamespaceReturn}>Back to full {GraphFilter.GRAPH_TYPES[graphTypeKey]}</Button>
             ) : (
@@ -169,7 +169,7 @@ export class GraphFilter extends React.PureComponent<GraphFilterProps> {
             <GraphSettingsContainer edgeLabelMode={this.props.edgeLabelMode} graphType={this.props.graphType} />
           </FormGroup>
           <GraphFindContainer />
-          <Toolbar.RightContent style={{ ...AlignRightStyle }}>
+          <Toolbar.RightContent style={{ ...AlignRightStyle, display: 'flex' }}>
             <GraphRefreshContainer
               id="graph_refresh_container"
               disabled={this.props.disabled}

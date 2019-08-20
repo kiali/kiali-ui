@@ -164,7 +164,7 @@ class ServiceListComponent extends FilterComponent.Component<
     return (
       <VirtualList rows={this.state.listItems} scrollFilters={false} updateItems={this.updateListItems}>
         <StatefulFilters initialFilters={ServiceListFilters.availableFilters} onFilterChange={this.onFilterChange}>
-          <ToolbarRightContent style={{ ...AlignRightStyle }}>
+          <ToolbarRightContent style={{ ...AlignRightStyle, display: 'flex' }}>
             <DurationDropdownContainer id="service-list-duration-dropdown" />
             <RefreshButtonContainer handleRefresh={this.updateListItems} />
           </ToolbarRightContent>
