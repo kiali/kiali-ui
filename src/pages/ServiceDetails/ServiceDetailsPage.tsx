@@ -407,11 +407,26 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
               this.props.jaegerUrl +
               `/search?service=${this.props.match.params.service}.${this.props.match.params.namespace}`
             }
+            target="_blank"
             title={jaegerTitle}
           />
         );
       }
       tabsArray.push(jaegerTag);
+    }
+
+    if (this.state.serviceDetailsInfo.apiDocumentation && this.state.serviceDetailsInfo.apiDocumentation.hasSpec) {
+      const docTabIndex = tabsArray.length;
+      const docTab: any = (
+        <Tab eventKey={docTabIndex} title={'API Doc'} key="API Doc">
+          <ApiDocumentation
+            apiType={this.state.serviceDetailsInfo.apiDocumentation.type}
+            namespace={this.props.match.params.namespace}
+            service={this.props.match.params.service}
+          />
+        </Tab>
+      );
+      tabsArray.push(docTab);
     }
 
     return (

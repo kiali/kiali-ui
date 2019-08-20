@@ -61,10 +61,6 @@ export default class ParameterizedTabs extends React.Component<TabsProps, TabsSt
     return this.indexMap[index];
   }
 
-  tabLinkOf(index: number) {
-    return this.tabLinks[index];
-  }
-
   activeTab = () => {
     return activeTab(this.props.tabName, this.props.defaultTab);
   };
@@ -92,13 +88,6 @@ export default class ParameterizedTabs extends React.Component<TabsProps, TabsSt
     });
   };
 
-  linkTabHandler = (tabKey: number) => {
-    const link = this.tabLinkOf(tabKey);
-    if (link) {
-      window.open(link, '_blank');
-    }
-  };
-
   tabTransitionHandler = (tabKey: number) => {
     const tabName = this.tabNameOf(tabKey);
     this.tabSelectHandler(tabName);
@@ -111,9 +100,7 @@ export default class ParameterizedTabs extends React.Component<TabsProps, TabsSt
         id={this.props.id}
         activeKey={this.activeIndex()}
         onSelect={(_, ek) => {
-          if (this.isLinkTab(ek)) {
-            this.linkTabHandler(ek);
-          } else {
+          if (!this.isLinkTab(ek)) {
             this.tabTransitionHandler(ek);
           }
         }}

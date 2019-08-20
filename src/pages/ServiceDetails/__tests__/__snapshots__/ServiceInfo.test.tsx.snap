@@ -241,11 +241,11 @@ exports[`#ServiceInfo render correctly with data should render serviceInfo with 
           <ForwardRef
             eventKey={1}
             title={
-              <UNDEFINED>
+              <React.Fragment>
                 Virtual Services (
                 1
                 )
-              </UNDEFINED>
+              </React.Fragment>
             }
           >
             <ServiceInfoVirtualServices
@@ -284,7 +284,7 @@ exports[`#ServiceInfo render correctly with data should render serviceInfo with 
           <ForwardRef
             eventKey={2}
             title={
-              <UNDEFINED>
+              <React.Fragment>
                 Destination Rules (
                 1
                 )
@@ -297,7 +297,7 @@ exports[`#ServiceInfo render correctly with data should render serviceInfo with 
                     type="pf"
                   />
                 </span>
-              </UNDEFINED>
+              </React.Fragment>
             }
           >
             <ServiceInfoDestinationRules
