@@ -95,7 +95,7 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
       this.handleFind();
     }
     if (hideChanged || compressOnHideChanged || (graphChanged && this.props.hideValue)) {
-      this.handleHide(graphChanged);
+      this.handleHide(graphChanged, hideChanged || compressOnHideChanged);
     }
   }
 
@@ -264,7 +264,7 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
     this.setState({ compressOnHide: !this.state.compressOnHide });
   };
 
-  private handleHide = (graphChanged: boolean) => {
+  private handleHide = (graphChanged: boolean, hideChanged) => {
     if (!this.props.cyData) {
       console.debug('Skip Hide: cy not set.');
       return;
@@ -284,12 +284,11 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
     if (this.removedElements) {
       // Only restore the removed nodes if we are working with the same graph.  If the graph has changed
       // (i.e. refresh) then we have new nodes, and therefore a potential ID conflict. don't restore the
-      // removed nodes, instead, just remove our references and they should get garbage collected.
+      // removed nodes, instead, just remove our reference and they should get garbage collected.
       if (!graphChanged) {
         this.removedElements.restore();
       }
       this.removedElements = undefined;
-      CytoscapeGraphUtils.runLayout(cy, this.props.layout);
     }
     if (selector) {
       // select the new hide-hits
@@ -308,7 +307,6 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
         // now subtract any appboxes that don't have any visible children
         const hiddenAppBoxes = cy.$('$node[isGroup]').subtract(cy.$('$node[isGroup] > :inside'));
         this.removedElements = this.removedElements.add(cy.remove(hiddenAppBoxes));
-        CytoscapeGraphUtils.runLayout(cy, this.props.layout);
       } else {
         // set the remaining hide-hits hidden
         this.hiddenElements = hiddenElements;
@@ -317,6 +315,19 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
         const hiddenAppBoxes = cy.$('$node[isGroup]').subtract(cy.$('$node[isGroup] > :visible'));
         hiddenAppBoxes.style({ visibility: 'hidden' });
         this.hiddenElements = this.hiddenElements.add(hiddenAppBoxes);
+      }
+    }
+    if (hideChanged || (this.removedElements && this.removedElements.size() > 0)) {
+      const zoom = cy.zoom();
+      const pan = cy.pan();
+      CytoscapeGraphUtils.runLayout(cy, this.props.layout);
+      if (!hideChanged) {
+        if (zoom !== cy.zoom()) {
+          cy.zoom(zoom);
+        }
+        if (pan.x !== cy.pan().x || pan.y !== cy.pan().y) {
+          cy.pan(pan);
+        }
       }
     }
     cy.endBatch();
