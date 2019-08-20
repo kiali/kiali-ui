@@ -107,6 +107,7 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
   static doubleTapMs = 350;
   static tapTarget: any;
   static tapTimeout: any;
+  static readonly DataNodeId = 'data-node-id';
 
   private graphHighlighter?: GraphHighlighter;
   private trafficRenderer?: TrafficRender;
@@ -257,10 +258,6 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
     }
   };
 
-  private turnNodeLabelsTo = (cy: any, value: boolean) => {
-    cy.scratch(CytoscapeGlobalScratchNamespace).showNodeLabels = value;
-  };
-
   private cyInitialization(cy: any) {
     if (!cy) {
       return;
@@ -299,7 +296,36 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
       }
     };
 
+    const findRelatedNode = element => {
+      // Skip top-level node, this one has margins that we don't want to consider.
+      if (element.getAttribute(CytoscapeGraph.DataNodeId)) {
+        return null;
+      }
+      while (element && element.getAttribute) {
+        const dataNodeId = element.getAttribute(CytoscapeGraph.DataNodeId);
+        if (dataNodeId) {
+          return dataNodeId;
+        }
+        element = element.parentNode;
+      }
+      return null;
+    };
+
     cy.on('tap', (event: any) => {
+      // Check if we clicked a label, if so stop processing the event right away.
+      if (event.originalEvent) {
+        const element = document.elementFromPoint(event.originalEvent.clientX, event.originalEvent.clientY);
+        const realTargetId = findRelatedNode(element);
+        if (realTargetId) {
+          const realTarget = cy.$id(realTargetId);
+          if (realTarget) {
+            event.preventDefault();
+            realTarget.trigger('tap');
+            return;
+          }
+        }
+      }
+
       let tapped = event.target;
       if (CytoscapeGraph.tapTimeout) {
         // cancel any single-tap timer in progress
@@ -341,6 +367,59 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
       const cytoscapeEvent = getCytoscapeBaseEvent(evt);
       if (cytoscapeEvent) {
         this.handleMouseOut(cytoscapeEvent);
+      }
+    });
+
+    cy.on('nodehtml-create-or-update', 'node', (evt: any, data: any) => {
+      const { label, isNew } = data;
+      const { target } = evt;
+      const node = label.getNode();
+
+      if (target.isParent()) {
+        // Avoid parent nodes
+        return;
+      }
+
+      // Add listeners to new nodes
+      if (isNew) {
+        node.setAttribute('data-node-id', target.id());
+      }
+
+      let oldBE = target.numericStyle('bounds-expansion');
+      if (oldBE.length === 1) {
+        oldBE = Array(4).fill(oldBE[0]);
+      }
+      // Do not include the "click" overlay on the bounding box calc
+      const bb = target.boundingBox({ includeOverlays: false });
+      let newBE = [...oldBE];
+      const requiredWidth = node.offsetWidth - bb.w;
+      const requiredHeight = node.offsetHeight;
+      newBE[1] = newBE[3] = requiredWidth * 0.5;
+      newBE[2] = requiredHeight;
+
+      // The boundingBox contains any value present in the current bounds-expansion, we subtracted this value and now we
+      // need to add it back to avoid loops
+      newBE[1] += oldBE[1];
+      newBE[3] += oldBE[3];
+
+      // Ensure we don't end with negative values in our bounds-expansion
+      newBE = newBE.map(val => Math.max(val, 0));
+
+      // Only trigger an update if it really changed, else just skip to avoid this function to call again
+      if (oldBE.join(' ') !== newBE.join(' ')) {
+        target.style('bounds-expansion', newBE);
+        // bounds-expansion changed. Make sure we tell our parent (if any) to update as well (so he can update the label position).
+        if (target.isChild()) {
+          // The timeout ensures that the previous value is already applied
+          setTimeout(() => {
+            if (!target.cy().destroyed()) {
+              target
+                .cy()
+                .nodeHtmlLabel()
+                .updateNodeLabel(target.parent());
+            }
+          }, 0);
+        }
       }
     });
 
@@ -456,12 +535,6 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
     if (updateLayout) {
       CytoscapeGraphUtils.runLayout(cy, this.props.layout);
     }
-
-    cy.startBatch();
-    // Create and destroy labels
-    this.turnNodeLabelsTo(cy, this.props.showNodeLabels);
-
-    cy.endBatch();
 
     // We need to fit outside of the batch operation for it to take effect on the new nodes
     if (updateLayout) {
