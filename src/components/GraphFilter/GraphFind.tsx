@@ -272,10 +272,6 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
     const cy = this.props.cyData.cyRef;
     const selector = this.parseValue(this.props.hideValue);
     cy.startBatch();
-    // this could also be done using cy remove/restore but we had better results
-    // using visible/hidden.  The latter worked better when hiding animation, and
-    // also prevents the need for running layout because visible/hidden maintains
-    // the space of the hidden elements.
     if (this.hiddenElements) {
       // make visible old hide-hits
       this.hiddenElements.style({ visibility: 'visible' });
