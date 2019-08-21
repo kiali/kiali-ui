@@ -313,7 +313,7 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
         this.hiddenElements = this.hiddenElements.add(hiddenAppBoxes);
       }
     }
-    if (hideChanged || (this.removedElements && this.removedElements.size() > 0)) {
+    if ((hideChanged && selector) || (this.removedElements && this.removedElements.size() > 0)) {
       const zoom = cy.zoom();
       const pan = cy.pan();
       CytoscapeGraphUtils.runLayout(cy, this.props.layout);
