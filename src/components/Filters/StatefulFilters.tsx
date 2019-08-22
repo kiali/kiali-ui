@@ -2,6 +2,7 @@ import * as React from 'react';
 import {
   Chip,
   ChipGroup,
+  ChipGroupToolbarItem,
   FormSelect,
   FormSelectOption,
   TextInput,
@@ -27,8 +28,7 @@ export interface StatefulFiltersState {
   currentValue: string;
 }
 
-
-const dividerStyle = style({borderRight: '1px solid #d1d1d1;', padding: '10px', display: 'inherit'});
+const dividerStyle = style({ borderRight: '1px solid #d1d1d1;', padding: '10px', display: 'inherit' });
 
 const RenderToolbarItem = props => (
   <ToolbarGroup>
@@ -166,7 +166,6 @@ export class StatefulFilters extends React.Component<StatefulFiltersProps, State
 
   onValueKeyPress = (keyEvent: any) => {
     const { currentValue, currentFilterType } = this.state;
-
     if (keyEvent.key === 'Enter') {
       if (currentValue && currentValue.length > 0 && !this.duplicatesFilter(currentFilterType, currentValue)) {
         this.filterAdded(currentFilterType, currentValue);
@@ -186,8 +185,9 @@ export class StatefulFilters extends React.Component<StatefulFiltersProps, State
     return !!filter;
   };
 
-  removeFilter = (index: number) => {
+  removeFilter = (category: string, value: string) => {
     const { activeFilters } = this.state;
+    const index = activeFilters.findIndex(x => x.category === category && x.value === value);
     if (index > -1) {
       const updated = [...activeFilters.slice(0, index), ...activeFilters.slice(index + 1)];
       this.updateActiveFilters(updated);
@@ -206,7 +206,12 @@ export class StatefulFilters extends React.Component<StatefulFiltersProps, State
     }
     if (currentFilterType.filterType === 'select') {
       return (
-        <FormSelect value={'default'} onChange={this.filterValueSelected} aria-label="FormSelect Input" style={{width: "auto"}}>
+        <FormSelect
+          value={'default'}
+          onChange={this.filterValueSelected}
+          aria-label="filter_select_value"
+          style={{ width: 'auto' }}
+        >
           <FormSelectOption key={'filter_default'} value={'default'} label={currentFilterType.placeholder} />
           {currentFilterType.filterValues.map((filter, index) => (
             <FormSelectOption key={'filter_' + index} value={filter.id} label={filter.title} />
@@ -218,6 +223,7 @@ export class StatefulFilters extends React.Component<StatefulFiltersProps, State
         <TextInput
           type={currentFilterType.filterType}
           value={currentValue}
+          aria-label={'filter_imput_value'}
           placeholder={currentFilterType.placeholder}
           onChange={this.updateCurrentValue}
           onKeyPress={e => this.onValueKeyPress(e)}
@@ -231,7 +237,9 @@ export class StatefulFilters extends React.Component<StatefulFiltersProps, State
       <ToolbarGroup>
         {Array.isArray(this.props.children) ? (
           (this.props.children as Array<any>).map((child, index) => (
-            <ToolbarItem key={'toolbar_statefulFilters_' + index} className={dividerStyle}>{child}</ToolbarItem>
+            <ToolbarItem key={'toolbar_statefulFilters_' + index} className={dividerStyle}>
+              {child}
+            </ToolbarItem>
           ))
         ) : (
           <ToolbarItem>{this.props.children}</ToolbarItem>
@@ -240,14 +248,29 @@ export class StatefulFilters extends React.Component<StatefulFiltersProps, State
     );
   };
 
+  groupBy = (items, key) =>
+    items.reduce(
+      (result, item) => ({
+        ...result,
+        [item[key]]: [...(result[item[key]] || []), item]
+      }),
+      {}
+    );
+
   render() {
     const { currentFilterType, activeFilters } = this.state;
-
+    const filters = this.groupBy(activeFilters, 'category');
+    console.log(Object.entries(filters).forEach(([key, value]) => console.log(key, value)));
     return (
       <Toolbar>
-        <ToolbarSection aria-label={"Toolbar_Filter"}>
+        <ToolbarSection aria-label={'Toolbar_Filter'}>
           <RenderToolbarItem>
-            <FormSelect value={currentFilterType.id} onChange={this.selectFilterType} style={{width: "auto", backgroundColor: '#ededed', borderColor: '#bbb'}}>
+            <FormSelect
+              value={currentFilterType.id}
+              aria-label={'filter_select_type'}
+              onChange={this.selectFilterType}
+              style={{ width: 'auto', backgroundColor: '#ededed', borderColor: '#bbb' }}
+            >
               {this.state.filterTypes.map(option => (
                 <FormSelectOption key={option.id} value={option.id} label={option.title} />
               ))}
@@ -257,17 +280,22 @@ export class StatefulFilters extends React.Component<StatefulFiltersProps, State
           {this.props.children && this.renderChildren()}
         </ToolbarSection>
         {activeFilters && activeFilters.length > 0 && (
-          <ToolbarSection aria-label={"Toolbar_Filter_ChipGroup"}>
+          <ToolbarSection aria-label={'Toolbar_Filter_ChipGroup'}>
             <RenderToolbarItem>Active Filters:</RenderToolbarItem>
             <RenderToolbarItem>
-              <ChipGroup defaultIsOpen={true}>
-                {activeFilters.map((item, index) => {
-                  return (
-                    <Chip key={index} onClick={() => this.removeFilter(index)}>
-                      {item.category + ': ' + item.value}
-                    </Chip>
-                  );
-                })}
+              <ChipGroup defaultIsOpen={true} withToolbar={true}>
+                {Object.entries(filters).map(([category, item]) => (
+                  <ChipGroupToolbarItem key={category} categoryName={category}>
+                    {(item as Array<ActiveFilter>).map(subItem => (
+                      <Chip
+                        key={'filter_' + category + '_' + subItem.value}
+                        onClick={() => this.removeFilter(category, subItem.value)}
+                      >
+                        {subItem.value}
+                      </Chip>
+                    ))}
+                  </ChipGroupToolbarItem>
+                ))}
               </ChipGroup>
             </RenderToolbarItem>
             <RenderToolbarItem>

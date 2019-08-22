@@ -161,7 +161,7 @@ class WorkloadListComponent extends FilterComponent.Component<
     return (
       <VirtualList rows={this.state.listItems} scrollFilters={false} updateItems={this.updateListItems}>
         <StatefulFilters initialFilters={WorkloadListFilters.availableFilters} onFilterChange={this.onFilterChange}>
-          <ToolbarRightContent style={{ ...AlignRightStyle }}>
+          <ToolbarRightContent style={{ ...AlignRightStyle, display: 'flex', position: 'absolute', right: '0' }}>
             <DurationDropdownContainer id="workload-list-duration-dropdown" />
             <RefreshButtonContainer handleRefresh={this.updateListItems} />
           </ToolbarRightContent>
