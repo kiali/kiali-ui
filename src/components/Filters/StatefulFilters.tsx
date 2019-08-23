@@ -123,7 +123,7 @@ export class StatefulFilters extends React.Component<StatefulFiltersProps, State
     this.updateActiveFilters(activeFilters);
   };
 
-  selectFilterType = value => {
+  selectFilterType = (value: string) => {
     const { currentFilterType } = this.state;
     const filterType = this.state.filterTypes.filter(filter => filter.id === value)[0];
 
@@ -135,7 +135,7 @@ export class StatefulFilters extends React.Component<StatefulFiltersProps, State
     }
   };
 
-  filterValueSelected = value => {
+  filterValueSelected = (value: string) => {
     const { currentFilterType, currentValue } = this.state;
     const filterValue = currentFilterType.filterValues.filter(filter => filter.id === value)[0];
 
