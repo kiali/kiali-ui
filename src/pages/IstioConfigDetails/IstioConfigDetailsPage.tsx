@@ -1,13 +1,7 @@
 import * as React from 'react';
-import { Col, Nav, NavItem, Row, TabContainer, TabContent, TabPane } from 'patternfly-react';
+import { Col, Row } from 'patternfly-react';
 import { Prompt, RouteComponentProps } from 'react-router-dom';
-import {
-  aceOptions,
-  IstioConfigDetails,
-  IstioConfigId,
-  ParsedSearch,
-  safeDumpOptions
-} from '../../types/IstioConfigDetails';
+import { aceOptions, IstioConfigDetails, IstioConfigId, safeDumpOptions } from '../../types/IstioConfigDetails';
 import * as MessageCenter from '../../utils/MessageCenter';
 import * as API from '../../services/Api';
 import AceEditor from 'react-ace';
@@ -26,9 +20,10 @@ import { Paths } from '../../config';
 import { MessageType } from '../../types/MessageCenter';
 import { getIstioObject, mergeJsonPatch } from '../../utils/IstioConfigUtils';
 import { style } from 'typestyle';
+import ParameterizedTabs, { activeTab } from '../../components/Tab/Tabs';
+import { Tab } from '@patternfly/react-core';
 
 const rightToolbarStyle = style({ float: 'right', marginTop: '8px' });
-const navStyle = style({ paddingTop: '8px' });
 
 interface IstioConfigDetailsState {
   istioObjectDetails?: IstioConfigDetails;
@@ -36,7 +31,14 @@ interface IstioConfigDetailsState {
   isModified: boolean;
   yamlModified?: string;
   yamlValidations?: AceValidations;
+  currentTab: string;
 }
+
+const tabName = 'list';
+const paramToTab: { [key: string]: number } = {
+  overview: 0,
+  yaml: 1
+};
 
 class IstioConfigDetailsPage extends React.Component<RouteComponentProps<IstioConfigId>, IstioConfigDetailsState> {
   aceEditorRef: React.RefObject<AceEditor>;
@@ -44,9 +46,16 @@ class IstioConfigDetailsPage extends React.Component<RouteComponentProps<IstioCo
 
   constructor(props: RouteComponentProps<IstioConfigId>) {
     super(props);
-    this.state = { isModified: false };
+    this.state = {
+      isModified: false,
+      currentTab: activeTab(tabName, this.defaultTab())
+    };
     this.aceEditorRef = React.createRef();
     this.promptTo = '';
+  }
+
+  defaultTab() {
+    return this.hasOverview() ? 'overview' : 'yaml';
   }
 
   fetchIstioObjectDetails = () => {
@@ -324,33 +333,33 @@ class IstioConfigDetailsPage extends React.Component<RouteComponentProps<IstioCo
   };
 
   renderTabs = (): any => {
+    const tabs: JSX.Element[] = [];
+    if (this.hasOverview()) {
+      tabs.push(
+        <Tab title="Overview" eventKey={0}>
+          {this.state.currentTab === 'overview' ? this.renderOverview() : undefined}
+        </Tab>
+      );
+    }
+
+    tabs.push(
+      <Tab title={`YAML ${this.state.isModified ? ' * ' : ''}`} eventKey={1}>
+        {this.state.currentTab === 'yaml' ? this.renderEditor() : undefined}
+      </Tab>
+    );
+
     return (
-      <TabContainer
+      <ParameterizedTabs
         id="basic-tabs"
-        activeKey={this.activeTab('list', this.hasOverview() ? 'overview' : 'yaml')}
-        onSelect={this.tabSelectHandler('list')}
+        onSelect={tabValue => {
+          this.setState({ currentTab: tabValue });
+        }}
+        tabMap={paramToTab}
+        tabName={tabName}
+        defaultTab={this.defaultTab()}
       >
-        <div>
-          <Nav bsClass={`nav nav-tabs nav-tabs-pf ${navStyle}`}>
-            {this.hasOverview() ? (
-              <NavItem eventKey="overview">
-                <div>Overview</div>
-              </NavItem>
-            ) : null}
-            <NavItem eventKey="yaml">
-              <div>YAML {this.state.isModified ? ' * ' : undefined}</div>
-            </NavItem>
-          </Nav>
-          <TabContent>
-            {this.hasOverview() ? (
-              <TabPane eventKey="overview" mountOnEnter={true} unmountOnExit={true}>
-                {this.renderOverview()}
-              </TabPane>
-            ) : null}
-            <TabPane eventKey="yaml">{this.renderEditor()}</TabPane>
-          </TabContent>
-        </div>
-      </TabContainer>
+        {tabs}
+      </ParameterizedTabs>
     );
   };
 
@@ -376,41 +385,6 @@ class IstioConfigDetailsPage extends React.Component<RouteComponentProps<IstioCo
       </>
     );
   }
-
-  private activeTab = (tabNameParam: string, whenEmpty: string) => {
-    return new URLSearchParams(this.props.location.search).get(tabNameParam) || whenEmpty;
-  };
-
-  // Helper method to extract search urls with format
-  // ?list=overview or ?list=yaml
-  private parseSearch = (): ParsedSearch => {
-    const parsed: ParsedSearch = {};
-    if (this.props.location.search) {
-      const firstParams = this.props.location.search
-        .split('&')[0]
-        .replace('?', '')
-        .split('=');
-      parsed.type = firstParams[0];
-      parsed.name = firstParams[1];
-    }
-    return {};
-  };
-
-  private tabSelectHandler = (tabNameParam: string) => {
-    return (tabKey?: string) => {
-      if (!tabKey) {
-        return;
-      }
-
-      const urlParams = new URLSearchParams('');
-      const parsedSearch = this.parseSearch();
-      if (parsedSearch.type && parsedSearch.name) {
-        urlParams.set(parsedSearch.type, parsedSearch.name);
-      }
-      urlParams.set(tabNameParam, tabKey);
-      this.props.history.push(this.props.location.pathname + '?' + urlParams.toString());
-    };
-  };
 }
 
 export default IstioConfigDetailsPage;
