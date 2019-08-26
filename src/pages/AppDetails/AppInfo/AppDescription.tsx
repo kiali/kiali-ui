@@ -16,7 +16,9 @@ import {
   Grid,
   GridItem,
   List,
-  ListItem
+  ListItem,
+  Text,
+  TextVariants
 } from '@patternfly/react-core';
 
 type AppDescriptionProps = {
@@ -83,7 +85,7 @@ class AppDescription extends React.Component<AppDescriptionProps, AppDescription
         <Badge>W</Badge>
       </DataListCell>,
       <DataListCell key="workload-list" className="resourceList">
-        <h3>Workloads</h3>
+        <Text component={TextVariants.h3}>Workloads</Text>
         <List>{workloadList}</List>
       </DataListCell>
     ];
@@ -102,7 +104,7 @@ class AppDescription extends React.Component<AppDescriptionProps, AppDescription
         <Badge>S</Badge>
       </DataListCell>,
       <DataListCell key="service-list" className="resourceList">
-        <h3>Services</h3>
+        <Text component={TextVariants.h3}>Services</Text>
         <List>{serviceList}</List>
       </DataListCell>
     ];
@@ -111,7 +113,7 @@ class AppDescription extends React.Component<AppDescriptionProps, AppDescription
   render() {
     const app = this.props.app;
     return app ? (
-      <Grid gutter="lg">
+      <Grid gutter="md">
         <GridItem span={6}>
           <Card>
             <CardBody className="noPadding">
@@ -135,7 +137,7 @@ class AppDescription extends React.Component<AppDescriptionProps, AppDescription
           <Card>
             <CardBody>
               <div>
-                <h2>Health Overview</h2>
+                <Text component={TextVariants.h2}>Health Overview</Text>
                 <strong>Health</strong>
               </div>
               <HealthIndicator
