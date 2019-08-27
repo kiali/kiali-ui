@@ -53,12 +53,6 @@ const rightToolbar = style({
 const dividerStyle = style({ borderRight: '1px solid #d1d1d1;', padding: '10px', display: 'inherit' });
 const paddingStyle = style({ padding: '10px' });
 
-const RenderToolbarItem = props => (
-  <ToolbarGroup style={{ marginRight: '0px' }}>
-    <ToolbarItem className={dividerStyle}>{props.children}</ToolbarItem>
-  </ToolbarGroup>
-);
-
 export class StatefulFilters extends React.Component<StatefulFiltersProps, StatefulFiltersState> {
   private promises = new PromisesRegistry();
 
@@ -287,19 +281,21 @@ export class StatefulFilters extends React.Component<StatefulFiltersProps, State
     return (
       <Toolbar>
         <ToolbarSection aria-label="ToolbarSection">
-          <RenderToolbarItem>
-            <FormSelect
-              value={currentFilterType.id}
-              aria-label={'filter_select_type'}
-              onChange={this.selectFilterType}
-              style={{ width: 'auto', backgroundColor: '#ededed', borderColor: '#bbb' }}
-            >
-              {this.state.filterTypes.map(option => (
-                <FormSelectOption key={option.id} value={option.id} label={option.title} />
-              ))}
-            </FormSelect>
-            {this.renderInput()}
-          </RenderToolbarItem>
+          <ToolbarGroup style={{ marginRight: '0px' }}>
+            <ToolbarItem className={this.props.children ? dividerStyle : ''}>
+              <FormSelect
+                value={currentFilterType.id}
+                aria-label={'filter_select_type'}
+                onChange={this.selectFilterType}
+                style={{ width: 'auto', backgroundColor: '#ededed', borderColor: '#bbb' }}
+              >
+                {this.state.filterTypes.map(option => (
+                  <FormSelectOption key={option.id} value={option.id} label={option.title} />
+                ))}
+              </FormSelect>
+              {this.renderInput()}
+            </ToolbarItem>
+          </ToolbarGroup>
           {this.renderChildren()}
           {this.props.rightToolbar && this.renderRightToolbar()}
         </ToolbarSection>
