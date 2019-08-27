@@ -21,7 +21,7 @@ import { MessageType } from '../../types/MessageCenter';
 import { getIstioObject, mergeJsonPatch } from '../../utils/IstioConfigUtils';
 import { style } from 'typestyle';
 import ParameterizedTabs, { activeTab } from '../../components/Tab/Tabs';
-import { Tab } from '@patternfly/react-core';
+import { Tab, Text, TextVariants } from '@patternfly/react-core';
 
 const rightToolbarStyle = style({ float: 'right', marginTop: '8px' });
 
@@ -56,6 +56,19 @@ class IstioConfigDetailsPage extends React.Component<RouteComponentProps<IstioCo
 
   defaultTab() {
     return this.hasOverview() ? 'overview' : 'yaml';
+  }
+
+  objectTitle() {
+    let title: string = '';
+    if (this.state.istioObjectDetails) {
+      if (this.state.istioObjectDetails.virtualService) {
+        title = this.state.istioObjectDetails.virtualService.metadata.name;
+      } else {
+        title = this.state.istioObjectDetails.destinationRule.metadata.name;
+      }
+    }
+
+    return title;
   }
 
   fetchIstioObjectDetails = () => {
@@ -367,6 +380,7 @@ class IstioConfigDetailsPage extends React.Component<RouteComponentProps<IstioCo
     return (
       <>
         <BreadcrumbView location={this.props.location} />
+        <Text component={TextVariants.h1}>{this.objectTitle()}</Text>
         {this.renderRightToolbar()}
         {this.renderTabs()}
         <Prompt

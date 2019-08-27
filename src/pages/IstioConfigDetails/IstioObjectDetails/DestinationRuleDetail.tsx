@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Col, Icon, Row, Table } from 'patternfly-react';
+import { Icon, Table } from 'patternfly-react';
 import { globalChecks, severityToColor, severityToIconName, validationToSeverity } from '../../../types/ServiceInfo';
 import { DestinationRule, ObjectValidation, Subset } from '../../../types/IstioObjects';
 import LocalTime from '../../../components/Time/LocalTime';
@@ -7,6 +7,7 @@ import DetailObject from '../../../components/Details/DetailObject';
 import * as resolve from 'table-resolver';
 import Label from '../../../components/Label/Label';
 import { Link } from 'react-router-dom';
+import { Card, CardBody, Grid, GridItem, Text, TextVariants } from '@patternfly/react-core';
 
 interface DestinationRuleProps {
   namespace: string;
@@ -56,6 +57,7 @@ class DestinationRuleDetail extends React.Component<DestinationRuleProps> {
 
     return <Table.Cell className={className}>{value}</Table.Cell>;
   };
+
   columnsSubsets() {
     return {
       columns: [
@@ -103,18 +105,35 @@ class DestinationRuleDetail extends React.Component<DestinationRuleProps> {
       trafficPolicy: <DetailObject name={subset.trafficPolicy ? 'trafficPolicy' : ''} detail={subset.trafficPolicy} />
     }));
   }
-  generateSubsets(subsets: Subset[]) {
+
+  generateSubsets() {
+    const subsets = this.props.destinationRule.spec.subsets || [];
+    const hasSubsets = subsets.length > 0;
+
     return (
-      <Table.PfProvider
-        columns={this.columnsSubsets().columns}
-        striped={true}
-        bordered={true}
-        hover={true}
-        dataTable={true}
-      >
-        <Table.Header headerRows={resolve.headerRows(this.columnsSubsets())} />
-        <Table.Body rows={this.rowsSubset(subsets)} rowKey="id" />
-      </Table.PfProvider>
+      <GridItem>
+        <Card>
+          <CardBody>
+            <>
+              <Text component={TextVariants.h2}>Subsets</Text>
+              {hasSubsets ? (
+                <Table.PfProvider
+                  columns={this.columnsSubsets().columns}
+                  striped={true}
+                  bordered={true}
+                  hover={true}
+                  dataTable={true}
+                >
+                  <Table.Header headerRows={resolve.headerRows(this.columnsSubsets())} />
+                  <Table.Body rows={this.rowsSubset(subsets)} rowKey="id" />
+                </Table.PfProvider>
+              ) : (
+                <Text component={TextVariants.p}>No subsets defined.</Text>
+              )}
+            </>
+          </CardBody>
+        </Card>
+      </GridItem>
     );
   }
 
@@ -135,52 +154,62 @@ class DestinationRuleDetail extends React.Component<DestinationRuleProps> {
     }
   }
 
-  rawConfig(destinationRule: DestinationRule) {
+  rawConfig() {
+    const destinationRule = this.props.destinationRule;
     const globalStatus = this.globalStatus(destinationRule);
     const isValid = globalStatus === '' ? true : false;
     return (
-      <div className="card-pf-body" key={'virtualServiceConfig'}>
-        <h4>DestinationRule: {destinationRule.metadata.name}</h4>
-        <div>{globalStatus}</div>
-        <div>
-          <strong>Created at</strong>: <LocalTime time={destinationRule.metadata.creationTimestamp || ''} />
-        </div>
-        <div>
-          <strong>Resource Version</strong>: {destinationRule.metadata.resourceVersion}
-        </div>
-        {destinationRule.spec.host && (
-          <div>
-            <strong>Host</strong>:{' '}
-            {this.serviceLink(destinationRule.metadata.namespace || '', destinationRule.spec.host, isValid)}
-          </div>
-        )}
-        {destinationRule.spec.trafficPolicy && (
-          <div>
-            <strong>Traffic Policy</strong>
-            <DetailObject name="" detail={destinationRule.spec.trafficPolicy} />
-          </div>
-        )}
-      </div>
+      <GridItem span={6}>
+        <Card>
+          <CardBody>
+            <Text component={TextVariants.h2}>Destination Rule Overview</Text>
+            {globalStatus}
+            <Text component={TextVariants.h3}>Created at</Text>
+            <LocalTime time={destinationRule.metadata.creationTimestamp || ''} />
+
+            <Text component={TextVariants.h3}>Resource Version</Text>
+            {destinationRule.metadata.resourceVersion}
+            {destinationRule.spec.host && (
+              <>
+                <Text component={TextVariants.h3}>Host</Text>
+                {this.serviceLink(destinationRule.metadata.namespace || '', destinationRule.spec.host, isValid)}
+              </>
+            )}
+          </CardBody>
+        </Card>
+      </GridItem>
+    );
+  }
+
+  trafficPolicy() {
+    const destinationRule = this.props.destinationRule;
+    const hasTrafficPolicy = !!destinationRule.spec.trafficPolicy;
+
+    return (
+      <GridItem span={6}>
+        <Card>
+          <CardBody>
+            <Text component={TextVariants.h2}>Traffic Policy</Text>
+            {hasTrafficPolicy ? (
+              <DetailObject name="" detail={destinationRule.spec.trafficPolicy} />
+            ) : (
+              <Text component={TextVariants.p}>No traffic policy defined.</Text>
+            )}
+          </CardBody>
+        </Card>
+      </GridItem>
     );
   }
 
   render() {
     return (
-      <Row className="row-cards-pf">
-        <Col xs={12} sm={12} md={3} lg={3}>
-          {this.rawConfig(this.props.destinationRule)}
-        </Col>
-        {this.props.destinationRule.spec.subsets && (
-          <Col xs={12} sm={12} md={3} lg={3}>
-            <Row className="card-pf-body" key={'destinationRulesSubsets'}>
-              <Col>
-                <strong> Subsets : </strong>
-                {this.generateSubsets(this.props.destinationRule.spec.subsets)}
-              </Col>
-            </Row>
-          </Col>
-        )}
-      </Row>
+      <div className="container-fluid container-cards-pf">
+        <Grid gutter={'md'}>
+          {this.rawConfig()}
+          {this.trafficPolicy()}
+          {this.generateSubsets()}
+        </Grid>
+      </div>
     );
   }
 }
