@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, FormGroup, Toolbar } from 'patternfly-react';
+import { Button, Toolbar, ToolbarGroup } from '@patternfly/react-core';
 import { style } from 'typestyle';
 import * as _ from 'lodash';
 import { connect } from 'react-redux';
@@ -27,7 +27,13 @@ import Namespace, { namespacesFromString, namespacesToString } from '../../types
 import { NamespaceActions } from '../../actions/NamespaceAction';
 import { GraphActions } from '../../actions/GraphActions';
 import { KialiAppAction } from '../../actions/KialiAppAction';
-import { AlignRightStyle, ThinStyle } from '../../components/Filters/FilterStyles';
+
+const toolbarGroupStyle = style({
+  display: 'flex',
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  borderBottom: '1px solid #ccc;'
+});
 
 type ReduxProps = {
   activeNamespaces: Namespace[];
@@ -49,13 +55,13 @@ type GraphFilterProps = ReduxProps & {
 };
 
 // align with separator start / Graph breadcrumb
-const alignLeftStyle = style({
-  marginLeft: '-30px'
-});
-
-const marginLeftRight = style({
-  margin: '0 10px 0 10px'
-});
+// const alignLeftStyle = style({
+//   marginLeft: '-30px'
+// });
+//
+// const marginLeftRight = style({
+//   margin: '0 10px 0 10px'
+// });
 
 export class GraphFilter extends React.PureComponent<GraphFilterProps> {
   /**
@@ -148,40 +154,46 @@ export class GraphFilter extends React.PureComponent<GraphFilterProps> {
     const edgeLabelModeKey: string = _.findKey(EdgeLabelMode, val => val === this.props.edgeLabelMode)!;
     return (
       <>
-        <Toolbar>
-          <FormGroup className={alignLeftStyle} style={{ ...ThinStyle, display: 'flex' }}>
-            {this.props.node ? (
-              <Button onClick={this.handleNamespaceReturn}>Back to full {GraphFilter.GRAPH_TYPES[graphTypeKey]}</Button>
-            ) : (
-              <ToolbarDropdown
-                id={'graph_filter_view_type'}
-                disabled={this.props.disabled}
-                handleSelect={this.setGraphType}
-                value={graphTypeKey}
-                label={GraphFilter.GRAPH_TYPES[graphTypeKey]}
-                options={GraphFilter.GRAPH_TYPES}
-              />
-            )}
-            <div className={marginLeftRight}>
-              <ToolbarDropdown
-                id={'graph_filter_edge_labels'}
-                disabled={false}
-                handleSelect={this.setEdgeLabelMode}
-                value={edgeLabelModeKey}
-                label={GraphFilter.EDGE_LABEL_MODES[edgeLabelModeKey]}
-                options={GraphFilter.EDGE_LABEL_MODES}
-              />
-            </div>
+        <Toolbar className={toolbarGroupStyle}>
+          <ToolbarGroup>
+            <>
+              {this.props.node ? (
+                <Button onClick={this.handleNamespaceReturn}>
+                  Back to full {GraphFilter.GRAPH_TYPES[graphTypeKey]}
+                </Button>
+              ) : (
+                <ToolbarDropdown
+                  id={'graph_filter_view_type'}
+                  disabled={this.props.disabled}
+                  handleSelect={this.setGraphType}
+                  value={graphTypeKey}
+                  label={GraphFilter.GRAPH_TYPES[graphTypeKey]}
+                  options={GraphFilter.GRAPH_TYPES}
+                />
+              )}
+            </>
+            <ToolbarDropdown
+              id={'graph_filter_edge_labels'}
+              disabled={false}
+              handleSelect={this.setEdgeLabelMode}
+              value={edgeLabelModeKey}
+              label={GraphFilter.EDGE_LABEL_MODES[edgeLabelModeKey]}
+              options={GraphFilter.EDGE_LABEL_MODES}
+            />
             <GraphSettingsContainer edgeLabelMode={this.props.edgeLabelMode} graphType={this.props.graphType} />
-          </FormGroup>
-          <GraphFindContainer />
-          <Toolbar.RightContent style={{ ...AlignRightStyle, display: 'flex' }}>
+          </ToolbarGroup>
+
+          <ToolbarGroup>
+            <GraphFindContainer />
+          </ToolbarGroup>
+
+          <ToolbarGroup>
             <GraphRefreshContainer
               id="graph_refresh_container"
               disabled={this.props.disabled}
               handleRefresh={this.handleRefresh}
             />
-          </Toolbar.RightContent>
+          </ToolbarGroup>
         </Toolbar>
       </>
     );
