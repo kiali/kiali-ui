@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Button, FormControl, FormGroup, Icon, InputGroup, OverlayTrigger, Tooltip } from 'patternfly-react';
+import { Button, Form, TextInput } from '@patternfly/react-core';
+import { CloseIcon, HelpIcon, ExpandIcon, CompressIcon } from '@patternfly/react-icons';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { bindActionCreators } from 'redux';
@@ -54,16 +55,19 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
     router: () => null
   };
 
-  private findInputRef;
   private hiddenElements: any | undefined;
-  private hideInputRef;
   private removedElements: any | undefined;
 
   constructor(props: GraphFindProps) {
     super(props);
     const findValue = props.findValue ? props.findValue : '';
     const hideValue = props.hideValue ? props.hideValue : '';
-    this.state = { errorMessage: '', findInputValue: findValue, hideInputValue: hideValue, compressOnHide: false };
+    this.state = {
+      errorMessage: '',
+      findInputValue: findValue,
+      hideInputValue: hideValue,
+      compressOnHide: false
+    };
     if (props.showFindHelp) {
       props.toggleFindHelp();
     }
@@ -102,97 +106,55 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
   render() {
     return (
       <>
-        <FormGroup style={{ flexDirection: 'row', alignItems: 'flex-start', ...thinGroupStyle }}>
+        <Form style={{ flexDirection: 'row', alignItems: 'flex-start', ...thinGroupStyle }} isHorizontal={true}>
           <span className={'form-inline'}>
-            <InputGroup>
-              <FormControl
-                id="graph_find"
-                name="graph_find"
-                autoComplete="on"
-                type="text"
-                style={{ ...inputWidth }}
-                inputRef={ref => {
-                  this.findInputRef = ref;
-                }}
-                onChange={this.updateFind}
-                defaultValue={this.state.findInputValue}
-                onKeyPress={this.checkSubmitFind}
-                placeholder="Find..."
-              />
-              {this.props.findValue && (
-                <OverlayTrigger
-                  key="ot_clear_find"
-                  placement="top"
-                  trigger={['hover', 'focus']}
-                  delayShow={1000}
-                  overlay={<Tooltip id="tt_clear_find">Clear Find...</Tooltip>}
-                >
-                  <InputGroup.Button>
-                    <Button onClick={this.clearFind}>
-                      <Icon name="close" type="fa" />
-                    </Button>
-                  </InputGroup.Button>
-                </OverlayTrigger>
-              )}
-              <FormControl
-                id="graph_hide"
-                name="graph_hide"
-                autoComplete="on"
-                type="text"
-                style={{ ...inputWidth }}
-                inputRef={ref => {
-                  this.hideInputRef = ref;
-                }}
-                onChange={this.updateHide}
-                defaultValue={this.state.hideInputValue}
-                onKeyPress={this.checkSubmitHide}
-                placeholder="Hide..."
-              />
-              {this.props.hideValue && (
-                <OverlayTrigger
-                  key="ot_clear_hide"
-                  placement="top"
-                  trigger={['hover', 'focus']}
-                  delayShow={1000}
-                  overlay={<Tooltip id="tt_clear_hide">Clear Hide...</Tooltip>}
-                >
-                  <InputGroup.Button>
-                    <Button onClick={this.clearHide}>
-                      <Icon name="close" type="fa" />
-                    </Button>
-                  </InputGroup.Button>
-                </OverlayTrigger>
-              )}
-              <OverlayTrigger
-                key="ot_compress_on_hide"
-                placement="top"
-                trigger={['hover', 'focus']}
-                delayShow={1000}
-                overlay={<Tooltip id="tt_compress_on_hide">Compress Graph on Hide...</Tooltip>}
-              >
-                <InputGroup.Button>
-                  <Button onClick={this.toggleCompressOnHide}>
-                    <Icon name={this.state.compressOnHide ? 'compress' : 'expand'} type="fa" />
-                  </Button>
-                </InputGroup.Button>
-              </OverlayTrigger>
-            </InputGroup>
-            <OverlayTrigger
-              key={'ot_graph_find_help'}
-              placement="top"
-              overlay={<Tooltip id={'tt_graph_find_help'}>Find/Hide Help...</Tooltip>}
-            >
-              <Button bsStyle="link" style={{ paddingLeft: '6px' }} onClick={this.toggleFindHelp}>
-                <Icon name="help" type="pf" />
-              </Button>
-            </OverlayTrigger>
+            <TextInput
+              id="graph_find"
+              aria-label="graph find"
+              name="graph_find"
+              autoComplete="on"
+              type="text"
+              style={{ ...inputWidth }}
+              onChange={this.updateFind}
+              defaultValue={this.state.findInputValue}
+              onKeyPress={this.checkSubmitFind}
+              placeholder="Find..."
+            />
+            {this.props.findValue && <Button onClick={this.clearFind} icon={<CloseIcon />} />}
+            <TextInput
+              id="graph_hide"
+              aria-label="graph hide"
+              name="graph_hide"
+              autoComplete="on"
+              type="text"
+              style={{ ...inputWidth }}
+              onChange={this.updateHide}
+              defaultValue={this.state.hideInputValue}
+              onKeyPress={this.checkSubmitHide}
+              placeholder="Hide..."
+            />
+            {this.props.hideValue && <Button onClick={this.clearHide} icon={<CloseIcon />} />}
+            <Button
+              variant="link"
+              aria-label="graph expand/compress"
+              style={{ margin: '4px', border: '1px solid gray' }}
+              onClick={this.toggleCompressOnHide}
+              icon={this.state.compressOnHide ? <ExpandIcon /> : <CompressIcon />}
+            />
+            <Button
+              variant="link"
+              aria-label="graph find/hide help"
+              style={{ paddingLeft: '6px' }}
+              onClick={this.toggleFindHelp}
+              icon={<HelpIcon />}
+            />
           </span>
           {this.state.errorMessage && (
             <div>
               <span style={{ color: 'red' }}>{this.state.errorMessage}</span>
             </div>
           )}
-        </FormGroup>
+        </Form>
         {this.props.showFindHelp && <GraphHelpFind onClose={this.toggleFindHelp} />}{' '}
       </>
     );
@@ -203,18 +165,18 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
   };
 
   private updateFind = event => {
-    if ('' === event.target.value) {
+    if ('' === event) {
       this.clearFind();
     } else {
-      this.setState({ findInputValue: event.target.value, errorMessage: '' });
+      this.setState({ findInputValue: event, errorMessage: '' });
     }
   };
 
   private updateHide = event => {
-    if ('' === event.target.value) {
+    if ('' === event) {
       this.clearHide();
     } else {
-      this.setState({ hideInputValue: event.target.value, errorMessage: '' });
+      this.setState({ hideInputValue: event, errorMessage: '' });
     }
   };
 
@@ -248,14 +210,12 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
 
   private clearFind = () => {
     // note, we don't use findInputRef.current because <FormControl> deals with refs differently than <input>
-    this.findInputRef.value = '';
     this.setState({ findInputValue: '', errorMessage: '' });
     this.props.setFindValue('');
   };
 
   private clearHide = () => {
     // note, we don't use hideInputRef.current because <FormControl> deals with refs differently than <input>
-    this.hideInputRef.value = '';
     this.setState({ hideInputValue: '', errorMessage: '' });
     this.props.setHideValue('');
   };

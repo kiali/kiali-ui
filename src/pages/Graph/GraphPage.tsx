@@ -301,7 +301,7 @@ export class GraphPage extends React.Component<GraphPageProps, GraphPageState> {
       <>
         <StatefulTour steps={graphHelp} isOpen={this.state.showHelp} onClose={this.toggleHelp} />
         <FlexView className={conStyle} column={true}>
-          <div>
+          <>
             <Breadcrumb title={true}>
               <Breadcrumb.Item active={true}>
                 {this.props.node && this.props.node.nodeType !== NodeType.UNKNOWN
@@ -325,11 +325,11 @@ export class GraphPage extends React.Component<GraphPageProps, GraphPageState> {
                 </span>
               )}
             </Breadcrumb>
-          </div>
-          <div>
+          </>
+          <>
             {/* Use empty div to reset the flex, this component doesn't seem to like that. It renders all its contents in the center */}
             <GraphFilterContainer disabled={this.props.isLoading} onRefresh={this.handleRefreshClick} />
-          </div>
+          </>
           <FlexView grow={true} className={cytoscapeGraphWrapperDivStyle}>
             <ErrorBoundary
               ref={this.errorBoundaryRef}
