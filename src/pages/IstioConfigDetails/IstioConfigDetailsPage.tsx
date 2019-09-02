@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Col, Row } from 'patternfly-react';
 import { Prompt, RouteComponentProps } from 'react-router-dom';
 import { aceOptions, IstioConfigDetails, IstioConfigId, safeDumpOptions } from '../../types/IstioConfigDetails';
 import * as MessageCenter from '../../utils/MessageCenter';
@@ -255,27 +254,23 @@ class IstioConfigDetailsPage extends React.Component<RouteComponentProps<IstioCo
 
     return (
       <div className="container-fluid container-cards-pf">
-        <Row className="row-cards-pf">
-          <Col>
-            {this.state.istioObjectDetails ? (
-              <AceEditor
-                ref={this.aceEditorRef}
-                mode="yaml"
-                theme="eclipse"
-                onChange={this.onEditorChange}
-                width={'100%'}
-                height={'var(--kiali-yaml-editor-height)'}
-                className={'istio-ace-editor'}
-                readOnly={!this.canUpdate()}
-                setOptions={aceOptions}
-                value={this.state.istioObjectDetails ? yamlSource : undefined}
-                annotations={editorValidations.annotations}
-                markers={editorValidations.markers}
-              />
-            ) : null}
-            {this.renderActionButtons()}
-          </Col>
-        </Row>
+        {this.state.istioObjectDetails ? (
+          <AceEditor
+            ref={this.aceEditorRef}
+            mode="yaml"
+            theme="eclipse"
+            onChange={this.onEditorChange}
+            width={'100%'}
+            height={'var(--kiali-yaml-editor-height)'}
+            className={'istio-ace-editor'}
+            readOnly={!this.canUpdate()}
+            setOptions={aceOptions}
+            value={this.state.istioObjectDetails ? yamlSource : undefined}
+            annotations={editorValidations.annotations}
+            markers={editorValidations.markers}
+          />
+        ) : null}
+        {this.renderActionButtons()}
       </div>
     );
   };
