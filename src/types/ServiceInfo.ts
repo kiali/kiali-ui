@@ -7,6 +7,7 @@ import {
   Pod,
   Port,
   Validations,
+  ValidationTypes,
   VirtualServices
 } from './IstioObjects';
 import { TLSStatus } from './TLSStatus';
@@ -112,12 +113,12 @@ export const severityToColor = (severity: string): string => {
   return color;
 };
 
-export const higherSeverity = (a: string, b: string): boolean => {
+export const higherSeverity = (a: ValidationTypes, b: ValidationTypes): boolean => {
   return higherThan.includes(a + '-' + b);
 };
 
-export const highestSeverity = (checks: ObjectCheck[]): string => {
-  let severity = 'correct';
+export const highestSeverity = (checks: ObjectCheck[]): ValidationTypes => {
+  let severity: ValidationTypes = ValidationTypes.Correct;
 
   checks.forEach(check => {
     if (higherSeverity(check.severity, severity)) {

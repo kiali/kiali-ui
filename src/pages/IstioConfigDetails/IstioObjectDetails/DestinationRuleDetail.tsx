@@ -6,7 +6,7 @@ import Label from '../../../components/Label/Label';
 import { Link } from 'react-router-dom';
 import { Card, CardBody, Grid, GridItem, Text, TextVariants } from '@patternfly/react-core';
 import { Table, TableBody, TableHeader, TableVariant } from '@patternfly/react-table';
-import Validation from '../../../components/Validations/Validation';
+import GlobalValidation from '../../../components/Validations/GlobalValidation';
 import { ServiceIcon } from '@patternfly/react-icons';
 
 interface DestinationRuleProps {
@@ -19,7 +19,7 @@ class DestinationRuleDetail extends React.Component<DestinationRuleProps> {
   globalStatus() {
     const validation = this.props.validation;
     if (validation && !validation.valid) {
-      return <Validation validation={validation} />;
+      return <GlobalValidation validation={validation} />;
     } else {
       return undefined;
     }
