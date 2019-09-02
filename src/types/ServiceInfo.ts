@@ -1,5 +1,4 @@
 import { ServiceHealth } from './Health';
-import { PfColors } from '../components/Pf/PfColors';
 import {
   DestinationRules,
   ObjectCheck,
@@ -10,6 +9,8 @@ import {
   VirtualServices
 } from './IstioObjects';
 import { TLSStatus } from './TLSStatus';
+import { icons } from '../config';
+import { IconType } from '@patternfly/react-icons/dist/js/createIcon';
 
 export interface Endpoints {
   addresses?: EndpointAddress[];
@@ -80,35 +81,20 @@ const higherThan = [
   'improvement-correct'
 ];
 
-const IconSeverityMap = new Map<string, string>([
-  ['error', 'error-circle-o'],
-  ['warning', 'warning-triangle-o'],
-  ['improvement', 'info'],
-  ['correct', 'ok']
-]);
 
-const ColorSeverityMap = new Map<string, string>([
-  ['error', PfColors.Red100],
-  ['warning', PfColors.Orange400],
-  ['improvement', PfColors.Blue400],
-  ['correct', PfColors.Green400]
-]);
-
-export const severityToIconName = (severity: string): string => {
-  let iconName = IconSeverityMap.get(severity);
+export const severityToIconName = (severity: string): IconType => {
+  let iconName = icons.health.severity[severity].icon;
   if (!iconName) {
-    iconName = 'ok';
+    iconName = icons.health.severity.correct.icon;
   }
-
   return iconName;
 };
 
 export const severityToColor = (severity: string): string => {
-  let color = ColorSeverityMap.get(severity);
+  let color = icons.health.severity[severity].color;
   if (!color) {
     color = 'black';
   }
-
   return color;
 };
 

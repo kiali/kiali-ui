@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Label from '../Label/Label';
-import { Icon } from 'patternfly-react';
 import './DetailObject.css';
+import { IconType } from '@patternfly/react-icons/dist/js/createIcon';
 
 interface DetailObjectProps {
   name: string;
@@ -13,7 +13,7 @@ interface DetailObjectProps {
 
 interface Validation {
   message: string;
-  icon: string;
+  icon: IconType;
   color: string;
 }
 
@@ -95,7 +95,7 @@ class DetailObject extends React.Component<DetailObjectProps> {
         {depth === 0 && !!this.props.validation && this.props.validation.message ? (
           <div>
             <p style={{ color: this.props.validation.color }}>
-              <Icon type="pf" name={this.props.validation.icon} /> {this.props.validation.message}
+              {this.props.validation.icon} {this.props.validation.message}
             </p>
           </div>
         ) : (

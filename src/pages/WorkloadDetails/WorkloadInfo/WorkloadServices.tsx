@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { Port, Service } from '../../../types/IstioObjects';
-import { Col, Row, Table } from 'patternfly-react';
+import { Table, TableHeader, TableBody, TableVariant, classNames, textCenter } from '@patternfly/react-table';
 import { Link } from 'react-router-dom';
 import LocalTime from '../../../components/Time/LocalTime';
-import * as resolve from 'table-resolver';
 import Labels from '../../../components/Label/Labels';
+import { Card, CardBody, Grid, GridItem } from '@patternfly/react-core';
 
 type WorkloadServicesProps = {
   services: Service[];
@@ -18,86 +18,19 @@ class WorkloadServices extends React.Component<WorkloadServicesProps, WorkloadSe
     super(props);
     this.state = {};
   }
-  headerFormat = (label, { column }) => <Table.Heading className={column.property}>{label}</Table.Heading>;
-  cellFormat = value => {
-    return <Table.Cell>{value}</Table.Cell>;
-  };
 
   columns() {
-    return {
-      columns: [
-        {
-          property: 'name',
-          header: {
-            label: 'Name',
-            formatters: [this.headerFormat]
-          },
-          cell: {
-            formatters: [this.cellFormat]
-          }
-        },
-        {
-          property: 'createdAt',
-          header: {
-            label: 'Created at',
-            formatters: [this.headerFormat]
-          },
-          cell: {
-            formatters: [this.cellFormat]
-          }
-        },
-        {
-          property: 'type',
-          header: {
-            label: 'Type',
-            formatters: [this.headerFormat]
-          },
-          cell: {
-            formatters: [this.cellFormat]
-          }
-        },
-        {
-          property: 'labels',
-          header: {
-            label: 'Labels',
-            formatters: [this.headerFormat]
-          },
-          cell: {
-            formatters: [this.cellFormat]
-          }
-        },
-        {
-          property: 'resourceVersion',
-          header: {
-            label: 'Resource Version',
-            formatters: [this.headerFormat]
-          },
-          cell: {
-            formatters: [this.cellFormat]
-          }
-        },
-        {
-          property: 'ip',
-          header: {
-            label: 'Ip',
-            formatters: [this.headerFormat]
-          },
-          cell: {
-            formatters: [this.cellFormat]
-          }
-        },
-        {
-          property: 'ports',
-          header: {
-            label: 'Ports',
-            formatters: [this.headerFormat]
-          },
-          cell: {
-            formatters: [this.cellFormat]
-          }
-        }
-      ]
-    };
+    return [
+      {title: 'Name', transforms: [textCenter], columnTransforms: [classNames('pf-m-width-10')], cellTransforms: [textCenter]},
+      {title: 'Created at', transforms: [textCenter], columnTransforms: [classNames('pf-m-width-10')], cellTransforms: [textCenter]},
+      {title: 'Type', transforms: [textCenter], columnTransforms: [classNames('pf-m-width-10')], cellTransforms: [textCenter]},
+      {title: 'Labels', transforms: [textCenter],
+        columnTransforms: [classNames('pf-m-width-30')],
+        cellTransforms: [textCenter]},
+      {title: 'Resource Version', transforms: [textCenter], columnTransforms: [classNames('pf-m-width-20')], cellTransforms: [textCenter]},
+      {title: 'Ip', transforms: [textCenter], columnTransforms: [classNames('pf-m-width-20')], cellTransforms: [textCenter]},
+      {title: 'Ports', transforms: [textCenter], columnTransforms: [classNames('pf-m-width-10')], cellTransforms: [textCenter]}
+    ];
   }
 
   overviewLink(service: Service) {
@@ -125,36 +58,33 @@ class WorkloadServices extends React.Component<WorkloadServicesProps, WorkloadSe
 
   rows() {
     return (this.props.services || []).map((service, vsIdx) => {
-      const generateRows = {
-        id: vsIdx,
-        name: this.overviewLink(service),
-        createdAt: <LocalTime time={service.createdAt} />,
-        type: service.type,
-        labels: <Labels key={'pod_' + vsIdx} labels={service.labels} />,
-        resourceVersion: service.resourceVersion,
-        ip: service.ip,
-        ports: this.renderPorts(service.ports || [])
-      };
-
-      return generateRows;
+      return {
+        cells: [
+          { title: this.overviewLink(service) },
+          { title: <LocalTime time={service.createdAt}/> },
+          { title: service.type },
+          { title: <Labels key={'pod_' + vsIdx} labels={service.labels}/> },
+          { title: service.resourceVersion },
+          { title: service.ip },
+          { title: this.renderPorts(service.ports || []) }
+        ]
+      }
     });
   }
   render() {
     return (
-      <Row className="card-pf-body">
-        <Col xs={12}>
-          <Table.PfProvider
-            columns={this.columns().columns}
-            striped={true}
-            bordered={true}
-            hover={true}
-            dataTable={true}
-          >
-            <Table.Header headerRows={resolve.headerRows(this.columns())} />
-            <Table.Body rows={this.rows()} rowKey="id" />
-          </Table.PfProvider>
-        </Col>
-      </Row>
+      <Grid>
+        <GridItem span={12}>
+          <Card>
+            <CardBody>
+              <Table variant={TableVariant.compact} aria-label={"list_services"} cells={this.columns()} rows={this.rows()}>
+                <TableHeader/>
+                <TableBody />
+              </Table>
+            </CardBody>
+          </Card>
+        </GridItem>
+      </Grid>
     );
   }
 }

@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { Col, Row } from 'patternfly-react';
 import { Workload } from '../../../types/Workload';
 import LocalTime from '../../../components/Time/LocalTime';
 import { DisplayMode, HealthIndicator } from '../../../components/Health/HealthIndicator';
 import { WorkloadHealth } from '../../../types/Health';
 import { runtimesLogoProviders } from '../../../config/Logos';
 import Labels from '../../../components/Label/Labels';
+import { Card, CardBody, Grid, GridItem, Stack, StackItem } from '@patternfly/react-core';
 
 type WorkloadDescriptionProps = {
   workload: Workload;
@@ -37,56 +37,60 @@ class WorkloadDescription extends React.Component<WorkloadDescriptionProps, Work
       ['Deployment', 'ReplicaSet', 'ReplicationController', 'DeploymentConfig', 'StatefulSet'].indexOf(workload.type) >=
         0;
     return workload ? (
-      <div className="card-pf">
-        <div className="card-pf-body">
-          <Row>
-            <Col xs={12} sm={8} md={6} lg={6}>
-              <div id="labels">
-                <div className="progress-description">
-                  <strong>{isTemplateLabels ? 'Template Labels' : 'Labels'}</strong>
-                </div>
-                <div className="label-collection">
-                  <Labels labels={workload.labels} />
-                </div>
-              </div>
-              <div>
-                <strong>Type</strong> {workload.type ? workload.type : ''}
-              </div>
-              <div>
-                <strong>Created at</strong> <LocalTime time={workload.createdAt} />
-              </div>
-              <div>
-                <strong>Resource Version</strong> {workload.resourceVersion}
-              </div>
-              {workload.runtimes.length > 0 && (
-                <div>
-                  <br />
-                  {workload.runtimes
-                    .filter(r => r.name !== '')
-                    .map((rt, idx) => this.renderLogo(rt.name, idx))
-                    .reduce(
-                      (list: JSX.Element[], elem) =>
-                        list.length > 0 ? [...list, <span key="sep"> | </span>, elem] : [elem],
-                      []
-                    )}
-                </div>
-              )}
-            </Col>
-            <Col xs={12} sm={4} md={3} lg={3} />
-            <Col xs={12} sm={4} md={3} lg={3}>
-              <div className="progress-description">
-                <strong>Health</strong>
-              </div>
+      <Card>
+        <CardBody>
+      <Grid>
+        <GridItem span={6} lg={6} md={6} sm={8}>
+          <Stack id={"labels"}>
+            <StackItem className="progress-description">
+              <strong>{isTemplateLabels ? 'Template Labels' : 'Labels'}</strong>
+            </StackItem>
+            <StackItem className="label-collection">
+              <Labels labels={workload.labels} />
+            </StackItem>
+            <StackItem>
+              <strong>Type</strong> {workload.type ? workload.type : ''}
+            </StackItem>
+            <StackItem>
+              <strong>Created at</strong> <LocalTime time={workload.createdAt} />
+            </StackItem>
+            <StackItem>
+             <strong>Resource Version</strong> {workload.resourceVersion}
+            </StackItem>
+         {workload.runtimes.length > 0 && (
+            <StackItem>
+              <br />
+              {workload.runtimes
+                .filter(r => r.name !== '')
+                .map((rt, idx) => this.renderLogo(rt.name, idx))
+                .reduce(
+                  (list: JSX.Element[], elem) =>
+                    list.length > 0 ? [...list, <span key="sep"> | </span>, elem] : [elem],
+                  []
+                )}
+            </StackItem>
+          )}
+          </Stack>
+        </GridItem>
+        <GridItem span={3} lg={3} md={3} sm={4}/>
+        <GridItem span={3} lg={3} md={3} sm={4}>
+          <Stack>
+            <StackItem className="progress-description">
+              <strong>Health</strong>
+            </StackItem>
+            <StackItem>
               <HealthIndicator
                 id={workload.name}
                 health={this.props.health}
                 mode={DisplayMode.LARGE}
                 tooltipPlacement="left"
               />
-            </Col>
-          </Row>
-        </div>
-      </div>
+            </StackItem>
+          </Stack>
+        </GridItem>
+      </Grid>
+        </CardBody>
+      </Card>
     ) : (
       'Loading'
     );
