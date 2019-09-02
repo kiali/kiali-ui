@@ -117,89 +117,65 @@ class VirtualServiceDetail extends React.Component<VirtualServiceProps> {
     const virtualService: VirtualService = this.props.virtualService;
 
     return (
-      <div className="card-pf-body" key={'virtualServiceConfig'}>
-        <h4>Virtual Service Overview</h4>
-        <div>{this.globalStatus(virtualService)}</div>
-        <div>
-          <strong>Created at</strong>: <LocalTime time={virtualService.metadata.creationTimestamp || ''} />
-        </div>
-        <div>
-          <strong>Resource Version</strong>: {virtualService.metadata.resourceVersion}
-        </div>
-        {virtualService.spec.hosts && virtualService.spec.hosts.length > 0 ? (
-          <DetailObject
-            name="Hosts"
-            detail={virtualService.spec.hosts}
-            validation={this.hostStatusMessage(virtualService)}
-          />
-        ) : (
-          undefined
-        )}
-        {virtualService.spec.gateways && virtualService.spec.gateways.length > 0
-          ? this.generateGatewaysList(virtualService.spec.gateways)
-          : undefined}
-      </div>
+      <GridItem>
+        <Card key={'virtualServiceConfig'}>
+          <CardBody>
+            <h4>Virtual Service Overview</h4>
+            <div>{this.globalStatus(virtualService)}</div>
+            <div>
+              <strong>Created at</strong>: <LocalTime time={virtualService.metadata.creationTimestamp || ''} />
+            </div>
+            <div>
+              <strong>Resource Version</strong>: {virtualService.metadata.resourceVersion}
+            </div>
+            {virtualService.spec.hosts && virtualService.spec.hosts.length > 0 ? (
+              <DetailObject
+                name="Hosts"
+                detail={virtualService.spec.hosts}
+                validation={this.hostStatusMessage(virtualService)}
+              />
+            ) : (
+              undefined
+            )}
+            {virtualService.spec.gateways && virtualService.spec.gateways.length > 0
+              ? this.generateGatewaysList(virtualService.spec.gateways)
+              : undefined}
+          </CardBody>
+        </Card>
+      </GridItem>
     );
   }
 
   weights() {
     const virtualService: VirtualService = this.props.virtualService;
+    const protocols = [
+      { name: 'HTTP', object: virtualService.spec.http },
+      { name: 'TCP', object: virtualService.spec.tcp },
+      { name: 'TLS', object: virtualService.spec.tls }
+    ];
 
-    return (
-      <>
-        {virtualService.spec.http && virtualService.spec.http.length > 0 ? (
-          <GridItem>
+    return protocols.map((protocol, i) => {
+      const { name, object } = protocol;
+      if (object && object.length > 0) {
+        return (
+          <GridItem key={'virtualserviceroute-grid' + i}>
             <Card>
               <CardBody>
                 <VirtualServiceRoute
                   name={virtualService.metadata.name}
                   namespace={virtualService.metadata.namespace || ''}
-                  kind="HTTP"
-                  routes={virtualService.spec.http}
+                  kind={name}
+                  routes={object}
                   validation={this.props.validation}
                 />
               </CardBody>
             </Card>
           </GridItem>
-        ) : (
-          undefined
-        )}
-        {virtualService.spec.tcp && virtualService.spec.tcp.length > 0 ? (
-          <GridItem>
-            <Card>
-              <CardBody>
-                <VirtualServiceRoute
-                  name={virtualService.metadata.name}
-                  namespace={virtualService.metadata.namespace || ''}
-                  kind="TCP"
-                  routes={virtualService.spec.tcp}
-                  validation={this.props.validation}
-                />
-              </CardBody>
-            </Card>
-          </GridItem>
-        ) : (
-          undefined
-        )}
-        {virtualService.spec.tls && virtualService.spec.tls.length > 0 ? (
-          <GridItem>
-            <Card>
-              <CardBody>
-                <VirtualServiceRoute
-                  name={virtualService.metadata.name}
-                  namespace={virtualService.metadata.namespace || ''}
-                  kind="TLS"
-                  routes={virtualService.spec.tls}
-                  validation={this.props.validation}
-                />
-              </CardBody>
-            </Card>
-          </GridItem>
-        ) : (
-          undefined
-        )}
-      </>
-    );
+        );
+      } else {
+        return undefined;
+      }
+    });
   }
 
   render() {

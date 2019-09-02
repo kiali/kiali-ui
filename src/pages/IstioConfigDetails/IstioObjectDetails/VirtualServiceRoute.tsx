@@ -8,12 +8,13 @@ import {
   ObjectValidation,
   TCPRoute
 } from '../../../types/IstioObjects';
-import { BulletChart, Col, Icon, OverlayTrigger, Popover, Row, Tooltip } from 'patternfly-react';
+import { BulletChart, Icon, Tooltip as TooltipPF3 } from 'patternfly-react';
 import DetailObject from '../../../components/Details/DetailObject';
 import { PfColors } from '../../../components/Pf/PfColors';
 import { Link } from 'react-router-dom';
-import { Table, TableBody, TableHeader, TableVariant } from '@patternfly/react-table';
 import { ServiceIcon } from '@patternfly/react-icons';
+import { Table, TableBody, TableHeader, TableVariant } from '@patternfly/react-table';
+import { Grid, GridItem, Tooltip, TooltipPosition } from '@patternfly/react-core';
 
 interface VirtualServiceRouteProps {
   name: string;
@@ -92,8 +93,24 @@ class VirtualServiceRoute extends React.Component<VirtualServiceRouteProps> {
       })
     );
 
-    console.log(rows);
     return rows;
+  }
+
+  serviceLink(namespace: string, host: string, isValid: boolean): any {
+    if (!host) {
+      return '-';
+    }
+    // TODO Full FQDN are not linked yet, it needs more checks in crossnamespace scenarios + validation of target
+    if (host.indexOf('.') > -1 || !isValid) {
+      return host;
+    } else {
+      return (
+        <Link to={'/namespaces/' + namespace + '/services/' + host}>
+          {host + ' '}
+          <ServiceIcon />
+        </Link>
+      );
+    }
   }
 
   validation(): ObjectValidation {
@@ -123,57 +140,33 @@ class VirtualServiceRoute extends React.Component<VirtualServiceRouteProps> {
     const iconName = severity ? severityToIconName(severity) : 'ok';
     if (iconName !== 'ok') {
       return (
-        <OverlayTrigger
-          placement={'left'}
-          overlay={this.infotipContent(checks)}
-          trigger={['hover', 'focus']}
-          rootClose={false}
+        <Tooltip
+          aria-label={'Validations for route ' + routeIndex + ' and destination ' + destinationIndex}
+          position={TooltipPosition.left}
+          enableFlip={true}
+          content={this.infotipContent(checks)}
         >
           <Icon type="pf" name={iconName} />
-        </OverlayTrigger>
+        </Tooltip>
       );
     } else {
       return '';
     }
   }
 
-  serviceLink(namespace: string, host: string, isValid: boolean): any {
-    if (!host) {
-      return '-';
-    }
-    // TODO Full FQDN are not linked yet, it needs more checks in crossnamespace scenarios + validation of target
-    if (host.indexOf('.') > -1 || !isValid) {
-      return host;
-    } else {
-      return (
-        <Link to={'/namespaces/' + namespace + '/services/' + host}>
-          {host + ' '}
-          <ServiceIcon />
-        </Link>
-      );
-    }
-  }
-
   infotipContent(checks: ObjectCheck[]) {
-    return (
-      <Popover id={this.props.name + '-weight-tooltip'}>
-        {checks.map((check, index) => {
-          return this.objectCheckToHtml(check, index);
-        })}
-      </Popover>
-    );
+    return checks.map((check, index) => {
+      return this.objectCheckToHtml(check, index);
+    });
   }
 
   objectCheckToHtml(object: ObjectCheck, i: number) {
     return (
-      <Row key={'objectCheck-' + i}>
-        <Col xs={1}>
-          <Icon type="pf" name={severityToIconName(object.severity)} />
-        </Col>
-        <Col xs={10} style={{ marginLeft: '-20px' }}>
-          {object.message}
-        </Col>
-      </Row>
+      <div key={'validation-check-' + i}>
+        <Icon type="pf" name={severityToIconName(object.severity)} />
+        {'  '}
+        {object.message}
+      </div>
     );
   }
 
@@ -185,9 +178,9 @@ class VirtualServiceRoute extends React.Component<VirtualServiceRouteProps> {
       tooltipFunction: () => {
         const badges = this.renderDestination(destinationWeight.destination);
         return (
-          <Tooltip id={`${u}_${destinationWeight.weight}`} key={`${u}_${destinationWeight.weight}`}>
+          <TooltipPF3 id={`${u}_${destinationWeight.weight}`} key={`${u}_${destinationWeight.weight}`}>
             <div className="label-collection">{badges}</div>
-          </Tooltip>
+          </TooltipPF3>
         );
       }
     }));
@@ -246,28 +239,21 @@ class VirtualServiceRoute extends React.Component<VirtualServiceRouteProps> {
   }
 
   render() {
-    return (
-      <div>
-        {(this.props.routes || []).map((route, i) => (
-          <div key={'virtualservice-rule' + i} className="row-cards-pf">
-            <Row>
-              <Col xs={12} sm={12} md={3} lg={3}>
-                <DetailObject
-                  name={this.props.kind + ' Route'}
-                  detail={route}
-                  exclude={['route']}
-                  validation={this.routeStatusMessage(route, i)}
-                />
-              </Col>
-              <Col xs={12} sm={12} md={5} lg={5}>
-                {this.renderTable(route, i)}
-              </Col>
-            </Row>
-            <hr />
-          </div>
-        ))}
-      </div>
-    );
+    return (this.props.routes || []).map((route, i) => (
+      <Grid key={'virtualservice-rule' + i}>
+        <GridItem sm={12} md={12} lg={4}>
+          <DetailObject
+            name={this.props.kind + ' Route'}
+            detail={route}
+            exclude={['route']}
+            validation={this.routeStatusMessage(route, i)}
+          />
+        </GridItem>
+        <GridItem sm={12} md={12} lg={8}>
+          {this.renderTable(route, i)}
+        </GridItem>
+      </Grid>
+    ));
   }
 }
 
