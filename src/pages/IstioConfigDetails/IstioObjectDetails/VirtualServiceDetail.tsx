@@ -1,19 +1,12 @@
 import * as React from 'react';
-import { Icon } from 'patternfly-react';
-import {
-  checkForPath,
-  globalChecks,
-  highestSeverity,
-  severityToColor,
-  severityToIconName,
-  validationToSeverity
-} from '../../../types/ServiceInfo';
+import { checkForPath, highestSeverity, severityToColor, severityToIconName } from '../../../types/ServiceInfo';
 import { Host, ObjectValidation, VirtualService } from '../../../types/IstioObjects';
 import LocalTime from '../../../components/Time/LocalTime';
 import DetailObject from '../../../components/Details/DetailObject';
 import VirtualServiceRoute from './VirtualServiceRoute';
 import { Link } from 'react-router-dom';
 import { Card, CardBody, Grid, GridItem } from '@patternfly/react-core';
+import Validation from '../../../components/Validations/Validation';
 
 interface VirtualServiceProps {
   namespace: string;
@@ -22,43 +15,21 @@ interface VirtualServiceProps {
 }
 
 class VirtualServiceDetail extends React.Component<VirtualServiceProps> {
-  validation(_virtualService: VirtualService): ObjectValidation | undefined {
+  validation(): ObjectValidation | undefined {
     return this.props.validation;
   }
 
-  globalStatus(rule: VirtualService) {
-    const validation = this.validation(rule);
-    if (!validation) {
-      return '';
-    }
-
-    const checks = globalChecks(validation);
-    const severity = validationToSeverity(validation);
-    const iconName = severityToIconName(severity);
-    const color = severityToColor(severity);
-    let message = checks.map(check => check.message).join(',');
-
-    if (!message.length) {
-      if (validation && !validation.valid) {
-        message = 'Not all checks passed!';
-      }
-    }
-
-    if (message.length) {
-      return (
-        <div>
-          <p style={{ color: color }}>
-            <Icon type="pf" name={iconName} /> {message}
-          </p>
-        </div>
-      );
+  globalStatus() {
+    const validation = this.props.validation;
+    if (validation && !validation.valid) {
+      return <Validation validation={validation} />;
     } else {
-      return '';
+      return undefined;
     }
   }
 
-  hostStatusMessage(virtualService: VirtualService) {
-    const checks = checkForPath(this.validation(virtualService), 'spec/hosts');
+  hostStatusMessage() {
+    const checks = checkForPath(this.validation(), 'spec/hosts');
     const severity = highestSeverity(checks);
 
     return {
@@ -121,7 +92,7 @@ class VirtualServiceDetail extends React.Component<VirtualServiceProps> {
         <Card key={'virtualServiceConfig'}>
           <CardBody>
             <h4>Virtual Service Overview</h4>
-            <div>{this.globalStatus(virtualService)}</div>
+            <div>{this.globalStatus()}</div>
             <div>
               <strong>Created at</strong>: <LocalTime time={virtualService.metadata.creationTimestamp || ''} />
             </div>
@@ -129,11 +100,7 @@ class VirtualServiceDetail extends React.Component<VirtualServiceProps> {
               <strong>Resource Version</strong>: {virtualService.metadata.resourceVersion}
             </div>
             {virtualService.spec.hosts && virtualService.spec.hosts.length > 0 ? (
-              <DetailObject
-                name="Hosts"
-                detail={virtualService.spec.hosts}
-                validation={this.hostStatusMessage(virtualService)}
-              />
+              <DetailObject name="Hosts" detail={virtualService.spec.hosts} validation={this.hostStatusMessage()} />
             ) : (
               undefined
             )}
