@@ -1,8 +1,8 @@
-import React, { FunctionComponent } from 'react';
+import React from 'react';
 import { ObjectCheck, ObjectValidation } from '../../types/IstioObjects';
 import { ErrorCircleOIcon, OkIcon, WarningTriangleIcon } from '@patternfly/react-icons';
 import { PfColors } from '../Pf/PfColors';
-import { IconProps } from '@patternfly/react-core';
+import { IconType } from '@patternfly/react-icons/dist/js/createIcon';
 
 type Props = {
   validation?: ObjectValidation;
@@ -16,7 +16,7 @@ enum ValidationTypes {
 
 type ValidationType = {
   color: string;
-  icon: FunctionComponent<IconProps>;
+  icon: IconType;
 };
 
 const ErrorValidation: ValidationType = {
@@ -102,14 +102,13 @@ class Validation extends React.Component<Props> {
 
   render() {
     const validation = this.validation();
-    const IconComponent = validation.icon;
 
     return (
-      <div>
+      <>
         <p style={{ color: validation.color }}>
-          <IconComponent /> {this.message()}
+          {validation.icon} {this.message()}
         </p>
-      </div>
+      </>
     );
   }
 }
