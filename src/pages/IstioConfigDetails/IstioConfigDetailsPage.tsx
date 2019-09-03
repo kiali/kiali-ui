@@ -21,6 +21,7 @@ import { getIstioObject, mergeJsonPatch } from '../../utils/IstioConfigUtils';
 import { style } from 'typestyle';
 import ParameterizedTabs, { activeTab } from '../../components/Tab/Tabs';
 import { Tab, Text, TextVariants } from '@patternfly/react-core';
+import { dicIstioType } from '../../types/IstioConfigList';
 
 const rightToolbarStyle = style({ float: 'right', marginTop: '8px' });
 
@@ -60,11 +61,9 @@ class IstioConfigDetailsPage extends React.Component<RouteComponentProps<IstioCo
   objectTitle() {
     let title: string = '';
     if (this.state.istioObjectDetails) {
-      if (this.state.istioObjectDetails.virtualService) {
-        title = this.state.istioObjectDetails.virtualService.metadata.name;
-      } else {
-        title = this.state.istioObjectDetails.destinationRule.metadata.name;
-      }
+      const objectType = dicIstioType[this.props.match.params.objectType];
+      const methodName = objectType.charAt(0).toLowerCase() + objectType.slice(1);
+      title = this.state.istioObjectDetails[methodName].metadata.name;
     }
 
     return title;
