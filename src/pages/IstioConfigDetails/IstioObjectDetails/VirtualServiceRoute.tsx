@@ -1,20 +1,13 @@
 import * as React from 'react';
 import { checkForPath, highestSeverity, severityToColor, severityToIconName } from '../../../types/ServiceInfo';
-import {
-  Destination,
-  DestinationWeight,
-  HTTPRoute,
-  ObjectCheck,
-  ObjectValidation,
-  TCPRoute
-} from '../../../types/IstioObjects';
-import { BulletChart, Icon, Tooltip as TooltipPF3 } from 'patternfly-react';
+import { DestinationWeight, HTTPRoute, ObjectCheck, ObjectValidation, TCPRoute } from '../../../types/IstioObjects';
+import { Icon } from 'patternfly-react';
 import DetailObject from '../../../components/Details/DetailObject';
-import { PfColors } from '../../../components/Pf/PfColors';
 import { Link } from 'react-router-dom';
 import { ServiceIcon } from '@patternfly/react-icons';
 import { Table, TableBody, TableHeader, TableVariant } from '@patternfly/react-table';
 import { Grid, GridItem, Tooltip, TooltipPosition } from '@patternfly/react-core';
+import { ChartBullet } from '@patternfly/react-charts/dist/js/components/ChartBullet';
 
 interface VirtualServiceRouteProps {
   name: string;
@@ -23,15 +16,6 @@ interface VirtualServiceRouteProps {
   routes: any[];
   validation?: ObjectValidation;
 }
-
-const PFBlueColors = [
-  PfColors.Blue,
-  PfColors.Blue500,
-  PfColors.Blue600,
-  PfColors.Blue300,
-  PfColors.Blue200,
-  PfColors.Blue100
-];
 
 class VirtualServiceRoute extends React.Component<VirtualServiceRouteProps> {
   columns() {
@@ -171,48 +155,49 @@ class VirtualServiceRoute extends React.Component<VirtualServiceRouteProps> {
   }
 
   bulletChartValues(routes: TCPRoute | HTTPRoute) {
-    return (routes.route || []).map((destinationWeight, u) => ({
-      value: routes.route && routes.route.length === 1 ? 100 : destinationWeight.weight,
-      title: `${u}_${destinationWeight.weight}`,
-      color: PFBlueColors[u % PFBlueColors.length],
-      tooltipFunction: () => {
-        const badges = this.renderDestination(destinationWeight.destination);
-        return (
-          <TooltipPF3 id={`${u}_${destinationWeight.weight}`} key={`${u}_${destinationWeight.weight}`}>
-            <div className="label-collection">{badges}</div>
-          </TooltipPF3>
-        );
-      }
-    }));
+    let weightSum: number = 0;
+    return (routes.route || []).map(destinationWeight => {
+      const destination = destinationWeight.destination;
+      const destRepresentation = `${destination.host || '-'}_${destination.subset || '-'}_${destination.port || '-'}`;
+
+      const routeSum = routes.route && routes.route.length === 1 ? 100 : destinationWeight.weight || 0;
+      weightSum += routeSum;
+
+      return {
+        y: weightSum,
+        name: `${destinationWeight.weight}_${destRepresentation}`
+      };
+    });
   }
 
-  renderDestination(destination: Destination) {
-    if (destination) {
-      return (
-        <ul style={{ listStyleType: 'none', paddingLeft: '15px' }}>
-          <li>Host: {destination.host || '-'} </li>
-          <li>Subset: {destination.subset || '-'} </li>
-          <li>Port: {destination.port ? destination.port.number : '-'} </li>
-        </ul>
-      );
-    } else {
-      return undefined;
+  bulletChartLabels(datum: any) {
+    const [percent, host, subset, port] = datum.name.split('_');
+    let label = 'Max weight: 100';
+    if (host) {
+      label = `Weight: ${percent}\n Host: ${host}\n Subset: ${subset}\n Port: ${port}`;
     }
+    return label;
   }
 
   renderTable(route: any, i: number) {
     return (
-      <div key={'bulletchart-wrapper-' + i} style={{ marginTop: '30px' }}>
+      <div key={'bulletchart-wrapper-' + i}>
         {(route.route || []).length > 1 && (
-          <div>
-            <BulletChart
+          <div style={{ margin: '0 20%' }}>
+            <ChartBullet
               key={'bullet-chart-' + i}
-              label="Weight sum"
-              stacked={true}
-              thresholdWarning={-1}
-              thresholdError={-1}
-              values={this.bulletChartValues(route)}
-              ranges={[{ value: 100 }]}
+              title={'Weight sum'}
+              ariaDesc={'Routing percentage representation'}
+              ariaTitle={'Traffic routing distribution'}
+              maxDomain={{ y: 100 }}
+              qualitativeRangeData={[{ name: 'Range', y: 100 }]}
+              primarySegmentedMeasureData={this.bulletChartValues(route)}
+              labels={this.bulletChartLabels}
+              padding={{
+                left: 150,
+                right: 150
+              }}
+              width={600}
             />
           </div>
         )}
