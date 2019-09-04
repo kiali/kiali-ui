@@ -102,11 +102,12 @@ class Validation extends React.Component<Props> {
 
   render() {
     const validation = this.validation();
+    const ValidationIcon = validation.icon;
 
     return (
       <>
         <p style={{ color: validation.color }}>
-          {validation.icon} {this.message()}
+          <ValidationIcon /> {this.message()}
         </p>
       </>
     );

@@ -5,7 +5,7 @@ import LocalTime from '../../../components/Time/LocalTime';
 import DetailObject from '../../../components/Details/DetailObject';
 import VirtualServiceRoute from './VirtualServiceRoute';
 import { Link } from 'react-router-dom';
-import { Card, CardBody, Grid, GridItem } from '@patternfly/react-core';
+import { Card, CardBody, Grid, GridItem, Text, TextVariants } from '@patternfly/react-core';
 import Validation from '../../../components/Validations/Validation';
 
 interface VirtualServiceProps {
@@ -77,10 +77,10 @@ class VirtualServiceDetail extends React.Component<VirtualServiceProps> {
     });
 
     return (
-      <div>
-        <strong className="text-capitalize">Gateways</strong>
+      <>
+        <Text component={TextVariants.h3}>Gateways</Text>
         <ul className={'details'}>{childrenList}</ul>
-      </div>
+      </>
     );
   }
 
@@ -91,16 +91,19 @@ class VirtualServiceDetail extends React.Component<VirtualServiceProps> {
       <GridItem>
         <Card key={'virtualServiceConfig'}>
           <CardBody>
-            <h4>Virtual Service Overview</h4>
-            <div>{this.globalStatus()}</div>
-            <div>
-              <strong>Created at</strong>: <LocalTime time={virtualService.metadata.creationTimestamp || ''} />
-            </div>
-            <div>
-              <strong>Resource Version</strong>: {virtualService.metadata.resourceVersion}
-            </div>
+            <Text component={TextVariants.h2}>Virtual Service Overview</Text>
+            {this.globalStatus()}
+            <Text component={TextVariants.h3}>Created at</Text>
+            <LocalTime time={virtualService.metadata.creationTimestamp || ''} />
+
+            <Text component={TextVariants.h3}>Resource Version</Text>
+            {virtualService.metadata.resourceVersion}
+
             {virtualService.spec.hosts && virtualService.spec.hosts.length > 0 ? (
-              <DetailObject name="Hosts" detail={virtualService.spec.hosts} validation={this.hostStatusMessage()} />
+              <>
+                <Text component={TextVariants.h3}>Hosts</Text>
+                <DetailObject name="" detail={virtualService.spec.hosts} validation={this.hostStatusMessage()} />
+              </>
             ) : (
               undefined
             )}
