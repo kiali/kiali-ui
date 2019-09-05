@@ -7,13 +7,12 @@ type TabsProps = {
   tabMap: { [key: string]: number };
   tabName: string;
   defaultTab: string;
+  activeTab: string;
   onSelect: (tabName: string) => void;
   postHandler?: (tabName: string) => void;
 };
 
-type TabsState = {
-  currentTab: string;
-};
+type TabsState = {};
 
 export const activeTab = (tabName: string, defaultTab: string): string => {
   return new URLSearchParams(history.location.search).get(tabName) || defaultTab;
@@ -25,7 +24,6 @@ export default class ParameterizedTabs extends React.Component<TabsProps, TabsSt
 
   constructor(props: TabsProps) {
     super(props);
-    this.state = { currentTab: this.activeTab() };
     this.indexMap = this.buildIndexMap();
     this.tabLinks = this.buildTabLinks();
   }
@@ -62,12 +60,8 @@ export default class ParameterizedTabs extends React.Component<TabsProps, TabsSt
     return this.indexMap[index];
   }
 
-  activeTab = () => {
-    return activeTab(this.props.tabName, this.props.defaultTab);
-  };
-
   activeIndex = () => {
-    return this.tabIndexOf(this.activeTab());
+    return this.tabIndexOf(this.props.activeTab);
   };
 
   isLinkTab = (index: number) => {
