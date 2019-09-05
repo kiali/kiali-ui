@@ -12,13 +12,11 @@ type TabsProps = {
   postHandler?: (tabName: string) => void;
 };
 
-type TabsState = {};
-
 export const activeTab = (tabName: string, defaultTab: string): string => {
   return new URLSearchParams(history.location.search).get(tabName) || defaultTab;
 };
 
-export default class ParameterizedTabs extends React.Component<TabsProps, TabsState> {
+export default class ParameterizedTabs extends React.Component<TabsProps> {
   private indexMap: { [key: number]: string };
   private tabLinks: { [key: number]: string };
 
