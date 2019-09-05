@@ -5,7 +5,7 @@ import DetailObject from '../../../components/Details/DetailObject';
 import Label from '../../../components/Label/Label';
 import { Link } from 'react-router-dom';
 import { Card, CardBody, Grid, GridItem, Text, TextVariants } from '@patternfly/react-core';
-import { Table, TableBody, TableHeader } from '@patternfly/react-table';
+import { Table, TableBody, TableHeader, TableVariant } from '@patternfly/react-table';
 import Validation from '../../../components/Validations/Validation';
 import { ServiceIcon } from '@patternfly/react-icons';
 
@@ -68,7 +68,7 @@ class DestinationRuleDetail extends React.Component<DestinationRuleProps> {
             <>
               <Text component={TextVariants.h2}>Subsets</Text>
               {hasSubsets ? (
-                <Table cells={this.columnsSubsets()} rows={this.rowsSubset()}>
+                <Table variant={TableVariant.compact} cells={this.columnsSubsets()} rows={this.rowsSubset()}>
                   <TableHeader />
                   <TableBody />
                 </Table>
