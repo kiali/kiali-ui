@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { DropdownButton, MenuItem, MessageDialog } from 'patternfly-react';
+import { MessageDialog } from 'patternfly-react';
 import { style } from 'typestyle';
+import { Dropdown, DropdownItem, DropdownPosition, DropdownToggle } from '@patternfly/react-core';
 
 type Props = {
   objectKind?: string;
@@ -11,6 +12,7 @@ type Props = {
 
 type State = {
   showConfirmModal: boolean;
+  dropdownOpen: boolean;
 };
 
 const msgDialogStyle = style({
@@ -24,17 +26,31 @@ const msgDialogStyle = style({
 class IstioActionDropdown extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = { showConfirmModal: false };
+    this.state = {
+      showConfirmModal: false,
+      dropdownOpen: false
+    };
   }
 
-  onAction = (key: string) => {
-    if (key === 'delete') {
-      this.setState({ showConfirmModal: true });
-    }
+  onSelect = e => {
+    console.log(e);
+    this.setState({
+      dropdownOpen: !this.state.dropdownOpen
+    });
+  };
+
+  onToggle = (dropdownState: boolean) => {
+    this.setState({
+      dropdownOpen: dropdownState
+    });
   };
 
   hideConfirmModal = () => {
     this.setState({ showConfirmModal: false });
+  };
+
+  onClickDelete = () => {
+    this.setState({ showConfirmModal: true });
   };
 
   onDelete = () => {
@@ -47,11 +63,19 @@ class IstioActionDropdown extends React.Component<Props, State> {
 
     return (
       <>
-        <DropdownButton id="actions" title="Actions" onSelect={this.onAction} pullRight={true}>
-          <MenuItem key="delete" eventKey="delete" disabled={!this.props.canDelete}>
-            Delete
-          </MenuItem>
-        </DropdownButton>
+        <Dropdown
+          id="actions"
+          title="Actions"
+          toggle={<DropdownToggle onToggle={this.onToggle}>Actions</DropdownToggle>}
+          onSelect={this.onSelect}
+          position={DropdownPosition.right}
+          isOpen={this.state.dropdownOpen}
+          dropdownItems={[
+            <DropdownItem key="delete" onClick={this.onClickDelete} isDisabled={!this.props.canDelete}>
+              Delete
+            </DropdownItem>
+          ]}
+        />
         <MessageDialog
           className={msgDialogStyle}
           show={this.state.showConfirmModal}
