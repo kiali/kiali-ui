@@ -3,7 +3,14 @@ import { Icon, Nav, NavItem, TabContainer, TabContent, TabPane } from 'patternfl
 import { RateTableGrpc, RateTableHttp } from '../../components/SummaryPanel/RateTable';
 import { RpsChart, TcpChart } from '../../components/SummaryPanel/RpsChart';
 import ResponseTimeChart from '../../components/SummaryPanel/ResponseTimeChart';
-import { GraphType, NodeType, Protocol, SummaryPanelPropType, DecoratedGraphNodeData } from '../../types/Graph';
+import {
+  GraphType,
+  NodeType,
+  Protocol,
+  SummaryPanelPropType,
+  DecoratedGraphNodeData,
+  UNKNOWN
+} from '../../types/Graph';
 import { renderTitle } from './SummaryLink';
 import {
   shouldRefreshData,
@@ -12,7 +19,8 @@ import {
   getNodeMetricType,
   renderNoTraffic,
   NodeMetricType,
-  renderLabels
+  renderLabels,
+  panelNavTabs
 } from './SummaryPanelCommon';
 import { MetricGroup, Metric, Metrics } from '../../types/Metrics';
 import { Response } from '../../services/Api';
@@ -130,7 +138,7 @@ export default class SummaryPanelEdge extends React.Component<SummaryPanelPropTy
           >
             <TabContainer id="basic-tabs" defaultActiveKey="traffic">
               <div>
-                <Nav bsClass="nav nav-tabs nav-tabs-pf" style={{ paddingLeft: '20px' }}>
+                <Nav className={`nav nav-tabs nav-tabs-pf ${panelNavTabs}`}>
                   <NavItem eventKey="traffic">
                     <div>Traffic</div>
                   </NavItem>
@@ -229,7 +237,7 @@ export default class SummaryPanelEdge extends React.Component<SummaryPanelPropTy
     }
     const comparator = (metric: Metric) => {
       if (this.isSpecialServiceDest(destMetricType)) {
-        return metric[sourceLabel] === sourceValue && metric.destination_workload === 'unknown';
+        return metric[sourceLabel] === sourceValue && metric.destination_workload === UNKNOWN;
       }
       return metric[sourceLabel] === sourceValue;
     };

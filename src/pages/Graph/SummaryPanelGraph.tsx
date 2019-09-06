@@ -6,7 +6,7 @@ import { RpsChart, TcpChart } from '../../components/SummaryPanel/RpsChart';
 import { SummaryPanelPropType, NodeType } from '../../types/Graph';
 import { getAccumulatedTrafficRateGrpc, getAccumulatedTrafficRateHttp } from '../../utils/TrafficRate';
 import * as API from '../../services/Api';
-import { shouldRefreshData, getDatapoints, mergeMetricsResponses } from './SummaryPanelCommon';
+import { shouldRefreshData, getDatapoints, mergeMetricsResponses, panelNavTabs } from './SummaryPanelCommon';
 import { Response } from '../../services/Api';
 import { Metrics } from '../../types/Metrics';
 import { IstioMetricsOptions } from '../../types/MetricsOptions';
@@ -91,6 +91,12 @@ export default class SummaryPanelGraph extends React.Component<SummaryPanelPropT
     const incomingEdges = cy.$(`node[?${CyNode.isRoot}]`).edgesTo('*');
     const incomingRateGrpc = getAccumulatedTrafficRateGrpc(incomingEdges);
     const incomingRateHttp = getAccumulatedTrafficRateHttp(incomingEdges);
+    const outgoingEdges = cy
+      .nodes()
+      .leaves(`node[?${CyNode.isOutside}],[?${CyNode.isServiceEntry}]`)
+      .connectedEdges();
+    const outgoingRateGrpc = getAccumulatedTrafficRateGrpc(outgoingEdges);
+    const outgoingRateHttp = getAccumulatedTrafficRateHttp(outgoingEdges);
 
     return (
       <div className="panel panel-default" style={SummaryPanelGraph.panelStyle}>
@@ -105,9 +111,12 @@ export default class SummaryPanelGraph extends React.Component<SummaryPanelPropT
         >
           <TabContainer id="basic-tabs" defaultActiveKey="incoming">
             <div>
-              <Nav bsClass="nav nav-tabs nav-tabs-pf" style={{ paddingLeft: '20px' }}>
+              <Nav className={`nav nav-tabs nav-tabs-pf ${panelNavTabs}`}>
                 <NavItem eventKey="incoming">
                   <div>Incoming </div>
+                </NavItem>
+                <NavItem eventKey="outgoing">
+                  <div>Outgoing </div>
                 </NavItem>
                 <NavItem eventKey="total">
                   <div>Total</div>
@@ -130,6 +139,30 @@ export default class SummaryPanelGraph extends React.Component<SummaryPanelPropT
                         rate3xx={incomingRateHttp.rate3xx}
                         rate4xx={incomingRateHttp.rate4xx}
                         rate5xx={incomingRateHttp.rate5xx}
+                      />
+                    )}
+                    {
+                      // We don't show a sparkline here because we need to aggregate the traffic of an
+                      // ad hoc set of [root] nodes. We don't have backend support for that aggregation.
+                    }
+                  </>
+                </TabPane>
+                <TabPane eventKey="outgoing" mountOnEnter={true} unmountOnExit={true}>
+                  <>
+                    {outgoingRateGrpc.rate > 0 && (
+                      <RateTableGrpc
+                        title="GRPC Traffic (requests per second):"
+                        rate={outgoingRateGrpc.rate}
+                        rateErr={outgoingRateGrpc.rateErr}
+                      />
+                    )}
+                    {outgoingRateHttp.rate > 0 && (
+                      <RateTableHttp
+                        title="HTTP Traffic (requests per second):"
+                        rate={outgoingRateHttp.rate}
+                        rate3xx={outgoingRateHttp.rate3xx}
+                        rate4xx={outgoingRateHttp.rate4xx}
+                        rate5xx={outgoingRateHttp.rate5xx}
                       />
                     )}
                     {
