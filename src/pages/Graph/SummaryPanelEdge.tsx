@@ -20,7 +20,8 @@ import {
   renderNoTraffic,
   NodeMetricType,
   renderLabels,
-  panelNavTabs
+  summaryBodyTabs,
+  summaryNavTabs
 } from './SummaryPanelCommon';
 import { MetricGroup, Metric, Metrics } from '../../types/Metrics';
 import { Response } from '../../services/Api';
@@ -132,13 +133,10 @@ export default class SummaryPanelEdge extends React.Component<SummaryPanelPropTy
         <HeadingBlock prefix="To" node={dest} />
         {isMtls && <MTLSBlock />}
         {(isGrpc || isHttp) && (
-          <div
-            className="panel-body"
-            style={{ padding: '0px', paddingLeft: '15px', paddingRight: '15px', paddingBottom: '15px' }}
-          >
+          <div className={`"panel-body ${summaryBodyTabs}`}>
             <TabContainer id="basic-tabs" defaultActiveKey="traffic">
               <div>
-                <Nav className={`nav nav-tabs nav-tabs-pf ${panelNavTabs}`}>
+                <Nav className={`nav nav-tabs nav-tabs-pf ${summaryNavTabs}`}>
                   <NavItem eventKey="traffic">
                     <div>Traffic</div>
                   </NavItem>

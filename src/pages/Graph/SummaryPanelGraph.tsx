@@ -6,7 +6,13 @@ import { RpsChart, TcpChart } from '../../components/SummaryPanel/RpsChart';
 import { SummaryPanelPropType, NodeType } from '../../types/Graph';
 import { getAccumulatedTrafficRateGrpc, getAccumulatedTrafficRateHttp } from '../../utils/TrafficRate';
 import * as API from '../../services/Api';
-import { shouldRefreshData, getDatapoints, mergeMetricsResponses, panelNavTabs } from './SummaryPanelCommon';
+import {
+  shouldRefreshData,
+  getDatapoints,
+  mergeMetricsResponses,
+  summaryBodyTabs,
+  summaryNavTabs
+} from './SummaryPanelCommon';
 import { Response } from '../../services/Api';
 import { Metrics } from '../../types/Metrics';
 import { IstioMetricsOptions } from '../../types/MetricsOptions';
@@ -105,13 +111,10 @@ export default class SummaryPanelGraph extends React.Component<SummaryPanelPropT
           {this.props.namespaces.map(namespace => namespace.name).join(', ')}
           {this.renderTopologySummary(numSvc, numWorkloads, numApps, numEdges)}
         </div>
-        <div
-          className="panel-body"
-          style={{ padding: '0px', paddingLeft: '15px', paddingRight: '15px', paddingBottom: '15px' }}
-        >
+        <div className={`"panel-body ${summaryBodyTabs}`}>
           <TabContainer id="basic-tabs" defaultActiveKey="incoming">
             <div>
-              <Nav className={`nav nav-tabs nav-tabs-pf ${panelNavTabs}`}>
+              <Nav className={`nav nav-tabs nav-tabs-pf ${summaryNavTabs}`}>
                 <NavItem eventKey="incoming">
                   <div>Incoming </div>
                 </NavItem>
@@ -125,6 +128,11 @@ export default class SummaryPanelGraph extends React.Component<SummaryPanelPropT
               <TabContent style={{ paddingTop: '10px' }}>
                 <TabPane eventKey="incoming" mountOnEnter={true} unmountOnExit={true}>
                   <>
+                    {incomingRateGrpc.rate === 0 && incomingRateHttp.rate === 0 && (
+                      <>
+                        <Icon type="pf" name="info" /> No incoming traffic.
+                      </>
+                    )}
                     {incomingRateGrpc.rate > 0 && (
                       <RateTableGrpc
                         title="GRPC Traffic (requests per second):"
@@ -149,6 +157,11 @@ export default class SummaryPanelGraph extends React.Component<SummaryPanelPropT
                 </TabPane>
                 <TabPane eventKey="outgoing" mountOnEnter={true} unmountOnExit={true}>
                   <>
+                    {outgoingRateGrpc.rate === 0 && outgoingRateHttp.rate === 0 && (
+                      <>
+                        <Icon type="pf" name="info" /> No outgoing traffic.
+                      </>
+                    )}
                     {outgoingRateGrpc.rate > 0 && (
                       <RateTableGrpc
                         title="GRPC Traffic (requests per second):"
@@ -173,6 +186,11 @@ export default class SummaryPanelGraph extends React.Component<SummaryPanelPropT
                 </TabPane>
                 <TabPane eventKey="total" mountOnEnter={true} unmountOnExit={true}>
                   <>
+                    {totalRateGrpc.rate === 0 && totalRateHttp.rate === 0 && (
+                      <>
+                        <Icon type="pf" name="info" /> No traffic.
+                      </>
+                    )}
                     {totalRateGrpc.rate > 0 && (
                       <RateTableGrpc
                         title="GRPC Traffic (requests per second):"

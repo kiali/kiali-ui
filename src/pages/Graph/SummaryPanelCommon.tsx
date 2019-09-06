@@ -19,7 +19,11 @@ export enum NodeMetricType {
   SERVICE = 3
 }
 
-export const panelNavTabs = style({
+export const summaryBodyTabs = style({
+  padding: '0 15px 15px'
+});
+
+export const summaryNavTabs = style({
   fontSize: '13px',
   paddingLeft: '1.5em'
 });
