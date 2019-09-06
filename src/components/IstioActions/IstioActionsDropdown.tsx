@@ -1,7 +1,14 @@
 import * as React from 'react';
-import { MessageDialog } from 'patternfly-react';
-import { style } from 'typestyle';
-import { Dropdown, DropdownItem, DropdownPosition, DropdownToggle } from '@patternfly/react-core';
+import {
+  Button,
+  Dropdown,
+  DropdownItem,
+  DropdownPosition,
+  DropdownToggle,
+  Modal,
+  Text,
+  TextVariants
+} from '@patternfly/react-core';
 
 type Props = {
   objectKind?: string;
@@ -14,14 +21,6 @@ type State = {
   showConfirmModal: boolean;
   dropdownOpen: boolean;
 };
-
-const msgDialogStyle = style({
-  $nest: {
-    '.modal-content': {
-      fontSize: '14px'
-    }
-  }
-});
 
 class IstioActionDropdown extends React.Component<Props, State> {
   constructor(props: Props) {
@@ -76,21 +75,25 @@ class IstioActionDropdown extends React.Component<Props, State> {
             </DropdownItem>
           ]}
         />
-        <MessageDialog
-          className={msgDialogStyle}
-          show={this.state.showConfirmModal}
-          primaryAction={this.onDelete}
-          secondaryAction={this.hideConfirmModal}
-          onHide={this.hideConfirmModal}
-          primaryActionButtonContent="Delete"
-          secondaryActionButtonContent="Cancel"
-          primaryActionButtonBsStyle="danger"
+        <Modal
           title="Confirm Delete"
-          primaryContent={`Are you sure you want to delete the ${objectName} '${this.props.objectName}'? `}
-          secondaryContent="It cannot be undone. Make sure this is something you really want to do!"
-          accessibleName="deleteConfirmationDialog"
-          accessibleDescription="deleteConfirmationDialogContent"
-        />
+          isSmall={true}
+          isOpen={this.state.showConfirmModal}
+          onClose={this.hideConfirmModal}
+          actions={[
+            <Button key="cancel" variant="secondary" onClick={this.hideConfirmModal}>
+              Cancel
+            </Button>,
+            <Button key="confirm" variant="danger" onClick={this.onDelete}>
+              Delete
+            </Button>
+          ]}
+        >
+          <Text component={TextVariants.p}>
+            Are you sure you want to delete the {objectName} '{this.props.objectName}'? It cannot be undone. Make sure
+            this is something you really want to do!
+          </Text>
+        </Modal>
       </>
     );
   }
