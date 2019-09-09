@@ -3,11 +3,15 @@ import { ErrorCircleOIcon, OkIcon, WarningTriangleIcon } from '@patternfly/react
 import { PfColors } from '../Pf/PfColors';
 import { IconType } from '@patternfly/react-icons/dist/js/createIcon';
 import { ValidationTypes } from '../../types/IstioObjects';
+import { Text, TextVariants } from '@patternfly/react-core';
 
-type Props = {
+type Props = ValidationDescription & {
+  messageColor?: boolean;
+};
+
+export type ValidationDescription = {
   severity: ValidationTypes;
   message?: string;
-  colorMessage?: boolean;
 };
 
 export type ValidationType = {
@@ -44,18 +48,18 @@ class Validation extends React.Component<Props> {
   render() {
     const validation = this.validation();
     const IconComponent = validation.icon;
-    const colorMessage: boolean = !!this.props.colorMessage;
+    const colorMessage = this.props.messageColor || false;
     const colorStyle = { color: validation.color };
     const hasMessage = this.props.message;
     if (hasMessage) {
       return (
         <div>
-          <div style={{ width: '20px', float: 'left', height: '100%' }}>
+          <div style={{ float: 'left', margin: '2px 5px 0 0' }}>
             <IconComponent style={colorStyle} />
           </div>
-          <div style={{ width: '180px' }}>
-            <p style={colorMessage ? colorStyle : {}}>{this.props.message}</p>
-          </div>
+          <Text component={TextVariants.p} style={colorMessage ? colorStyle : {}}>
+            {this.props.message}
+          </Text>
         </div>
       );
     } else {

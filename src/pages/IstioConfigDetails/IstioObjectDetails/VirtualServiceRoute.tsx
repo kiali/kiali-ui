@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { checkForPath, highestSeverity, severityToColor, severityToIconName } from '../../../types/ServiceInfo';
+import { checkForPath, highestSeverity } from '../../../types/ServiceInfo';
 import { DestinationWeight, HTTPRoute, ObjectValidation, TCPRoute, ValidationTypes } from '../../../types/IstioObjects';
 import DetailObject from '../../../components/Details/DetailObject';
 import { Link } from 'react-router-dom';
@@ -211,8 +211,7 @@ class VirtualServiceRoute extends React.Component<VirtualServiceRouteProps> {
 
     return {
       message: checks.map(check => check.message).join(','),
-      icon: severityToIconName(severity),
-      color: severityToColor(severity)
+      severity
     };
   }
 

@@ -73,7 +73,7 @@ class GlobalValidation extends React.Component<Props> {
   }
 
   render() {
-    return <Validation severity={this.severity()} message={this.message()} colorMessage={true} />;
+    return <Validation severity={this.severity()} message={this.message()} messageColor={true} />;
   }
 }
 

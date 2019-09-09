@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { checkForPath, highestSeverity, severityToColor, severityToIconName } from '../../../types/ServiceInfo';
+import { checkForPath, highestSeverity } from '../../../types/ServiceInfo';
 import { Host, ObjectValidation, VirtualService } from '../../../types/IstioObjects';
 import LocalTime from '../../../components/Time/LocalTime';
 import DetailObject from '../../../components/Details/DetailObject';
@@ -34,8 +34,7 @@ class VirtualServiceDetail extends React.Component<VirtualServiceProps> {
 
     return {
       message: checks.map(check => check.message).join(','),
-      icon: severityToIconName(severity),
-      color: severityToColor(severity)
+      severity
     };
   }
 
