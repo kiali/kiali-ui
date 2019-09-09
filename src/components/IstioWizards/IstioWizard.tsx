@@ -305,7 +305,13 @@ class IstioWizard extends React.Component<WizardProps, WizardState> {
     return (
       <Modal
         width={'50%'}
-        title={this.props.update ? WIZARD_UPDATE_TITLES[this.props.type] : WIZARD_TITLES[this.props.type]}
+        title={
+          this.props.type.length > 0
+            ? this.props.update
+              ? WIZARD_UPDATE_TITLES[this.props.type]
+              : WIZARD_TITLES[this.props.type]
+            : ''
+        }
         isOpen={this.state.showWizard}
         onClose={this.onClose}
         onKeyPress={e => {
@@ -317,7 +323,7 @@ class IstioWizard extends React.Component<WizardProps, WizardState> {
           <Button key="cancel" variant="secondary" onClick={this.onClose}>
             Cancel
           </Button>,
-          <Button disabled={!this.isValid(this.state)} key="confirm" variant="primary" onClick={this.onCreateUpdate}>
+          <Button isDisabled={!this.isValid(this.state)} key="confirm" variant="primary" onClick={this.onCreateUpdate}>
             {this.props.update ? 'Update' : 'Create'}
           </Button>
         ]}
@@ -380,6 +386,7 @@ class IstioWizard extends React.Component<WizardProps, WizardState> {
               nsWideStatus={this.props.tlsStatus}
               onTrafficPolicyChange={this.onTrafficPolicy}
             />
+            <br />
             <GatewaySelector
               serviceName={this.props.serviceName}
               hasGateway={hasGateway(this.props.virtualServices)}
@@ -388,6 +395,7 @@ class IstioWizard extends React.Component<WizardProps, WizardState> {
               gateways={this.props.gateways}
               onGatewayChange={this.onGateway}
             />
+            <br />
           </Expandable>
         )}
       </Modal>
