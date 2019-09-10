@@ -1,10 +1,16 @@
 import * as React from 'react';
 import { ObjectValidation, Pod } from '../../../types/IstioObjects';
 import { Card, CardBody, Grid, GridItem, Tooltip } from '@patternfly/react-core';
-import { ICell, IRow, Table, TableHeader, TableBody, TableVariant, classNames, textCenter } from '@patternfly/react-table';
+import { ICell, IRow, Table, TableHeader, TableBody, TableVariant } from '@patternfly/react-table';
+import { css } from '@patternfly/react-styles';
 import { ConfigIndicator } from '../../../components/ConfigValidation/ConfigIndicator';
 import Labels from '../../../components/Label/Labels';
 import { icons } from '../../../config';
+
+const textCenter = () => ({ textCenter: true });
+const classNames = (...classNames: string[]) => () => ({
+  className: css(...classNames)
+});
 
 type WorkloadPodsProps = {
   namespace: string;
@@ -48,7 +54,27 @@ class WorkloadPods extends React.Component<WorkloadPodsProps, WorkloadPodsState>
     )
   };
 
-  renderExtraInformation
+  renderInformation (pod: Pod) {
+    const columns: string[] = [
+      'Created by',
+      'Istio Init Containers',
+      'Istio Containers'
+    ];
+    const rows = [{
+      cells: [
+        pod.createdBy && pod.createdBy.length > 0 ? pod.createdBy.map(ref => ref.name + ' (' + ref.kind + ')').join(', ') : '',
+        pod.istioInitContainers ? pod.istioInitContainers.map(c => `${c.image}`).join(', ') : '',
+        pod.istioContainers ? pod.istioContainers.map(c => `${c.image}`).join(', ') : ''
+      ]
+    }];
+    return (
+      <Table variant={TableVariant.compact} aria-label={"list_pods"} onCollapse={this.onCollapse}  cells={columns} rows={rows}>
+        <TableHeader/>
+        <TableBody />
+      </Table>
+    );
+  };
+
   rows() {
     let rows: IRow[] = [];
     (this.props.pods || []).map((pod, podIdx) => {
@@ -68,12 +94,10 @@ class WorkloadPods extends React.Component<WorkloadPodsProps, WorkloadPodsState>
       rows.push({
         parent: rows.length - 1,
         cells: [
-          { title : <>Created by {pod.createdBy && pod.createdBy.length > 0
-              ? pod.createdBy.map(ref => ref.name + ' (' + ref.kind + ')').join(', ')
-              : ''} Istio Init Containers : {pod.istioInitContainers ? pod.istioInitContainers.map(c => `${c.image}`).join(', ') : ''} Istio Containers : {pod.istioContainers ? pod.istioContainers.map(c => `${c.image}`).join(', ') : ''}</>},
+          { title : this.renderInformation(pod)},
         ]
       });
-      return;
+      return rows;
     });
     return rows;
   }

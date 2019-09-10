@@ -1259,6 +1259,25 @@
   dependencies:
     "@fortawesome/free-brands-svg-icons" "^5.8.1"
 
+"@patternfly/react-styles@3.5.16":
+  version "3.5.16"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-styles/-/react-styles-3.5.16.tgz#36cacd4a3bcbb9a74ddee457e859a9c634cc8432"
+  integrity sha512-pty2X4b+udp3NhbabBIHWX3KGgyGDRcg5J+0Q8JSN1dwMLTa3HsocDXlPIfTuNAHsYNBF7xAqQsbg+R1nAWOFw==
+  dependencies:
+    "@babel/helper-plugin-utils" "^7.0.0-beta.48"
+    camel-case "^3.0.0"
+    css "^2.2.3"
+    cssom "^0.3.4"
+    cssstyle "^0.3.1"
+    emotion "^9.2.9"
+    emotion-server "^9.2.9"
+    fbjs-scripts "^0.8.3"
+    fs-extra "^6.0.1"
+    jsdom "^15.1.0"
+    relative "^3.0.2"
+    resolve-from "^4.0.0"
+    typescript "3.4.5"
+
 "@patternfly/react-styles@^3.5.13":
   version "3.5.13"
   resolved "https://registry.yarnpkg.com/@patternfly/react-styles/-/react-styles-3.5.13.tgz#b6d4454eaf8ce2041f6e410aa85eef0e53892b24"
