@@ -68,6 +68,7 @@
     "@patternfly/react-core": "3.89.2",
     "@patternfly/react-table": "2.16.4",
     "@patternfly/react-virtualized-extension": "1.1.97",
+    "@webcomponents/custom-elements": "1.2.4",
     "axios": "0.18.1",
     "csstips": "0.3.0",
     "csx": "9.0.0",
