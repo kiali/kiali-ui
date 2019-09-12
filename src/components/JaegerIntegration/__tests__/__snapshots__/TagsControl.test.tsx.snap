@@ -28,7 +28,7 @@ ShallowWrapper {
           <UNDEFINED>
             <Popover
               appendTo={[Function]}
-              aria-label=""
+              aria-label="Tags_Information"
               bodyContent={
                 <UNDEFINED>
                   Values should be in the
@@ -139,7 +139,7 @@ ShallowWrapper {
         "helperText": <UNDEFINED>
           <Popover
             appendTo={[Function]}
-            aria-label=""
+            aria-label="Tags_Information"
             bodyContent={
               <UNDEFINED>
                 Values should be in the
@@ -249,7 +249,7 @@ ShallowWrapper {
             <UNDEFINED>
               <Popover
                 appendTo={[Function]}
-                aria-label=""
+                aria-label="Tags_Information"
                 bodyContent={
                   <UNDEFINED>
                     Values should be in the
@@ -360,7 +360,7 @@ ShallowWrapper {
           "helperText": <UNDEFINED>
             <Popover
               appendTo={[Function]}
-              aria-label=""
+              aria-label="Tags_Information"
               bodyContent={
                 <UNDEFINED>
                   Values should be in the
