@@ -562,7 +562,7 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
       case 'rt':
       case 'responsetime': {
         if (this.props.edgeLabelMode !== EdgeLabelMode.RESPONSE_TIME_95TH_PERCENTILE) {
-          MessageCenter.add('Enabling "response time" edge labels for graph find/hide expression');
+          MessageCenter.addSuccess('Enabling "response time" edge labels for graph find/hide expression');
           this.props.setEdgeLabelMode(EdgeLabelMode.RESPONSE_TIME_95TH_PERCENTILE);
         }
         const s = this.getNumericSelector(CyEdge.responseTime, op, val, expression);
@@ -624,7 +624,7 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
         return { target: 'node', selector: isNegation ? `[^${CyNode.isRoot}]` : `[?${CyNode.isRoot}]` };
       case 'unused':
         if (!this.props.showUnusedNodes) {
-          MessageCenter.add('Enabling "unused nodes" display option for graph find/hide expression');
+          MessageCenter.addSuccess('Enabling "unused nodes" display option for graph find/hide expression');
           this.props.toggleUnusedNodes();
         }
         return { target: 'node', selector: isNegation ? `[^${CyNode.isUnused}]` : `[?${CyNode.isUnused}]` };
@@ -636,7 +636,7 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
       //
       case 'mtls':
         if (!this.props.showSecurity) {
-          MessageCenter.add('Enabling "security" display option for graph find/hide expression');
+          MessageCenter.addSuccess('Enabling "security" display option for graph find/hide expression');
           this.props.toggleGraphSecurity();
         }
         return { target: 'edge', selector: isNegation ? `[${CyEdge.isMTLS} <= 0]` : `[${CyEdge.isMTLS} > 0]` };

@@ -18,7 +18,7 @@ describe('Parse find value test', () => {
     const wrapper = shallow(
       <GraphFind
         cyData={{ updateTimestamp: 123, cyRef: 'dummyRef' }}
-        edgeLabelMode={EdgeLabelMode.REQUESTS_PER_SECOND}
+        edgeLabelMode={EdgeLabelMode.NONE}
         findValue="testFind"
         hideValue="testHide"
         showFindHelp={false}
