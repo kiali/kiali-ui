@@ -5,7 +5,7 @@ import DetailObject from '../../../components/Details/DetailObject';
 import { Link } from 'react-router-dom';
 import { ServiceIcon } from '@patternfly/react-icons';
 import { Table, TableBody, TableHeader, TableVariant } from '@patternfly/react-table';
-import { Grid, GridItem } from '@patternfly/react-core';
+import { Grid, GridItem, Text, TextVariants } from '@patternfly/react-core';
 import { ChartBullet } from '@patternfly/react-charts/dist/js/components/ChartBullet';
 import TooltipValidation from '../../../components/Validations/TooltipValidation';
 
@@ -219,12 +219,8 @@ class VirtualServiceRoute extends React.Component<VirtualServiceRouteProps> {
     return (this.props.routes || []).map((route, i) => (
       <Grid key={'virtualservice-rule' + i}>
         <GridItem sm={12} md={12} lg={4}>
-          <DetailObject
-            name={this.props.kind + ' Route'}
-            detail={route}
-            exclude={['route']}
-            validation={this.routeStatusMessage(route, i)}
-          />
+          <Text component={TextVariants.h3}>{this.props.kind + ' Route'}</Text>
+          <DetailObject name={''} detail={route} exclude={['route']} validation={this.routeStatusMessage(route, i)} />
         </GridItem>
         <GridItem sm={12} md={12} lg={8}>
           {this.renderTable(route, i)}

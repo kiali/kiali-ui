@@ -53,8 +53,8 @@ class Validation extends React.Component<Props> {
     const hasMessage = this.props.message;
     if (hasMessage) {
       return (
-        <div>
-          <div style={{ float: 'left', margin: '2px 5px 0 0' }}>
+        <div style={{ textAlign: 'left' }}>
+          <div style={{ float: 'left', margin: '2px 0.6em 0 0' }}>
             <IconComponent style={colorStyle} />
           </div>
           <Text component={TextVariants.p} style={colorMessage ? colorStyle : {}}>
