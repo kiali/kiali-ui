@@ -28,7 +28,8 @@ export default class GraphLegend extends React.Component<GraphLegendProps, Graph
     const legendBoxStyle = style({
       margin: '1em 0 4em 0',
       padding: '1em',
-      border: '1px solid gray'
+      border: '1px solid gray',
+      overflowY: 'hidden'
     });
 
     const headerStyle = style({
@@ -46,7 +47,9 @@ export default class GraphLegend extends React.Component<GraphLegendProps, Graph
 
     const legendListStyle = style({
       display: 'flex',
-      flexDirection: 'column'
+      flexDirection: 'column',
+      overflowY: 'scroll',
+      height: '650px'
     });
 
     return (
@@ -104,7 +107,7 @@ export default class GraphLegend extends React.Component<GraphLegendProps, Graph
     const legendItemLabelStyle = style({
       fontSize: '1em',
       fontWeight: 'normal',
-      width: '160px'
+      width: '175px'
     });
 
     return (
