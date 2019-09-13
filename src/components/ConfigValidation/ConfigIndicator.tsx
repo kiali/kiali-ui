@@ -1,17 +1,21 @@
 import * as React from 'react';
 import { ObjectValidation } from '../../types/IstioObjects';
 import { PfColors } from '../Pf/PfColors';
-import { OverlayTrigger, Popover } from 'patternfly-react';
 import { IconType } from '@patternfly/react-icons/dist/js/createIcon';
-import { ErrorCircleOIcon, WarningTriangleIcon, CheckCircleIcon } from '@patternfly/react-icons';
+import { CheckCircleIcon, ErrorCircleOIcon, WarningTriangleIcon } from '@patternfly/react-icons';
 import { createIcon } from '../Health/Helper';
 import { style } from 'typestyle';
+import { Popover } from '@patternfly/react-core';
 
 interface Props {
   id: string;
   validations: ObjectValidation[];
   definition?: boolean;
   size?: string;
+}
+
+interface State {
+  show: boolean;
 }
 
 export interface Validation {
@@ -60,7 +64,20 @@ const tooltipListStyle = style({
   margin: '0 0 0 0'
 });
 
-export class ConfigIndicator extends React.PureComponent<Props, {}> {
+export class ConfigIndicator extends React.PureComponent<Props, State> {
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      show: false
+    };
+  }
+
+  toggleTrigger = () => {
+    this.setState({
+      show: !this.state.show
+    });
+  };
+
   numberOfChecks = (type: string) => {
     let numCheck = 0;
     this.props.validations.forEach(validation => {
@@ -131,36 +148,37 @@ export class ConfigIndicator extends React.PureComponent<Props, {}> {
       });
     }
 
+    const content = (
+      <div className={tooltipListStyle}>
+        {issuesMessages.map(cat => (
+          <div className={tooltipListStyle} key={cat}>
+            {cat}
+          </div>
+        ))}
+        {validationsInfo}
+      </div>
+    );
+
     return (
       <Popover
-        id={this.props.id + '-config-validation'}
-        title={this.getValid().name}
-        style={showDefinitions && { maxWidth: '80%', minWidth: '200px' }}
+        key={this.props.id + '-config-validation'}
+        isVisible={this.state.show}
+        enableFlip={true}
+        headerContent={this.getValid().name}
+        bodyContent={content}
       >
-        <div className={tooltipListStyle}>
-          {issuesMessages.map(cat => (
-            <div className={tooltipListStyle} key={cat}>
-              {cat}
-            </div>
-          ))}
-          {validationsInfo}
-        </div>
+        <span
+          onMouseEnter={this.toggleTrigger}
+          onMouseLeave={this.toggleTrigger}
+          style={{ color: this.getValid().color }}
+        >
+          {createIcon(this.getValid(), 'sm')}
+        </span>
       </Popover>
     );
   }
 
   render() {
-    return (
-      <span>
-        <OverlayTrigger
-          placement={'right'}
-          overlay={this.tooltipContent()}
-          trigger={['hover', 'focus']}
-          rootClose={false}
-        >
-          <span style={{ color: this.getValid().color }}>{createIcon(this.getValid(), 'sm')}</span>
-        </OverlayTrigger>
-      </span>
-    );
+    return this.tooltipContent();
   }
 }
