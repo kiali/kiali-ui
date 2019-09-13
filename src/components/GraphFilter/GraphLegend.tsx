@@ -1,8 +1,8 @@
 import * as React from 'react';
-import Draggable from 'react-draggable';
 import { style } from 'typestyle';
-import { Button, Icon } from 'patternfly-react';
 import legendData, { GraphLegendItem, GraphLegendItemRow } from './GraphLegendData';
+import { Button, Tooltip } from '@patternfly/react-core';
+import CloseIcon from '@patternfly/react-icons/dist/js/icons/close-icon';
 
 export interface GraphLegendProps {
   closeLegend: () => void;
@@ -25,23 +25,23 @@ export default class GraphLegend extends React.Component<GraphLegendProps, Graph
   }
 
   render() {
-    const parentClassName = this.props.className ? this.props.className : '';
-    const width = 'calc(100vw - 50px - var(--pf-c-page__sidebar--md--Width))'; // 50px prevents full coverage
-    const maxWidth = this.state.width + 2; // +2 includes border and prevents scroll
-
-    const contentStyle = style({
-      width: width,
-      maxWidth: maxWidth
+    const legendBoxStyle = style({
+      margin: '1em 0 4em 0',
+      padding: '1em',
+      border: '1px solid gray'
     });
 
     const headerStyle = style({
       width: this.state.width
     });
 
+    const legendTextHeadingStyle = style({
+      fontWeight: 'bold'
+    });
+
     const bodyStyle = style({
       width: this.state.width,
-      height: this.state.height,
-      overflowY: 'auto'
+      height: this.state.height
     });
 
     const legendListStyle = style({
@@ -50,27 +50,27 @@ export default class GraphLegend extends React.Component<GraphLegendProps, Graph
     });
 
     return (
-      <Draggable bounds="#root">
-        <div className={`modal-content ${parentClassName} ${contentStyle}`}>
-          <div className={`modal-header ${headerStyle}`}>
-            <Button className="close" bsClass="" onClick={this.props.closeLegend}>
-              <Icon title="Close" type="pf" name="close" />
-            </Button>
-            <span className="modal-title">Graph Legend</span>
-          </div>
-          <div className={`modal-body ${bodyStyle}`}>
-            <div className={legendListStyle}>{this.renderGraphLegendList(legendData)}</div>
-          </div>
+      <div className={legendBoxStyle}>
+        <div className={headerStyle}>
+          <span className={legendTextHeadingStyle}>Legend</span>
+          <span className="pull-right">
+            <Tooltip content="Close Legend">
+              <Button id="legend_close" variant="plain" onClick={this.props.closeLegend}>
+                <CloseIcon />
+              </Button>
+            </Tooltip>
+          </span>
         </div>
-      </Draggable>
+        <div className={bodyStyle}>
+          <div className={legendListStyle}>{this.renderGraphLegendList(legendData)}</div>
+        </div>
+      </div>
     );
   }
 
   renderGraphLegendList(legendData: GraphLegendItem[]) {
     const legendColumnHeadingStyle = style({
-      fontSize: '1.3em',
-      fontWeight: 'bold',
-      paddingTop: '10px'
+      paddingTop: '1.25em'
     });
 
     return (
