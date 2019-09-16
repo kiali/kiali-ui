@@ -22,6 +22,7 @@ export class TagsControl extends React.PureComponent<TagsControlProps, {}> {
         <Popover
           position="right"
           className={tagsInput}
+          aria-label={'Tags_Information'}
           bodyContent={
             <>
               Values should be in the{' '}
