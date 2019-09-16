@@ -8,6 +8,7 @@ import './Validation.css';
 
 type Props = ValidationDescription & {
   messageColor?: boolean;
+  size?: string;
 };
 
 export type ValidationDescription = {
@@ -16,34 +17,54 @@ export type ValidationDescription = {
 };
 
 export type ValidationType = {
+  name: string;
   color: string;
   icon: IconType;
 };
 
 const ErrorValidation: ValidationType = {
+  name: 'Not Valid',
   color: PfColors.Red100,
   icon: ErrorCircleOIcon
 };
 
 const WarningValidation: ValidationType = {
+  name: 'Warning',
   color: PfColors.Orange400,
   icon: WarningTriangleIcon
 };
 
 const CorrectValidation: ValidationType = {
+  name: 'Valid',
   color: PfColors.Green400,
   icon: OkIcon
 };
 
-const severityToValidation: { [severity: string]: ValidationType } = {
+export const severityToValidation: { [severity: string]: ValidationType } = {
   error: ErrorValidation,
   warning: WarningValidation,
   correct: CorrectValidation
 };
 
+export const SMALL_SIZE = '12px';
+export const MEDIUM_SIZE = '18px';
+export const BIG_SIZE = '35px';
+export const INHERITED_SIZE = 'inherit';
+
+const sizeMapper = new Map<string, string>([
+  ['small', SMALL_SIZE],
+  ['medium', MEDIUM_SIZE],
+  ['big', BIG_SIZE],
+  ['inherited', INHERITED_SIZE]
+]);
+
 class Validation extends React.Component<Props> {
   validation() {
     return severityToValidation[this.props.severity];
+  }
+
+  size() {
+    return sizeMapper.get(this.props.size || 'inherited') || INHERITED_SIZE;
   }
 
   render() {

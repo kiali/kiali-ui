@@ -6,7 +6,7 @@ import { ServiceHealth } from '../../../types/Health';
 import { Endpoints } from '../../../types/ServiceInfo';
 import { ObjectCheck, ObjectValidation, Port } from '../../../types/IstioObjects';
 import { style } from 'typestyle';
-import { ConfigIndicator, MEDIUM_SIZE } from '../../../components/ConfigValidation/ConfigIndicator';
+import { ConfigIndicator } from '../../../components/ConfigValidation/ConfigIndicator';
 import './ServiceInfoDescription.css';
 import Labels from '../../../components/Label/Labels';
 import { ThreeScaleServiceRule } from '../../../types/ThreeScale';
@@ -114,11 +114,7 @@ class ServiceInfoDescription extends React.Component<ServiceInfoDescriptionProps
             </Col>
             <Col xs={12} sm={4} md={2} lg={2}>
               <div className="progress-description">
-                <ConfigIndicator
-                  id={this.props.name + '-config-validation'}
-                  validations={[this.getValidations()]}
-                  size={MEDIUM_SIZE}
-                />
+                <ConfigIndicator id={this.props.name + '-config-validation'} validations={[this.getValidations()]} />
                 <strong style={{ margin: '0.1em 0 0 0.5em' }}>Ports</strong>
               </div>
               <ul className={listStyle}>

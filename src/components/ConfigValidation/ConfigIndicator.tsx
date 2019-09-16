@@ -1,11 +1,9 @@
 import * as React from 'react';
-import { ObjectValidation } from '../../types/IstioObjects';
-import { PfColors } from '../Pf/PfColors';
-import { IconType } from '@patternfly/react-icons/dist/js/createIcon';
-import { CheckCircleIcon, ErrorCircleOIcon, WarningTriangleIcon } from '@patternfly/react-icons';
-import { createIcon } from '../Health/Helper';
+import { ObjectValidation, ValidationTypes } from '../../types/IstioObjects';
 import { style } from 'typestyle';
-import { Popover } from '@patternfly/react-core';
+import { Text, TextVariants, Tooltip, TooltipPosition } from '@patternfly/react-core';
+import Validation, { severityToValidation } from '../Validations/Validation';
+import { higherSeverity, highestSeverity } from '../../types/ServiceInfo';
 
 interface Props {
   id: string;
@@ -14,70 +12,13 @@ interface Props {
   size?: string;
 }
 
-interface State {
-  show: boolean;
-}
-
-export interface Validation {
-  name: string;
-  color: string;
-  icon: IconType;
-  class: string;
-}
-
-export const NOT_VALID: Validation = {
-  name: 'Not Valid',
-  color: PfColors.Red100,
-  icon: ErrorCircleOIcon,
-  class: 'health-icon'
-};
-
-export const WARNING: Validation = {
-  name: 'Warning',
-  color: PfColors.Gold100,
-  icon: WarningTriangleIcon,
-  class: 'health-icon'
-};
-
-export const VALID: Validation = {
-  name: 'Valid',
-  color: PfColors.Green400,
-  icon: CheckCircleIcon,
-  class: 'health-icon'
-};
-
-export const SMALL_SIZE = '12px';
-export const MEDIUM_SIZE = '18px';
-export const BIG_SIZE = '35px';
-export const INHERITED_SIZE = 'inherit';
-
-const sizeMapper = new Map<string, string>([
-  ['small', SMALL_SIZE],
-  ['medium', MEDIUM_SIZE],
-  ['big', BIG_SIZE],
-  ['inherited', INHERITED_SIZE]
-]);
-
 const tooltipListStyle = style({
   border: 0,
   padding: '0 0 0 0',
   margin: '0 0 0 0'
 });
 
-export class ConfigIndicator extends React.PureComponent<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      show: false
-    };
-  }
-
-  toggleTrigger = () => {
-    this.setState({
-      show: !this.state.show
-    });
-  };
-
+export class ConfigIndicator extends React.PureComponent<Props> {
   numberOfChecks = (type: string) => {
     let numCheck = 0;
     this.props.validations.forEach(validation => {
@@ -97,45 +38,35 @@ export class ConfigIndicator extends React.PureComponent<Props, State> {
       : undefined;
   };
 
-  getValid() {
-    if (this.props.validations.length === 0) {
-      return WARNING;
-    }
-    const warnIssues = this.numberOfChecks('warning');
-    const errIssues = this.numberOfChecks('error');
-    return warnIssues === 0 && errIssues === 0 ? VALID : errIssues > 0 ? NOT_VALID : WARNING;
+  checkCount() {
+    return this.props.validations.reduce((sum, current) => {
+      return sum + (current.checks ? current.checks.length : 0);
+    }, 0);
   }
 
-  size() {
-    return sizeMapper.get(this.props.size || 'inherited') || INHERITED_SIZE;
-  }
-
-  tooltipContent() {
-    let numChecks = 0;
-    this.props.validations.forEach(validation => {
-      if (validation.checks) {
-        numChecks += validation.checks.length;
-      }
-    });
-
+  severitySummary() {
     const issuesMessages: string[] = [];
+
     if (this.props.validations.length > 0) {
-      if (numChecks === 0) {
-        issuesMessages.push('No issues found');
-      } else {
-        const errMessage = this.getTypeMessage('error');
-        if (errMessage) {
-          issuesMessages.push(errMessage);
-        }
-        const warnMessage = this.getTypeMessage('warning');
-        if (warnMessage) {
-          issuesMessages.push(warnMessage);
-        }
+      const errMessage = this.getTypeMessage('error');
+      if (errMessage) {
+        issuesMessages.push(errMessage);
       }
-    } else {
-      issuesMessages.push('Expected validation results are missing');
+      const warnMessage = this.getTypeMessage('warning');
+      if (warnMessage) {
+        issuesMessages.push(warnMessage);
+      }
     }
 
+    if (issuesMessages.length === 0) {
+      issuesMessages.push('No issues found');
+    }
+
+    return issuesMessages;
+  }
+
+  validationInfo() {
+    const numChecks = this.checkCount();
     const validationsInfo: JSX.Element[] = [];
     const showDefinitions = this.props.definition && numChecks !== 0;
     if (showDefinitions) {
@@ -147,38 +78,53 @@ export class ConfigIndicator extends React.PureComponent<Props, State> {
         );
       });
     }
+    return validationsInfo;
+  }
 
-    const content = (
-      <div className={tooltipListStyle}>
-        {issuesMessages.map(cat => (
-          <div className={tooltipListStyle} key={cat}>
-            {cat}
-          </div>
-        ))}
-        {validationsInfo}
-      </div>
-    );
+  severity() {
+    let severity = ValidationTypes.Correct;
 
+    this.props.validations.forEach(validation => {
+      const valSeverity = validation.checks ? highestSeverity(validation.checks) : ValidationTypes.Correct;
+      if (higherSeverity(valSeverity, severity)) {
+        severity = valSeverity;
+      }
+    });
+
+    return severity;
+  }
+
+  tooltipContent() {
+    const validation = severityToValidation[this.severity()];
     return (
-      <Popover
-        key={this.props.id + '-config-validation'}
-        isVisible={this.state.show}
-        enableFlip={true}
-        headerContent={this.getValid().name}
-        bodyContent={content}
-      >
-        <span
-          onMouseEnter={this.toggleTrigger}
-          onMouseLeave={this.toggleTrigger}
-          style={{ color: this.getValid().color }}
-        >
-          {createIcon(this.getValid(), 'sm')}
-        </span>
-      </Popover>
+      <div>
+        <Text component={TextVariants.h4}>
+          <strong>{validation.name}</strong>
+        </Text>
+        <div className={tooltipListStyle}>
+          {this.severitySummary().map(cat => (
+            <div className={tooltipListStyle} key={cat}>
+              {cat}
+            </div>
+          ))}
+          {this.validationInfo()}
+        </div>
+      </div>
     );
   }
 
   render() {
-    return this.tooltipContent();
+    return (
+      <Tooltip
+        aria-label={'Validations list'}
+        position={TooltipPosition.left}
+        enableFlip={true}
+        content={this.tooltipContent()}
+      >
+        <div style={{ float: 'left' }}>
+          <Validation severity={this.severity()} />
+        </div>
+      </Tooltip>
+    );
   }
 }
