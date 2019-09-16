@@ -142,13 +142,14 @@ class WorkloadInfo extends React.Component<WorkloadInfoProps, WorkloadInfoState>
               {pods.length > 0 && (
                 <WorkloadPods
                   namespace={this.props.namespace}
+                  workloadName={this.props.workload.name}
                   pods={pods}
                   validations={this.props.validations!.pod}
                 />
               )}
             </Tab>
             <Tab title={'Services (' + services.length + ')'} eventKey={1}>
-              {services.length > 0 && <WorkloadServices services={services} namespace={this.props.namespace} />}
+              {services.length > 0 && <WorkloadServices workloadName={this.props.workload.name} services={services} namespace={this.props.namespace} />}
             </Tab>
           </ParameterizedTabs>
         </GridItem>

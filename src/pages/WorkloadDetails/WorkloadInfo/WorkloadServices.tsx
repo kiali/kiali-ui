@@ -1,13 +1,24 @@
 import * as React from 'react';
 import { Port, Service } from '../../../types/IstioObjects';
-import { Table, TableHeader, TableBody, TableVariant, classNames, textCenter } from '@patternfly/react-table';
+import { IRow, Table, TableHeader, TableBody, TableVariant, classNames, textCenter } from '@patternfly/react-table';
 import { Link } from 'react-router-dom';
 import LocalTime from '../../../components/Time/LocalTime';
 import Labels from '../../../components/Label/Labels';
-import { Card, CardBody, Grid, GridItem } from '@patternfly/react-core';
+import {
+  Card,
+  CardBody,
+  EmptyState, EmptyStateBody,
+  EmptyStateIcon,
+  EmptyStateVariant,
+  Grid,
+  GridItem,
+  Title
+} from '@patternfly/react-core';
+import { ServiceIcon } from '@patternfly/react-icons';
 
 type WorkloadServicesProps = {
   services: Service[];
+  workloadName: string;
   namespace: string;
 };
 
@@ -56,7 +67,26 @@ class WorkloadServices extends React.Component<WorkloadServicesProps, WorkloadSe
     );
   }
 
-  rows() {
+  noServices(): IRow[] {
+    return [{
+      cells: [
+        {title:
+            <EmptyState variant={EmptyStateVariant.full}>
+              <EmptyStateIcon icon={ServiceIcon} />
+              <Title headingLevel="h5" size="lg">
+                No Services found
+              </Title>
+              <EmptyStateBody>
+                No services found for workload {this.props.workloadName}
+              </EmptyStateBody>
+            </EmptyState>,
+          props: {colSpan: 7}}
+      ]
+    }]
+  }
+
+  rows(): IRow[] {
+    if ((this.props.services || []).length === 0) {return this.noServices()}
     return (this.props.services || []).map((service, vsIdx) => {
       return {
         cells: [
