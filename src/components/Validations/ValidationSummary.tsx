@@ -2,7 +2,7 @@ import * as React from 'react';
 import { ObjectValidation, ValidationTypes } from '../../types/IstioObjects';
 import { style } from 'typestyle';
 import { Text, TextVariants, Tooltip, TooltipPosition } from '@patternfly/react-core';
-import Validation, { severityToValidation } from '../Validations/Validation';
+import Validation, { severityToValidation } from './Validation';
 import { higherSeverity, highestSeverity } from '../../types/ServiceInfo';
 
 interface Props {
@@ -18,7 +18,7 @@ const tooltipListStyle = style({
   margin: '0 0 0 0'
 });
 
-export class ConfigIndicator extends React.PureComponent<Props> {
+export class ValidationSummary extends React.PureComponent<Props> {
   numberOfChecks = (type: string) => {
     let numCheck = 0;
     this.props.validations.forEach(validation => {
