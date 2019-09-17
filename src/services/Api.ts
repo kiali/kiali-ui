@@ -16,7 +16,8 @@ import {
   WorkloadHealth,
   NamespaceAppHealth,
   NamespaceServiceHealth,
-  NamespaceWorkloadHealth
+  NamespaceWorkloadHealth,
+  HealthContext
 } from '../types/Health';
 import { App } from '../types/App';
 import { ServerStatus } from '../types/ServerStatus';
@@ -332,6 +333,89 @@ export const getNamespaceWorkloadHealth = (
       const ret: NamespaceWorkloadHealth = {};
       Object.keys(response.data).forEach(k => {
         ret[k] = WorkloadHealth.fromJson(response.data[k], { rateInterval: durationSec, hasSidecar: true });
+      });
+      return ret;
+    }
+  );
+};
+
+export interface NamespaceHealthQueryEntry {
+  namespace: string;
+  type: 'app' | 'workload' | 'service';
+}
+
+interface NamespaceHealthQueryResponseNamespace {
+  appHealth: NamespaceAppHealth;
+  serviceHealth: NamespaceServiceHealth;
+  workloadHealth: NamespaceWorkloadHealth;
+}
+
+type NamespaceHealthQueryResponse = Record<string, NamespaceHealthQueryResponseNamespace>;
+
+export const getNamespaceHealth = (
+  query: NamespaceHealthQueryEntry[],
+  durationSec: number
+): Promise<NamespaceHealthQueryResponse> => {
+  interface QueryParams {
+    type: string[];
+    namespace: string[];
+    rateInterval?: string;
+  }
+
+  let params: QueryParams = { type: [], namespace: [] };
+
+  params = query.reduce((p: QueryParams, nh: NamespaceHealthQueryEntry) => {
+    p.type.push(nh.type);
+    p.namespace.push(nh.namespace);
+    return p;
+  }, params);
+
+  if (durationSec) {
+    params.rateInterval = String(durationSec) + 's';
+  }
+
+  const assignEachValue = <T>(
+    elements: Record<string, T>,
+    data: any,
+    ctx: HealthContext,
+    decoder: (json: any, ctx: HealthContext) => T
+  ) => {
+    if (data) {
+      Object.keys(data).forEach(k => {
+        elements[k] = decoder(data[k], ctx);
+      });
+    }
+  };
+
+  return newRequest<NamespaceHealthQueryResponse>(HTTP_VERBS.GET, urls.multiNamespaceHealth, params, {}).then(
+    response => {
+      const ret: NamespaceHealthQueryResponse = {};
+      const ctx = { rateInterval: durationSec, hasSidecar: true };
+      Object.keys(response.data).forEach(namespace => {
+        const namespaceResponse: NamespaceHealthQueryResponseNamespace = {
+          appHealth: {},
+          serviceHealth: {},
+          workloadHealth: {}
+        };
+        assignEachValue<AppHealth>(
+          namespaceResponse.appHealth,
+          response.data[namespace].appHealth,
+          ctx,
+          AppHealth.fromJson
+        );
+        assignEachValue<WorkloadHealth>(
+          namespaceResponse.workloadHealth,
+          response.data[namespace].workloadHealth,
+          ctx,
+          WorkloadHealth.fromJson
+        );
+        assignEachValue<ServiceHealth>(
+          namespaceResponse.serviceHealth,
+          response.data[namespace].serviceHealth,
+          ctx,
+          ServiceHealth.fromJson
+        );
+        ret[namespace] = namespaceResponse;
       });
       return ret;
     }

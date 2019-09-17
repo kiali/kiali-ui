@@ -40,7 +40,6 @@ import {
 import { EdgeLabelMode, Layout } from '../../types/GraphFilter';
 import * as H from '../../types/Health';
 import { MessageType } from '../../types/MessageCenter';
-import { NamespaceAppHealth, NamespaceServiceHealth, NamespaceWorkloadHealth } from '../../types/Health';
 import { GraphUrlParams, makeNodeGraphUrlFromParams } from '../Nav/NavUtils';
 import { NamespaceActions } from '../../actions/NamespaceAction';
 import { DurationInSeconds, PollIntervalInMs } from '../../types/Common';
@@ -48,6 +47,7 @@ import GraphThunkActions from '../../actions/GraphThunkActions';
 import * as MessageCenterUtils from '../../utils/MessageCenter';
 import FocusAnimation from './FocusAnimation';
 import { CytoscapeContextMenuWrapper, NodeContextMenuType, EdgeContextMenuType } from './CytoscapeContextMenu';
+import { NamespaceHealthQueryEntry } from '../../services/Api';
 
 type ReduxProps = {
   activeNamespaces: Namespace[];
@@ -673,12 +673,20 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
     if (!cy) {
       return;
     }
+
     const duration = this.props.duration;
     // Keep a map of namespace x promises in order not to fetch several times the same data per namespace
-    const appHealthPerNamespace = new Map<string, Promise<NamespaceAppHealth>>();
-    const serviceHealthPerNamespace = new Map<string, Promise<NamespaceServiceHealth>>();
-    const workloadHealthPerNamespace = new Map<string, Promise<NamespaceWorkloadHealth>>();
+    //const appHealthPerNamespace = new Map<string, Promise<NamespaceAppHealth>>();
+    //const serviceHealthPerNamespace = new Map<string, Promise<NamespaceServiceHealth>>();
+    //const workloadHealthPerNamespace = new Map<string, Promise<NamespaceWorkloadHealth>>();
     // Asynchronously fetch health
+
+    const queryElements = new Set<string>();
+    let resolve = _ => {};
+    const promise = new Promise(localResolve => {
+      resolve = localResolve;
+    });
+
     cy.nodes().forEach(ele => {
       const inaccessible = ele.data(CyNode.isInaccessible);
       if (inaccessible) {
@@ -694,40 +702,50 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
       const useWorkloadHealth = nodeType === NodeType.WORKLOAD || (nodeType === NodeType.APP && workloadOk);
 
       if (useWorkloadHealth) {
-        let promise = workloadHealthPerNamespace.get(namespace);
-        if (!promise) {
-          promise = API.getNamespaceWorkloadHealth(namespace, duration);
-          workloadHealthPerNamespace.set(namespace, promise);
-        }
-        this.updateNodeHealth(ele, promise, workload);
+        queryElements.add(`${namespace}.workload`);
+        this.updateNodeHealth(
+          ele,
+          promise.then((result: any) => {
+            return Promise.resolve(result[namespace].workloadHealth);
+          }),
+          workload
+        );
       } else if (nodeType === NodeType.APP) {
         const app = ele.data(CyNode.app);
-        let promise = appHealthPerNamespace.get(namespace);
-        if (!promise) {
-          promise = API.getNamespaceAppHealth(namespace, duration);
-          appHealthPerNamespace.set(namespace, promise);
-        }
-        this.updateNodeHealth(ele, promise, app);
+        queryElements.add(`${namespace}.app`);
+        this.updateNodeHealth(
+          ele,
+          promise.then((result: any) => {
+            return Promise.resolve(result[namespace].appHealth);
+          }),
+          app
+        );
         // TODO: If we want to block health checks for service entries, uncomment this (see kiali-2029)
         // } else if (nodeType === NodeType.SERVICE && !ele.data(CyNode.isServiceEntry)) {
       } else if (nodeType === NodeType.SERVICE) {
         const service = ele.data(CyNode.service);
-
-        let promise = serviceHealthPerNamespace.get(namespace);
-        if (!promise) {
-          promise = API.getNamespaceServiceHealth(namespace, duration);
-          serviceHealthPerNamespace.set(namespace, promise);
-        }
-        this.updateNodeHealth(ele, promise, service);
+        queryElements.add(`${namespace}.service`);
+        this.updateNodeHealth(
+          ele,
+          promise.then((result: any) => {
+            return Promise.resolve(result[namespace].serviceHealth);
+          }),
+          service
+        );
       }
     });
+
+    const query = Array.from(queryElements.values()).map((val: string) => {
+      const [namespace, type] = val.split('.', 2);
+      return {
+        namespace,
+        type
+      } as NamespaceHealthQueryEntry;
+    });
+    resolve(API.getNamespaceHealth(query, duration));
   }
 
-  private updateNodeHealth(
-    ele: any,
-    promise: Promise<H.NamespaceAppHealth | H.NamespaceServiceHealth | H.NamespaceWorkloadHealth>,
-    key: string
-  ) {
+  private updateNodeHealth(ele: any, promise: Promise<any>, key: string) {
     ele.data('healthPromise', promise.then(nsHealth => nsHealth[key]));
     promise
       .then(nsHealth => {
@@ -737,6 +755,7 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
           if (health) {
             const status = health.getGlobalStatus();
             ele.removeClass(H.DEGRADED.name + ' ' + H.FAILURE.name);
+            console.log(`Status of ${key} is ${status.name}`);
             if (status === H.DEGRADED || status === H.FAILURE) {
               ele.addClass(status.name);
             }

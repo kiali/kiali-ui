@@ -164,7 +164,7 @@ export abstract class Health {
   }
 }
 
-interface HealthContext {
+export interface HealthContext {
   rateInterval: number;
   hasSidecar: boolean;
 }

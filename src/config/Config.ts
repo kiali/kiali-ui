@@ -88,6 +88,7 @@ const conf = {
       namespaces: 'api/namespaces',
       namespacesGraphElements: `api/namespaces/graph`,
       namespaceHealth: (namespace: string) => `api/namespaces/${namespace}/health`,
+      multiNamespaceHealth: 'api/namespaces/health',
       namespaceMetrics: (namespace: string) => `api/namespaces/${namespace}/metrics`,
       namespaceTls: (namespace: string) => `api/namespaces/${namespace}/tls`,
       meshTls: () => 'api/mesh/tls',
