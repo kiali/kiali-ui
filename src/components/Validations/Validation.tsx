@@ -4,6 +4,7 @@ import { PfColors } from '../Pf/PfColors';
 import { IconType } from '@patternfly/react-icons/dist/js/createIcon';
 import { ValidationTypes } from '../../types/IstioObjects';
 import { Text, TextVariants } from '@patternfly/react-core';
+import './Validation.css';
 
 type Props = ValidationDescription & {
   messageColor?: boolean;
@@ -53,7 +54,7 @@ class Validation extends React.Component<Props> {
     const hasMessage = this.props.message;
     if (hasMessage) {
       return (
-        <div style={{ textAlign: 'left' }}>
+        <div className="validation">
           <div style={{ float: 'left', margin: '2px 0.6em 0 0' }}>
             <IconComponent style={colorStyle} />
           </div>
