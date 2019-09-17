@@ -9,6 +9,8 @@ import './Validation.css';
 type Props = ValidationDescription & {
   messageColor?: boolean;
   size?: string;
+  textStyle?: React.CSSProperties;
+  iconStyle?: React.CSSProperties;
 };
 
 export type ValidationDescription = {
@@ -46,46 +48,47 @@ export const severityToValidation: { [severity: string]: ValidationType } = {
   correct: CorrectValidation
 };
 
-export const SMALL_SIZE = '12px';
-export const MEDIUM_SIZE = '18px';
-export const BIG_SIZE = '35px';
-export const INHERITED_SIZE = 'inherit';
-
-const sizeMapper = new Map<string, string>([
-  ['small', SMALL_SIZE],
-  ['medium', MEDIUM_SIZE],
-  ['big', BIG_SIZE],
-  ['inherited', INHERITED_SIZE]
-]);
-
 class Validation extends React.Component<Props> {
   validation() {
     return severityToValidation[this.props.severity];
   }
 
-  size() {
-    return sizeMapper.get(this.props.size || 'inherited') || INHERITED_SIZE;
+  severityColor() {
+    return { color: this.validation().color };
+  }
+
+  textStyle() {
+    const colorMessage = this.props.messageColor || false;
+    const textStyle = this.props.textStyle || {};
+    if (colorMessage) {
+      Object.assign(textStyle, this.severityColor());
+    }
+    return textStyle;
+  }
+
+  iconStyle() {
+    const iconStyle = this.props.iconStyle || {};
+    Object.assign(iconStyle, this.severityColor());
+    return iconStyle;
   }
 
   render() {
     const validation = this.validation();
     const IconComponent = validation.icon;
-    const colorMessage = this.props.messageColor || false;
-    const colorStyle = { color: validation.color };
-    const hasMessage = this.props.message;
+    const hasMessage = !!this.props.message;
     if (hasMessage) {
       return (
         <div className="validation">
           <div style={{ float: 'left', margin: '2px 0.6em 0 0' }}>
-            <IconComponent style={colorStyle} />
+            <IconComponent style={this.iconStyle()} />
           </div>
-          <Text component={TextVariants.p} style={colorMessage ? colorStyle : {}}>
+          <Text component={TextVariants.p} style={this.textStyle()}>
             {this.props.message}
           </Text>
         </div>
       );
     } else {
-      return <IconComponent style={colorStyle} />;
+      return <IconComponent style={this.severityColor()} />;
     }
   }
 }
