@@ -143,10 +143,10 @@ export default class SummaryPanelEdge extends React.Component<SummaryPanelPropTy
                   <NavItem eventKey="traffic">
                     <div>Traffic</div>
                   </NavItem>
-                  <NavItem eventKey="flags">
+                  <NavItem eventKey="flags" title="Response flags by code">
                     <div>Flags</div>
                   </NavItem>
-                  <NavItem eventKey="hosts">
+                  <NavItem eventKey="hosts" title="Request hosts by code">
                     <div>Hosts</div>
                   </NavItem>
                 </Nav>
