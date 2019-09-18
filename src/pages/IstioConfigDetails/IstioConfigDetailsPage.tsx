@@ -132,7 +132,7 @@ class IstioConfigDetailsPage extends React.Component<RouteComponentProps<IstioCo
   onCancel = () => {
     let refresh = true;
     if (this.state.isModified) {
-      refresh = window.confirm('You have unsaved changes, are you sure you want to refresh ?');
+      refresh = window.confirm('You have unsaved changes, are you sure you want to cancel ?');
     }
     if (refresh) {
       if (this.hasOverview()) {
