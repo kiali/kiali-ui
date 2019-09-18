@@ -7,6 +7,7 @@ import { highestSeverity } from '../../types/ServiceInfo';
 type Props = {
   checks?: ObjectCheck[];
   showValid?: boolean;
+  tooltipPosition?: TooltipPosition;
 };
 
 class TooltipValidation extends React.Component<Props> {
@@ -22,7 +23,7 @@ class TooltipValidation extends React.Component<Props> {
     const tooltip = (
       <Tooltip
         aria-label={'Validations list'}
-        position={TooltipPosition.left}
+        position={this.props.tooltipPosition || TooltipPosition.left}
         enableFlip={true}
         content={this.content()}
       >

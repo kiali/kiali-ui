@@ -64,13 +64,7 @@ class Validation extends React.Component<Props> {
         </div>
       );
     } else {
-      return (
-        <>
-          <p style={colorMessage ? colorStyle : {}}>
-            <IconComponent style={!colorMessage ? colorStyle : {}} />
-          </p>
-        </>
-      );
+      return <IconComponent style={colorStyle} />;
     }
   }
 }
