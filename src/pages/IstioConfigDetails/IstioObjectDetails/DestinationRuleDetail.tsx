@@ -114,7 +114,7 @@ class DestinationRuleDetail extends React.Component<DestinationRuleProps> {
   rawConfig() {
     const destinationRule = this.props.destinationRule;
     const globalStatus = this.globalStatus();
-    const isValid = globalStatus ? true : false;
+    const isValid = !globalStatus;
     return (
       <GridItem span={6}>
         <Card>
