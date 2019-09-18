@@ -16,27 +16,35 @@ interface Row {
 
 export class ResponseHostsTable extends React.PureComponent<ResponseHostsTableProps> {
   render() {
+    const rows = this.getRows(this.props.responses);
+
     return (
       <>
-        <strong>{this.props.title}</strong>
-        <table className="table">
-          <thead>
-            <tr key="table-header">
-              <th>Code</th>
-              <th>Host</th>
-              <th>% of Requests</th>
-            </tr>
-          </thead>
-          <tbody>
-            {this.getRows(this.props.responses).map(row => (
-              <tr key={row.key}>
-                <td>{row.code}</td>
-                <td>{row.host}</td>
-                <td>{row.val}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        {rows.length > 0 ? (
+          <>
+            <strong>{this.props.title}</strong>
+            <table className="table">
+              <thead>
+                <tr key="table-header">
+                  <th>Code</th>
+                  <th>Host</th>
+                  <th>% of Requests</th>
+                </tr>
+              </thead>
+              <tbody>
+                {rows.map(row => (
+                  <tr key={row.key}>
+                    <td>{row.code}</td>
+                    <td>{row.host}</td>
+                    <td>{row.val}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </>
+        ) : (
+          <>No Host Information (see FAQ)</>
+        )}
       </>
     );
   }
