@@ -33,6 +33,8 @@ const navStyle = style({ paddingTop: '8px' });
 interface IstioConfigDetailsState {
   istioObjectDetails?: IstioConfigDetails;
   istioValidations?: ObjectValidation;
+  originalIstioObjectDetails?: IstioConfigDetails;
+  originalIstioValidations?: ObjectValidation;
   isModified: boolean;
   yamlModified?: string;
   yamlValidations?: AceValidations;
@@ -63,7 +65,9 @@ class IstioConfigDetailsPage extends React.Component<RouteComponentProps<IstioCo
       .then(resultConfigDetails => {
         this.setState({
           istioObjectDetails: resultConfigDetails.data,
+          originalIstioObjectDetails: resultConfigDetails.data,
           istioValidations: resultConfigDetails.data.validation,
+          originalIstioValidations: resultConfigDetails.data.validation,
           isModified: false,
           yamlModified: ''
         });
@@ -126,10 +130,29 @@ class IstioConfigDetailsPage extends React.Component<RouteComponentProps<IstioCo
   };
 
   onCancel = () => {
-    if (this.hasOverview()) {
-      this.props.history.push(this.props.location.pathname + '?list=overview');
-    } else {
-      this.backToList();
+    let refresh = true;
+    if (this.state.isModified) {
+      refresh = window.confirm('You have unsaved changes, are you sure you want to cancel ?');
+    }
+    if (refresh) {
+      if (this.hasOverview()) {
+        this.setState(
+          prevState => {
+            return {
+              isModified: false,
+              yamlModified: '',
+              currentTab: 'overview',
+              istioObjectDetails: prevState.originalIstioObjectDetails,
+              istioValidations: prevState.originalIstioValidations
+            };
+          },
+          () => {
+            this.props.history.push(this.props.location.pathname + '?list=overview');
+          }
+        );
+      } else {
+        this.backToList();
+      }
     }
   };
 
