@@ -285,7 +285,8 @@ export default class SummaryPanelEdge extends React.Component<SummaryPanelPropTy
         edge.target().isIstio
           ? 'destination'
           : 'source';
-      const filtersRps = ['request_count', 'request_duration', 'request_error_count'];
+      // see comment below about why we have both 'request_duration' and 'request_duration_millis'
+      const filtersRps = ['request_count', 'request_duration', 'request_duration_millis', 'request_error_count'];
       promiseRps = getNodeMetrics(
         destMetricType,
         edge.target(),
@@ -328,34 +329,19 @@ export default class SummaryPanelEdge extends React.Component<SummaryPanelPropTy
             destMetricType,
             sourceData
           );
-          rtAvg = this.getNodeDataPoints(
-            histograms.request_duration.avg,
-            'avg',
-            sourceMetricType,
-            destMetricType,
-            sourceData
-          );
-          rtMed = this.getNodeDataPoints(
-            histograms.request_duration['0.5'],
-            'p50',
-            sourceMetricType,
-            destMetricType,
-            sourceData
-          );
-          rt95 = this.getNodeDataPoints(
-            histograms.request_duration['0.95'],
-            'p95',
-            sourceMetricType,
-            destMetricType,
-            sourceData
-          );
-          rt99 = this.getNodeDataPoints(
-            histograms.request_duration['0.99'],
-            'p99',
-            sourceMetricType,
-            destMetricType,
-            sourceData
-          );
+          // We query for both 'request_duration' and 'request_duration_millis' because the former is used
+          // with Istio mixer telemetry and the latter with Istio mixer-less (introduced as an experimental
+          // option in istion 1.3.0).  Until we can safely rely on the newer metris we must support both. So,
+          // prefer the newer but if it hold no valid data, revert to the older.
+          let histo = histograms.request_duration_millis;
+          rtAvg = this.getNodeDataPoints(histo.avg, 'avg', sourceMetricType, destMetricType, sourceData);
+          if (this.isEmpty(rtAvg)) {
+            histo = histograms.request_duration;
+            rtAvg = this.getNodeDataPoints(histo.avg, 'avg', sourceMetricType, destMetricType, sourceData);
+          }
+          rtMed = this.getNodeDataPoints(histo['0.5'], 'p50', sourceMetricType, destMetricType, sourceData);
+          rt95 = this.getNodeDataPoints(histo['0.95'], 'p95', sourceMetricType, destMetricType, sourceData);
+          rt99 = this.getNodeDataPoints(histo['0.99'], 'p99', sourceMetricType, destMetricType, sourceData);
         } else {
           // TCP
           tcpSent = this.getNodeDataPoints(metrics.tcp_sent, 'Sent', sourceMetricType, destMetricType, sourceData);
@@ -395,6 +381,22 @@ export default class SummaryPanelEdge extends React.Component<SummaryPanelPropTy
 
     this.setState({ loading: true, metricsLoadError: null });
   };
+
+  // Returns true if the histo datum values are all NaN
+  private isEmpty(datums: [string | number][]): boolean {
+    for (const datum of datums) {
+      if (datum[0] === 'x') {
+        continue;
+      }
+      for (let i = 1; i < datum.length; i++) {
+        if (datum[i] !== 'NaN' && datum[i] !== NaN) {
+          return false;
+        }
+      }
+    }
+
+    return true;
+  }
 
   private safeRate = (s: any) => {
     return isNaN(s) ? 0.0 : Number(s);
@@ -461,6 +463,7 @@ export default class SummaryPanelEdge extends React.Component<SummaryPanelPropTy
             rtMed={this.state.rtMed}
             rt95={this.state.rt95}
             rt99={this.state.rt99}
+            units="ms"
           />
           <hr />
         </>
