@@ -97,7 +97,7 @@ export class ValidationSummary extends React.PureComponent<Props> {
   tooltipContent() {
     const validation = severityToValidation[this.severity()];
     return (
-      <div>
+      <>
         <Text component={TextVariants.h4}>
           <strong>{validation.name}</strong>
         </Text>
@@ -109,7 +109,7 @@ export class ValidationSummary extends React.PureComponent<Props> {
           ))}
           {this.validationInfo()}
         </div>
-      </div>
+      </>
     );
   }
 
