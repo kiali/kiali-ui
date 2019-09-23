@@ -389,7 +389,7 @@ export default class SummaryPanelEdge extends React.Component<SummaryPanelPropTy
         continue;
       }
       for (let i = 1; i < datum.length; i++) {
-        if (datum[i] !== 'NaN' && datum[i] !== NaN) {
+        if (!isNaN(Number(datum[i]))) {
           return false;
         }
       }
