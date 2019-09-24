@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Table, TableHeader, TableBody } from '@patternfly/react-table';
+import { Table, TableHeader, TableBody, cellWidth } from '@patternfly/react-table';
 import Slider from './Slider/Slider';
 import { WorkloadOverview } from '../../types/ServiceInfo';
 import { style } from 'typestyle';
@@ -160,10 +160,12 @@ class WeightedRouting extends React.Component<Props, State> {
     const headerCells = [
       {
         title: 'Workload',
+        transforms: [cellWidth(30)],
         props: {}
       },
       {
         title: 'Traffic Weight',
+        transforms: [cellWidth(70)],
         props: {}
       }
     ];

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Table, TableHeader, TableBody } from '@patternfly/react-table';
+import { Table, TableHeader, TableBody, cellWidth } from '@patternfly/react-table';
 import { WorkloadOverview } from '../../types/ServiceInfo';
 import { style } from 'typestyle';
 import { Badge, Button, Tooltip, TooltipPosition } from '@patternfly/react-core';
@@ -102,10 +102,12 @@ class SuspendTraffic extends React.Component<Props, State> {
     const headerCells = [
       {
         title: 'Workload',
+        transforms: [cellWidth(30)],
         props: {}
       },
       {
         title: 'Suspended Status',
+        transforms: [cellWidth(70)],
         props: {}
       }
     ];
