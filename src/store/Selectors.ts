@@ -39,6 +39,10 @@ const edgeLabelMode = (state: KialiAppState) => state.graph.filterState.edgeLabe
 
 export const edgeLabelModeSelector = createIdentitySelector(edgeLabelMode);
 
+const findHideErrorMessage = (state: KialiAppState) => state.graph.filterState.findHideErrorMessage;
+
+export const findHideErrorMessageSelector = createIdentitySelector(findHideErrorMessage);
+
 const findValue = (state: KialiAppState) => state.graph.filterState.findValue;
 
 export const findValueSelector = createIdentitySelector(findValue);

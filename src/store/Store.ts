@@ -31,6 +31,7 @@ export interface NamespaceState {
 
 // Various pages are described here with their various sections
 export interface GraphFilterState {
+  findHideErrorMessage?: string;
   // dropdown props
   edgeLabelMode: EdgeLabelMode;
   graphType: GraphType;

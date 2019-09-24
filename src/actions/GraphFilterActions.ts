@@ -5,6 +5,7 @@ import { EdgeLabelMode } from '../types/GraphFilter';
 import { ActionKeys } from './ActionKeys';
 
 export const GraphFilterActions = {
+  setFindHideErrorMessage: createStandardAction(ActionKeys.GRAPH_FILTER_SET_HIDE_VALUE)<string>(),
   setEdgelLabelMode: createStandardAction(ActionKeys.GRAPH_FILTER_SET_EDGE_LABEL_MODE)<EdgeLabelMode>(),
   setFindValue: createStandardAction(ActionKeys.GRAPH_FILTER_SET_FIND_VALUE)<string>(),
   setGraphType: createStandardAction(ActionKeys.GRAPH_FILTER_SET_GRAPH_TYPE)<GraphType>(),

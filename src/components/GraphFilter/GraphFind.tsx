@@ -1,11 +1,16 @@
 import * as React from 'react';
 import { Button, Form, TextInput } from '@patternfly/react-core';
-import { CloseIcon, HelpIcon, ExpandIcon, CompressIcon } from '@patternfly/react-icons';
+import { CloseIcon, HelpIcon } from '@patternfly/react-icons';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { bindActionCreators } from 'redux';
 import { KialiAppState } from '../../store/Store';
-import { findValueSelector, hideValueSelector, edgeLabelModeSelector } from '../../store/Selectors';
+import {
+  findValueSelector,
+  hideValueSelector,
+  edgeLabelModeSelector,
+  findHideErrorMessageSelector
+} from '../../store/Selectors';
 import { GraphFilterActions } from '../../actions/GraphFilterActions';
 import { KialiAppAction } from '../../actions/KialiAppAction';
 import GraphHelpFind from '../../pages/Graph/GraphHelpFind';
@@ -14,8 +19,10 @@ import * as CytoscapeGraphUtils from '../CytoscapeGraph/CytoscapeGraphUtils';
 import { CyData, NodeType } from '../../types/Graph';
 import { Layout, EdgeLabelMode } from 'types/GraphFilter';
 import * as MessageCenter from '../../utils/MessageCenter';
+import _ from 'lodash';
 
-type ReduxProps = {
+type GraphFindProps = {
+  findHideErrorMessage: string | undefined;
   compressOnHide: boolean;
   cyData: CyData | null;
   edgeLabelMode: EdgeLabelMode;
@@ -27,19 +34,12 @@ type ReduxProps = {
   showUnusedNodes: boolean;
 
   setEdgeLabelMode: (val: EdgeLabelMode) => void;
+  setFindHideErrorMessage: (val: string) => void;
   setFindValue: (val: string) => void;
   setHideValue: (val: string) => void;
   toggleFindHelp: () => void;
   toggleGraphSecurity: () => void;
   toggleUnusedNodes: () => void;
-};
-
-type GraphFindProps = ReduxProps;
-
-type GraphFindState = {
-  errorMessage: string;
-  findInputValue: string;
-  hideInputValue: string;
 };
 
 type ParsedExpression = {
@@ -57,21 +57,16 @@ const thinGroupStyle = {
   paddingRight: '10px'
 };
 
-export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindState> {
+export class GraphFind extends React.Component<GraphFindProps> {
   static contextTypes = {
     router: () => null
   };
 
-  private findInputRef;
   private hiddenElements: any | undefined;
-  private hideInputRef;
   private removedElements: any | undefined;
 
   constructor(props: GraphFindProps) {
     super(props);
-    const findValue = props.findValue ? props.findValue : '';
-    const hideValue = props.hideValue ? props.hideValue : '';
-    this.state = { errorMessage: '', findInputValue: findValue, hideInputValue: hideValue };
     if (props.showFindHelp) {
       props.toggleFindHelp();
     }
@@ -82,8 +77,6 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
   // that applying the find/hide on update is sufficient because  we will be updated after the cy is loaded
   // due to a change notification for this.props.cyData.
   componentDidUpdate(prevProps: GraphFindProps) {
-    const findChanged = this.props.findValue !== prevProps.findValue;
-    const hideChanged = this.props.hideValue !== prevProps.hideValue;
     const compressOnHideChanged = this.props.compressOnHide !== prevProps.compressOnHide;
     const hadCyData = prevProps.cyData != null;
     const hasCyData = this.props.cyData != null;
@@ -91,19 +84,11 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
       (!hadCyData && hasCyData) ||
       (hadCyData && hasCyData && this.props.cyData!.updateTimestamp !== prevProps.cyData!.updateTimestamp);
 
-    // make sure the value is updated if there was a change
-    if (findChanged) {
-      this.setState({ findInputValue: this.props.findValue });
-    }
-    if (hideChanged) {
-      this.setState({ hideInputValue: this.props.hideValue });
-    }
-
-    if (findChanged || (graphChanged && this.props.findValue)) {
+    if (graphChanged && this.props.findValue) {
       this.handleFind();
     }
-    if (hideChanged || compressOnHideChanged || (graphChanged && this.props.hideValue)) {
-      this.handleHide(graphChanged, hideChanged, compressOnHideChanged);
+    if (graphChanged && this.props.hideValue) {
+      this.handleHide(graphChanged, compressOnHideChanged);
     }
   }
 
@@ -120,7 +105,7 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
               type="text"
               style={{ ...inputWidth }}
               onChange={this.updateFind}
-              defaultValue={this.state.findInputValue}
+              defaultValue={this.props.findValue}
               onKeyPress={this.checkSubmitFind}
               placeholder="Find..."
             />
@@ -133,18 +118,11 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
               type="text"
               style={{ ...inputWidth }}
               onChange={this.updateHide}
-              defaultValue={this.state.hideInputValue}
+              defaultValue={this.props.hideValue}
               onKeyPress={this.checkSubmitHide}
               placeholder="Hide..."
             />
             {this.props.hideValue && <Button onClick={this.clearHide} icon={<CloseIcon />} />}
-            <Button
-              variant="link"
-              aria-label="graph expand/compress"
-              style={{ margin: '4px', border: '1px solid gray' }}
-              onClick={this.toggleCompressOnHide}
-              icon={this.props.compressOnHide ? <ExpandIcon /> : <CompressIcon />}
-            />
             <Button
               variant="link"
               aria-label="graph find/hide help"
@@ -153,9 +131,9 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
               icon={<HelpIcon />}
             />
           </span>
-          {this.state.errorMessage && (
+          {this.props.findHideErrorMessage && (
             <div>
-              <span style={{ color: 'red' }}>{this.state.errorMessage}</span>
+              <span style={{ color: 'red' }}>{this.props.findHideErrorMessage}</span>
             </div>
           )}
         </Form>
@@ -172,7 +150,8 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
     if ('' === event) {
       this.clearFind();
     } else {
-      this.setState({ findInputValue: event, errorMessage: '' });
+      this.props.setFindHideErrorMessage('');
+      this.props.setFindValue(event);
     }
   };
 
@@ -180,7 +159,8 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
     if ('' === event) {
       this.clearHide();
     } else {
-      this.setState({ hideInputValue: event, errorMessage: '' });
+      this.props.setFindHideErrorMessage('');
+      this.props.setHideValue(event);
     }
   };
 
@@ -188,7 +168,8 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
     const keyCode = event.keyCode ? event.keyCode : event.which;
     if (keyCode === 13) {
       event.preventDefault();
-      this.submitFind();
+      // this.submitFind();
+      this.props.setFindValue(event);
     }
   };
 
@@ -196,37 +177,22 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
     const keyCode = event.keyCode ? event.keyCode : event.which;
     if (keyCode === 13) {
       event.preventDefault();
-      this.submitHide();
-    }
-  };
-
-  private submitFind = () => {
-    if (this.props.findValue !== this.state.findInputValue) {
-      this.props.setFindValue(this.state.findInputValue);
-    }
-  };
-
-  private submitHide = () => {
-    if (this.props.hideValue !== this.state.hideInputValue) {
-      this.props.setHideValue(this.state.hideInputValue);
+      this.props.setHideValue(event);
     }
   };
 
   private clearFind = () => {
     // note, we don't use findInputRef.current because <FormControl> deals with refs differently than <input>
-    this.findInputRef.value = '';
-    this.setState({ findInputValue: '', errorMessage: '' });
+    this.props.setFindHideErrorMessage('');
     this.props.setFindValue('');
   };
 
   private clearHide = () => {
     // note, we don't use hideInputRef.current because <FormControl> deals with refs differently than <input>
-    this.hideInputRef.value = '';
-    this.setState({ hideInputValue: '', errorMessage: '' });
     this.props.setHideValue('');
   };
 
-  private handleHide = (graphChanged: boolean, hideChanged: boolean, compressOnHideChanged: boolean) => {
+  private handleHide = (graphChanged: boolean, compressOnHideChanged: boolean) => {
     if (!this.props.cyData) {
       console.debug('Skip Hide: cy not set.');
       return;
@@ -279,11 +245,11 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
     }
 
     const removedElements: boolean = this.removedElements && this.removedElements.size() > 0;
-    if (hideChanged || (compressOnHideChanged && selector) || removedElements) {
+    if ((compressOnHideChanged && selector) || removedElements) {
       const zoom = cy.zoom();
       const pan = cy.pan();
       CytoscapeGraphUtils.runLayout(cy, this.props.layout);
-      if (!hideChanged && !compressOnHideChanged) {
+      if (!compressOnHideChanged) {
         if (zoom !== cy.zoom()) {
           cy.zoom(zoom);
         }
@@ -301,24 +267,27 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
       return;
     }
     const cy = this.props.cyData.cyRef;
-    const selector = this.parseValue(this.props.findValue);
-    cy.startBatch();
-    // unhighlight old find-hits
-    cy.elements('*.find').removeClass('find');
-    if (selector) {
-      // add new find-hits
-      cy.elements(selector).addClass('find');
+    if (!_.isEmpty(this.props.findValue)) {
+      const selector = this.parseValue(this.props.findValue);
+      cy.startBatch();
+      // unhighlight old find-hits
+      cy.elements('*.find').removeClass('find');
+      if (selector) {
+        // add new find-hits
+        cy.elements(selector).addClass('find');
+      }
+      cy.endBatch();
     }
-    cy.endBatch();
   };
 
   private setErrorMsg(errorMessage: string): undefined {
-    if (errorMessage !== this.state.errorMessage) {
-      this.setState({ errorMessage: errorMessage });
+    if (errorMessage !== this.props.findHideErrorMessage) {
+      this.props.setFindHideErrorMessage(errorMessage);
     }
     return undefined;
   }
 
+  // @ts-ignore
   private parseValue = (val: string): string | undefined => {
     let preparedVal = this.prepareValue(val);
     if (!preparedVal) {
@@ -353,6 +322,9 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
 
   private prepareValue = (val: string): string => {
     // remove double spaces
+    if (!val) {
+      return '';
+    }
     val = val.replace(/ +(?= )/g, '');
 
     // remove unnecessary mnemonic qualifiers on unary operators (e.g. 'has cb' -> 'cb').
@@ -641,6 +613,7 @@ const mapStateToProps = (state: KialiAppState) => ({
   edgeLabelMode: edgeLabelModeSelector(state),
   findValue: findValueSelector(state),
   hideValue: hideValueSelector(state),
+  findHideErrorMessage: findHideErrorMessageSelector(state),
   layout: state.graph.layout,
   showFindHelp: state.graph.filterState.showFindHelp,
   showSecurity: state.graph.filterState.showSecurity,
@@ -651,6 +624,7 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<KialiAppState, void, KialiAp
   return {
     setEdgeLabelMode: bindActionCreators(GraphFilterActions.setEdgelLabelMode, dispatch),
     setFindValue: bindActionCreators(GraphFilterActions.setFindValue, dispatch),
+    setFindHideErrorMessage: bindActionCreators(GraphFilterActions.setFindHideErrorMessage, dispatch),
     toggleGraphSecurity: bindActionCreators(GraphFilterActions.toggleGraphSecurity, dispatch),
     setHideValue: bindActionCreators(GraphFilterActions.setHideValue, dispatch),
     toggleFindHelp: bindActionCreators(GraphFilterActions.toggleFindHelp, dispatch),

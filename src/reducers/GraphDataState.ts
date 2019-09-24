@@ -24,6 +24,7 @@ export const INITIAL_GRAPH_STATE: GraphState = {
     compressOnHide: true,
     edgeLabelMode: EdgeLabelMode.NONE,
     findValue: '',
+    findHideErrorMessage: '',
     graphType: GraphType.VERSIONED_APP,
     hideValue: '',
     showCircuitBreakers: true,
