@@ -3,6 +3,7 @@ import { AreaChart, Icon } from 'patternfly-react';
 import { PfColors } from '../../components/Pf/PfColors';
 import { SUMMARY_PANEL_CHART_WIDTH } from '../../types/Graph';
 
+export type ResponseTimeUnit = 's' | 'ms';
 type ResponseTimeChartTypeProp = {
   hide?: boolean;
   label: string;
@@ -10,10 +11,10 @@ type ResponseTimeChartTypeProp = {
   rtMed: [string | number][];
   rt95: [string | number][];
   rt99: [string | number][];
-  units: 's' | 'ms';
+  unit: ResponseTimeUnit;
 };
 
-export default class ResponseTimeChart extends React.Component<ResponseTimeChartTypeProp, {}> {
+export class ResponseTimeChart extends React.Component<ResponseTimeChartTypeProp, {}> {
   thereIsTrafficData = () => {
     return this.props.rtAvg && this.props.rtAvg.length > 1 && this.props.rtAvg[0].length > 1;
   };
@@ -54,7 +55,7 @@ export default class ResponseTimeChart extends React.Component<ResponseTimeChart
     };
 
     const columns =
-      this.props.units === 's'
+      this.props.unit === 's'
         ? (this.toMillis(this.props.rtAvg) as [string | number][])
             .concat(this.toMillis(this.props.rtMed) as [string | number][])
             .concat(this.toMillis(this.props.rt95) as [string | number][])
