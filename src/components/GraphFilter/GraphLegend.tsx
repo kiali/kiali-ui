@@ -10,18 +10,11 @@ export interface GraphLegendProps {
   isMTLSEnabled: boolean;
 }
 
-export interface GraphLegendState {
-  width: number;
-  height: number;
-}
+const width = '300px';
 
-export default class GraphLegend extends React.Component<GraphLegendProps, GraphLegendState> {
+export default class GraphLegend extends React.Component<GraphLegendProps> {
   constructor(props: GraphLegendProps) {
     super(props);
-    this.state = {
-      width: 300,
-      height: 660
-    };
   }
 
   render() {
@@ -29,11 +22,13 @@ export default class GraphLegend extends React.Component<GraphLegendProps, Graph
       margin: '1em 0 4em 0',
       padding: '1em',
       border: '1px solid gray',
-      overflowY: 'hidden'
+      overflow: 'hidden',
+      overflowX: 'auto',
+      overflowY: 'auto'
     });
 
     const headerStyle = style({
-      width: this.state.width
+      width: width
     });
 
     const legendTextHeadingStyle = style({
@@ -41,15 +36,13 @@ export default class GraphLegend extends React.Component<GraphLegendProps, Graph
     });
 
     const bodyStyle = style({
-      width: this.state.width,
-      height: this.state.height
+      width: width,
+      height: 'auto'
     });
 
     const legendListStyle = style({
       display: 'flex',
-      flexDirection: 'column',
-      overflowY: 'scroll',
-      height: '650px'
+      flexDirection: 'column'
     });
 
     return (
@@ -75,9 +68,13 @@ export default class GraphLegend extends React.Component<GraphLegendProps, Graph
     const legendColumnHeadingStyle = style({
       paddingTop: '1.25em'
     });
+    const aStyle = style({
+      height: '100%',
+      width: width
+    });
 
     return (
-      <div>
+      <div className={aStyle}>
         {legendData.map((legendItem: GraphLegendItem) => (
           <div key={legendItem.title} className={legendColumnHeadingStyle}>
             {legendItem.title}
@@ -100,7 +97,6 @@ export default class GraphLegend extends React.Component<GraphLegendProps, Graph
       display: 'flex',
       flexDirection: 'row',
       justifyContent: 'space-between',
-      width: '270px',
       padding: '5px 5px 0 5px'
     });
 
