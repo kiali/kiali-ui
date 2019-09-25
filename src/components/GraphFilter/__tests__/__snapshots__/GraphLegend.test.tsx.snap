@@ -13,7 +13,7 @@ exports[`GraphLegend test should render correctly 1`] = `
       Legend
     </span>
     <span
-      className="pull-right"
+      className="f1vrdyv8"
     >
       <Tooltip
         appendTo={[Function]}

@@ -41,11 +41,16 @@ export default class GraphLegend extends React.Component<GraphLegendProps> {
       flexDirection: 'column'
     });
 
+    const closeBoxStyle = style({
+      float: 'right',
+      marginTop: '-7px'
+    });
+
     return (
       <div className={legendBoxStyle}>
         <div className={headerStyle}>
           <span className={legendTextHeadingStyle}>Legend</span>
-          <span className="pull-right">
+          <span className={closeBoxStyle}>
             <Tooltip content="Close Legend">
               <Button id="legend_close" variant="plain" onClick={this.props.closeLegend}>
                 <CloseIcon />
