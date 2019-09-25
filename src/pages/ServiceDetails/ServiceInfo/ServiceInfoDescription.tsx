@@ -144,11 +144,15 @@ class ServiceInfoDescription extends React.Component<ServiceInfoDescriptionProps
                     {(this.props.endpoints || []).map((endpoint, i) =>
                       (endpoint.addresses || []).map((address, u) => (
                         <StackItem key={'endpoint_' + i + '_address_' + u}>
-                          <Tooltip content={<>{address.name}</>}>
-                            <span>
-                              <EyeIcon /> {address.ip}
-                            </span>
-                          </Tooltip>
+                          {address.name !== '' ? (
+                            <Tooltip content={<>{address.name}</>}>
+                              <span>
+                                <EyeIcon /> {address.ip}
+                              </span>
+                            </Tooltip>
+                          ) : (
+                            <>{address.name}</>
+                          )}
                         </StackItem>
                       ))
                     )}
