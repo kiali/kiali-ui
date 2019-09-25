@@ -2,7 +2,7 @@ import * as React from 'react';
 import Label from './Label';
 import { style } from 'typestyle';
 
-const SHOW_MORE_TRESHOLD = 3;
+const SHOW_MORE_TRESHOLD = 2;
 
 interface Props {
   labels?: { [key: string]: string };
