@@ -49,7 +49,7 @@ class Labels extends React.Component<Props, State> {
   renderMoreLabelsLink() {
     if (this.hasManyLabels() && !this.state.expanded) {
       return (
-        <a className={linkStyle} onClick={this.expandLabels}>
+        <a key="label_more" className={linkStyle} onClick={this.expandLabels}>
           {' '}
           More labels...
         </a>
