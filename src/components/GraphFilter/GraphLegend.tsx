@@ -13,10 +13,6 @@ export interface GraphLegendProps {
 const width = '300px';
 
 export default class GraphLegend extends React.Component<GraphLegendProps> {
-  constructor(props: GraphLegendProps) {
-    super(props);
-  }
-
   render() {
     const legendBoxStyle = style({
       margin: '1em 0 4em 0',
