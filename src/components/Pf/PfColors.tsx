@@ -88,3 +88,9 @@ export enum PfColors {
   // Kiali colors that use PF colors
   Gray = '#72767b' // Black600
 }
+
+export enum PFColorVars {
+  DangerColor = '--pf-global--danger-color--100',
+  WarningColor = '--pf-global--warning-color--100',
+  SuccessColor = '--pf-global--success-color--100'
+}
