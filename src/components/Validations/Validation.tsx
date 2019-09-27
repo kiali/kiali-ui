@@ -54,7 +54,7 @@ class Validation extends React.Component<Props> {
   }
 
   severityColor() {
-    return { color: `var(${this.validation().color})` };
+    return { color: this.validation().color };
   }
 
   textStyle() {
