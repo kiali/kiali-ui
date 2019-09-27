@@ -380,6 +380,20 @@ export class GraphStyles {
       return 'none';
     };
 
+    const getNodeBackgroundPositionX = (ele: any): string => {
+      if (getNodeShape(ele) === 'tag') {
+        return '0';
+      }
+      return '50%';
+    };
+
+    const getNodeBackgroundPositionY = (ele: any): string => {
+      if (getNodeShape(ele) === 'triangle') {
+        return '6px';
+      }
+      return '50%';
+    };
+
     const getNodeBorderColor = (ele: any): string => {
       if (ele.hasClass(DEGRADED.name)) {
         return NodeColorBorderDegraded;
@@ -429,7 +443,10 @@ export class GraphStyles {
           'background-image': (ele: any) => {
             return getNodeBackgroundImage(ele);
           },
-          'background-fit': 'contain',
+          'background-width': '80%',
+          'background-height': '80%',
+          'background-position-x': getNodeBackgroundPositionX,
+          'background-position-y': getNodeBackgroundPositionY,
           'border-color': (ele: any) => {
             return getNodeBorderColor(ele);
           },
