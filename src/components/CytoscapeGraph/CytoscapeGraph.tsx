@@ -373,17 +373,37 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
     cy.on('nodehtml-create-or-update', 'node', (evt: any, data: any) => {
       const { label, isNew } = data;
       const { target } = evt;
+      // This is the DOM node of the label, if we want the cyNode it is `target`
       const node = label.getNode();
 
-      if (target.isParent()) {
-        // Avoid parent nodes
-        return;
-      }
-
-      // Add listeners to new nodes
+      // Assign to the label node (the DOM element) an id that matches the cy node.
+      // This is so that when we click, we can identify if the clicked label belongs to
+      // any cy node and select it
+      // Note that we don't add an actual listener to this DOM node. We use the cy click event, this proved to be more
+      // stable than adding a listener. As we only want the contents to match and not the whole node (which is bigger).
       if (isNew) {
         node.setAttribute('data-node-id', target.id());
       }
+
+      // Skip parent nodes from bounding expansion calculation, their size is defined by their contents, so no point in
+      // messing with these values.
+      if (target.isParent()) {
+        return;
+      }
+
+      // The code below expands the bounds of a node, taking into consideration the labels. This is important not only
+      // for displaying the label, but to avoid nodes overlapping with other labels.
+      // We assume that a label is placed centered in the bottom part of a node.
+      // The algorithm is:
+      // - Take the old bounds-expansion
+      // - Get the bounding-box of a node (without taking into account the overlays  i.e. the one that appears on click)
+      // - Compute the required extra width as the label width minus the bounding box width
+      //   - This will yield a a positive number if we need more space, or negative if we need less space.
+      // - Compute the required height as the height of the label. Since the label is at the bottom, we only need that.
+      //   If its center was aligned with the center of the node, we would do a similar operation as with the width.
+      // - Spread the required width as extra space in the left area and space in the right area of the cy node
+      //   (half in each side)
+      // - Required height is only needed at the bottom, so we now that we always have to grow at the bottom by this value.
 
       let oldBE = target.numericStyle('bounds-expansion');
       if (oldBE.length === 1) {
@@ -394,13 +414,9 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
       let newBE = [...oldBE];
       const requiredWidth = node.offsetWidth - bb.w;
       const requiredHeight = node.offsetHeight;
-      newBE[1] = newBE[3] = requiredWidth * 0.5;
+      newBE[1] += requiredWidth * 0.5;
+      newBE[3] += requiredWidth * 0.5;
       newBE[2] = requiredHeight;
-
-      // The boundingBox contains any value present in the current bounds-expansion, we subtracted this value and now we
-      // need to add it back to avoid loops
-      newBE[1] += oldBE[1];
-      newBE[3] += oldBE[3];
 
       // Ensure we don't end with negative values in our bounds-expansion
       newBE = newBE.map(val => Math.max(val, 0));
