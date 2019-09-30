@@ -328,7 +328,7 @@ class ThreeScaleIntegration extends React.Component<Props, State> {
                 />
                 <DataListItemCells
                   dataListCells={[
-                    <DataListCell isIcon={true}>
+                    <DataListCell key={'handler' + id + 'icon'} isIcon={true}>
                       {isLinked && (
                         <Tooltip
                           position={TooltipPosition.top}
@@ -342,7 +342,7 @@ class ThreeScaleIntegration extends React.Component<Props, State> {
                         </Tooltip>
                       )}
                     </DataListCell>,
-                    <DataListCell>
+                    <DataListCell key={'handler' + id + 'name'}>
                       {isLinked && (
                         <>
                           Service <b>{this.props.serviceName}</b> will be linked with 3scale API using{' '}
