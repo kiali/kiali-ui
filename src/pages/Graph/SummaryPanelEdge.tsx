@@ -187,8 +187,27 @@ export default class SummaryPanelEdge extends React.Component<SummaryPanelPropTy
           </div>
         )}
         {isTcp && (
-          <div className="panel-body">
-            <ResponseFlagsTable title="TCP Responses:" responses={edgeData.responses} />
+          <div className={`"panel-body ${summaryBodyTabs}`}>
+            <TabContainer id="basic-tabs" defaultActiveKey="flags">
+              <div>
+                <Nav className={`nav nav-tabs nav-tabs-pf ${summaryNavTabs}`}>
+                  <NavItem eventKey="flags" title="Response flags by code">
+                    <div>Flags</div>
+                  </NavItem>
+                  <NavItem eventKey="hosts" title="Request hosts by code">
+                    <div>Hosts</div>
+                  </NavItem>
+                </Nav>
+                <TabContent style={{ paddingTop: '10px' }}>
+                  <TabPane eventKey="flags" mountOnEnter={true} unmountOnExit={true}>
+                    <ResponseFlagsTable title="TCP Responses:" responses={edgeData.responses} />
+                  </TabPane>
+                  <TabPane eventKey="hosts" mountOnEnter={true} unmountOnExit={true}>
+                    <ResponseHostsTable title="TCP Responses" responses={edgeData.responses} />
+                  </TabPane>
+                </TabContent>
+              </div>
+            </TabContainer>
             <hr />
             {this.renderCharts(edge, isGrpc, isHttp, isTcp)}
           </div>

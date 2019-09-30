@@ -1,5 +1,6 @@
 import * as React from 'react';
 import _ from 'lodash';
+import { style } from 'typestyle';
 import { Responses } from '../../types/Graph';
 
 type ResponseHostsTableProps = {
@@ -14,6 +15,10 @@ interface Row {
   val: string;
 }
 
+const hostStyle = style({
+  wordWrap: 'break-word'
+});
+
 export class ResponseHostsTable extends React.PureComponent<ResponseHostsTableProps> {
   render() {
     const rows = this.getRows(this.props.responses);
@@ -23,19 +28,19 @@ export class ResponseHostsTable extends React.PureComponent<ResponseHostsTablePr
         {rows.length > 0 ? (
           <>
             <strong>{this.props.title}</strong>
-            <table className="table">
+            <table className="table" style={{ tableLayout: 'fixed', width: '100%' }}>
               <thead>
                 <tr key="table-header">
-                  <th>Code</th>
-                  <th>Host</th>
-                  <th>% of Requests</th>
+                  <th style={{ width: '15%' }}>Code</th>
+                  <th style={{ width: '50%' }}>Host</th>
+                  <th style={{ width: '35%' }}>% Requests</th>
                 </tr>
               </thead>
               <tbody>
                 {rows.map(row => (
                   <tr key={row.key}>
                     <td>{row.code}</td>
-                    <td>{row.host}</td>
+                    <td className={hostStyle}>{row.host}</td>
                     <td>{row.val}</td>
                   </tr>
                 ))}
@@ -43,7 +48,7 @@ export class ResponseHostsTable extends React.PureComponent<ResponseHostsTablePr
             </table>
           </>
         ) : (
-          <>No Host Information (see FAQ)</>
+          <>No Host Information Available</>
         )}
       </>
     );
