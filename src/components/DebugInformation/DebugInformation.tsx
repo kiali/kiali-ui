@@ -107,7 +107,7 @@ export class DebugInformation extends React.PureComponent<DebugInformationProps,
 
     return (
       <Modal
-        isLarge={true}
+        isSmall={true}
         isOpen={this.state.show}
         onClose={this.close}
         title="Debug information"
@@ -120,6 +120,7 @@ export class DebugInformation extends React.PureComponent<DebugInformationProps,
       >
         {this.state.copyStatus === CopyStatus.COPIED && (
           <Alert
+            style={{ marginBottom: '20px' }}
             title="Debug information has been copied to your clipboard."
             variant={AlertVariant.success}
             isInline={true}
@@ -128,6 +129,7 @@ export class DebugInformation extends React.PureComponent<DebugInformationProps,
         )}
         {this.state.copyStatus === CopyStatus.OLD_COPY && (
           <Alert
+            style={{ marginBottom: '20px' }}
             title="Debug information was copied to your clipboard, but is outdated now. It could be caused by new data received by auto refresh timers."
             variant={AlertVariant.warning}
             isInline={true}

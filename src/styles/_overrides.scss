@@ -340,3 +340,10 @@ Top line in tabs
 .nav-tabs {
   border-top: 1px solid #ededed;
 }
+
+/*
+Inline Alerts: background transparent
+ */
+.pf-c-alert.pf-m-inline {
+  --pf-c-alert__icon--BackgroundColor: var(--pf-c-alert--m-inline__icon--BackgroundColor);
+}
