@@ -90,11 +90,22 @@ export interface CytoscapeMouseOutEvent extends CytoscapeBaseEvent {}
 
 // Graph Structures
 
-export type ResponseDetail = {
-  flags: object; // string map flags->percentageOfTraffic
-  hosts: object; // string map host->percentageOfTraffic
+type PercentageOfTrafficByFlag = {
+  [flag: string]: string;
 };
-export type Responses = object; // map responseCode:string -> ResponseDetail
+
+type PercentageOfTrafficByHost = {
+  [host: string]: string;
+};
+
+export type ResponseDetail = {
+  flags: PercentageOfTrafficByFlag;
+  hosts: PercentageOfTrafficByHost;
+};
+
+export type Responses = {
+  [responseCode: string]: ResponseDetail;
+};
 
 type ValidProtocols = 'http' | 'grpc' | 'tcp';
 
