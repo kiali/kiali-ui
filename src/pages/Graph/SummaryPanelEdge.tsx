@@ -146,7 +146,7 @@ export default class SummaryPanelEdge extends React.Component<SummaryPanelPropTy
                   <NavItem eventKey="flags" title="Response flags by code">
                     <div>Flags</div>
                   </NavItem>
-                  <NavItem eventKey="hosts" title="Request hosts by code">
+                  <NavItem eventKey="hosts" title="Hosts by code">
                     <div>Hosts</div>
                   </NavItem>
                 </Nav>
@@ -174,10 +174,16 @@ export default class SummaryPanelEdge extends React.Component<SummaryPanelPropTy
                     )}
                   </TabPane>
                   <TabPane eventKey="flags" mountOnEnter={true} unmountOnExit={true}>
-                    <ResponseFlagsTable title={isGrpc ? 'GRPC codes:' : 'HTTP codes:'} responses={edgeData.responses} />
+                    <ResponseFlagsTable
+                      title={'Response flags by ' + (isGrpc ? 'GRPC code:' : 'HTTP code:')}
+                      responses={edgeData.responses}
+                    />
                   </TabPane>
                   <TabPane eventKey="hosts" mountOnEnter={true} unmountOnExit={true}>
-                    <ResponseHostsTable title={isGrpc ? 'GRPC codes:' : 'HTTP codes:'} responses={edgeData.responses} />
+                    <ResponseHostsTable
+                      title={'Hosts by ' + (isGrpc ? 'GRPC code:' : 'HTTP code:')}
+                      responses={edgeData.responses}
+                    />
                   </TabPane>
                 </TabContent>
               </div>
@@ -194,16 +200,16 @@ export default class SummaryPanelEdge extends React.Component<SummaryPanelPropTy
                   <NavItem eventKey="flags" title="Response flags by code">
                     <div>Flags</div>
                   </NavItem>
-                  <NavItem eventKey="hosts" title="Request hosts by code">
+                  <NavItem eventKey="hosts" title="Hosts by code">
                     <div>Hosts</div>
                   </NavItem>
                 </Nav>
                 <TabContent style={{ paddingTop: '10px' }}>
                   <TabPane eventKey="flags" mountOnEnter={true} unmountOnExit={true}>
-                    <ResponseFlagsTable title="TCP Responses:" responses={edgeData.responses} />
+                    <ResponseFlagsTable title="Response flags by code:" responses={edgeData.responses} />
                   </TabPane>
                   <TabPane eventKey="hosts" mountOnEnter={true} unmountOnExit={true}>
-                    <ResponseHostsTable title="TCP Responses" responses={edgeData.responses} />
+                    <ResponseHostsTable title="Hosts by code:" responses={edgeData.responses} />
                   </TabPane>
                 </TabContent>
               </div>
