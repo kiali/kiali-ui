@@ -60,6 +60,8 @@ const NodeTextFontSize = '8px';
 const NodeTextFontSizeHover = '11px';
 const NodeWidth = NodeHeight;
 
+type NodeShape = 'round-rectangle' | 'round-triangle' | 'round-tag' | 'round-diamond' | 'ellipse';
+
 const labelStyleDefault = style({
   borderRadius: '3px',
   boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)',
@@ -381,14 +383,14 @@ export class GraphStyles {
     };
 
     const getNodeBackgroundPositionX = (ele: any): string => {
-      if (getNodeShape(ele) === 'tag') {
+      if (getNodeShape(ele) === 'round-tag') {
         return '0';
       }
       return '50%';
     };
 
     const getNodeBackgroundPositionY = (ele: any): string => {
-      if (getNodeShape(ele) === 'triangle') {
+      if (getNodeShape(ele) === 'round-triangle') {
         return '6px';
       }
       return '50%';
@@ -404,16 +406,16 @@ export class GraphStyles {
       return NodeColorBorder;
     };
 
-    const getNodeShape = (ele: any): string => {
+    const getNodeShape = (ele: any): NodeShape => {
       const nodeData = decoratedNodeData(ele);
       const nodeType = nodeData.nodeType;
       switch (nodeType) {
         case NodeType.APP:
-          return 'rectangle';
+          return 'round-rectangle';
         case NodeType.SERVICE:
-          return nodeData.isServiceEntry ? 'tag' : 'triangle';
+          return nodeData.isServiceEntry ? 'round-tag' : 'round-triangle';
         case NodeType.UNKNOWN:
-          return 'diamond';
+          return 'round-diamond';
         case NodeType.WORKLOAD:
           return 'ellipse';
         default:
