@@ -23,7 +23,7 @@
     c. For every edge that goes to a child (or comes from a child), create a synthetic edge
        that goes to (or comes from) the compound node and remove the original
        edge. We can cull away repeated edges as they are not needed.
-    d. Detach the children. This is important, else cytoscape won't honor the size specifie
+    d. Detach the children. This is important, else cytoscape won't honor the size specified
        in previous step. "A compound parent node does not have independent dimensions (position
        and size), as those values are automatically inferred by the positions and dimensions
        of the descendant nodes." http://js.cytoscape.org/#notation/compound-nodes
@@ -205,8 +205,8 @@ export default class GroupCompoundLayout {
 
     // (2) Add a one-time callback to be fired when the layout stops
     layout.one('layoutstop', _event => {
-      // This part of the code needs to be executed inside a batch to work, else the relative position is not correctly
-      // updated
+      // This part of the code needs to be executed inside a batch to work, else the relative position
+      //  is not correctly updated
       this.cy.startBatch();
       // (3) Remove synthetic edges
       this.cy.remove(syntheticEdges);
