@@ -42,17 +42,6 @@ const STYLES_KEY = NAMESPACE_KEY + 'styles';
 const RELATIVE_POSITION_KEY = NAMESPACE_KEY + 'relative_position';
 const PARENT_POSITION_KEY = NAMESPACE_KEY + '.parent_position';
 
-// We can't fully rely on the reported position of the compound nodes, as they are relative to contents
-// Since we are moving a lots of params without waiting for a refresh (maybe related that we are in a batch) we are
-// computing this value using the bounding box, for the parents we use the bounding box of all the elements.
-// The position is the center of the box, so we are using the top left corner and adding half the width / height.
-const positionFromBoundingBox = boundingBox => {
-  return {
-    x: boundingBox.x1 + boundingBox.w * 0.5,
-    y: boundingBox.y1 + boundingBox.h * 0.5
-  };
-};
-
 // Styles used to have more control on how the compound nodes are going to be seen by the Layout algorithm.
 interface OverridenStyles {
   shape: string;
@@ -142,22 +131,9 @@ export default class GroupCompoundLayout {
       // see https://github.com/cytoscape/cytoscape.js/issues/2402
       const boundingBox = targetElements.boundingBox();
 
-      const parentPosition = positionFromBoundingBox(boundingBox);
-
       // Save the relative positions, as we will need them later.
       parent.children().each(child => {
-        // Need to build the relativePosition.
-        // For some reason we can't trust our current relativePosition and position of the parent node
-        // It might be related that we are running in a batch operation or something else.
-        // Luckily we can build our own relativePosition with the parent and children boundingBox
-        const childPosition = positionFromBoundingBox(child.boundingBox());
-        const relativePosition = {
-          x: childPosition.x - parentPosition.x,
-          y: childPosition.y - parentPosition.y
-        };
-
-        // Can't use scratchPad here because we are going to remove this element.
-        child.data(RELATIVE_POSITION_KEY, relativePosition);
+        child.scratch(RELATIVE_POSITION_KEY, child.relativePosition());
       });
 
       const backupStyles: OverridenStyles = {
@@ -193,6 +169,18 @@ export default class GroupCompoundLayout {
     // (1.d) Remove all child nodes from parents (and their edges).
     const removedElements = this.cy.remove(children);
 
+    // Ensure we only touch the requested elements and not the whole graph.
+    const layoutElements = this.cy
+      .collection()
+      .add(this.elements)
+      .subtract(removedElements)
+      .add(syntheticEdges);
+
+    // Before running the layout, reset the elements positions.
+    // This is not absolutely necessary, but we have seen some problems with `cola` + firefox + a particular mesh
+    // if we don't do this.
+    layoutElements.position({ x: 0, y: 0 });
+
     const layout = this.cy.layout({
       // Create a new layout
       ...this.options, // Sharing the main options
@@ -219,7 +207,7 @@ export default class GroupCompoundLayout {
         // (4.b) Layout the children using our compound layout.
         const parentPosition = parent.scratch(PARENT_POSITION_KEY);
         parent.children().each(child => {
-          const relativePosition = child.data(RELATIVE_POSITION_KEY);
+          const relativePosition = child.scratch(RELATIVE_POSITION_KEY);
           child.position({
             x: parentPosition.x + relativePosition.x,
             y: parentPosition.y + relativePosition.y
