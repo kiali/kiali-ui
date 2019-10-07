@@ -125,7 +125,7 @@ export default class GroupCompoundLayout {
       compoundLayout.run();
 
       // see https://github.com/cytoscape/cytoscape.js/issues/2402
-      const boundingBox = targetElements.boundingBox();
+      const boundingBox = parent.boundingBox();
 
       // Save the relative positions, as we will need them later.
       parent.children().each(child => {
