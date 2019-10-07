@@ -305,6 +305,7 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
       }
     }
 
+    cy.endBatch();
     const removedElements: boolean = this.removedElements && this.removedElements.size() > 0;
     if (hideChanged || (compressOnHideChanged && selector) || removedElements) {
       const zoom = cy.zoom();
@@ -319,7 +320,6 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
         }
       }
     }
-    cy.endBatch();
   };
 
   private handleFind = () => {
