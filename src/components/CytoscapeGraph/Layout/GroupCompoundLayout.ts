@@ -23,16 +23,15 @@
     c. For every edge that goes to a child (or comes from a child), create a synthetic edge
        that goes to (or comes from) the compound node and remove the original
        edge. We can cull away repeated edges as they are not needed.
-    d. Detach the children. This is important, else cytoscape won't honor the size specified
+    d. Remove the children. This is important, else cytoscape won't honor the size specified
        in previous step. "A compound parent node does not have independent dimensions (position
        and size), as those values are automatically inferred by the positions and dimensions
        of the descendant nodes." http://js.cytoscape.org/#notation/compound-nodes
   2. Run the real layout on this new graph and wait until it finishes.
   3. Remove the synthetic edges.
-  4. For every original parent node:
-    a. Add back its children and edges.
-    b. Set the relative position to parent of every children -saved in 1.a-
-
+  4. Bring back the child nodes
+    a. Restore the children.
+    b. For every child set the relative position to its parent
  */
 
 export const COMPOUND_PARENT_NODE_CLASS = '__compoundLayoutParentNodeClass';
@@ -125,9 +124,6 @@ export default class GroupCompoundLayout {
       });
       compoundLayout.run();
 
-      // Starting from cytoscape 3.4.3, When setting cy.json and this "run" (because we call boundingBox) function in
-      // the same batch throws an error  "trying to access x of undefined". This might be a bug or I'm doing something
-      // wrong here, the way to workaround this is to have the run outside of a batch operation,
       // see https://github.com/cytoscape/cytoscape.js/issues/2402
       const boundingBox = targetElements.boundingBox();
 
@@ -154,9 +150,8 @@ export default class GroupCompoundLayout {
       parent.style(newStyles);
     });
 
-    //  Remove the children and its edges and add synthetic edges for every edge that touches a child node.
+    // (1.c) Add synthetic edges for every edge that touches a child node.
     let syntheticEdges = this.cy.collection();
-    // Removed elements are being stored because later we will add them back.
     children.each(child => {
       child.connectedEdges().each(edge => {
         // (1.c) Create synthetic edges.
@@ -177,8 +172,8 @@ export default class GroupCompoundLayout {
       .add(syntheticEdges);
 
     // Before running the layout, reset the elements positions.
-    // This is not absolutely necessary, but we have seen some problems with `cola` + firefox + a particular mesh
-    // if we don't do this.
+    // This is not absolutely necessary, but without this we have seen some problems with
+    //  `cola` + firefox + a particular mesh
     layoutElements.position({ x: 0, y: 0 });
 
     const layout = this.cy.layout({
