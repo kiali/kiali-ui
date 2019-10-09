@@ -97,7 +97,9 @@ exports[`#ServiceInfoDescription render correctly with data should render servic
           Health Overview
            
         </Title>
-        <Stack>
+        <Stack
+          className="stack_service_details"
+        >
           <StackItem
             id="health"
           >
