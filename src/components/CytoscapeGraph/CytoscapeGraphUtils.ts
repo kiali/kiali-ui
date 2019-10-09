@@ -23,6 +23,11 @@ export const CyEdge = {
   tcp: 'tcp'
 };
 
+export const CyEdgeResponses = {
+  flags: 'flags',
+  hosts: 'hosts'
+};
+
 export const CyNode = {
   app: 'app',
   destServices: 'destServices',
@@ -74,6 +79,8 @@ export const runLayout = (cy: any, layout: Layout) => {
   const showNodeLabels = cy.scratch(CytoscapeGlobalScratchNamespace).showNodeLabels;
   cy.scratch(CytoscapeGlobalScratchNamespace).showNodeLabels = true;
 
+  cy.nodeHtmlLabel().updateNodeLabel(cy.nodes());
+
   const layoutOptions = LayoutDictionary.getLayout(layout);
   if (cy.nodes('$node > node').length > 0) {
     // if there is any parent node, run the group-compound-layout
@@ -87,7 +94,6 @@ export const runLayout = (cy: any, layout: Layout) => {
   } else {
     cy.layout(layoutOptions).run();
   }
-
   cy.scratch(CytoscapeGlobalScratchNamespace).showNodeLabels = showNodeLabels;
 };
 
