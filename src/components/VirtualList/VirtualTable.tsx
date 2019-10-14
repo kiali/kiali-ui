@@ -57,6 +57,8 @@ export default class VirtualTable extends React.Component<VirtualTableProps, Vir
 
   render() {
     const { rows } = this.props;
+    const isChrome = navigator.userAgent.indexOf('Chrome') != -1;
+    const overflowY = isChrome ? 'overlay' : 'auto';
 
     return (
       <AutoSizer disableHeight>
@@ -72,6 +74,7 @@ export default class VirtualTable extends React.Component<VirtualTableProps, Vir
             rowCount={rows.length}
             rowRenderer={this.rowRenderer}
             width={width}
+            style={{ overflowY: overflowY }}
           />
         )}
       </AutoSizer>
