@@ -57,7 +57,7 @@ export default class VirtualTable extends React.Component<VirtualTableProps, Vir
 
   render() {
     const { rows } = this.props;
-    const isChrome = navigator.userAgent.indexOf('Chrome') != -1;
+    const isChrome = navigator.userAgent.indexOf('Chrome') !== -1;
     const overflowY = isChrome ? 'overlay' : 'auto';
 
     return (
