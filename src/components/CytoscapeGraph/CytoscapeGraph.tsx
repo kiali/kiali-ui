@@ -876,6 +876,7 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
       loop.style('loop-sweep', DEFAULT_LOOP_SWEEP);
 
       let found = false;
+      // Check if we have any other edge that overlaps with any of our loop edges
       otherEdges.forEach(edge => {
         const testPoint = edge.source().same(node) ? edge.sourceEndpoint() : edge.targetEndpoint();
         if (
@@ -883,22 +884,25 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
           squaredDistance(testPoint, loop.targetEndpoint()) <= minDistance
         ) {
           found = true;
+          return false; // break the cytoscape forEach
         }
+        return true;
       });
 
       if (!found) {
         return;
       }
 
+      // Simple case, one other edge, just move the loop-direction half the default loop-sweep value to avoid the edge
       if (otherEdges.length === 1) {
         const loopDirection = loop.numericStyle('loop-direction') - loop.numericStyle('loop-sweep') * 0.5;
         loop.style('loop-direction', loopDirection);
         return;
       }
 
-      // Compute every angle, sort it and find the best place to place the loop
+      // Compute every angle between the top (12 o’clock position)
+      // We store the angles as radians and positive numbers, thus we add PI to the negative angles.
       const usedAngles: number[] = [];
-
       otherEdges.forEach(edge => {
         const testPoint = edge.source().same(node) ? edge.sourceEndpoint() : edge.targetEndpoint();
         const angle = angleBetweenVectors(
@@ -910,7 +914,8 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
 
       usedAngles.sort((a, b) => a - b);
 
-      // Try to fit in the longest arc
+      // Try to fit our loop in the longest arc
+      // Iterate over the found angles and find the longest distance
       let maxArc = {
         start: 0,
         end: 0,
@@ -927,21 +932,24 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
         }
       }
 
-      // If the max arc is 1.0 radians, the node is already too busy, ignore it
+      // If the max arc is 1.0 radians (the biggest gap is of about 50 deg), the node is already too busy, ignore it
       if (maxArc.value < 1.0) {
         return;
       }
 
       if (maxArc.start > maxArc.end) {
-        maxArc.start += Math.PI * 2;
+        // To ensure the difference between end and start goes in the way we want, we add a full circle to our end
+        maxArc.end += Math.PI * 2;
       }
 
       if (maxArc.value <= -DEFAULT_LOOP_SWEEP) {
         // Make it slightly smaller to be able to fit
+        // loop-sweep is related to the distance between the start and end of our loop edge
         loop.style('loop-sweep', -maxArc.value * 0.9);
         maxArc.start += maxArc.value * 0.05;
         maxArc.end -= maxArc.value * 0.05;
       }
+      // Move the loop to the center of the arc, loop-direction is related to the middle point of the loop
       loop.style('loop-direction', maxArc.start + (maxArc.end - maxArc.start) * 0.5);
     });
   }
