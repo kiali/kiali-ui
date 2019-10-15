@@ -57,8 +57,10 @@ export default class VirtualTable extends React.Component<VirtualTableProps, Vir
 
   render() {
     const { rows } = this.props;
-    const isChrome = navigator.userAgent.indexOf('Chrome') !== -1;
-    const overflowY = isChrome ? 'overlay' : 'auto';
+    // TODO: This is a chrome/webkit-only fix for kiali#1710. A full fix is waiting of PF to handle header changes when
+    //       virtualized table-body space is reduced by vertical scrollbar. When resolved in PF this should be updated.
+    const hasOverlay = navigator.userAgent.indexOf('Chrome') !== -1 || navigator.userAgent.indexOf('WebKit') !== -1;
+    const overflowY = hasOverlay ? 'overlay' : 'auto';
 
     return (
       <AutoSizer disableHeight>
