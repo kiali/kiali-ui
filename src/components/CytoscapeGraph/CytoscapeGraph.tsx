@@ -877,6 +877,7 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
 
       let found = false;
       // Check if we have any other edge that overlaps with any of our loop edges
+      // this uses cytoscape forEach (https://js.cytoscape.org/#eles.forEach)
       otherEdges.forEach(edge => {
         const testPoint = edge.source().same(node) ? edge.sourceEndpoint() : edge.targetEndpoint();
         if (
@@ -884,9 +885,9 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
           squaredDistance(testPoint, loop.targetEndpoint()) <= minDistance
         ) {
           found = true;
-          return false; // break the cytoscape forEach
+          return false; // break the inner cytoscape forEach
         }
-        return true;
+        return; // return to avoid typescript error about "not all code paths return a value"
       });
 
       if (!found) {
