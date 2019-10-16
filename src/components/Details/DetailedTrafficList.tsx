@@ -15,6 +15,7 @@ import { NodeType, ProtocolTraffic, hasProtocolTraffic } from '../../types/Graph
 import { Direction } from '../../types/MetricsOptions';
 import { REQUESTS_THRESHOLDS } from '../../types/Health';
 import history, { URLParam } from '../../app/History';
+import { PfColors } from '../Pf/PfColors';
 
 type DetailedTrafficProps = {
   direction: Direction;
@@ -180,12 +181,12 @@ class DetailedTrafficList extends React.Component<DetailedTrafficProps> {
       } else {
         percentError = traffic.rates.grpcPercentErr ? Number(traffic.rates.grpcPercentErr) : 0;
       }
-      let healthIcon = <OkIcon />;
+      let healthIcon = <OkIcon color={PfColors.Green400} />;
 
       if (percentError > REQUESTS_THRESHOLDS.failure) {
-        healthIcon = <ErrorCircleOIcon />;
+        healthIcon = <ErrorCircleOIcon color={PfColors.Red100} />;
       } else if (percentError > REQUESTS_THRESHOLDS.degraded) {
-        healthIcon = <WarningTriangleIcon />;
+        healthIcon = <WarningTriangleIcon color={PfColors.Orange400} />;
       }
 
       return <TableGrid.Col {...statusColumnSizes}>{healthIcon}</TableGrid.Col>;
