@@ -112,7 +112,6 @@ const cytoscapeGraphWrapperDivStyle = style({ position: 'relative' });
 const cytoscapeToolbarWrapperDivStyle = style({
   position: 'absolute',
   bottom: '10px',
-  left: '-13px',
   zIndex: 2,
   borderStyle: 'hidden'
 });

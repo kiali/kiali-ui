@@ -86,13 +86,25 @@ export enum PfColors {
   Red = '#cc0000', // Red100
 
   // Kiali colors that use PF colors
-  Gray = '#72767b' // Black600
+
+  Gray = Black600,
+  GrayBackground = Black150,
+
+  // Health/Alert colors https://www.patternfly.org/v4/design-guidelines/styles/colors
+  Danger = '#C9190B',
+  DangerBackground = '#470000',
+  Info = '#73BCF7',
+  InfoBackground = '#004368',
+  Success = '#92D400',
+  SuccessBackground = '#486B00',
+  Warning = '#f0AB00',
+  WarningBackground = '#795600'
 }
 
 export enum PFColorVars {
   DangerColor = 'var(--pf-global--danger-color--100)',
-  WarningColor = 'var(--pf-global--warning-color--100)',
-  SuccessColor = 'var(--pf-global--success-color--100)'
+  SuccessColor = 'var(--pf-global--success-color--100)',
+  WarningColor = 'var(--pf-global--warning-color--100)'
 }
 
 export const withAlpha = (color: PfColors, hexAlpha: string) => {

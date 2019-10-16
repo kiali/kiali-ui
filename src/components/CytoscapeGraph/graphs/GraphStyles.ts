@@ -18,10 +18,14 @@ import _ from 'lodash';
 export const DimClass = 'mousedim';
 
 // UX-specified colors, widths, etc
-const EdgeColor = PfColors.Green400;
+const ColorDanger = PfColors.Danger; // Same as Health.FAILURE.color
+const ColorHealthy = PfColors.Success; // Same as Health.HEALTHY.color
+const ColorWarning = PfColors.Warning; // Same as Health.DEGRADED.color
+
+const EdgeColor = ColorHealthy;
 const EdgeColorDead = PfColors.Black500;
-const EdgeColorDegraded = PfColors.Orange;
-const EdgeColorFailure = PfColors.Red;
+const EdgeColorDegraded = ColorWarning;
+const EdgeColorFailure = ColorDanger;
 const EdgeColorTCPWithTraffic = PfColors.Blue600;
 const EdgeIconMTLS = icons.istio.mtls.ascii; // lock
 const EdgeIconDisabledMTLS = icons.istio.disabledMtls.ascii; // broken lock
@@ -35,8 +39,8 @@ const EdgeWidthSelected = 3;
 const NodeBorderWidth = '1px';
 const NodeBorderWidthSelected = '3px';
 const NodeColorBorder = PfColors.Black400;
-const NodeColorBorderDegraded = PfColors.Orange;
-const NodeColorBorderFailure = PfColors.Red;
+const NodeColorBorderDegraded = ColorWarning;
+const NodeColorBorderFailure = ColorDanger;
 const NodeColorBorderHover = PfColors.Blue300;
 const NodeColorBorderSelected = PfColors.Blue300;
 const NodeColorFill = PfColors.White;

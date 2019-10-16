@@ -9,6 +9,7 @@ import dagre from 'cytoscape-dagre';
 import coseBilkent from 'cytoscape-cose-bilkent';
 import GroupCompoundLayout from './Layout/GroupCompoundLayout';
 import popper from 'cytoscape-popper';
+import { PfColors } from 'components/Pf/PfColors';
 const nodeHtmlLabel = require('cy-node-html-label');
 
 cytoscape.use(canvas);
@@ -24,7 +25,8 @@ type CytoscapeReactWrapperProps = any;
 type CytoscapeReactWrapperState = {};
 
 const styleContainer: React.CSSProperties = {
-  height: '100%'
+  height: '100%',
+  background: PfColors.GrayBackground
 };
 
 /**

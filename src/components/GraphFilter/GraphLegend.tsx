@@ -15,7 +15,7 @@ const width = '200px';
 export default class GraphLegend extends React.Component<GraphLegendProps> {
   render() {
     const legendBoxStyle = style({
-      margin: '1em 0 4em 0',
+      margin: '1px 0 3.8em 0',
       padding: '1em',
       border: '1px solid #EDEDED',
       overflow: 'hidden',
