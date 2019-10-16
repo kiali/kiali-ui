@@ -110,8 +110,22 @@ describe('TrafficDetails', () => {
       .find('TableGridRow');
 
     const toText = (item: ShallowWrapper): string => {
-      const icon = item.find('Icon');
-      if (icon.length > 1 && icon.at(1).prop('style')!.paddingLeft) {
+      const iconsType = [
+        'BundleIcon',
+        'ServiceIcon',
+        'ApplicationsIcon',
+        'ErrorCircleOIcon',
+        'InfoAltIcon',
+        'OkIcon',
+        'UnknownIcon',
+        'WarningTriangleIcon'
+      ];
+      const elementIcons = iconsType.filter(
+        iconT =>
+          item.find(iconT).length > 0 && item.find(iconT).prop('style')! && item.find(iconT).prop('style')!.paddingLeft
+      );
+      const icon = elementIcons.length > 0 ? item.find(elementIcons[0]).at(0) : undefined;
+      if (icon && icon.exists()) {
         return (
           '->' +
           item
