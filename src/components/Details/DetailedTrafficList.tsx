@@ -1,4 +1,13 @@
-import { Icon } from 'patternfly-react';
+import {
+  ApplicationsIcon,
+  BundleIcon,
+  ErrorCircleOIcon,
+  InfoAltIcon,
+  OkIcon,
+  ServiceIcon,
+  UnknownIcon,
+  WarningTriangleIcon
+} from '@patternfly/react-icons';
 import { TableGrid } from 'patternfly-react-extensions';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
@@ -92,7 +101,7 @@ class DetailedTrafficList extends React.Component<DetailedTrafficProps> {
           {sortedTraffic.length === 0 && (
             <TableGrid.Row>
               <TableGrid.Col md={10} sm={10} xs={10}>
-                <Icon type="pf" name="info" /> Not enough {this.props.direction} traffic to generate info
+                <InfoAltIcon /> Not enough {this.props.direction} traffic to generate info
               </TableGrid.Col>
             </TableGrid.Row>
           )}
@@ -171,19 +180,19 @@ class DetailedTrafficList extends React.Component<DetailedTrafficProps> {
       } else {
         percentError = traffic.rates.grpcPercentErr ? Number(traffic.rates.grpcPercentErr) : 0;
       }
-      let healthIcon = <Icon type="pf" name="ok" />;
+      let healthIcon = <OkIcon />;
 
       if (percentError > REQUESTS_THRESHOLDS.failure) {
-        healthIcon = <Icon type="pf" name="error-circle-o" />;
+        healthIcon = <ErrorCircleOIcon />;
       } else if (percentError > REQUESTS_THRESHOLDS.degraded) {
-        healthIcon = <Icon type="pf" name="warning-triangle-o" />;
+        healthIcon = <WarningTriangleIcon />;
       }
 
       return <TableGrid.Col {...statusColumnSizes}>{healthIcon}</TableGrid.Col>;
     } else {
       return (
         <TableGrid.Col {...statusColumnSizes}>
-          <Icon type="pf" name="unknown" />
+          <UnknownIcon />
         </TableGrid.Col>
       );
     }
@@ -191,11 +200,11 @@ class DetailedTrafficList extends React.Component<DetailedTrafficProps> {
 
   private renderWorkloadColumn = (node: TrafficNode, isProxyed: boolean) => {
     const style = isProxyed ? { paddingLeft: '2em', paddingRight: '4px' } : { paddingRight: '4px' };
-    let icon = <Icon type="pf" name="unknown" style={style} />;
+    let icon = <UnknownIcon style={style} />;
     let name = <>{node.name}</>;
 
     if (NodeType.WORKLOAD === node.type) {
-      icon = <Icon type="pf" name="bundle" style={style} />;
+      icon = <BundleIcon style={style} />;
       if (!node.isInaccessible) {
         name = (
           <Link to={`/namespaces/${encodeURIComponent(node.namespace)}/workloads/${encodeURIComponent(node.name)}`}>
@@ -204,7 +213,7 @@ class DetailedTrafficList extends React.Component<DetailedTrafficProps> {
         );
       }
     } else if (NodeType.SERVICE === node.type) {
-      icon = <Icon type="pf" name="service" style={style} />;
+      icon = <ServiceIcon style={style} />;
       if (!node.isServiceEntry && !node.isInaccessible) {
         name = (
           <Link to={`/namespaces/${encodeURIComponent(node.namespace)}/services/${encodeURIComponent(node.name)}`}>
@@ -213,7 +222,7 @@ class DetailedTrafficList extends React.Component<DetailedTrafficProps> {
         );
       }
     } else if (NodeType.APP === node.type) {
-      icon = <Icon type="pf" name="applications" style={style} />;
+      icon = <ApplicationsIcon style={style} />;
       if (!node.isInaccessible) {
         name = (
           <Link to={`/namespaces/${encodeURIComponent(node.namespace)}/applications/${encodeURIComponent(node.name)}`}>
