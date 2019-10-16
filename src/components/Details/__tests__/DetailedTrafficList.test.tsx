@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { MemoryRouter, Router } from 'react-router';
 import { mount, shallow } from 'enzyme';
-import { Icon } from 'patternfly-react';
+import { ErrorCircleOIcon, OkIcon, UnknownIcon, WarningTriangleIcon } from '@patternfly/react-icons';
 import DetailedTrafficList, { AppNode, ServiceNode, TrafficItem, WorkloadNode } from '../DetailedTrafficList';
 import history from '../../../app/History';
 import { NodeType } from '../../../types/Graph';
@@ -159,7 +159,7 @@ describe('DetailedTrafficList', () => {
     const wrapper = shallow(<DetailedTrafficList direction={'outbound'} traffic={[trafficItem]} />);
 
     const cell = wrapper.find('TableGridCol').at(DetailedTrafficList.STATUS_COLUMN_IDX);
-    expect(cell.contains(<Icon type="pf" name="ok" />)).toBeTruthy();
+    expect(cell.contains(<OkIcon />)).toBeTruthy();
   });
 
   it('renders warning status if HTTP traffic has errors below error threshold', () => {
@@ -167,7 +167,7 @@ describe('DetailedTrafficList', () => {
     const wrapper = shallow(<DetailedTrafficList direction={'outbound'} traffic={[trafficItem]} />);
 
     const cell = wrapper.find('TableGridCol').at(DetailedTrafficList.STATUS_COLUMN_IDX);
-    expect(cell.contains(<Icon type="pf" name="warning-triangle-o" />)).toBeTruthy();
+    expect(cell.contains(<WarningTriangleIcon />)).toBeTruthy();
   });
 
   it('renders error status if HTTP traffic has errors above error threshold', () => {
@@ -175,7 +175,7 @@ describe('DetailedTrafficList', () => {
     const wrapper = shallow(<DetailedTrafficList direction={'outbound'} traffic={[trafficItem]} />);
 
     const cell = wrapper.find('TableGridCol').at(DetailedTrafficList.STATUS_COLUMN_IDX);
-    expect(cell.contains(<Icon type="pf" name="error-circle-o" />)).toBeTruthy();
+    expect(cell.contains(<ErrorCircleOIcon />)).toBeTruthy();
   });
 
   it('renders green status if GRPC traffic has no errors', () => {
@@ -183,7 +183,7 @@ describe('DetailedTrafficList', () => {
     const wrapper = shallow(<DetailedTrafficList direction={'outbound'} traffic={[trafficItem]} />);
 
     const cell = wrapper.find('TableGridCol').at(DetailedTrafficList.STATUS_COLUMN_IDX);
-    expect(cell.contains(<Icon type="pf" name="ok" />)).toBeTruthy();
+    expect(cell.contains(<OkIcon />)).toBeTruthy();
   });
 
   it('renders warning status if GRPC traffic has errors below error threshold', () => {
@@ -191,7 +191,7 @@ describe('DetailedTrafficList', () => {
     const wrapper = shallow(<DetailedTrafficList direction={'outbound'} traffic={[trafficItem]} />);
 
     const cell = wrapper.find('TableGridCol').at(DetailedTrafficList.STATUS_COLUMN_IDX);
-    expect(cell.contains(<Icon type="pf" name="warning-triangle-o" />)).toBeTruthy();
+    expect(cell.contains(<WarningTriangleIcon />)).toBeTruthy();
   });
 
   it('renders error status if GRPC traffic has errors above error threshold', () => {
@@ -199,7 +199,7 @@ describe('DetailedTrafficList', () => {
     const wrapper = shallow(<DetailedTrafficList direction={'outbound'} traffic={[trafficItem]} />);
 
     const cell = wrapper.find('TableGridCol').at(DetailedTrafficList.STATUS_COLUMN_IDX);
-    expect(cell.contains(<Icon type="pf" name="error-circle-o" />)).toBeTruthy();
+    expect(cell.contains(<ErrorCircleOIcon />)).toBeTruthy();
   });
 
   it('renders unknown status if traffic is TCP or unknown', () => {
@@ -208,14 +208,14 @@ describe('DetailedTrafficList', () => {
     let wrapper = shallow(<DetailedTrafficList direction={'outbound'} traffic={[trafficItem]} />);
 
     let cell = wrapper.find('TableGridCol').at(DetailedTrafficList.STATUS_COLUMN_IDX);
-    expect(cell.contains(<Icon type="pf" name="unknown" />)).toBeTruthy();
+    expect(cell.contains(<UnknownIcon />)).toBeTruthy();
 
     // Unknown
     trafficItem = buildUnknownProtocolItem();
     wrapper = shallow(<DetailedTrafficList direction={'outbound'} traffic={[trafficItem]} />);
 
     cell = wrapper.find('TableGridCol').at(DetailedTrafficList.STATUS_COLUMN_IDX);
-    expect(cell.contains(<Icon type="pf" name="unknown" />)).toBeTruthy();
+    expect(cell.contains(<UnknownIcon />)).toBeTruthy();
   });
 
   it('renders traffic type correctly', () => {
@@ -278,10 +278,10 @@ describe('DetailedTrafficList', () => {
     const wrapper = shallow(<DetailedTrafficList direction={'outbound'} traffic={[trafficItem]} />);
 
     const cell = wrapper.find('TableGridCol').at(DetailedTrafficList.WORKLOAD_COLUMN_IDX);
-    const icon = cell.find('Icon').first();
+    const icon = cell.find('UnknownIcon').first();
     const link = cell.find('Link');
 
-    expect(icon.prop('name')).toBe('unknown');
+    expect(icon).toBeDefined();
     expect(link.length).toBe(0);
     expect(
       cell
@@ -300,10 +300,10 @@ describe('DetailedTrafficList', () => {
     );
 
     const cell = wrapper.find('TableGridCol').at(DetailedTrafficList.WORKLOAD_COLUMN_IDX);
-    const icon = cell.find('Icon').first();
+    const icon = cell.find('ApplicationsIcon').first();
     const link = cell.find('Link').first();
 
-    expect(icon.prop('name')).toBe('applications');
+    expect(icon).toBeDefined();
     expect(link.prop('to')).toBe('/namespaces/ns/applications/app3');
     expect(
       cell
@@ -324,10 +324,10 @@ describe('DetailedTrafficList', () => {
     );
 
     const cell = wrapper.find('TableGridCol').at(DetailedTrafficList.WORKLOAD_COLUMN_IDX);
-    const icon = cell.find('Icon').first();
+    const icon = cell.find('ApplicationsIcon').first();
     const link = cell.find('Link').first();
 
-    expect(icon.prop('name')).toBe('applications');
+    expect(icon).toBeDefined();
     expect(link.prop('to')).toBe('/namespaces/ns/applications/app3');
     expect(
       cell
@@ -346,10 +346,10 @@ describe('DetailedTrafficList', () => {
     );
 
     const cell = wrapper.find('TableGridCol').at(DetailedTrafficList.WORKLOAD_COLUMN_IDX);
-    const icon = cell.find('Icon').first();
+    const icon = cell.find('BundleIcon').first();
     const link = cell.find('Link').first();
 
-    expect(icon.prop('name')).toBe('bundle');
+    expect(icon).toBeDefined();
     expect(link.prop('to')).toBe('/namespaces/ns/workloads/workload');
     expect(
       cell
@@ -368,10 +368,10 @@ describe('DetailedTrafficList', () => {
     );
 
     const cell = wrapper.find('TableGridCol').at(DetailedTrafficList.WORKLOAD_COLUMN_IDX);
-    const icon = cell.find('Icon').first();
+    const icon = cell.find('ServiceIcon').first();
     const link = cell.find('Link').first();
 
-    expect(icon.prop('name')).toBe('service');
+    expect(icon).toBeDefined();
     expect(link.prop('to')).toBe('/namespaces/ns/services/svc1');
     expect(
       cell
