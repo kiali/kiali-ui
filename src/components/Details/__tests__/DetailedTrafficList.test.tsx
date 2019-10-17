@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { MemoryRouter, Router } from 'react-router';
 import { mount } from 'enzyme';
-import { ErrorCircleOIcon, OkIcon, UnknownIcon, WarningTriangleIcon } from '@patternfly/react-icons';
+import { ErrorCircleOIcon, CheckCircleIcon, UnknownIcon, WarningTriangleIcon } from '@patternfly/react-icons';
 import DetailedTrafficList, { AppNode, ServiceNode, TrafficItem, WorkloadNode } from '../DetailedTrafficList';
 import history from '../../../app/History';
 import { NodeType } from '../../../types/Graph';
@@ -162,7 +162,7 @@ describe('DetailedTrafficList', () => {
       </MemoryRouter>
     );
     const cell = wrapper.find('BodyCell').at(DetailedTrafficList.STATUS_COLUMN_IDX);
-    expect(cell.contains(<OkIcon size={'md'} color={PfColors.Green400} />)).toBeTruthy();
+    expect(cell.contains(<CheckCircleIcon size={'md'} color={PfColors.Green400} />)).toBeTruthy();
   });
 
   it('renders warning status if HTTP traffic has errors below error threshold', () => {
@@ -198,7 +198,7 @@ describe('DetailedTrafficList', () => {
     );
 
     const cell = wrapper.find('BodyCell').at(DetailedTrafficList.STATUS_COLUMN_IDX);
-    expect(cell.contains(<OkIcon size={'md'} color={PfColors.Green400} />)).toBeTruthy();
+    expect(cell.contains(<CheckCircleIcon size={'md'} color={PfColors.Green400} />)).toBeTruthy();
   });
 
   it('renders warning status if GRPC traffic has errors below error threshold', () => {

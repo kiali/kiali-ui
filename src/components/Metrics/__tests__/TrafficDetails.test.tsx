@@ -111,7 +111,7 @@ describe('TrafficDetails', () => {
         'ApplicationsIcon',
         'ErrorCircleOIcon',
         'InfoAltIcon',
-        'OkIcon',
+        'CheckCircleIcon',
         'UnknownIcon',
         'WarningTriangleIcon'
       ];

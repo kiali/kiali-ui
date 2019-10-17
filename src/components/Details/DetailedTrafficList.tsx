@@ -3,7 +3,7 @@ import {
   BundleIcon,
   ErrorCircleOIcon,
   InfoAltIcon,
-  OkIcon,
+  CheckCircleIcon,
   ServiceIcon,
   UnknownIcon,
   WarningTriangleIcon
@@ -203,7 +203,7 @@ class DetailedTrafficList extends React.Component<DetailedTrafficProps> {
       } else {
         percentError = traffic.rates.grpcPercentErr ? Number(traffic.rates.grpcPercentErr) : 0;
       }
-      let healthIcon = <OkIcon size={'md'} color={PfColors.Green400} />;
+      let healthIcon = <CheckCircleIcon size={'md'} color={PfColors.Green400} />;
 
       if (percentError > REQUESTS_THRESHOLDS.failure) {
         healthIcon = <ErrorCircleOIcon size={'md'} color={PfColors.Red100} />;
