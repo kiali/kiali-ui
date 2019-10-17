@@ -181,19 +181,19 @@ class DetailedTrafficList extends React.Component<DetailedTrafficProps> {
       } else {
         percentError = traffic.rates.grpcPercentErr ? Number(traffic.rates.grpcPercentErr) : 0;
       }
-      let healthIcon = <OkIcon color={PfColors.Green400} />;
+      let healthIcon = <OkIcon size={'md'} color={PfColors.Green400} />;
 
       if (percentError > REQUESTS_THRESHOLDS.failure) {
-        healthIcon = <ErrorCircleOIcon color={PfColors.Red100} />;
+        healthIcon = <ErrorCircleOIcon size={'md'} color={PfColors.Red100} />;
       } else if (percentError > REQUESTS_THRESHOLDS.degraded) {
-        healthIcon = <WarningTriangleIcon color={PfColors.Orange400} />;
+        healthIcon = <WarningTriangleIcon size={'md'} color={PfColors.Orange400} />;
       }
 
       return <TableGrid.Col {...statusColumnSizes}>{healthIcon}</TableGrid.Col>;
     } else {
       return (
         <TableGrid.Col {...statusColumnSizes}>
-          <UnknownIcon />
+          <UnknownIcon size={'md'} />
         </TableGrid.Col>
       );
     }
@@ -201,11 +201,11 @@ class DetailedTrafficList extends React.Component<DetailedTrafficProps> {
 
   private renderWorkloadColumn = (node: TrafficNode, isProxyed: boolean) => {
     const style = isProxyed ? { paddingLeft: '2em', paddingRight: '4px' } : { paddingRight: '4px' };
-    let icon = <UnknownIcon style={style} />;
+    let icon = <UnknownIcon size={'md'} style={style} />;
     let name = <>{node.name}</>;
 
     if (NodeType.WORKLOAD === node.type) {
-      icon = <BundleIcon style={style} />;
+      icon = <BundleIcon size={'md'} style={style} />;
       if (!node.isInaccessible) {
         name = (
           <Link to={`/namespaces/${encodeURIComponent(node.namespace)}/workloads/${encodeURIComponent(node.name)}`}>
@@ -214,7 +214,7 @@ class DetailedTrafficList extends React.Component<DetailedTrafficProps> {
         );
       }
     } else if (NodeType.SERVICE === node.type) {
-      icon = <ServiceIcon style={style} />;
+      icon = <ServiceIcon size={'md'} style={style} />;
       if (!node.isServiceEntry && !node.isInaccessible) {
         name = (
           <Link to={`/namespaces/${encodeURIComponent(node.namespace)}/services/${encodeURIComponent(node.name)}`}>
@@ -223,7 +223,7 @@ class DetailedTrafficList extends React.Component<DetailedTrafficProps> {
         );
       }
     } else if (NodeType.APP === node.type) {
-      icon = <ApplicationsIcon style={style} />;
+      icon = <ApplicationsIcon size={'md'} style={style} />;
       if (!node.isInaccessible) {
         name = (
           <Link to={`/namespaces/${encodeURIComponent(node.namespace)}/applications/${encodeURIComponent(node.name)}`}>
@@ -244,7 +244,7 @@ class DetailedTrafficList extends React.Component<DetailedTrafficProps> {
 
     return (
       <TableGrid.Col {...workloadColumnSizes}>
-        {icon} {name}
+        {icon} <span style={{ display: 'table-caption' }}>{name}</span>
       </TableGrid.Col>
     );
   };

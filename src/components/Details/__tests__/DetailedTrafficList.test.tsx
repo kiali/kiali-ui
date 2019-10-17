@@ -6,6 +6,7 @@ import DetailedTrafficList, { AppNode, ServiceNode, TrafficItem, WorkloadNode } 
 import history from '../../../app/History';
 import { NodeType } from '../../../types/Graph';
 import { REQUESTS_THRESHOLDS } from '../../../types/Health';
+import { PfColors } from '../../Pf/PfColors';
 
 describe('DetailedTrafficList', () => {
   const buildHttpItemWithError = (error: number): TrafficItem => ({
@@ -159,7 +160,7 @@ describe('DetailedTrafficList', () => {
     const wrapper = shallow(<DetailedTrafficList direction={'outbound'} traffic={[trafficItem]} />);
 
     const cell = wrapper.find('TableGridCol').at(DetailedTrafficList.STATUS_COLUMN_IDX);
-    expect(cell.contains(<OkIcon />)).toBeTruthy();
+    expect(cell.contains(<OkIcon size={'md'} color={PfColors.Green400} />)).toBeTruthy();
   });
 
   it('renders warning status if HTTP traffic has errors below error threshold', () => {
@@ -167,7 +168,7 @@ describe('DetailedTrafficList', () => {
     const wrapper = shallow(<DetailedTrafficList direction={'outbound'} traffic={[trafficItem]} />);
 
     const cell = wrapper.find('TableGridCol').at(DetailedTrafficList.STATUS_COLUMN_IDX);
-    expect(cell.contains(<WarningTriangleIcon />)).toBeTruthy();
+    expect(cell.contains(<WarningTriangleIcon size={'md'} color={PfColors.Orange400} />)).toBeTruthy();
   });
 
   it('renders error status if HTTP traffic has errors above error threshold', () => {
@@ -175,7 +176,7 @@ describe('DetailedTrafficList', () => {
     const wrapper = shallow(<DetailedTrafficList direction={'outbound'} traffic={[trafficItem]} />);
 
     const cell = wrapper.find('TableGridCol').at(DetailedTrafficList.STATUS_COLUMN_IDX);
-    expect(cell.contains(<ErrorCircleOIcon />)).toBeTruthy();
+    expect(cell.contains(<ErrorCircleOIcon size={'md'} color={PfColors.Red100} />)).toBeTruthy();
   });
 
   it('renders green status if GRPC traffic has no errors', () => {
@@ -183,7 +184,7 @@ describe('DetailedTrafficList', () => {
     const wrapper = shallow(<DetailedTrafficList direction={'outbound'} traffic={[trafficItem]} />);
 
     const cell = wrapper.find('TableGridCol').at(DetailedTrafficList.STATUS_COLUMN_IDX);
-    expect(cell.contains(<OkIcon />)).toBeTruthy();
+    expect(cell.contains(<OkIcon size={'md'} color={PfColors.Green400} />)).toBeTruthy();
   });
 
   it('renders warning status if GRPC traffic has errors below error threshold', () => {
@@ -191,7 +192,7 @@ describe('DetailedTrafficList', () => {
     const wrapper = shallow(<DetailedTrafficList direction={'outbound'} traffic={[trafficItem]} />);
 
     const cell = wrapper.find('TableGridCol').at(DetailedTrafficList.STATUS_COLUMN_IDX);
-    expect(cell.contains(<WarningTriangleIcon />)).toBeTruthy();
+    expect(cell.contains(<WarningTriangleIcon size={'md'} color={PfColors.Orange400} />)).toBeTruthy();
   });
 
   it('renders error status if GRPC traffic has errors above error threshold', () => {
@@ -199,7 +200,7 @@ describe('DetailedTrafficList', () => {
     const wrapper = shallow(<DetailedTrafficList direction={'outbound'} traffic={[trafficItem]} />);
 
     const cell = wrapper.find('TableGridCol').at(DetailedTrafficList.STATUS_COLUMN_IDX);
-    expect(cell.contains(<ErrorCircleOIcon />)).toBeTruthy();
+    expect(cell.contains(<ErrorCircleOIcon size={'md'} color={PfColors.Red100} />)).toBeTruthy();
   });
 
   it('renders unknown status if traffic is TCP or unknown', () => {
@@ -208,14 +209,14 @@ describe('DetailedTrafficList', () => {
     let wrapper = shallow(<DetailedTrafficList direction={'outbound'} traffic={[trafficItem]} />);
 
     let cell = wrapper.find('TableGridCol').at(DetailedTrafficList.STATUS_COLUMN_IDX);
-    expect(cell.contains(<UnknownIcon />)).toBeTruthy();
+    expect(cell.contains(<UnknownIcon size={'md'} />)).toBeTruthy();
 
     // Unknown
     trafficItem = buildUnknownProtocolItem();
     wrapper = shallow(<DetailedTrafficList direction={'outbound'} traffic={[trafficItem]} />);
 
     cell = wrapper.find('TableGridCol').at(DetailedTrafficList.STATUS_COLUMN_IDX);
-    expect(cell.contains(<UnknownIcon />)).toBeTruthy();
+    expect(cell.contains(<UnknownIcon size={'md'} />)).toBeTruthy();
   });
 
   it('renders traffic type correctly', () => {
