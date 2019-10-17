@@ -33,7 +33,7 @@ export interface WorkloadOverview {
 
 export interface ApiDocumentation {
   type: string;
-  hasSpec: boolean;
+  path: string;
 }
 
 export interface Service {

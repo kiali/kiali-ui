@@ -22,6 +22,7 @@ declare global {
 
 interface ApiDocumentationProps {
   apiType: string;
+  apiPath: string;
   namespace: string;
   service: string;
 }
@@ -33,7 +34,7 @@ export class ApiDocumentation extends React.Component<ApiDocumentationProps> {
     return (
       <div>
         <rapi-doc
-          spec-url={urls.serviceApiDocumentation(this.props.namespace, this.props.service)}
+          spec-url={urls.serviceApiDocumentation(this.props.namespace, this.props.service, this.props.apiPath)}
           show-header="false"
           show-info="false"
           allow-authentication="false"

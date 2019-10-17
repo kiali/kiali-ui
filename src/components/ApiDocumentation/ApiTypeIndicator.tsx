@@ -18,7 +18,7 @@ const nameToSource = new Map<string, string>([
 const iconStyle = style({
   marginTop: -2,
   marginRight: 6,
-  width: 30
+  height: 30
 });
 
 export class ApiTypeIndicator extends React.Component<Props> {

@@ -83,7 +83,7 @@ const emptyService: ServiceDetailsInfo = {
   validations: {},
   apiDocumentation: {
     type: '',
-    hasSpec: false
+    path: ''
   },
   additionalDetails: []
 };
@@ -95,7 +95,8 @@ const tabIndex: { [tab: string]: number } = {
   info: 0,
   traffic: 1,
   metrics: 2,
-  traces: 3
+  traces: 3,
+  api: 4
 };
 
 class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetailsState> {
@@ -435,12 +436,13 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
       tabsArray.push(jaegerTag);
     }
 
-    if (this.state.serviceDetailsInfo.apiDocumentation && this.state.serviceDetailsInfo.apiDocumentation.hasSpec) {
+    if (this.state.serviceDetailsInfo.apiDocumentation && this.state.serviceDetailsInfo.apiDocumentation.path !=='') {
       const docTabIndex = tabsArray.length;
       const docTab: any = (
         <Tab eventKey={docTabIndex} title={'API Doc'} key="API Doc">
           <ApiDocumentation
             apiType={this.state.serviceDetailsInfo.apiDocumentation.type}
+            apiPath={this.state.serviceDetailsInfo.apiDocumentation.path}
             namespace={this.props.match.params.namespace}
             service={this.props.match.params.service}
           />
@@ -453,7 +455,7 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
       <>
         <RenderHeader>
           <BreadcrumbView location={this.props.location} />
-          <PfTitle location={this.props.location} istio={this.state.serviceDetailsInfo.istioSidecar} />
+          <PfTitle location={this.props.location} istio={this.state.serviceDetailsInfo.istioSidecar} apiType={this.state.serviceDetailsInfo.apiDocumentation ? this.state.serviceDetailsInfo.apiDocumentation.type : ''} />
           {this.renderActions()}
         </RenderHeader>
         <ParameterizedTabs

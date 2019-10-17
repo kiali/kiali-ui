@@ -5,6 +5,7 @@ import { ServiceIcon, BundleIcon, ApplicationsIcon } from '@patternfly/react-ico
 import { CytoscapeGraphSelectorBuilder } from '../CytoscapeGraph/CytoscapeGraphSelector';
 import { style } from 'typestyle';
 import { NodeType } from '../../types/Graph';
+import { ApiTypeIndicator } from '../ApiDocumentation/ApiTypeIndicator';
 
 const PfTitleStyle = style({
   fontSize: '19px',
@@ -19,6 +20,7 @@ interface PfTitleProps {
     search: string;
   };
   istio?: boolean;
+  apiType?: string;
 }
 
 interface PfTitleState {
@@ -115,6 +117,11 @@ class PfTitle extends React.Component<PfTitleProps, PfTitleState> {
     return (
       <h2 className={PfTitleStyle}>
         {this.state.icon} {this.state.name}
+        {this.props.apiType !== undefined && this.props.apiType !== '' && (
+          <span style={{ marginLeft: '10px' }}>
+            <ApiTypeIndicator apiType={this.props.apiType} />
+          </span>
+        )}
         {this.state.name && this.props.istio !== undefined && !this.props.istio && (
           <span style={{ marginLeft: '10px' }}>
             <MissingSidecar namespace={this.state.namespace} />

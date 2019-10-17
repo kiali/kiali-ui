@@ -50,7 +50,7 @@ export const SERVICE_DETAILS: ServiceDetailsInfo = {
     }
   ],
   apiDocumentation: {
-    hasSpec: true,
+    path: '/api.json',
     type: 'rest'
   },
   virtualServices: {
