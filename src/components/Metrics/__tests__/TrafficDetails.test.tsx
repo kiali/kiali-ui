@@ -117,7 +117,7 @@ describe('TrafficDetails', () => {
       ];
       const elementIcons = iconsType.filter(
         iconT =>
-          item.find(iconT).length > 0 && item.find(iconT).prop('style')! && item.find(iconT).prop('style')!.paddingLeft
+          item.find(iconT).length > 0 && item.find(iconT).prop('style')! && item.find(iconT).prop('style')!.marginLeft
       );
       const icon = elementIcons.length > 0 ? item.find(elementIcons[0]).at(0) : undefined;
       if (icon && icon.exists()) {

@@ -218,7 +218,7 @@ class DetailedTrafficList extends React.Component<DetailedTrafficProps> {
   };
 
   private renderWorkloadColumn = (node: TrafficNode, isProxyed: boolean) => {
-    const style = isProxyed ? { paddingLeft: '2em', paddingRight: '4px' } : { paddingRight: '4px' };
+    const style = isProxyed ? { marginLeft: '2em', marginRight: '4px' } : { marginRight: '4px' };
     let icon = <UnknownIcon size={'md'} style={style} />;
     let name = <>{node.name}</>;
 
