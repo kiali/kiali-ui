@@ -77,14 +77,9 @@ class TrafficDetails extends React.Component<TrafficDetailsProps, TrafficDetails
         <GridItem span={12}>
           <Card>
             <CardBody>
-              <div>
-                <strong>Inbound</strong>
-              </div>
-              <DetailedTrafficList direction="inbound" traffic={this.state.inboundTraffic} />
-              <div style={{ marginTop: '2em' }}>
-                <strong>Outbound</strong>
-              </div>
-              <DetailedTrafficList direction="outbound" traffic={this.state.outboundTraffic} />
+              <DetailedTrafficList header="Inbound" direction="inbound" traffic={this.state.inboundTraffic} />
+              <div style={{ marginTop: '2em' }} />
+              <DetailedTrafficList header="Outbound" direction="outbound" traffic={this.state.outboundTraffic} />
             </CardBody>
           </Card>
         </GridItem>

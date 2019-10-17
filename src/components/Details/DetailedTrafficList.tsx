@@ -8,7 +8,7 @@ import {
   UnknownIcon,
   WarningTriangleIcon
 } from '@patternfly/react-icons';
-import { TableGrid } from 'patternfly-react-extensions';
+import { cellWidth, ICell, IRow, Table, TableBody, TableHeader, TableVariant } from '@patternfly/react-table';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { NodeType, ProtocolTraffic, hasProtocolTraffic } from '../../types/Graph';
@@ -16,9 +16,11 @@ import { Direction } from '../../types/MetricsOptions';
 import { REQUESTS_THRESHOLDS } from '../../types/Health';
 import history, { URLParam } from '../../app/History';
 import { PfColors } from '../Pf/PfColors';
+import { style } from 'typestyle';
 
 type DetailedTrafficProps = {
   direction: Direction;
+  header?: string;
   traffic: TrafficItem[];
 };
 
@@ -64,19 +66,10 @@ export interface TrafficItem {
   traffic: ProtocolTraffic;
 }
 
-const statusColumnSizes = {
-  md: 1,
-  sm: 1,
-  xs: 1
-};
-const workloadColumnSizes = {
-  md: 3,
-  sm: 3,
-  xs: 3
-};
-const metricsLinksColumnsSizes = workloadColumnSizes;
-const typeColumnSizes = statusColumnSizes;
-const trafficColumnSizes = workloadColumnSizes;
+const headerStyle = style({
+  fontWeight: 'bold',
+  color: 'black'
+});
 
 class DetailedTrafficList extends React.Component<DetailedTrafficProps> {
   static STATUS_COLUMN_IDX = 0;
@@ -84,41 +77,74 @@ class DetailedTrafficList extends React.Component<DetailedTrafficProps> {
   static PROTOCOL_COLUMN_IDX = 2;
   static TRAFFIC_COLUMN_IDX = 3;
   static METRICS_LINK_COLUMN_IDX = 4;
+  static HEADER_PROPS = { style: { color: '#72767b', fontWeight: 300, fontSize: '12px' } };
+  static COLUMN_PROPS = { style: { color: 'black', fontWeight: 400, fontSize: '1rem', verticalAlign: 'middle' } };
+  columns = (): ICell[] => {
+    return [
+      { title: 'STATUS', transforms: [cellWidth(10)], props: DetailedTrafficList.HEADER_PROPS },
+      {
+        title: this.props.direction === 'inbound' ? 'SOURCE' : 'DESTINATION',
+        transforms: [cellWidth(30)],
+        props: DetailedTrafficList.HEADER_PROPS
+      },
+      { title: 'TYPE', transforms: [cellWidth(10)], props: DetailedTrafficList.HEADER_PROPS },
+      { title: 'TRAFFIC', transforms: [cellWidth(30)], props: DetailedTrafficList.HEADER_PROPS },
+      { title: '', transforms: [cellWidth(10)], props: DetailedTrafficList.HEADER_PROPS }
+    ];
+  };
+
+  noSortedTraffic = (): IRow[] => {
+    return [
+      {
+        cells: [
+          {
+            title: (
+              <>
+                <InfoAltIcon /> Not enough {this.props.direction} traffic to generate info
+              </>
+            ),
+            props: { colSpan: 5 }
+          }
+        ]
+      }
+    ];
+  };
+
+  rows = (): IRow[] => {
+    const sortedTraffic = this.getSortedTraffic();
+    let rows: IRow[] = [];
+    sortedTraffic.map(item =>
+      rows.push({
+        cells: [
+          { title: this.renderStatusColumn(item.traffic), props: DetailedTrafficList.COLUMN_PROPS },
+          {
+            title: this.renderWorkloadColumn(item.node, item.proxy !== undefined),
+            props: DetailedTrafficList.COLUMN_PROPS
+          },
+          { title: this.renderTypeColumn(item.traffic), props: DetailedTrafficList.COLUMN_PROPS },
+          { title: this.renderTrafficColumn(item.traffic), props: DetailedTrafficList.COLUMN_PROPS },
+          { title: this.renderMetricsLinksColumn(item.node), props: DetailedTrafficList.COLUMN_PROPS }
+        ]
+      })
+    );
+    return rows;
+  };
 
   render() {
     const sortedTraffic = this.getSortedTraffic();
 
     return (
-      <TableGrid id="table-grid" bordered={true} selectType="none" style={{ clear: 'both' }}>
-        <TableGrid.Head>
-          <TableGrid.ColumnHeader {...statusColumnSizes}>Status</TableGrid.ColumnHeader>
-          <TableGrid.ColumnHeader {...workloadColumnSizes}>
-            {this.props.direction === 'inbound' ? 'Source' : 'Destination'}
-          </TableGrid.ColumnHeader>
-          <TableGrid.ColumnHeader {...typeColumnSizes}>Type</TableGrid.ColumnHeader>
-          <TableGrid.ColumnHeader {...trafficColumnSizes}>Traffic</TableGrid.ColumnHeader>
-        </TableGrid.Head>
-        <TableGrid.Body>
-          {sortedTraffic.length === 0 && (
-            <TableGrid.Row>
-              <TableGrid.Col md={10} sm={10} xs={10}>
-                <InfoAltIcon /> Not enough {this.props.direction} traffic to generate info
-              </TableGrid.Col>
-            </TableGrid.Row>
-          )}
-          {sortedTraffic.map(item => {
-            return (
-              <TableGrid.Row key={item.node.id}>
-                {this.renderStatusColumn(item.traffic)}
-                {this.renderWorkloadColumn(item.node, item.proxy !== undefined)}
-                {this.renderTypeColumn(item.traffic)}
-                {this.renderTrafficColumn(item.traffic)}
-                {this.renderMetricsLinksColumn(item.node)}
-              </TableGrid.Row>
-            );
-          })}
-        </TableGrid.Body>
-      </TableGrid>
+      <>
+        <Table
+          caption={<span className={headerStyle}>{this.props.header}</span>}
+          variant={TableVariant.compact}
+          cells={this.columns()}
+          rows={sortedTraffic.length === 0 ? this.noSortedTraffic() : this.rows()}
+        >
+          <TableHeader />
+          <TableBody />
+        </Table>
+      </>
     );
   }
 
@@ -166,11 +192,7 @@ class DetailedTrafficList extends React.Component<DetailedTrafficProps> {
       return null;
     }
 
-    return (
-      <TableGrid.Col {...metricsLinksColumnsSizes}>
-        <Link to={metricsLink}>View metrics</Link>
-      </TableGrid.Col>
-    );
+    return <Link to={metricsLink}>View metrics</Link>;
   };
 
   private renderStatusColumn = (traffic: ProtocolTraffic) => {
@@ -189,13 +211,9 @@ class DetailedTrafficList extends React.Component<DetailedTrafficProps> {
         healthIcon = <WarningTriangleIcon size={'md'} color={PfColors.Orange400} />;
       }
 
-      return <TableGrid.Col {...statusColumnSizes}>{healthIcon}</TableGrid.Col>;
+      return healthIcon;
     } else {
-      return (
-        <TableGrid.Col {...statusColumnSizes}>
-          <UnknownIcon size={'md'} />
-        </TableGrid.Col>
-      );
+      return <UnknownIcon size={'md'} />;
     }
   };
 
@@ -243,16 +261,16 @@ class DetailedTrafficList extends React.Component<DetailedTrafficProps> {
     }
 
     return (
-      <TableGrid.Col {...workloadColumnSizes}>
-        {icon} <span style={{ display: 'table-caption' }}>{name}</span>
-      </TableGrid.Col>
+      <>
+        {icon} <span style={{ verticalAlign: 'text-bottom' }}>{name}</span>
+      </>
     );
   };
 
   private renderTrafficColumn = (traffic: ProtocolTraffic) => {
     if (hasProtocolTraffic(traffic)) {
       if (traffic.protocol === 'tcp') {
-        return <TableGrid.Col {...trafficColumnSizes}>{Number(traffic.rates.tcp).toFixed(2)}</TableGrid.Col>;
+        return Number(traffic.rates.tcp).toFixed(2);
       } else {
         let rps: number;
         let percentError: number;
@@ -266,22 +284,22 @@ class DetailedTrafficList extends React.Component<DetailedTrafficProps> {
         }
 
         return (
-          <TableGrid.Col {...trafficColumnSizes}>
+          <>
             {rps.toFixed(2)}rps | {(100 - percentError).toFixed(1)}% success
-          </TableGrid.Col>
+          </>
         );
       }
     } else {
-      return <TableGrid.Col {...trafficColumnSizes}>N/A</TableGrid.Col>;
+      return 'N/A';
     }
   };
 
   private renderTypeColumn = (traffic: ProtocolTraffic) => {
     if (!traffic.protocol) {
-      return <TableGrid.Col {...typeColumnSizes}>N/A</TableGrid.Col>;
+      return 'N/A';
     }
 
-    return <TableGrid.Col {...typeColumnSizes}>{traffic.protocol.toUpperCase()}</TableGrid.Col>;
+    return traffic.protocol.toUpperCase();
   };
 
   private getSortedTraffic = () => {
