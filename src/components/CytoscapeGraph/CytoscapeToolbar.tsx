@@ -36,8 +36,7 @@ const buttonStyle = style({
   marginRight: '1px'
 });
 const cytoscapeToolbarStyle = style({
-  padding: '7px 10px',
-  backgroundColor: PfColors.GrayBackground
+  padding: '7px 10px'
 });
 const cytoscapeToolbarPadStyle = style({ marginLeft: '9px' });
 
