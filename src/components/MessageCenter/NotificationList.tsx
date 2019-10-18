@@ -1,10 +1,8 @@
 import * as React from 'react';
+import { NotificationMessage, MessageType } from '../../types/MessageCenter';
+import { Alert, AlertVariant, AlertActionCloseButton } from '@patternfly/react-core';
 
-import { NotificationMessage } from '../../types/MessageCenter';
-
-import { ToastNotificationList, TimedToastNotification } from 'patternfly-react';
-
-const DEFAULT_TIMER_DELAY = 5000;
+// const DEFAULT_TIMER_DELAY = 5000;
 
 type PropsType = {
   messages: NotificationMessage[];
@@ -15,20 +13,33 @@ type StateType = {};
 export default class NotificationList extends React.PureComponent<PropsType, StateType> {
   render() {
     return (
-      <ToastNotificationList>
-        {this.props.messages.map(message => (
-          <TimedToastNotification
-            key={message.id}
-            persistent={false}
-            paused={false}
-            timerdelay={DEFAULT_TIMER_DELAY}
-            onDismiss={event => this.props.onDismiss(message, event !== undefined)}
-            type={message.type}
-          >
-            <span>{message.content}</span>
-          </TimedToastNotification>
-        ))}
-      </ToastNotificationList>
+      <>
+        {this.props.messages.map((message, i) => {
+          let variant: AlertVariant;
+          switch (message.type) {
+            case MessageType.SUCCESS:
+              variant = AlertVariant.success;
+              break;
+            case MessageType.WARNING:
+              variant = AlertVariant.warning;
+              break;
+            default:
+              variant = AlertVariant.danger;
+          }
+          const onClose = () => {
+            this.props.onDismiss(message, true);
+          };
+          return (
+            <Alert
+              style={{ width: '30em', right: '0', top: `${(i + 1) * 5}em`, position: 'absolute' }}
+              key={message.id}
+              variant={variant}
+              title={message.content}
+              action={<AlertActionCloseButton onClose={onClose} />}
+            />
+          );
+        })}
+      </>
     );
   }
 }
