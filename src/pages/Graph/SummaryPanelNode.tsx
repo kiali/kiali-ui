@@ -37,6 +37,7 @@ import { Reporter } from '../../types/MetricsOptions';
 import { icons } from '../../config/Icons';
 import { CyNode, decoratedNodeData } from '../../components/CytoscapeGraph/CytoscapeGraphUtils';
 import { PopoverPosition } from '@patternfly/react-core';
+import { KialiIcon } from 'config/KialiIcon';
 
 type SummaryPanelStateType = {
   loading: boolean;
@@ -399,7 +400,7 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
       return (
         <>
           <div>
-            <Icon type="pf" name="info" /> Sparkline charts not supported for unknown node. Use edge for details.
+            <KialiIcon.Info /> Sparkline charts not supported for unknown node. Use edge for details.
             <hr />
           </div>
         </>
