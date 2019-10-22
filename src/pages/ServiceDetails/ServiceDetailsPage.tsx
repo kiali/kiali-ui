@@ -177,7 +177,7 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
   doRefresh = () => {
     const currentTab = this.state.currentTab;
 
-    if (this.state.serviceDetailsInfo === emptyService || currentTab === 'info') {
+    if (currentTab === 'info') {
       this.setState({ trafficData: null });
       this.fetchBackend();
     }
