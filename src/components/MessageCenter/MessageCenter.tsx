@@ -10,6 +10,7 @@ import { KialiAppAction } from 'actions/KialiAppAction';
 import { MessageCenterActions } from 'actions/MessageCenterActions';
 
 const notificationStyle = style({
+  position: 'relative',
   zIndex: 100
 });
 

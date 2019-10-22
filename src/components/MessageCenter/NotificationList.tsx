@@ -31,7 +31,7 @@ export default class NotificationList extends React.PureComponent<PropsType, Sta
           };
           return (
             <Alert
-              style={{ width: '30em', right: '0', top: `${(i + 1) * 5}em`, position: 'absolute' }}
+              style={{ width: '30em', right: '0', top: `${i * 5}em`, position: 'absolute' }}
               key={message.id}
               variant={variant}
               title={message.content}

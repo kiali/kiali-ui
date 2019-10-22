@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
 import {
   Card,
   CardHead,
@@ -12,14 +11,38 @@ import {
   AccordionItem,
   AccordionContent
 } from '@patternfly/react-core';
-import { NotificationMessage, NotificationGroup } from '../../types/MessageCenter';
-import { style } from 'typestyle';
-import { MessageCenterActions } from 'actions/MessageCenterActions';
+import { CloseIcon, AngleDoubleRightIcon, AngleDoubleLeftIcon, InfoIcon } from '@patternfly/react-icons';
+import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { KialiAppState } from 'store/Store';
+import { style } from 'typestyle';
+import { NotificationMessage, NotificationGroup } from '../../types/MessageCenter';
+import { MessageCenterActions } from 'actions/MessageCenterActions';
 import { KialiAppAction } from 'actions/KialiAppAction';
-import { CloseIcon, AngleDoubleRightIcon, AngleDoubleLeftIcon, InfoIcon } from '@patternfly/react-icons';
 import AlertDrawerGroupContainer from './AlertDrawerGroup';
+import {
+  BoundingClientAwareComponent,
+  PropertyType
+} from 'components/BoundingClientAwareComponent/BoundingClientAwareComponent';
+
+type ReduxProps = {
+  expandedGroupId: string | undefined;
+  groups: NotificationGroup[];
+  isExpanded: boolean;
+  isHidden: boolean;
+
+  expandDrawer: () => void;
+  hideDrawer: () => void;
+  toggleGroup: (group) => void;
+};
+
+type AlertDrawerProps = ReduxProps & {
+  title: string;
+};
+
+const hideGroup = (group: NotificationGroup): boolean => {
+  return group.hideIfEmpty && group.messages.length === 0;
+};
 
 const getUnreadCount = (messages: NotificationMessage[]) => {
   return messages.reduce((count, message) => {
@@ -39,75 +62,70 @@ const noNotificationsMessage = (
   </>
 );
 
-type ReduxProps = {
-  expandedGroupId: string | undefined;
-  groups: NotificationGroup[];
-  isExpanded: boolean;
-  isHidden: boolean;
-
-  onExpandDrawer: () => void;
-  onHideDrawer: () => void;
-  onToggleGroup: (groupId) => void;
-};
-
-type AlertDrawerProps = ReduxProps & {
-  title: string;
-};
-
 export class AlertDrawer extends React.PureComponent<AlertDrawerProps> {
   render() {
-    const adStyle = style({
-      right: '0',
-      top: `5em`,
+    const drawerStyle = style({
       position: 'absolute',
-      width: this.props.isExpanded ? '75%' : '25em'
+      right: '0',
+      width: this.props.isExpanded ? '75%' : '30em'
     });
-
-    console.log(`ExpandedGroupId=${this.props.expandedGroupId}`);
+    const drawerBodyStyle = style({
+      paddingLeft: 0,
+      paddingRight: 0
+    });
+    const boundingComponentStyle = style({
+      overflow: 'auto'
+    });
+    const drawerBodyMarginBottom = 20;
 
     return (
-      <Card className={adStyle} hidden={this.props.isHidden}>
+      <Card className={drawerStyle} hidden={this.props.isHidden}>
         <CardHead>
           <CardActions>
             {this.props.isExpanded ? (
-              <Button id="alert_drawer_collapse" variant="plain" onClick={this.props.onExpandDrawer}>
+              <Button id="alert_drawer_collapse" variant="plain" onClick={this.props.expandDrawer}>
                 <AngleDoubleRightIcon />
               </Button>
             ) : (
-              <Button id="alert_drawer_expand" variant="plain" onClick={this.props.onExpandDrawer}>
+              <Button id="alert_drawer_expand" variant="plain" onClick={this.props.expandDrawer}>
                 <AngleDoubleLeftIcon />
               </Button>
             )}
-            <Button id="alert_drawer_close" variant="plain" onClick={this.props.onHideDrawer}>
+            <Button id="alert_drawer_close" variant="plain" onClick={this.props.hideDrawer}>
               <CloseIcon />
             </Button>
           </CardActions>
           <CardHeader>{this.props.title}</CardHeader>
         </CardHead>
-        <CardBody>
+        <CardBody className={drawerBodyStyle}>
           {this.props.groups.length === 0 ? (
             noNotificationsMessage
           ) : (
-            <Accordion>
-              {this.props.groups.map(group => {
-                return (
-                  <AccordionItem key={group.id + '_item'}>
-                    <AccordionToggle
-                      id={group.id + '_toggle'}
-                      isExpanded={group.id === this.props.expandedGroupId}
-                      onClick={() => {
-                        this.props.onToggleGroup(group);
-                      }}
-                    >
-                      {group.title} {getUnreadMessageLabel(group.messages)}
-                    </AccordionToggle>
-                    <AccordionContent id={group.id + '_content'} isHidden={group.id !== this.props.expandedGroupId}>
-                      <AlertDrawerGroupContainer key={group.id} group={group} />
-                    </AccordionContent>
-                  </AccordionItem>
-                );
-              })}
-            </Accordion>
+            <BoundingClientAwareComponent
+              className={boundingComponentStyle}
+              maxHeight={{ type: PropertyType.VIEWPORT_HEIGHT_MINUS_TOP, margin: drawerBodyMarginBottom }}
+            >
+              <Accordion>
+                {this.props.groups.map(group => {
+                  return hideGroup(group) ? null : (
+                    <AccordionItem key={group.id + '_item'}>
+                      <AccordionToggle
+                        id={group.id + '_toggle'}
+                        isExpanded={group.id === this.props.expandedGroupId}
+                        onClick={() => {
+                          this.props.toggleGroup(group);
+                        }}
+                      >
+                        {group.title} {getUnreadMessageLabel(group.messages)}
+                      </AccordionToggle>
+                      <AccordionContent id={group.id + '_content'} isHidden={group.id !== this.props.expandedGroupId}>
+                        <AlertDrawerGroupContainer key={group.id} group={group} />
+                      </AccordionContent>
+                    </AccordionItem>
+                  );
+                })}
+              </Accordion>
+            </BoundingClientAwareComponent>
           )}
         </CardBody>
       </Card>
@@ -126,9 +144,9 @@ const mapStateToProps = (state: KialiAppState) => {
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<KialiAppState, void, KialiAppAction>) => {
   return {
-    onExpandDrawer: () => dispatch(MessageCenterActions.toggleExpandedMessageCenter()),
-    onHideDrawer: () => dispatch(MessageCenterActions.hideMessageCenter()),
-    onToggleGroup: group => dispatch(MessageCenterActions.toggleGroup(group.id))
+    expandDrawer: () => dispatch(MessageCenterActions.toggleExpandedMessageCenter()),
+    hideDrawer: () => dispatch(MessageCenterActions.hideMessageCenter()),
+    toggleGroup: group => dispatch(MessageCenterActions.toggleGroup(group.id))
   };
 };
 
