@@ -1,16 +1,14 @@
 import * as React from 'react';
 import { NotificationMessage, MessageType } from '../../types/MessageCenter';
-import { Alert, AlertVariant, AlertActionCloseButton } from '@patternfly/react-core';
+import { AlertVariant } from '@patternfly/react-core';
+import AlertToast from './AlertToast';
 
-// const DEFAULT_TIMER_DELAY = 5000;
-
-type PropsType = {
+type NotificationListProps = {
   messages: NotificationMessage[];
   onDismiss: (message: NotificationMessage, userDismissed: boolean) => void;
 };
-type StateType = {};
 
-export default class NotificationList extends React.PureComponent<PropsType, StateType> {
+export default class NotificationList extends React.PureComponent<NotificationListProps> {
   render() {
     return (
       <>
@@ -30,12 +28,13 @@ export default class NotificationList extends React.PureComponent<PropsType, Sta
             this.props.onDismiss(message, true);
           };
           return (
-            <Alert
+            <AlertToast
               style={{ width: '30em', right: '0', top: `${i * 5}em`, position: 'absolute' }}
-              key={message.id}
+              message={message}
               variant={variant}
               title={message.content}
-              action={<AlertActionCloseButton onClose={onClose} />}
+              onClose={onClose}
+              onTtl={onClose}
             />
           );
         })}
