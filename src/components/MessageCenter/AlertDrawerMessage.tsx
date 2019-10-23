@@ -13,13 +13,13 @@ import { KialiIcon } from 'config/KialiIcon';
 const getIcon = (type: MessageType) => {
   switch (type) {
     case MessageType.ERROR:
-      return KialiIcon.Error();
+      return <KialiIcon.Error />;
     case MessageType.INFO:
-      return KialiIcon.Info();
+      return <KialiIcon.Info />;
     case MessageType.SUCCESS:
-      return KialiIcon.Ok();
+      return <KialiIcon.Ok />;
     case MessageType.WARNING:
-      return KialiIcon.Warning();
+      return <KialiIcon.Warning />;
     default:
       throw Error('Unexpected type');
   }

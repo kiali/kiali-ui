@@ -39,7 +39,7 @@ export class MessageCenterTrigger extends React.PureComponent<PropsType, {}> {
         onClick={this.props.toggleSystemErrorsCenter}
         variant={ButtonVariant.plain}
       >
-        {KialiIcon.Warning()}
+        <KialiIcon.Warning />
         {this.props.systemErrorsCount}
         {this.props.systemErrorsCount === 1 ? ' Open Issue' : ' Open Issues'}
       </Button>
@@ -60,7 +60,7 @@ export class MessageCenterTrigger extends React.PureComponent<PropsType, {}> {
         onClick={this.props.toggleMessageCenter}
         variant={ButtonVariant.plain}
       >
-        {KialiIcon.Bell(bell)}
+        <KialiIcon.Bell className={bell} />
         {this.props.newMessagesCount > 0 && (
           <Badge className={'pf-badge-bordered' + (this.props.badgeDanger ? ' badge-danger' : '')}>
             {this.props.newMessagesCount > 0 ? this.props.newMessagesCount : ' '}

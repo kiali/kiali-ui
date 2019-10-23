@@ -93,11 +93,11 @@ export class AlertDrawer extends React.PureComponent<AlertDrawerProps> {
           <CardActions>
             {this.props.isExpanded ? (
               <Button id="alert_drawer_collapse" variant="plain" onClick={this.props.expandDrawer}>
-                {KialiIcon.AngleDoubleRight()}
+                <KialiIcon.AngleDoubleRight />
               </Button>
             ) : (
               <Button id="alert_drawer_expand" variant="plain" onClick={this.props.expandDrawer}>
-                {KialiIcon.AngleDoubleLeft()}
+                <KialiIcon.AngleDoubleLeft />
               </Button>
             )}
             <Button id="alert_drawer_close" variant="plain" onClick={this.props.hideDrawer}>

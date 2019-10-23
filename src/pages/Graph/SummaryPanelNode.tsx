@@ -401,7 +401,7 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
       return (
         <>
           <div>
-            {KialiIcon.Info()} Sparkline charts not supported for unknown node. Use edge for details.
+            <KialiIcon.Info /> Sparkline charts not supported for unknown node. Use edge for details.
             <hr />
           </div>
         </>

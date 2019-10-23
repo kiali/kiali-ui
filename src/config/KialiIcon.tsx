@@ -27,29 +27,35 @@ const iconStyle = style({
   width: '10px'
 });
 
+interface IconProps {
+  className?: string;
+}
+
 // keep alphabetized
-export const KialiIcon = {
-  AngleDoubleDown: (style?: string) => <AngleDoubleDownIcon className={style !== undefined ? style : iconStyle} />,
-  AngleDoubleLeft: (style?: string) => <AngleDoubleLeftIcon className={style !== undefined ? style : iconStyle} />,
-  AngleDoubleRight: (style?: string) => <AngleDoubleRightIcon className={style !== undefined ? style : iconStyle} />,
-  AngleDoubleUp: (style?: string) => <AngleDoubleUpIcon className={style !== undefined ? style : iconStyle} />,
-  Applications: (style?: string) => <ApplicationsIcon className={style !== undefined ? style : iconStyle} />,
-  Bell: (style?: string) => <BellIcon className={style !== undefined ? style : iconStyle} />,
-  CircuitBreaker: (style?: string) => <BoltIcon className={style !== undefined ? style : iconStyle} />,
-  Error: (style?: string) => (
-    <ErrorCircleOIcon className={style !== undefined ? style : iconStyle} color={PfColors.Danger} />
-  ),
-  Info: (style?: string) => <InfoAltIcon className={style !== undefined ? style : iconStyle} color={PfColors.Info} />,
-  Ok: (style?: string) => <OkIcon className={style !== undefined ? style : iconStyle} color={PfColors.Success} />,
-  MissingSidecar: (style?: string) => <CodeBranchIcon className={style !== undefined ? style : iconStyle} />,
-  MtlsLock: (style?: string) => <LockIcon className={style !== undefined ? style : iconStyle} />,
-  MtlsUnlock: (style?: string) => <LockOpenIcon className={style !== undefined ? style : iconStyle} />,
-  Services: (style?: string) => <ServiceIcon className={style !== undefined ? style : iconStyle} />,
-  Topology: (style?: string) => <TopologyIcon className={style !== undefined ? style : iconStyle} />,
-  Unknown: (style?: string) => <UnknownIcon className={style !== undefined ? style : iconStyle} />,
-  VirtualService: (style?: string) => <BlueprintIcon className={style !== undefined ? style : iconStyle} />,
-  Warning: (style?: string) => (
-    <WarningTriangleIcon className={style !== undefined ? style : iconStyle} color={PfColors.Warning} />
-  ),
-  Workloads: (style?: string) => <BundleIcon className={style !== undefined ? style : iconStyle} />
+export const KialiIcon: { [name: string]: React.FunctionComponent<IconProps> } = {
+  AngleDoubleDown: (props: IconProps) => <AngleDoubleDownIcon className={props.className} />,
+  AngleDoubleLeft: (props: IconProps) => <AngleDoubleLeftIcon className={props.className} />,
+  AngleDoubleRight: (props: IconProps) => <AngleDoubleRightIcon className={props.className} />,
+  AngleDoubleUp: (props: IconProps) => <AngleDoubleUpIcon className={props.className} />,
+  Applications: (props: IconProps) => <ApplicationsIcon className={props.className} />,
+  Bell: (props: IconProps) => <BellIcon className={props.className} />,
+  CircuitBreaker: (props: IconProps) => <BoltIcon className={props.className} />,
+  Error: (props: IconProps) => <ErrorCircleOIcon className={props.className} color={PfColors.Danger} />,
+  Info: (props: IconProps) => <InfoAltIcon className={props.className} color={PfColors.Info} />,
+  Ok: (props: IconProps) => <OkIcon className={props.className} color={PfColors.Success} />,
+  MissingSidecar: (props: IconProps) => <CodeBranchIcon className={props.className} />,
+  MtlsLock: (props: IconProps) => <LockIcon className={props.className} />,
+  MtlsUnlock: (props: IconProps) => <LockOpenIcon className={props.className} />,
+  Services: (props: IconProps) => <ServiceIcon className={props.className} />,
+  Topology: (props: IconProps) => <TopologyIcon className={props.className} />,
+  Unknown: (props: IconProps) => <UnknownIcon className={props.className} />,
+  VirtualService: (props: IconProps) => <BlueprintIcon className={props.className} />,
+  Warning: (props: IconProps) => <WarningTriangleIcon className={props.className} color={PfColors.Warning} />,
+  Workloads: (props: IconProps) => <BundleIcon className={props.className} />
 };
+
+Object.keys(KialiIcon).forEach(key => {
+  KialiIcon[key].defaultProps = {
+    className: iconStyle
+  };
+});
