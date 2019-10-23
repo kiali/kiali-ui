@@ -28,31 +28,37 @@ const noNotificationsMessage = (
 );
 
 class AlertDrawerGroup extends React.PureComponent<AlertDrawerGroupProps> {
-  getMessages = () => {
-    return this.props.reverseMessageOrder ? [...this.props.group.messages].reverse() : this.props.group.messages;
-  };
+  static readonly body = style({
+    padding: 0 // note: I don't know why but paddingTop with the additional explicit style prop used below
+  });
+  static readonly footer = style({
+    paddingBottom: 5,
+    paddingTop: 5
+  });
+  static readonly left = style({
+    float: 'left'
+  });
+  static readonly right = style({
+    float: 'right'
+  });
 
   render() {
-    const drawerBodyStyle = style({
-      paddingLeft: 0,
-      paddingRight: 0
-    });
     const group: NotificationGroup = this.props.group;
 
     return (
       <Card>
-        <CardBody className={drawerBodyStyle}>
+        <CardBody className={AlertDrawerGroup.body} style={{ paddingTop: 0 }}>
           {group.messages.length === 0 && noNotificationsMessage}
           {this.getMessages().map(message => (
             <AlertDrawerMessageContainer key={message.id} message={message} />
           ))}
         </CardBody>
         {group.showActions && group.messages.length > 0 && (
-          <CardFooter>
-            <Button variant="link" onClick={() => this.props.markGroupAsRead(group)}>
+          <CardFooter className={AlertDrawerGroup.footer}>
+            <Button className={AlertDrawerGroup.left} variant="link" onClick={() => this.props.markGroupAsRead(group)}>
               Mark All Read
             </Button>
-            <Button variant="link" onClick={() => this.props.clearGroup(group)}>
+            <Button className={AlertDrawerGroup.right} variant="link" onClick={() => this.props.clearGroup(group)}>
               Clear All
             </Button>
           </CardFooter>
@@ -60,6 +66,10 @@ class AlertDrawerGroup extends React.PureComponent<AlertDrawerGroupProps> {
       </Card>
     );
   }
+
+  private getMessages = () => {
+    return this.props.reverseMessageOrder ? [...this.props.group.messages].reverse() : this.props.group.messages;
+  };
 }
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<KialiAppState, void, KialiAppAction>) => {

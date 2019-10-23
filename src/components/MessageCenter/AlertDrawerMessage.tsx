@@ -1,31 +1,25 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Expandable } from '@patternfly/react-core';
+import { Expandable, Card, CardBody } from '@patternfly/react-core';
 import { MessageType, NotificationMessage } from '../../types/MessageCenter';
 import moment from 'moment';
 import { MessageCenterActions } from 'actions/MessageCenterActions';
 import { ThunkDispatch } from 'redux-thunk';
 import { KialiAppState } from 'store/Store';
+import { style } from 'typestyle';
 import { KialiAppAction } from 'actions/KialiAppAction';
+import { KialiIcon } from 'config/KialiIcon';
 
-// KIALI-3172 For some reason not fully explained, when loaded with "import" it happens that the NotificationDrawer
-// does not come with the expected ".Title", ".Accordion" (etc.) fields.
-// Which ends up in React error "Element type is invalid" as those components are undefined.
-// Using the "require" way is a workaround.
-// Note that it is unclear what triggers the error
-// (may happen with or without lazy loading, generally not seen using `yarn start` but seen with build)
-const Pf = require('patternfly-react');
-
-const typeForPfIcon = (type: MessageType) => {
+const getIcon = (type: MessageType) => {
   switch (type) {
     case MessageType.ERROR:
-      return 'error-circle-o';
+      return KialiIcon.Error();
     case MessageType.INFO:
-      return 'info';
+      return KialiIcon.Info();
     case MessageType.SUCCESS:
-      return 'ok';
+      return KialiIcon.Ok();
     case MessageType.WARNING:
-      return 'warning-triangle-o';
+      return KialiIcon.Warning();
     default:
       throw Error('Unexpected type');
   }
@@ -41,34 +35,42 @@ type AlertDrawerMessageProps = ReduxProps & {
 };
 
 class AlertDrawerMessage extends React.PureComponent<AlertDrawerMessageProps> {
+  static readonly body = style({
+    paddingTop: 0
+  });
+  static readonly left = style({
+    float: 'left'
+  });
+  static readonly right = style({
+    float: 'right'
+  });
+
   render() {
     return (
-      <Pf.Notification seen={this.props.message.seen} onClick={() => this.props.markAsRead(this.props.message)}>
-        <Pf.Icon className="pull-left" type="pf" name={typeForPfIcon(this.props.message.type)} />
-        <Pf.Notification.Content>
-          <Pf.Notification.Message>
-            {this.props.message.content}
-            {this.props.message.detail && (
-              <Expandable
-                toggleText={this.props.message.showDetail ? 'Hide Detail' : 'Show Detail'}
-                onToggle={() => this.props.toggleMessageDetail(this.props.message)}
-                isExpanded={this.props.message.showDetail}
-              >
-                <pre>{this.props.message.detail}</pre>
-              </Expandable>
-            )}
-            {this.props.message.count > 1 && (
-              <div>
-                {this.props.message.count} {moment().from(this.props.message.firstTriggered)}
-              </div>
-            )}
-          </Pf.Notification.Message>
-          <Pf.Notification.Info
-            leftText={this.props.message.created.toLocaleDateString()}
-            rightText={this.props.message.created.toLocaleTimeString()}
-          />
-        </Pf.Notification.Content>
-      </Pf.Notification>
+      <Card>
+        <CardBody className={AlertDrawerMessage.body}>
+          {getIcon(this.props.message.type)}{' '}
+          {this.props.message.seen ? this.props.message.content : <b>{this.props.message.content}</b>}
+          {this.props.message.detail && (
+            <Expandable
+              toggleText={this.props.message.showDetail ? 'Hide Detail' : 'Show Detail'}
+              onToggle={() => this.props.toggleMessageDetail(this.props.message)}
+              isExpanded={this.props.message.showDetail}
+            >
+              <pre>{this.props.message.detail}</pre>
+            </Expandable>
+          )}
+          {this.props.message.count > 1 && (
+            <div>
+              {this.props.message.count} {moment().from(this.props.message.firstTriggered)}
+            </div>
+          )}
+          <div>
+            <span className={AlertDrawerMessage.left}>{this.props.message.created.toLocaleDateString()}</span>
+            <span className={AlertDrawerMessage.right}>{this.props.message.created.toLocaleTimeString()}</span>
+          </div>
+        </CardBody>
+      </Card>
     );
   }
 }

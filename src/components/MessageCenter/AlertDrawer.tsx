@@ -11,7 +11,7 @@ import {
   AccordionItem,
   AccordionContent
 } from '@patternfly/react-core';
-import { CloseIcon, AngleDoubleRightIcon, AngleDoubleLeftIcon, InfoIcon } from '@patternfly/react-icons';
+import { CloseIcon, InfoIcon } from '@patternfly/react-icons';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { KialiAppState } from 'store/Store';
@@ -24,6 +24,7 @@ import {
   BoundingClientAwareComponent,
   PropertyType
 } from 'components/BoundingClientAwareComponent/BoundingClientAwareComponent';
+import { KialiIcon } from 'config/KialiIcon';
 
 type ReduxProps = {
   expandedGroupId: string | undefined;
@@ -63,32 +64,40 @@ const noNotificationsMessage = (
 );
 
 export class AlertDrawer extends React.PureComponent<AlertDrawerProps> {
+  static readonly head = style({
+    paddingBottom: 0
+  });
+  static readonly body = style({
+    paddingLeft: 0,
+    paddingRight: 0
+  });
+  static readonly wrapper = style({
+    overflow: 'auto'
+  });
+  static readonly wrapperMarginBottom = 10;
+  static readonly groups = style({
+    paddingTop: 0,
+    paddingBottom: 0
+  });
+
   render() {
-    const drawerStyle = style({
+    const drawer = style({
       position: 'absolute',
       right: '0',
-      width: this.props.isExpanded ? '75%' : '30em'
+      width: this.props.isExpanded ? '80%' : '30em'
     });
-    const drawerBodyStyle = style({
-      paddingLeft: 0,
-      paddingRight: 0
-    });
-    const boundingComponentStyle = style({
-      overflow: 'auto'
-    });
-    const drawerBodyMarginBottom = 20;
 
     return (
-      <Card className={drawerStyle} hidden={this.props.isHidden}>
-        <CardHead>
+      <Card className={drawer} hidden={this.props.isHidden}>
+        <CardHead className={AlertDrawer.head}>
           <CardActions>
             {this.props.isExpanded ? (
               <Button id="alert_drawer_collapse" variant="plain" onClick={this.props.expandDrawer}>
-                <AngleDoubleRightIcon />
+                {KialiIcon.AngleDoubleRight()}
               </Button>
             ) : (
               <Button id="alert_drawer_expand" variant="plain" onClick={this.props.expandDrawer}>
-                <AngleDoubleLeftIcon />
+                {KialiIcon.AngleDoubleLeft()}
               </Button>
             )}
             <Button id="alert_drawer_close" variant="plain" onClick={this.props.hideDrawer}>
@@ -97,15 +106,15 @@ export class AlertDrawer extends React.PureComponent<AlertDrawerProps> {
           </CardActions>
           <CardHeader>{this.props.title}</CardHeader>
         </CardHead>
-        <CardBody className={drawerBodyStyle}>
+        <CardBody className={AlertDrawer.body}>
           {this.props.groups.length === 0 ? (
             noNotificationsMessage
           ) : (
             <BoundingClientAwareComponent
-              className={boundingComponentStyle}
-              maxHeight={{ type: PropertyType.VIEWPORT_HEIGHT_MINUS_TOP, margin: drawerBodyMarginBottom }}
+              className={AlertDrawer.wrapper}
+              maxHeight={{ type: PropertyType.VIEWPORT_HEIGHT_MINUS_TOP, margin: AlertDrawer.wrapperMarginBottom }}
             >
-              <Accordion>
+              <Accordion className={AlertDrawer.groups}>
                 {this.props.groups.map(group => {
                   return hideGroup(group) ? null : (
                     <AccordionItem key={group.id + '_item'}>
