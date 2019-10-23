@@ -169,6 +169,9 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
   }
 
   fetchTrafficDataOnTabChange = (tabValue: string): void => {
+    if (tabValue === defaultTab && this.state.serviceDetailsInfo === emptyService) {
+      this.fetchBackend();
+    }
     if (tabValue === trafficTabName && this.state.trafficData == null) {
       this.fetchTrafficData();
     }
