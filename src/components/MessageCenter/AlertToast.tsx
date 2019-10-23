@@ -16,10 +16,6 @@ type AlertToastProps = AlertProps & {
 export default class AlertToast extends React.Component<AlertToastProps> {
   ttlTimer: NodeJS.Timeout | undefined;
 
-  constructor(props: AlertToastProps) {
-    super(props);
-  }
-
   componentDidMount() {
     this.ttlTimer = setInterval(
       () => {
