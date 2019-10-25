@@ -99,8 +99,8 @@ export default class ParameterizedTabs extends React.Component<TabsProps> {
             this.tabTransitionHandler(ek as number);
           }
         }}
-        mountOnEnter={this.props.mountOnEnter}
-        unmountOnExit={this.props.unmountOnExit}
+        mountOnEnter={this.props.mountOnEnter === undefined ? true : this.props.mountOnEnter}
+        unmountOnExit={this.props.unmountOnExit === undefined ? true : this.props.unmountOnExit}
       >
         {this.props.children}
       </Tabs>
