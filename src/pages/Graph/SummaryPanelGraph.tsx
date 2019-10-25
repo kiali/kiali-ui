@@ -33,7 +33,7 @@ type SummaryPanelGraphState = {
 };
 
 const topologyStyle = style({
-  padding: '0 1em'
+  margin: '0 1em'
 });
 
 export default class SummaryPanelGraph extends React.Component<SummaryPanelPropType, SummaryPanelGraphState> {
@@ -359,7 +359,7 @@ export default class SummaryPanelGraph extends React.Component<SummaryPanelPropT
       )}
       {numEdges > 0 && (
         <>
-          <KialiIcon.Topology />
+          <KialiIcon.Topology className={topologyStyle} />
           {numEdges.toString()} {numEdges === 1 ? 'edge' : 'edges'}
         </>
       )}
