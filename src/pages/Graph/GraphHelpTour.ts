@@ -1,16 +1,24 @@
-import { StatefulStep } from '../../components/Tour/StatefulTour';
 import { PopoverPosition } from '@patternfly/react-core';
-import { getNamespaceDropdown } from 'components/NamespaceDropdown';
+import { TourStopInfo, TourInfo } from 'components/Tour/TourStop';
 
-const GraphHelpTour: Array<StatefulStep> = [
-  {
-    position: PopoverPosition.bottom,
-    offset: 0,
-    target: getNamespaceDropdown,
+export const GraphTourStops: { [name: string]: TourStopInfo } = {
+  Legend: {
+    name: 'Legend',
+    description: 'Display the legend to learn about what the different shapes, colors and backgrounds mean.',
+    position: PopoverPosition.top
+  },
+  Namespaces: {
     name: 'Namespaces',
-    description: 'Select the namespaces you want to see in the graph.'
+    description: 'Select the namespaces you want to see in the graph.',
+    position: PopoverPosition.bottom
   }
-  /*,
+};
+
+const GraphTour: TourInfo = {
+  name: 'GraphTour',
+  stops: [GraphTourStops.Legend]
+};
+/*,
   {
     position: PopoverPosition.right,
     offset: 0,
@@ -63,6 +71,5 @@ const GraphHelpTour: Array<StatefulStep> = [
     description: 'Display the legend to learn about what the different shapes, colors and backgrounds mean.'
   }
   */
-];
 
-export default GraphHelpTour;
+export default GraphTour;

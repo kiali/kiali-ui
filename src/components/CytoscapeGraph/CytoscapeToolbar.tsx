@@ -19,6 +19,8 @@ import { GraphActions } from '../../actions/GraphActions';
 import { HistoryManager, URLParam } from '../../app/History';
 import * as LayoutDictionary from './graphs/LayoutDictionary';
 import { GraphFilterActions } from '../../actions/GraphFilterActions';
+import { GraphTourStops } from 'pages/Graph/GraphHelpTour';
+import TourStopContainer from 'components/Tour/TourStop';
 
 type ReduxProps = {
   layout: Layout;
@@ -140,15 +142,17 @@ export class CytoscapeToolbar extends React.PureComponent<CytoscapeToolbarProps>
           </Tooltip>
         </ToolbarItem>
         <ToolbarItem>
-          <Button
-            variant="primary"
-            id="toolbar_toggle_legend"
-            onClick={this.props.toggleLegend}
-            isActive={this.props.showLegend}
-            className={cytoscapeToolbarPadStyle}
-          >
-            Legend
-          </Button>
+          <TourStopContainer info={GraphTourStops.Legend}>
+            <Button
+              variant="primary"
+              id="toolbar_toggle_legend"
+              onClick={this.props.toggleLegend}
+              isActive={this.props.showLegend}
+              className={cytoscapeToolbarPadStyle}
+            >
+              Legend
+            </Button>
+          </TourStopContainer>
         </ToolbarItem>
       </Toolbar>
     );

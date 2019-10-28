@@ -2,7 +2,7 @@ import * as React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
-import { RouteComponentProps, withRouter } from 'react-router-dom';
+import { RouteComponentProps } from 'react-router-dom';
 import FlexView from 'react-flexview';
 import { Breadcrumb, Button, OverlayTrigger, Tooltip } from 'patternfly-react';
 import { style } from 'typestyle';
@@ -19,12 +19,8 @@ import CytoscapeToolbarContainer from '../../components/CytoscapeGraph/Cytoscape
 import ErrorBoundary from '../../components/ErrorBoundary/ErrorBoundary';
 import GraphFilterContainer from '../../components/GraphFilter/GraphFilter';
 import GraphLegend from '../../components/GraphFilter/GraphLegend';
-import StatefulTour from '../../components/Tour/StatefulTour';
 import EmptyGraphLayoutContainer from '../../components/EmptyGraphLayout';
 import SummaryPanel from './SummaryPanel';
-import graphHelp from './GraphHelpTour';
-import { arrayEquals } from '../../utils/Common';
-import { getFocusSelector, isKioskMode } from '../../utils/SearchParamUtils';
 import {
   activeNamespacesSelector,
   durationSelector,
@@ -43,6 +39,11 @@ import { NodeContextMenuContainer } from '../../components/CytoscapeGraph/Contex
 import { GlobalActions } from '../../actions/GlobalActions';
 import { PfColors } from 'components/Pf/PfColors';
 import { KialiIcon } from 'config/KialiIcon';
+import { TourActions } from 'actions/TourActions';
+import { TourInfo } from 'components/Tour/TourStop';
+import { arrayEquals } from 'utils/Common';
+import { isKioskMode, getFocusSelector } from 'utils/SearchParamUtils';
+import GraphTour from './GraphHelpTour';
 
 // GraphURLPathProps holds path variable values.  Currenly all path variables are relevant only to a node graph
 type GraphURLPathProps = {
@@ -55,6 +56,7 @@ type GraphURLPathProps = {
 
 type ReduxProps = {
   activeNamespaces: Namespace[];
+  activeTour?: TourInfo;
   duration: DurationInSeconds; // current duration (dropdown) setting
   edgeLabelMode: EdgeLabelMode;
   graphData: any;
@@ -88,13 +90,11 @@ type ReduxProps = {
   setNode: (node?: NodeParamsType) => void;
   toggleLegend: () => void;
   setLastRefreshAt: (lastRefreshAt: TimeInMilliseconds) => void;
+  endTour: () => void;
+  startTour: (tourInfo: TourInfo) => void;
 };
 
 export type GraphPageProps = RouteComponentProps<Partial<GraphURLPathProps>> & ReduxProps;
-
-type GraphPageState = {
-  showHelp: boolean;
-};
 
 const NUMBER_OF_DATAPOINTS = 30;
 
@@ -143,7 +143,7 @@ const timeDisplayOptions = {
   hour12: false
 };
 
-export class GraphPage extends React.Component<GraphPageProps, GraphPageState> {
+export class GraphPage extends React.Component<GraphPageProps> {
   private pollTimeoutRef?: number;
   private pollPromise?: CancelablePromise<any>;
   private readonly errorBoundaryRef: any;
@@ -211,9 +211,6 @@ export class GraphPage extends React.Component<GraphPageProps, GraphPageState> {
     super(props);
     this.errorBoundaryRef = React.createRef();
     this.cytoscapeGraphRef = React.createRef();
-    this.state = {
-      showHelp: false
-    };
 
     // Let URL override current redux state at construction time
     // Note that state updates will not be posted until until after the first render
@@ -273,8 +270,8 @@ export class GraphPage extends React.Component<GraphPageProps, GraphPageState> {
       this.errorBoundaryRef.current.cleanError();
     }
 
-    if (curr.showLegend && this.state.showHelp) {
-      this.setState({ showHelp: false });
+    if (curr.showLegend && this.props.activeTour) {
+      this.props.endTour();
     }
   }
 
@@ -286,9 +283,11 @@ export class GraphPage extends React.Component<GraphPageProps, GraphPageState> {
     if (this.props.showLegend) {
       this.props.toggleLegend();
     }
-    this.setState({
-      showHelp: !this.state.showHelp
-    });
+    if (this.props.activeTour) {
+      this.props.endTour();
+    } else {
+      this.props.startTour(GraphTour);
+    }
   };
 
   render() {
@@ -301,7 +300,6 @@ export class GraphPage extends React.Component<GraphPageProps, GraphPageState> {
     const focusSelector = getFocusSelector();
     return (
       <>
-        <StatefulTour steps={graphHelp} isOpen={this.state.showHelp} onClose={this.toggleHelp} />
         <FlexView className={conStyle} column={true}>
           <div>
             <Breadcrumb title={true}>
@@ -466,6 +464,7 @@ export class GraphPage extends React.Component<GraphPageProps, GraphPageState> {
 
 const mapStateToProps = (state: KialiAppState) => ({
   activeNamespaces: activeNamespacesSelector(state),
+  activeTour: state.tourState.activeTour,
   duration: durationSelector(state),
   edgeLabelMode: edgeLabelModeSelector(state),
   graphData: graphDataSelector(state),
@@ -512,13 +511,13 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<KialiAppState, void, KialiAp
   graphChanged: bindActionCreators(GraphActions.changed, dispatch),
   setNode: bindActionCreators(GraphActions.setNode, dispatch),
   toggleLegend: bindActionCreators(GraphFilterActions.toggleLegend, dispatch),
-  setLastRefreshAt: bindActionCreators(GlobalActions.setLastRefreshAt, dispatch)
+  setLastRefreshAt: bindActionCreators(GlobalActions.setLastRefreshAt, dispatch),
+  endTour: bindActionCreators(TourActions.endTour, dispatch),
+  startTour: bindActionCreators(TourActions.startTour, dispatch)
 });
 
-const GraphPageContainer = withRouter<RouteComponentProps<{}>>(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )(GraphPage)
-);
+const GraphPageContainer = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(GraphPage);
 export default GraphPageContainer;
