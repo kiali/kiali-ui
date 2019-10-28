@@ -1,16 +1,18 @@
-import { StepPlacement } from '../../components/Tour/Tour';
 import { StatefulStep } from '../../components/Tour/StatefulTour';
+import { PopoverPosition } from '@patternfly/react-core';
+import { getNamespaceDropdown } from 'components/NamespaceDropdown';
 
 const GraphHelpTour: Array<StatefulStep> = [
   {
-    placement: StepPlacement.BOTTOM_START,
+    position: PopoverPosition.bottom,
     offset: 0,
-    target: '#namespace-selector',
+    target: getNamespaceDropdown,
     name: 'Namespaces',
     description: 'Select the namespaces you want to see in the graph.'
-  },
+  }
+  /*,
   {
-    placement: StepPlacement.RIGHT,
+    position: PopoverPosition.right,
     offset: 0,
     target: '#graph_filter_view_type',
     name: 'Graph Type',
@@ -37,7 +39,7 @@ const GraphHelpTour: Array<StatefulStep> = [
     description: 'Highlight or Hide graph elements via typed expressions. Click the Find/Hide help icon for details.'
   },
   {
-    placement: StepPlacement.BOTTOM,
+    position: PopoverPosition.bottom,
     offset: -120,
     target: '#cytoscape-container',
     isVisible: target => {
@@ -60,6 +62,7 @@ const GraphHelpTour: Array<StatefulStep> = [
     name: 'Legend',
     description: 'Display the legend to learn about what the different shapes, colors and backgrounds mean.'
   }
+  */
 ];
 
 export default GraphHelpTour;

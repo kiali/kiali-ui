@@ -54,8 +54,8 @@ export default class StatefulTour extends React.Component<StatefulTourProps, Sta
   }
 
   isStepVisible(step: StatefulStep) {
-    const element = document.querySelector(step.target);
-    if (element && step.isVisible) {
+    const element = step.target();
+    if (step.isVisible && step.target()) {
       return step.isVisible(element);
     }
     return !!element;
