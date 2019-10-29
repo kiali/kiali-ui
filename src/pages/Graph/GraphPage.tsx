@@ -40,10 +40,10 @@ import { GlobalActions } from '../../actions/GlobalActions';
 import { PfColors } from 'components/Pf/PfColors';
 import { KialiIcon } from 'config/KialiIcon';
 import { TourActions } from 'actions/TourActions';
-import { TourInfo } from 'components/Tour/TourStop';
+import TourStopContainer, { TourInfo } from 'components/Tour/TourStop';
 import { arrayEquals } from 'utils/Common';
 import { isKioskMode, getFocusSelector } from 'utils/SearchParamUtils';
-import GraphTour from './GraphHelpTour';
+import GraphTour, { GraphTourStops } from './GraphHelpTour';
 
 // GraphURLPathProps holds path variable values.  Currenly all path variables are relevant only to a node graph
 type GraphURLPathProps = {
@@ -343,15 +343,17 @@ export class GraphPage extends React.Component<GraphPageProps> {
                   closeLegend={this.props.toggleLegend}
                 />
               )}
-              <CytoscapeGraphContainer
-                refresh={this.handleRefreshClick}
-                containerClassName={cytoscapeGraphContainerStyle}
-                ref={refInstance => this.setCytoscapeGraph(refInstance)}
-                isMTLSEnabled={this.props.mtlsEnabled}
-                focusSelector={focusSelector}
-                contextMenuNodeComponent={NodeContextMenuContainer}
-                contextMenuGroupComponent={NodeContextMenuContainer}
-              />
+              <TourStopContainer info={GraphTourStops.Graph}>
+                <CytoscapeGraphContainer
+                  refresh={this.handleRefreshClick}
+                  containerClassName={cytoscapeGraphContainerStyle}
+                  ref={refInstance => this.setCytoscapeGraph(refInstance)}
+                  isMTLSEnabled={this.props.mtlsEnabled}
+                  focusSelector={focusSelector}
+                  contextMenuNodeComponent={NodeContextMenuContainer}
+                  contextMenuGroupComponent={NodeContextMenuContainer}
+                />
+              </TourStopContainer>
               {this.props.graphData.nodes && Object.keys(this.props.graphData.nodes).length > 0 && !this.props.isError && (
                 <div className={cytoscapeToolbarWrapperDivStyle}>
                   <CytoscapeToolbarContainer cytoscapeGraphRef={this.cytoscapeGraphRef} />

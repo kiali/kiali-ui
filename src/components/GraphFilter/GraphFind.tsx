@@ -14,6 +14,8 @@ import { CyData, NodeType } from '../../types/Graph';
 import { Layout, EdgeLabelMode } from 'types/GraphFilter';
 import * as AlertUtils from '../../utils/AlertUtils';
 import { KialiIcon } from 'config/KialiIcon';
+import TourStopContainer from 'components/Tour/TourStop';
+import { GraphTourStops } from 'pages/Graph/GraphHelpTour';
 
 type ReduxProps = {
   compressOnHide: boolean;
@@ -114,20 +116,22 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
         <FormGroup style={{ flexDirection: 'row', alignItems: 'flex-start', ...thinGroupStyle }}>
           <span className={'form-inline'}>
             <InputGroup>
-              <FormControl
-                id="graph_find"
-                name="graph_find"
-                autoComplete="on"
-                type="text"
-                style={{ ...inputWidth }}
-                inputRef={ref => {
-                  this.findInputRef = ref;
-                }}
-                onChange={this.updateFind}
-                defaultValue={this.state.findInputValue}
-                onKeyPress={this.checkSubmitFind}
-                placeholder="Find..."
-              />
+              <TourStopContainer info={GraphTourStops.Find}>
+                <FormControl
+                  id="graph_find"
+                  name="graph_find"
+                  autoComplete="on"
+                  type="text"
+                  style={{ ...inputWidth }}
+                  inputRef={ref => {
+                    this.findInputRef = ref;
+                  }}
+                  onChange={this.updateFind}
+                  defaultValue={this.state.findInputValue}
+                  onKeyPress={this.checkSubmitFind}
+                  placeholder="Find..."
+                />
+              </TourStopContainer>
               {this.props.findValue && (
                 <OverlayTrigger
                   key="ot_clear_find"

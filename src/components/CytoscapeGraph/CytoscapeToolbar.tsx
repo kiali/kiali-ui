@@ -110,21 +110,23 @@ export class CytoscapeToolbar extends React.PureComponent<CytoscapeToolbarProps>
           </Tooltip>
         </ToolbarItem>
 
-        <ToolbarItem>
-          <Tooltip content={'Layout 1 ' + CoseGraph.getLayout().name}>
-            <Button
-              id="toolbar_layout1"
-              className={buttonStyle}
-              variant="plain"
-              onClick={() => {
-                this.props.setLayout(CoseGraph.getLayout());
-              }}
-              isActive={this.props.layout.name === CoseGraph.getLayout().name}
-            >
-              <TopologyIcon /> 1
-            </Button>
-          </Tooltip>
-        </ToolbarItem>
+        <TourStopContainer info={GraphTourStops.Layout}>
+          <ToolbarItem>
+            <Tooltip content={'Layout 1 ' + CoseGraph.getLayout().name}>
+              <Button
+                id="toolbar_layout1"
+                className={buttonStyle}
+                variant="plain"
+                onClick={() => {
+                  this.props.setLayout(CoseGraph.getLayout());
+                }}
+                isActive={this.props.layout.name === CoseGraph.getLayout().name}
+              >
+                <TopologyIcon /> 1
+              </Button>
+            </Tooltip>
+          </ToolbarItem>
+        </TourStopContainer>
 
         <ToolbarItem>
           <Tooltip content={'Layout 2 ' + ColaGraph.getLayout().name}>
@@ -141,8 +143,9 @@ export class CytoscapeToolbar extends React.PureComponent<CytoscapeToolbarProps>
             </Button>
           </Tooltip>
         </ToolbarItem>
-        <ToolbarItem>
-          <TourStopContainer info={GraphTourStops.Legend}>
+
+        <TourStopContainer info={GraphTourStops.Legend}>
+          <ToolbarItem>
             <Button
               variant="primary"
               id="toolbar_toggle_legend"
@@ -152,8 +155,8 @@ export class CytoscapeToolbar extends React.PureComponent<CytoscapeToolbarProps>
             >
               Legend
             </Button>
-          </TourStopContainer>
-        </ToolbarItem>
+          </ToolbarItem>
+        </TourStopContainer>
       </Toolbar>
     );
   }
