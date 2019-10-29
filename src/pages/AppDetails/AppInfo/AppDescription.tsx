@@ -57,8 +57,10 @@ class AppDescription extends React.Component<AppDescriptionProps, AppDescription
   renderWorkloadItem(namespace: string, workload: AppWorkload) {
     return (
       <ListItem key={`AppWorkload_${workload.workloadName}`}>
-        <Link to={this.workloadLink(namespace, workload.workloadName)}>{workload.workloadName}</Link>{' '}
-        {!workload.istioSidecar && <MissingSidecar namespace={namespace} tooltip={true} text={''} />}
+        <Link to={this.workloadLink(namespace, workload.workloadName)}>{workload.workloadName}</Link>
+        {!workload.istioSidecar && (
+          <MissingSidecar namespace={namespace} tooltip={true} style={{ marginLeft: '10px' }} text={''} />
+        )}
       </ListItem>
     );
   }
