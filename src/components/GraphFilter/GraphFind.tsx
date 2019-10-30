@@ -13,7 +13,7 @@ import * as CytoscapeGraphUtils from '../CytoscapeGraph/CytoscapeGraphUtils';
 import { CyData, NodeType } from '../../types/Graph';
 import { Layout, EdgeLabelMode } from 'types/GraphFilter';
 import * as AlertUtils from '../../utils/AlertUtils';
-import { KialiIcon } from 'config/KialiIcon';
+import { KialiIcon, defaultIconStyle } from 'config/KialiIcon';
 import TourStopContainer from 'components/Tour/TourStop';
 import { GraphTourStops } from 'pages/Graph/GraphHelpTour';
 
@@ -183,7 +183,7 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
               overlay={<Tooltip id={'tt_graph_find_help'}>Find/Hide Help...</Tooltip>}
             >
               <Button bsStyle="link" style={{ paddingLeft: '6px' }} onClick={this.toggleFindHelp}>
-                <KialiIcon.Help />
+                <KialiIcon.Help className={defaultIconStyle} />
               </Button>
             </OverlayTrigger>
           </span>

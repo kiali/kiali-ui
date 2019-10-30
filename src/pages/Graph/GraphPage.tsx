@@ -38,7 +38,7 @@ import { GraphFilterActions } from '../../actions/GraphFilterActions';
 import { NodeContextMenuContainer } from '../../components/CytoscapeGraph/ContextMenu/NodeContextMenu';
 import { GlobalActions } from '../../actions/GlobalActions';
 import { PfColors } from 'components/Pf/PfColors';
-import { KialiIcon } from 'config/KialiIcon';
+import { KialiIcon, defaultIconStyle } from 'config/KialiIcon';
 import { TourActions } from 'actions/TourActions';
 import TourStopContainer, { TourInfo } from 'components/Tour/TourStop';
 import { arrayEquals } from 'utils/Common';
@@ -313,7 +313,7 @@ export class GraphPage extends React.Component<GraphPageProps> {
                   overlay={<Tooltip id={'graph-tour-help-tt'}>Graph help tour...</Tooltip>}
                 >
                   <Button bsStyle="link" style={{ paddingLeft: '6px' }} onClick={this.toggleHelp}>
-                    <KialiIcon.Help />
+                    <KialiIcon.Help className={defaultIconStyle} />
                   </Button>
                 </OverlayTrigger>
               </Breadcrumb.Item>

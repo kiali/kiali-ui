@@ -31,6 +31,10 @@ import {
 } from '@patternfly/react-icons';
 import { style } from 'typestyle';
 
+export const defaultIconStyle = style({
+  // nothing special
+});
+
 const iconStyle = style({
   width: '10px'
 });

@@ -10,6 +10,7 @@ import { KialiAppAction } from 'actions/KialiAppAction';
 import { TourActions } from 'actions/TourActions';
 import { style } from 'typestyle';
 import { Props } from 'tippy.js';
+import { PfColors } from 'components/Pf/PfColors';
 
 export interface TourStopInfo {
   name: string;
@@ -22,6 +23,14 @@ export interface TourInfo {
   name: string;
   stops: Array<TourStopInfo>;
 }
+
+const stopNumberStyle = style({
+  borderRadius: '20px',
+  backgroundColor: PfColors.Blue300,
+  padding: '2px 6px',
+  marginRight: '10px',
+  color: PfColors.White
+});
 
 type ReduxProps = {
   activeTour?: TourInfo;
@@ -73,6 +82,12 @@ class TourStop extends React.PureComponent<TourStopProps> {
     );
   };
 
+  /*
+  private stopNumber = () => {
+    return <span className={stopNumberStyle}>{this.props.activeStop! + 1}</span>;
+  };
+  */
+
   private isVisible = (): boolean => {
     const name = this.props.info.name;
     const isVisible: boolean =
@@ -122,7 +137,12 @@ class TourStop extends React.PureComponent<TourStopProps> {
               onHidden={this.onHidden}
               position={this.props.info.position}
               tippyProps={tippyProps}
-              headerContent={<span>{this.props.info.name}</span>}
+              headerContent={
+                <div>
+                  <span className={stopNumberStyle}>{this.props.activeStop! + 1}</span>
+                  <span>{this.props.info.name}</span>
+                </div>
+              }
               bodyContent={this.props.info.description}
               footerContent={
                 <div>
