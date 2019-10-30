@@ -109,6 +109,7 @@
     "redux-thunk": "2.3.0",
     "reselect": "4.0.0",
     "ssri": "6.0.1",
+    "table-resolver": "3.3.0",
     "tippy.js": "3.4.1",
     "typesafe-actions": "3.2.1",
     "typestyle": "2.0.1",
@@ -142,8 +143,6 @@
     "typescript": "3.5.3"
   },
   "resolutions": {
-    "@typescript-eslint/parser": "1.11.0",
-    "@typescript-eslint/eslint-plugin": "1.11.0",
     "handlebars": "4.0.14",
     "js-yaml": "3.13.1",
     "hoist-non-react-statics": "3.3.0"
