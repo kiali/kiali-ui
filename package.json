@@ -143,7 +143,6 @@
     "typescript": "3.5.3"
   },
   "resolutions": {
-    "js-yaml": "3.13.1",
     "hoist-non-react-statics": "3.3.0"
   },
   "engines": {
