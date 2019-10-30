@@ -76,7 +76,7 @@ class TourStop extends React.PureComponent<TourStopProps> {
   private isVisible = (): boolean => {
     const name = this.props.info.name;
     const isVisible: boolean =
-      this.props.activeTour != undefined && name === this.props.activeTour.stops[this.props.activeStop!].name;
+      this.props.activeTour !== undefined && name === this.props.activeTour.stops[this.props.activeStop!].name;
     return isVisible;
   };
 
@@ -118,12 +118,11 @@ class TourStop extends React.PureComponent<TourStopProps> {
             <Popover
               key={this.props.info.name}
               isVisible={true}
-              hideOnOutsideClick={false} // should be ignored but just in case
               shouldClose={this.shouldClose}
               onHidden={this.onHidden}
               position={this.props.info.position}
               tippyProps={tippyProps}
-              headerContent={<span>{name}</span>}
+              headerContent={<span>{this.props.info.name}</span>}
               bodyContent={this.props.info.description}
               footerContent={
                 <div>
