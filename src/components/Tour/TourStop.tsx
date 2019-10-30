@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { KialiAppState } from 'store/Store';
+import ReactResizeDetector from 'react-resize-detector';
 import { KialiIcon } from 'config/KialiIcon';
 import { KialiAppAction } from 'actions/KialiAppAction';
 import { TourActions } from 'actions/TourActions';
@@ -72,43 +73,68 @@ class TourStop extends React.PureComponent<TourStopProps> {
     );
   };
 
-  private onHidden() {
-    if (this.props !== undefined) {
-      console.log(`HIDDEN [${this.props.info.name}]`);
+  private isVisible = (): boolean => {
+    const name = this.props.info.name;
+    const isVisible: boolean =
+      this.props.activeTour != undefined && name === this.props.activeTour.stops[this.props.activeStop!].name;
+    return isVisible;
+  };
+
+  // This is here to workaround what seems to be a bug.  As far as I know when isVisible is set then outside clicks should not hide
+  // the Popover, but it seems to be happening in certain scenarios. So, if the Popover is still valid, unhide it immediately.
+  private onHidden = () => {
+    if (this.isVisible()) {
+      this.forceUpdate();
     }
-  }
+  };
+
+  private onResize = () => {
+    if (this.isVisible()) {
+      this.forceUpdate();
+    }
+  };
+
+  private shouldClose = () => {
+    this.props.endTour();
+  };
 
   render() {
-    const name = this.props.info.name;
     const offset: string = this.props.info.offset ? this.props.info.offset : '0, 0';
     const tippyProps: Props = { offset: offset };
-    const show = this.props.activeTour && name === this.props.activeTour.stops[this.props.activeStop!].name;
-    if (show) {
-      console.log(`*** [${name}]`);
-    } else {
-      console.log(`                      [${name}]`);
-    }
+    const isVisible = this.isVisible();
+
     return (
       <>
-        {show ? (
-          <Popover
-            key={this.props.info.name}
-            isVisible={true}
-            shouldClose={this.props.endTour}
-            onHidden={this.onHidden}
-            position={this.props.info.position}
-            tippyProps={tippyProps}
-            headerContent={<span>{name}</span>}
-            bodyContent={this.props.info.description}
-            footerContent={
-              <div>
-                {this.backButton()}
-                {this.nextButton()}
-              </div>
-            }
-          >
-            <>{this.props.children}</>
-          </Popover>
+        {isVisible ? (
+          <>
+            <ReactResizeDetector
+              refreshMode={'debounce'}
+              refreshRate={100}
+              skipOnMount={true}
+              handleWidth={true}
+              handleHeight={true}
+              onResize={this.onResize}
+            />
+            <Popover
+              key={this.props.info.name}
+              isVisible={true}
+              hideOnOutsideClick={false} // should be ignored but just in case
+              shouldClose={this.shouldClose}
+              onHidden={this.onHidden}
+              position={this.props.info.position}
+              tippyProps={tippyProps}
+              headerContent={<span>{name}</span>}
+              bodyContent={this.props.info.description}
+              footerContent={
+                <div>
+                  {this.backButton()}
+                  {this.nextButton()}
+                </div>
+              }
+            >
+              <>{this.props.children}</>
+            </Popover>
+          </>
         ) : (
           <>{this.props.children}</>
         )}
