@@ -3,10 +3,9 @@ import { ActionKeys } from './ActionKeys';
 import { TourInfo } from '../components/Tour/TourStop';
 
 export const TourActions = {
-  startTour: createStandardAction(ActionKeys.TOUR_START)<TourInfo>(),
   endTour: createAction(ActionKeys.TOUR_END),
-  nextStop: createAction(ActionKeys.TOUR_NEXT),
-  previousStop: createAction(ActionKeys.TOUR_PREV)
+  setStop: createStandardAction(ActionKeys.TOUR_SET_STOP)<number>(),
+  startTour: createStandardAction(ActionKeys.TOUR_START)<{ info: TourInfo; stop: number }>()
 };
 
 export type TourAction = ActionType<typeof TourActions>;

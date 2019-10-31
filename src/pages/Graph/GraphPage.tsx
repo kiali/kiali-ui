@@ -40,7 +40,7 @@ import { GlobalActions } from '../../actions/GlobalActions';
 import { PfColors } from 'components/Pf/PfColors';
 import { KialiIcon, defaultIconStyle } from 'config/KialiIcon';
 import { TourActions } from 'actions/TourActions';
-import TourStopContainer, { TourInfo } from 'components/Tour/TourStop';
+import TourStopContainer, { TourInfo, getNextTourStop } from 'components/Tour/TourStop';
 import { arrayEquals } from 'utils/Common';
 import { isKioskMode, getFocusSelector } from 'utils/SearchParamUtils';
 import GraphTour, { GraphTourStops } from './GraphHelpTour';
@@ -91,7 +91,7 @@ type ReduxProps = {
   toggleLegend: () => void;
   setLastRefreshAt: (lastRefreshAt: TimeInMilliseconds) => void;
   endTour: () => void;
-  startTour: (tourInfo: TourInfo) => void;
+  startTour: ({ info: TourInfo, stop: number }) => void;
 };
 
 export type GraphPageProps = RouteComponentProps<Partial<GraphURLPathProps>> & ReduxProps;
@@ -286,7 +286,8 @@ export class GraphPage extends React.Component<GraphPageProps> {
     if (this.props.activeTour) {
       this.props.endTour();
     } else {
-      this.props.startTour(GraphTour);
+      const firstStop = getNextTourStop(GraphTour, -1, 'forward');
+      this.props.startTour({ info: GraphTour, stop: firstStop });
     }
   };
 

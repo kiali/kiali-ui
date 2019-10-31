@@ -13,10 +13,11 @@ import { Props } from 'tippy.js';
 import { PfColors } from 'components/Pf/PfColors';
 
 export interface TourStopInfo {
-  name: string;
-  description: string;
+  name: string; // displayed in the tour stop header.
+  description: string; // displayed as the tour stop body
   position?: PopoverPosition;
   offset?: string; // tippy prop: 'xOffset, yOffset'
+  isValid?: boolean; // internal use, leave unset
 }
 
 export interface TourInfo {
@@ -37,26 +38,62 @@ type ReduxProps = {
   activeStop?: number;
 
   endTour: () => void;
-  nextStop: () => void;
-  previousStop: () => void;
+  setStop: (stop: number) => void;
 };
 
 type TourStopProps = ReduxProps & {
   info: TourStopInfo;
 };
 
+export function getNextTourStop(
+  activeTour: TourInfo,
+  activeStop: number,
+  direction: 'back' | 'forward'
+): number | undefined {
+  if (direction === 'back') {
+    for (let i: number = activeStop - 1; i >= 0; --i) {
+      if (activeTour.stops[i].isValid) {
+        console.log(`${activeTour.name} ${activeStop} ${direction} => ${i}`);
+        return i;
+      }
+    }
+  } else {
+    for (let i: number = activeStop + 1; i < activeTour.stops.length; ++i) {
+      if (activeTour.stops[i].isValid) {
+        console.log(`${activeTour.name} ${activeStop} ${direction} => ${i}`);
+        return i;
+      }
+    }
+  }
+  console.log(`${activeTour.name} ${activeStop} ${direction} => undefined`);
+  return undefined;
+}
+
 class TourStop extends React.PureComponent<TourStopProps> {
-  private hasPreviousStop = (): boolean => {
-    return this.props.activeStop !== undefined && this.props.activeStop > 0;
+  tourStopInfo: TourStopInfo;
+
+  constructor(props: TourStopProps) {
+    super(props);
+
+    this.tourStopInfo = props.info;
+  }
+
+  private getStop = (direction: 'back' | 'forward'): number | undefined => {
+    if (this.props.activeStop === undefined) {
+      return undefined;
+    }
+
+    return getNextTourStop(this.props.activeTour!, this.props.activeStop!, direction);
   };
 
-  private hasNextStop = (): boolean => {
-    return this.props.activeStop !== undefined && this.props.activeStop + 1 < this.props.activeTour!.stops.length;
+  private setStop = (stop: number) => {
+    this.props.setStop(stop);
   };
 
   private backButton = () => {
+    const stop = this.getStop('back');
     return (
-      <Button isDisabled={!this.hasPreviousStop()} variant="secondary" onClick={this.props.previousStop}>
+      <Button isDisabled={stop === undefined} variant="secondary" onClick={() => this.setStop(stop!)}>
         <KialiIcon.AngleLeft /> Back
       </Button>
     );
@@ -66,27 +103,22 @@ class TourStop extends React.PureComponent<TourStopProps> {
     const right = style({
       float: 'right'
     });
+    const stop = this.getStop('forward');
 
-    if (this.hasNextStop()) {
+    if (stop === undefined) {
       return (
-        <Button className={right} variant="primary" onClick={this.props.nextStop}>
-          Next <KialiIcon.AngleRight />
+        <Button className={right} variant="primary" onClick={this.props.endTour}>
+          Done
         </Button>
       );
     }
 
     return (
-      <Button className={right} variant="primary" onClick={this.props.endTour}>
-        Done
+      <Button className={right} variant="primary" onClick={() => this.setStop(stop!)}>
+        Next <KialiIcon.AngleRight />
       </Button>
     );
   };
-
-  /*
-  private stopNumber = () => {
-    return <span className={stopNumberStyle}>{this.props.activeStop! + 1}</span>;
-  };
-  */
 
   private isVisible = (): boolean => {
     const name = this.props.info.name;
@@ -113,10 +145,15 @@ class TourStop extends React.PureComponent<TourStopProps> {
     this.props.endTour();
   };
 
+  componentWillUnmount() {
+    this.tourStopInfo.isValid = false;
+  }
+
   render() {
     const offset: string = this.props.info.offset ? this.props.info.offset : '0, 0';
     const tippyProps: Props = { offset: offset };
     const isVisible = this.isVisible();
+    this.tourStopInfo.isValid = true;
 
     return (
       <>
@@ -131,7 +168,6 @@ class TourStop extends React.PureComponent<TourStopProps> {
               onResize={this.onResize}
             />
             <Popover
-              key={this.props.info.name}
               isVisible={true}
               shouldClose={this.shouldClose}
               onHidden={this.onHidden}
@@ -170,8 +206,7 @@ const mapStateToProps = (state: KialiAppState) => ({
 const mapDispatchToProps = (dispatch: ThunkDispatch<KialiAppState, void, KialiAppAction>) => {
   return {
     endTour: bindActionCreators(TourActions.endTour, dispatch),
-    nextStop: bindActionCreators(TourActions.nextStop, dispatch),
-    previousStop: bindActionCreators(TourActions.previousStop, dispatch)
+    setStop: bindActionCreators(TourActions.setStop, dispatch)
   };
 };
 

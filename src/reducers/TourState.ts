@@ -14,22 +14,11 @@ const tour = (state: TourState = INITIAL_TOUR_STATE, action: KialiAppAction): To
     case getType(TourActions.endTour):
       return updateState(state, { activeTour: undefined, activeStop: undefined });
 
-    case getType(TourActions.nextStop): {
-      if (state.activeStop === undefined) {
-        return state;
-      }
-      const nextStop = state.activeStop + 1;
-      return nextStop < state.activeTour!.stops.length ? updateState(state, { activeStop: nextStop }) : state;
-    }
-    case getType(TourActions.previousStop): {
-      if (state.activeStop === undefined) {
-        return state;
-      }
-      const nextStop = state.activeStop - 1;
-      return nextStop >= 0 ? updateState(state, { activeStop: nextStop }) : state;
+    case getType(TourActions.setStop): {
+      return updateState(state, { activeStop: action.payload });
     }
     case getType(TourActions.startTour):
-      return updateState(state, { activeTour: action.payload, activeStop: 0 });
+      return updateState(state, { activeTour: action.payload.info, activeStop: action.payload.stop });
 
     default:
       return state;
