@@ -53,19 +53,16 @@ export function getNextTourStop(
   if (direction === 'back') {
     for (let i: number = activeStop - 1; i >= 0; --i) {
       if (activeTour.stops[i].isValid) {
-        console.log(`${activeTour.name} ${activeStop} ${direction} => ${i}`);
         return i;
       }
     }
   } else {
     for (let i: number = activeStop + 1; i < activeTour.stops.length; ++i) {
       if (activeTour.stops[i].isValid) {
-        console.log(`${activeTour.name} ${activeStop} ${direction} => ${i}`);
         return i;
       }
     }
   }
-  console.log(`${activeTour.name} ${activeStop} ${direction} => undefined`);
   return undefined;
 }
 
