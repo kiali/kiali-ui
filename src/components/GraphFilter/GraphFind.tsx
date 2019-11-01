@@ -177,23 +177,24 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
                 </OverlayTrigger>
               )}
             </InputGroup>
-            <OverlayTrigger
-              key={'ot_graph_find_help'}
-              placement="top"
-              overlay={<Tooltip id={'tt_graph_find_help'}>Find/Hide Help...</Tooltip>}
-            >
-              <Button bsStyle="link" style={{ paddingLeft: '6px' }} onClick={this.toggleFindHelp}>
-                <KialiIcon.Help className={defaultIconStyle} />
-              </Button>
-            </OverlayTrigger>
+            <GraphHelpFind onClose={this.toggleFindHelp}>
+              <OverlayTrigger
+                key={'ot_graph_find_help'}
+                placement="top"
+                overlay={<Tooltip id={'tt_graph_find_help'}>Find/Hide Help...</Tooltip>}
+              >
+                <Button bsStyle="link" style={{ paddingLeft: '6px' }} onClick={this.toggleFindHelp}>
+                  <KialiIcon.Help className={defaultIconStyle} />
+                </Button>
+              </OverlayTrigger>
+            </GraphHelpFind>
           </span>
           {this.state.errorMessage && (
             <div>
               <span style={{ color: 'red' }}>{this.state.errorMessage}</span>
             </div>
           )}
-        </FormGroup>
-        {this.props.showFindHelp && <GraphHelpFind onClose={this.toggleFindHelp} />}{' '}
+        </FormGroup>{' '}
       </>
     );
   }

@@ -1,32 +1,16 @@
 import * as React from 'react';
-import Draggable from 'react-draggable';
-import { Button, Tabs, Tab } from '@patternfly/react-core';
+import ReactResizeDetector from 'react-resize-detector';
+import { Tab, Popover, PopoverPosition } from '@patternfly/react-core';
 import { ICell, Table, TableBody, TableHeader, TableVariant, cellWidth } from '@patternfly/react-table';
-import { CloseIcon } from '@patternfly/react-icons';
 import { style } from 'typestyle';
+import SimpleTabs from 'components/Tab/SimpleTabs';
 
 export interface GraphHelpFindProps {
   onClose: () => void;
   className?: string;
 }
 
-interface GraphHelpFindState {
-  tabIndex: number;
-}
-
-export default class GraphHelpFind extends React.Component<GraphHelpFindProps, GraphHelpFindState> {
-  constructor(props: GraphHelpFindProps) {
-    super(props);
-    this.state = { tabIndex: 2 };
-  }
-
-  private handleTabClick = (_, index) => {
-    console.log(`Change to tab [${index}]`);
-    this.setState({
-      tabIndex: index
-    });
-  };
-
+export default class GraphHelpFind extends React.Component<GraphHelpFindProps> {
   /*
   headerFormat = (label, { column }) => <Table.Heading className={column.property}>{label}</Table.Heading>;
   cellFormat = (value, { column }) => {
@@ -36,6 +20,137 @@ export default class GraphHelpFind extends React.Component<GraphHelpFindProps, G
     return <Table.Cell className={className}>{value}</Table.Cell>;
   };
   */
+
+  private onResize = () => {
+    this.forceUpdate();
+  };
+
+  render() {
+    // const className = this.props.className ? this.props.className : '';
+    const width = '600px';
+    const maxWidth = '604px';
+    // const contentWidth = 'calc(100vw - 50px - var(--pf-c-page__sidebar--md--Width))'; // 50px prevents full coverage
+    const popoverStyle = style({
+      width: width,
+      maxWidth: maxWidth,
+      height: '550px',
+      // padding: '0',
+      // right: '0',
+      // top: '5px',
+      // zIndex: 9999,
+      // position: 'absolute',
+      overflow: 'hidden',
+      overflowX: 'auto',
+      overflowY: 'auto'
+    });
+    /*
+    const headerStyle = style({
+      width: width
+    });
+    const bodyStyle = style({
+      // width: width
+    });
+    */
+    const prefaceStyle = style({
+      fontSize: '12px',
+      color: '#fff',
+      backgroundColor: '#003145',
+      width: '540px',
+      height: '70px',
+      padding: '5px',
+      resize: 'none'
+    });
+    const preface =
+      'You can use the Find and Hide fields to highlight or hide graph edges and nodes. Each field accepts ' +
+      'expressions using the language described below. Hide takes precedence when using Find and Hide ' +
+      'together. Uncheck the "Compress Hidden" display option for hidden elements to retain their space.';
+
+    return (
+      <>
+        <ReactResizeDetector
+          refreshMode={'debounce'}
+          refreshRate={100}
+          skipOnMount={true}
+          handleWidth={true}
+          handleHeight={true}
+          onResize={this.onResize}
+        />
+        <Popover
+          className={popoverStyle}
+          position={PopoverPosition.auto}
+          headerContent={
+            <div>
+              <span>Graph Find/Hide</span>
+            </div>
+          }
+          bodyContent={
+            <div>
+              <textarea className={`${prefaceStyle}`} readOnly={true} value={preface} />
+              <SimpleTabs id="graph_find_help_tabs" defaultTab={0}>
+                <Tab eventKey={0} title="Usage Notes">
+                  <Table
+                    header={<></>}
+                    variant={TableVariant.compact}
+                    cells={this.noteColumns()}
+                    rows={this.noteRows()}
+                  >
+                    <TableHeader />
+                    <TableBody />
+                  </Table>
+                </Tab>
+                <Tab eventKey={1} title="Operators">
+                  <Table
+                    header={<></>}
+                    variant={TableVariant.compact}
+                    cells={this.operatorColumns()}
+                    rows={this.operatorRows()}
+                  >
+                    <TableHeader />
+                    <TableBody />
+                  </Table>
+                </Tab>
+                <Tab eventKey={2} title="Nodes">
+                  <Table
+                    header={<></>}
+                    variant={TableVariant.compact}
+                    cells={this.nodeColumns()}
+                    rows={this.nodeRows()}
+                  >
+                    <TableHeader />
+                    <TableBody />
+                  </Table>
+                </Tab>
+                <Tab eventKey={3} title="Edges">
+                  <Table
+                    header={<></>}
+                    variant={TableVariant.compact}
+                    cells={this.edgeColumns()}
+                    rows={this.edgeRows()}
+                  >
+                    <TableHeader />
+                    <TableBody />
+                  </Table>
+                </Tab>
+                <Tab eventKey={4} title="Examples">
+                  <Table
+                    header={<></>}
+                    variant={TableVariant.compact}
+                    cells={this.exampleColumns()}
+                    rows={this.exampleRows()}
+                  >
+                    <TableHeader />
+                    <TableBody />
+                  </Table>
+                </Tab>
+              </SimpleTabs>
+            </div>
+          }
+        >
+          <>{this.props.children}</>
+        </Popover>
+      </>
+    );
+  }
 
   private edgeColumns = (): ICell[] => {
     return [{ title: 'Expression' }, { title: 'Notes' }];
@@ -140,107 +255,4 @@ export default class GraphHelpFind extends React.Component<GraphHelpFindProps, G
       ['<=', `less than or equals`]
     ];
   };
-
-  render() {
-    console.log('Render');
-    const className = this.props.className ? this.props.className : '';
-    const width = '600px';
-    const maxWidth = '602px';
-    const contentWidth = 'calc(100vw - 50px - var(--pf-c-page__sidebar--md--Width))'; // 50px prevents full coverage
-    const contentStyle = style({
-      width: contentWidth,
-      maxWidth: maxWidth,
-      height: '550px',
-      right: '0',
-      top: '10px',
-      zIndex: 9999,
-      position: 'absolute',
-      overflow: 'hidden',
-      overflowX: 'auto',
-      overflowY: 'auto'
-    });
-    const headerStyle = style({
-      width: width
-    });
-    const bodyStyle = style({
-      width: width
-    });
-    const prefaceStyle = style({
-      width: '100%',
-      height: '77px',
-      padding: '10px',
-      resize: 'none',
-      color: '#fff',
-      backgroundColor: '#003145'
-    });
-    const preface =
-      'You can use the Find and Hide fields to highlight or hide graph edges and nodes. Each field accepts ' +
-      'expressions using the language described below. Hide takes precedence when using Find and Hide ' +
-      'together. Uncheck the "Compress Hidden" display option for hidden elements to retain their space.';
-
-    console.log('Render 2');
-    return (
-      <Draggable handle="#helpheader" bounds="#root">
-        <div className={`modal-content ${className} ${contentStyle}`}>
-          <div id="helpheader" className={`modal-header ${headerStyle}`}>
-            <Button className="close" onClick={this.props.onClose}>
-              <CloseIcon />
-            </Button>
-            <span className="modal-title">Help: Graph Find/Hide</span>
-          </div>
-          <div className={`modal-body ${bodyStyle}`}>
-            <textarea className={`${prefaceStyle}`} readOnly={true} value={preface} />
-            <Tabs
-              id="graph_find_help_tabs"
-              activeKey={this.state.tabIndex}
-              onSelect={this.handleTabClick}
-              mountOnEnter={true}
-              unmountOnExit={true}
-            >
-              <Tab eventKey={0} title="Notes" style={{ paddingLeft: '10px' }}>
-                <Table header={<></>} variant={TableVariant.compact} cells={this.noteColumns()} rows={this.noteRows()}>
-                  <TableHeader />
-                  <TableBody />
-                </Table>
-              </Tab>
-              <Tab eventKey={1} title="Operators">
-                <Table
-                  header={<></>}
-                  variant={TableVariant.compact}
-                  cells={this.operatorColumns()}
-                  rows={this.operatorRows()}
-                >
-                  <TableHeader />
-                  <TableBody />
-                </Table>
-              </Tab>
-              <Tab eventKey={2} title="Nodes">
-                <Table header={<></>} variant={TableVariant.compact} cells={this.nodeColumns()} rows={this.nodeRows()}>
-                  <TableHeader />
-                  <TableBody />
-                </Table>
-              </Tab>
-              <Tab eventKey={3} title="Edges">
-                <Table header={<></>} variant={TableVariant.compact} cells={this.edgeColumns()} rows={this.edgeRows()}>
-                  <TableHeader />
-                  <TableBody />
-                </Table>
-              </Tab>
-              <Tab eventKey={4} title="Examples">
-                <Table
-                  header={<></>}
-                  variant={TableVariant.compact}
-                  cells={this.exampleColumns()}
-                  rows={this.exampleRows()}
-                >
-                  <TableHeader />
-                  <TableBody />
-                </Table>
-              </Tab>
-            </Tabs>
-          </div>
-        </div>
-      </Draggable>
-    );
-  }
 }
