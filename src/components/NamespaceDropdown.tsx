@@ -3,40 +3,41 @@ import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 import _ from 'lodash';
 import { style } from 'typestyle';
-import { Button, FormControl, InputGroup, OverlayTrigger, Popover } from 'patternfly-react';
+import { Button, ButtonVariant, Dropdown, DropdownToggle, TextInput } from '@patternfly/react-core';
 import { KialiAppState } from '../store/Store';
 import { activeNamespacesSelector, namespaceFilterSelector, namespaceItemsSelector } from '../store/Selectors';
 import { KialiAppAction } from '../actions/KialiAppAction';
 import { NamespaceActions } from '../actions/NamespaceAction';
 import NamespaceThunkActions from '../actions/NamespaceThunkActions';
 import Namespace from '../types/Namespace';
-import { PfColors } from './Pf/PfColors';
 import { HistoryManager, URLParam } from '../app/History';
 import {
   BoundingClientAwareComponent,
   PropertyType
 } from './BoundingClientAwareComponent/BoundingClientAwareComponent';
 import { KialiIcon } from 'config/KialiIcon';
-import TourStopContainer from './Tour/TourStop';
-import { GraphTourStops } from 'pages/Graph/GraphHelpTour';
 
-const namespaceButtonColors = {
-  backgroundColor: PfColors.White,
-  fontSize: '1rem',
-  color: '#282d33',
-  textDecoration: 'none'
-};
-
-const namespaceButtonStyle = style({
-  ...namespaceButtonColors,
-  height: '32px',
-  padding: '4px 6px 5px 6px',
-  // these properties are being overridden by btn:hover/focus and btn-link:hover/focus
-  $nest: {
-    '&:hover': namespaceButtonColors,
-    '&:focus': namespaceButtonColors
-  }
+const clearAllButtonStyle = style({
+  margin: '0, 1em, 0, 0'
 });
+const filterTextStyle = style({
+  padding: '0, 1em, 0, 1em'
+});
+
+interface ReduxProps {
+  activeNamespaces: Namespace[];
+  filter: string;
+  items: Namespace[];
+  refresh: () => void;
+  toggleNamespace: (namespace: Namespace) => void;
+  setFilter: (filter: string) => void;
+  setNamespaces: (namespaces: Namespace[]) => void;
+}
+
+interface NamespaceDropdownProps extends ReduxProps {
+  disabled: boolean;
+  clearAll: () => void;
+}
 
 const namespaceLabelStyle = style({
   fontWeight: 400
@@ -67,7 +68,18 @@ interface NamespaceDropdownProps extends ReduxProps {
   clearAll: () => void;
 }
 
-export class NamespaceDropdown extends React.PureComponent<NamespaceDropdownProps> {
+interface NamespaceDropdownState {
+  isOpen: boolean;
+}
+
+export class NamespaceDropdown extends React.PureComponent<NamespaceDropdownProps, NamespaceDropdownState> {
+  constructor(props: NamespaceDropdownProps) {
+    super(props);
+    this.state = {
+      isOpen: false
+    };
+  }
+
   componentDidMount() {
     this.props.refresh();
     this.syncNamespacesURLParam();
@@ -128,6 +140,44 @@ export class NamespaceDropdown extends React.PureComponent<NamespaceDropdownProp
     }
   }
 
+  private onToggle = isOpen => {
+    this.setState({
+      isOpen
+    });
+  };
+
+  getHeaderContent() {
+    return (
+      <>
+        <div>
+          <TextInput
+            type="text"
+            name="namespace-filter"
+            placeholder="Filter by keyword..."
+            value={this.props.filter}
+            onChange={this.onFilterChange}
+          />
+          {this.props.filter !== '' && (
+            <Button onClick={this.clearFilter} className={filterTextStyle}>
+              <KialiIcon.Close />
+            </Button>
+          )}
+        </div>
+        <div className="text-right">
+          <Button
+            variant={ButtonVariant.link}
+            disabled={this.props.activeNamespaces.length === -1}
+            onClick={this.props.clearAll}
+            className={clearAllButtonStyle}
+            aria-label="clear-all"
+          >
+            Clear all
+          </Button>
+        </div>
+      </>
+    );
+  }
+
   getPopoverContent() {
     if (this.props.items.length > 0) {
       const activeMap = this.props.activeNamespaces.reduce((map, namespace) => {
@@ -138,7 +188,11 @@ export class NamespaceDropdown extends React.PureComponent<NamespaceDropdownProp
       const namespaces = this.props.items
         .filter((namespace: Namespace) => namespace.name.includes(this.props.filter))
         .map((namespace: Namespace) => (
-          <div id={`namespace-list-item[${namespace.name}]`} key={`namespace-list-item[${namespace.name}]`}>
+          <div
+            style={{ margin: '0 1em' }}
+            id={`namespace-list-item[${namespace.name}]`}
+            key={`namespace-list-item[${namespace.name}]`}
+          >
             <label>
               <input
                 type="checkbox"
@@ -153,29 +207,6 @@ export class NamespaceDropdown extends React.PureComponent<NamespaceDropdownProp
 
       return (
         <>
-          <div>
-            <InputGroup>
-              <FormControl
-                type="text"
-                name="namespace-filter"
-                placeholder="Filter by keyword..."
-                value={this.props.filter}
-                onChange={this.onFilterChange}
-              />
-              {this.props.filter !== '' && (
-                <InputGroup.Button>
-                  <Button onClick={this.clearFilter}>
-                    <KialiIcon.Close />
-                  </Button>
-                </InputGroup.Button>
-              )}
-            </InputGroup>
-          </div>
-          <div className="text-right">
-            <Button disabled={this.props.activeNamespaces.length === 0} bsStyle="link" onClick={this.props.clearAll}>
-              Clear all
-            </Button>
-          </div>
           <BoundingClientAwareComponent
             className={namespaceContainerStyle}
             maxHeight={{ type: PropertyType.VIEWPORT_HEIGHT_MINUS_TOP, margin: popoverMarginBottom }}
@@ -189,21 +220,15 @@ export class NamespaceDropdown extends React.PureComponent<NamespaceDropdownProp
   }
 
   render() {
-    const popover = <Popover id="namespace-list-layers-popover">{this.getPopoverContent()}</Popover>;
+    const { isOpen } = this.state;
     return (
-      <TourStopContainer info={GraphTourStops.Namespaces}>
-        <OverlayTrigger
-          onEnter={this.props.refresh}
-          overlay={popover}
-          placement="bottom"
-          trigger={['click']}
-          rootClose={true}
-        >
-          <Button bsClass={`btn btn-link btn-lg  ${namespaceButtonStyle}`} id="namespace-selector">
-            {this.namespaceButtonText()} <KialiIcon.AngleDown />
-          </Button>
-        </OverlayTrigger>
-      </TourStopContainer>
+      <Dropdown
+        toggle={<DropdownToggle onToggle={this.onToggle}>{this.namespaceButtonText()}</DropdownToggle>}
+        isOpen={isOpen}
+      >
+        {this.getHeaderContent()}
+        {this.getPopoverContent()}
+      </Dropdown>
     );
   }
 }
