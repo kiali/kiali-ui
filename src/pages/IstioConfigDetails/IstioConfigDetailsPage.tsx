@@ -364,8 +364,8 @@ class IstioConfigDetailsPage extends React.Component<RouteComponentProps<IstioCo
           ) : (
             undefined
           )}
-          <GridItem span={12}>{this.renderActionButtons()}</GridItem>
         </Grid>
+        {this.renderActionButtons()}
       </div>
     );
   };
