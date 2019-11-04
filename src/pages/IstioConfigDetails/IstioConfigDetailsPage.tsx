@@ -300,6 +300,8 @@ class IstioConfigDetailsPage extends React.Component<RouteComponentProps<IstioCo
   renderEditor = () => {
     const yamlSource = this.fetchYaml();
     const objectReferences = this.objectReferences();
+    const refPresent = objectReferences.length > 0;
+    const editorSpan = refPresent ? 9 : 12;
     let editorValidations: AceValidations = {
       markers: [],
       annotations: []
@@ -316,7 +318,7 @@ class IstioConfigDetailsPage extends React.Component<RouteComponentProps<IstioCo
     return (
       <div className="container-fluid container-cards-pf">
         <Grid gutter={GutterSize.md}>
-          <GridItem span={9}>
+          <GridItem span={editorSpan}>
             {this.state.istioObjectDetails ? (
               <AceEditor
                 ref={this.aceEditorRef}
@@ -334,30 +336,34 @@ class IstioConfigDetailsPage extends React.Component<RouteComponentProps<IstioCo
               />
             ) : null}
           </GridItem>
-          <GridItem span={3}>
-            <Card>
-              <CardHeader>
-                <Title headingLevel={TitleLevel.h3} size={TitleSize.xl}>
-                  Validation references
-                </Title>
-              </CardHeader>
-              <CardBody>
-                <Stack>
-                  {objectReferences.map((reference, i) => {
-                    return (
-                      <StackItem key={'rel-object-' + i}>
-                        <IstioObjectLink
-                          name={reference.name}
-                          type={reference.objectType}
-                          namespace={reference.namespace}
-                        />
-                      </StackItem>
-                    );
-                  })}
-                </Stack>
-              </CardBody>
-            </Card>
-          </GridItem>
+          {refPresent ? (
+            <GridItem span={3}>
+              <Card>
+                <CardHeader>
+                  <Title headingLevel={TitleLevel.h3} size={TitleSize.xl}>
+                    Validation references
+                  </Title>
+                </CardHeader>
+                <CardBody>
+                  <Stack>
+                    {objectReferences.map((reference, i) => {
+                      return (
+                        <StackItem key={'rel-object-' + i}>
+                          <IstioObjectLink
+                            name={reference.name}
+                            type={reference.objectType}
+                            namespace={reference.namespace}
+                          />
+                        </StackItem>
+                      );
+                    })}
+                  </Stack>
+                </CardBody>
+              </Card>
+            </GridItem>
+          ) : (
+            undefined
+          )}
           <GridItem span={12}>{this.renderActionButtons()}</GridItem>
         </Grid>
       </div>
