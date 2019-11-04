@@ -11,46 +11,21 @@ export interface GraphHelpFindProps {
 }
 
 export default class GraphHelpFind extends React.Component<GraphHelpFindProps> {
-  /*
-  headerFormat = (label, { column }) => <Table.Heading className={column.property}>{label}</Table.Heading>;
-  cellFormat = (value, { column }) => {
-    const props = column.cell.props;
-    const className = props ? props.align : '';
-
-    return <Table.Cell className={className}>{value}</Table.Cell>;
-  };
-  */
-
   private onResize = () => {
     this.forceUpdate();
   };
 
   render() {
-    // const className = this.props.className ? this.props.className : '';
     const width = '600px';
     const maxWidth = '604px';
-    // const contentWidth = 'calc(100vw - 50px - var(--pf-c-page__sidebar--md--Width))'; // 50px prevents full coverage
     const popoverStyle = style({
       width: width,
       maxWidth: maxWidth,
       height: '550px',
-      // padding: '0',
-      // right: '0',
-      // top: '5px',
-      // zIndex: 9999,
-      // position: 'absolute',
       overflow: 'hidden',
       overflowX: 'auto',
       overflowY: 'auto'
     });
-    /*
-    const headerStyle = style({
-      width: width
-    });
-    const bodyStyle = style({
-      // width: width
-    });
-    */
     const prefaceStyle = style({
       fontSize: '12px',
       color: '#fff',
@@ -78,6 +53,9 @@ export default class GraphHelpFind extends React.Component<GraphHelpFindProps> {
         <Popover
           className={popoverStyle}
           position={PopoverPosition.auto}
+          isVisible={true}
+          hideOnOutsideClick={false}
+          shouldClose={this.props.onClose}
           headerContent={
             <div>
               <span>Graph Find/Hide</span>
