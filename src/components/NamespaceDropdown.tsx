@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 import _ from 'lodash';
 import { style } from 'typestyle';
-import { Button, ButtonVariant, Dropdown, DropdownToggle, TextInput } from '@patternfly/react-core';
+import { Button, ButtonVariant, Dropdown, DropdownToggle, TextInput, Tooltip } from '@patternfly/react-core';
 import { KialiAppState } from '../store/Store';
 import { activeNamespacesSelector, namespaceFilterSelector, namespaceItemsSelector } from '../store/Selectors';
 import { KialiAppAction } from '../actions/KialiAppAction';
@@ -16,13 +16,6 @@ import {
   PropertyType
 } from './BoundingClientAwareComponent/BoundingClientAwareComponent';
 import { KialiIcon } from 'config/KialiIcon';
-
-const clearAllButtonStyle = style({
-  margin: '0, 1em, 0, 0'
-});
-const filterTextStyle = style({
-  padding: '0, 1em, 0, 1em'
-});
 
 interface ReduxProps {
   activeNamespaces: Namespace[];
@@ -51,6 +44,10 @@ const popoverMarginBottom = 20;
 
 const namespaceContainerStyle = style({
   overflow: 'auto'
+});
+
+const clearAllButtonStyle = style({
+  margin: '0, 1em, 0, 0'
 });
 
 interface ReduxProps {
@@ -110,8 +107,8 @@ export class NamespaceDropdown extends React.PureComponent<NamespaceDropdownProp
     this.props.toggleNamespace({ name: a.target.value });
   };
 
-  onFilterChange = (event: any) => {
-    this.props.setFilter(event.target.value);
+  onFilterChange = (value: string) => {
+    this.props.setFilter(value);
   };
 
   clearFilter = () => {
@@ -146,11 +143,13 @@ export class NamespaceDropdown extends React.PureComponent<NamespaceDropdownProp
     });
   };
 
-  getHeaderContent() {
+  private getHeaderContent() {
     return (
       <>
-        <div>
+        <div style={{ width: '300px' }}>
           <TextInput
+            aria-label="filter-namespace"
+            style={{ width: '256px' }}
             type="text"
             name="namespace-filter"
             placeholder="Filter by keyword..."
@@ -158,9 +157,11 @@ export class NamespaceDropdown extends React.PureComponent<NamespaceDropdownProp
             onChange={this.onFilterChange}
           />
           {this.props.filter !== '' && (
-            <Button onClick={this.clearFilter} className={filterTextStyle}>
-              <KialiIcon.Close />
-            </Button>
+            <Tooltip key="ot_clear_namespace_filter" position="top" content="Clear Filter by Keyword">
+              <Button onClick={this.clearFilter} style={{ float: 'right' }}>
+                <KialiIcon.Close />
+              </Button>
+            </Tooltip>
           )}
         </div>
         <div className="text-right">
@@ -178,18 +179,18 @@ export class NamespaceDropdown extends React.PureComponent<NamespaceDropdownProp
     );
   }
 
-  getPopoverContent() {
+  private getPopoverContent() {
     if (this.props.items.length > 0) {
       const activeMap = this.props.activeNamespaces.reduce((map, namespace) => {
         map[namespace.name] = namespace.name;
         return map;
       }, {});
-      const checkboxStyle = style({ marginLeft: 5 });
+      const checkboxLabelStyle = style({ marginLeft: '0.5em' });
       const namespaces = this.props.items
         .filter((namespace: Namespace) => namespace.name.includes(this.props.filter))
         .map((namespace: Namespace) => (
           <div
-            style={{ margin: '0 1em' }}
+            style={{ marginLeft: '0.5em' }}
             id={`namespace-list-item[${namespace.name}]`}
             key={`namespace-list-item[${namespace.name}]`}
           >
@@ -200,7 +201,7 @@ export class NamespaceDropdown extends React.PureComponent<NamespaceDropdownProp
                 checked={!!activeMap[namespace.name]}
                 onChange={this.onNamespaceToggled}
               />
-              <span className={checkboxStyle}>{namespace.name}</span>
+              <span className={checkboxLabelStyle}>{namespace.name}</span>
             </label>
           </div>
         ));
