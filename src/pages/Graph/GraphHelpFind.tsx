@@ -31,7 +31,7 @@ export default class GraphHelpFind extends React.Component<GraphHelpFindProps> {
       color: '#fff',
       backgroundColor: '#003145',
       width: '540px',
-      height: '70px',
+      height: '71px',
       padding: '5px',
       resize: 'none'
     });
