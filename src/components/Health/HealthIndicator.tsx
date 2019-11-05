@@ -81,7 +81,6 @@ export class HealthIndicator extends React.PureComponent<Props, HealthState> {
         aria-label={'Health indicator'}
         content={this.renderHealthTooltip(health)}
         position={PopoverPosition.auto}
-        exitDelay={999999}
         className={'health_indicator'}
       >
         {icon}

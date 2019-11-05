@@ -96,7 +96,7 @@ exports[`HealthIndicator renders healthy 1`] = `
   distance={15}
   enableFlip={true}
   entryDelay={500}
-  exitDelay={999999}
+  exitDelay={500}
   flipBehavior={
     Array [
       "top",
