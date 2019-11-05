@@ -15,8 +15,8 @@ import { Layout, EdgeLabelMode } from 'types/GraphFilter';
 import * as AlertUtils from '../../utils/AlertUtils';
 import { KialiIcon, defaultIconStyle } from 'config/KialiIcon';
 import { style } from 'typestyle';
-// import TourStopContainer from 'components/Tour/TourStop';
-// import { GraphTourStops } from 'pages/Graph/GraphHelpTour';
+import TourStopContainer from 'components/Tour/TourStop';
+import { GraphTourStops } from 'pages/Graph/GraphHelpTour';
 
 type ReduxProps = {
   compressOnHide: boolean;
@@ -116,72 +116,74 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
     const isHideValid: boolean = !(this.props.hideValue.length > 0 && this.state.errorMessage.length > 0);
 
     return (
-      <Form style={{ float: 'left' }} isHorizontal={true}>
-        <span className={thinGroupStyle}>
-          <TextInput
-            id="graph_find"
-            name="graph_find"
-            ref={ref => {
-              this.findInputRef = ref;
-            }}
-            style={{ ...inputWidth }}
-            type="text"
-            autoComplete="on"
-            isValid={isFindValid}
-            onChange={this.updateFind}
-            defaultValue={this.state.findInputValue}
-            onKeyPress={this.checkSubmitFind}
-            placeholder="Find..."
-          />
-          {this.props.findValue && (
-            <Tooltip key="ot_clear_find" position="top" content="Clear Find...">
-              <Button variant={ButtonVariant.control} onClick={this.clearFind}>
-                <KialiIcon.Close />
-              </Button>
-            </Tooltip>
-          )}
-          <TextInput
-            id="graph_hide"
-            name="graph_hide"
-            ref={ref => {
-              this.hideInputRef = ref;
-            }}
-            style={{ ...inputWidth }}
-            autoComplete="on"
-            isValid={isHideValid}
-            type="text"
-            onChange={this.updateHide}
-            defaultValue={this.state.hideInputValue}
-            onKeyPress={this.checkSubmitHide}
-            placeholder="Hide..."
-          />
-          {this.props.hideValue && (
-            <Tooltip key="ot_clear_hide" position="top" content="Clear Hide...">
-              <Button variant={ButtonVariant.control} onClick={this.clearHide}>
-                <KialiIcon.Close />
-              </Button>
-            </Tooltip>
-          )}
-          {this.props.showFindHelp ? (
-            <GraphHelpFind onClose={this.toggleFindHelp}>
-              <Button variant={ButtonVariant.link} style={{ paddingLeft: '6px' }} onClick={this.toggleFindHelp}>
-                <KialiIcon.Help className={defaultIconStyle} />
-              </Button>
-            </GraphHelpFind>
-          ) : (
-            <Tooltip key={'ot_graph_find_help'} position="top" content="Find/Hide Help...">
-              <Button variant={ButtonVariant.link} style={{ paddingLeft: '6px' }} onClick={this.toggleFindHelp}>
-                <KialiIcon.Help className={defaultIconStyle} />
-              </Button>
-            </Tooltip>
-          )}
-          {this.state.errorMessage && (
-            <div>
-              <span style={{ color: 'red' }}>{this.state.errorMessage}</span>
-            </div>
-          )}
-        </span>
-      </Form>
+      <TourStopContainer info={GraphTourStops.Find}>
+        <Form style={{ float: 'left' }} isHorizontal={true}>
+          <span className={thinGroupStyle}>
+            <TextInput
+              id="graph_find"
+              name="graph_find"
+              ref={ref => {
+                this.findInputRef = ref;
+              }}
+              style={{ ...inputWidth }}
+              type="text"
+              autoComplete="on"
+              isValid={isFindValid}
+              onChange={this.updateFind}
+              defaultValue={this.state.findInputValue}
+              onKeyPress={this.checkSubmitFind}
+              placeholder="Find..."
+            />
+            {this.props.findValue && (
+              <Tooltip key="ot_clear_find" position="top" content="Clear Find...">
+                <Button variant={ButtonVariant.control} onClick={this.clearFind}>
+                  <KialiIcon.Close />
+                </Button>
+              </Tooltip>
+            )}
+            <TextInput
+              id="graph_hide"
+              name="graph_hide"
+              ref={ref => {
+                this.hideInputRef = ref;
+              }}
+              style={{ ...inputWidth }}
+              autoComplete="on"
+              isValid={isHideValid}
+              type="text"
+              onChange={this.updateHide}
+              defaultValue={this.state.hideInputValue}
+              onKeyPress={this.checkSubmitHide}
+              placeholder="Hide..."
+            />
+            {this.props.hideValue && (
+              <Tooltip key="ot_clear_hide" position="top" content="Clear Hide...">
+                <Button variant={ButtonVariant.control} onClick={this.clearHide}>
+                  <KialiIcon.Close />
+                </Button>
+              </Tooltip>
+            )}
+            {this.props.showFindHelp ? (
+              <GraphHelpFind onClose={this.toggleFindHelp}>
+                <Button variant={ButtonVariant.link} style={{ paddingLeft: '6px' }} onClick={this.toggleFindHelp}>
+                  <KialiIcon.Help className={defaultIconStyle} />
+                </Button>
+              </GraphHelpFind>
+            ) : (
+              <Tooltip key={'ot_graph_find_help'} position="top" content="Find/Hide Help...">
+                <Button variant={ButtonVariant.link} style={{ paddingLeft: '6px' }} onClick={this.toggleFindHelp}>
+                  <KialiIcon.Help className={defaultIconStyle} />
+                </Button>
+              </Tooltip>
+            )}
+            {this.state.errorMessage && (
+              <div>
+                <span style={{ color: 'red' }}>{this.state.errorMessage}</span>
+              </div>
+            )}
+          </span>
+        </Form>
+      </TourStopContainer>
     );
   }
 
@@ -234,18 +236,23 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
   };
 
   private clearFind = () => {
-    console.log(`ClearFind 1 [${JSON.stringify(this.findInputRef)}]`);
-    console.log(`ClearFind 2 [${this.findInputRef.value}]`);
-    // note, we don't use findInputRef.current because <FormControl> deals with refs differently than <input>
+    // TODO: when TextInput refs are fixed in PF4 then use the ref and remove the direct HTMLElement usage
     this.findInputRef.value = '';
-    console.log(`ClearFind 3 [${this.findInputRef.value}]`);
+    const htmlInputElement: HTMLInputElement = document.getElementById('graph_find') as HTMLInputElement;
+    if (htmlInputElement !== null) {
+      htmlInputElement.value = '';
+    }
     this.setState({ findInputValue: '', errorMessage: '' });
     this.props.setFindValue('');
   };
 
   private clearHide = () => {
-    // note, we don't use hideInputRef.current because <FormControl> deals with refs differently than <input>
+    // TODO: when TextInput refs are fixed in PF4 then use the ref and remove the direct HTMLElement usage
     this.hideInputRef.value = '';
+    const htmlInputElement: HTMLInputElement = document.getElementById('graph_hide') as HTMLInputElement;
+    if (htmlInputElement !== null) {
+      htmlInputElement.value = '';
+    }
     this.setState({ hideInputValue: '', errorMessage: '' });
     this.props.setHideValue('');
   };
