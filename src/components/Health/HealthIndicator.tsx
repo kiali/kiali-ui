@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Card, CardHeader, CardBody, PopoverPosition, Tooltip } from '@patternfly/react-core';
+import { PopoverPosition, Text, TextContent, TextVariants, Tooltip } from '@patternfly/react-core';
 import { HealthDetails } from './HealthDetails';
 import * as H from '../../types/Health';
 import { createIcon } from './Helper';
@@ -68,12 +68,10 @@ export class HealthIndicator extends React.PureComponent<Props, HealthState> {
   }
   renderHealthTooltip(health: H.Health) {
     return (
-      <Card>
-        <CardHeader>{this.state.globalStatus.name}</CardHeader>
-        <CardBody>
-          <HealthDetails health={health} />
-        </CardBody>
-      </Card>
+      <TextContent>
+        <Text component={TextVariants.h2}>{this.state.globalStatus.name}</Text>
+        <HealthDetails health={health} />
+      </TextContent>
     );
   }
 
@@ -83,6 +81,8 @@ export class HealthIndicator extends React.PureComponent<Props, HealthState> {
         aria-label={'Health indicator'}
         content={this.renderHealthTooltip(health)}
         position={PopoverPosition.auto}
+        exitDelay={999999}
+        className={'health_indicator'}
       >
         {icon}
       </Tooltip>

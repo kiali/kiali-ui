@@ -6,97 +6,97 @@ exports[`HealthIndicator renders healthy 1`] = `
   aria="describedby"
   aria-label="Health indicator"
   boundary="window"
-  className=""
+  className="health_indicator"
   content={
-    <Card>
-      <CardHeader>
+    <TextContent>
+      <Text
+        component="h2"
+      >
         Healthy
-      </CardHeader>
-      <CardBody>
-        <HealthDetails
-          health={
-            AppHealth {
-              "items": Array [
-                Object {
-                  "children": Array [
-                    Object {
-                      "status": Object {
-                        "class": "icon-healthy",
-                        "color": "#3e8635",
-                        "icon": [Function],
-                        "name": "Healthy",
-                        "priority": 1,
-                      },
-                      "text": "A: 1 / 1",
+      </Text>
+      <HealthDetails
+        health={
+          AppHealth {
+            "items": Array [
+              Object {
+                "children": Array [
+                  Object {
+                    "status": Object {
+                      "class": "icon-healthy",
+                      "color": "#3e8635",
+                      "icon": [Function],
+                      "name": "Healthy",
+                      "priority": 1,
                     },
-                    Object {
-                      "status": Object {
-                        "class": "icon-healthy",
-                        "color": "#3e8635",
-                        "icon": [Function],
-                        "name": "Healthy",
-                        "priority": 1,
-                      },
-                      "text": "B: 2 / 2",
-                    },
-                  ],
-                  "status": Object {
-                    "class": "icon-healthy",
-                    "color": "#3e8635",
-                    "icon": [Function],
-                    "name": "Healthy",
-                    "priority": 1,
+                    "text": "A: 1 / 1",
                   },
-                  "title": "Pods Status",
-                },
-                Object {
-                  "children": Array [
-                    Object {
-                      "status": Object {
-                        "class": "icon-na",
-                        "color": "#72767b",
-                        "icon": [Function],
-                        "name": "No health information",
-                        "priority": 0,
-                      },
-                      "text": "Inbound: No requests",
+                  Object {
+                    "status": Object {
+                      "class": "icon-healthy",
+                      "color": "#3e8635",
+                      "icon": [Function],
+                      "name": "Healthy",
+                      "priority": 1,
                     },
-                    Object {
-                      "status": Object {
-                        "class": "icon-na",
-                        "color": "#72767b",
-                        "icon": [Function],
-                        "name": "No health information",
-                        "priority": 0,
-                      },
-                      "text": "Outbound: No requests",
-                    },
-                  ],
-                  "status": Object {
-                    "class": "icon-na",
-                    "color": "#72767b",
-                    "icon": [Function],
-                    "name": "No health information",
-                    "priority": 0,
+                    "text": "B: 2 / 2",
                   },
-                  "title": "Error Rate over last 10m",
+                ],
+                "status": Object {
+                  "class": "icon-healthy",
+                  "color": "#3e8635",
+                  "icon": [Function],
+                  "name": "Healthy",
+                  "priority": 1,
                 },
-              ],
-              "requests": Object {
-                "errorRatio": -1,
-                "inboundErrorRatio": -1,
-                "outboundErrorRatio": -1,
+                "title": "Pods Status",
               },
-            }
+              Object {
+                "children": Array [
+                  Object {
+                    "status": Object {
+                      "class": "icon-na",
+                      "color": "#72767b",
+                      "icon": [Function],
+                      "name": "No health information",
+                      "priority": 0,
+                    },
+                    "text": "Inbound: No requests",
+                  },
+                  Object {
+                    "status": Object {
+                      "class": "icon-na",
+                      "color": "#72767b",
+                      "icon": [Function],
+                      "name": "No health information",
+                      "priority": 0,
+                    },
+                    "text": "Outbound: No requests",
+                  },
+                ],
+                "status": Object {
+                  "class": "icon-na",
+                  "color": "#72767b",
+                  "icon": [Function],
+                  "name": "No health information",
+                  "priority": 0,
+                },
+                "title": "Error Rate over last 10m",
+              },
+            ],
+            "requests": Object {
+              "errorRatio": -1,
+              "inboundErrorRatio": -1,
+              "outboundErrorRatio": -1,
+            },
           }
-        />
-      </CardBody>
-    </Card>
+        }
+      />
+    </TextContent>
   }
   distance={15}
   enableFlip={true}
   entryDelay={500}
-  exitDelay={500}
+  exitDelay={999999}
   flipBehavior={
     Array [
       "top",
