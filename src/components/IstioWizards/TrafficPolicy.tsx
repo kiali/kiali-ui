@@ -172,7 +172,13 @@ class TrafficPolicy extends React.Component<Props, TrafficPolicyState> {
             tlsModified: true,
             mtlsMode: value
           },
-          () => this.props.onTrafficPolicyChange(true, this.state)
+          () =>
+            this.props.onTrafficPolicyChange(
+              this.state.mtlsMode === MUTUAL
+                ? this.state.clientCertificate.length > 0 && this.state.privateKey.length > 0
+                : true,
+              this.state
+            )
         );
         break;
       case TrafficPolicyForm.TLS_CLIENT_CERTIFICATE:
@@ -181,7 +187,13 @@ class TrafficPolicy extends React.Component<Props, TrafficPolicyState> {
             tlsModified: true,
             clientCertificate: value
           },
-          () => this.props.onTrafficPolicyChange(true, this.state)
+          () =>
+            this.props.onTrafficPolicyChange(
+              this.state.mtlsMode === MUTUAL &&
+                this.state.clientCertificate.length > 0 &&
+                this.state.privateKey.length > 0,
+              this.state
+            )
         );
         break;
       case TrafficPolicyForm.TLS_PRIVATE_KEY:
@@ -190,7 +202,13 @@ class TrafficPolicy extends React.Component<Props, TrafficPolicyState> {
             tlsModified: true,
             privateKey: value
           },
-          () => this.props.onTrafficPolicyChange(true, this.state)
+          () =>
+            this.props.onTrafficPolicyChange(
+              this.state.mtlsMode === MUTUAL &&
+                this.state.clientCertificate.length > 0 &&
+                this.state.privateKey.length > 0,
+              this.state
+            )
         );
         break;
       case TrafficPolicyForm.TLS_CA_CERTIFICATES:

@@ -243,6 +243,7 @@ class IstioWizard extends React.Component<WizardProps, WizardState> {
     this.setState(prevState => {
       // At the moment this callback only updates the valid of the loadbalancer
       // tls is always true, but I maintain it on the structure for consistency
+      prevState.valid.tls = valid;
       prevState.valid.lb = valid;
       return {
         valid: prevState.valid,
