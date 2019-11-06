@@ -12,7 +12,6 @@ interface Props {
 
 const IstioObjectLink = (props: Props) => {
   const { name, namespace, type } = props;
-  //const objectType = type.charAt(0).toUpperCase() + type.slice(1);
   const istioType = IstioTypes[type];
   const url = '/namespaces/' + namespace + '/' + Paths.ISTIO + '/' + istioType.slug + '/' + name;
   return (
