@@ -146,21 +146,25 @@ export class NamespaceDropdown extends React.PureComponent<NamespaceDropdownProp
   };
 
   private getHeaderContent() {
+    const headerWidth = 300;
+    const closeButtonWidth = this.props.filter ? 40 : 0;
+    const marginWidth = 10;
+    const inputWidth = headerWidth - closeButtonWidth - 2 * marginWidth;
     return (
       <>
-        <div style={{ width: '300px' }}>
+        <div style={{ float: 'left', width: headerWidth }}>
           <TextInput
+            style={{ marginLeft: marginWidth, width: inputWidth }}
             aria-label="filter-namespace"
-            style={{ width: '256px' }}
             type="text"
             name="namespace-filter"
-            placeholder="Filter by keyword..."
+            placeholder="Filter by Name..."
             value={this.props.filter}
             onChange={this.onFilterChange}
           />
-          {this.props.filter !== '' && (
-            <Tooltip key="ot_clear_namespace_filter" position="top" content="Clear Filter by Keyword">
-              <Button onClick={this.clearFilter} style={{ float: 'right' }}>
+          {this.props.filter && (
+            <Tooltip key="ot_clear_namespace_filter" position="top" content="Clear Filter by Name">
+              <Button onClick={this.clearFilter}>
                 <KialiIcon.Close />
               </Button>
             </Tooltip>
