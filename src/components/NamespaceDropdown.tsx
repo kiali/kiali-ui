@@ -16,6 +16,8 @@ import {
   PropertyType
 } from './BoundingClientAwareComponent/BoundingClientAwareComponent';
 import { KialiIcon } from 'config/KialiIcon';
+import TourStopContainer from './Tour/TourStop';
+import { GraphTourStops } from '../pages/Graph/GraphHelpTour';
 
 interface ReduxProps {
   activeNamespaces: Namespace[];
@@ -223,13 +225,15 @@ export class NamespaceDropdown extends React.PureComponent<NamespaceDropdownProp
   render() {
     const { isOpen } = this.state;
     return (
-      <Dropdown
-        toggle={<DropdownToggle onToggle={this.onToggle}>{this.namespaceButtonText()}</DropdownToggle>}
-        isOpen={isOpen}
-      >
-        {this.getHeaderContent()}
-        {this.getPopoverContent()}
-      </Dropdown>
+      <TourStopContainer info={GraphTourStops.Namespaces}>
+        <Dropdown
+          toggle={<DropdownToggle onToggle={this.onToggle}>{this.namespaceButtonText()}</DropdownToggle>}
+          isOpen={isOpen}
+        >
+          {this.getHeaderContent()}
+          {this.getPopoverContent()}
+        </Dropdown>
+      </TourStopContainer>
     );
   }
 }
