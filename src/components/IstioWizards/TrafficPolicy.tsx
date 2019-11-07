@@ -217,7 +217,13 @@ class TrafficPolicy extends React.Component<Props, TrafficPolicyState> {
             tlsModified: true,
             caCertificates: value
           },
-          () => this.props.onTrafficPolicyChange(true, this.state)
+          () =>
+            this.props.onTrafficPolicyChange(
+              this.state.mtlsMode === MUTUAL &&
+                this.state.clientCertificate.length > 0 &&
+                this.state.privateKey.length > 0,
+              this.state
+            )
         );
         break;
       case TrafficPolicyForm.LB_SWITCH:
