@@ -4,10 +4,11 @@ import SwitchErrorBoundary from '../SwitchErrorBoundary/SwitchErrorBoundary';
 import { pathRoutes, defaultRoute, secondaryMastheadRoutes } from '../../routes';
 import { Path } from '../../types/Routes';
 import { style } from 'typestyle';
+import { PfColors } from '../Pf/PfColors';
 
 const containerStyle = style({ marginLeft: 0, marginRight: 0 });
 const containerPadding = style({ padding: '0 20px 0 20px' });
-const containerGray = style({ background: '#f5f5f5' });
+const containerGray = style({ background: PfColors.Black150 });
 
 class RenderPage extends React.Component<{ needScroll: boolean }> {
   renderPaths(paths: Path[]) {

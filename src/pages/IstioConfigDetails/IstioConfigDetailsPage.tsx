@@ -24,13 +24,14 @@ import ParameterizedTabs, { activeTab } from '../../components/Tab/Tabs';
 import { Tab, Text, TextVariants } from '@patternfly/react-core';
 import { dicIstioType } from '../../types/IstioConfigList';
 import { showInMessageCenter } from '../../utils/IstioValidationUtils';
+import { PfColors } from '../../components/Pf/PfColors';
 
 const rightToolbarStyle = style({
   position: 'absolute',
   right: '20px',
   zIndex: 1,
   marginTop: '8px',
-  backgroundColor: 'white'
+  backgroundColor: PfColors.White
 });
 
 interface IstioConfigDetailsState {
