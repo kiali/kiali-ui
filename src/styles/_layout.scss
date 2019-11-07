@@ -30,3 +30,15 @@ body,
   // 45px is the height of the global namespace selector
   height: calc(100vh - 42px - var(--pf-c-page__header--MinHeight));
 }
+
+#basic-tabs {
+  background-color: white;
+}
+
+#basic-tabs .pf-c-tabs__list {
+  margin-left: 30px;
+}
+
+#service-tabs .pf-c-tabs__list {
+  background-color: white;
+}

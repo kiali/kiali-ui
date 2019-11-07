@@ -9,6 +9,7 @@ import 'brace/theme/eclipse';
 import { ObjectValidation } from '../../types/IstioObjects';
 import { AceValidations, jsYaml, parseKialiValidations, parseYamlValidations } from '../../types/AceValidations';
 import IstioActionDropdown from '../../components/IstioActions/IstioActionsDropdown';
+import { RenderHeader } from '../../components/Nav/Page';
 import './IstioConfigDetailsPage.css';
 import { default as IstioActionButtonsContainer } from '../../components/IstioActions/IstioActionsButtons';
 import BreadcrumbView from '../../components/BreadcrumbView/BreadcrumbView';
@@ -24,7 +25,13 @@ import { Tab, Text, TextVariants } from '@patternfly/react-core';
 import { dicIstioType } from '../../types/IstioConfigList';
 import { showInMessageCenter } from '../../utils/IstioValidationUtils';
 
-const rightToolbarStyle = style({ float: 'right', marginTop: '8px' });
+const rightToolbarStyle = style({
+  position: 'absolute',
+  right: '20px',
+  zIndex: 1,
+  marginTop: '8px',
+  backgroundColor: 'white'
+});
 
 interface IstioConfigDetailsState {
   istioObjectDetails?: IstioConfigDetails;
@@ -408,9 +415,11 @@ class IstioConfigDetailsPage extends React.Component<RouteComponentProps<IstioCo
   render() {
     return (
       <>
-        <BreadcrumbView location={this.props.location} />
-        <Text component={TextVariants.h1}>{this.objectTitle()}</Text>
-        {this.renderRightToolbar()}
+        <RenderHeader>
+          <BreadcrumbView location={this.props.location} />
+          <Text component={TextVariants.h1}>{this.objectTitle()}</Text>
+          {this.renderRightToolbar()}
+        </RenderHeader>
         {this.renderTabs()}
         <Prompt
           message={location => {
