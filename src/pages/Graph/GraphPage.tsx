@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { RouteComponentProps } from 'react-router-dom';
 import FlexView from 'react-flexview';
-import { Breadcrumb, Button, OverlayTrigger, Tooltip } from 'patternfly-react';
+import { Breadcrumb, BreadcrumbItem, Button, Title, Tooltip, TooltipPosition } from '@patternfly/react-core';
 import { style } from 'typestyle';
 import { store } from '../../store/ConfigStore';
 import { DurationInSeconds, PollIntervalInMs, TimeInMilliseconds, TimeInSeconds } from '../../types/Common';
@@ -303,21 +303,19 @@ export class GraphPage extends React.Component<GraphPageProps> {
       <>
         <FlexView className={conStyle} column={true}>
           <div>
-            <Breadcrumb title={true}>
-              <Breadcrumb.Item active={true}>
-                {this.props.node && this.props.node.nodeType !== NodeType.UNKNOWN
-                  ? `Graph for ${this.props.node.nodeType}: ${this.getTitle(this.props.node)}`
-                  : 'Graph'}
-                <OverlayTrigger
-                  key={'graph-tour-help-ot'}
-                  placement="right"
-                  overlay={<Tooltip id={'graph-tour-help-tt'}>Graph help tour...</Tooltip>}
-                >
-                  <Button bsStyle="link" style={{ paddingLeft: '6px' }} onClick={this.toggleHelp}>
+            <Breadcrumb>
+              <BreadcrumbItem isActive={true}>
+                <Title headingLevel="h4" size="xl">
+                  {this.props.node && this.props.node.nodeType !== NodeType.UNKNOWN
+                    ? `Graph for ${this.props.node.nodeType}: ${this.getTitle(this.props.node)}`
+                    : 'Graph'}
+                </Title>
+                <Tooltip key={'graph-tour-help-ot'} position={TooltipPosition.right} content="Graph help tour...">
+                  <Button variant="link" style={{ paddingLeft: '6px' }} onClick={this.toggleHelp}>
                     <KialiIcon.Help className={defaultIconStyle} />
                   </Button>
-                </OverlayTrigger>
-              </Breadcrumb.Item>
+                </Tooltip>
+              </BreadcrumbItem>
               {this.props.graphTimestamp > 0 && (
                 <span className={'pull-right'}>
                   {new Date(graphStart).toLocaleDateString(undefined, timeDisplayOptions)}
