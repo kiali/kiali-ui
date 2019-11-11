@@ -49,6 +49,10 @@ type GraphFilterProps = ReduxProps & {
   onRefresh: () => void;
 };
 
+const toolbarStyle = style({
+  marginBottom: '10px'
+});
+
 const rightToolbarStyle = style({
   marginLeft: 'auto'
 });
@@ -148,7 +152,7 @@ export class GraphFilter extends React.PureComponent<GraphFilterProps> {
     const edgeLabelModeKey: string = _.findKey(EdgeLabelMode, val => val === this.props.edgeLabelMode)!;
     return (
       <>
-        <Toolbar>
+        <Toolbar className={toolbarStyle}>
           <div style={{ display: 'flex' }}>
             {this.props.node ? (
               <Button variant={ButtonVariant.link} onClick={this.handleNamespaceReturn}>
