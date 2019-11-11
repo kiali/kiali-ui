@@ -99,8 +99,7 @@ export type GraphPageProps = RouteComponentProps<Partial<GraphURLPathProps>> & R
 const NUMBER_OF_DATAPOINTS = 30;
 
 const breadcrumbStyle = style({
-  marginTop: '10px',
-  marginBottom: '-7px'
+  marginTop: '10px'
 });
 
 const containerStyle = style({
@@ -321,14 +320,14 @@ export class GraphPage extends React.Component<GraphPageProps> {
                   </Button>
                 </Tooltip>
               </BreadcrumbItem>
-              {this.props.graphTimestamp > 0 && (
-                <span className={'pull-right'}>
-                  {new Date(graphStart).toLocaleDateString(undefined, timeDisplayOptions)}
-                  {' ... '}
-                  {new Date(graphEnd).toLocaleDateString(undefined, timeDisplayOptions)}
-                </span>
-              )}
             </Breadcrumb>
+            {this.props.graphTimestamp > 0 && (
+              <span className={'pull-right'}>
+                {new Date(graphStart).toLocaleDateString(undefined, timeDisplayOptions)}
+                {' ... '}
+                {new Date(graphEnd).toLocaleDateString(undefined, timeDisplayOptions)}
+              </span>
+            )}
           </div>
           <div>
             {/* Use empty div to reset the flex, this component doesn't seem to like that. It renders all its contents in the center */}
