@@ -98,6 +98,11 @@ export type GraphPageProps = RouteComponentProps<Partial<GraphURLPathProps>> & R
 
 const NUMBER_OF_DATAPOINTS = 30;
 
+const breadcrumbStyle = style({
+  marginTop: '10px',
+  marginBottom: '-7px'
+});
+
 const containerStyle = style({
   minHeight: '350px',
   // TODO: try flexbox to remove this calc
@@ -302,7 +307,7 @@ export class GraphPage extends React.Component<GraphPageProps> {
     return (
       <>
         <FlexView className={conStyle} column={true}>
-          <div>
+          <div className={breadcrumbStyle}>
             <Breadcrumb>
               <BreadcrumbItem isActive={true}>
                 <Title headingLevel="h4" size="xl">
