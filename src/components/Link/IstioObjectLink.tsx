@@ -19,7 +19,7 @@ const IstioObjectLink = (props: Props) => {
   if (!!subType) {
     to = to + '/' + istioType + '/' + subType + '/' + name;
   } else {
-    to = to + '/' + istioType.slug + '/' + name;
+    to = to + '/' + istioType.url + '/' + name;
   }
 
   return (

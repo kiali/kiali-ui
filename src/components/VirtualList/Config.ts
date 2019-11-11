@@ -116,24 +116,24 @@ const istioType: ResourceType<IstioConfigItem> = {
 };
 
 export const IstioTypes = {
-  gateway: { name: 'Gateway', slug: 'gateways', icon: 'G' },
-  virtualservice: { name: 'VirtualService', slug: 'virtualservices', icon: 'VS' },
-  destinationrule: { name: 'DestinationRule', slug: 'destinationrules', icon: 'DR' },
-  serviceentry: { name: 'ServiceEntry', slug: 'serviceentries', icon: 'SE' },
-  rule: { name: 'Rule', slug: 'rules', icon: 'R' },
-  adapter: { name: 'Adapter', slug: 'adapters', icon: 'A' },
-  template: { name: 'Template', slug: 'templates', icon: 'T' },
-  quotaspec: { name: 'QuotaSpec', slug: 'quotaspecs', icon: 'QS' },
-  quotaspecbinding: { name: 'QuotaSpecBinding', slug: 'quotaspecbindings', icon: 'QSB' },
-  policy: { name: 'Policy', slug: 'policies', icon: 'P' },
-  meshpolicy: { name: 'MeshPolicy', slug: 'meshpolicies', icon: 'MP' },
-  servicemeshpolicy: { name: 'ServiceMeshPolicy', slug: 'servicemeshpolicy', icon: 'SMP' },
-  clusterrbacconfig: { name: 'ClusterRbacConfig', slug: 'clusterrbacconfigs', icon: 'CRC' },
-  rbacconfig: { name: 'RbacConfig', slug: 'rbacconfigs', icon: 'RC' },
-  servicemeshrbacconfig: { name: 'ServiceMeshRbacConfig', slug: 'servicemeshrbacconfigs', icon: 'SRC' },
-  sidecar: { name: 'Sidecar', slug: 'sidercars', icon: 'S' },
-  servicerole: { name: 'ServiceRole', slug: 'serviceroles', icon: 'SR' },
-  servicerolebinding: { name: 'ServiceRoleBinding', slug: 'servicerolebindings', icon: 'SRB' }
+  gateway: { name: 'Gateway', url: 'gateways', icon: 'G' },
+  virtualservice: { name: 'VirtualService', url: 'virtualservices', icon: 'VS' },
+  destinationrule: { name: 'DestinationRule', url: 'destinationrules', icon: 'DR' },
+  serviceentry: { name: 'ServiceEntry', url: 'serviceentries', icon: 'SE' },
+  rule: { name: 'Rule', url: 'rules', icon: 'R' },
+  adapter: { name: 'Adapter', url: 'adapters', icon: 'A' },
+  template: { name: 'Template', url: 'templates', icon: 'T' },
+  quotaspec: { name: 'QuotaSpec', url: 'quotaspecs', icon: 'QS' },
+  quotaspecbinding: { name: 'QuotaSpecBinding', url: 'quotaspecbindings', icon: 'QSB' },
+  policy: { name: 'Policy', url: 'policies', icon: 'P' },
+  meshpolicy: { name: 'MeshPolicy', url: 'meshpolicies', icon: 'MP' },
+  servicemeshpolicy: { name: 'ServiceMeshPolicy', url: 'servicemeshpolicy', icon: 'SMP' },
+  clusterrbacconfig: { name: 'ClusterRbacConfig', url: 'clusterrbacconfigs', icon: 'CRC' },
+  rbacconfig: { name: 'RbacConfig', url: 'rbacconfigs', icon: 'RC' },
+  servicemeshrbacconfig: { name: 'ServiceMeshRbacConfig', url: 'servicemeshrbacconfigs', icon: 'SRC' },
+  sidecar: { name: 'Sidecar', url: 'sidercars', icon: 'S' },
+  servicerole: { name: 'ServiceRole', url: 'serviceroles', icon: 'SR' },
+  servicerolebinding: { name: 'ServiceRoleBinding', url: 'servicerolebindings', icon: 'SRB' }
 };
 
 export type Resource = {
