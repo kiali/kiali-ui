@@ -8,18 +8,26 @@ interface Props {
   name: string;
   namespace: string;
   type: string;
+  subType?: string;
 }
 
 const IstioObjectLink = (props: Props) => {
-  const { name, namespace, type } = props;
+  const { name, namespace, type, subType } = props;
   const istioType = IstioTypes[type];
-  const url = '/namespaces/' + namespace + '/' + Paths.ISTIO + '/' + istioType.slug + '/' + name;
+  let to = '/namespaces/' + namespace + '/' + Paths.ISTIO;
+
+  if (!!subType) {
+    to = to + '/' + istioType + '/' + subType + '/' + name;
+  } else {
+    to = to + '/' + istioType.slug + '/' + name;
+  }
+
   return (
     <>
       <Tooltip position={TooltipPosition.top} content={<>{istioType.name}</>}>
         <Badge className={'virtualitem_badge_definition'}>{istioType.icon}</Badge>
       </Tooltip>
-      <Link to={url}>
+      <Link to={to}>
         {namespace}/{name}
       </Link>
     </>
