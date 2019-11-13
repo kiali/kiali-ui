@@ -18,7 +18,7 @@ import { ServiceHealth } from '../../../types/Health';
 import { Endpoints } from '../../../types/ServiceInfo';
 import { ObjectCheck, ObjectValidation, Port } from '../../../types/IstioObjects';
 import { style } from 'typestyle';
-import { ValidationSummary } from '../../../components/Validations/ValidationSummary';
+import { ValidationObjectSummary } from '../../../components/Validations/ValidationObjectSummary';
 import ValidationList from '../../../components/Validations/ValidationList';
 import './ServiceInfoDescription.css';
 import Labels from '../../../components/Label/Labels';
@@ -169,7 +169,7 @@ class ServiceInfoDescription extends React.Component<ServiceInfoDescriptionProps
                 </StackItem>
                 <StackItem id={'ports'}>
                   <Text component={TextVariants.h3}>
-                    <ValidationSummary
+                    <ValidationObjectSummary
                       id={this.props.name + '-config-validation'}
                       validations={this.props.validations ? [this.props.validations] : []}
                     />
