@@ -3,8 +3,8 @@ import {
   Breadcrumb,
   BreadcrumbItem,
   Card,
-  CardHeader,
   CardBody,
+  CardHeader,
   EmptyState,
   EmptyStateBody,
   EmptyStateVariant,
@@ -30,7 +30,7 @@ import {
 } from '../../types/Health';
 import { SortField } from '../../types/SortFilters';
 import { PromisesRegistry } from '../../utils/CancelablePromises';
-import OverviewToolbarContainer, { OverviewToolbar, OverviewType, OverviewDisplayMode } from './OverviewToolbar';
+import OverviewToolbarContainer, { OverviewDisplayMode, OverviewToolbar, OverviewType } from './OverviewToolbar';
 import NamespaceInfo, { NamespaceStatus } from './NamespaceInfo';
 import NamespaceMTLSStatusContainer from '../../components/MTls/NamespaceMTLSStatus';
 import { RenderHeader } from '../../components/Nav/Page';
@@ -46,6 +46,7 @@ import { nsWideMTLSStatus } from '../../types/TLSStatus';
 import { switchType } from './OverviewHelper';
 import * as Sorts from './Sorts';
 import * as Filters from './Filters';
+import ValidationSummary from '../../components/Validations/ValidationSummary';
 
 const gridStyle = style({ backgroundColor: '#f5f5f5', paddingBottom: '20px', marginTop: '20px' });
 const cardGridStyle = style({ borderTop: '2px solid #39a5dc', textAlign: 'center', marginTop: '20px' });
@@ -119,7 +120,8 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
               name: ns.name,
               status: previous ? previous.status : undefined,
               tlsStatus: previous ? previous.tlsStatus : undefined,
-              metrics: previous ? previous.metrics : undefined
+              metrics: previous ? previous.metrics : undefined,
+              validations: previous ? previous.validations : undefined
             };
           });
         const isAscending = FilterHelper.isCurrentSortAscending();
@@ -140,6 +142,7 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
           () => {
             this.fetchHealth(isAscending, sortField, type);
             this.fetchTLS(isAscending, sortField);
+            this.fetchValidations(isAscending, sortField);
             if (displayMode === OverviewDisplayMode.EXPAND) {
               this.fetchMetrics();
             }
@@ -283,6 +286,36 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
       .catch(err => this.handleAxiosError('Could not fetch TLS status', err));
   }
 
+  fetchValidations(isAscending: boolean, sortField: SortField<NamespaceInfo>) {
+    _.chunk(this.state.namespaces, 10).forEach(chunk => {
+      this.promises
+        .registerChained('validationchunks', undefined, () => this.fetchValidationChunk(chunk))
+        .then(() => {
+          this.setState(prevState => {
+            let newNamespaces = prevState.namespaces.slice();
+            if (sortField.id === 'validations') {
+              newNamespaces = Sorts.sortFunc(newNamespaces, sortField, isAscending);
+            }
+            return { namespaces: newNamespaces };
+          });
+        });
+    });
+  }
+
+  fetchValidationChunk(chunk: NamespaceInfo[]) {
+    return Promise.all(
+      chunk.map(nsInfo => {
+        return API.getNamespaceValidations(nsInfo.name).then(rs => ({ validations: rs.data, nsInfo: nsInfo }));
+      })
+    )
+      .then(results => {
+        results.forEach(result => {
+          result.nsInfo.validations = result.validations;
+        });
+      })
+      .catch(err => this.handleAxiosError('Could not fetch validations status', err));
+  }
+
   handleAxiosError(message: string, error: AxiosError) {
     FilterHelper.handleError(`${message}: ${API.getErrorString(error)}`);
   }
@@ -325,6 +358,15 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
               <GridItem sm={sm} md={md} key={'CardItem_' + ns.name} style={{ margin: '0px 10px 0 10px' }}>
                 <Card isCompact={true} className={cardGridStyle}>
                   <CardHeader>
+                    {ns.validations ? (
+                      <ValidationSummary
+                        id={'ns-val-' + ns.name}
+                        errors={ns.validations.errors}
+                        warnings={ns.validations.warnings}
+                      />
+                    ) : (
+                      undefined
+                    )}
                     {ns.tlsStatus ? <NamespaceMTLSStatusContainer status={ns.tlsStatus.status} /> : undefined}
                     {ns.name}
                   </CardHeader>

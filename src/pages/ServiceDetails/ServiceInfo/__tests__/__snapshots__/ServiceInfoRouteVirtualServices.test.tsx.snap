@@ -58,7 +58,7 @@ exports[`#ServiceInfoVirtualServices render correctly with data should render se
               Object {
                 "cells": Array [
                   Object {
-                    "title": <ValidationSummary
+                    "title": <ValidationObjectSummary
                       id="0-config-validation"
                       validations={Array []}
                     />,
