@@ -88,7 +88,7 @@ class Validation extends React.Component<Props> {
         </div>
       );
     } else {
-      return <IconComponent style={this.severityColor()} />;
+      return <IconComponent style={this.iconStyle()} />;
     }
   }
 }

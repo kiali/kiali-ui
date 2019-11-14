@@ -10,6 +10,8 @@ import {
   EmptyStateVariant,
   Grid,
   GridItem,
+  Text,
+  TextVariants,
   Title
 } from '@patternfly/react-core';
 import { style } from 'typestyle';
@@ -334,6 +336,17 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
     }
   };
 
+  isNamespaceEmpty = (ns: NamespaceInfo): boolean => {
+    return (
+      !!ns.status &&
+      ns.status.inError.length +
+        ns.status.inSuccess.length +
+        ns.status.inWarning.length +
+        ns.status.notAvailable.length ===
+        0
+    );
+  };
+
   render() {
     const sm = this.state.displayMode === OverviewDisplayMode.COMPACT ? 3 : 6;
     const md = this.state.displayMode === OverviewDisplayMode.COMPACT ? 3 : 4;
@@ -358,20 +371,12 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
               <GridItem sm={sm} md={md} key={'CardItem_' + ns.name} style={{ margin: '0px 10px 0 10px' }}>
                 <Card isCompact={true} className={cardGridStyle}>
                   <CardHeader>
-                    {ns.validations ? (
-                      <ValidationSummary
-                        id={'ns-val-' + ns.name}
-                        errors={ns.validations.errors}
-                        warnings={ns.validations.warnings}
-                      />
-                    ) : (
-                      undefined
-                    )}
                     {ns.tlsStatus ? <NamespaceMTLSStatusContainer status={ns.tlsStatus.status} /> : undefined}
                     {ns.name}
                   </CardHeader>
                   <CardBody>
                     {this.renderStatuses(ns)}
+                    {this.renderConfigStatus(ns)}
                     <OverviewCardLinks name={ns.name} overviewType={OverviewToolbar.currentOverviewType()} />
                   </CardBody>
                 </Card>
@@ -411,6 +416,26 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
       );
     }
     return <div style={{ height: 70 }} />;
+  }
+
+  renderConfigStatus(ns: NamespaceInfo): JSX.Element {
+    let status: any = 'N/A';
+    if (ns.validations && !this.isNamespaceEmpty(ns)) {
+      status = (
+        <ValidationSummary
+          id={'ns-val-' + ns.name}
+          errors={ns.validations.errors}
+          warnings={ns.validations.warnings}
+          style={{ marginLeft: '5px' }}
+          wrapper={false}
+        />
+      );
+    }
+    return (
+      <>
+        <Text component={TextVariants.p}>Config status: {status}</Text>
+      </>
+    );
   }
 }
 

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ObjectValidation, ValidationTypes } from '../../types/IstioObjects';
-import ValidationSummaryShort from './ValidationSummary';
+import ValidationSummary from './ValidationSummary';
 
 interface Props {
   id: string;
@@ -20,7 +20,7 @@ export class ValidationObjectSummary extends React.PureComponent<Props> {
 
   render() {
     return (
-      <ValidationSummaryShort
+      <ValidationSummary
         id={this.props.id}
         errors={this.numberOfChecks(ValidationTypes.Error)}
         warnings={this.numberOfChecks(ValidationTypes.Warning)}
