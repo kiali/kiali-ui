@@ -92,24 +92,27 @@ export enum PfColors {
   GrayBackground = Black150
 }
 
+// The hex string value of the PF CSS variable
+export type PFColorVal = string;
+
 // Health/Alert colors https://www.patternfly.org/v4/design-guidelines/styles/colors
-export type PFAlertColorValsType = {
-  Danger: string;
-  DangerBackground: string;
-  Info: string;
-  InfoBackground: string;
-  Success: string;
-  SuccessBackground: string;
-  Warning: string;
-  WarningBackground: string;
+export type PFAlertColorVals = {
+  Danger: PFColorVal;
+  DangerBackground: PFColorVal;
+  Info: PFColorVal;
+  InfoBackground: PFColorVal;
+  Success: PFColorVal;
+  SuccessBackground: PFColorVal;
+  Warning: PFColorVal;
+  WarningBackground: PFColorVal;
 };
 
-let pfAlertColorVals: PFAlertColorValsType | undefined;
+let PFAlertColorValsInstance: PFAlertColorVals | undefined;
 
-export const PfAlertColorVals = (): PFAlertColorValsType => {
-  if (!pfAlertColorVals) {
+export const getPFAlertColorVals = (): PFAlertColorVals => {
+  if (!PFAlertColorValsInstance) {
     const root = document.documentElement;
-    pfAlertColorVals = {
+    PFAlertColorValsInstance = {
       Danger: getComputedStyle(root).getPropertyValue('--pf-global--danger-color--100'),
       DangerBackground: getComputedStyle(root).getPropertyValue('--pf-global--danger-color--200'),
       Info: getComputedStyle(root).getPropertyValue('--pf-global--info-color--100'),
@@ -122,7 +125,7 @@ export const PfAlertColorVals = (): PFAlertColorValsType => {
       WarningBackground: getComputedStyle(root).getPropertyValue('--pf-global--warning-color--200')
     };
   }
-  return pfAlertColorVals;
+  return PFAlertColorValsInstance;
 };
 
 export enum PFAlertColor {

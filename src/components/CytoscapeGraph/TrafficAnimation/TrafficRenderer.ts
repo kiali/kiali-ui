@@ -1,6 +1,6 @@
 import { Point, clamp, quadraticBezier, linearInterpolation, distance, bezierLength } from '../../../utils/MathUtils';
 import { DimClass } from '../graphs/GraphStyles';
-import { PfColors, PfAlertColorVals } from '../../Pf/PfColors';
+import { PfColors, getPFAlertColorVals } from '../../Pf/PfColors';
 import {
   TrafficPointCircleRenderer,
   TrafficPointConcentricDiamondRenderer,
@@ -63,7 +63,7 @@ enum TrafficEdgeType {
  * @returns {TrafficPointRenderer}
  */
 const getTrafficPointRendererForRpsError: (edge: any) => TrafficPointRenderer = (_edge: any) => {
-  const colorVals = PfAlertColorVals();
+  const colorVals = getPFAlertColorVals();
   return new TrafficPointConcentricDiamondRenderer(
     new Diamond(5, PfColors.White, colorVals.Danger, 1.0),
     new Diamond(2, colorVals.Danger, colorVals.Danger, 1.0)

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Chart, ChartBar, ChartStack, ChartAxis, ChartTooltip } from '@patternfly/react-charts';
 import { VictoryLegend } from 'victory';
 
-import { PfColors, PfAlertColorVals } from '../../components/Pf/PfColors';
+import { PfColors, getPFAlertColorVals } from '../../components/Pf/PfColors';
 import { SUMMARY_PANEL_CHART_WIDTH } from '../../types/Graph';
 import * as Legend from 'components/Charts/LegendHelper';
 import { CustomFlyout } from 'components/Charts/CustomFlyout';
@@ -113,7 +113,7 @@ export class RateChart extends React.Component<Props, State> {
 }
 
 export const renderRateChartHttp = (percent2xx: number, percent3xx: number, percent4xx: number, percent5xx: number) => {
-  const colorVals = PfAlertColorVals();
+  const colorVals = getPFAlertColorVals();
   const vcLines: VCLines = [
     { name: 'OK', x: 'rate', y: percent2xx, color: colorVals.Success },
     { name: '3xx', x: 'rate', y: percent3xx, color: colorVals.Info },
@@ -133,7 +133,7 @@ export const renderRateChartHttp = (percent2xx: number, percent3xx: number, perc
 };
 
 export const renderRateChartGrpc = (percentOK: number, percentErr: number) => {
-  const colorVals = PfAlertColorVals();
+  const colorVals = getPFAlertColorVals();
   const vcLines: VCLines = [
     { name: 'OK', x: 'rate', y: percentOK, color: colorVals.Success },
     { name: 'Err', x: 'rate', y: percentErr, color: colorVals.Danger }
@@ -160,7 +160,7 @@ export const renderInOutRateChartHttp = (
   percent4xxOut: number,
   percent5xxOut: number
 ) => {
-  const colorVals = PfAlertColorVals();
+  const colorVals = getPFAlertColorVals();
   const vcLines: VCLines = [
     { name: 'OK', dp: [{ x: 'In', y: percent2xxIn }, { x: 'Out', y: percent2xxOut }], color: colorVals.Success },
     { name: '3xx', dp: [{ x: 'In', y: percent3xxIn }, { x: 'Out', y: percent3xxOut }], color: colorVals.Info },
@@ -193,7 +193,7 @@ export const renderInOutRateChartGrpc = (
   percentOKOut: number,
   percentErrOut: number
 ) => {
-  const colorVals = PfAlertColorVals();
+  const colorVals = getPFAlertColorVals();
   const vcLines: VCLines = [
     { name: 'OK', dp: [{ x: 'In', y: percentOKIn }, { x: 'Out', y: percentOKOut }], color: colorVals.Success },
     { name: 'Err', dp: [{ x: 'In', y: percentErrIn }, { x: 'Out', y: percentErrOut }], color: colorVals.Danger }

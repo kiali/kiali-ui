@@ -1,5 +1,11 @@
 import { style } from 'typestyle';
-import { PfColors, withAlpha, PFAlertColorValsType, PfAlertColorVals } from '../../../components/Pf/PfColors';
+import {
+  PfColors,
+  withAlpha,
+  getPFAlertColorVals,
+  PFColorVal,
+  PFAlertColorVals
+} from '../../../components/Pf/PfColors';
 import { EdgeLabelMode } from '../../../types/GraphFilter';
 import { FAILURE, DEGRADED, REQUESTS_THRESHOLDS } from '../../../types/Health';
 import {
@@ -18,10 +24,10 @@ import * as Cy from 'cytoscape';
 
 export const DimClass = 'mousedim';
 
-let EdgeColor: string;
+let EdgeColor: PFColorVal;
 const EdgeColorDead = PfColors.Black500;
-let EdgeColorDegraded: string;
-let EdgeColorFailure: string;
+let EdgeColorDegraded: PFColorVal;
+let EdgeColorFailure: PFColorVal;
 const EdgeColorTCPWithTraffic = PfColors.Blue600;
 const EdgeIconMTLS = icons.istio.mtls.ascii; // lock
 const EdgeIconDisabledMTLS = icons.istio.disabledMtls.ascii; // broken lock
@@ -113,7 +119,7 @@ export class GraphStyles {
     if (GraphStyles.colorsDefined) {
       return;
     }
-    const colorVals: PFAlertColorValsType = PfAlertColorVals();
+    const colorVals: PFAlertColorVals = getPFAlertColorVals();
     EdgeColor = colorVals.Success;
     EdgeColorDegraded = colorVals.Warning;
     EdgeColorFailure = colorVals.Danger;
