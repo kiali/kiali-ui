@@ -37,7 +37,7 @@ class ServiceInfoDestinationRules extends React.Component<ServiceInfoDestination
       { title: 'Status' },
       { title: 'Name', transforms: [cellWidth(10) as any] },
       { title: 'Traffic Policy', transforms: [cellWidth(10) as any] },
-      { title: 'Subsets', transforms: [cellWidth(50) as any] },
+      { title: 'Subsets', transforms: [cellWidth(30) as any] },
       { title: 'Host', transforms: [cellWidth(10) as any] },
       { title: 'Created at', transforms: [cellWidth(20) as any] },
       { title: 'Resource version', transforms: [cellWidth(10) as any] },
