@@ -40,6 +40,12 @@ export class ServiceDropdown extends React.PureComponent<ServiceDropdownProps, S
     }
   }
 
+  componentDidUpdate(prevProps: ServiceDropdownProps) {
+    if (prevProps.activeNamespaces.sort().join(',') !== this.props.activeNamespaces.sort().join(',')) {
+      this.refreshServices(this.props.activeNamespaces);
+    }
+  }
+
   refreshServices = (namespaces: string[]) => {
     if (namespaces.length === 0) {
       this.setState({ servicesGroups: [] });

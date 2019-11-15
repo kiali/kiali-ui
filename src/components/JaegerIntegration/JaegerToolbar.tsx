@@ -115,7 +115,6 @@ export class JaegerToolbar extends React.Component<JaegerToolbarProps, JaegerToo
     const target = event.target;
     const value = target.type === 'checkbox' ? target.checked : target.value;
     this.setState({ namespaceSelector: value });
-    this.onRequestTraces();
   };
 
   render() {
