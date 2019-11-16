@@ -19,8 +19,8 @@ import {
   renderNoTraffic,
   NodeMetricType,
   renderNodeInfo,
-  summaryBodyTabs,
-  summaryHeader
+  summaryHeader,
+  summaryBodyTabs
 } from './SummaryPanelCommon';
 import { MetricGroup, Metric, Metrics, Datapoint } from '../../types/Metrics';
 import { Response } from '../../services/Api';
@@ -29,7 +29,8 @@ import { decoratedEdgeData, decoratedNodeData } from '../../components/Cytoscape
 import { ResponseFlagsTable } from 'components/SummaryPanel/ResponseFlagsTable';
 import { ResponseHostsTable } from 'components/SummaryPanel/ResponseHostsTable';
 import { KialiIcon } from 'config/KialiIcon';
-import { Tab, Tabs } from '@patternfly/react-core';
+import { Tab } from '@patternfly/react-core';
+import SimpleTabs from 'components/Tab/SimpleTabs';
 
 type SummaryPanelEdgeMetricsState = {
   reqRates: Datapoint[] | null;
@@ -41,8 +42,6 @@ type SummaryPanelEdgeMetricsState = {
   tcpSent: Datapoint[];
   tcpReceived: Datapoint[];
   unit: ResponseTimeUnit;
-  activeRateTabKey: number;
-  activeFlagsHostsTabKey: number;
 };
 
 type SummaryPanelEdgeState = SummaryPanelEdgeMetricsState & {
@@ -60,9 +59,7 @@ const defaultMetricsState: SummaryPanelEdgeMetricsState = {
   rt99: [],
   tcpSent: [],
   tcpReceived: [],
-  unit: 'ms',
-  activeRateTabKey: 0,
-  activeFlagsHostsTabKey: 0
+  unit: 'ms'
 };
 
 const defaultState: SummaryPanelEdgeState = {
@@ -153,15 +150,8 @@ export default class SummaryPanelEdge extends React.Component<SummaryPanelPropTy
         <HeadingBlock prefix="To" node={dest} />
         {isMtls && <MTLSBlock />}
         {(isGrpc || isHttp) && (
-          <div className={`"panel-body ${summaryBodyTabs}`}>
-            <Tabs
-              id="mtls-tabs"
-              activeKey={this.state.activeRateTabKey}
-              onSelect={this.handleRateTabClick}
-              style={{ paddingTop: '10px' }}
-              mountOnEnter
-              unmountOnExit
-            >
+          <div className={summaryBodyTabs}>
+            <SimpleTabs id="edge_summary_rate_tabs" defaultTab={0} style={{ paddingBottom: '10px' }}>
               <Tab title="Traffic" eventKey={0}>
                 {isGrpc && (
                   <>
@@ -196,26 +186,21 @@ export default class SummaryPanelEdge extends React.Component<SummaryPanelPropTy
                   responses={edgeData.responses}
                 />
               </Tab>
-            </Tabs>
+            </SimpleTabs>
             <hr />
             {this.renderCharts(edge, isGrpc, isHttp, isTcp)}
           </div>
         )}
         {isTcp && (
-          <div className={`"panel-body ${summaryBodyTabs}`}>
-            <Tabs
-              id="flags-hosts-tabs"
-              activeKey={this.state.activeFlagsHostsTabKey}
-              onSelect={this.handleFlagsHostTabClick}
-              style={{ paddingTop: '10px' }}
-            >
+          <div className={summaryBodyTabs}>
+            <SimpleTabs id="edge_summary_flag_hosts_tabs" defaultTab={0} style={{ paddingBottom: '10px' }}>
               <Tab eventKey={0} title="Flags">
                 <ResponseFlagsTable title="Response flags by code:" responses={edgeData.responses} />
               </Tab>
               <Tab eventKey={1} title="Hosts">
                 <ResponseHostsTable title="Hosts by code:" responses={edgeData.responses} />
               </Tab>
-            </Tabs>
+            </SimpleTabs>
             <hr />
             {this.renderCharts(edge, isGrpc, isHttp, isTcp)}
           </div>
@@ -518,18 +503,6 @@ export default class SummaryPanelEdge extends React.Component<SummaryPanelPropTy
       this.props.graphType !== GraphType.SERVICE
     );
   }
-
-  private handleRateTabClick = (_event, tabIndex) => {
-    this.setState({
-      activeRateTabKey: tabIndex
-    });
-  };
-
-  private handleFlagsHostTabClick = (_event, tabIndex) => {
-    this.setState({
-      activeFlagsHostsTabKey: tabIndex
-    });
-  };
 
   private renderBadgeSummary = (mTLSPercentage: number) => {
     let mtls = 'mTLS Enabled';
