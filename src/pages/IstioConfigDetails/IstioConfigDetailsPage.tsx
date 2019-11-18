@@ -440,7 +440,7 @@ class IstioConfigDetailsPage extends React.Component<RouteComponentProps<IstioCo
       return (
         <EmptyState variant={EmptyStateVariant.full}>
           <EmptyStateIcon color={PFAlertColor.Danger} icon={KialiIcon.Error} />
-          <Title headingLevel="h5" size="lg">
+          <Title headingLevel={TitleLevel.h5} size={TitleSize.lg}>
             Error loading object {this.props.match.params.object}
           </Title>
           <EmptyStateBody>
