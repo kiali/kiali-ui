@@ -376,7 +376,7 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
                   </CardHeader>
                   <CardBody>
                     {this.renderStatuses(ns)}
-                    {this.renderConfigStatus(ns)}
+                    {this.renderIstioConfigStatus(ns)}
                     <OverviewCardLinks name={ns.name} overviewType={OverviewToolbar.currentOverviewType()} />
                   </CardBody>
                 </Card>
@@ -418,7 +418,7 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
     return <div style={{ height: 70 }} />;
   }
 
-  renderConfigStatus(ns: NamespaceInfo): JSX.Element {
+  renderIstioConfigStatus(ns: NamespaceInfo): JSX.Element {
     let status: any = 'N/A';
     if (ns.validations && !this.isNamespaceEmpty(ns)) {
       status = (
@@ -433,7 +433,7 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
     }
     return (
       <>
-        <Text component={TextVariants.p}>Config status: {status}</Text>
+        <Text component={TextVariants.p}>Istio Config status: {status}</Text>
       </>
     );
   }

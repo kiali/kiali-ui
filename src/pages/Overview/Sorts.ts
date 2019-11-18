@@ -53,9 +53,9 @@ export const sortFields: SortField<NamespaceInfo>[] = [
   },
   {
     id: 'config',
-    title: 'Config',
+    title: 'Istio Config',
     isNumeric: false,
-    param: 'c',
+    param: 'ic',
     compare: (a: NamespaceInfo, b: NamespaceInfo) => {
       if (a.validations && b.validations) {
         if (a.validations.errors === b.validations.errors) {
