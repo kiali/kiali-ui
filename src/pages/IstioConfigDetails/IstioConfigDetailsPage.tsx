@@ -44,7 +44,7 @@ import {
 import { KialiIcon } from '../../config/KialiIcon';
 import { dicIstioType } from '../../types/IstioConfigList';
 import { showInMessageCenter } from '../../utils/IstioValidationUtils';
-import { PFAlertColor, PfColors } from '../../components/Pf/PfColors';
+import { PfColors } from '../../components/Pf/PfColors';
 import IstioObjectLink from '../../components/Link/IstioObjectLink';
 
 const rightToolbarStyle = style({
@@ -439,7 +439,7 @@ class IstioConfigDetailsPage extends React.Component<RouteComponentProps<IstioCo
 
       return (
         <EmptyState variant={EmptyStateVariant.full}>
-          <EmptyStateIcon color={PFAlertColor.Danger} icon={KialiIcon.Error} />
+          <EmptyStateIcon icon={KialiIcon.Error} />
           <Title headingLevel={TitleLevel.h5} size={TitleSize.lg}>
             Error loading object {this.props.match.params.object}
           </Title>
