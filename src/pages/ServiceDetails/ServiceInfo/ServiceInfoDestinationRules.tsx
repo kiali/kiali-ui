@@ -120,6 +120,7 @@ class ServiceInfoDestinationRules extends React.Component<ServiceInfoDestination
               <ValidationObjectSummary
                 id={vsIdx + '-config-validation'}
                 validations={this.hasValidations(destinationRule) ? [this.validation(destinationRule)] : []}
+                style={{ verticalAlign: '-0.5em' }}
               />
             )
           },

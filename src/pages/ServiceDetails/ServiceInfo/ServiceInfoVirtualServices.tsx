@@ -116,6 +116,7 @@ class ServiceInfoVirtualServices extends React.Component<ServiceInfoVirtualServi
               <ValidationObjectSummary
                 id={vsIdx + '-config-validation'}
                 validations={this.hasValidations(virtualService) ? [this.validation(virtualService)] : []}
+                style={{ verticalAlign: '-0.5em' }}
               />
             )
           },

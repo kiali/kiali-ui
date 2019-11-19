@@ -83,11 +83,8 @@ class Validation extends React.Component<Props> {
     if (hasMessage) {
       return (
         <div className="validation">
-          <div style={{ float: 'left', margin: '2px 0.6em 0 0' }}>
-            <IconComponent style={this.iconStyle()} />
-          </div>
           <Text component={TextVariants.p} style={this.textStyle()}>
-            {this.props.message}
+            <IconComponent style={this.iconStyle()} /> {this.props.message}
           </Text>
         </div>
       );

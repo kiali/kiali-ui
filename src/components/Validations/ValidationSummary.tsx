@@ -1,16 +1,15 @@
 import * as React from 'react';
+import { CSSProperties } from 'react';
 import { ValidationTypes } from '../../types/IstioObjects';
 import { style } from 'typestyle';
 import { Text, TextVariants, Tooltip, TooltipPosition } from '@patternfly/react-core';
 import Validation, { severityToValidation } from './Validation';
-import { CSSProperties } from 'react';
 
 interface Props {
   id: string;
   errors: number;
   warnings: number;
   style?: CSSProperties;
-  wrapper?: boolean;
 }
 
 const tooltipListStyle = style({
@@ -72,11 +71,6 @@ export class ValidationSummary extends React.PureComponent<Props> {
   }
 
   render() {
-    const useWrapper = this.props.wrapper === undefined ? true : this.props.wrapper;
-    let wrapperStyle: CSSProperties = { float: 'left' };
-    if (!!this.props.style) {
-      wrapperStyle = Object.assign(wrapperStyle, this.props.style);
-    }
     return (
       <Tooltip
         aria-label={'Validations list'}
@@ -84,13 +78,7 @@ export class ValidationSummary extends React.PureComponent<Props> {
         enableFlip={true}
         content={this.tooltipContent()}
       >
-        {useWrapper ? (
-          <div style={wrapperStyle}>
-            <Validation severity={this.severity()} />
-          </div>
-        ) : (
-          <Validation iconStyle={this.props.style} severity={this.severity()} />
-        )}
+        <Validation iconStyle={this.props.style} severity={this.severity()} />
       </Tooltip>
     );
   }

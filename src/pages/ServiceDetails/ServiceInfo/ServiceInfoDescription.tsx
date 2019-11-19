@@ -54,11 +54,7 @@ const ExternalNameType = 'ExternalName';
 
 class ServiceInfoDescription extends React.Component<ServiceInfoDescriptionProps> {
   getPortOver(portId: number) {
-    return (
-      <div style={{ float: 'left', fontSize: '12px', padding: '3px 0.6em 0 0' }}>
-        <ValidationList checks={this.getPortChecks(portId)} />
-      </div>
-    );
+    return <ValidationList checks={this.getPortChecks(portId)} />;
   }
 
   getPortChecks(portId: number): ObjectCheck[] {
@@ -178,8 +174,7 @@ class ServiceInfoDescription extends React.Component<ServiceInfoDescriptionProps
                   <ul className={listStyle}>
                     {(this.props.ports || []).map((port, i) => (
                       <li key={'port_' + i}>
-                        {this.hasIssue(i) ? this.getPortOver(i) : undefined}
-                        {port.protocol} {port.name} ({port.port})
+                        {this.hasIssue(i) ? this.getPortOver(i) : undefined} {port.protocol} {port.name} ({port.port})
                       </li>
                     ))}
                   </ul>

@@ -427,7 +427,6 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
           errors={ns.validations.errors}
           warnings={ns.validations.warnings}
           style={{ marginLeft: '5px' }}
-          wrapper={false}
         />
       );
     }
