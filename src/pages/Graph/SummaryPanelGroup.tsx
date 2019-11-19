@@ -25,7 +25,7 @@ import { CyNode, decoratedNodeData } from '../../components/CytoscapeGraph/Cytos
 import { KialiIcon } from 'config/KialiIcon';
 
 type SummaryPanelGroupMetricsState = {
-  requestCountIn: Datapoint[] | null;
+  requestCountIn: Datapoint[];
   requestCountOut: Datapoint[];
   errorCountIn: Datapoint[];
   errorCountOut: Datapoint[];
@@ -44,7 +44,7 @@ type SummaryPanelGroupState = SummaryPanelGroupMetricsState & {
 };
 
 const defaultMetricsState: SummaryPanelGroupMetricsState = {
-  requestCountIn: null,
+  requestCountIn: [],
   requestCountOut: [],
   errorCountIn: [],
   errorCountOut: [],

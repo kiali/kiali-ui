@@ -33,7 +33,7 @@ import { Tab } from '@patternfly/react-core';
 import SimpleTabs from 'components/Tab/SimpleTabs';
 
 type SummaryPanelEdgeMetricsState = {
-  reqRates: Datapoint[] | null;
+  reqRates: Datapoint[];
   errRates: Datapoint[];
   rtAvg: Datapoint[];
   rtMed: Datapoint[];
@@ -51,7 +51,7 @@ type SummaryPanelEdgeState = SummaryPanelEdgeMetricsState & {
 };
 
 const defaultMetricsState: SummaryPanelEdgeMetricsState = {
-  reqRates: null,
+  reqRates: [],
   errRates: [],
   rtAvg: [],
   rtMed: [],
