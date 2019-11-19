@@ -69,14 +69,14 @@ export class CytoscapeToolbar extends React.PureComponent<CytoscapeToolbarProps>
       <Toolbar className={cytoscapeToolbarStyle}>
         <ToolbarItem>
           <Tooltip content="Zoom In">
-            <Button id="toolbar_zoom_in" className={buttonStyle} variant="plain" onClick={this.zoomIn}>
+            <Button id="toolbar_zoom_in" className={buttonStyle} variant="tertiary" onClick={this.zoomIn}>
               <SearchPlusIcon />
             </Button>
           </Tooltip>
         </ToolbarItem>
         <ToolbarItem>
           <Tooltip content="Zoom Out">
-            <Button id="toolbar_zoom_out" className={buttonStyle} variant="plain" onClick={this.zoomOut}>
+            <Button id="toolbar_zoom_out" className={buttonStyle} variant="tertiary" onClick={this.zoomOut}>
               <SearchMinusIcon />
             </Button>
           </Tooltip>
@@ -86,7 +86,7 @@ export class CytoscapeToolbar extends React.PureComponent<CytoscapeToolbarProps>
             <Button
               id="toolbar_graph_fit"
               className={[cytoscapeToolbarPadStyle, buttonStyle].join(' ')}
-              variant="plain"
+              variant="tertiary"
               onClick={this.fit}
             >
               <ExpandArrowsAltIcon />
@@ -99,7 +99,7 @@ export class CytoscapeToolbar extends React.PureComponent<CytoscapeToolbarProps>
             <Button
               id="toolbar_layout_default"
               className={buttonStyle}
-              variant="plain"
+              variant="tertiary"
               onClick={() => {
                 this.props.setLayout(DagreGraph.getLayout());
               }}
@@ -116,7 +116,7 @@ export class CytoscapeToolbar extends React.PureComponent<CytoscapeToolbarProps>
               <Button
                 id="toolbar_layout1"
                 className={buttonStyle}
-                variant="plain"
+                variant="tertiary"
                 onClick={() => {
                   this.props.setLayout(CoseGraph.getLayout());
                 }}
@@ -133,7 +133,7 @@ export class CytoscapeToolbar extends React.PureComponent<CytoscapeToolbarProps>
             <Button
               id="toolbar_layout2"
               className={buttonStyle}
-              variant="plain"
+              variant="tertiary"
               onClick={() => {
                 this.props.setLayout(ColaGraph.getLayout());
               }}
