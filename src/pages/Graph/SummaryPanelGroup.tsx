@@ -310,7 +310,7 @@ export default class SummaryPanelGroup extends React.Component<SummaryPanelPropT
   };
 
   private renderSparklines = group => {
-    if (this.state.loading && !this.state.requestCountIn) {
+    if (this.state.loading) {
       return <strong>Loading charts...</strong>;
     } else if (this.state.metricsLoadError) {
       return (

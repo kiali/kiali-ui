@@ -439,7 +439,7 @@ export default class SummaryPanelEdge extends React.Component<SummaryPanelPropTy
       );
     }
 
-    if (this.state.loading && !this.state.reqRates) {
+    if (this.state.loading) {
       return <strong>Loading charts...</strong>;
     }
 

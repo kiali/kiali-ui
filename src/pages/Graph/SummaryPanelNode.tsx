@@ -437,7 +437,7 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
         </>
       );
     }
-    if (this.state.loading && !this.state.grpcRequestCountIn) {
+    if (this.state.loading) {
       return <strong>Loading charts...</strong>;
     }
     if (this.state.metricsLoadError) {
