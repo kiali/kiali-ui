@@ -80,7 +80,9 @@ export class HealthIndicator extends React.PureComponent<Props, HealthState> {
       <Tooltip
         aria-label={'Health indicator'}
         content={this.renderHealthTooltip(health)}
-        position={PopoverPosition.auto}
+        boundary={'scrollParent'}
+        position={PopoverPosition.bottom}
+        enableFlip={true}
         className={'health_indicator'}
       >
         {icon}

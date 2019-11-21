@@ -5,7 +5,7 @@ exports[`HealthIndicator renders healthy 1`] = `
   appendTo={[Function]}
   aria="describedby"
   aria-label="Health indicator"
-  boundary="window"
+  boundary="scrollParent"
   className="health_indicator"
   content={
     <TextContent>
@@ -111,7 +111,7 @@ exports[`HealthIndicator renders healthy 1`] = `
   isAppLauncher={false}
   isVisible={false}
   maxWidth="18.75rem"
-  position="auto"
+  position="bottom"
   tippyProps={Object {}}
   trigger="mouseenter focus"
   zIndex={9999}
