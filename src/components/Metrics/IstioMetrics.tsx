@@ -2,7 +2,8 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { Card, CardBody, Grid, GridItem, Toolbar, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
-import { Dashboard, DashboardModel, ExternalLink } from '@kiali/k-charted-pf4';
+import { PfColors, PFAlertColor } from 'components/Pf/PfColors';
+import { Dashboard, DashboardModel, ExternalLink, toOverlay } from '@kiali/k-charted-pf4';
 import { style } from 'typestyle';
 
 import RefreshContainer from '../../components/Refresh/Refresh';
@@ -23,11 +24,14 @@ import { MetricsObjectTypes } from '../../types/Metrics';
 import { GrafanaInfo } from '../../types/GrafanaInfo';
 import { MessageType } from '../../types/MessageCenter';
 import { GrafanaLinks } from './GrafanaLinks';
+import { Span, TracingQuery } from 'types/Tracing';
+import { OverlayInfo, Overlay } from '@kiali/k-charted-pf4/dist/pf4/src/types/Overlay';
 
 type MetricsState = {
   dashboard?: DashboardModel;
   labelsSettings: LabelsSettings;
   grafanaLinks: ExternalLink[];
+  tracingSpans: Span[];
 };
 
 type ObjectId = {
@@ -47,6 +51,7 @@ const displayFlex = style({
 
 class IstioMetrics extends React.Component<IstioMetricsProps, MetricsState> {
   options: IstioMetricsOptions;
+  lastFetchMicros: number | undefined;
   static grafanaInfoPromise: Promise<GrafanaInfo | undefined> | undefined;
 
   constructor(props: IstioMetricsProps) {
@@ -55,7 +60,7 @@ class IstioMetrics extends React.Component<IstioMetricsProps, MetricsState> {
     const settings = MetricsHelper.readMetricsSettingsFromURL();
     this.options = this.initOptions(settings);
     // Initialize active filters from URL
-    this.state = { labelsSettings: settings.labelsSettings, grafanaLinks: [] };
+    this.state = { labelsSettings: settings.labelsSettings, grafanaLinks: [], tracingSpans: [] };
   }
 
   initOptions(settings: MetricsSettings): IstioMetricsOptions {
@@ -70,8 +75,13 @@ class IstioMetrics extends React.Component<IstioMetricsProps, MetricsState> {
 
   componentDidMount() {
     this.fetchGrafanaInfo();
-    this.fetchMetrics();
+    this.refresh();
   }
+
+  refresh = () => {
+    this.fetchMetrics();
+    this.fetchSpans(this.lastFetchMicros);
+  };
 
   fetchMetrics = () => {
     let promise: Promise<API.Response<DashboardModel>>;
@@ -128,6 +138,26 @@ class IstioMetrics extends React.Component<IstioMetricsProps, MetricsState> {
       });
   }
 
+  fetchSpans(lastFetchMicros?: number) {
+    const doAppend = lastFetchMicros !== undefined;
+    const nowMicros = new Date().getTime() * 1000;
+    const frameStart = nowMicros - (this.options.duration || 600) * 1000000; // seconds to micros;
+    const opts: TracingQuery = { startMicros: lastFetchMicros ? lastFetchMicros : frameStart };
+    this.lastFetchMicros = nowMicros;
+    API.getServiceSpans(this.props.namespace, this.props.object, opts)
+      .then(res => {
+        if (doAppend) {
+          const spans = this.state.tracingSpans.filter(s => s.startTime >= frameStart).concat(res.data);
+          this.setState({ tracingSpans: spans });
+        } else {
+          this.setState({ tracingSpans: res.data });
+        }
+      })
+      .catch(err => {
+        AlertUtils.addError('Could not fetch spans.', err);
+      });
+  }
+
   onMetricsSettingsChanged = (settings: MetricsSettings) => {
     MetricsHelper.settingsToOptions(settings, this.options);
     this.fetchMetrics();
@@ -139,7 +169,8 @@ class IstioMetrics extends React.Component<IstioMetricsProps, MetricsState> {
 
   onDurationChanged = (duration: DurationInSeconds) => {
     MetricsHelper.durationToOptions(duration, this.options);
-    this.fetchMetrics();
+    this.lastFetchMicros = undefined;
+    this.refresh();
   };
 
   onReporterChanged = (reporter: Reporter) => {
@@ -154,6 +185,29 @@ class IstioMetrics extends React.Component<IstioMetricsProps, MetricsState> {
 
     const urlParams = new URLSearchParams(history.location.search);
     const expandedChart = urlParams.get('expand') || undefined;
+    let overlay: Overlay | undefined;
+    if (this.state.tracingSpans.length > 0) {
+      const info: OverlayInfo = {
+        title: 'Span duration',
+        unit: 'seconds',
+        dataStyle: { fill: ({ datum }) => (datum.error ? PFAlertColor.Danger : PfColors.Cyan300), fillOpacity: 0.6 },
+        color: PfColors.Cyan300,
+        symbol: 'circle',
+        size: 10
+      };
+      const dps = this.state.tracingSpans.map(span => {
+        const hasError = span.tags.some(tag => tag.key === 'error' && tag.value);
+        return {
+          name: span.operationName,
+          x: new Date(span.startTime / 1000),
+          y: Number(span.duration / 1000000),
+          error: hasError,
+          color: hasError ? PFAlertColor.Danger : PfColors.Cyan300,
+          size: 5 + Math.min(span.traceSize, 25)
+        };
+      });
+      overlay = toOverlay(info, dps);
+    }
 
     return (
       <RenderComponentScroll>
@@ -168,6 +222,7 @@ class IstioMetrics extends React.Component<IstioMetricsProps, MetricsState> {
                   expandedChart={expandedChart}
                   expandHandler={this.expandHandler}
                   labelPrettifier={MetricsHelper.prettyLabelValues}
+                  overlay={overlay}
                 />
               </CardBody>
             </Card>
@@ -208,7 +263,7 @@ class IstioMetrics extends React.Component<IstioMetricsProps, MetricsState> {
             <MetricsDuration onChanged={this.onDurationChanged} />
           </ToolbarItem>
           <ToolbarItem>
-            <RefreshContainer id="metrics-refresh" handleRefresh={this.fetchMetrics} hideLabel={true} />
+            <RefreshContainer id="metrics-refresh" handleRefresh={this.refresh} hideLabel={true} />
           </ToolbarItem>
         </ToolbarGroup>
       </Toolbar>
