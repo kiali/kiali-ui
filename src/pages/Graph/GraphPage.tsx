@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { RouteComponentProps } from 'react-router-dom';
 import FlexView from 'react-flexview';
-import { Breadcrumb, BreadcrumbItem, Button, Title, Tooltip, TooltipPosition } from '@patternfly/react-core';
 import { style } from 'typestyle';
 import { store } from '../../store/ConfigStore';
 import { DurationInSeconds, TimeInMilliseconds, TimeInSeconds } from '../../types/Common';
@@ -36,7 +35,6 @@ import { GraphToolbarActions } from '../../actions/GraphToolbarActions';
 import { NodeContextMenuContainer } from '../../components/CytoscapeGraph/ContextMenu/NodeContextMenu';
 import { GlobalActions } from '../../actions/GlobalActions';
 import { PfColors } from 'components/Pf/PfColors';
-import { KialiIcon, defaultIconStyle } from 'config/KialiIcon';
 import { TourActions } from 'actions/TourActions';
 import TourStopContainer, { TourInfo, getNextTourStop } from 'components/Tour/TourStop';
 import { arrayEquals } from 'utils/Common';
@@ -96,10 +94,6 @@ export type GraphPageProps = RouteComponentProps<Partial<GraphURLPathProps>> & R
 
 const NUMBER_OF_DATAPOINTS = 30;
 
-const breadcrumbStyle = style({
-  marginTop: '10px'
-});
-
 const containerStyle = style({
   minHeight: '350px',
   // TODO: try flexbox to remove this calc
@@ -134,15 +128,6 @@ const GraphErrorBoundaryFallback = () => {
       <EmptyGraphLayoutContainer namespaces={[]} isError={true} />
     </div>
   );
-};
-
-const timeDisplayOptions = {
-  day: '2-digit',
-  month: 'short',
-  hour: '2-digit',
-  minute: '2-digit',
-  second: '2-digit',
-  hour12: false
 };
 
 export class GraphPage extends React.Component<GraphPageProps> {
@@ -277,8 +262,6 @@ export class GraphPage extends React.Component<GraphPageProps> {
   }
 
   render() {
-    const graphEnd: TimeInMilliseconds = this.props.graphTimestamp * 1000;
-    const graphStart: TimeInMilliseconds = graphEnd - this.props.graphDuration * 1000;
     let conStyle = containerStyle;
     if (isKioskMode()) {
       conStyle = kioskContainerStyle;
@@ -287,31 +270,12 @@ export class GraphPage extends React.Component<GraphPageProps> {
     return (
       <>
         <FlexView className={conStyle} column={true}>
-          <div className={breadcrumbStyle}>
-            <Breadcrumb>
-              <BreadcrumbItem isActive={true}>
-                <Title headingLevel="h4" size="xl">
-                  {this.props.node && this.props.node.nodeType !== NodeType.UNKNOWN
-                    ? `Graph for ${this.props.node.nodeType}: ${this.getTitle(this.props.node)}`
-                    : 'Graph'}
-                </Title>
-                <Tooltip key={'graph-tour-help-ot'} position={TooltipPosition.right} content="Graph help tour...">
-                  <Button variant="link" style={{ paddingLeft: '6px' }} onClick={this.toggleHelp}>
-                    <KialiIcon.Help className={defaultIconStyle} />
-                  </Button>
-                </Tooltip>
-              </BreadcrumbItem>
-            </Breadcrumb>
-            {this.props.graphTimestamp > 0 && (
-              <span className={'pull-right'}>
-                {new Date(graphStart).toLocaleDateString(undefined, timeDisplayOptions)}
-                {' ... '}
-                {new Date(graphEnd).toLocaleDateString(undefined, timeDisplayOptions)}
-              </span>
-            )}
-          </div>
           <div>
-            <GraphToolbarContainer disabled={this.props.isLoading} onRefresh={this.handleRefresh} />
+            <GraphToolbarContainer
+              disabled={this.props.isLoading}
+              onRefresh={this.handleRefresh}
+              onToggleHelp={this.toggleHelp}
+            />
           </div>
           <FlexView grow={true} className={cytoscapeGraphWrapperDivStyle}>
             <ErrorBoundary
@@ -378,23 +342,6 @@ export class GraphPage extends React.Component<GraphPageProps> {
       this.props.startTour({ info: GraphTour, stop: firstStop });
     }
   };
-
-  private getTitle(node: NodeParamsType) {
-    if (node.nodeType === NodeType.APP) {
-      let title = node.app;
-      if (node.version && node.version !== UNKNOWN) {
-        title += ' - ' + node.version;
-      }
-
-      return title;
-    } else if (node.nodeType === NodeType.SERVICE) {
-      return node.service;
-    } else if (node.nodeType === NodeType.WORKLOAD) {
-      return node.workload;
-    }
-
-    return 'unknown';
-  }
 
   private setCytoscapeGraph(cytoscapeGraph: any) {
     this.cytoscapeGraphRef.current = cytoscapeGraph;
