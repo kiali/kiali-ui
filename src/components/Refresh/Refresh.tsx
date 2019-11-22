@@ -65,7 +65,6 @@ class Refresh extends React.PureComponent<Props, State> {
   }
 
   componentDidUpdate(prevProps: Props) {
-    console.log('didUpdate');
     // ensure redux state and URL are aligned
     if (this.props.manageURL) {
       HistoryManager.setParam(URLParam.REFRESH_INTERVAL, String(this.props.refreshInterval));

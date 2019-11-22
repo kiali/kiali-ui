@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, FormSelect, FormSelectOption } from '@patternfly/react-core';
+import { Button } from '@patternfly/react-core';
 import { SortAlphaDownIcon, SortAlphaUpIcon } from '@patternfly/react-icons';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
@@ -43,6 +43,16 @@ const overviewTypes = {
   workload: 'Workloads',
   service: 'Services'
 };
+
+// TODO Use Object.fromEntries when available
+const sortTypes = (function() {
+  let o = {};
+  Sorts.sortFields.forEach(sortType => {
+    let id: string = sortType.id;
+    Object.assign(o, { [id]: sortType.title });
+  });
+  return o;
+})();
 
 export type OverviewType = keyof typeof overviewTypes;
 
@@ -126,16 +136,13 @@ export class OverviewToolbar extends React.Component<Props, State> {
         ]}
       >
         <>
-          <FormSelect
-            aria-label={'Sort_Selector'}
+          <ToolbarDropdown
+            id="sort_selector"
+            handleSelect={this.changeSortField}
             value={this.state.sortField.id}
-            onChange={this.changeSortField}
-            style={{ width: 'auto' }}
-          >
-            {Sorts.sortFields.map(sortType => (
-              <FormSelectOption key={sortType.id} value={sortType.id} label={sortType.title} />
-            ))}
-          </FormSelect>
+            label={sortTypes[this.state.overviewType]}
+            options={sortTypes}
+          />
           <Button variant="plain" onClick={this.updateSortDirection} style={{ ...ThinStyle }}>
             {this.state.isSortAscending ? <SortAlphaDownIcon /> : <SortAlphaUpIcon />}
           </Button>
