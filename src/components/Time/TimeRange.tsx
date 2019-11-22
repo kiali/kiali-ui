@@ -13,10 +13,6 @@ type TimeRangeProps = ReduxProps & {
 };
 
 export class TimeRange extends React.PureComponent<TimeRangeProps> {
-  constructor(props: TimeRangeProps) {
-    super(props);
-  }
-
   render() {
     return (
       <>
