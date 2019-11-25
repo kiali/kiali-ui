@@ -6,7 +6,7 @@ import { RouteComponentProps } from 'react-router-dom';
 import FlexView from 'react-flexview';
 import { style } from 'typestyle';
 import { store } from '../../store/ConfigStore';
-import { DurationInSeconds, TimeInMilliseconds, TimeInSeconds } from '../../types/Common';
+import { DurationInSeconds, TimeInSeconds, TimeInMilliseconds } from '../../types/Common';
 import Namespace from '../../types/Namespace';
 import { GraphType, NodeParamsType, NodeType, SummaryData, UNKNOWN, EdgeLabelMode, Layout } from '../../types/Graph';
 import { computePrometheusRateParams } from '../../services/Prometheus';
@@ -33,7 +33,6 @@ import GraphDataThunkActions from '../../actions/GraphDataThunkActions';
 import { GraphActions } from '../../actions/GraphActions';
 import { GraphToolbarActions } from '../../actions/GraphToolbarActions';
 import { NodeContextMenuContainer } from '../../components/CytoscapeGraph/ContextMenu/NodeContextMenu';
-import { GlobalActions } from '../../actions/GlobalActions';
 import { PfColors } from 'components/Pf/PfColors';
 import { TourActions } from 'actions/TourActions';
 import TourStopContainer, { TourInfo, getNextTourStop } from 'components/Tour/TourStop';
@@ -41,6 +40,7 @@ import { arrayEquals } from 'utils/Common';
 import { isKioskMode, getFocusSelector } from 'utils/SearchParamUtils';
 import GraphTour, { GraphTourStops } from './GraphHelpTour';
 import { getErrorString } from 'services/Api';
+import { Chip } from '@patternfly/react-core';
 
 // GraphURLPathProps holds path variable values.  Currenly all path variables are relevant only to a node graph
 type GraphURLPathProps = {
@@ -80,12 +80,12 @@ type ReduxProps = {
     edgeLabelMode: EdgeLabelMode,
     showSecurity: boolean,
     showUnusedNodes: boolean,
-    node?: NodeParamsType
+    node?: NodeParamsType,
+    queryTime?: TimeInSeconds
   ) => any;
   graphChanged: () => void;
   setNode: (node?: NodeParamsType) => void;
   toggleLegend: () => void;
-  setLastRefreshAt: (lastRefreshAt: TimeInMilliseconds) => void;
   endTour: () => void;
   startTour: ({ info: TourInfo, stop: number }) => void;
 };
@@ -114,7 +114,16 @@ const cytoscapeToolbarWrapperDivStyle = style({
   borderStyle: 'hidden'
 });
 
-const graphToolbarStyle = style({
+const graphTimeRangeDivStyle = style({
+  position: 'absolute',
+  top: '10px',
+  left: '5px',
+  width: 'auto',
+  zIndex: 2,
+  backgroundColor: PfColors.White
+});
+
+const graphLegendStyle = style({
   right: '0',
   bottom: '10px',
   zIndex: 9999,
@@ -267,6 +276,8 @@ export class GraphPage extends React.Component<GraphPageProps> {
       conStyle = kioskContainerStyle;
     }
     const focusSelector = getFocusSelector();
+    const isReady =
+      this.props.graphData.nodes && Object.keys(this.props.graphData.nodes).length > 0 && !this.props.isError;
     return (
       <>
         <FlexView className={conStyle} column={true}>
@@ -285,10 +296,15 @@ export class GraphPage extends React.Component<GraphPageProps> {
             >
               {this.props.showLegend && (
                 <GraphLegend
-                  className={graphToolbarStyle}
+                  className={graphLegendStyle}
                   isMTLSEnabled={this.props.mtlsEnabled}
                   closeLegend={this.props.toggleLegend}
                 />
+              )}
+              {isReady && (
+                <Chip className={graphTimeRangeDivStyle} isOverflowChip={true} isReadOnly={true}>
+                  {this.displayTimeRange()}
+                </Chip>
               )}
               <TourStopContainer info={GraphTourStops.Graph}>
                 <TourStopContainer info={GraphTourStops.ContextualMenu}>
@@ -303,7 +319,7 @@ export class GraphPage extends React.Component<GraphPageProps> {
                   />
                 </TourStopContainer>
               </TourStopContainer>
-              {this.props.graphData.nodes && Object.keys(this.props.graphData.nodes).length > 0 && !this.props.isError && (
+              {isReady && (
                 <div className={cytoscapeToolbarWrapperDivStyle}>
                   <CytoscapeToolbarContainer cytoscapeGraphRef={this.cytoscapeGraphRef} />
                 </div>
@@ -376,6 +392,25 @@ export class GraphPage extends React.Component<GraphPageProps> {
   private notifyError = (error: Error, _componentStack: string) => {
     AlertUtils.add(`There was an error when rendering the graph: ${error.message}, please try a different layout`);
   };
+
+  private displayTimeRange = () => {
+    const timeDisplayOptions = {
+      day: '2-digit',
+      month: 'short',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false
+    };
+
+    const rangeEnd: TimeInMilliseconds = this.props.graphTimestamp * 1000;
+    const rangeStart: TimeInMilliseconds = rangeEnd - this.props.duration * 1000;
+    const rangeEndStr = new Date(rangeEnd).toLocaleDateString(undefined, timeDisplayOptions);
+    const rangeStartStr = new Date(rangeStart).toLocaleDateString(undefined, timeDisplayOptions);
+    const range = `${rangeStartStr} ... ${rangeEndStr}`;
+
+    return range;
+  };
 }
 
 const mapStateToProps = (state: KialiAppState) => ({
@@ -409,7 +444,8 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<KialiAppState, void, KialiAp
     edgeLabelMode: EdgeLabelMode,
     showSecurity: boolean,
     showUnusedNodes: boolean,
-    node?: NodeParamsType
+    node?: NodeParamsType,
+    queryTime?: TimeInMilliseconds
   ) =>
     dispatch(
       GraphDataThunkActions.fetchGraphData(
@@ -420,13 +456,13 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<KialiAppState, void, KialiAp
         edgeLabelMode,
         showSecurity,
         showUnusedNodes,
-        node
+        node,
+        queryTime
       )
     ),
   graphChanged: bindActionCreators(GraphActions.changed, dispatch),
   setNode: bindActionCreators(GraphActions.setNode, dispatch),
   toggleLegend: bindActionCreators(GraphToolbarActions.toggleLegend, dispatch),
-  setLastRefreshAt: bindActionCreators(GlobalActions.setLastRefreshAt, dispatch),
   endTour: bindActionCreators(TourActions.endTour, dispatch),
   startTour: bindActionCreators(TourActions.startTour, dispatch)
 });

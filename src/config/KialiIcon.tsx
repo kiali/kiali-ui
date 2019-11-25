@@ -29,7 +29,8 @@ import {
   AngleDownIcon,
   HomeIcon,
   PficonTemplateIcon,
-  ArrowLeftIcon
+  ArrowLeftIcon,
+  OutlinedClockIcon
 } from '@patternfly/react-icons';
 import { style } from 'typestyle';
 
@@ -58,6 +59,7 @@ export const KialiIcon: { [name: string]: React.FunctionComponent<IconProps> } =
   Back: (props: IconProps) => <ArrowLeftIcon className={props.className} />,
   Bell: (props: IconProps) => <BellIcon className={props.className} />,
   CircuitBreaker: (props: IconProps) => <BoltIcon className={props.className} />,
+  Clock: (props: IconProps) => <OutlinedClockIcon className={props.className} />,
   Close: (props: IconProps) => <CloseIcon className={props.className} />,
   Error: (props: IconProps) => <ErrorCircleOIcon className={props.className} color={PFAlertColor.Danger} />,
   Help: (props: IconProps) => <HelpIcon className={props.className} />,
