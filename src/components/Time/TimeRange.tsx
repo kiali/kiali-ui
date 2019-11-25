@@ -4,16 +4,9 @@ import { DurationDropdownContainer } from '../DurationDropdown/DurationDropdown'
 import RefreshContainer from 'components/Refresh/Refresh';
 import { KialiAppState } from 'store/Store';
 import { lastRefreshAtSelector, durationSelector } from 'store/Selectors';
-import { TimeInMilliseconds, DurationInSeconds } from 'types/Common';
-
-const timeDisplayOptions = {
-  day: '2-digit',
-  month: 'short',
-  hour: '2-digit',
-  minute: '2-digit',
-  second: '2-digit',
-  hour12: false
-};
+import { TimeInMilliseconds, DurationInSeconds, TimeInSeconds } from 'types/Common';
+import { Tooltip, TooltipPosition, Button } from '@patternfly/react-core';
+import { KialiIcon, defaultIconStyle } from 'config/KialiIcon';
 
 type ReduxProps = {
   duration: DurationInSeconds;
@@ -27,18 +20,28 @@ type TimeRangeProps = ReduxProps & {
   handleRefresh: () => void;
 };
 
-export class TimeRange extends React.PureComponent<TimeRangeProps> {
-  render() {
-    const rangeEnd: TimeInMilliseconds = this.props.lastRefreshAt;
-    const rangeStart: TimeInMilliseconds = rangeEnd - this.props.duration * 1000;
+type TimeRangeState = {
+  replayStartTime: TimeInSeconds;
+  showReplay: boolean;
+};
+export class TimeRange extends React.PureComponent<TimeRangeProps, TimeRangeState> {
+  constructor(props: TimeRangeProps) {
+    super(props);
 
+    this.state = {
+      replayStartTime: 0,
+      showReplay: false
+    };
+  }
+
+  render() {
     return (
-      <>
-        <span>
-          {new Date(rangeStart).toLocaleDateString(undefined, timeDisplayOptions)}
-          {' ... '}
-          {new Date(rangeEnd).toLocaleDateString(undefined, timeDisplayOptions)}
-        </span>
+      <span>
+        <Tooltip key={'time-range-advanced'} position={TooltipPosition.left} content="Replay...">
+          <Button variant="link" style={{ paddingLeft: '0px', paddingRight: '6px' }} onClick={this.onToggleReplay}>
+            <KialiIcon.Clock className={defaultIconStyle} />
+          </Button>
+        </Tooltip>
         <DurationDropdownContainer
           id={'time_range_duration'}
           disabled={this.props.disabled}
@@ -51,9 +54,13 @@ export class TimeRange extends React.PureComponent<TimeRangeProps> {
           handleRefresh={this.props.handleRefresh}
           manageURL={true}
         />
-      </>
+      </span>
     );
   }
+
+  private onToggleReplay = () => {
+    this.setState({ showReplay: !this.state.showReplay, replayStartTime: 0 });
+  };
 }
 
 const mapStateToProps = (state: KialiAppState) => ({

@@ -49,7 +49,7 @@ type GraphToolbarProps = ReduxProps & {
 
 const toolbarStyle = style({
   marginBottom: '20px',
-  marginTop: '-10px'
+  marginTop: '20px'
 });
 
 const rightToolbarStyle = style({
