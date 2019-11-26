@@ -27,7 +27,7 @@ const mockAPIToPromise = (func: keyof typeof API, obj: any, encapsData: boolean)
           } catch (e) {
             reject(e);
           }
-        }, 1);
+        }, 2);
       });
     });
   });
