@@ -41,6 +41,11 @@ const mockNamespaceHealth = (obj: NamespaceAppHealth): Promise<void> => {
   return mockAPIToPromise('getNamespaceAppHealth', obj, false);
 };
 
+// Ignore other calls
+mockAPIToPromise('getNamespaceMetrics', null, false);
+mockAPIToPromise('getNamespaceTls', null, false);
+mockAPIToPromise('getNamespaceValidations', null, false);
+
 let mounted: ReactWrapper<any, any> | null;
 
 const mountPage = () => {
@@ -227,7 +232,7 @@ describe('Overview page', () => {
     mountPage();
   });
 
-  xit('filters namespaces info name no match', done => {
+  it('filters namespaces info name no match', done => {
     FilterSelected.setSelected([
       {
         category: 'Name',
@@ -242,7 +247,7 @@ describe('Overview page', () => {
     mountPage();
   });
 
-  xit('filters namespaces info name and health match', done => {
+  it('filters namespaces info name and health match', done => {
     FilterSelected.setSelected([
       {
         category: 'Name',
@@ -268,7 +273,7 @@ describe('Overview page', () => {
     mountPage();
   });
 
-  xit('filters namespaces info name and health no match', done => {
+  it('filters namespaces info name and health no match', done => {
     FilterSelected.setSelected([
       {
         category: 'Name',
