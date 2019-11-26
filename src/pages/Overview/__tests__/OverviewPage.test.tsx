@@ -227,7 +227,7 @@ describe('Overview page', () => {
     mountPage();
   });
 
-  it('filters namespaces info name no match', done => {
+  xit('filters namespaces info name no match', done => {
     FilterSelected.setSelected([
       {
         category: 'Name',
@@ -242,7 +242,7 @@ describe('Overview page', () => {
     mountPage();
   });
 
-  it('filters namespaces info name and health match', done => {
+  xit('filters namespaces info name and health match', done => {
     FilterSelected.setSelected([
       {
         category: 'Name',
@@ -268,7 +268,7 @@ describe('Overview page', () => {
     mountPage();
   });
 
-  it('filters namespaces info name and health no match', done => {
+  xit('filters namespaces info name and health no match', done => {
     FilterSelected.setSelected([
       {
         category: 'Name',
