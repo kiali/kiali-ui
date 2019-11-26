@@ -1,19 +1,17 @@
 // Config
-@import '../../node_modules/patternfly/dist/sass/patternfly/color-variables';
-
-// External dependency variables or mixins that are required/extended by our custom styles (tilde tells Webpack not to use relative path)
-// IMPORTANT: Please put non-variable/mixin external dependency imports in vendor.scss!
-// Patternfly variables must be imported before Bootstrap
-@import '../../node_modules/patternfly/dist/sass/patternfly/variables';
-@import '../../node_modules/bootstrap-sass/assets/stylesheets/bootstrap/variables';
-@import '../../node_modules/bootstrap-sass/assets/stylesheets/bootstrap/mixins';
-@import '../../node_modules/font-awesome-sass/assets/stylesheets/font-awesome/variables';
+@import '../../node_modules/@patternfly/patternfly/sass-utilities/_all';
+@import '../../node_modules/@patternfly/patternfly/_variables';
 
 // Disable PatternFly 4 reset.
 $pf-global--enable-reset: false;
 
 $color-grey-background-border: #ccc;
+
+$screen-sm:                  768px !default;
+$screen-sm-min:              $screen-sm !default;
 $grid-float-breakpoint: $screen-sm-min !default;
+
+$pf-color-black:                 #030303 !default;
 // PatternFly 4 overrides
 
 // Webpack will not properly bundle the background-image from PatternFly
@@ -62,7 +60,7 @@ $grid-float-breakpoint: $screen-sm-min !default;
 }
 
 .pf-c-page__sidebar {
-  --pf-c-page__sidebar--BackgroundColor: #{$color-pf-black-900};
+  --pf-c-page__sidebar--BackgroundColor: #{$pf-color-black-900};
   --pf-c-page__sidebar-body--PaddingBottom: 0;
   --pf-c-page__sidebar-body--PaddingTop: 0;
   --pf-c-page__sidebar--md--Width: 210px; // TODO: Remove. Test enlarged message center when removing.
@@ -89,14 +87,14 @@ $grid-float-breakpoint: $screen-sm-min !default;
     --pf-c-nav__list-link--after--Left: 0;
     --pf-c-nav__list-link--after--md--Left: var(--pf-c-nav__list-link--after--Left);
     --pf-c-nav__list-link--after--Width: 3px;
-    --pf-c-nav__list-link--Color: #{$color-pf-black-300};
+    --pf-c-nav__list-link--Color: #{$pf-color-black-300};
     --pf-c-nav__list-link--focus--after--BackgroundColor: var(--pf-c-nav__list-link--hover--after--BackgroundColor);
     --pf-c-nav__list-link--focus--BackgroundColor: var(--pf-c-nav__list-link--hover--BackgroundColor);
     --pf-c-nav__list-link--focus--Color: var(--pf-c-nav__list-link--hover--Color);
     --pf-c-nav__list-link--hover--after--BackgroundColor: transparent;
-    --pf-c-nav__list-link--hover--BackgroundColor: #{$color-pf-black-700};
-    --pf-c-nav__list-link--hover--Color: #{$color-pf-white};
-    --pf-c-nav__list-link--m-current--after--BackgroundColor: #{$color-pf-blue-300};
+    --pf-c-nav__list-link--hover--BackgroundColor: #{$pf-color-black-700};
+    --pf-c-nav__list-link--hover--Color: #{$pf-color-white};
+    --pf-c-nav__list-link--m-current--after--BackgroundColor: #{$pf-color-blue-300};
     --pf-c-nav__list-link--m-current--Color: var(--pf-c-nav__list-link--hover--Color);
     --pf-c-nav__list-link--md--PaddingLeft: 32px;
     --pf-c-nav__list-link--PaddingBottom: var(--pf-c-nav__list-link--PaddingTop);
@@ -136,7 +134,7 @@ $grid-float-breakpoint: $screen-sm-min !default;
   .pf-c-nav__list {
     list-style: none; // turn off list-styles to fix bug in Edge
     > .pf-c-nav__item {
-      border-bottom: 1px solid #{$color-pf-black};
+      border-bottom: 1px solid #{$pf-color-black};
       margin-top: 0;
 
       &:not(.pf-m-current) > .pf-c-nav__link {
@@ -148,7 +146,7 @@ $grid-float-breakpoint: $screen-sm-min !default;
       }
 
       &.pf-m-current {
-        background-color: #{$color-pf-black-800};
+        background-color: #{$pf-color-black-800};
 
         &.pf-m-expanded > .pf-c-nav__link::after {
           display: none;
@@ -170,10 +168,6 @@ $grid-float-breakpoint: $screen-sm-min !default;
     .pf-c-nav__link {
       align-items: center;
       padding-left: var(--pf-c-nav__list-link--PaddingLeft);
-
-      @media screen and (min-width: $grid-float-breakpoint) {
-        padding-left: var(--pf-c-nav__list-link--md--PaddingLeft);
-      }
     }
   }
 
@@ -197,7 +191,7 @@ $grid-float-breakpoint: $screen-sm-min !default;
       margin-bottom: 17px;
 
       &::after {
-        --pf-c-nav__simple-list-link--m-separator--after--Background: #{$color-pf-black};
+        --pf-c-nav__simple-list-link--m-separator--after--Background: #{$pf-color-black};
         --pf-c-nav__simple-list-link--m-separator--after--Bottom: -9px;
       }
     }
