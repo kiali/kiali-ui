@@ -6,7 +6,8 @@ import {
   TimeInSeconds,
   UserName,
   RawDate,
-  TimeInMilliseconds
+  TimeInMilliseconds,
+  TimeOffsetInSeconds
 } from '../types/Common';
 import { EdgeLabelMode, Layout, GraphType, NodeParamsType, SummaryData, CyData, GraphElements } from '../types/Graph';
 import { TLSStatus } from '../types/TLSStatus';
@@ -98,9 +99,10 @@ export interface InterfaceSettings {
 }
 
 export interface UserSettings {
+  duration: DurationInSeconds;
   interface: InterfaceSettings;
   refreshInterval: RefreshIntervalInMs;
-  duration: DurationInSeconds;
+  replayOffset: TimeOffsetInSeconds;
 }
 
 export interface JaegerState {

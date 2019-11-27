@@ -43,7 +43,7 @@ type ReduxProps = {
 
 type GraphToolbarProps = ReduxProps & {
   disabled: boolean;
-  onRefresh: () => void;
+  onRefresh?: () => void;
   onToggleHelp: () => void;
 };
 
@@ -137,7 +137,9 @@ export class GraphToolbar extends React.PureComponent<GraphToolbarProps> {
   }
 
   handleRefresh = () => {
-    this.props.onRefresh();
+    if (this.props.onRefresh) {
+      this.props.onRefresh();
+    }
   };
 
   handleNamespaceReturn = () => {

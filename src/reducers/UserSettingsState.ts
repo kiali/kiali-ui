@@ -6,9 +6,10 @@ import { KialiAppAction } from '../actions/KialiAppAction';
 import { UserSettingsActions } from '../actions/UserSettingsActions';
 
 export const INITIAL_USER_SETTINGS_STATE: UserSettings = {
-  interface: { navCollapse: false },
   duration: config.toolbar.defaultDuration,
-  refreshInterval: config.toolbar.defaultRefreshInterval
+  interface: { navCollapse: false },
+  refreshInterval: config.toolbar.defaultRefreshInterval,
+  replayOffset: 0
 };
 
 const UserSettingsState = (state: UserSettings = INITIAL_USER_SETTINGS_STATE, action: KialiAppAction): UserSettings => {
@@ -24,6 +25,11 @@ const UserSettingsState = (state: UserSettings = INITIAL_USER_SETTINGS_STATE, ac
     case getType(UserSettingsActions.setRefreshInterval): {
       return updateState(state, {
         refreshInterval: action.payload
+      });
+    }
+    case getType(UserSettingsActions.setReplayOffset): {
+      return updateState(state, {
+        replayOffset: action.payload
       });
     }
     default:

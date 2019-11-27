@@ -12,6 +12,12 @@ import RefreshButtonContainer from './RefreshButton';
 import { GlobalActions } from '../../actions/GlobalActions';
 import { HistoryManager, URLParam } from 'app/History';
 
+type ReduxProps = {
+  refreshInterval: RefreshIntervalInMs;
+  setRefreshInterval: (refreshInterval: RefreshIntervalInMs) => void;
+  setLastRefreshAt: (lastRefreshAt: TimeInMilliseconds) => void;
+};
+
 type ComponentProps = {
   id: string;
   disabled?: boolean;
@@ -19,12 +25,6 @@ type ComponentProps = {
   manageURL?: boolean;
 
   handleRefresh: () => void;
-};
-
-type ReduxProps = {
-  refreshInterval: RefreshIntervalInMs;
-  setRefreshInterval: (refreshInterval: RefreshIntervalInMs) => void;
-  setLastRefreshAt: (lastRefreshAt: TimeInMilliseconds) => void;
 };
 
 type Props = ComponentProps & ReduxProps;
