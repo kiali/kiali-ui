@@ -6,7 +6,7 @@ import { RouteComponentProps } from 'react-router-dom';
 import FlexView from 'react-flexview';
 import { style } from 'typestyle';
 import { store } from '../../store/ConfigStore';
-import { DurationInSeconds, TimeInSeconds, TimeInMilliseconds } from '../../types/Common';
+import { DurationInSeconds, TimeInSeconds, TimeInMilliseconds, TimeOffsetInSeconds } from '../../types/Common';
 import Namespace from '../../types/Namespace';
 import { GraphType, NodeParamsType, NodeType, SummaryData, UNKNOWN, EdgeLabelMode, Layout } from '../../types/Graph';
 import { computePrometheusRateParams } from '../../services/Prometheus';
@@ -25,7 +25,9 @@ import {
   edgeLabelModeSelector,
   graphDataSelector,
   graphTypeSelector,
-  meshWideMTLSEnabledSelector
+  meshWideMTLSEnabledSelector,
+  lastRefreshAtSelector,
+  replayOffsetSelector
 } from '../../store/Selectors';
 import { KialiAppState } from '../../store/Store';
 import { KialiAppAction } from '../../actions/KialiAppAction';
@@ -63,8 +65,10 @@ type ReduxProps = {
   isError: boolean;
   isLoading: boolean;
   isPageVisible: boolean;
+  lastRefreshAt: TimeInMilliseconds;
   layout: Layout;
   node?: NodeParamsType;
+  replayOffset: TimeOffsetInSeconds;
   showLegend: boolean;
   showSecurity: boolean;
   showServiceNodes: boolean;
@@ -117,7 +121,7 @@ const cytoscapeToolbarWrapperDivStyle = style({
 const graphTimeRangeDivStyle = style({
   position: 'absolute',
   top: '10px',
-  left: '5px',
+  left: '10px',
   width: 'auto',
   zIndex: 2,
   backgroundColor: PfColors.White
@@ -247,6 +251,8 @@ export class GraphPage extends React.Component<GraphPageProps> {
       (prev.edgeLabelMode !== curr.edgeLabelMode &&
         curr.edgeLabelMode === EdgeLabelMode.RESPONSE_TIME_95TH_PERCENTILE) ||
       prev.graphType !== curr.graphType ||
+      prev.lastRefreshAt !== curr.lastRefreshAt ||
+      prev.replayOffset !== curr.replayOffset ||
       prev.showServiceNodes !== curr.showServiceNodes ||
       prev.showSecurity !== curr.showSecurity ||
       prev.showUnusedNodes !== curr.showUnusedNodes ||
@@ -282,11 +288,7 @@ export class GraphPage extends React.Component<GraphPageProps> {
       <>
         <FlexView className={conStyle} column={true}>
           <div>
-            <GraphToolbarContainer
-              disabled={this.props.isLoading}
-              onRefresh={this.handleRefresh}
-              onToggleHelp={this.toggleHelp}
-            />
+            <GraphToolbarContainer disabled={this.props.isLoading} onToggleHelp={this.toggleHelp} />
           </div>
           <FlexView grow={true} className={cytoscapeGraphWrapperDivStyle}>
             <ErrorBoundary
@@ -309,7 +311,7 @@ export class GraphPage extends React.Component<GraphPageProps> {
               <TourStopContainer info={GraphTourStops.Graph}>
                 <TourStopContainer info={GraphTourStops.ContextualMenu}>
                   <CytoscapeGraphContainer
-                    refresh={this.handleRefresh}
+                    onEmptyGraphAction={this.handleEmptyGraphAction}
                     containerClassName={cytoscapeGraphContainerStyle}
                     ref={refInstance => this.setCytoscapeGraph(refInstance)}
                     isMTLSEnabled={this.props.mtlsEnabled}
@@ -343,7 +345,7 @@ export class GraphPage extends React.Component<GraphPageProps> {
     );
   }
 
-  private handleRefresh = () => {
+  private handleEmptyGraphAction = () => {
     this.loadGraphDataFromBackend();
   };
 
@@ -367,6 +369,10 @@ export class GraphPage extends React.Component<GraphPageProps> {
     if (this.loadPromise) {
       this.loadPromise.cancel();
     }
+    const queryTime: TimeInSeconds | undefined = !!this.props.replayOffset
+      ? Date.now() - this.props.replayOffset
+      : undefined;
+    console.log(`QueryTime=[${queryTime}]`);
     const promise = this.props.fetchGraphData(
       this.props.node ? [this.props.node.namespace] : this.props.activeNamespaces,
       this.props.duration,
@@ -375,7 +381,8 @@ export class GraphPage extends React.Component<GraphPageProps> {
       this.props.edgeLabelMode,
       this.props.showSecurity,
       this.props.showUnusedNodes,
-      this.props.node
+      this.props.node,
+      queryTime
     );
     this.loadPromise = makeCancelablePromise(promise);
     this.loadPromise.promise
@@ -425,8 +432,10 @@ const mapStateToProps = (state: KialiAppState) => ({
   isError: state.graph.isError,
   isLoading: state.graph.isLoading,
   isPageVisible: state.globalState.isPageVisible,
+  lastRefreshAt: lastRefreshAtSelector(state),
   layout: state.graph.layout,
   node: state.graph.node,
+  replayOffset: replayOffsetSelector(state),
   showLegend: state.graph.toolbarState.showLegend,
   showSecurity: state.graph.toolbarState.showSecurity,
   showServiceNodes: state.graph.toolbarState.showServiceNodes,
