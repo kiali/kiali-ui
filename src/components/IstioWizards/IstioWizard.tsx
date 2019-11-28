@@ -38,38 +38,42 @@ import { ThreeScaleServiceRule } from '../../types/ThreeScale';
 import GatewaySelector, { GatewaySelectorState } from './GatewaySelector';
 import VirtualServiceHosts from './VirtualServiceHosts';
 
+const emptyWizardState = (serviceName: string): WizardState => {
+  return {
+    showWizard: false,
+    showAdvanced: false,
+    workloads: [],
+    rules: [],
+    suspendedRoutes: [],
+    valid: {
+      mainWizard: true,
+      vsHosts: true,
+      tls: true,
+      lb: true,
+      gateway: true
+    },
+    advancedOptionsValid: true,
+    vsHosts: [serviceName],
+    trafficPolicy: {
+      tlsModified: false,
+      mtlsMode: DISABLE,
+      clientCertificate: '',
+      privateKey: '',
+      caCertificates: '',
+      addLoadBalancer: false,
+      simpleLB: false,
+      consistentHashType: ConsistentHashType.HTTP_HEADER_NAME,
+      loadBalancer: {
+        simple: ROUND_ROBIN
+      }
+    }
+  };
+};
+
 class IstioWizard extends React.Component<WizardProps, WizardState> {
   constructor(props: WizardProps) {
     super(props);
-    this.state = {
-      showWizard: false,
-      showAdvanced: false,
-      workloads: [],
-      rules: [],
-      suspendedRoutes: [],
-      valid: {
-        mainWizard: true,
-        vsHosts: true,
-        tls: true,
-        lb: true,
-        gateway: true
-      },
-      advancedOptionsValid: true,
-      vsHosts: [props.serviceName],
-      trafficPolicy: {
-        tlsModified: false,
-        mtlsMode: DISABLE,
-        clientCertificate: '',
-        privateKey: '',
-        caCertificates: '',
-        addLoadBalancer: false,
-        simpleLB: false,
-        consistentHashType: ConsistentHashType.HTTP_HEADER_NAME,
-        loadBalancer: {
-          simple: ROUND_ROBIN
-        }
-      }
-    };
+    this.state = emptyWizardState(props.serviceName);
   }
 
   componentDidUpdate(prevProps: WizardProps) {
@@ -152,9 +156,7 @@ class IstioWizard extends React.Component<WizardProps, WizardState> {
   };
 
   onClose = () => {
-    this.setState({
-      showWizard: false
-    });
+    this.setState(emptyWizardState(this.props.serviceName));
     this.props.onClose(true);
   };
 
