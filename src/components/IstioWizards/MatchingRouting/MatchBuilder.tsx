@@ -33,7 +33,7 @@ export const REGEX = 'regex';
 
 // Pseudo operator
 export const PRESENCE = 'is present';
-export const ANYTHING = '/^.*$/';
+export const ANYTHING = '^.*$';
 
 const opOptions: string[] = [EXACT, PREFIX, REGEX];
 
