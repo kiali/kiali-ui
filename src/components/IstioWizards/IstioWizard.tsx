@@ -66,7 +66,8 @@ const emptyWizardState = (serviceName: string): WizardState => {
       loadBalancer: {
         simple: ROUND_ROBIN
       }
-    }
+    },
+    gateway: undefined
   };
 };
 
@@ -155,9 +156,9 @@ class IstioWizard extends React.Component<WizardProps, WizardState> {
     return true;
   };
 
-  onClose = () => {
+  onClose = (changed: boolean) => {
     this.setState(emptyWizardState(this.props.serviceName));
-    this.props.onClose(true);
+    this.props.onClose(changed);
   };
 
   onCreateUpdate = () => {
@@ -223,11 +224,11 @@ class IstioWizard extends React.Component<WizardProps, WizardState> {
             MessageType.SUCCESS
           );
         }
-        this.props.onClose(true);
+        this.onClose(true);
       })
       .catch(error => {
         AlertUtils.addError('Could not ' + (this.props.update ? 'update' : 'create') + ' Istio config objects.', error);
-        this.props.onClose(true);
+        this.onClose(true);
       });
   };
 
@@ -321,14 +322,14 @@ class IstioWizard extends React.Component<WizardProps, WizardState> {
             : ''
         }
         isOpen={this.state.showWizard}
-        onClose={this.onClose}
+        onClose={() => this.onClose(false)}
         onKeyPress={e => {
           if (e.key === 'Enter' && this.isValid(this.state)) {
             this.onCreateUpdate();
           }
         }}
         actions={[
-          <Button key="cancel" variant="secondary" onClick={this.onClose}>
+          <Button key="cancel" variant="secondary" onClick={() => this.onClose(false)}>
             Cancel
           </Button>,
           <Button isDisabled={!this.isValid(this.state)} key="confirm" variant="primary" onClick={this.onCreateUpdate}>
