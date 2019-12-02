@@ -23,7 +23,8 @@ describe('UserSettingsState reducer', () => {
     expect(UserSettingsState(undefined, GlobalActions.unknown())).toEqual({
       interface: { navCollapse: false },
       duration: 60,
-      refreshInterval: 15000
+      refreshInterval: 15000,
+      replayOffset: 0
     });
   });
 
@@ -33,14 +34,16 @@ describe('UserSettingsState reducer', () => {
         {
           interface: { navCollapse: false },
           duration: 60,
-          refreshInterval: 60
+          refreshInterval: 60,
+          replayOffset: 0
         },
         UserSettingsActions.navCollapse(true)
       )
     ).toEqual({
       interface: { navCollapse: true },
       duration: 60,
-      refreshInterval: 60
+      refreshInterval: 60,
+      replayOffset: 0
     });
   });
 
@@ -50,14 +53,16 @@ describe('UserSettingsState reducer', () => {
         {
           interface: { navCollapse: false },
           duration: 60,
-          refreshInterval: 60
+          refreshInterval: 60,
+          replayOffset: 0
         },
         UserSettingsActions.setDuration(120)
       )
     ).toEqual({
       interface: { navCollapse: false },
       duration: 120,
-      refreshInterval: 60
+      refreshInterval: 60,
+      replayOffset: 0
     });
   });
 
@@ -67,14 +72,35 @@ describe('UserSettingsState reducer', () => {
         {
           interface: { navCollapse: false },
           duration: 60,
-          refreshInterval: 60
+          refreshInterval: 60,
+          replayOffset: 0
         },
         UserSettingsActions.setRefreshInterval(120)
       )
     ).toEqual({
       interface: { navCollapse: false },
       duration: 60,
-      refreshInterval: 120
+      refreshInterval: 120,
+      replayOffset: 0
     });
+  });
+});
+
+it('should set replay offset', () => {
+  expect(
+    UserSettingsState(
+      {
+        interface: { navCollapse: false },
+        duration: 60,
+        refreshInterval: 60,
+        replayOffset: 0
+      },
+      UserSettingsActions.setReplayOffset(600)
+    )
+  ).toEqual({
+    interface: { navCollapse: false },
+    duration: 60,
+    refreshInterval: 60,
+    replayOffset: 600
   });
 });

@@ -368,7 +368,7 @@ export class GraphPage extends React.Component<GraphPageProps> {
       this.loadPromise.cancel();
     }
     const queryTime: TimeInSeconds | undefined = !!this.props.replayOffset
-      ? Date.now() - this.props.replayOffset
+      ? Math.floor(Date.now() / 1000) - this.props.replayOffset
       : undefined;
     console.log(`QueryTime=[${queryTime}]`);
     const promise = this.props.fetchGraphData(
@@ -452,7 +452,7 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<KialiAppState, void, KialiAp
     showSecurity: boolean,
     showUnusedNodes: boolean,
     node?: NodeParamsType,
-    queryTime?: TimeInMilliseconds
+    queryTime?: TimeInSeconds
   ) =>
     dispatch(
       GraphDataThunkActions.fetchGraphData(
