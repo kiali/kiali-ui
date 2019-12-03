@@ -95,7 +95,7 @@ export class LoginPage extends React.Component<LoginProps, LoginState> {
           filledInputs: true
         });
       } else {
-        let message = 'Please, provide a Service Account token.';
+        const message = 'Please, provide a Service Account token.';
 
         this.setState({
           showHelperText: true,
@@ -187,15 +187,11 @@ export class LoginPage extends React.Component<LoginProps, LoginState> {
 
     const messages = this.getHelperMessage();
     const isLoggingIn = this.props.isPostLoginPerforming || this.props.status === LoginStatus.logging;
-    const isLoginBtnDisabled =
+    const isLoginButtonDisabled =
       isLoggingIn || (this.props.postLoginErrorMsg !== undefined && this.props.postLoginErrorMsg.length !== 0);
 
-    // Unfortunately, typescripg typings are wrong in the PatternFly
-    // library. So, this casts LoginForm as "any" so that it is
-    // possible to use the "isLoginButtonDisabled" property.
-    const CredentialsForm = LoginForm as any;
     const loginForm = (
-      <CredentialsForm
+      <LoginForm
         usernameLabel="Username"
         showHelperText={this.state.showHelperText || this.props.message !== '' || messages.length > 0}
         helperText={<>{messages}</>}
@@ -210,7 +206,7 @@ export class LoginPage extends React.Component<LoginProps, LoginState> {
         onLoginButtonClick={(e: any) => this.handleSubmit(e)}
         style={{ marginTop: '10px' }}
         loginButtonLabel={isLoggingIn ? 'Logging in...' : undefined}
-        isLoginButtonDisabled={isLoginBtnDisabled}
+        isLoginButtonDisabled={isLoginButtonDisabled}
       />
     );
 
@@ -244,7 +240,7 @@ export class LoginPage extends React.Component<LoginProps, LoginState> {
             <Button
               type="submit"
               onClick={this.handleSubmit}
-              isDisabled={isLoginBtnDisabled}
+              isDisabled={isLoginButtonDisabled}
               style={{ width: '100%' }}
               variant="primary"
             >
