@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { Card, CardBody, Grid, GridItem, Toolbar, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
 import { PfColors, PFAlertColor } from 'components/Pf/PfColors';
-import { Dashboard, DashboardModel, ExternalLink, toOverlay } from '@kiali/k-charted-pf4';
+import { Dashboard, DashboardModel, ExternalLink, toOverlay, OverlayInfo, Overlay } from '@kiali/k-charted-pf4';
 import { style } from 'typestyle';
 
 import RefreshContainer from '../../components/Refresh/Refresh';
@@ -25,7 +25,6 @@ import { GrafanaInfo } from '../../types/GrafanaInfo';
 import { MessageType } from '../../types/MessageCenter';
 import { GrafanaLinks } from './GrafanaLinks';
 import { Span, TracingQuery } from 'types/Tracing';
-import { OverlayInfo, Overlay } from '@kiali/k-charted-pf4/dist/pf4/src/types/Overlay';
 
 type MetricsState = {
   dashboard?: DashboardModel;
