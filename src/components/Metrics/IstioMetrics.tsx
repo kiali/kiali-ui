@@ -141,16 +141,18 @@ class IstioMetrics extends React.Component<IstioMetricsProps, MetricsState> {
   fetchSpans(lastFetchMicros?: number) {
     const doAppend = lastFetchMicros !== undefined;
     const nowMicros = new Date().getTime() * 1000;
-    const frameStart = nowMicros - (this.options.duration || 600) * 1000000; // seconds to micros;
+    const frameStart = nowMicros - ((this.options.duration || 600) + 60) * 1000000; // seconds to micros with 1min margin;
     const opts: TracingQuery = { startMicros: lastFetchMicros ? lastFetchMicros : frameStart };
-    this.lastFetchMicros = nowMicros;
     API.getServiceSpans(this.props.namespace, this.props.object, opts)
       .then(res => {
-        if (doAppend) {
-          const spans = this.state.tracingSpans.filter(s => s.startTime >= frameStart).concat(res.data);
-          this.setState({ tracingSpans: spans });
-        } else {
-          this.setState({ tracingSpans: res.data });
+        const spans = doAppend
+          ? this.state.tracingSpans.filter(s => s.startTime >= frameStart).concat(res.data)
+          : res.data;
+        this.setState({ tracingSpans: spans });
+        // Update last fetch time only if we had some results
+        // So that if Jaeger DB hadn't time to ingest data, it's still going to be fetched next time
+        if (spans.length > 0) {
+          this.lastFetchMicros = nowMicros;
         }
       })
       .catch(err => {
