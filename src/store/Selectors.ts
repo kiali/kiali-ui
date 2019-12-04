@@ -50,6 +50,10 @@ const refreshInterval = (state: KialiAppState) => state.userSettings.refreshInte
 
 export const refreshIntervalSelector = createIdentitySelector(refreshInterval);
 
+const replayActive = (state: KialiAppState) => state.userSettings.replayActive;
+
+export const replayActiveSelector = createIdentitySelector(replayActive);
+
 const replayOffset = (state: KialiAppState) => state.userSettings.replayOffset;
 
 export const replayOffsetSelector = createIdentitySelector(replayOffset);

@@ -10,7 +10,8 @@ import {
   activeNamespacesSelector,
   edgeLabelModeSelector,
   graphTypeSelector,
-  showUnusedNodesSelector
+  showUnusedNodesSelector,
+  replayActiveSelector
 } from '../../../store/Selectors';
 import { GraphToolbarActions } from '../../../actions/GraphToolbarActions';
 import { GraphType, NodeParamsType, EdgeLabelMode } from '../../../types/Graph';
@@ -26,12 +27,14 @@ import { GraphTourStops } from 'pages/Graph/GraphHelpTour';
 import TourStopContainer from 'components/Tour/TourStop';
 import TimeRangeContainer from 'components/Time/TimeRange';
 import { KialiIcon, defaultIconStyle } from 'config/KialiIcon';
+import ReplayContainer from 'components/Time/Replay';
 
 type ReduxProps = {
   activeNamespaces: Namespace[];
   edgeLabelMode: EdgeLabelMode;
   graphType: GraphType;
   node?: NodeParamsType;
+  replayActive: boolean;
   showUnusedNodes: boolean;
 
   setActiveNamespaces: (activeNamespaces: Namespace[]) => void;
@@ -213,6 +216,7 @@ export class GraphToolbar extends React.PureComponent<GraphToolbarProps> {
             />
           </ToolbarGroup>
         </Toolbar>
+        {this.props.replayActive && <ReplayContainer id={'time-range-replay'} disabled={this.props.disabled} />}
       </>
     );
   }
@@ -256,6 +260,7 @@ const mapStateToProps = (state: KialiAppState) => ({
   edgeLabelMode: edgeLabelModeSelector(state),
   graphType: graphTypeSelector(state),
   node: state.graph.node,
+  replayActive: replayActiveSelector(state),
   showUnusedNodes: showUnusedNodesSelector(state)
 });
 
