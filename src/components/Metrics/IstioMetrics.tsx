@@ -151,7 +151,7 @@ class IstioMetrics extends React.Component<IstioMetricsProps, MetricsState> {
         // Update last fetch time only if we had some results
         // So that if Jaeger DB hadn't time to ingest data, it's still going to be fetched next time
         if (spans.length > 0) {
-          this.lastFetchMicros = nowMicros;
+          this.lastFetchMicros = Math.max(...spans.map(s => s.startTime));
         }
       })
       .catch(err => {
@@ -204,7 +204,7 @@ class IstioMetrics extends React.Component<IstioMetricsProps, MetricsState> {
           y: Number(span.duration / 1000000),
           error: hasError,
           color: hasError ? PFAlertColor.Danger : PfColors.Cyan300,
-          size: 5 + Math.min(span.traceSize, 25)
+          size: 4
         };
       });
       overlay = toOverlay(info, dps);
