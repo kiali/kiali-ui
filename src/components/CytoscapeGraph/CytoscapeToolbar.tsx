@@ -37,6 +37,9 @@ const buttonStyle = style({
   backgroundColor: PfColors.White,
   marginRight: '1px'
 });
+const selectedTopologyButtonStyle = style({
+  color: PfColors.Blue300
+});
 const cytoscapeToolbarStyle = style({
   padding: '7px 10px'
 });
@@ -104,7 +107,11 @@ export class CytoscapeToolbar extends React.PureComponent<CytoscapeToolbarProps>
               }}
               isActive={this.props.layout.name === DagreGraph.getLayout().name}
             >
-              <TopologyIcon />
+              <TopologyIcon
+                className={
+                  this.props.layout.name === DagreGraph.getLayout().name ? selectedTopologyButtonStyle : undefined
+                }
+              />
             </Button>
           </Tooltip>
         </ToolbarItem>
@@ -121,7 +128,12 @@ export class CytoscapeToolbar extends React.PureComponent<CytoscapeToolbarProps>
                 }}
                 isActive={this.props.layout.name === CoseGraph.getLayout().name}
               >
-                <TopologyIcon /> 1
+                <TopologyIcon
+                  className={
+                    this.props.layout.name === CoseGraph.getLayout().name ? selectedTopologyButtonStyle : undefined
+                  }
+                />{' '}
+                1
               </Button>
             </Tooltip>
           </ToolbarItem>
@@ -138,7 +150,12 @@ export class CytoscapeToolbar extends React.PureComponent<CytoscapeToolbarProps>
               }}
               isActive={this.props.layout.name === ColaGraph.getLayout().name}
             >
-              <TopologyIcon /> 2
+              <TopologyIcon
+                className={
+                  this.props.layout.name === ColaGraph.getLayout().name ? selectedTopologyButtonStyle : undefined
+                }
+              />{' '}
+              2
             </Button>
           </Tooltip>
         </ToolbarItem>
