@@ -8,7 +8,8 @@ export const UserSettingsActions = {
   ),
   setDuration: createStandardAction(ActionKeys.SET_DURATION)<DurationInSeconds>(),
   setRefreshInterval: createStandardAction(ActionKeys.SET_REFRESH_INTERVAL)<RefreshIntervalInMs>(),
-  setReplayOffset: createStandardAction(ActionKeys.SET_REPLAY_OFFSET)<TimeOffsetInSeconds>()
+  setReplayOffset: createStandardAction(ActionKeys.SET_REPLAY_OFFSET)<TimeOffsetInSeconds>(),
+  toggleReplayActive: createAction(ActionKeys.TOGGLE_REPLAY_ACTIVE)
 };
 
 export type UserSettingsAction = ActionType<typeof UserSettingsActions>;

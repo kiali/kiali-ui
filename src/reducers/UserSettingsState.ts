@@ -9,6 +9,7 @@ export const INITIAL_USER_SETTINGS_STATE: UserSettings = {
   duration: config.toolbar.defaultDuration,
   interface: { navCollapse: false },
   refreshInterval: config.toolbar.defaultRefreshInterval,
+  replayActive: false,
   replayOffset: 0
 };
 
@@ -30,6 +31,12 @@ const UserSettingsState = (state: UserSettings = INITIAL_USER_SETTINGS_STATE, ac
     case getType(UserSettingsActions.setReplayOffset): {
       return updateState(state, {
         replayOffset: action.payload
+      });
+    }
+    case getType(UserSettingsActions.toggleReplayActive): {
+      return updateState(state, {
+        replayActive: !state.replayActive,
+        replayOffset: 0
       });
     }
     default:

@@ -102,6 +102,7 @@ export interface UserSettings {
   duration: DurationInSeconds;
   interface: InterfaceSettings;
   refreshInterval: RefreshIntervalInMs;
+  replayActive: boolean;
   replayOffset: TimeOffsetInSeconds;
 }
 
