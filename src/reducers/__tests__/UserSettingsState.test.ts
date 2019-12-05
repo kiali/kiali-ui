@@ -35,7 +35,7 @@ describe('UserSettingsState reducer', () => {
           interface: { navCollapse: false },
           duration: 60,
           refreshInterval: 60,
-          replayOffset: 0
+          replayInterval: 0
         },
         UserSettingsActions.navCollapse(true)
       )
@@ -54,7 +54,7 @@ describe('UserSettingsState reducer', () => {
           interface: { navCollapse: false },
           duration: 60,
           refreshInterval: 60,
-          replayOffset: 0
+          replayInterval: 0
         },
         UserSettingsActions.setDuration(120)
       )
@@ -73,7 +73,7 @@ describe('UserSettingsState reducer', () => {
           interface: { navCollapse: false },
           duration: 60,
           refreshInterval: 60,
-          replayOffset: 0
+          replayInterval: 0
         },
         UserSettingsActions.setRefreshInterval(120)
       )
@@ -93,9 +93,9 @@ it('should set replay offset', () => {
         interface: { navCollapse: false },
         duration: 60,
         refreshInterval: 60,
-        replayOffset: 0
+        replayInterval: 0
       },
-      UserSettingsActions.setReplayOffset(600)
+      UserSettingsActions.setReplayInterval(600)
     )
   ).toEqual({
     interface: { navCollapse: false },

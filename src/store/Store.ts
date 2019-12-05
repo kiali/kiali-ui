@@ -7,7 +7,7 @@ import {
   UserName,
   RawDate,
   TimeInMilliseconds,
-  TimeOffsetInSeconds
+  ReplayIntervalInSeconds
 } from '../types/Common';
 import { EdgeLabelMode, Layout, GraphType, NodeParamsType, SummaryData, CyData, GraphElements } from '../types/Graph';
 import { TLSStatus } from '../types/TLSStatus';
@@ -103,7 +103,9 @@ export interface UserSettings {
   interface: InterfaceSettings;
   refreshInterval: RefreshIntervalInMs;
   replayActive: boolean;
-  replayOffset: TimeOffsetInSeconds;
+  replayEndTime: TimeInSeconds;
+  replayInterval: ReplayIntervalInSeconds;
+  replayQueryTime: TimeInSeconds;
 }
 
 export interface JaegerState {
