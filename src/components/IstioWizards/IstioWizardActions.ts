@@ -197,7 +197,7 @@ export const buildIstioConfig = (
       }
     },
     spec: {
-      host: wProps.serviceName,
+      host: wProps.serviceName + '.' + wProps.namespace + '.' + serverConfig.istioIdentityDomain,
       subsets: wProps.workloads.map(workload => {
         // Using version
         const versionLabelName = serverConfig.istioLabels.versionLabelName;
@@ -264,7 +264,7 @@ export const buildIstioConfig = (
             route: wState.workloads.map(workload => {
               return {
                 destination: {
-                  host: wProps.serviceName,
+                  host: wProps.serviceName + '.' + wProps.namespace + '.' + serverConfig.istioIdentityDomain,
                   subset: wkdNameVersion[workload.name]
                 },
                 weight: workload.weight
@@ -284,7 +284,7 @@ export const buildIstioConfig = (
           for (let iRoute = 0; iRoute < rule.routes.length; iRoute++) {
             const destW: DestinationWeight = {
               destination: {
-                host: wProps.serviceName,
+                host: wProps.serviceName + '.' + wProps.namespace + '.' + serverConfig.istioIdentityDomain,
                 subset: wkdNameVersion[rule.routes[iRoute]]
               }
             };
@@ -319,7 +319,7 @@ export const buildIstioConfig = (
           const suspendedRoute = wState.suspendedRoutes[i];
           const destW: DestinationWeight = {
             destination: {
-              host: wProps.serviceName,
+              host: wProps.serviceName + '.' + wProps.namespace + '.' + serverConfig.istioIdentityDomain,
               subset: wkdNameVersion[suspendedRoute.workload]
             }
           };
@@ -341,7 +341,7 @@ export const buildIstioConfig = (
         httpRoute.route = [
           {
             destination: {
-              host: wProps.serviceName
+              host: wProps.serviceName + '.' + wProps.namespace + '.' + serverConfig.istioIdentityDomain
             }
           }
         ];
