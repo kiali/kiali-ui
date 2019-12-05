@@ -17,6 +17,7 @@ type Props = {
   value: number;
   tooltip: boolean;
   onSlide: (value: number) => void;
+  onSlideStop: (value: number) => void;
   input: boolean;
   sliderClass: string;
   inputFormat: string;
@@ -41,6 +42,7 @@ class Slider extends React.Component<Props, State> {
     step: 1,
     toolTip: false,
     onSlide: noop,
+    onSlideStop: noop,
     label: null,
     labelClass: null,
     input: false,
@@ -68,6 +70,10 @@ class Slider extends React.Component<Props, State> {
 
   onSlide = value => {
     this.setState({ value }, () => this.props.onSlide(value));
+  };
+
+  onSlideStop = value => {
+    this.setState({ value }, () => this.props.onSlideStop(value));
   };
 
   onPlus = () => {
@@ -109,6 +115,7 @@ class Slider extends React.Component<Props, State> {
         formatter={this.formatter}
         value={this.state.value}
         onSlide={this.onSlide}
+        onSlideStop={this.onSlideStop}
       />
     );
 
@@ -140,31 +147,35 @@ class Slider extends React.Component<Props, State> {
     return (
       <>
         <Boundaries slider={BSSlider} {...this.props}>
-          <Button
-            className={leftButtonStyle}
-            variant="link"
-            isDisabled={this.props.locked}
-            onClick={() => this.onMinus()}
-          >
-            <MinusIcon />
-          </Button>
-          <TextInput
-            className={inputStyle}
-            id="slider-text"
-            aria-label="slider-text"
-            value={this.state.value}
-            onChange={this.onInputChange}
-            isDisabled={this.props.locked}
-          />
-          <Button
-            className={rightButtonStyle}
-            variant="link"
-            isDisabled={this.props.locked}
-            onClick={() => this.onPlus()}
-          >
-            <PlusIcon />
-          </Button>
-          <InputGroupText>{this.props.inputFormat}</InputGroupText>
+          {this.props.input && (
+            <>
+              <Button
+                className={leftButtonStyle}
+                variant="link"
+                isDisabled={this.props.locked}
+                onClick={() => this.onMinus()}
+              >
+                <MinusIcon />
+              </Button>
+              <TextInput
+                className={inputStyle}
+                id="slider-text"
+                aria-label="slider-text"
+                value={this.state.value}
+                onChange={this.onInputChange}
+                isDisabled={this.props.locked}
+              />
+              <Button
+                className={rightButtonStyle}
+                variant="link"
+                isDisabled={this.props.locked}
+                onClick={() => this.onPlus()}
+              >
+                <PlusIcon />
+              </Button>
+              <InputGroupText>{this.props.inputFormat}</InputGroupText>
+            </>
+          )}
           {this.props.showLock && (
             <Button
               className={pinButtonStyle}
