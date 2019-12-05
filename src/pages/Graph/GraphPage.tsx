@@ -6,7 +6,7 @@ import { RouteComponentProps } from 'react-router-dom';
 import FlexView from 'react-flexview';
 import { style } from 'typestyle';
 import { store } from '../../store/ConfigStore';
-import { DurationInSeconds, TimeInSeconds, TimeInMilliseconds, TimeOffsetInSeconds } from '../../types/Common';
+import { DurationInSeconds, TimeInSeconds, TimeInMilliseconds } from '../../types/Common';
 import Namespace from '../../types/Namespace';
 import { GraphType, NodeParamsType, NodeType, SummaryData, UNKNOWN, EdgeLabelMode, Layout } from '../../types/Graph';
 import { computePrometheusRateParams } from '../../services/Prometheus';
@@ -27,7 +27,7 @@ import {
   graphTypeSelector,
   meshWideMTLSEnabledSelector,
   lastRefreshAtSelector,
-  replayOffsetSelector
+  replayQueryTimeSelector
 } from '../../store/Selectors';
 import { KialiAppState } from '../../store/Store';
 import { KialiAppAction } from '../../actions/KialiAppAction';
@@ -68,7 +68,7 @@ type ReduxProps = {
   lastRefreshAt: TimeInMilliseconds;
   layout: Layout;
   node?: NodeParamsType;
-  replayOffset: TimeOffsetInSeconds;
+  replayQueryTime: TimeInSeconds;
   showLegend: boolean;
   showSecurity: boolean;
   showServiceNodes: boolean;
@@ -251,8 +251,8 @@ export class GraphPage extends React.Component<GraphPageProps> {
       (prev.edgeLabelMode !== curr.edgeLabelMode &&
         curr.edgeLabelMode === EdgeLabelMode.RESPONSE_TIME_95TH_PERCENTILE) ||
       prev.graphType !== curr.graphType ||
-      prev.lastRefreshAt !== curr.lastRefreshAt ||
-      prev.replayOffset !== curr.replayOffset ||
+      (prev.lastRefreshAt !== curr.lastRefreshAt && curr.replayQueryTime === 0) ||
+      prev.replayQueryTime !== curr.replayQueryTime ||
       prev.showServiceNodes !== curr.showServiceNodes ||
       prev.showSecurity !== curr.showSecurity ||
       prev.showUnusedNodes !== curr.showUnusedNodes ||
@@ -367,9 +367,7 @@ export class GraphPage extends React.Component<GraphPageProps> {
     if (this.loadPromise) {
       this.loadPromise.cancel();
     }
-    const queryTime: TimeInSeconds | undefined = !!this.props.replayOffset
-      ? Math.floor(Date.now() / 1000) - this.props.replayOffset
-      : undefined;
+    const queryTime: TimeInSeconds | undefined = !!this.props.replayQueryTime ? this.props.replayQueryTime : undefined;
     console.log(`QueryTime=[${queryTime}]`);
     const promise = this.props.fetchGraphData(
       this.props.node ? [this.props.node.namespace] : this.props.activeNamespaces,
@@ -433,7 +431,7 @@ const mapStateToProps = (state: KialiAppState) => ({
   lastRefreshAt: lastRefreshAtSelector(state),
   layout: state.graph.layout,
   node: state.graph.node,
-  replayOffset: replayOffsetSelector(state),
+  replayQueryTime: replayQueryTimeSelector(state),
   showLegend: state.graph.toolbarState.showLegend,
   showSecurity: state.graph.toolbarState.showSecurity,
   showServiceNodes: state.graph.toolbarState.showServiceNodes,

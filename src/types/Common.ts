@@ -23,7 +23,7 @@ export const UNIT_TIME = {
 
 export type TimeInMilliseconds = number;
 export type TimeInSeconds = number;
-export type TimeOffsetInSeconds = number;
 
-export type RefreshIntervalInMs = TimeInMilliseconds;
-export type DurationInSeconds = TimeInSeconds;
+export type RefreshIntervalInMs = number;
+export type ReplayIntervalInSeconds = number;
+export type DurationInSeconds = number;
