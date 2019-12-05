@@ -15,6 +15,7 @@ import SuspendTraffic, { SuspendedRoute } from './SuspendTraffic';
 import { Rule } from './MatchingRouting/Rules';
 import {
   buildIstioConfig,
+  fqdnServiceName,
   getInitGateway,
   getInitHosts,
   getInitLoadBalancer,
@@ -37,7 +38,6 @@ import ThreeScaleIntegration from './ThreeScaleIntegration';
 import { ThreeScaleServiceRule } from '../../types/ThreeScale';
 import GatewaySelector, { GatewaySelectorState } from './GatewaySelector';
 import VirtualServiceHosts from './VirtualServiceHosts';
-import { serverConfig } from '../../config';
 
 const emptyWizardState = (fqdnServiceName: string): WizardState => {
   return {
@@ -75,7 +75,7 @@ const emptyWizardState = (fqdnServiceName: string): WizardState => {
 class IstioWizard extends React.Component<WizardProps, WizardState> {
   constructor(props: WizardProps) {
     super(props);
-    this.state = emptyWizardState(props.serviceName + '.' + props.namespace + '.' + serverConfig.istioIdentityDomain);
+    this.state = emptyWizardState(fqdnServiceName(props.serviceName, props.namespace));
   }
 
   componentDidUpdate(prevProps: WizardProps) {
@@ -139,7 +139,7 @@ class IstioWizard extends React.Component<WizardProps, WizardState> {
         vsHosts:
           initVsHosts.length > 1 || (initVsHosts.length === 1 && initVsHosts[0].length > 0)
             ? initVsHosts
-            : [this.props.serviceName + '.' + this.props.namespace + '.' + serverConfig.istioIdentityDomain],
+            : [fqdnServiceName(this.props.serviceName, this.props.namespace)],
         trafficPolicy: trafficPolicy
       });
     }
@@ -158,9 +158,7 @@ class IstioWizard extends React.Component<WizardProps, WizardState> {
   };
 
   onClose = (changed: boolean) => {
-    this.setState(
-      emptyWizardState(this.props.serviceName + '.' + this.props.namespace + '.' + serverConfig.istioIdentityDomain)
-    );
+    this.setState(emptyWizardState(fqdnServiceName(this.props.serviceName, this.props.namespace)));
     this.props.onClose(changed);
   };
 
