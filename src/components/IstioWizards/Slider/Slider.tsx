@@ -15,7 +15,10 @@ type Props = {
   maxLimit: number;
   step: number;
   value: number;
+  ticks: number[];
+  ticks_labels: string[];
   tooltip: boolean;
+  tooltipFormatter: (value: number) => string;
   onSlide: (value: number) => void;
   onSlideStop: (value: number) => void;
   input: boolean;
@@ -40,7 +43,10 @@ class Slider extends React.Component<Props, State> {
     maxLimit: 100,
     value: 0,
     step: 1,
+    ticks: [],
+    ticks_labels: [],
     toolTip: false,
+    tooltipFormatter: noop,
     onSlide: noop,
     onSlideStop: noop,
     label: null,
@@ -105,7 +111,11 @@ class Slider extends React.Component<Props, State> {
     this.setState({ tooltipFormat: format });
   };
 
-  formatter = value => `${value} ${this.state.tooltipFormat}`;
+  formatter = value => {
+    return this.props.tooltipFormatter != noop
+      ? this.props.tooltipFormatter(value)
+      : `${value} ${this.state.tooltipFormat}`;
+  };
 
   render() {
     const BSSlider = (

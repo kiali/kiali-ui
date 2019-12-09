@@ -18,6 +18,8 @@ import { KialiAppAction } from 'actions/KialiAppAction';
 import Slider from 'components/IstioWizards/Slider/Slider';
 import { KialiIcon } from 'config/KialiIcon';
 import { style } from 'typestyle';
+import { toString } from './LocalTime';
+import { DurationDropdownContainer } from 'components/DurationDropdown/DurationDropdown';
 
 type ReduxProps = {
   lastRefreshAt: TimeInMilliseconds;
@@ -42,7 +44,7 @@ type ReplayState = {
 };
 
 const replayIntervals = {
-  0: 'Replay starting...',
+  0: 'Starting...',
   60: '1 minute ago',
   300: '5 minutes ago',
   600: '10 minutes ago',
@@ -59,7 +61,7 @@ const replayStyle = style({
 
 const sliderStyle = style({
   width: '100%',
-  margin: '10px 5px 0 15px'
+  margin: '0 5px 0 15px'
 });
 
 export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
@@ -106,9 +108,24 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
 
   render() {
     const locked = this.state.replayFrameCount < 1;
+    const startTime: TimeInSeconds = this.props.replayEndTime - this.props.replayInterval;
+    const ticks: number[] = [0, 5, 10];
+    const ticksLabels: string[] = [];
+    const formatter: (val: number) => string = val => {
+      return 'Current frame: ' + val;
+    };
+    ticksLabels.push(toString(startTime * 1000));
+    ticksLabels.push(toString((this.props.replayEndTime - this.props.replayInterval / 2) * 1000));
+    ticksLabels.push(toString(this.props.replayEndTime * 1000));
 
     return (
       <div className={replayStyle}>
+        <DurationDropdownContainer
+          id={'time_range_duration'}
+          disabled={this.props.disabled}
+          tooltip={'Duration for metric queries'}
+          prefix="Query Back"
+        />
         <ToolbarDropdown
           id={'time-range-replay'}
           disabled={this.props.disabled}
@@ -129,7 +146,10 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
                 maxLimit={this.state.replayFrameCount}
                 step={1}
                 value={this.state.replayFrame}
+                ticks={ticks}
+                ticks_labels={ticksLabels}
                 tooltip={true}
+                tooltipFormatter={formatter}
                 onSlideStop={this.setFrame}
                 input={false}
                 locked={locked}
