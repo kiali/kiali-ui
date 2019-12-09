@@ -43,6 +43,7 @@ import { isKioskMode, getFocusSelector } from 'utils/SearchParamUtils';
 import GraphTour, { GraphTourStops } from './GraphHelpTour';
 import { getErrorString } from 'services/Api';
 import { Chip } from '@patternfly/react-core';
+import { toRangeString } from 'components/Time/LocalTime';
 
 // GraphURLPathProps holds path variable values.  Currenly all path variables are relevant only to a node graph
 type GraphURLPathProps = {
@@ -397,22 +398,10 @@ export class GraphPage extends React.Component<GraphPageProps> {
   };
 
   private displayTimeRange = () => {
-    const timeDisplayOptions = {
-      day: '2-digit',
-      month: 'short',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: false
-    };
-
     const rangeEnd: TimeInMilliseconds = this.props.graphTimestamp * 1000;
     const rangeStart: TimeInMilliseconds = rangeEnd - this.props.duration * 1000;
-    const rangeEndStr = new Date(rangeEnd).toLocaleDateString(undefined, timeDisplayOptions);
-    const rangeStartStr = new Date(rangeStart).toLocaleDateString(undefined, timeDisplayOptions);
-    const range = `${rangeStartStr} ... ${rangeEndStr}`;
 
-    return range;
+    return toRangeString(rangeStart, rangeEnd, { second: '2-digit' }, { second: '2-digit' });
   };
 }
 
