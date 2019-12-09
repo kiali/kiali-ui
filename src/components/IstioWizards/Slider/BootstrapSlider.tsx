@@ -14,7 +14,7 @@ type Props = {
   onSlide: (event: any) => any;
   onSlideStop: (event: any) => any;
   orientation: string;
-  ticks_labels: [];
+  ticks_labels: string[];
   locked: boolean;
   min: number;
   // Note that Slider will use max and maxLimit properties to:
