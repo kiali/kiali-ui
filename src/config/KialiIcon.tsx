@@ -30,7 +30,10 @@ import {
   HomeIcon,
   PficonTemplateIcon,
   ArrowLeftIcon,
-  OutlinedClockIcon
+  OutlinedClockIcon,
+  PauseIcon,
+  PlayIcon,
+  StopIcon
 } from '@patternfly/react-icons';
 import { style } from 'typestyle';
 
@@ -70,8 +73,11 @@ export const KialiIcon: { [name: string]: React.FunctionComponent<IconProps> } =
   MtlsLock: (props: IconProps) => <LockIcon className={props.className} />,
   MtlsUnlock: (props: IconProps) => <LockOpenIcon className={props.className} />,
   Ok: (props: IconProps) => <OkIcon className={props.className} color={PFAlertColor.Success} />,
+  Pause: (props: IconProps) => <PauseIcon className={props.className} />,
+  Play: (props: IconProps) => <PlayIcon className={props.className} />,
   Repository: (props: IconProps) => <RepositoryIcon className={props.className} />,
   Services: (props: IconProps) => <ServiceIcon className={props.className} />,
+  Stop: (props: IconProps) => <StopIcon className={props.className} />,
   Topology: (props: IconProps) => <TopologyIcon className={props.className} />,
   Unknown: (props: IconProps) => <UnknownIcon className={props.className} />,
   VirtualService: (props: IconProps) => <CodeBranchIcon className={props.className} />,
