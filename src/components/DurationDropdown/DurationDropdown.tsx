@@ -23,6 +23,7 @@ type BasicDurationDropdownProps = ReduxProps & {
   disabled?: boolean;
   prefix?: string;
   tooltip?: string;
+  nameDropdown?: string;
 };
 
 // These are taken from the serverConfig
@@ -50,6 +51,7 @@ export class DurationDropdown extends React.Component<DurationDropdownProps> {
         label={this.prefixedDurations[this.props.duration]}
         options={this.prefixedDurations}
         tooltip={this.props.tooltip}
+        nameDropdown={this.props.nameDropdown}
       />
     );
   }
