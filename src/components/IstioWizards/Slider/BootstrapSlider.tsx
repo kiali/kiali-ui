@@ -14,6 +14,7 @@ type Props = {
   onSlide: (event: any) => any;
   onSlideStop: (event: any) => any;
   orientation: string;
+  ticks: number[];
   ticks_labels: string[];
   locked: boolean;
   min: number;
@@ -30,6 +31,7 @@ class BootstrapSlider extends React.Component<Props> {
     formatter: value => value,
     onSlide: event => event,
     orientation: 'horizontal',
+    ticks: [],
     ticks_labels: [],
     locked: false
   };

@@ -216,7 +216,7 @@ export class GraphToolbar extends React.PureComponent<GraphToolbarProps> {
             />
           </ToolbarGroup>
         </Toolbar>
-        {this.props.replayActive && <ReplayContainer id={'time-range-replay'} disabled={this.props.disabled} />}
+        {this.props.replayActive && <ReplayContainer id={'time-range-replay'} />}
       </>
     );
   }

@@ -369,7 +369,6 @@ export class GraphPage extends React.Component<GraphPageProps> {
       this.loadPromise.cancel();
     }
     const queryTime: TimeInSeconds | undefined = !!this.props.replayQueryTime ? this.props.replayQueryTime : undefined;
-    console.log(`QueryTime=[${queryTime}]`);
     const promise = this.props.fetchGraphData(
       this.props.node ? [this.props.node.namespace] : this.props.activeNamespaces,
       this.props.duration,

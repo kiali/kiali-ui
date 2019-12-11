@@ -68,6 +68,11 @@ class Slider extends React.Component<Props, State> {
     };
   }
 
+  componentDidMount() {
+    // This empty setState forces a re-render which resolves an issue with initial tick_label placement
+    this.setState({});
+  }
+
   componentDidUpdate(prevProps: Readonly<Props>): void {
     if (prevProps.value !== this.props.value || this.state.value !== this.props.value) {
       this.setState({ value: this.props.value });
@@ -112,7 +117,7 @@ class Slider extends React.Component<Props, State> {
   };
 
   formatter = value => {
-    return this.props.tooltipFormatter != noop
+    return this.props.tooltipFormatter !== noop
       ? this.props.tooltipFormatter(value)
       : `${value} ${this.state.tooltipFormat}`;
   };
@@ -121,7 +126,6 @@ class Slider extends React.Component<Props, State> {
     const BSSlider = (
       <BootstrapSlider
         {...this.props}
-        locked={this.props.locked}
         formatter={this.formatter}
         value={this.state.value}
         onSlide={this.onSlide}

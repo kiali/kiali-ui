@@ -26,7 +26,6 @@ type ReduxProps = {
 };
 
 type ReplayProps = ReduxProps & {
-  disabled: boolean;
   id: string;
 };
 
@@ -38,8 +37,9 @@ type ReplayState = {
   replaySpeed: number;
 };
 
+// key represents replay interval in seconds
 const replayIntervals = {
-  0: 'Starting...',
+  0: 'Start...',
   60: '1 minute ago',
   300: '5 minutes ago',
   600: '10 minutes ago',
@@ -47,12 +47,16 @@ const replayIntervals = {
   3600: '1 hour ago'
 };
 
+// key represents refresh interval in seconds
 const replaySpeeds = {
   1: 'Very Fast',
   3: 'Fast',
   5: 'Medium',
   10: 'Slow'
 };
+
+// number of seconds clock advances per frame
+const frameInterval = 10;
 
 const replayStyle = style({
   display: 'flex',
@@ -62,7 +66,12 @@ const replayStyle = style({
 });
 
 const pauseStyle = style({
-  margin: '0 5px 0 10px'
+  margin: '0 5px 0 10px',
+  height: '37px'
+});
+
+const stopStyle = style({
+  height: '37px'
 });
 
 const sliderStyle = style({
@@ -72,19 +81,19 @@ const sliderStyle = style({
 
 export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
   static getFrameCount = (replayInterval: ReplayIntervalInSeconds): number => {
-    return replayInterval > 0 ? Math.floor(replayInterval / 10) : 0;
+    return replayInterval > 0 ? Math.floor(replayInterval / frameInterval) : 0;
   };
 
-  static queryTimeToFrame = (props: ReduxProps) => {
+  static queryTimeToFrame = (props: ReduxProps): number => {
     const replayStartTime: TimeInSeconds = props.replayEndTime - props.replayInterval;
     const elapsedTime: ReplayIntervalInSeconds = props.replayQueryTime - replayStartTime;
     const frame: number = Replay.getFrameCount(elapsedTime);
     return frame;
   };
 
-  static frameToQueryTime = (frame: number, props: ReduxProps) => {
+  static frameToQueryTime = (frame: number, props: ReduxProps): TimeInSeconds => {
     const replayStartTime = props.replayEndTime - props.replayInterval;
-    const queryTime: TimeInSeconds = !!replayStartTime ? replayStartTime + frame * 10 : 0;
+    const queryTime: TimeInSeconds = !!replayStartTime ? replayStartTime + frame * frameInterval : 0;
     return queryTime;
   };
 
@@ -95,8 +104,17 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
       refresherRef: undefined,
       replayFrame: Replay.queryTimeToFrame(props),
       replayFrameCount: Replay.getFrameCount(props.replayInterval),
-      replaySpeed: 5 // medium
+      replaySpeed: 3 // Fast
     };
+  }
+
+  componentDidUpdate(_: ReplayProps, prevState: ReplayState) {
+    let refreshChange = this.state.isReplaying !== prevState.isReplaying;
+    refreshChange = refreshChange || this.state.replaySpeed !== prevState.replaySpeed;
+
+    if (refreshChange) {
+      this.updateRefresher();
+    }
   }
 
   componentWillUnmount() {
@@ -106,22 +124,25 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
   }
 
   render() {
-    const locked = this.state.replayFrameCount < 1;
     const startTime: TimeInSeconds = this.props.replayEndTime - this.props.replayInterval;
-    // const ticks: number[] = [0, 5, 10];
+    const ticks: number[] = [0, Math.floor(this.state.replayFrameCount / 2), this.state.replayFrameCount];
     const ticksLabels: string[] = [];
-    const formatter: (val: number) => string = val => {
-      return 'Current frame: ' + val;
-    };
-    ticksLabels.push(toString(startTime * 1000));
-    ticksLabels.push(toString((this.props.replayEndTime - this.props.replayInterval / 2) * 1000));
-    ticksLabels.push(toString(this.props.replayEndTime * 1000));
+    ticksLabels.push(toString(startTime * 1000, { second: '2-digit' }));
+    ticksLabels.push(
+      toString((this.props.replayEndTime - this.props.replayInterval / 2) * 1000, {
+        month: undefined,
+        day: undefined,
+        second: '2-digit'
+      })
+    );
+    ticksLabels.push(
+      toString(this.props.replayEndTime * 1000, { month: undefined, day: undefined, second: '2-digit' })
+    );
 
     return (
       <div className={replayStyle}>
         <ToolbarDropdown
           id={'replay-interval'}
-          disabled={this.props.disabled}
           handleSelect={key => this.setReplayInterval(Number(key))}
           value={String(this.props.replayInterval)}
           label={replayIntervals[this.props.replayInterval]}
@@ -129,15 +150,9 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
           tooltip="Replay traffic starting at selected time"
           nameDropdown="Replay: "
         />
-        <DurationDropdownContainer
-          id={'replay-duration'}
-          disabled={this.props.disabled}
-          tooltip={'Duration for metric queries'}
-          prefix="Duration"
-        />
+        <DurationDropdownContainer id={'replay-duration'} tooltip={'Duration for metric queries'} prefix="Duration" />
         <ToolbarDropdown
           id={'replay-speed'}
-          disabled={this.props.disabled}
           handleSelect={key => this.setReplaySpeed(Number(key))}
           value={String(this.state.replaySpeed)}
           label={replaySpeeds[this.state.replaySpeed]}
@@ -148,19 +163,19 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
           <>
             {this.state.isReplaying ? (
               <Tooltip key="replay-pause" position="top" content="Pause...">
-                <Button className={pauseStyle} variant={ButtonVariant.control} onClick={this.pause}>
+                <Button className={pauseStyle} variant={ButtonVariant.link} onClick={this.pause}>
                   <KialiIcon.Pause />
                 </Button>
               </Tooltip>
             ) : (
               <Tooltip key="replay-play" position="top" content="Play...">
-                <Button className={pauseStyle} variant={ButtonVariant.control} onClick={this.play}>
+                <Button className={pauseStyle} variant={ButtonVariant.link} onClick={this.play}>
                   <KialiIcon.Play />
                 </Button>
               </Tooltip>
             )}
             <Tooltip key="end_replay" position="top" content="End Replay...">
-              <Button variant={ButtonVariant.control} onClick={this.stop}>
+              <Button className={stopStyle} variant={ButtonVariant.link} onClick={this.stop}>
                 <KialiIcon.Stop />
               </Button>
             </Tooltip>
@@ -173,11 +188,13 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
                 maxLimit={this.state.replayFrameCount}
                 step={1}
                 value={this.state.replayFrame}
+                ticks={ticks}
+                ticks_labels={ticksLabels}
                 tooltip={true}
-                tooltipFormatter={formatter}
+                tooltipFormatter={this.formatTooltip}
                 onSlideStop={this.setFrame}
                 input={false}
-                locked={locked}
+                locked={false}
                 showLock={false}
               />
             </span>
@@ -187,6 +204,11 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
     );
   }
 
+  formatTooltip = (val: number): string => {
+    const time: string = toString(Replay.frameToQueryTime(val, this.props) * 1000, { second: '2-digit' });
+    return `Frame ${val}/${this.state.replayFrameCount}: ${time}`;
+  };
+
   private setReplayInterval = (replayInterval: ReplayIntervalInSeconds) => {
     const frameCount = Replay.getFrameCount(replayInterval);
     this.setState({ replayFrame: 0, replayFrameCount: frameCount });
@@ -195,17 +217,18 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
 
   private setReplaySpeed = (replaySpeed: number) => {
     this.setState({ replaySpeed: replaySpeed });
-    this.updateRefresher();
   };
 
   private pause = () => {
     this.setState({ isReplaying: false });
-    this.updateRefresher();
   };
 
   private play = () => {
     this.setState({ isReplaying: true });
-    this.updateRefresher();
+    const frameTime = Replay.frameToQueryTime(this.state.replayFrame, this.props);
+    if (frameTime !== this.props.replayQueryTime) {
+      this.props.setReplayQueryTime(frameTime);
+    }
   };
 
   private stop = () => {
@@ -213,8 +236,10 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
   };
 
   private setFrame = (frame: number) => {
-    this.setState({ replayFrame: frame });
-    this.props.setReplayQueryTime(Replay.frameToQueryTime(frame, this.props));
+    if (frame !== this.state.replayFrame) {
+      this.setState({ replayFrame: frame });
+      this.props.setReplayQueryTime(Replay.frameToQueryTime(frame, this.props));
+    }
   };
 
   private updateRefresher = () => {
@@ -232,8 +257,12 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
 
   private handleRefresh = () => {
     const nextFrame = this.state.replayFrame + 1;
-    this.setState({ replayFrame: nextFrame });
-    this.props.setReplayQueryTime(Replay.frameToQueryTime(nextFrame, this.props));
+    if (nextFrame > this.state.replayFrameCount) {
+      this.pause();
+    } else {
+      this.setState({ replayFrame: nextFrame });
+      this.props.setReplayQueryTime(Replay.frameToQueryTime(nextFrame, this.props));
+    }
   };
 }
 
