@@ -25,5 +25,10 @@ export type TimeInMilliseconds = number;
 export type TimeInSeconds = number;
 
 export type RefreshIntervalInMs = number;
-export type ReplayIntervalInSeconds = number;
+export type IntervalInSeconds = number;
 export type DurationInSeconds = number;
+
+export type ReplayWindow = {
+  interval: IntervalInSeconds;
+  startTime: TimeInSeconds;
+};

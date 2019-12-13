@@ -10,9 +10,8 @@ export const INITIAL_USER_SETTINGS_STATE: UserSettings = {
   interface: { navCollapse: false },
   refreshInterval: config.toolbar.defaultRefreshInterval,
   replayActive: false,
-  replayEndTime: 0,
-  replayInterval: 0,
-  replayQueryTime: 0
+  replayQueryTime: 0,
+  replayWindow: { interval: 0, startTime: 0 }
 };
 
 const UserSettingsState = (state: UserSettings = INITIAL_USER_SETTINGS_STATE, action: KialiAppAction): UserSettings => {
@@ -30,23 +29,21 @@ const UserSettingsState = (state: UserSettings = INITIAL_USER_SETTINGS_STATE, ac
         refreshInterval: action.payload
       });
     }
-    case getType(UserSettingsActions.setReplayInterval): {
-      return updateState(state, {
-        replayEndTime: !!action.payload ? Math.floor(Date.now() / 1000) : 0,
-        replayInterval: action.payload,
-        replayQueryTime: 0
-      });
-    }
     case getType(UserSettingsActions.setReplayQueryTime): {
       return updateState(state, {
         replayQueryTime: action.payload
       });
     }
+    case getType(UserSettingsActions.setReplayWindow): {
+      return updateState(state, {
+        replayWindow: action.payload,
+        replayQueryTime: 0
+      });
+    }
     case getType(UserSettingsActions.toggleReplayActive): {
       return updateState(state, {
         replayActive: !state.replayActive,
-        replayEndTime: 0,
-        replayInterval: 0,
+        replayWindow: { interval: 0, startTime: 0 },
         replayQueryTime: 0
       });
     }
