@@ -5,7 +5,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import { KialiAppState } from 'store/Store';
 import { replayWindowSelector, replayQueryTimeSelector } from 'store/Selectors';
 import { Tooltip, ButtonVariant, Button, Text } from '@patternfly/react-core';
-import { TimeInSeconds, IntervalInSeconds, ReplayWindow, TimeInMilliseconds } from 'types/Common';
+import { TimeInSeconds, IntervalInSeconds, ReplayWindow } from 'types/Common';
 import ToolbarDropdown from 'components/ToolbarDropdown/ToolbarDropdown';
 import { UserSettingsActions } from 'actions/UserSettingsActions';
 import { KialiAppAction } from 'actions/KialiAppAction';
@@ -15,6 +15,7 @@ import { style } from 'typestyle';
 import { toString } from './LocalTime';
 import { DurationDropdownContainer } from 'components/DurationDropdown/DurationDropdown';
 import DateTimeInput from './DateTimeInput';
+import { serverConfig } from 'config';
 
 type ReduxProps = {
   replayQueryTime: TimeInSeconds;
@@ -64,17 +65,20 @@ const replayStyle = style({
 });
 
 const pauseStyle = style({
-  margin: '0 5px 0 10px',
-  height: '37px'
+  margin: '0 0 0 15px',
+  height: '37px',
+  width: '10px'
 });
 
 const stopStyle = style({
-  height: '37px'
+  margin: '0 10px 0 0',
+  height: '37px',
+  width: '10px'
 });
 
 const sliderStyle = style({
   width: '100%',
-  margin: '0 10px 0 15px'
+  margin: '0 20px 0 15px'
 });
 
 export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
@@ -130,7 +134,6 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
     if (!!!this.props.replayWindow.startTime) {
       return null;
     }
-    console.log(`startTime=[${this.props.replayWindow.startTime}]`);
 
     const endTime: TimeInSeconds = this.props.replayWindow.startTime + this.props.replayWindow.interval;
     const ticks: number[] = [0, Math.floor(this.state.replayFrameCount / 2), this.state.replayFrameCount];
@@ -148,7 +151,12 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
       <div className={replayStyle}>
         <Text style={{ width: '12em', marginTop: '8px' }}>Play from</Text>
         <DateTimeInput
-          initialTime={this.props.replayWindow.startTime * 1000}
+          minTime={
+            Math.floor(Date.now() / 1000) -
+            serverConfig.prometheus.storageTsdbRetention! +
+            this.props.replayWindow.interval
+          }
+          time={this.props.replayWindow.startTime}
           onTimeChange={this.setReplayStartTime}
           tooltip="Start Time"
         />
@@ -217,22 +225,15 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
     return `Frame ${val}/${this.state.replayFrameCount}: ${time}`;
   };
 
-  private setReplayStartTime = (startTime: TimeInMilliseconds) => {
-    this.setReplayWindow({ interval: this.props.replayWindow.interval, startTime: startTime / 1000 });
+  private setReplayStartTime = (startTime: TimeInSeconds) => {
+    this.setReplayWindow({ interval: this.props.replayWindow.interval, startTime: startTime });
   };
 
   private setReplayInterval = (interval: IntervalInSeconds) => {
     this.setReplayWindow({ interval: interval, startTime: this.props.replayWindow.startTime });
   };
 
-  /*
-  private setReplayStartTime = (startTime: TimeInSeconds) => {
-    this.setReplayWindow({ interval: this.props.replayWindow.interval, startTime: startTime });
-  };
-  */
-
   private setReplayWindow = (replayWindow: ReplayWindow) => {
-    console.log(`setReplyWindow ${JSON.stringify(replayWindow)}`);
     const frameCount = Replay.getFrameCount(replayWindow.interval);
     this.setState({ replayFrame: 0, replayFrameCount: frameCount });
     this.props.setReplayWindow(replayWindow);

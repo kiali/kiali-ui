@@ -33,7 +33,8 @@ import {
   OutlinedClockIcon,
   PauseIcon,
   PlayIcon,
-  StopIcon
+  StopIcon,
+  UserClockIcon
 } from '@patternfly/react-icons';
 import { style } from 'typestyle';
 
@@ -80,6 +81,7 @@ export const KialiIcon: { [name: string]: React.FunctionComponent<IconProps> } =
   Stop: (props: IconProps) => <StopIcon className={props.className} />,
   Topology: (props: IconProps) => <TopologyIcon className={props.className} />,
   Unknown: (props: IconProps) => <UnknownIcon className={props.className} />,
+  UserClock: (props: IconProps) => <UserClockIcon className={props.className} />,
   VirtualService: (props: IconProps) => <CodeBranchIcon className={props.className} />,
   Warning: (props: IconProps) => <WarningTriangleIcon className={props.className} color={PFAlertColor.Warning} />,
   Website: (props: IconProps) => <HomeIcon className={props.className} />,
