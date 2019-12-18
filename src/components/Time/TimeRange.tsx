@@ -30,13 +30,13 @@ export class TimeRange extends React.PureComponent<TimeRangeProps> {
   render() {
     return (
       <span>
-        <Tooltip key={'time-range-advanced'} position={TooltipPosition.left} content="Toggle Replay...">
-          <Button variant="link" style={{ paddingLeft: '0px', paddingRight: '6px' }} onClick={this.onToggleReplay}>
-            <KialiIcon.Clock className={defaultIconStyle} />
-          </Button>
-        </Tooltip>
         {!this.props.replayActive && (
           <>
+            <Tooltip key={'time-range-advanced'} position={TooltipPosition.left} content="Toggle Replay...">
+              <Button variant="link" style={{ paddingLeft: '0px', paddingRight: '6px' }} onClick={this.onToggleReplay}>
+                <KialiIcon.Clock className={defaultIconStyle} />
+              </Button>
+            </Tooltip>
             <DurationDropdownContainer
               id={'time_range_duration'}
               disabled={this.props.disabled}

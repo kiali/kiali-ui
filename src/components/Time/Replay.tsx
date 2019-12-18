@@ -182,11 +182,6 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
             </Button>
           </Tooltip>
         )}
-        <Tooltip key="end_replay" position="top" content="End Replay...">
-          <Button className={stopStyle} variant={ButtonVariant.link} onClick={this.stop}>
-            <KialiIcon.Stop />
-          </Button>
-        </Tooltip>
         <span className={sliderStyle}>
           <Slider
             key={endString} // on new endTime force new slider because of bug updating tick labels
@@ -216,6 +211,11 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
           tooltip="Replay speed"
         />
         <DurationDropdownContainer id={'replay-duration'} tooltip={'Duration for metric queries'} prefix="Metrics" />
+        <Tooltip key="end_replay" position="top" content="End Replay...">
+          <Button className={stopStyle} variant={ButtonVariant.link} onClick={this.stop}>
+            <KialiIcon.Close />
+          </Button>
+        </Tooltip>
       </div>
     );
   }

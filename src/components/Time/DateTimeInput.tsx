@@ -30,7 +30,7 @@ const sliderStyle = style({
 });
 
 const inputStyle = style({
-  width: '10em'
+  width: '11em'
 });
 
 const buttonStyle = style({
