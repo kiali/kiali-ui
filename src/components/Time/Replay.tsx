@@ -60,7 +60,7 @@ const frameInterval = 10; // number of seconds clock advances per frame
 
 const replayStyle = style({
   display: 'flex',
-  width: '90%',
+  width: '100%',
   marginTop: '-5px'
 });
 
@@ -149,7 +149,7 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
 
     return (
       <div className={replayStyle}>
-        <Text style={{ width: '12em', marginTop: '8px' }}>Play from</Text>
+        <Text style={{ width: '12em', marginTop: '8px', marginRight: '2px' }}>Play from</Text>
         <DateTimeInput
           minTime={
             Math.floor(Date.now() / 1000) -
@@ -158,7 +158,7 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
           }
           time={this.props.replayWindow.startTime}
           onTimeChange={this.setReplayStartTime}
-          tooltip="Start Time"
+          name="Start Time"
         />
         <Text style={{ width: '5em', marginLeft: '0.5em', marginTop: '8px' }}>for</Text>
         <ToolbarDropdown

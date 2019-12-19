@@ -8,9 +8,10 @@ import { style } from 'typestyle';
 
 interface DateTimeInputProps {
   minTime: TimeInSeconds;
+  name: string;
   steps?: number;
   time: TimeInSeconds;
-  tooltip: string;
+  tooltip?: string;
 
   onTimeChange: (time: TimeInSeconds) => void;
 }
@@ -63,7 +64,7 @@ export default class DateTimeInput extends React.PureComponent<DateTimeInputProp
 
     return (
       <>
-        <Tooltip content={<>{this.props.tooltip}</>}>
+        <Tooltip content={<>{this.props.tooltip ? this.props.tooltip : this.props.name}</>}>
           <TextInput
             id="date_time_input"
             name="date_time_input"
@@ -74,7 +75,7 @@ export default class DateTimeInput extends React.PureComponent<DateTimeInputProp
             isReadOnly={true}
           />
         </Tooltip>
-        <Tooltip key="ot_clear_find" position="top" content="Customize Start Time...">
+        <Tooltip key="ot_clear_find" position="top" content={`Change ${this.props.name}...`}>
           <Button className={buttonStyle} variant={ButtonVariant.control} onClick={this.toggleCustomTime}>
             <KialiIcon.UserClock className={defaultIconStyle} />
           </Button>
@@ -82,7 +83,7 @@ export default class DateTimeInput extends React.PureComponent<DateTimeInputProp
         {this.state.showCustomTime && (
           <Modal
             width={'60%'}
-            title="Custom Start Time"
+            title={`Change ${this.props.name}`}
             isOpen={this.state.showCustomTime}
             onClose={this.cancelCustomTime}
             actions={[
@@ -97,8 +98,8 @@ export default class DateTimeInput extends React.PureComponent<DateTimeInputProp
           >
             <div className={sliderStyle}>
               <Slider
-                key="custom-start-time"
-                id="custom-start-time"
+                key="custom-time"
+                id="custom-time"
                 orientation="horizontal"
                 min={this.sliderMin}
                 max={this.sliderMax}

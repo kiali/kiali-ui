@@ -27,7 +27,8 @@ import {
   graphTypeSelector,
   meshWideMTLSEnabledSelector,
   lastRefreshAtSelector,
-  replayQueryTimeSelector
+  replayQueryTimeSelector,
+  replayActiveSelector
 } from '../../store/Selectors';
 import { KialiAppState } from '../../store/Store';
 import { KialiAppAction } from '../../actions/KialiAppAction';
@@ -69,6 +70,7 @@ type ReduxProps = {
   lastRefreshAt: TimeInMilliseconds;
   layout: Layout;
   node?: NodeParamsType;
+  replayActive: boolean;
   replayQueryTime: TimeInSeconds;
   showLegend: boolean;
   showSecurity: boolean;
@@ -126,6 +128,14 @@ const graphTimeRangeDivStyle = style({
   width: 'auto',
   zIndex: 2,
   backgroundColor: PfColors.White
+});
+
+const whiteBackground = style({
+  backgroundColor: PfColors.White
+});
+
+const replayBackground = style({
+  backgroundColor: PfColors.LightBlue100
 });
 
 const graphLegendStyle = style({
@@ -285,6 +295,7 @@ export class GraphPage extends React.Component<GraphPageProps> {
     const focusSelector = getFocusSelector();
     const isReady =
       this.props.graphData.nodes && Object.keys(this.props.graphData.nodes).length > 0 && !this.props.isError;
+    const isReplayReady = this.props.replayActive && !!this.props.replayQueryTime;
     return (
       <>
         <FlexView className={conStyle} column={true}>
@@ -305,23 +316,33 @@ export class GraphPage extends React.Component<GraphPageProps> {
                 />
               )}
               {isReady && (
-                <Chip className={graphTimeRangeDivStyle} isOverflowChip={true} isReadOnly={true}>
-                  {this.displayTimeRange()}
+                <Chip
+                  className={`${graphTimeRangeDivStyle} ${
+                    this.props.replayActive ? replayBackground : whiteBackground
+                  }`}
+                  isOverflowChip={true}
+                  isReadOnly={true}
+                >
+                  {!isReplayReady && this.props.replayActive && `WAITING FOR REPLAY...`}
+                  {!isReplayReady && !this.props.replayActive && `${this.displayTimeRange()}`}
+                  {isReplayReady && `REPLAY: ${this.displayTimeRange()}`}
                 </Chip>
               )}
-              <TourStopContainer info={GraphTourStops.Graph}>
-                <TourStopContainer info={GraphTourStops.ContextualMenu}>
-                  <CytoscapeGraphContainer
-                    onEmptyGraphAction={this.handleEmptyGraphAction}
-                    containerClassName={cytoscapeGraphContainerStyle}
-                    ref={refInstance => this.setCytoscapeGraph(refInstance)}
-                    isMTLSEnabled={this.props.mtlsEnabled}
-                    focusSelector={focusSelector}
-                    contextMenuNodeComponent={NodeContextMenuContainer}
-                    contextMenuGroupComponent={NodeContextMenuContainer}
-                  />
+              {(!this.props.replayActive || isReplayReady) && (
+                <TourStopContainer info={GraphTourStops.Graph}>
+                  <TourStopContainer info={GraphTourStops.ContextualMenu}>
+                    <CytoscapeGraphContainer
+                      onEmptyGraphAction={this.handleEmptyGraphAction}
+                      containerClassName={cytoscapeGraphContainerStyle}
+                      ref={refInstance => this.setCytoscapeGraph(refInstance)}
+                      isMTLSEnabled={this.props.mtlsEnabled}
+                      focusSelector={focusSelector}
+                      contextMenuNodeComponent={NodeContextMenuContainer}
+                      contextMenuGroupComponent={NodeContextMenuContainer}
+                    />
+                  </TourStopContainer>
                 </TourStopContainer>
-              </TourStopContainer>
+              )}
               {isReady && (
                 <div className={cytoscapeToolbarWrapperDivStyle}>
                   <CytoscapeToolbarContainer cytoscapeGraphRef={this.cytoscapeGraphRef} />
@@ -421,6 +442,7 @@ const mapStateToProps = (state: KialiAppState) => ({
   lastRefreshAt: lastRefreshAtSelector(state),
   layout: state.graph.layout,
   node: state.graph.node,
+  replayActive: replayActiveSelector(state),
   replayQueryTime: replayQueryTimeSelector(state),
   showLegend: state.graph.toolbarState.showLegend,
   showSecurity: state.graph.toolbarState.showSecurity,
