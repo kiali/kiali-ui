@@ -3,9 +3,9 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { KialiAppState } from 'store/Store';
-import { replayWindowSelector, replayQueryTimeSelector } from 'store/Selectors';
+import { replayWindowSelector, replayQueryTimeSelector, durationSelector } from 'store/Selectors';
 import { Tooltip, ButtonVariant, Button, Text } from '@patternfly/react-core';
-import { TimeInSeconds, IntervalInSeconds, ReplayWindow } from 'types/Common';
+import { TimeInSeconds, IntervalInSeconds, ReplayWindow, DurationInSeconds } from 'types/Common';
 import ToolbarDropdown from 'components/ToolbarDropdown/ToolbarDropdown';
 import { UserSettingsActions } from 'actions/UserSettingsActions';
 import { KialiAppAction } from 'actions/KialiAppAction';
@@ -18,6 +18,7 @@ import DateTimeInput from './DateTimeInput';
 import { serverConfig } from 'config';
 
 type ReduxProps = {
+  duration: DurationInSeconds;
   replayQueryTime: TimeInSeconds;
   replayWindow: ReplayWindow;
 
@@ -60,12 +61,17 @@ const frameInterval = 10; // number of seconds clock advances per frame
 
 const replayStyle = style({
   display: 'flex',
-  width: '100%',
-  marginTop: '-5px'
+  width: '100%'
+  // marginTop: '-5px'
+});
+
+const frameStyle = style({
+  display: 'flex',
+  margin: '5px 0 0 15px'
 });
 
 const pauseStyle = style({
-  margin: '0 0 0 15px',
+  margin: '-5px 10px 0 40%',
   height: '37px',
   width: '10px'
 });
@@ -78,7 +84,7 @@ const stopStyle = style({
 
 const sliderStyle = style({
   width: '100%',
-  margin: '0 20px 0 15px'
+  margin: '0 0 0 20px'
 });
 
 export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
@@ -136,7 +142,7 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
     }
 
     const endTime: TimeInSeconds = this.props.replayWindow.startTime + this.props.replayWindow.interval;
-    const ticks: number[] = [0, Math.floor(this.state.replayFrameCount / 2), this.state.replayFrameCount];
+    const ticks: number[] = Array.from(Array(this.state.replayFrameCount).keys());
     const ticksLabels: string[] = [];
     const startString = toString(this.props.replayWindow.startTime * 1000, { second: '2-digit' });
     const midString = toString((this.props.replayWindow.startTime + this.props.replayWindow.interval / 2) * 1000, {
@@ -149,7 +155,6 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
 
     return (
       <div className={replayStyle}>
-        <Text style={{ width: '12em', marginTop: '8px', marginRight: '2px' }}>Play from</Text>
         <DateTimeInput
           minTime={
             Math.floor(Date.now() / 1000) -
@@ -158,30 +163,25 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
           }
           time={this.props.replayWindow.startTime}
           onTimeChange={this.setReplayStartTime}
-          name="Start Time"
+          name="Replay Start Time"
         />
-        <Text style={{ width: '5em', marginLeft: '0.5em', marginTop: '8px' }}>for</Text>
         <ToolbarDropdown
           id={'replay-interval'}
           handleSelect={key => this.setReplayInterval(Number(key))}
           value={String(this.props.replayWindow.interval)}
           label={replayIntervals[this.props.replayWindow.interval]}
           options={replayIntervals}
-          tooltip="Replay length"
+          tooltip="Replay Length"
         />
-        {this.state.isReplaying ? (
-          <Tooltip key="replay-pause" position="top" content="Pause...">
-            <Button className={pauseStyle} variant={ButtonVariant.link} onClick={this.pause}>
-              <KialiIcon.Pause />
-            </Button>
-          </Tooltip>
-        ) : (
-          <Tooltip key="replay-play" position="top" content="Play...">
-            <Button className={pauseStyle} variant={ButtonVariant.link} onClick={this.play}>
-              <KialiIcon.Play />
-            </Button>
-          </Tooltip>
-        )}
+        <ToolbarDropdown
+          id={'replay-speed'}
+          handleSelect={key => this.setReplaySpeed(Number(key))}
+          value={String(this.state.replaySpeed)}
+          label={replaySpeeds[this.state.replaySpeed]}
+          options={replaySpeeds}
+          tooltip="Replay speed"
+        />
+        <DurationDropdownContainer id={'replay-duration'} tooltip={'Metrics per Frame'} prefix=" " />
         <span className={sliderStyle}>
           <Slider
             key={endString} // on new endTime force new slider because of bug updating tick labels
@@ -193,7 +193,7 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
             step={1}
             value={this.state.replayFrame}
             ticks={ticks}
-            ticks_labels={ticksLabels}
+            // ticks_labels={ticksLabels}
             tooltip={true}
             tooltipFormatter={this.formatTooltip}
             onSlideStop={this.setFrame}
@@ -201,16 +201,23 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
             locked={false}
             showLock={false}
           />
+          <span className={frameStyle}>
+            {this.state.isReplaying ? (
+              <Tooltip key="replay-pause" position="top" content="Pause...">
+                <Button className={pauseStyle} variant={ButtonVariant.link} onClick={this.pause}>
+                  <KialiIcon.Pause />
+                </Button>
+              </Tooltip>
+            ) : (
+              <Tooltip key="replay-play" position="top" content="Play...">
+                <Button className={pauseStyle} variant={ButtonVariant.link} onClick={this.play}>
+                  <KialiIcon.Play />
+                </Button>
+              </Tooltip>
+            )}
+            <Text>{this.formatFrame(this.state.replayFrame)}</Text>
+          </span>
         </span>
-        <ToolbarDropdown
-          id={'replay-speed'}
-          handleSelect={key => this.setReplaySpeed(Number(key))}
-          value={String(this.state.replaySpeed)}
-          label={replaySpeeds[this.state.replaySpeed]}
-          options={replaySpeeds}
-          tooltip="Replay speed"
-        />
-        <DurationDropdownContainer id={'replay-duration'} tooltip={'Duration for metric queries'} prefix="Metrics" />
         <Tooltip key="end_replay" position="top" content="End Replay...">
           <Button className={stopStyle} variant={ButtonVariant.link} onClick={this.stop}>
             <KialiIcon.Close />
@@ -222,7 +229,23 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
 
   formatTooltip = (val: number): string => {
     const time: string = toString(Replay.frameToQueryTime(val, this.props) * 1000, { second: '2-digit' });
-    return `Frame ${val}/${this.state.replayFrameCount}: ${time}`;
+    return `${time} [${val}/${this.state.replayFrameCount}]`;
+  };
+
+  formatFrame = (val: number): string => {
+    const elapsedTime: TimeInSeconds = val * frameInterval;
+    const elapsedSec: number = Math.floor(elapsedTime % 60);
+    const elapsedMin: number = Math.floor((elapsedTime - elapsedSec) / 60);
+    const zeroPadSec: string = elapsedSec < 10 ? '0' : '';
+    const zeroPadMin: string = elapsedMin < 10 ? '0' : '';
+    const elapsed: string = `${zeroPadMin}${elapsedMin}:${zeroPadSec}${elapsedSec}`;
+    /*
+    const end: TimeInSeconds = Replay.frameToQueryTime(val, this.props);
+    const start: TimeInSeconds = end - this.props.duration;
+    const range: string = toRangeString(start * 1000, end * 1000, { second: '2-digit' }, { second: '2-digit' });
+    return `${elapsed}  [${range}]`;
+    */
+    return `${elapsed}`;
   };
 
   private setReplayStartTime = (startTime: TimeInSeconds) => {
@@ -291,6 +314,7 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
 }
 
 const mapStateToProps = (state: KialiAppState) => ({
+  duration: durationSelector(state),
   replayQueryTime: replayQueryTimeSelector(state),
   replayWindow: replayWindowSelector(state)
 });
