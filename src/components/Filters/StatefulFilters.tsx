@@ -5,6 +5,9 @@ import {
   ChipGroupToolbarItem,
   FormSelect,
   FormSelectOption,
+  Select,
+  SelectOption,
+  SelectVariant,
   TextInput,
   Toolbar,
   ToolbarGroup,
@@ -29,6 +32,7 @@ export interface StatefulFiltersState {
   currentFilterType: FilterType;
   activeFilters: ActiveFilter[];
   currentValue: string;
+  isExpanded: boolean;
 }
 
 export class FilterSelected {
@@ -72,6 +76,7 @@ export class StatefulFilters extends React.Component<StatefulFiltersProps, State
       currentFilterType: this.props.initialFilters[0],
       filterTypes: this.props.initialFilters,
       activeFilters: active,
+      isExpanded: false,
       currentValue: ''
     };
   }
@@ -150,7 +155,7 @@ export class StatefulFilters extends React.Component<StatefulFiltersProps, State
     }
   };
 
-  filterValueSelected = (value: string) => {
+  filterValueSelected = (_event: any, value: any) => {
     const { currentFilterType, currentValue } = this.state;
     const filterValue = currentFilterType.filterValues.filter(filter => filter.id === value)[0];
 
@@ -161,6 +166,8 @@ export class StatefulFilters extends React.Component<StatefulFiltersProps, State
     ) {
       this.filterAdded(currentFilterType, filterValue.title);
     }
+
+    this.setState({ isExpanded: false });
   };
 
   updateCurrentValue = value => {
@@ -209,13 +216,30 @@ export class StatefulFilters extends React.Component<StatefulFiltersProps, State
     if (!currentFilterType) {
       return null;
     }
-    if (currentFilterType.filterType === 'select') {
+    if (currentFilterType.filterType === 'typeahead') {
+      return (
+        <Select
+          value={'default'}
+          onSelect={this.filterValueSelected}
+          onToggle={this.onToggle}
+          variant={SelectVariant.typeahead}
+          isExpanded={this.state.isExpanded}
+          aria-label="filter_select_value"
+          placeholderText={currentFilterType.placeholder}
+          width={'65%'}
+        >
+          {currentFilterType.filterValues.map((filter, index) => (
+            <SelectOption key={'filter_' + index} value={filter.id} label={filter.title} />
+          ))}
+        </Select>
+      );
+    } else if (currentFilterType.filterType === 'select') {
       return (
         <FormSelect
           value={'default'}
           onChange={this.filterValueSelected}
           aria-label="filter_select_value"
-          style={{ width: 'auto' }}
+          style={{ width: '65%' }}
         >
           <FormSelectOption key={'filter_default'} value={'default'} label={currentFilterType.placeholder} />
           {currentFilterType.filterValues.map((filter, index) => (
@@ -232,7 +256,7 @@ export class StatefulFilters extends React.Component<StatefulFiltersProps, State
           placeholder={currentFilterType.placeholder}
           onChange={this.updateCurrentValue}
           onKeyPress={e => this.onValueKeyPress(e)}
-          style={{ width: 'auto' }}
+          style={{ width: '65%' }}
         />
       );
     }
@@ -278,6 +302,12 @@ export class StatefulFilters extends React.Component<StatefulFiltersProps, State
     );
   };
 
+  onToggle = isExpanded => {
+    this.setState({
+      isExpanded: isExpanded
+    });
+  };
+
   render() {
     const { currentFilterType, activeFilters } = this.state;
 
@@ -290,7 +320,7 @@ export class StatefulFilters extends React.Component<StatefulFiltersProps, State
                 value={currentFilterType.id}
                 aria-label={'filter_select_type'}
                 onChange={this.selectFilterType}
-                style={{ width: 'auto', backgroundColor: '#ededed', borderColor: '#bbb' }}
+                style={{ width: '35%', backgroundColor: '#ededed', borderColor: '#bbb' }}
               >
                 {this.state.filterTypes.map(option => (
                   <FormSelectOption key={option.id} value={option.id} label={option.title} />

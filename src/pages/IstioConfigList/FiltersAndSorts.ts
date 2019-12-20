@@ -87,7 +87,7 @@ export const istioTypeFilter: FilterType = {
   id: 'istiotype',
   title: 'Istio Type',
   placeholder: 'Filter by Istio Type',
-  filterType: 'select',
+  filterType: 'typeahead',
   action: FILTER_ACTION_APPEND,
   filterValues: [
     {
