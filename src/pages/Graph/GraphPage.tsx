@@ -43,8 +43,9 @@ import { arrayEquals } from 'utils/Common';
 import { isKioskMode, getFocusSelector } from 'utils/SearchParamUtils';
 import GraphTour, { GraphTourStops } from './GraphHelpTour';
 import { getErrorString } from 'services/Api';
-import { Chip } from '@patternfly/react-core';
+import { Chip, Badge } from '@patternfly/react-core';
 import { toRangeString } from 'components/Time/LocalTime';
+import { ReplayColor } from 'components/Time/Replay';
 
 // GraphURLPathProps holds path variable values.  Currenly all path variables are relevant only to a node graph
 type GraphURLPathProps = {
@@ -134,8 +135,14 @@ const whiteBackground = style({
   backgroundColor: PfColors.White
 });
 
+const replayBorder = style({
+  borderStyle: 'dotted',
+  borderColor: ReplayColor,
+  borderWidth: '3px'
+});
+
 const replayBackground = style({
-  backgroundColor: PfColors.LightBlue100
+  backgroundColor: ReplayColor
 });
 
 const graphLegendStyle = style({
@@ -302,7 +309,10 @@ export class GraphPage extends React.Component<GraphPageProps> {
           <div>
             <GraphToolbarContainer disabled={this.props.isLoading} onToggleHelp={this.toggleHelp} />
           </div>
-          <FlexView grow={true} className={cytoscapeGraphWrapperDivStyle}>
+          <FlexView
+            grow={true}
+            className={`${cytoscapeGraphWrapperDivStyle} ${this.props.replayActive && replayBorder}`}
+          >
             <ErrorBoundary
               ref={this.errorBoundaryRef}
               onError={this.notifyError}
@@ -323,9 +333,10 @@ export class GraphPage extends React.Component<GraphPageProps> {
                   isOverflowChip={true}
                   isReadOnly={true}
                 >
-                  {!isReplayReady && this.props.replayActive && `WAITING FOR REPLAY...`}
+                  {this.props.replayActive && <Badge style={{ marginRight: '4px' }} isRead={true}>{`Replay`}</Badge>}
+                  {!isReplayReady && this.props.replayActive && `Waiting to play...`}
                   {!isReplayReady && !this.props.replayActive && `${this.displayTimeRange()}`}
-                  {isReplayReady && `REPLAY: ${this.displayTimeRange()}`}
+                  {isReplayReady && `${this.displayTimeRange()}`}
                 </Chip>
               )}
               {(!this.props.replayActive || isReplayReady) && (

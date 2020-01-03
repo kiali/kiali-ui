@@ -75,7 +75,7 @@ export default class DateTimeInput extends React.PureComponent<DateTimeInputProp
             isReadOnly={true}
           />
         </Tooltip>
-        <Tooltip key="ot_clear_find" position="top" content={`Change ${this.props.name}...`}>
+        <Tooltip key="ot_clear_find" position="top" content={`Change ${this.props.name.toLowerCase()}...`}>
           <Button className={buttonStyle} variant={ButtonVariant.control} onClick={this.toggleCustomTime}>
             <KialiIcon.UserClock className={defaultIconStyle} />
           </Button>
@@ -83,7 +83,7 @@ export default class DateTimeInput extends React.PureComponent<DateTimeInputProp
         {this.state.showCustomTime && (
           <Modal
             width={'60%'}
-            title={`Change ${this.props.name}`}
+            title={`Change ${this.props.name.toLowerCase()}`}
             isOpen={this.state.showCustomTime}
             onClose={this.cancelCustomTime}
             actions={[

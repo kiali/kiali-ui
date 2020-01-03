@@ -10,12 +10,13 @@ import ToolbarDropdown from 'components/ToolbarDropdown/ToolbarDropdown';
 import { UserSettingsActions } from 'actions/UserSettingsActions';
 import { KialiAppAction } from 'actions/KialiAppAction';
 import Slider from 'components/IstioWizards/Slider/Slider';
-import { KialiIcon } from 'config/KialiIcon';
+import { KialiIcon, defaultIconStyle } from 'config/KialiIcon';
 import { style } from 'typestyle';
 import { toString } from './LocalTime';
 import { DurationDropdownContainer } from 'components/DurationDropdown/DurationDropdown';
 import DateTimeInput from './DateTimeInput';
 import { serverConfig } from 'config';
+import { PfColors } from 'components/Pf/PfColors';
 
 type ReduxProps = {
   duration: DurationInSeconds;
@@ -38,6 +39,8 @@ type ReplayState = {
   replayFrameCount: number;
   replaySpeed: number;
 };
+
+export const ReplayColor = PfColors.LightBlue200;
 
 // key represents replay interval in seconds
 const replayIntervals = {
@@ -77,14 +80,13 @@ const pauseStyle = style({
 });
 
 const stopStyle = style({
-  margin: '0 10px 0 0',
   height: '37px',
   width: '10px'
 });
 
 const sliderStyle = style({
   width: '100%',
-  margin: '0 0 0 20px'
+  margin: '0 -10px 0 20px'
 });
 
 export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
@@ -163,7 +165,7 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
           }
           time={this.props.replayWindow.startTime}
           onTimeChange={this.setReplayStartTime}
-          name="Replay Start Time"
+          name="Replay start time"
         />
         <ToolbarDropdown
           id={'replay-interval'}
@@ -171,7 +173,7 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
           value={String(this.props.replayWindow.interval)}
           label={replayIntervals[this.props.replayWindow.interval]}
           options={replayIntervals}
-          tooltip="Replay Length"
+          tooltip="Replay length"
         />
         <ToolbarDropdown
           id={'replay-speed'}
@@ -181,7 +183,7 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
           options={replaySpeeds}
           tooltip="Replay speed"
         />
-        <DurationDropdownContainer id={'replay-duration'} tooltip={'Metrics per Frame'} prefix=" " />
+        <DurationDropdownContainer id={'replay-duration'} tooltip={'Metrics per frame'} prefix=" " />
         <span className={sliderStyle}>
           <Slider
             key={endString} // on new endTime force new slider because of bug updating tick labels
@@ -203,22 +205,22 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
           />
           <span className={frameStyle}>
             {this.state.isReplaying ? (
-              <Tooltip key="replay-pause" position="top" content="Pause...">
+              <Tooltip key="replay-pause" position="top" content="Pause">
                 <Button className={pauseStyle} variant={ButtonVariant.link} onClick={this.pause}>
-                  <KialiIcon.Pause />
+                  <KialiIcon.PauseCircle className={defaultIconStyle} />
                 </Button>
               </Tooltip>
             ) : (
-              <Tooltip key="replay-play" position="top" content="Play...">
+              <Tooltip key="replay-play" position="top" content="Play">
                 <Button className={pauseStyle} variant={ButtonVariant.link} onClick={this.play}>
-                  <KialiIcon.Play />
+                  <KialiIcon.PlayCircle className={defaultIconStyle} />
                 </Button>
               </Tooltip>
             )}
             <Text>{this.formatFrame(this.state.replayFrame)}</Text>
           </span>
         </span>
-        <Tooltip key="end_replay" position="top" content="End Replay...">
+        <Tooltip key="end_replay" position="top" content="Close Replay">
           <Button className={stopStyle} variant={ButtonVariant.link} onClick={this.stop}>
             <KialiIcon.Close />
           </Button>
