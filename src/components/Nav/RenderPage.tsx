@@ -5,12 +5,14 @@ import { pathRoutes, defaultRoute, secondaryMastheadRoutes } from '../../routes'
 import { Path } from '../../types/Routes';
 import { style } from 'typestyle';
 import { PfColors } from '../Pf/PfColors';
+import { ReplayColor } from 'components/Time/Replay';
 
-const containerStyle = style({ marginLeft: 0, marginRight: 0 });
+const containerStyle = style({ marginLeft: 0, marginRight: 0, backgroundColor: 'green' });
 const containerPadding = style({ padding: '0 20px 0 20px' });
-const containerGray = style({ background: PfColors.Black150 });
+const containerBackground = style({ background: PfColors.Black150 });
+const containerReplayBackground = style({ background: ReplayColor });
 
-class RenderPage extends React.Component<{ isGraph: boolean }> {
+class RenderPage extends React.Component<{ isGraph: boolean; isReplay: boolean }> {
   renderPaths(paths: Path[]) {
     return paths.map((item, index) => {
       return <Route key={index} path={item.path} component={item.component} />;
@@ -26,8 +28,9 @@ class RenderPage extends React.Component<{ isGraph: boolean }> {
   }
 
   render() {
+    const background = this.props.isReplay ? containerReplayBackground : containerBackground;
     const component = (
-      <div className={`${containerStyle} ${this.props.isGraph && containerPadding}`}>
+      <div className={`${containerStyle} ${this.props.isGraph && containerPadding} ${background}`}>
         <SwitchErrorBoundary
           fallBackComponent={() => <h2>Sorry, there was a problem. Try a refresh or navigate to a different page.</h2>}
         >
@@ -39,7 +42,7 @@ class RenderPage extends React.Component<{ isGraph: boolean }> {
     return (
       <>
         {this.renderSecondaryMastheadRoutes()}
-        {!this.props.isGraph ? <div className={containerGray}>{component}</div> : component}
+        {!this.props.isGraph ? <div className={background}>{component}</div> : component}
       </>
     );
   }
