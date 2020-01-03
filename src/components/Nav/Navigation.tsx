@@ -13,18 +13,13 @@ import { kialiLogo, serverConfig } from '../../config';
 import { KialiAppState } from '../../store/Store';
 import { KialiAppAction } from '../../actions/KialiAppAction';
 import UserSettingsThunkActions from '../../actions/UserSettingsThunkActions';
-import { replayActiveSelector } from 'store/Selectors';
 
-type ReduxProps = {
+type PropsType = RouteComponentProps & {
   navCollapsed: boolean;
+  setNavCollapsed: (collapse: boolean) => void;
   jaegerUrl: string;
   jaegerIntegration: boolean;
-  replayActive: boolean;
-
-  setNavCollapsed: (collapse: boolean) => void;
 };
-
-type NavigationProps = RouteComponentProps & ReduxProps & {};
 
 type NavigationState = {
   isMobileView: boolean;
@@ -37,12 +32,12 @@ const flexBoxColumnStyle = style({
   flexDirection: 'column'
 });
 
-class Navigation extends React.Component<NavigationProps, NavigationState> {
+class Navigation extends React.Component<PropsType, NavigationState> {
   static contextTypes = {
     router: () => null
   };
 
-  constructor(props: NavigationProps) {
+  constructor(props: PropsType) {
     super(props);
     this.state = {
       isMobileView: false,
@@ -118,7 +113,7 @@ class Navigation extends React.Component<NavigationProps, NavigationState> {
       <Page header={Header} sidebar={Sidebar} onPageResize={this.onPageResize}>
         <MessageCenterContainer drawerTitle="Message Center" />
         <PageSection className={flexBoxColumnStyle} variant={'light'}>
-          <RenderPage isGraph={this.isGraph()} isReplay={this.props.replayActive} />
+          <RenderPage isGraph={this.isGraph()} />
         </PageSection>
       </Page>
     );
@@ -128,7 +123,7 @@ class Navigation extends React.Component<NavigationProps, NavigationState> {
 const mapStateToProps = (state: KialiAppState) => ({
   navCollapsed: state.userSettings.interface.navCollapse,
   jaegerUrl: state.jaegerState ? state.jaegerState.jaegerURL : '',
-  jaegerIntegration: state.jaegerState ? state.jaegerState.integration : false,
+  jaegerIntegration: state.jaegerState ? state.jaegerState.enableIntegration : false,
   replayActive: replayActiveSelector(state)
 });
 
