@@ -213,6 +213,7 @@ export class GraphToolbar extends React.PureComponent<GraphToolbarProps> {
               id="graph_time_range"
               disabled={this.props.disabled}
               handleRefresh={this.handleRefresh}
+              supportsReplay={true}
             />
           </ToolbarGroup>
         </Toolbar>

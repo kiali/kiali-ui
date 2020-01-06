@@ -22,6 +22,7 @@ type ReduxProps = {
 type TimeRangeProps = ReduxProps & {
   disabled: boolean;
   id: string;
+  supportsReplay?: boolean;
 
   handleRefresh: () => void;
 };
@@ -30,13 +31,15 @@ export class TimeRange extends React.PureComponent<TimeRangeProps> {
   render() {
     return (
       <span>
-        {!this.props.replayActive && (
+        {!!this.props.supportsReplay && !this.props.replayActive && (
+          <Tooltip key={'time-range-advanced'} position={TooltipPosition.left} content="Replay...">
+            <Button variant="link" style={{ paddingLeft: '0px', paddingRight: '6px' }} onClick={this.onToggleReplay}>
+              <KialiIcon.History className={defaultIconStyle} />
+            </Button>
+          </Tooltip>
+        )}
+        {!(!!this.props.supportsReplay && this.props.replayActive) && (
           <>
-            <Tooltip key={'time-range-advanced'} position={TooltipPosition.left} content="Replay...">
-              <Button variant="link" style={{ paddingLeft: '0px', paddingRight: '6px' }} onClick={this.onToggleReplay}>
-                <KialiIcon.History className={defaultIconStyle} />
-              </Button>
-            </Tooltip>
             <DurationDropdownContainer
               id={'time_range_duration'}
               disabled={this.props.disabled}
