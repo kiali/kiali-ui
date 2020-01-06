@@ -21,10 +21,12 @@ describe('UserSettingsState reducer', () => {
 
   it('should return the initial state', () => {
     expect(UserSettingsState(undefined, GlobalActions.unknown())).toEqual({
-      interface: { navCollapse: false },
       duration: 60,
+      interface: { navCollapse: false },
       refreshInterval: 15000,
-      replayOffset: 0
+      replayActive: false,
+      replayQueryTime: 0,
+      replayWindow: { interval: 0, startTime: 0 }
     });
   });
 
@@ -32,18 +34,22 @@ describe('UserSettingsState reducer', () => {
     expect(
       UserSettingsState(
         {
-          interface: { navCollapse: false },
           duration: 60,
-          refreshInterval: 60,
-          replayInterval: 0
+          interface: { navCollapse: false },
+          refreshInterval: 60000,
+          replayActive: false,
+          replayQueryTime: 0,
+          replayWindow: { interval: 0, startTime: 0 }
         },
         UserSettingsActions.navCollapse(true)
       )
     ).toEqual({
-      interface: { navCollapse: true },
       duration: 60,
-      refreshInterval: 60,
-      replayOffset: 0
+      interface: { navCollapse: true },
+      refreshInterval: 60000,
+      replayActive: false,
+      replayQueryTime: 0,
+      replayWindow: { interval: 0, startTime: 0 }
     });
   });
 
@@ -51,18 +57,22 @@ describe('UserSettingsState reducer', () => {
     expect(
       UserSettingsState(
         {
-          interface: { navCollapse: false },
           duration: 60,
-          refreshInterval: 60,
-          replayInterval: 0
+          interface: { navCollapse: false },
+          refreshInterval: 60000,
+          replayActive: false,
+          replayQueryTime: 0,
+          replayWindow: { interval: 0, startTime: 0 }
         },
         UserSettingsActions.setDuration(120)
       )
     ).toEqual({
-      interface: { navCollapse: false },
       duration: 120,
-      refreshInterval: 60,
-      replayOffset: 0
+      interface: { navCollapse: false },
+      refreshInterval: 60000,
+      replayActive: false,
+      replayQueryTime: 0,
+      replayWindow: { interval: 0, startTime: 0 }
     });
   });
 
@@ -70,37 +80,68 @@ describe('UserSettingsState reducer', () => {
     expect(
       UserSettingsState(
         {
-          interface: { navCollapse: false },
           duration: 60,
-          refreshInterval: 60,
-          replayInterval: 0
+          interface: { navCollapse: false },
+          refreshInterval: 60000,
+          replayActive: false,
+          replayQueryTime: 0,
+          replayWindow: { interval: 0, startTime: 0 }
         },
-        UserSettingsActions.setRefreshInterval(120)
+        UserSettingsActions.setRefreshInterval(120000)
       )
     ).toEqual({
-      interface: { navCollapse: false },
       duration: 60,
-      refreshInterval: 120,
-      replayOffset: 0
+      interface: { navCollapse: false },
+      refreshInterval: 120000,
+      replayActive: false,
+      replayQueryTime: 0,
+      replayWindow: { interval: 0, startTime: 0 }
     });
   });
 });
 
-it('should set replay offset', () => {
+it('should set replay active', () => {
   expect(
     UserSettingsState(
       {
-        interface: { navCollapse: false },
         duration: 60,
-        refreshInterval: 60,
-        replayInterval: 0
+        interface: { navCollapse: false },
+        refreshInterval: 60000,
+        replayActive: false,
+        replayQueryTime: 0,
+        replayWindow: { interval: 0, startTime: 0 }
       },
-      UserSettingsActions.setReplayInterval(600)
+      UserSettingsActions.toggleReplayActive()
     )
   ).toEqual({
-    interface: { navCollapse: false },
     duration: 60,
-    refreshInterval: 60,
-    replayOffset: 600
+    interface: { navCollapse: false },
+    refreshInterval: 60000,
+    replayActive: true,
+    replayQueryTime: 0,
+    replayWindow: { interval: 0, startTime: 0 }
+  });
+});
+
+it('should set replay window', () => {
+  expect(
+    UserSettingsState(
+      {
+        duration: 60,
+        interface: { navCollapse: false },
+        refreshInterval: 60000,
+        replayActive: false,
+        replayQueryTime: 0,
+        replayWindow: { interval: 0, startTime: 0 }
+      },
+      UserSettingsActions.setReplayWindow({ interval: 600, startTime: 1234567890 })
+    )
+  ).toEqual({
+    duration: 60,
+    interface: { navCollapse: false },
+    refreshInterval: 60000,
+    replayActive: false,
+    replayQueryTime: 0,
+    replayWindow: { interval: 600, startTime: 1234567890 }
   });
 });
