@@ -40,6 +40,11 @@ type ReplayState = {
   replaySpeed: number;
 };
 
+type ReplaySpeed = {
+  speed: IntervalInSeconds;
+  text: string;
+};
+
 export const ReplayColor = PfColors.LightBlue200;
 
 // key represents replay interval in seconds
@@ -51,15 +56,14 @@ const replayIntervals = {
 };
 
 // key represents refresh interval in seconds
-const replaySpeeds = {
-  1: 'Very Fast',
-  3: 'Fast',
-  5: 'Medium',
-  10: 'Slow'
-};
+const replaySpeeds: ReplaySpeed[] = [
+  { speed: 5, text: 'slow' },
+  { speed: 3, text: 'medium' },
+  { speed: 1, text: 'fast' }
+];
 
 const defaultReplayInterval = 300; // 5 minutes
-const defaultReplaySpeed = 3; // fast
+const defaultReplaySpeed = 3; // medium
 const frameInterval = 10; // number of seconds clock advances per frame
 
 const replayStyle = style({
@@ -74,7 +78,7 @@ const frameStyle = style({
 });
 
 const pauseStyle = style({
-  margin: '-5px 10px 0 40%',
+  margin: '-5px 10px 0 30%',
   height: '37px',
   width: '10px'
 });
@@ -87,6 +91,17 @@ const stopStyle = style({
 const sliderStyle = style({
   width: '100%',
   margin: '0 -10px 0 20px'
+});
+
+const speedStyle = style({
+  height: '1.5em',
+  width: '4em',
+  margin: '1px 0 0 0',
+  padding: '0 2px 2px 2px'
+});
+
+const speedFocusStyle = style({
+  backgroundColor: ReplayColor
 });
 
 export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
@@ -175,14 +190,6 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
           options={replayIntervals}
           tooltip="Replay length"
         />
-        <ToolbarDropdown
-          id={'replay-speed'}
-          handleSelect={key => this.setReplaySpeed(Number(key))}
-          value={String(this.state.replaySpeed)}
-          label={replaySpeeds[this.state.replaySpeed]}
-          options={replaySpeeds}
-          tooltip="Replay speed"
-        />
         <DurationDropdownContainer id={'replay-duration'} tooltip={'Metrics per frame'} prefix=" " />
         <span className={sliderStyle}>
           <Slider
@@ -217,7 +224,8 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
                 </Button>
               </Tooltip>
             )}
-            <Text>{this.formatFrame(this.state.replayFrame)}</Text>
+            <Text style={{ margin: '1px 15px 0 0' }}>{this.formatFrame(this.state.replayFrame)}</Text>
+            {replaySpeeds.map(s => this.speedButton(s))}
           </span>
         </span>
         <Tooltip key="end_replay" position="top" content="Close Replay">
@@ -312,6 +320,21 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
       this.setState({ replayFrame: nextFrame });
       this.props.setReplayQueryTime(Replay.frameToQueryTime(nextFrame, this.props));
     }
+  };
+
+  private speedButton = (replaySpeed: ReplaySpeed): React.ReactFragment => {
+    const isFocus = this.state.replaySpeed === replaySpeed.speed;
+    const className = isFocus ? `${speedStyle} ${speedFocusStyle}` : `${speedStyle}`;
+    return (
+      <Button
+        className={className}
+        variant={ButtonVariant.plain}
+        isFocus={isFocus}
+        onClick={() => this.setReplaySpeed(replaySpeed.speed)}
+      >
+        {replaySpeed.text}
+      </Button>
+    );
   };
 }
 
