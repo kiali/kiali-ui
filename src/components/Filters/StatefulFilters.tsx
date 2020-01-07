@@ -155,7 +155,12 @@ export class StatefulFilters extends React.Component<StatefulFiltersProps, State
     }
   };
 
-  filterValueSelected = (_event: any, value: any) => {
+  filterValueAheadSelected = (_event: any, value: any) => {
+    this.filterValueSelected(value);
+    this.setState({ isExpanded: false });
+  };
+
+  filterValueSelected = (value: any) => {
     const { currentFilterType, currentValue } = this.state;
     const filterValue = currentFilterType.filterValues.filter(filter => filter.id === value)[0];
 
@@ -166,8 +171,6 @@ export class StatefulFilters extends React.Component<StatefulFiltersProps, State
     ) {
       this.filterAdded(currentFilterType, filterValue.title);
     }
-
-    this.setState({ isExpanded: false });
   };
 
   updateCurrentValue = value => {
@@ -220,7 +223,7 @@ export class StatefulFilters extends React.Component<StatefulFiltersProps, State
       return (
         <Select
           value={'default'}
-          onSelect={this.filterValueSelected}
+          onSelect={this.filterValueAheadSelected}
           onToggle={this.onToggle}
           variant={SelectVariant.typeahead}
           isExpanded={this.state.isExpanded}
