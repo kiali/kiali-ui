@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Slider from 'bootstrap-slider-without-jquery';
+import _ from 'lodash';
 
 const orientation = {
   horizontal: 'horizontal',
@@ -49,7 +50,7 @@ class BootstrapSlider extends React.Component<Props> {
       this.slider.setValue(value);
     };
     const onSlideStop = value => {
-      value = value >= this.props.max ? this.props.max : value;
+      value = _.min([value, this.props.max]);
       this.props.onSlideStop(value);
       this.slider.setValue(value);
     };
@@ -83,7 +84,7 @@ class BootstrapSlider extends React.Component<Props> {
         this.slider.setValue(value);
       };
       const onSlideStop = value => {
-        value = value >= this.props.max ? this.props.max : value;
+        value = _.min([value, this.props.max]);
         this.props.onSlideStop(value);
         this.slider.setValue(value);
       };

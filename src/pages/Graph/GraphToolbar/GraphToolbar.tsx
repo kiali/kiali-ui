@@ -209,12 +209,14 @@ export class GraphToolbar extends React.PureComponent<GraphToolbarProps> {
           </div>
           <GraphFindContainer />
           <ToolbarGroup className={rightToolbarStyle} aria-label="graph_refresh_toolbar">
-            <TimeRangeContainer
-              id="graph_time_range"
-              disabled={this.props.disabled}
-              handleRefresh={this.handleRefresh}
-              supportsReplay={true}
-            />
+            <TourStopContainer info={GraphTourStops.TimeRange}>
+              <TimeRangeContainer
+                id="graph_time_range"
+                disabled={this.props.disabled}
+                handleRefresh={this.handleRefresh}
+                supportsReplay={true}
+              />
+            </TourStopContainer>
           </ToolbarGroup>
         </Toolbar>
         {this.props.replayActive && <ReplayContainer id={'time-range-replay'} />}
@@ -235,25 +237,6 @@ export class GraphToolbar extends React.PureComponent<GraphToolbarProps> {
       this.props.setEdgeLabelMode(mode);
     }
   };
-
-  /*
-  private getTitle(node: NodeParamsType) {
-    if (node.nodeType === NodeType.APP) {
-      let title = node.app;
-      if (node.version && node.version !== UNKNOWN) {
-        title += ' - ' + node.version;
-      }
-
-      return title;
-    } else if (node.nodeType === NodeType.SERVICE) {
-      return node.service;
-    } else if (node.nodeType === NodeType.WORKLOAD) {
-      return node.workload;
-    }
-
-    return 'unknown';
-  }
-  */
 }
 
 const mapStateToProps = (state: KialiAppState) => ({
