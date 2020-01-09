@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { KialiAppState } from 'store/Store';
+import DatePicker from 'react-datepicker';
 import { replayWindowSelector, replayQueryTimeSelector, durationSelector } from 'store/Selectors';
 import { Tooltip, ButtonVariant, Button, Text } from '@patternfly/react-core';
 import { TimeInSeconds, IntervalInSeconds, ReplayWindow, DurationInSeconds } from 'types/Common';
@@ -14,7 +15,6 @@ import { KialiIcon, defaultIconStyle } from 'config/KialiIcon';
 import { style } from 'typestyle';
 import { toString } from './LocalTime';
 import { DurationDropdownContainer } from 'components/DurationDropdown/DurationDropdown';
-import DateTimeInput from './DateTimeInput';
 import { serverConfig } from 'config';
 import { PfColors } from 'components/Pf/PfColors';
 
@@ -69,12 +69,17 @@ const frameInterval = 10; // number of seconds clock advances per frame
 const replayStyle = style({
   display: 'flex',
   width: '100%'
-  // marginTop: '-5px'
 });
 
 const frameStyle = style({
   display: 'flex',
   margin: '5px 0 0 15px'
+});
+
+const startTimeStyle = style({
+  height: '36px',
+  paddingLeft: '.75em',
+  width: '12em'
 });
 
 const pauseStyle = style({
@@ -120,6 +125,8 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
     return queryTime;
   };
 
+  private pickerTime: TimeInSeconds = 0;
+
   constructor(props: ReplayProps) {
     super(props);
     this.state = {
@@ -158,30 +165,38 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
       return null;
     }
 
+    const selectedTime = new Date(this.props.replayWindow.startTime * 1000);
     const endTime: TimeInSeconds = this.props.replayWindow.startTime + this.props.replayWindow.interval;
     const ticks: number[] = Array.from(Array(this.state.replayFrameCount).keys());
-    const ticksLabels: string[] = [];
-    const startString = toString(this.props.replayWindow.startTime * 1000, { second: '2-digit' });
-    const midString = toString((this.props.replayWindow.startTime + this.props.replayWindow.interval / 2) * 1000, {
-      month: undefined,
-      day: undefined,
-      second: '2-digit'
-    });
     const endString = toString(endTime * 1000, { month: undefined, day: undefined, second: '2-digit' });
-    ticksLabels.push(startString, midString, endString);
+    const now = Date.now();
+    const maxTime: Date = new Date(now - 1000 * this.props.replayWindow.interval);
+    const minTime: Date = new Date(
+      now - 1000 * (serverConfig.prometheus.storageTsdbRetention! + this.props.replayWindow.interval)
+    );
 
     return (
       <div className={replayStyle}>
-        <DateTimeInput
-          minTime={
-            Math.floor(Date.now() / 1000) -
-            serverConfig.prometheus.storageTsdbRetention! +
-            this.props.replayWindow.interval
-          }
-          time={this.props.replayWindow.startTime}
-          onTimeChange={this.setReplayStartTime}
-          name="Replay start time"
-        />
+        <Tooltip content="Replay start time">
+          <DatePicker
+            className={startTimeStyle}
+            dateFormat="MMM dd, hh:mm aa"
+            injectTimes={[maxTime]}
+            maxDate={maxTime}
+            maxTime={maxTime}
+            minDate={minTime}
+            minTime={minTime}
+            onCalendarClose={() => this.onPickerClose()}
+            onCalendarOpen={() => this.onPickerOpen()}
+            onChange={date => this.onPickerChange(date)}
+            popperPlacement="auto-end"
+            selected={selectedTime}
+            showTimeSelect={true}
+            timeCaption="time"
+            timeFormat="hh:mm aa"
+            timeIntervals={5}
+          />
+        </Tooltip>
         <ToolbarDropdown
           id={'replay-interval'}
           handleSelect={key => this.setReplayInterval(Number(key))}
@@ -202,7 +217,6 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
             step={1}
             value={this.state.replayFrame}
             ticks={ticks}
-            // ticks_labels={ticksLabels}
             tooltip={true}
             tooltipFormatter={this.formatTooltip}
             onSlideStop={this.setFrame}
@@ -249,17 +263,25 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
     const zeroPadSec: string = elapsedSec < 10 ? '0' : '';
     const zeroPadMin: string = elapsedMin < 10 ? '0' : '';
     const elapsed: string = `${zeroPadMin}${elapsedMin}:${zeroPadSec}${elapsedSec}`;
-    /*
-    const end: TimeInSeconds = Replay.frameToQueryTime(val, this.props);
-    const start: TimeInSeconds = end - this.props.duration;
-    const range: string = toRangeString(start * 1000, end * 1000, { second: '2-digit' }, { second: '2-digit' });
-    return `${elapsed}  [${range}]`;
-    */
     return `${elapsed}`;
   };
 
   private setReplayStartTime = (startTime: TimeInSeconds) => {
     this.setReplayWindow({ interval: this.props.replayWindow.interval, startTime: startTime });
+  };
+
+  private onPickerChange = (startTime: Date) => {
+    this.pickerTime = startTime.getTime() / 1000;
+  };
+
+  private onPickerClose = () => {
+    if (this.pickerTime !== this.props.replayWindow.startTime) {
+      this.setReplayStartTime(this.pickerTime);
+    }
+  };
+
+  private onPickerOpen = () => {
+    this.pickerTime = this.props.replayWindow.startTime;
   };
 
   private setReplayInterval = (interval: IntervalInSeconds) => {

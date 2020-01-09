@@ -15,6 +15,7 @@ import LoginPageContainer from '../pages/Login/LoginPage';
 import { LoginActions } from '../actions/LoginActions';
 import 'tippy.js/dist/tippy.css';
 import 'tippy.js/dist/themes/light-border.css';
+import 'react-datepicker/dist/react-datepicker.css';
 
 /**
  * Use the Patternfly RCUE productized css styles if set by the environment

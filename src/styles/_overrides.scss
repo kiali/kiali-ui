@@ -367,3 +367,10 @@ html.kiosk {
     display: none;
   }
 }
+
+/*
+Make sure datepicker popper rises above other inflated z-index elements
+*/
+.react-datepicker-popper {
+  z-index: 3;
+}
