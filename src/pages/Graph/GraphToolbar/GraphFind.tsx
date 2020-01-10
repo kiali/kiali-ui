@@ -1,5 +1,14 @@
 import * as React from 'react';
-import { Button, Tooltip, ButtonVariant, TextInput, Form } from '@patternfly/react-core';
+import {
+  Button,
+  ButtonVariant,
+  Form,
+  Tooltip,
+  TextInput,
+  Dropdown,
+  DropdownItem,
+  DropdownToggle
+} from '@patternfly/react-core';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { bindActionCreators } from 'redux';
@@ -16,6 +25,13 @@ import { KialiIcon, defaultIconStyle } from 'config/KialiIcon';
 import { style } from 'typestyle';
 import TourStopContainer from 'components/Tour/TourStop';
 import { GraphTourStops } from 'pages/Graph/GraphHelpTour';
+import { HistoryIcon } from '@patternfly/react-icons';
+import { PFAlertColor } from '../../../components/Pf/PfColors';
+
+enum FindOrHideType {
+  Find = 'FIND-HISTORY',
+  Hide = 'HIDE-HISTORY'
+}
 
 type ReduxProps = {
   compressOnHide: boolean;
@@ -42,6 +58,12 @@ type GraphFindState = {
   errorMessage: string;
   findInputValue: string;
   hideInputValue: string;
+
+  // find/hide history state
+  isFindHistoryOpen: boolean;
+  findHistoryItems: string[];
+  isHideHistoryOpen: boolean;
+  hideHistoryItems: string[];
 };
 
 type ParsedExpression = {
@@ -73,7 +95,22 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
     super(props);
     const findValue = props.findValue ? props.findValue : '';
     const hideValue = props.hideValue ? props.hideValue : '';
-    this.state = { errorMessage: '', findInputValue: findValue, hideInputValue: hideValue };
+
+    const storageFindHistory = localStorage.getItem(FindOrHideType.Find);
+    const findHistoryItems = JSON.parse(storageFindHistory !== null ? storageFindHistory : '[]');
+
+    const storageHideHistory = localStorage.getItem(FindOrHideType.Hide);
+    const hideHistoryItems = JSON.parse(storageHideHistory !== null ? storageHideHistory : '[]');
+
+    this.state = {
+      errorMessage: '',
+      findInputValue: findValue,
+      hideInputValue: hideValue,
+      isFindHistoryOpen: false,
+      findHistoryItems: findHistoryItems,
+      isHideHistoryOpen: false,
+      hideHistoryItems: hideHistoryItems
+    };
     if (props.showFindHelp) {
       props.toggleFindHelp();
     }
@@ -111,8 +148,9 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
   }
 
   render() {
+    const { isFindHistoryOpen, isHideHistoryOpen } = this.state;
     const isFindValid: boolean = !(this.props.findValue.length > 0 && this.state.errorMessage.length > 0);
-    const isHideValid: boolean = !(this.props.hideValue.length > 0 && this.state.errorMessage.length > 0);
+    const isHideValid = !(this.props.hideValue.length > 0 && this.state.errorMessage.length > 0);
 
     return (
       <TourStopContainer info={GraphTourStops.Find}>
@@ -140,6 +178,25 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
                 </Button>
               </Tooltip>
             )}
+            {this.state.findHistoryItems.length > 0 && (
+              <Dropdown
+                onSelect={this.onFindHistorySelect}
+                disabled={!this.state.findHistoryItems.length}
+                toggle={
+                  <DropdownToggle
+                    iconComponent={null}
+                    onToggle={this.onFindHistoryToggle}
+                    aria-label="Find History"
+                    id="find-history-dropdown"
+                  >
+                    <HistoryIcon />
+                  </DropdownToggle>
+                }
+                isOpen={isFindHistoryOpen}
+                isPlain
+                dropdownItems={this.getCommandItemsAsJsx(FindOrHideType.Find)}
+              />
+            )}
             <TextInput
               id="graph_hide"
               name="graph_hide"
@@ -162,6 +219,25 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
                 </Button>
               </Tooltip>
             )}
+            {this.state.hideHistoryItems.length > 0 && (
+              <Dropdown
+                onSelect={this.onHideHistorySelect}
+                toggle={
+                  <DropdownToggle
+                    iconComponent={null}
+                    onToggle={this.onHideHistoryToggle}
+                    aria-label="Hide History"
+                    id="hide-history-dropdown"
+                  >
+                    <HistoryIcon />
+                  </DropdownToggle>
+                }
+                isOpen={isHideHistoryOpen}
+                isPlain
+                dropdownItems={this.getCommandItemsAsJsx(FindOrHideType.Hide)}
+              />
+            )}
+
             {this.props.showFindHelp ? (
               <GraphHelpFind onClose={this.toggleFindHelp}>
                 <Button variant={ButtonVariant.link} style={{ paddingLeft: '6px' }} onClick={this.toggleFindHelp}>
@@ -177,13 +253,113 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
             )}
             {this.state.errorMessage && (
               <div>
-                <span style={{ color: 'red' }}>{this.state.errorMessage}</span>
+                <span style={{ color: PFAlertColor.Danger }}>{this.state.errorMessage}</span>
               </div>
             )}
           </span>
         </Form>
       </TourStopContainer>
     );
+  }
+
+  private onFindHistoryToggle = () => {
+    this.setState({
+      isFindHistoryOpen: !this.state.isFindHistoryOpen
+    });
+  };
+
+  private onFindHistorySelect = () => {
+    this.setState({
+      isFindHistoryOpen: !this.state.isFindHistoryOpen
+    });
+  };
+
+  private onHideHistoryToggle = () => {
+    this.setState({
+      isHideHistoryOpen: !this.state.isHideHistoryOpen
+    });
+  };
+
+  private onHideHistorySelect = () => {
+    this.setState({
+      isHideHistoryOpen: !this.state.isHideHistoryOpen
+    });
+  };
+
+  private addCommandToHistory(findType: FindOrHideType, command: string) {
+    const MAX_COMMAND_HISTORY = 5;
+    const addToHistory = (command: string, commandHistory: string[]): string[] => {
+      let newHistory: string[] = commandHistory;
+      newHistory.unshift(command);
+      if (commandHistory.length > MAX_COMMAND_HISTORY) {
+        // remove the last item
+        return newHistory.slice(0, newHistory.length - 1);
+      } else {
+        return newHistory;
+      }
+    };
+    if (findType === FindOrHideType.Find) {
+      this.setState({
+        findHistoryItems: addToHistory(command, this.state.findHistoryItems)
+      });
+    } else {
+      this.setState({
+        hideHistoryItems: addToHistory(command, this.state.hideHistoryItems)
+      });
+    }
+  }
+
+  private getCommandItemsAsJsx(findType: FindOrHideType): JSX.Element[] | undefined {
+    const dropdownClick = (key: string) => {
+      if (findType === FindOrHideType.Find) {
+        const selectedCommand = this.state.findHistoryItems[+key];
+
+        // TODO: when TextInput refs are fixed in PF4 then use the ref and remove the direct HTMLElement usage
+        this.findInputRef.value = selectedCommand;
+        const htmlInputElement: HTMLInputElement = document.getElementById('graph_find') as HTMLInputElement;
+        if (htmlInputElement !== null) {
+          htmlInputElement.value = selectedCommand;
+        }
+        this.setState({ findInputValue: selectedCommand, errorMessage: '' });
+        this.props.setFindValue(selectedCommand);
+      } else {
+        const selectedCommand = this.state.hideHistoryItems[+key];
+
+        // TODO: when TextInput refs are fixed in PF4 then use the ref and remove the direct HTMLElement usage
+        this.hideInputRef.value = selectedCommand;
+        const htmlInputElement: HTMLInputElement = document.getElementById('graph_hide') as HTMLInputElement;
+        if (htmlInputElement !== null) {
+          htmlInputElement.value = selectedCommand;
+        }
+        this.setState({ hideInputValue: selectedCommand, errorMessage: '' });
+        this.props.setHideValue(selectedCommand);
+      }
+    };
+
+    const makeDropdownItems = (items: string[]) => {
+      if (items instanceof Array) {
+        return items.map((item: string, i: number) => {
+          return (
+            <DropdownItem key={i} component="button" onClick={() => dropdownClick(i.toString())}>
+              {item}
+            </DropdownItem>
+          );
+        });
+      } else {
+        return undefined;
+      }
+    };
+
+    if (findType === FindOrHideType.Find) {
+      if (this.state.findHistoryItems && this.state.findHistoryItems.length > 0) {
+        return makeDropdownItems(this.state.findHistoryItems);
+      }
+    } else {
+      if (this.state.hideHistoryItems && this.state.hideHistoryItems.length) {
+        return makeDropdownItems(this.state.hideHistoryItems);
+      }
+    }
+    return undefined;
   }
 
   private toggleFindHelp = () => {
@@ -224,12 +400,16 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
 
   private submitFind = () => {
     if (this.props.findValue !== this.state.findInputValue) {
+      this.addCommandToHistory(FindOrHideType.Find, this.state.findInputValue);
+      localStorage.setItem(FindOrHideType.Find, JSON.stringify(this.state.findHistoryItems));
       this.props.setFindValue(this.state.findInputValue);
     }
   };
 
   private submitHide = () => {
     if (this.props.hideValue !== this.state.hideInputValue) {
+      this.addCommandToHistory(FindOrHideType.Hide, this.state.hideInputValue);
+      localStorage.setItem(FindOrHideType.Hide, JSON.stringify(this.state.hideHistoryItems));
       this.props.setHideValue(this.state.hideInputValue);
     }
   };
