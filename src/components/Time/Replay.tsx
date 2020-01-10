@@ -140,7 +140,8 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
 
   componentDidMount() {
     if (!!!this.props.replayWindow.startTime) {
-      const startTime = Math.floor(Date.now() / 1000) - defaultReplayInterval;
+      // force times to be on the minute for simpler display
+      const startTime = new Date().setSeconds(0, 0) / 1000 - defaultReplayInterval;
       this.setReplayWindow({ interval: defaultReplayInterval, startTime: startTime });
     }
   }
@@ -165,8 +166,8 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
       return null;
     }
 
-    const selectedTime = new Date(this.props.replayWindow.startTime * 1000);
-    const endTime: TimeInSeconds = this.props.replayWindow.startTime + this.props.replayWindow.interval;
+    const selectedTime: Date = new Date(this.props.replayWindow.startTime * 1000);
+    const endTime: TimeInSeconds = selectedTime.getTime() / 1000 + this.props.replayWindow.interval;
     const ticks: number[] = Array.from(Array(this.state.replayFrameCount).keys());
     const endString = toString(endTime * 1000, { month: undefined, day: undefined, second: '2-digit' });
     const now = Date.now();
@@ -270,8 +271,8 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
     this.setReplayWindow({ interval: this.props.replayWindow.interval, startTime: startTime });
   };
 
-  private onPickerChange = (startTime: Date) => {
-    this.pickerTime = startTime.getTime() / 1000;
+  private onPickerChange = (date: Date) => {
+    this.pickerTime = date.getTime() / 1000;
   };
 
   private onPickerClose = () => {
