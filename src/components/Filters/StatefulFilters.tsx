@@ -229,7 +229,7 @@ export class StatefulFilters extends React.Component<StatefulFiltersProps, State
           isExpanded={this.state.isExpanded}
           aria-label="filter_select_value"
           placeholderText={currentFilterType.placeholder}
-          width={'65%'}
+          width={'auto'}
         >
           {currentFilterType.filterValues.map((filter, index) => (
             <SelectOption key={'filter_' + index} value={filter.id} label={filter.title} />
@@ -242,7 +242,7 @@ export class StatefulFilters extends React.Component<StatefulFiltersProps, State
           value={'default'}
           onChange={this.filterValueSelected}
           aria-label="filter_select_value"
-          style={{ width: '65%' }}
+          style={{ width: 'auto' }}
         >
           <FormSelectOption key={'filter_default'} value={'default'} label={currentFilterType.placeholder} />
           {currentFilterType.filterValues.map((filter, index) => (
@@ -259,7 +259,7 @@ export class StatefulFilters extends React.Component<StatefulFiltersProps, State
           placeholder={currentFilterType.placeholder}
           onChange={this.updateCurrentValue}
           onKeyPress={e => this.onValueKeyPress(e)}
-          style={{ width: '65%' }}
+          style={{ width: 'auto' }}
         />
       );
     }
@@ -323,7 +323,7 @@ export class StatefulFilters extends React.Component<StatefulFiltersProps, State
                 value={currentFilterType.id}
                 aria-label={'filter_select_type'}
                 onChange={this.selectFilterType}
-                style={{ width: '35%', backgroundColor: '#ededed', borderColor: '#bbb' }}
+                style={{ width: 'auto', backgroundColor: '#ededed', borderColor: '#bbb' }}
               >
                 {this.state.filterTypes.map(option => (
                   <FormSelectOption key={option.id} value={option.id} label={option.title} />
