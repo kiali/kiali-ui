@@ -148,7 +148,6 @@ const replayBackground = style({
 const graphLegendStyle = style({
   right: '0',
   bottom: '10px',
-  zIndex: 9999,
   position: 'absolute',
   overflow: 'hidden'
 });

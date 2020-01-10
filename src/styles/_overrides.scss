@@ -368,9 +368,14 @@ html.kiosk {
   }
 }
 
+.tooltip {
+  z-index: 10 !important;
+}
+
 /*
 Make sure datepicker popper rises above other inflated z-index elements
+- secondaryMasthead currently at 10
 */
 .react-datepicker-popper {
-  z-index: 3;
+  z-index: 11;
 }
