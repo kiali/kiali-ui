@@ -11,7 +11,7 @@ import ToolbarDropdown from 'components/ToolbarDropdown/ToolbarDropdown';
 import { UserSettingsActions } from 'actions/UserSettingsActions';
 import { KialiAppAction } from 'actions/KialiAppAction';
 import Slider from 'components/IstioWizards/Slider/Slider';
-import { KialiIcon, defaultIconStyle } from 'config/KialiIcon';
+import { KialiIcon } from 'config/KialiIcon';
 import { style } from 'typestyle';
 import { toString } from './LocalTime';
 import { DurationDropdownContainer } from 'components/DurationDropdown/DurationDropdown';
@@ -83,9 +83,13 @@ const startTimeStyle = style({
 });
 
 const pauseStyle = style({
-  margin: '-5px 10px 0 30%',
+  margin: '-5px 20px 0 30%',
   height: '37px',
   width: '10px'
+});
+
+const pauseIconStyle = style({
+  fontSize: '1.5em'
 });
 
 const stopStyle = style({
@@ -228,13 +232,13 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
             {this.state.isReplaying ? (
               <Tooltip key="replay-pause" position="top" content="Pause">
                 <Button className={pauseStyle} variant={ButtonVariant.link} onClick={this.pause}>
-                  <KialiIcon.PauseCircle className={defaultIconStyle} />
+                  <KialiIcon.PauseCircle className={pauseIconStyle} />
                 </Button>
               </Tooltip>
             ) : (
               <Tooltip key="replay-play" position="top" content="Play">
                 <Button className={pauseStyle} variant={ButtonVariant.link} onClick={this.play}>
-                  <KialiIcon.PlayCircle className={defaultIconStyle} />
+                  <KialiIcon.PlayCircle className={pauseIconStyle} />
                 </Button>
               </Tooltip>
             )}
