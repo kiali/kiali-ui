@@ -2,7 +2,7 @@ import { NotificationGroup } from '../types/MessageCenter';
 import Namespace from '../types/Namespace';
 import {
   DurationInSeconds,
-  RefreshIntervalInMs,
+  IntervalInMilliseconds,
   TimeInSeconds,
   UserName,
   RawDate,
@@ -101,9 +101,9 @@ export interface InterfaceSettings {
 export interface UserSettings {
   duration: DurationInSeconds;
   interface: InterfaceSettings;
-  refreshInterval: RefreshIntervalInMs;
+  refreshInterval: IntervalInMilliseconds;
   replayActive: boolean;
-  replayQueryTime: TimeInSeconds;
+  replayQueryTime: TimeInMilliseconds;
   replayWindow: ReplayWindow;
 }
 

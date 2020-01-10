@@ -6,7 +6,7 @@ import { RouteComponentProps } from 'react-router-dom';
 import FlexView from 'react-flexview';
 import { style } from 'typestyle';
 import { store } from '../../store/ConfigStore';
-import { DurationInSeconds, TimeInSeconds, TimeInMilliseconds } from '../../types/Common';
+import { DurationInSeconds, TimeInMilliseconds, TimeInSeconds } from '../../types/Common';
 import Namespace from '../../types/Namespace';
 import { GraphType, NodeParamsType, NodeType, SummaryData, UNKNOWN, EdgeLabelMode, Layout } from '../../types/Graph';
 import { computePrometheusRateParams } from '../../services/Prometheus';
@@ -63,7 +63,7 @@ type ReduxProps = {
   edgeLabelMode: EdgeLabelMode;
   graphData: any;
   graphDuration: DurationInSeconds; // duration of current graph
-  graphTimestamp: TimeInSeconds; // queryTime of current graph
+  graphTimestamp: TimeInSeconds; // prom queryTime of current graph
   graphType: GraphType;
   isError: boolean;
   isLoading: boolean;
@@ -72,7 +72,7 @@ type ReduxProps = {
   layout: Layout;
   node?: NodeParamsType;
   replayActive: boolean;
-  replayQueryTime: TimeInSeconds;
+  replayQueryTime: TimeInMilliseconds;
   showLegend: boolean;
   showSecurity: boolean;
   showServiceNodes: boolean;
@@ -89,7 +89,7 @@ type ReduxProps = {
     showSecurity: boolean,
     showUnusedNodes: boolean,
     node?: NodeParamsType,
-    queryTime?: TimeInSeconds
+    queryTime?: TimeInMilliseconds
   ) => any;
   graphChanged: () => void;
   setNode: (node?: NodeParamsType) => void;
@@ -402,7 +402,9 @@ export class GraphPage extends React.Component<GraphPageProps> {
     if (this.loadPromise) {
       this.loadPromise.cancel();
     }
-    const queryTime: TimeInSeconds | undefined = !!this.props.replayQueryTime ? this.props.replayQueryTime : undefined;
+    const queryTime: TimeInMilliseconds | undefined = !!this.props.replayQueryTime
+      ? this.props.replayQueryTime
+      : undefined;
     const promise = this.props.fetchGraphData(
       this.props.node ? [this.props.node.namespace] : this.props.activeNamespaces,
       this.props.duration,
@@ -473,7 +475,7 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<KialiAppState, void, KialiAp
     showSecurity: boolean,
     showUnusedNodes: boolean,
     node?: NodeParamsType,
-    queryTime?: TimeInSeconds
+    queryTime?: TimeInMilliseconds
   ) =>
     dispatch(
       GraphDataThunkActions.fetchGraphData(

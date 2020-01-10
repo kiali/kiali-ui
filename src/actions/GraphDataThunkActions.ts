@@ -3,7 +3,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import Namespace from '../types/Namespace';
 import { KialiAppState } from '../store/Store';
 import { EdgeLabelMode, GraphType, GroupByType, NodeParamsType } from '../types/Graph';
-import { AppenderString, DurationInSeconds, TimeInSeconds } from '../types/Common';
+import { AppenderString, DurationInSeconds, TimeInMilliseconds } from '../types/Common';
 import { KialiAppAction } from './KialiAppAction';
 import { GraphDataActions } from './GraphDataActions';
 import * as AlertUtils from '../utils/AlertUtils';
@@ -29,7 +29,7 @@ const GraphDataThunkActions = {
     showSecurity: boolean,
     showUnusedNodes: boolean,
     node?: NodeParamsType,
-    queryTime?: TimeInSeconds
+    queryTime?: TimeInMilliseconds
   ) => {
     return (dispatch: ThunkDispatch<KialiAppState, undefined, KialiAppAction>, _getState: () => KialiAppState) => {
       if (namespaces.length === 0) {
@@ -48,7 +48,7 @@ const GraphDataThunkActions = {
       }
 
       if (queryTime) {
-        restParams.queryTime = String(queryTime);
+        restParams.queryTime = String(Math.floor(queryTime / 1000));
       }
 
       // Some appenders are expensive so only specify an appender if needed.

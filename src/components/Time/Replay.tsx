@@ -6,7 +6,7 @@ import { KialiAppState } from 'store/Store';
 import DatePicker from 'react-datepicker';
 import { replayWindowSelector, replayQueryTimeSelector, durationSelector } from 'store/Selectors';
 import { Tooltip, ButtonVariant, Button, Text } from '@patternfly/react-core';
-import { TimeInSeconds, IntervalInSeconds, ReplayWindow, DurationInSeconds } from 'types/Common';
+import { ReplayWindow, DurationInSeconds, IntervalInMilliseconds, TimeInMilliseconds } from 'types/Common';
 import ToolbarDropdown from 'components/ToolbarDropdown/ToolbarDropdown';
 import { UserSettingsActions } from 'actions/UserSettingsActions';
 import { KialiAppAction } from 'actions/KialiAppAction';
@@ -20,10 +20,10 @@ import { PfColors } from 'components/Pf/PfColors';
 
 type ReduxProps = {
   duration: DurationInSeconds;
-  replayQueryTime: TimeInSeconds;
+  replayQueryTime: TimeInMilliseconds;
   replayWindow: ReplayWindow;
 
-  setReplayQueryTime: (replayQueryTime: TimeInSeconds) => void;
+  setReplayQueryTime: (replayQueryTime: TimeInMilliseconds) => void;
   setReplayWindow: (replayWindow: ReplayWindow) => void;
   toggleReplayActive: () => void;
 };
@@ -37,11 +37,11 @@ type ReplayState = {
   refresherRef?: number;
   replayFrame: number;
   replayFrameCount: number;
-  replaySpeed: number;
+  replaySpeed: IntervalInMilliseconds;
 };
 
 type ReplaySpeed = {
-  speed: IntervalInSeconds;
+  speed: IntervalInMilliseconds;
   text: string;
 };
 
@@ -49,22 +49,22 @@ export const ReplayColor = PfColors.LightBlue200;
 
 // key represents replay interval in seconds
 const replayIntervals = {
-  60: '1 minute',
-  300: '5 minutes',
-  600: '10 minutes',
-  1800: '30 minutes'
+  60000: '1 minute',
+  300000: '5 minutes',
+  600000: '10 minutes',
+  1800000: '30 minutes'
 };
 
 // key represents refresh interval in seconds
 const replaySpeeds: ReplaySpeed[] = [
-  { speed: 5, text: 'slow' },
-  { speed: 3, text: 'medium' },
-  { speed: 1, text: 'fast' }
+  { speed: 5000, text: 'slow' },
+  { speed: 3000, text: 'medium' },
+  { speed: 1000, text: 'fast' }
 ];
 
-const defaultReplayInterval = 300; // 5 minutes
-const defaultReplaySpeed = 3; // medium
-const frameInterval = 10; // number of seconds clock advances per frame
+const defaultReplayInterval: IntervalInMilliseconds = 300000; // 5 minutes
+const defaultReplaySpeed: IntervalInMilliseconds = 3000; // medium
+const frameInterval: IntervalInMilliseconds = 10000; // number of ms clock advances per frame
 
 const replayStyle = style({
   display: 'flex',
@@ -110,22 +110,21 @@ const speedFocusStyle = style({
 });
 
 export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
-  static getFrameCount = (replayInterval: IntervalInSeconds): number => {
-    return replayInterval > 0 ? Math.floor(replayInterval / frameInterval) : 0;
+  static getFrameCount = (elapsedTime: IntervalInMilliseconds): number => {
+    return elapsedTime > 0 ? Math.floor(elapsedTime / frameInterval) : 0;
   };
 
   static queryTimeToFrame = (props: ReduxProps): number => {
-    const elapsedTime: IntervalInSeconds = props.replayQueryTime - props.replayWindow.startTime;
+    const elapsedTime: IntervalInMilliseconds = props.replayQueryTime - props.replayWindow.startTime;
     const frame: number = Replay.getFrameCount(elapsedTime);
     return frame;
   };
 
-  static frameToQueryTime = (frame: number, props: ReduxProps): TimeInSeconds => {
-    const queryTime: TimeInSeconds = props.replayWindow.startTime + frame * frameInterval;
-    return queryTime;
+  static frameToQueryTime = (frame: number, props: ReduxProps): TimeInMilliseconds => {
+    return props.replayWindow.startTime + frame * frameInterval;
   };
 
-  private pickerTime: TimeInSeconds = 0;
+  private pickerTime: TimeInMilliseconds = 0;
 
   constructor(props: ReplayProps) {
     super(props);
@@ -141,7 +140,7 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
   componentDidMount() {
     if (!!!this.props.replayWindow.startTime) {
       // force times to be on the minute for simpler display
-      const startTime = new Date().setSeconds(0, 0) / 1000 - defaultReplayInterval;
+      const startTime = new Date().setSeconds(0, 0) - defaultReplayInterval;
       this.setReplayWindow({ interval: defaultReplayInterval, startTime: startTime });
     }
   }
@@ -166,14 +165,14 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
       return null;
     }
 
-    const selectedTime: Date = new Date(this.props.replayWindow.startTime * 1000);
-    const endTime: TimeInSeconds = selectedTime.getTime() / 1000 + this.props.replayWindow.interval;
+    const selectedTime: Date = new Date(this.props.replayWindow.startTime);
+    const endTime: TimeInMilliseconds = selectedTime.getTime() + this.props.replayWindow.interval;
     const ticks: number[] = Array.from(Array(this.state.replayFrameCount).keys());
-    const endString = toString(endTime * 1000, { month: undefined, day: undefined, second: '2-digit' });
+    const endString = toString(endTime, { month: undefined, day: undefined, second: '2-digit' });
     const now = Date.now();
-    const maxTime: Date = new Date(now - 1000 * this.props.replayWindow.interval);
+    const maxTime: Date = new Date(now - this.props.replayWindow.interval);
     const minTime: Date = new Date(
-      now - 1000 * (serverConfig.prometheus.storageTsdbRetention! + this.props.replayWindow.interval)
+      now - (serverConfig.prometheus.storageTsdbRetention! * 1000 + this.props.replayWindow.interval)
     );
 
     return (
@@ -220,7 +219,7 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
             ticks={ticks}
             tooltip={true}
             tooltipFormatter={this.formatTooltip}
-            onSlideStop={this.setFrame}
+            onSlideStop={this.setReplayFrame}
             input={false}
             locked={false}
             showLock={false}
@@ -253,26 +252,26 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
   }
 
   formatTooltip = (val: number): string => {
-    const time: string = toString(Replay.frameToQueryTime(val, this.props) * 1000, { second: '2-digit' });
+    const time: string = toString(Replay.frameToQueryTime(val, this.props), { second: '2-digit' });
     return `${time} [${val}/${this.state.replayFrameCount}]`;
   };
 
-  formatFrame = (val: number): string => {
-    const elapsedTime: TimeInSeconds = val * frameInterval;
-    const elapsedSec: number = Math.floor(elapsedTime % 60);
-    const elapsedMin: number = Math.floor((elapsedTime - elapsedSec) / 60);
+  formatFrame = (frame: number): string => {
+    const elapsedTime: IntervalInMilliseconds = frame * frameInterval;
+    const elapsedSec: number = Math.floor((elapsedTime / 1000) % 60);
+    const elapsedMin: number = Math.floor((elapsedTime / 1000 - elapsedSec) / 60);
     const zeroPadSec: string = elapsedSec < 10 ? '0' : '';
     const zeroPadMin: string = elapsedMin < 10 ? '0' : '';
     const elapsed: string = `${zeroPadMin}${elapsedMin}:${zeroPadSec}${elapsedSec}`;
     return `${elapsed}`;
   };
 
-  private setReplayStartTime = (startTime: TimeInSeconds) => {
+  private setReplayStartTime = (startTime: TimeInMilliseconds) => {
     this.setReplayWindow({ interval: this.props.replayWindow.interval, startTime: startTime });
   };
 
   private onPickerChange = (date: Date) => {
-    this.pickerTime = date.getTime() / 1000;
+    this.pickerTime = date.getTime();
   };
 
   private onPickerClose = () => {
@@ -285,7 +284,7 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
     this.pickerTime = this.props.replayWindow.startTime;
   };
 
-  private setReplayInterval = (interval: IntervalInSeconds) => {
+  private setReplayInterval = (interval: IntervalInMilliseconds) => {
     this.setReplayWindow({ interval: interval, startTime: this.props.replayWindow.startTime });
   };
 
@@ -295,7 +294,7 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
     this.props.setReplayWindow(replayWindow);
   };
 
-  private setReplaySpeed = (replaySpeed: number) => {
+  private setReplaySpeed = (replaySpeed: IntervalInMilliseconds) => {
     this.setState({ replaySpeed: replaySpeed });
   };
 
@@ -305,9 +304,9 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
 
   private play = () => {
     this.setState({ isReplaying: true });
-    const frameTime = Replay.frameToQueryTime(this.state.replayFrame, this.props);
-    if (frameTime !== this.props.replayQueryTime) {
-      this.props.setReplayQueryTime(frameTime);
+    const frameQueryTime = Replay.frameToQueryTime(this.state.replayFrame, this.props);
+    if (frameQueryTime !== this.props.replayQueryTime) {
+      this.props.setReplayQueryTime(frameQueryTime);
     }
   };
 
@@ -315,7 +314,7 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
     this.props.toggleReplayActive();
   };
 
-  private setFrame = (frame: number) => {
+  private setReplayFrame = (frame: number) => {
     if (frame !== this.state.replayFrame) {
       this.setState({ replayFrame: frame });
       this.props.setReplayQueryTime(Replay.frameToQueryTime(frame, this.props));
@@ -331,7 +330,7 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
     }
 
     let refresherRef: number | undefined = undefined;
-    refresherRef = window.setInterval(this.handleRefresh, this.state.replaySpeed * 1000);
+    refresherRef = window.setInterval(this.handleRefresh, this.state.replaySpeed);
     this.setState({ refresherRef: refresherRef });
   };
 
