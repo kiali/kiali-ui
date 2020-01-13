@@ -30,7 +30,6 @@ type TimeRangeProps = ReduxProps & {
 export class TimeRange extends React.PureComponent<TimeRangeProps> {
   render() {
     const durationTooltip = this.props.replayActive ? 'Traffic metrics per frame' : 'Traffic metrics per refresh';
-    // const durationPrefix = this.props.replayActive ? " " : undefined;
 
     return (
       <span>

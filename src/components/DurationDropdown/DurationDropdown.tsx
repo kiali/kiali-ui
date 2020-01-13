@@ -11,7 +11,6 @@ import { UserSettingsActions } from '../../actions/UserSettingsActions';
 import { connect } from 'react-redux';
 import { HistoryManager, URLParam } from '../../app/History';
 import history from '../../app/History';
-import _ from 'lodash';
 
 type ReduxProps = {
   duration: DurationInSeconds;
