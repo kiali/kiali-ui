@@ -11,7 +11,7 @@ import ToolbarDropdown from 'components/ToolbarDropdown/ToolbarDropdown';
 import { UserSettingsActions } from 'actions/UserSettingsActions';
 import { KialiAppAction } from 'actions/KialiAppAction';
 import Slider from 'components/IstioWizards/Slider/Slider';
-import { KialiIcon } from 'config/KialiIcon';
+import { KialiIcon, defaultIconStyle } from 'config/KialiIcon';
 import { style } from 'typestyle';
 import { toString } from './Utils';
 import { serverConfig } from 'config';
@@ -32,6 +32,7 @@ type ReplayProps = ReduxProps & {
 };
 
 type ReplayState = {
+  isCustomStartTime: boolean;
   isReplaying: boolean;
   refresherRef?: number;
   replayFrame: number;
@@ -71,22 +72,13 @@ const defaultReplayInterval: IntervalInMilliseconds = 300000; // 5 minutes
 const defaultReplaySpeed: IntervalInMilliseconds = 3000; // medium
 const frameInterval: IntervalInMilliseconds = 10000; // number of ms clock advances per frame
 
-const replayStyle = style({
-  display: 'flex',
-  width: '100%',
-  padding: '5px 5px 0 10px',
-  marginTop: '-5px'
+const customToggleStyle = style({
+  height: '36px'
 });
 
 const frameStyle = style({
   display: 'flex',
   margin: '5px 0 0 15px'
-});
-
-const startTimeStyle = style({
-  height: '36px',
-  paddingLeft: '.75em',
-  width: '10em'
 });
 
 const pauseStyle = style({
@@ -97,6 +89,13 @@ const pauseStyle = style({
 
 const pauseIconStyle = style({
   fontSize: '1.5em'
+});
+
+const replayStyle = style({
+  display: 'flex',
+  width: '100%',
+  padding: '5px 5px 0 10px',
+  marginTop: '-5px'
 });
 
 const sliderStyle = style({
@@ -113,6 +112,12 @@ const speedStyle = style({
 
 const speedFocusStyle = style({
   backgroundColor: ReplayColor
+});
+
+const startTimeStyle = style({
+  height: '36px',
+  paddingLeft: '.75em',
+  width: '10em'
 });
 
 export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
@@ -135,6 +140,7 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
   constructor(props: ReplayProps) {
     super(props);
     this.state = {
+      isCustomStartTime: false,
       isReplaying: false,
       refresherRef: undefined,
       replayFrame: Replay.queryTimeToFrame(props),
@@ -145,9 +151,7 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
 
   componentDidMount() {
     if (!!!this.props.replayWindow.startTime) {
-      // force times to be on the minute for simpler display
-      const startTime = new Date().setSeconds(0, 0) - defaultReplayInterval;
-      this.setReplayWindow({ interval: defaultReplayInterval, startTime: startTime });
+      this.initReplay();
     }
   }
 
@@ -183,26 +187,28 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
 
     return (
       <div className={`${replayStyle} ${replayBorder}`}>
-        <Tooltip content="Replay start time">
-          <DatePicker
-            className={startTimeStyle}
-            dateFormat="MMM dd, hh:mm aa"
-            injectTimes={[maxTime]}
-            maxDate={maxTime}
-            maxTime={maxTime}
-            minDate={minTime}
-            minTime={minTime}
-            onCalendarClose={() => this.onPickerClose()}
-            onCalendarOpen={() => this.onPickerOpen()}
-            onChange={date => this.onPickerChange(date)}
-            popperPlacement="auto-end"
-            selected={selectedTime}
-            showTimeSelect={true}
-            timeCaption="time"
-            timeFormat="hh:mm aa"
-            timeIntervals={5}
-          />
-        </Tooltip>
+        {this.state.isCustomStartTime && (
+          <Tooltip content="Replay start time">
+            <DatePicker
+              className={startTimeStyle}
+              dateFormat="MMM dd, hh:mm aa"
+              injectTimes={[maxTime]}
+              maxDate={maxTime}
+              maxTime={maxTime}
+              minDate={minTime}
+              minTime={minTime}
+              onCalendarClose={() => this.onPickerClose()}
+              onCalendarOpen={() => this.onPickerOpen()}
+              onChange={date => this.onPickerChange(date)}
+              popperPlacement="auto-end"
+              selected={selectedTime}
+              showTimeSelect={true}
+              timeCaption="time"
+              timeFormat="hh:mm aa"
+              timeIntervals={5}
+            />
+          </Tooltip>
+        )}
         <ToolbarDropdown
           id={'replay-interval'}
           handleSelect={key => this.setReplayInterval(Number(key))}
@@ -210,7 +216,17 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
           label={replayIntervals[this.props.replayWindow.interval]}
           options={replayIntervals}
           tooltip="Replay length"
+          nameDropdown={this.state.isCustomStartTime ? undefined : 'Last'}
         />
+        <Tooltip
+          key="toggle_advanced_setter"
+          position="top"
+          content={`Set ${this.state.isCustomStartTime ? 'simple' : 'custom'} start time`}
+        >
+          <Button className={customToggleStyle} variant={ButtonVariant.control} onClick={this.toggleCustomStartTime}>
+            <KialiIcon.UserClock className={defaultIconStyle} />
+          </Button>
+        </Tooltip>
         <span className={sliderStyle}>
           <Slider
             key={endString} // on new endTime force new slider because of bug updating tick labels
@@ -231,13 +247,13 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
           />
           <span className={frameStyle}>
             {this.state.isReplaying ? (
-              <Tooltip key="replay-pause" position="top" content="Pause">
+              <Tooltip key="replay-pause" position="top" content="Pause" entryDelay={1000}>
                 <Button className={pauseStyle} variant={ButtonVariant.link} onClick={this.pause}>
                   <KialiIcon.PauseCircle className={pauseIconStyle} />
                 </Button>
               </Tooltip>
             ) : (
-              <Tooltip key="replay-play" position="top" content="Play">
+              <Tooltip key="replay-play" position="top" content="Play" entryDelay={1000}>
                 <Button className={pauseStyle} variant={ButtonVariant.link} onClick={this.play}>
                   <KialiIcon.PlayCircle className={pauseIconStyle} />
                 </Button>
@@ -266,8 +282,9 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
     return elapsed;
   };
 
-  private setReplayStartTime = (startTime: TimeInMilliseconds) => {
-    this.setReplayWindow({ interval: this.props.replayWindow.interval, startTime: startTime });
+  private toggleCustomStartTime = () => {
+    this.setState({ isCustomStartTime: !this.state.isCustomStartTime });
+    this.initReplay();
   };
 
   private onPickerChange = (date: Date) => {
@@ -284,8 +301,26 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
     this.pickerTime = this.props.replayWindow.startTime;
   };
 
+  private initReplay = () => {
+    const interval: IntervalInMilliseconds = !!this.props.replayWindow.interval
+      ? this.props.replayWindow.interval
+      : defaultReplayInterval;
+    // For simplicity/readability, round custom start times to the minute. Use seconds granularity for "Last <interval>"
+    const startTime: TimeInMilliseconds = this.state.isCustomStartTime
+      ? new Date().setSeconds(0, 0) - interval
+      : new Date().getTime() - interval;
+    this.setReplayWindow({ interval: interval, startTime: startTime });
+  };
+
+  private setReplayStartTime = (startTime: TimeInMilliseconds) => {
+    this.setReplayWindow({ interval: this.props.replayWindow.interval, startTime: startTime });
+  };
+
   private setReplayInterval = (interval: IntervalInMilliseconds) => {
-    this.setReplayWindow({ interval: interval, startTime: this.props.replayWindow.startTime });
+    const startTime: TimeInMilliseconds = this.state.isCustomStartTime
+      ? this.props.replayWindow.startTime
+      : Date.now() - interval;
+    this.setReplayWindow({ interval: interval, startTime: startTime });
   };
 
   private setReplayWindow = (replayWindow: ReplayWindow) => {
