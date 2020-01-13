@@ -13,8 +13,7 @@ import { KialiAppAction } from 'actions/KialiAppAction';
 import Slider from 'components/IstioWizards/Slider/Slider';
 import { KialiIcon } from 'config/KialiIcon';
 import { style } from 'typestyle';
-import { toString } from './LocalTime';
-import { DurationDropdownContainer } from 'components/DurationDropdown/DurationDropdown';
+import { toString } from './Utils';
 import { serverConfig } from 'config';
 import { PfColors } from 'components/Pf/PfColors';
 
@@ -45,9 +44,15 @@ type ReplaySpeed = {
   text: string;
 };
 
-export const ReplayColor = PfColors.LightBlue200;
+export const ReplayColor = PfColors.LightBlue300;
 
-// key represents replay interval in seconds
+export const replayBorder = style({
+  borderLeftStyle: 'solid',
+  borderColor: ReplayColor,
+  borderWidth: '3px'
+});
+
+// key represents replay interval in milliseconds
 const replayIntervals = {
   60000: '1 minute',
   300000: '5 minutes',
@@ -55,7 +60,7 @@ const replayIntervals = {
   1800000: '30 minutes'
 };
 
-// key represents refresh interval in seconds
+// key represents speed in milliseconds (i.e. how long to wait before refreshing-the-frame (fetching new data)
 const replaySpeeds: ReplaySpeed[] = [
   { speed: 5000, text: 'slow' },
   { speed: 3000, text: 'medium' },
@@ -68,7 +73,9 @@ const frameInterval: IntervalInMilliseconds = 10000; // number of ms clock advan
 
 const replayStyle = style({
   display: 'flex',
-  width: '100%'
+  width: '100%',
+  padding: '5px 5px 0 10px',
+  marginTop: '-5px'
 });
 
 const frameStyle = style({
@@ -79,7 +86,7 @@ const frameStyle = style({
 const startTimeStyle = style({
   height: '36px',
   paddingLeft: '.75em',
-  width: '12em'
+  width: '10em'
 });
 
 const pauseStyle = style({
@@ -90,11 +97,6 @@ const pauseStyle = style({
 
 const pauseIconStyle = style({
   fontSize: '1.5em'
-});
-
-const stopStyle = style({
-  height: '37px',
-  width: '10px'
 });
 
 const sliderStyle = style({
@@ -180,7 +182,7 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
     );
 
     return (
-      <div className={replayStyle}>
+      <div className={`${replayStyle} ${replayBorder}`}>
         <Tooltip content="Replay start time">
           <DatePicker
             className={startTimeStyle}
@@ -209,7 +211,6 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
           options={replayIntervals}
           tooltip="Replay length"
         />
-        <DurationDropdownContainer id={'replay-duration'} tooltip={'Metrics per frame'} prefix=" " />
         <span className={sliderStyle}>
           <Slider
             key={endString} // on new endTime force new slider because of bug updating tick labels
@@ -246,11 +247,6 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
             {replaySpeeds.map(s => this.speedButton(s))}
           </span>
         </span>
-        <Tooltip key="end_replay" position="top" content="Close Replay">
-          <Button className={stopStyle} variant={ButtonVariant.link} onClick={this.stop}>
-            <KialiIcon.Close />
-          </Button>
-        </Tooltip>
       </div>
     );
   }
@@ -267,7 +263,7 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
     const zeroPadSec: string = elapsedSec < 10 ? '0' : '';
     const zeroPadMin: string = elapsedMin < 10 ? '0' : '';
     const elapsed: string = `${zeroPadMin}${elapsedMin}:${zeroPadSec}${elapsedSec}`;
-    return `${elapsed}`;
+    return elapsed;
   };
 
   private setReplayStartTime = (startTime: TimeInMilliseconds) => {
@@ -312,10 +308,6 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
     if (frameQueryTime !== this.props.replayQueryTime) {
       this.props.setReplayQueryTime(frameQueryTime);
     }
-  };
-
-  private stop = () => {
-    this.props.toggleReplayActive();
   };
 
   private setReplayFrame = (frame: number) => {

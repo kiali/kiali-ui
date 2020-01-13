@@ -29,30 +29,40 @@ type TimeRangeProps = ReduxProps & {
 
 export class TimeRange extends React.PureComponent<TimeRangeProps> {
   render() {
+    const durationTooltip = this.props.replayActive ? 'Traffic metrics per frame' : 'Traffic metrics per refresh';
+    // const durationPrefix = this.props.replayActive ? " " : undefined;
+
     return (
       <span>
         {this.props.supportsReplay && !this.props.replayActive && (
-          <Tooltip key={'time-range-advanced'} position={TooltipPosition.left} content="Replay...">
-            <Button variant="link" style={{ paddingLeft: '0px', paddingRight: '6px' }} onClick={this.onToggleReplay}>
+          <Tooltip key={'time_range_replay'} position={TooltipPosition.left} content="Replay...">
+            <Button variant="link" style={{ padding: '1px 6px 0 0' }} onClick={this.onToggleReplay}>
               <KialiIcon.History className={defaultIconStyle} />
             </Button>
           </Tooltip>
         )}
+        <DurationDropdownContainer
+          id={'time_range_duration'}
+          disabled={this.props.disabled}
+          // prefix={durationPrefix}
+          tooltip={durationTooltip}
+        />
         {!(this.props.supportsReplay && this.props.replayActive) && (
-          <>
-            <DurationDropdownContainer
-              id={'time_range_duration'}
-              disabled={this.props.disabled}
-              tooltip={'Duration for metric queries'}
-            />
-            <RefreshContainer
-              id="time_range_refresh"
-              disabled={this.props.disabled}
-              hideLabel={true}
-              handleRefresh={this.props.handleRefresh}
-              manageURL={true}
-            />
-          </>
+          <RefreshContainer
+            id="time_range_refresh"
+            disabled={this.props.disabled}
+            hideLabel={true}
+            handleRefresh={this.props.handleRefresh}
+            manageURL={true}
+          />
+        )}
+        {this.props.supportsReplay && this.props.replayActive && (
+          <Button variant="link" style={{ margin: '1px 0 0 5px' }} onClick={this.onToggleReplay}>
+            <span>
+              <KialiIcon.Close className={defaultIconStyle} />
+              {`  Close Replay`}
+            </span>
+          </Button>
         )}
       </span>
     );

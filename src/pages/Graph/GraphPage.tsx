@@ -44,8 +44,8 @@ import { isKioskMode, getFocusSelector } from 'utils/SearchParamUtils';
 import GraphTour, { GraphTourStops } from './GraphHelpTour';
 import { getErrorString } from 'services/Api';
 import { Chip, Badge } from '@patternfly/react-core';
-import { toRangeString } from 'components/Time/LocalTime';
-import { ReplayColor } from 'components/Time/Replay';
+import { toRangeString } from 'components/Time/Utils';
+import { ReplayColor, replayBorder } from 'components/Time/Replay';
 
 // GraphURLPathProps holds path variable values.  Currenly all path variables are relevant only to a node graph
 type GraphURLPathProps = {
@@ -133,12 +133,6 @@ const graphTimeRangeDivStyle = style({
 
 const whiteBackground = style({
   backgroundColor: PfColors.White
-});
-
-const replayBorder = style({
-  borderStyle: 'dotted',
-  borderColor: ReplayColor,
-  borderWidth: '3px'
 });
 
 const replayBackground = style({

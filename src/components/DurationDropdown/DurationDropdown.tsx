@@ -21,7 +21,6 @@ type ReduxProps = {
 type BasicDurationDropdownProps = ReduxProps & {
   id: string;
   disabled?: boolean;
-  prefix?: string;
   tooltip?: string;
   nameDropdown?: string;
 };
@@ -32,15 +31,6 @@ type DurationDropdownProps = BasicDurationDropdownProps & {
 };
 
 export class DurationDropdown extends React.Component<DurationDropdownProps> {
-  static defaultPrefix = 'Last';
-  private prefixedDurations: Durations;
-
-  constructor(props) {
-    super(props);
-    const prefix = !!this.props.prefix ? this.props.prefix : DurationDropdown.defaultPrefix;
-    this.prefixedDurations = _.mapValues(this.props.durations, val => `${prefix} ${val}`);
-  }
-
   render() {
     return (
       <ToolbarDropdown
@@ -48,8 +38,8 @@ export class DurationDropdown extends React.Component<DurationDropdownProps> {
         disabled={this.props.disabled}
         handleSelect={key => this.props.setDuration(Number(key))}
         value={String(this.props.duration)}
-        label={this.prefixedDurations[this.props.duration]}
-        options={this.prefixedDurations}
+        label={serverConfig.durations[this.props.duration]}
+        options={serverConfig.durations}
         tooltip={this.props.tooltip}
         nameDropdown={this.props.nameDropdown}
       />
