@@ -72,8 +72,12 @@ const defaultReplayInterval: IntervalInMilliseconds = 300000; // 5 minutes
 const defaultReplaySpeed: IntervalInMilliseconds = 3000; // medium
 const frameInterval: IntervalInMilliseconds = 10000; // number of ms clock advances per frame
 
-const customToggleStyle = style({
+const isCustomStyle = style({
   height: '36px'
+});
+
+const isCustomFocusStyle = style({
+  color: ReplayColor
 });
 
 const frameStyle = style({
@@ -223,8 +227,10 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
           position="top"
           content={`Set ${this.state.isCustomStartTime ? 'simple' : 'custom'} start time`}
         >
-          <Button className={customToggleStyle} variant={ButtonVariant.control} onClick={this.toggleCustomStartTime}>
-            <KialiIcon.UserClock className={defaultIconStyle} />
+          <Button className={isCustomStyle} variant={ButtonVariant.control} onClick={this.toggleCustomStartTime}>
+            <KialiIcon.UserClock
+              className={this.state.isCustomStartTime ? `${defaultIconStyle} ${isCustomFocusStyle}` : defaultIconStyle}
+            />
           </Button>
         </Tooltip>
         <span className={sliderStyle}>
