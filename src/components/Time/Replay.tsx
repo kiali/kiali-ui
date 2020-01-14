@@ -166,6 +166,12 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
     if (refreshChange) {
       this.updateRefresher();
     }
+
+    let isCustomChange = this.state.isCustomStartTime !== prevState.isCustomStartTime;
+
+    if (isCustomChange) {
+      this.initReplay();
+    }
   }
 
   componentWillUnmount() {
@@ -223,7 +229,7 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
           nameDropdown={this.state.isCustomStartTime ? undefined : 'Last'}
         />
         <Tooltip
-          key="toggle_advanced_setter"
+          key="toggle_is_custom"
           position="top"
           content={`Set ${this.state.isCustomStartTime ? 'simple' : 'custom'} start time`}
         >
@@ -290,7 +296,6 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
 
   private toggleCustomStartTime = () => {
     this.setState({ isCustomStartTime: !this.state.isCustomStartTime });
-    this.initReplay();
   };
 
   private onPickerChange = (date: Date) => {
