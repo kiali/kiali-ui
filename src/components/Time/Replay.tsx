@@ -391,6 +391,7 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
     const className = isFocus ? `${speedStyle} ${speedFocusStyle}` : `${speedStyle}`;
     return (
       <Button
+        key={`speed-${replaySpeed.text}`}
         className={className}
         variant={ButtonVariant.plain}
         isFocus={isFocus}
