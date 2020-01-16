@@ -31,13 +31,14 @@ type ReplayProps = ReduxProps & {
   id: string;
 };
 
+type ReplayStatus = 'init' | 'playing' | 'paused' | 'done';
 type ReplayState = {
   isCustomStartTime: boolean;
   refresherRef?: number;
   replayFrame: number;
   replayFrameCount: number;
   replaySpeed: IntervalInMilliseconds;
-  status: 'done' | 'playing' | 'paused';
+  status: ReplayStatus;
 };
 
 type ReplaySpeed = {
@@ -72,15 +73,14 @@ const defaultReplayInterval: IntervalInMilliseconds = 300000; // 5 minutes
 const defaultReplaySpeed: IntervalInMilliseconds = 3000; // medium
 const frameInterval: IntervalInMilliseconds = 10000; // number of ms clock advances per frame
 
-const controlsStyle = style({
+const controlStyle = style({
   display: 'flex',
   margin: '5px 0 0 15px'
 });
 
 const controlButtonStyle = style({
-  margin: '-5px 20px 0 33%',
-  height: '37px',
-  width: '10px'
+  margin: '-5px -5px 0 33%',
+  height: '37px'
 });
 
 const controlIconStyle = style({
@@ -88,7 +88,7 @@ const controlIconStyle = style({
 });
 
 const frameStyle = style({
-  margin: '1px 20px 0 0'
+  margin: '2px 20px 0 0'
 });
 
 const isCustomStyle = style({
@@ -160,7 +160,7 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
       replayFrame: Replay.queryTimeToFrame(props),
       replayFrameCount: Replay.getFrameCount(props.replayWindow.interval),
       replaySpeed: defaultReplaySpeed,
-      status: 'paused'
+      status: 'init'
     };
   }
 
@@ -184,9 +184,11 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
       this.updateRefresher();
     }
 
-    const frameQueryTime = Replay.frameToQueryTime(this.state.replayFrame, this.props);
-    if (frameQueryTime !== this.props.replayQueryTime) {
-      this.props.setReplayQueryTime(frameQueryTime);
+    if (this.state.status !== 'init') {
+      const frameQueryTime = Replay.frameToQueryTime(this.state.replayFrame, this.props);
+      if (frameQueryTime !== this.props.replayQueryTime) {
+        this.props.setReplayQueryTime(frameQueryTime);
+      }
     }
   }
 
@@ -277,7 +279,7 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
               showLock={false}
             />
           </div>
-          <span className={controlsStyle}>
+          <span className={controlStyle}>
             {this.state.status === 'playing' ? (
               <Tooltip key="replay-pause" position="top" content="Pause" entryDelay={1000}>
                 <Button className={controlButtonStyle} variant={ButtonVariant.link} onClick={this.pause}>
@@ -288,7 +290,7 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
               <Tooltip
                 key="replay-play"
                 position="top"
-                content={this.state.status === 'paused' ? 'Play' : 'Play again'}
+                content={this.state.status === 'done' ? 'Play again' : 'Play'}
                 entryDelay={1000}
               >
                 <Button className={controlButtonStyle} variant={ButtonVariant.link} onClick={this.play}>
@@ -347,7 +349,7 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
       ? new Date().setSeconds(0, 0) - interval
       : new Date().getTime() - interval;
 
-    this.setState({ status: 'paused' });
+    this.setState({ status: 'init' });
     this.setReplayWindow({ interval: interval, startTime: startTime });
   };
 
@@ -387,8 +389,9 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
 
   private setReplayFrame = (frame: number) => {
     if (frame !== this.state.replayFrame) {
-      this.setState({ replayFrame: frame });
-      this.props.setReplayQueryTime(Replay.frameToQueryTime(frame, this.props));
+      let status: ReplayStatus = this.state.status === 'init' ? 'init' : 'paused';
+      status = frame === this.state.replayFrameCount ? 'done' : status;
+      this.setState({ replayFrame: frame, status: status });
     }
   };
 
