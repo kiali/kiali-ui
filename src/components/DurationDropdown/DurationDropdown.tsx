@@ -1,5 +1,5 @@
 import ToolbarDropdown from '../ToolbarDropdown/ToolbarDropdown';
-import { Durations, serverConfig } from '../../config/ServerConfig';
+import { serverConfig } from '../../config/ServerConfig';
 import * as React from 'react';
 import { DurationInSeconds } from '../../types/Common';
 import { KialiAppState } from '../../store/Store';
@@ -17,16 +17,11 @@ type ReduxProps = {
   setDuration: (duration: DurationInSeconds) => void;
 };
 
-type BasicDurationDropdownProps = ReduxProps & {
+type DurationDropdownProps = ReduxProps & {
   id: string;
   disabled?: boolean;
   tooltip?: string;
   nameDropdown?: string;
-};
-
-// These are taken from the serverConfig
-type DurationDropdownProps = BasicDurationDropdownProps & {
-  durations: Durations;
 };
 
 export class DurationDropdown extends React.Component<DurationDropdownProps> {
@@ -47,14 +42,14 @@ export class DurationDropdown extends React.Component<DurationDropdownProps> {
 }
 
 export const withDurations = DurationDropdownComponent => {
-  return (props: BasicDurationDropdownProps) => {
+  return (props: DurationDropdownProps) => {
     return <DurationDropdownComponent durations={serverConfig.durations} {...props} />;
   };
 };
 
 export const withURLAwareness = DurationDropdownComponent => {
-  return class extends React.Component<BasicDurationDropdownProps> {
-    constructor(props: BasicDurationDropdownProps) {
+  return class extends React.Component<DurationDropdownProps> {
+    constructor(props: DurationDropdownProps) {
       super(props);
       const urlParams = new URLSearchParams(history.location.search);
       const urlDuration = HistoryManager.getDuration(urlParams);
