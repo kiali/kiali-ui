@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Card, CardBody, Grid, GridItem, Title } from '@patternfly/react-core';
+import { Card, CardBody, Grid, GridItem, Title, Tooltip } from '@patternfly/react-core';
 import { Link } from 'react-router-dom';
 import { Span } from '../../../types/JaegerInfo';
 import history from '../../../app/History';
@@ -8,7 +8,6 @@ import { KialiAppState } from '../../../store/Store';
 import { connect } from 'react-redux';
 import { serverConfig } from '../../../config';
 import { SpanTable } from './SpanTable';
-import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 
 interface SpanDetailProps {
   spans: Span[];
@@ -45,22 +44,26 @@ export class SpanDetailC extends React.Component<SpanDetailProps, SpanDetailStat
                       <Title headingLevel="h2" size="3xl">
                         {' '}
                         Service{' '}
-                        <Link
-                          to={this.goService(this.props.spans[0].process.serviceName)}
-                          onClick={() => history.push(this.goService())}
-                        >
-                          {this.props.spans[0].process.serviceName}
-                        </Link>
+                        <Tooltip content={<>Go to the service {this.props.spans[0].process.serviceName}</>}>
+                          <Link
+                            to={this.goService(this.props.spans[0].process.serviceName)}
+                            onClick={() => history.push(this.goService())}
+                          >
+                            {this.props.spans[0].process.serviceName}
+                          </Link>
+                        </Tooltip>
                       </Title>
                     </GridItem>
                     <GridItem span={4} />
                     <GridItem span={2}>
-                      <Link
-                        to={this.goService() + '?tab=traces'}
-                        onClick={() => history.push(this.goService() + '?tab=traces')}
-                      >
-                        View traces <ExternalLinkAltIcon />
-                      </Link>
+                      <Tooltip content={<>View traces of service {this.props.spans[0].process.serviceName}</>}>
+                        <Link
+                          to={this.goService() + '?tab=traces'}
+                          onClick={() => history.push(this.goService() + '?tab=traces')}
+                        >
+                          View traces
+                        </Link>
+                      </Tooltip>
                     </GridItem>
                   </CardBody>
                 </Card>

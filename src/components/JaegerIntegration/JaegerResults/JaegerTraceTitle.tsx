@@ -34,13 +34,15 @@ export class JaegerTraceTitle extends React.Component<JaegerScatterProps> {
             </span>
           </Tooltip>
           {this.props.onClickLink !== '' && (
-            <a
-              href={this.props.onClickLink}
-              style={{ right: '130px', fontSize: '16px', position: 'absolute' }}
-              target={'_blank'}
-            >
-              View Trace in Tracing <ExternalLinkAltIcon />
-            </a>
+            <Tooltip content={<>View Trace in a new tab in the tracing tool</>}>
+              <a
+                href={this.props.onClickLink}
+                style={{ right: '130px', fontSize: '16px', position: 'absolute' }}
+                target={'_blank'}
+              >
+                View Trace in Tracing <ExternalLinkAltIcon />
+              </a>
+            </Tooltip>
           )}
           {duration != null && <span style={{ float: 'right', position: 'relative' }}>{formatDuration(duration)}</span>}
         </Text>

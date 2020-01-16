@@ -70,25 +70,31 @@ export class SpanTableC extends React.Component<SpanDetailProps, SpanDetailState
     const srv = sp.process.serviceName.split('.')[0];
     const regex = new RegExp(`${srv}-v[0-9]*`);
     const result = regex.exec(node);
+    let link = <></>;
+    let tooltipText = '';
     if (result) {
-      return (
+      tooltipText = `View logs of workload ${result[0]}`;
+      link = (
         <Link
           to={this.goLogsWorkloads(result[0], sp.operationName)}
           onClick={() => history.push(this.goLogsWorkloads(result[0], sp.operationName))}
         >
-          View logs of {result[0]}
+          View logs
         </Link>
       );
     } else {
       if (srv === 'istio-ingressgateway') {
-        return (
+        tooltipText = `View logs of workload ${srv}`;
+        link = (
           <Link to={this.goLogsWorkloads(srv, '')} onClick={() => history.push(this.goLogsWorkloads(srv, ''))}>
-            Logs of {srv}
+            View logs
           </Link>
         );
       }
-      return <> We can't find logs</>;
+      link = <> We can't find logs</>;
     }
+
+    return tooltipText !== '' ? <Tooltip content={<>{tooltipText}</>}>{link}</Tooltip> : link;
   };
 
   getRows = () => {
@@ -109,9 +115,11 @@ export class SpanTableC extends React.Component<SpanDetailProps, SpanDetailState
         cells: [
           {
             title: linkToService ? (
-              <Link to={linkToService} onClick={() => history.push(linkToService)}>
-                {serviceDefinition}
-              </Link>
+              <Tooltip content={<>Go to Service {span.operationName.split('.')[0]}</>}>
+                <Link to={linkToService} onClick={() => history.push(linkToService)}>
+                  {serviceDefinition}
+                </Link>
+              </Tooltip>
             ) : (
               serviceDefinition
             )
@@ -132,11 +140,13 @@ export class SpanTableC extends React.Component<SpanDetailProps, SpanDetailState
           { title: <>{formatDuration(span.duration)}</> },
           {
             title: linkToMetrics ? (
-              <Link to={linkToMetrics} onClick={() => history.push(linkToMetrics)}>
-                View metrics
-              </Link>
+              <Tooltip content={<>View metrics of {span.operationName.split('.')[0]}</>}>
+                <Link to={linkToMetrics} onClick={() => history.push(linkToMetrics)}>
+                  View metrics
+                </Link>
+              </Tooltip>
             ) : (
-              'View Metrics'
+              <></>
             )
           },
           { title: this.getNodeLog(span) }
