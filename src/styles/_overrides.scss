@@ -369,7 +369,8 @@ html.kiosk {
 }
 
 /*
-  Datepicker overrides for graph replay
+  Datepicker overrides for graph replay and other uses
+  - note: global .tooltip setting but I think it should be OK
 */
 // use PF fonts and fond-size
 .react-datepicker {
