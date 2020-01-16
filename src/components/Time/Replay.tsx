@@ -72,8 +72,13 @@ const defaultReplayInterval: IntervalInMilliseconds = 300000; // 5 minutes
 const defaultReplaySpeed: IntervalInMilliseconds = 3000; // medium
 const frameInterval: IntervalInMilliseconds = 10000; // number of ms clock advances per frame
 
-const controlStyle = style({
-  margin: '-5px 20px 0 30%',
+const controlsStyle = style({
+  display: 'flex',
+  margin: '5px 0 0 15px'
+});
+
+const controlButtonStyle = style({
+  margin: '-5px 20px 0 33%',
   height: '37px',
   width: '10px'
 });
@@ -82,17 +87,16 @@ const controlIconStyle = style({
   fontSize: '1.5em'
 });
 
+const frameStyle = style({
+  margin: '1px 20px 0 0'
+});
+
 const isCustomStyle = style({
   height: '36px'
 });
 
 const isCustomFocusStyle = style({
   color: ReplayColor
-});
-
-const frameStyle = style({
-  display: 'flex',
-  margin: '5px 0 0 15px'
 });
 
 const replayStyle = style({
@@ -109,19 +113,26 @@ const sliderStyle = style({
 
 const speedStyle = style({
   height: '1.5em',
-  width: '4em',
-  margin: '1px 0 0 0',
+  margin: '1px 5px 0 5px',
   padding: '0 2px 2px 2px'
 });
 
 const speedFocusStyle = style({
-  backgroundColor: ReplayColor
+  color: ReplayColor,
+  fontWeight: 'bolder'
 });
 
 const startTimeStyle = style({
   height: '36px',
   paddingLeft: '.75em',
   width: '10em'
+});
+
+const vrStyle = style({
+  border: '1px inset',
+  height: '20px',
+  marginTop: '4px',
+  width: '1px'
 });
 
 export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
@@ -218,7 +229,7 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
               popperPlacement="auto-end"
               selected={selectedTime}
               showTimeSelect={true}
-              timeCaption="time"
+              timeCaption="Time"
               timeFormat="hh:mm aa"
               timeIntervals={5}
             />
@@ -266,10 +277,10 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
               showLock={false}
             />
           </div>
-          <span className={frameStyle}>
+          <span className={controlsStyle}>
             {this.state.status === 'playing' ? (
               <Tooltip key="replay-pause" position="top" content="Pause" entryDelay={1000}>
-                <Button className={controlStyle} variant={ButtonVariant.link} onClick={this.pause}>
+                <Button className={controlButtonStyle} variant={ButtonVariant.link} onClick={this.pause}>
                   <KialiIcon.PauseCircle className={controlIconStyle} />
                 </Button>
               </Tooltip>
@@ -280,13 +291,13 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
                 content={this.state.status === 'paused' ? 'Play' : 'Play again'}
                 entryDelay={1000}
               >
-                <Button className={controlStyle} variant={ButtonVariant.link} onClick={this.play}>
+                <Button className={controlButtonStyle} variant={ButtonVariant.link} onClick={this.play}>
                   <KialiIcon.PlayCircle className={controlIconStyle} />
                 </Button>
               </Tooltip>
             )}
-            <Text style={{ margin: '1px 15px 0 0' }}>{this.formatFrame(this.state.replayFrame)}</Text>
-            {replaySpeeds.map(s => this.speedButton(s))}
+            <Text className={frameStyle}>{this.formatFrame(this.state.replayFrame)}</Text>
+            {replaySpeeds.map((s, i, a) => this.speedButton(s, i === a.length - 1))}
           </span>
         </span>
       </div>
@@ -404,19 +415,21 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
     }
   };
 
-  private speedButton = (replaySpeed: ReplaySpeed): React.ReactFragment => {
+  private speedButton = (replaySpeed: ReplaySpeed, isLast: boolean): React.ReactFragment => {
     const isFocus = this.state.replaySpeed === replaySpeed.speed;
-    const className = isFocus ? `${speedStyle} ${speedFocusStyle}` : `${speedStyle}`;
     return (
-      <Button
-        key={`speed-${replaySpeed.text}`}
-        className={className}
-        variant={ButtonVariant.plain}
-        isFocus={isFocus}
-        onClick={() => this.setReplaySpeed(replaySpeed.speed)}
-      >
-        {replaySpeed.text}
-      </Button>
+      <>
+        <Button
+          key={`speed-${replaySpeed.text}`}
+          className={speedStyle}
+          variant={ButtonVariant.plain}
+          isFocus={isFocus}
+          onClick={() => this.setReplaySpeed(replaySpeed.speed)}
+        >
+          <Text className={isFocus ? speedFocusStyle : undefined}>{replaySpeed.text}</Text>
+        </Button>
+        {!isLast && <div className={vrStyle} />}
+      </>
     );
   };
 }
