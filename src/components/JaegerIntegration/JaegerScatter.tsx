@@ -43,7 +43,10 @@ export class JaegerScatter extends React.Component<JaegerScatterProps> {
       let traceItem = {
         x: new Date(trace.startTime / 1000),
         y: Number(trace.duration / ONE_MILLISECOND),
-        name: `${trace.traceName} (${trace.traceID.slice(0, 7)})`,
+        name: `${trace.traceName !== '' ? trace.traceName : '<trace-without-root-span>'} (${trace.traceID.slice(
+          0,
+          7
+        )})`,
         color: PfColors.Blue200,
         unit: 'seconds',
         id: trace.traceID,

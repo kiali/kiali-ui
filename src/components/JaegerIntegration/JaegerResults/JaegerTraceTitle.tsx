@@ -27,7 +27,7 @@ export class JaegerTraceTitle extends React.Component<JaegerScatterProps> {
       <CardHeader style={{ backgroundColor: PfColors.Black200, height: '50px' }}>
         <span className={durationBar} style={{ width: `${durationPercent || DEFAULT_DURATION_PERCENT}%` }} />
         <Text component={TextVariants.h3} style={{ margin: 0, position: 'relative' }}>
-          {traceName}
+          {traceName === '' ? '<trace-without-root-span>' : traceName}
           <Tooltip content={<>{traceID}</>}>
             <span style={{ color: PfColors.Black600, paddingLeft: '10px', fontSize: '14px' }}>
               {traceID.slice(0, 7)}
