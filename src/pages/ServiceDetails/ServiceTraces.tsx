@@ -92,7 +92,9 @@ class ServiceTracesC extends React.Component<ServiceTracesProps, ServiceTracesSt
   componentDidUpdate(prevProps: ServiceTracesProps) {
     if (
       this.props.traces.length !== prevProps.traces.length ||
-      prevProps.traces[0].startTime !== this.props.traces[0].startTime
+      (prevProps.traces.length > 0 &&
+        this.props.traces.length > 0 &&
+        prevProps.traces[0].startTime !== this.props.traces[0].startTime)
     ) {
       this.getIntervalTraceDurations();
       const interval =
