@@ -70,31 +70,30 @@ export class SpanTableC extends React.Component<SpanDetailProps, SpanDetailState
     const srv = sp.process.serviceName.split('.')[0];
     const regex = new RegExp(`${srv}-v[0-9]*`);
     const result = regex.exec(node);
-    let link = <></>;
-    let tooltipText = '';
     if (result) {
-      tooltipText = `View logs of workload ${result[0]}`;
-      link = (
-        <Link
-          to={this.goLogsWorkloads(result[0], sp.operationName)}
-          onClick={() => history.push(this.goLogsWorkloads(result[0], sp.operationName))}
-        >
-          View logs
-        </Link>
-      );
-    } else {
-      if (srv === 'istio-ingressgateway') {
-        tooltipText = `View logs of workload ${srv}`;
-        link = (
-          <Link to={this.goLogsWorkloads(srv, '')} onClick={() => history.push(this.goLogsWorkloads(srv, ''))}>
+      return (
+        <Tooltip content={<>View logs of workload {result[0]}</>}>
+          <Link
+            to={this.goLogsWorkloads(result[0], sp.operationName)}
+            onClick={() => history.push(this.goLogsWorkloads(result[0], sp.operationName))}
+          >
             View logs
           </Link>
-        );
+        </Tooltip>
+      )
+    } else {
+      if (srv === 'istio-ingressgateway') {
+        return (
+          <Tooltip content={<>View logs of workload istio-ingressgateway</>}>
+            <Link to={this.goLogsWorkloads(srv, '')} onClick={() => history.push(this.goLogsWorkloads(srv, ''))}>
+              View logs
+            </Link>
+          </Tooltip>
+        )
+      }else {
+        return <> We can't find logs</>;
       }
-      link = <> We can't find logs</>;
     }
-
-    return tooltipText !== '' ? <Tooltip content={<>{tooltipText}</>}>{link}</Tooltip> : link;
   };
 
   getRows = () => {
