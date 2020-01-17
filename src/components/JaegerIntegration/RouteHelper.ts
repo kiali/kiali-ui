@@ -7,25 +7,11 @@ export interface JaegerSearchOptions {
   limit: string;
   start?: string;
   end?: string;
-  minDuration?: string;
-  maxDuration?: string;
   lookback?: string;
   tags?: string;
 }
 
 export const isErrorTag = ({ key, value }: KeyValuePair) => key === 'error' && (value === true || value === 'true');
-
-export const logfmtTagsConv = (tags: string) => {
-  if (!tags) {
-    return '';
-  }
-  let resultTags = '';
-  const jsonTags = JSON.parse(tags);
-  Object.keys(jsonTags).forEach(key => {
-    resultTags += `${key}=${String(jsonTags[key])} `;
-  });
-  return resultTags;
-};
 
 export const convTagsLogfmt = (tags: string) => {
   if (!tags) {
@@ -46,7 +32,7 @@ export const getQueryJaeger = () => {
     limit: HistoryManager.getParam(URLParam.JAEGER_LIMIT_TRACES) || '20'
   };
 
-  const optionsQuery = [URLParam.JAEGER_MAX_DURATION, URLParam.JAEGER_MIN_DURATION, URLParam.JAEGER_TAGS];
+  const optionsQuery = [URLParam.JAEGER_TAGS];
   optionsQuery.forEach(opt => {
     if (HistoryManager.getParam(opt)) {
       params[opt] = HistoryManager.getParam(opt);

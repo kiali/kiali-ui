@@ -33,16 +33,14 @@ interface ServiceTracesState {
   errorTraces: boolean;
   fixedTime: boolean;
   options: JaegerSearchOptions;
-  maxTraceDuration: number;
-  unitDuration: string;
-  durationsTypes: { [key: string]: string };
-  spanIntervalDuration: { [key: string]: string };
-  selectedSpanDuration: string;
+  traceIntervalDuration: { [key: string]: string };
+  selectedTraceIntervalDuration: string;
   selectedStatusCode: string;
   selectedLimitSpans: string;
+  traces: JaegerTrace[];
 }
 
-const spanDurationUnits: { [key: string]: string } = {
+const traceDurationUnits: { [key: string]: string } = {
   us: 'us',
   ms: 'ms',
   s: 's'
@@ -68,29 +66,25 @@ class ServiceTracesC extends React.Component<ServiceTracesProps, ServiceTracesSt
       tags += ' http.status_code=' + statusCode;
     }
     HistoryManager.setParam(URLParam.JAEGER_TAGS, convTagsLogfmt(tags));
-    const span =
-      HistoryManager.getParam(URLParam.JAEGER_SPAN_INTERVAL_SELECTED) ||
-      sessionStorage.getItem(URLParam.JAEGER_SPAN_INTERVAL_SELECTED) ||
+    const interval =
+      HistoryManager.getParam(URLParam.JAEGER_TRACE_INTERVAL_SELECTED) ||
+      sessionStorage.getItem(URLParam.JAEGER_TRACE_INTERVAL_SELECTED) ||
       'none';
 
     this.state = {
       url: '',
       width: 0,
-      maxTraceDuration: 0,
-      unitDuration: 'us',
       fixedTime: true,
       errorTraces: this.props.errorTags || false,
       options: {
         limit: limit,
-        tags: tags,
-        minDuration: HistoryManager.getParam(URLParam.JAEGER_MIN_DURATION) || '',
-        maxDuration: HistoryManager.getParam(URLParam.JAEGER_MAX_DURATION) || ''
+        tags: tags
       },
-      durationsTypes: { max: '', min: '' },
-      spanIntervalDuration: { none: 'none' },
-      selectedSpanDuration: span,
+      traceIntervalDuration: { none: 'none' },
+      selectedTraceIntervalDuration: interval,
       selectedStatusCode: statusCode,
-      selectedLimitSpans: limit
+      selectedLimitSpans: limit,
+      traces: this.filterTraces(interval)
     };
     this.props.onRefresh();
   }
@@ -100,9 +94,26 @@ class ServiceTracesC extends React.Component<ServiceTracesProps, ServiceTracesSt
       this.props.traces.length !== prevProps.traces.length ||
       prevProps.traces[0].startTime !== this.props.traces[0].startTime
     ) {
-      this.getIntervalSpanDurations();
+      this.getIntervalTraceDurations();
+      const interval =
+        HistoryManager.getParam(URLParam.JAEGER_TRACE_INTERVAL_SELECTED) ||
+        sessionStorage.getItem(URLParam.JAEGER_TRACE_INTERVAL_SELECTED) ||
+        'none';
+      this.setState({ traces: this.filterTraces(interval) });
     }
   }
+
+  filterTraces = (interval: string): JaegerTrace[] => {
+    if (interval === 'none') {
+      return this.props.traces;
+    }
+    const duration = interval.split('-');
+    const index = Object.keys(traceDurationUnits).findIndex(el => el === duration[2]);
+    let min = Number(duration[0]) * Math.pow(1000, index);
+    let max = Number(duration[1]) * Math.pow(1000, index);
+    this.props.traces.filter(trace => trace.duration >= min && trace.duration <= max);
+    return this.props.traces.filter(trace => trace.duration >= min && trace.duration <= max);
+  };
 
   setErrorTraces = () => {
     const errorTraces = !this.state.errorTraces;
@@ -144,10 +155,8 @@ class ServiceTracesC extends React.Component<ServiceTracesProps, ServiceTracesSt
         ? `${this.props.service}.${this.props.namespace}`
         : `${this.props.service}`;
     const variables = [
-      URLParam.JAEGER_MAX_DURATION,
       URLParam.JAEGER_START_TIME,
       URLParam.JAEGER_END_TIME,
-      URLParam.JAEGER_MIN_DURATION,
       URLParam.JAEGER_TAGS,
       URLParam.JAEGER_LIMIT_TRACES
     ];
@@ -179,23 +188,14 @@ class ServiceTracesC extends React.Component<ServiceTracesProps, ServiceTracesSt
     this.props.onRefresh();
   };
 
-  handleSpanDuration = (key: string) => {
-    this.saveValue('JAEGER_SPAN_INTERVAL_SELECTED', key);
-    if (key !== 'none') {
-      let selected = this.state.spanIntervalDuration[key].split(' ');
-      const unit = selected[1];
-      const minMax = selected[0].split('-');
-      const min = minMax[0] + unit;
-      const max = minMax[1] + unit;
-      this.setState({ durationsTypes: { min: min, max: max }, selectedSpanDuration: key });
-      this.onOptionsChange('JAEGER_MIN_DURATION', min);
-      this.onOptionsChange('JAEGER_MAX_DURATION', max);
+  handleIntervalDuration = (key: string) => {
+    if (key === 'none') {
+      this.removeValue('JAEGER_TRACE_INTERVAL_SELECTED');
+      this.setState({ selectedTraceIntervalDuration: key, traces: this.props.traces });
     } else {
-      HistoryManager.deleteParam(URLParam['JAEGER_MAX_DURATION']);
-      HistoryManager.deleteParam(URLParam['JAEGER_MIN_DURATION']);
-      this.setState({ selectedSpanDuration: key });
+      this.saveValue('JAEGER_TRACE_INTERVAL_SELECTED', key);
+      this.setState({ selectedTraceIntervalDuration: key, traces: this.filterTraces(key) });
     }
-    this.props.onRefresh();
   };
 
   handleLimitDuration = (key: string) => {
@@ -204,18 +204,15 @@ class ServiceTracesC extends React.Component<ServiceTracesProps, ServiceTracesSt
     this.props.onRefresh();
   };
 
-  getIntervalSpanDurations = () => {
-    let maxDuration = Math.max.apply(
-      Math,
-      this.props.traces.map(trace => Math.max.apply(Math, trace.spans.map(span => span.duration)))
-    );
+  getIntervalTraceDurations = () => {
+    let maxDuration = Math.max.apply(Math, this.props.traces.map(trace => trace.duration));
     let intervals: { [key: string]: string } = { none: 'none' };
     let i = 0;
-    let unit = spanDurationUnits[Object.keys(spanDurationUnits)[i]];
-    while (maxDuration >= 1000 && Object.keys(spanDurationUnits).length > i) {
+    let unit = traceDurationUnits[Object.keys(traceDurationUnits)[i]];
+    while (maxDuration >= 1000 && Object.keys(traceDurationUnits).length > i) {
       i += 1;
       maxDuration /= 1000;
-      unit = spanDurationUnits[Object.keys(spanDurationUnits)[i]];
+      unit = traceDurationUnits[Object.keys(traceDurationUnits)[i]];
     }
     const divisions = [5, 10, 20];
     i = 0;
@@ -225,10 +222,10 @@ class ServiceTracesC extends React.Component<ServiceTracesProps, ServiceTracesSt
     for (let step = 0; step <= maxDuration; step += divisions[i]) {
       let to = step + divisions[i] <= maxDuration ? step + divisions[i] - 1 : step + divisions[i];
       if (!Number.isNaN(to)) {
-        intervals[step + '-' + to] = `${step}-${to} ${unit}`;
+        intervals[step + '-' + to + '-' + unit] = `${step}-${to} ${unit}`;
       }
     }
-    this.setState({ maxTraceDuration: maxDuration, unitDuration: unit, spanIntervalDuration: intervals });
+    this.setState({ traceIntervalDuration: intervals });
   };
 
   render() {
@@ -242,12 +239,12 @@ class ServiceTracesC extends React.Component<ServiceTracesProps, ServiceTracesSt
                   <Grid>
                     <GridItem span={2}>
                       <Text component={TextVariants.h5} style={{ display: '-webkit-inline-box', marginRight: '10px' }}>
-                        Interval Span
+                        Interval Trace
                       </Text>
                       <ToolbarDropdown
-                        options={this.state.spanIntervalDuration}
-                        value={this.state.spanIntervalDuration[this.state.selectedSpanDuration]}
-                        handleSelect={key => this.handleSpanDuration(key)}
+                        options={this.state.traceIntervalDuration}
+                        value={this.state.traceIntervalDuration[this.state.selectedTraceIntervalDuration]}
+                        handleSelect={key => this.handleIntervalDuration(key)}
                       />
                     </GridItem>
                     <GridItem span={2}>
@@ -316,7 +313,7 @@ class ServiceTracesC extends React.Component<ServiceTracesProps, ServiceTracesSt
                   <GridItem span={12}>
                     <JaegerScatter
                       fixedTime={this.state.fixedTime}
-                      traces={this.props.traces}
+                      traces={this.state.traces}
                       errorFetchTraces={this.props.errorTraces}
                       onClick={traceId => this.props.onRefresh(true, traceId)}
                       errorTraces={true}
@@ -328,7 +325,6 @@ class ServiceTracesC extends React.Component<ServiceTracesProps, ServiceTracesSt
                         trace={this.props.selectedTrace}
                         namespace={this.props.namespace}
                         service={this.props.service}
-                        maxTraceDuration={this.state.maxTraceDuration}
                         jaegerURL={this.props.urlJaeger}
                       />
                     )}

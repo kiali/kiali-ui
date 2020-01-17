@@ -4,28 +4,19 @@ import { JaegerTrace } from '../../../types/JaegerInfo';
 import { PfColors } from '../../Pf/PfColors';
 import { formatDuration } from './transform';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
-import { style } from 'typestyle';
 
 interface JaegerScatterProps {
   trace: JaegerTrace;
   duration?: number;
-  durationPercent?: number;
   onClickLink: string;
 }
 
-const DEFAULT_DURATION_PERCENT = 0;
-
-const durationBar = style({
-  backgroundColor: '#d7e7ea'
-});
-
 export class JaegerTraceTitle extends React.Component<JaegerScatterProps> {
   render() {
-    const { trace, duration, durationPercent } = this.props;
+    const { trace, duration } = this.props;
     const { traceID, traceName } = trace;
     return (
       <CardHeader style={{ backgroundColor: PfColors.Black200, height: '50px' }}>
-        <span className={durationBar} style={{ width: `${durationPercent || DEFAULT_DURATION_PERCENT}%` }} />
         <Text component={TextVariants.h3} style={{ margin: 0, position: 'relative' }}>
           {traceName === '' ? '<trace-without-root-span>' : traceName}
           <Tooltip content={<>{traceID}</>}>

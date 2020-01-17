@@ -7,7 +7,6 @@ import { JaegerTraceTitle } from './JaegerTraceTitle';
 import { SpanDetail } from './SpanDetail';
 import { style } from 'typestyle';
 import moment from 'moment';
-import { formatDuration } from './transform';
 import { formatRelativeDate, cleanServiceSelector } from './transform';
 import { isErrorTag } from '../RouteHelper';
 import { KialiAppState } from '../../../store/Store';
@@ -23,7 +22,6 @@ interface JaegerScatterProps {
   namespaceSelector: boolean;
   namespace: string;
   service: string;
-  maxTraceDuration: number;
   jaegerURL: string;
 }
 
@@ -58,7 +56,7 @@ class JaegerItemC extends React.Component<JaegerScatterProps, JaegerScatterState
   };
 
   render() {
-    const { trace, maxTraceDuration } = this.props;
+    const { trace } = this.props;
     const { duration, services, spans, startTime } = trace;
     const numSpans = spans.length;
     const mDate = moment(startTime / 1000);
@@ -70,7 +68,6 @@ class JaegerItemC extends React.Component<JaegerScatterProps, JaegerScatterState
         <JaegerTraceTitle
           trace={trace}
           duration={duration}
-          durationPercent={(trace.duration / maxTraceDuration) * 100}
           onClickLink={this.props.jaegerURL !== '' ? `${this.props.jaegerURL}/trace/${this.props.trace.traceID}` : ''}
         />
         <CardBody>
@@ -90,7 +87,6 @@ class JaegerItemC extends React.Component<JaegerScatterProps, JaegerScatterState
                 const { name, numberOfSpans: count } = service;
                 const spans = trace.spans.filter(span => span.process.serviceName === name);
                 const errorSpans = spans.filter(span => span.tags.some(isErrorTag)).length;
-                const duration = spans.map(span => span.duration).reduce((prev, next) => prev + next);
                 return (
                   <Button
                     variant={this.getClassButtonSpan(name)}
@@ -98,8 +94,7 @@ class JaegerItemC extends React.Component<JaegerScatterProps, JaegerScatterState
                     className={labelStyle}
                     key={`span_button_${name}`}
                   >
-                    {name} ({count} {errorSpans > 0 && <ExclamationCircleIcon color={PfColors.Red200} />}) (
-                    {formatDuration(duration)})
+                    {name} ({count} {errorSpans > 0 && <ExclamationCircleIcon color={PfColors.Red200} />})
                   </Button>
                 );
               })}
