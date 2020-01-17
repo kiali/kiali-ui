@@ -55,6 +55,7 @@ class ServiceTracesC extends React.Component<ServiceTracesProps, ServiceTracesSt
       HistoryManager.getParam(URLParam.JAEGER_LIMIT_TRACES) ||
       sessionStorage.getItem(URLParam.JAEGER_LIMIT_TRACES) ||
       '20';
+    this.saveValue('JAEGER_LIMIT_TRACES', limit);
     let tags = '';
     const statusCode =
       HistoryManager.getParam(URLParam.JAEGER_STATUS_CODE) ||
