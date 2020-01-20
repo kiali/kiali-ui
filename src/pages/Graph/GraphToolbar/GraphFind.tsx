@@ -25,7 +25,7 @@ import { KialiIcon, defaultIconStyle } from 'config/KialiIcon';
 import { style } from 'typestyle';
 import TourStopContainer from 'components/Tour/TourStop';
 import { GraphTourStops } from 'pages/Graph/GraphHelpTour';
-import { HistoryIcon } from '@patternfly/react-icons';
+import { AngleDownIcon } from '@patternfly/react-icons';
 import { PFAlertColor } from '../../../components/Pf/PfColors';
 
 enum FindOrHideType {
@@ -79,6 +79,12 @@ const inputWidth = {
 const thinGroupStyle = style({
   paddingLeft: '10px',
   paddingRight: '10px'
+});
+
+const historyStyle = style({
+  width: '15px',
+  marginLeft: '-15px',
+  marginRight: '15px'
 });
 
 export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindState> {
@@ -164,24 +170,17 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
               }}
               style={{ ...inputWidth }}
               type="text"
-              autoComplete="on"
               isValid={isFindValid}
               onChange={this.updateFind}
               defaultValue={this.state.findInputValue}
               onKeyPress={this.checkSubmitFind}
               placeholder="Find..."
             />
-            {this.props.findValue && (
-              <Tooltip key="ot_clear_find" position="top" content="Clear Find...">
-                <Button variant={ButtonVariant.control} onClick={this.clearFind}>
-                  <KialiIcon.Close />
-                </Button>
-              </Tooltip>
-            )}
             {this.state.findHistoryItems.length > 0 && (
               <Dropdown
                 onSelect={this.onFindHistorySelect}
                 disabled={!this.state.findHistoryItems.length}
+                className={historyStyle}
                 toggle={
                   <DropdownToggle
                     iconComponent={null}
@@ -189,13 +188,20 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
                     aria-label="Find History"
                     id="find-history-dropdown"
                   >
-                    <HistoryIcon />
+                    <AngleDownIcon />
                   </DropdownToggle>
                 }
                 isOpen={isFindHistoryOpen}
                 isPlain
                 dropdownItems={this.getCommandItemsAsJsx(FindOrHideType.Find)}
               />
+            )}
+            {this.props.findValue && (
+              <Tooltip key="ot_clear_find" position="top" content="Clear Find...">
+                <Button variant={ButtonVariant.control} onClick={this.clearFind}>
+                  <KialiIcon.Close />
+                </Button>
+              </Tooltip>
             )}
             <TextInput
               id="graph_hide"
@@ -212,16 +218,10 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
               onKeyPress={this.checkSubmitHide}
               placeholder="Hide..."
             />
-            {this.props.hideValue && (
-              <Tooltip key="ot_clear_hide" position="top" content="Clear Hide...">
-                <Button variant={ButtonVariant.control} onClick={this.clearHide}>
-                  <KialiIcon.Close />
-                </Button>
-              </Tooltip>
-            )}
             {this.state.hideHistoryItems.length > 0 && (
               <Dropdown
                 onSelect={this.onHideHistorySelect}
+                className={historyStyle}
                 toggle={
                   <DropdownToggle
                     iconComponent={null}
@@ -229,7 +229,7 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
                     aria-label="Hide History"
                     id="hide-history-dropdown"
                   >
-                    <HistoryIcon />
+                    <AngleDownIcon />
                   </DropdownToggle>
                 }
                 isOpen={isHideHistoryOpen}
@@ -237,7 +237,13 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
                 dropdownItems={this.getCommandItemsAsJsx(FindOrHideType.Hide)}
               />
             )}
-
+            {this.props.hideValue && (
+              <Tooltip key="ot_clear_hide" position="top" content="Clear Hide...">
+                <Button variant={ButtonVariant.control} onClick={this.clearHide}>
+                  <KialiIcon.Close />
+                </Button>
+              </Tooltip>
+            )}
             {this.props.showFindHelp ? (
               <GraphHelpFind onClose={this.toggleFindHelp}>
                 <Button variant={ButtonVariant.link} style={{ paddingLeft: '6px' }} onClick={this.toggleFindHelp}>
@@ -288,9 +294,16 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
 
   private addCommandToHistory(findType: FindOrHideType, command: string) {
     const MAX_COMMAND_HISTORY = 5;
+
     const addToHistory = (command: string, commandHistory: string[]): string[] => {
       let newHistory: string[] = commandHistory;
       newHistory.unshift(command);
+      // de-dup:
+      if (newHistory.includes(command)) {
+        newHistory = newHistory.filter((item, index) => {
+          return newHistory.indexOf(item) === index;
+        });
+      }
       if (commandHistory.length > MAX_COMMAND_HISTORY) {
         // remove the last item
         return newHistory.slice(0, newHistory.length - 1);
