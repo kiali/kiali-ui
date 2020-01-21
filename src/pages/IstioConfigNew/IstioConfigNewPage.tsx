@@ -7,7 +7,8 @@ import { ActionGroup, Button, Form, FormGroup, FormSelect, FormSelectOption, Tex
 import { RenderContent } from '../../components/Nav/Page';
 import { style } from 'typestyle';
 import GatewayForm, { GatewayServer } from './GatewayForm';
-import SidecarForm from './SidecarForm';
+import SidecarForm, { EgressHost } from './SidecarForm';
+import { serverConfig } from '../../config';
 
 type Props = {
   activeNamespaces: Namespace[];
@@ -16,7 +17,10 @@ type Props = {
 type State = {
   istioResource: string;
   name: string;
+  // Gateway state
   gatewayServers: GatewayServer[];
+  // Sidecar state
+  egressHosts: EgressHost[];
 };
 
 const formPadding = style({ padding: '30px 20px 30px 20px' });
@@ -35,7 +39,13 @@ class IstioConfigNewPage extends React.Component<Props, State> {
     this.state = {
       istioResource: istioResourceOptions[0].value,
       name: '',
-      gatewayServers: []
+      gatewayServers: [],
+      egressHosts: [
+        // Init with the istio-system/* for sidecar
+        {
+          host: serverConfig.istioNamespace + '/*'
+        }
+      ]
     };
   }
   onIstioResourceChange = (value, _) => {
@@ -135,7 +145,27 @@ class IstioConfigNewPage extends React.Component<Props, State> {
               }}
             />
           )}
-          {this.state.istioResource === SIDECAR && <SidecarForm />}
+          {this.state.istioResource === SIDECAR && (
+            <SidecarForm
+              egressHosts={this.state.egressHosts}
+              onAdd={egressHost => {
+                this.setState(prevState => {
+                  prevState.egressHosts.push(egressHost);
+                  return {
+                    egressHosts: prevState.egressHosts
+                  };
+                });
+              }}
+              onRemove={index => {
+                this.setState(prevState => {
+                  prevState.egressHosts.splice(index, 1);
+                  return {
+                    egressHosts: prevState.egressHosts
+                  };
+                });
+              }}
+            />
+          )}
           <ActionGroup>
             <Button variant="primary" isDisabled={!isFormValid}>
               Create
