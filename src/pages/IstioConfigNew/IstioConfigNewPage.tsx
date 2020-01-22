@@ -14,6 +14,8 @@ import * as API from '../../services/Api';
 import { IstioPermissions } from '../../types/IstioConfigDetails';
 import * as AlertUtils from '../../utils/AlertUtils';
 import history from '../../app/History';
+import { buildGateway, buildSidecar } from '../../components/IstioWizards/IstioWizardActions';
+import { MessageType } from '../../types/MessageCenter';
 
 type Props = {
   activeNamespaces: Namespace[];
@@ -128,7 +130,53 @@ class IstioConfigNewPage extends React.Component<Props, State> {
   };
 
   onIstioResourceCreate = () => {
-    console.log('TODELETE Create the resource selected');
+    console.log('DELETE onIstioResourceCreate ' + this.state.istioResource);
+    switch (this.state.istioResource) {
+      case GATEWAY:
+        this.promises
+          .registerAll(
+            'Create Gateways',
+            this.props.activeNamespaces.map(ns =>
+              API.createIstioConfigDetail(
+                ns.name,
+                'gateways',
+                JSON.stringify(buildGateway(this.state.name, ns.name, this.state.gateway))
+              )
+            )
+          )
+          .then(results => {
+            if (results.length > 0) {
+              AlertUtils.add('Istio Gateway created', 'default', MessageType.SUCCESS);
+            }
+            this.backToList();
+          })
+          .catch(error => {
+            AlertUtils.addError('Could not create Istio Gateway objects.', error);
+          });
+        break;
+      case SIDECAR:
+        this.promises
+          .registerAll(
+            'Create Sidecars',
+            this.props.activeNamespaces.map(ns =>
+              API.createIstioConfigDetail(
+                ns.name,
+                'sidecars',
+                JSON.stringify(buildSidecar(this.state.name, ns.name, this.state.sidecar))
+              )
+            )
+          )
+          .then(results => {
+            if (results.length > 0) {
+              AlertUtils.add('Istio Sidecar created', 'default', MessageType.SUCCESS);
+            }
+            this.backToList();
+          })
+          .catch(error => {
+            AlertUtils.addError('Could not create Istio Sidecar objects.', error);
+          });
+        break;
+    }
   };
 
   backToList = () => {
@@ -277,7 +325,7 @@ class IstioConfigNewPage extends React.Component<Props, State> {
             />
           )}
           <ActionGroup>
-            <Button variant="primary" isDisabled={!isFormValid}>
+            <Button variant="primary" isDisabled={!isFormValid} onClick={() => this.onIstioResourceCreate()}>
               Create
             </Button>
             <Button variant="secondary" onClick={() => this.backToList()}>
