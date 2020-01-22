@@ -47,6 +47,11 @@ export type GatewayServer = {
   portProtocol: string;
 };
 
+// Gateway and Sidecar states are consolidated in the parent page
+export type GatewayState = {
+  gatewayServers: GatewayServer[];
+};
+
 type State = {
   addGatewayServer: GatewayServer;
 };

@@ -161,7 +161,7 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
   }
 
   componentDidMount() {
-    this.doRefresh();
+    this.promises.cancelAll();
   }
 
   componentDidUpdate(prevProps: ServiceDetailsProps, _prevState: ServiceDetailsState) {

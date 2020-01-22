@@ -26,8 +26,23 @@ export type EgressHost = {
 
 type Props = {
   egressHosts: EgressHost[];
-  onAdd: (host: EgressHost) => void;
-  onRemove: (index: number) => void;
+  addWorkloadSelector: boolean;
+  workloadSelectorLabels: string;
+  onAddEgressHost: (host: EgressHost) => void;
+  onChangeSelector: (
+    addWorkloadSelector: boolean,
+    workloadSelectorValid: boolean,
+    workloadSelectorLabels: string
+  ) => void;
+  onRemoveEgressHost: (index: number) => void;
+};
+
+// Gateway and Sidecar states are consolidated in the parent page
+export type SidecarState = {
+  egressHosts: EgressHost[];
+  addWorkloadSelector: boolean;
+  workloadSelectorValid: boolean;
+  workloadSelectorLabels: string;
 };
 
 type State = {
@@ -55,8 +70,8 @@ class SidecarForm extends React.Component<Props, State> {
     const removeAction = {
       title: 'Remove Server',
       // @ts-ignore
-      onClick: (event, rowIndex, rowData, extraData) => {
-        this.props.onRemove(rowIndex);
+      onClick: (event, rowIndex, _rowData, _extraData) => {
+        this.props.onRemoveEgressHost(rowIndex);
       }
     };
     if (rowIndex < this.props.egressHosts.length) {
@@ -74,7 +89,7 @@ class SidecarForm extends React.Component<Props, State> {
   };
 
   onAddEgressHost = () => {
-    this.props.onAdd(this.state.addEgressHost);
+    this.props.onAddEgressHost(this.state.addEgressHost);
     this.setState({
       addEgressHost: {
         host: ''
@@ -110,10 +125,19 @@ class SidecarForm extends React.Component<Props, State> {
         break;
       }
     }
-    this.setState({
-      workloadSelectorValid: isValid,
-      workloadSelectorLabels: value
-    });
+    this.setState(
+      {
+        workloadSelectorValid: isValid,
+        workloadSelectorLabels: value
+      },
+      () => {
+        this.props.onChangeSelector(
+          this.state.addWorkloadSelector,
+          this.state.workloadSelectorValid,
+          this.state.workloadSelectorLabels
+        );
+      }
+    );
   };
 
   rows() {
@@ -172,9 +196,18 @@ class SidecarForm extends React.Component<Props, State> {
             labelOff={' '}
             isChecked={this.state.addWorkloadSelector}
             onChange={() => {
-              this.setState(prevState => ({
-                addWorkloadSelector: !prevState.addWorkloadSelector
-              }));
+              this.setState(
+                prevState => ({
+                  addWorkloadSelector: !prevState.addWorkloadSelector
+                }),
+                () => {
+                  this.props.onChangeSelector(
+                    this.state.addWorkloadSelector,
+                    this.state.workloadSelectorValid,
+                    this.state.workloadSelectorLabels
+                  );
+                }
+              );
             }}
           />
         </FormGroup>
