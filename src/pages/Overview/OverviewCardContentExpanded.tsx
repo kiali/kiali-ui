@@ -25,19 +25,7 @@ class OverviewCardContentExpanded extends React.Component<Props> {
   render() {
     return (
       <>
-        <div style={{ width: '50%', display: 'inline-block', height: 90 }}>{this.renderLeft()}</div>
-        <div
-          style={{
-            width: '50%',
-            display: 'inline-block',
-            height: 90,
-            borderLeft: '1px solid #d1d1d1',
-            paddingLeft: 10,
-            verticalAlign: 'top'
-          }}
-        >
-          <OverviewCardSparkline metrics={this.props.metrics} duration={this.props.duration} />
-        </div>
+        <div style={{ width: '100%', display: 'inline-block', height: '215px' }}>{this.renderLeft()}</div>
       </>
     );
   }
@@ -67,7 +55,8 @@ class OverviewCardContentExpanded extends React.Component<Props> {
       <>
         {mainLink}
         <OverviewCardBars status={this.props.status} />
-        <div style={{ marginTop: -20, position: 'relative' }}>
+        <OverviewCardSparkline metrics={this.props.metrics} duration={this.props.duration} />
+        <div>
           <Text component={TextVariants.h2} style={{ marginTop: 0 }}>
             {status.inError.length > 0 && (
               <OverviewStatus
