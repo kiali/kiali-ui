@@ -15,22 +15,30 @@ import {
   DataListItemRow,
   Grid,
   GridItem,
-  PopoverPosition,
   List,
   ListItem,
+  PopoverPosition,
   Stack,
   StackItem,
   Text,
   TextVariants,
   Title
 } from '@patternfly/react-core';
+import { EdgeLabelMode, GraphType } from '../../../types/Graph';
+import CytoscapeGraph from '../../../components/CytoscapeGraph/CytoscapeGraph';
+import { style } from 'typestyle';
+import { DagreGraph } from '../../../components/CytoscapeGraph/graphs/DagreGraph';
+import GraphDataSource from '../../../services/GraphDataSource';
 
 type AppDescriptionProps = {
   app: App;
   health?: AppHealth;
+  miniGraphDataSource: GraphDataSource;
 };
 
 type AppDescriptionState = {};
+
+const cytoscapeGraphContainerStyle = style({ height: '300px' });
 
 class AppDescription extends React.Component<AppDescriptionProps, AppDescriptionState> {
   constructor(props: AppDescriptionProps) {
@@ -118,10 +126,12 @@ class AppDescription extends React.Component<AppDescriptionProps, AppDescription
     const app = this.props.app;
     return app ? (
       <Grid gutter="md">
-        <GridItem span={6}>
-          <Card>
+        <GridItem span={4}>
+          <Card style={{ height: '100%' }}>
             <CardBody className="noPadding">
-              <h2>Application Overview</h2>
+              <Title headingLevel="h3" size="2xl">
+                Application Overview
+              </Title>
               <DataList aria-label="workloads and services">
                 <DataListItem aria-labelledby="Workloads">
                   <DataListItemRow>
@@ -137,7 +147,45 @@ class AppDescription extends React.Component<AppDescriptionProps, AppDescription
             </CardBody>
           </Card>
         </GridItem>
-        <GridItem span={6}>
+        <GridItem span={4}>
+          <Card style={{ height: '100%' }}>
+            <CardBody>
+              <Title style={{ float: 'left' }} headingLevel="h3" size="2xl">
+                Graph Overview
+              </Title>
+              <div style={{ float: 'right' }}>(View graph)</div>
+              <div style={{ height: '100%' }}>
+                <CytoscapeGraph
+                  activeNamespaces={[this.props.app.namespace]}
+                  containerClassName={cytoscapeGraphContainerStyle}
+                  dataSource={this.props.miniGraphDataSource}
+                  displayUnusedNodes={() => undefined}
+                  duration={300} // TODO: sync with dropdown
+                  edgeLabelMode={EdgeLabelMode.NONE}
+                  graphType={GraphType.WORKLOAD}
+                  isMTLSEnabled={false}
+                  layout={DagreGraph.getLayout()}
+                  onEmptyGraphAction={() => undefined} // TODO
+                  onReady={() => undefined}
+                  refreshInterval={0}
+                  setActiveNamespaces={() => undefined} // TODO
+                  setNode={() => undefined} // TODO
+                  showCircuitBreakers={false}
+                  showMissingSidecars={true}
+                  showNodeLabels={true}
+                  showSecurity={false}
+                  showServiceNodes={true}
+                  showTrafficAnimation={true}
+                  showUnusedNodes={false}
+                  showVirtualServices={true}
+                  updateGraph={() => undefined} // TODO
+                  updateSummary={() => undefined} // TODO
+                />
+              </div>
+            </CardBody>
+          </Card>
+        </GridItem>
+        <GridItem span={4}>
           <Card style={{ height: '100%' }}>
             <CardBody>
               <Title headingLevel="h3" size="2xl">

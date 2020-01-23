@@ -26,6 +26,10 @@ import { ThreeScaleServiceRule } from '../../../types/ThreeScale';
 import { AdditionalItem } from 'types/Workload';
 import { TextOrLink } from 'components/TextOrLink';
 import { renderAPILogo } from 'components/Logo/Logos';
+import { EdgeLabelMode, GraphType, NodeType } from '../../../types/Graph';
+import CytoscapeGraph from '../../../components/CytoscapeGraph/CytoscapeGraph';
+import { DagreGraph } from '../../../components/CytoscapeGraph/graphs/DagreGraph';
+import GraphDataSource from '../../../services/GraphDataSource';
 
 interface ServiceInfoDescriptionProps {
   name: string;
@@ -53,7 +57,21 @@ const listStyle = style({
 
 const ExternalNameType = 'ExternalName';
 
+const cytoscapeGraphContainerStyle = style({ height: '300px' });
+
 class ServiceInfoDescription extends React.Component<ServiceInfoDescriptionProps> {
+  private graphDataSource: GraphDataSource;
+
+  constructor(props: ServiceInfoDescriptionProps) {
+    super(props);
+
+    this.graphDataSource = new GraphDataSource();
+  }
+
+  componentDidMount() {
+    this.loadMiniGraphData();
+  }
+
   getPortOver(portId: number) {
     return <ValidationList checks={this.getPortChecks(portId)} />;
   }
@@ -71,12 +89,12 @@ class ServiceInfoDescription extends React.Component<ServiceInfoDescriptionProps
   render() {
     return (
       <Grid gutter="md">
-        <GridItem span={6}>
+        <GridItem span={4}>
           <Card style={{ height: '100%' }}>
             <CardBody>
               <Title headingLevel="h3" size="2xl">
                 {' '}
-                Service overview{' '}
+                Service Overview{' '}
               </Title>
               <Stack>
                 <StackItem id={'labels'}>
@@ -114,7 +132,45 @@ class ServiceInfoDescription extends React.Component<ServiceInfoDescriptionProps
             </CardBody>
           </Card>
         </GridItem>
-        <GridItem span={6}>
+        <GridItem span={4}>
+          <Card style={{ height: '100%' }}>
+            <CardBody>
+              <Title headingLevel="h3" size="2xl">
+                {' '}
+                Graph Overview{' '}
+              </Title>
+              <div style={{ height: '100%' }}>
+                <CytoscapeGraph
+                  activeNamespaces={[{ name: this.props.namespace }]}
+                  containerClassName={cytoscapeGraphContainerStyle}
+                  dataSource={this.graphDataSource}
+                  displayUnusedNodes={() => undefined}
+                  duration={300} // TODO: sync with dropdown
+                  edgeLabelMode={EdgeLabelMode.NONE}
+                  graphType={GraphType.APP}
+                  isMTLSEnabled={false}
+                  layout={DagreGraph.getLayout()}
+                  onEmptyGraphAction={() => undefined} // TODO
+                  onReady={() => undefined}
+                  refreshInterval={0}
+                  setActiveNamespaces={() => undefined} // TODO
+                  setNode={() => undefined} // TODO
+                  showCircuitBreakers={false}
+                  showMissingSidecars={true}
+                  showNodeLabels={true}
+                  showSecurity={false}
+                  showServiceNodes={true}
+                  showTrafficAnimation={true}
+                  showUnusedNodes={false}
+                  showVirtualServices={true}
+                  updateGraph={() => undefined} // TODO
+                  updateSummary={() => undefined} // TODO
+                />
+              </div>
+            </CardBody>
+          </Card>
+        </GridItem>
+        <GridItem span={4}>
           <Card style={{ height: '100%' }}>
             <CardBody>
               <Title headingLevel="h3" size="2xl">
@@ -192,6 +248,26 @@ class ServiceInfoDescription extends React.Component<ServiceInfoDescriptionProps
       </Grid>
     );
   }
+
+  private loadMiniGraphData = () => {
+    this.graphDataSource.fetchGraphData({
+      namespaces: [{ name: 'bookinfo' }], // this.props.node ? [this.props.node.namespace] : this.props.activeNamespaces,
+      duration: 300, // this.props.duration,
+      graphType: GraphType.WORKLOAD, // this.props.graphType,
+      injectServiceNodes: true, // this.props.showServiceNodes,
+      edgeLabelMode: EdgeLabelMode.NONE, // this.props.edgeLabelMode,
+      showSecurity: false, // this.props.showSecurity,
+      showUnusedNodes: false, // this.props.showUnusedNodes,
+      node: {
+        app: '',
+        namespace: { name: 'bookinfo' },
+        nodeType: NodeType.SERVICE,
+        service: 'productpage',
+        version: '',
+        workload: ''
+      } // this.props.node
+    });
+  };
 }
 
 export default ServiceInfoDescription;

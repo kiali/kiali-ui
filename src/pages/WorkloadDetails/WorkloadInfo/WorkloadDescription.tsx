@@ -18,6 +18,13 @@ import {
 } from '@patternfly/react-core';
 import { TextOrLink } from 'components/TextOrLink';
 import { renderRuntimeLogo, renderAPILogo } from 'components/Logo/Logos';
+import CytoscapeGraph from '../../../components/CytoscapeGraph/CytoscapeGraph';
+import { EdgeLabelMode, GraphType, NodeType } from '../../../types/Graph';
+import { style } from 'typestyle';
+import GraphDataSource from '../../../services/GraphDataSource';
+import { DagreGraph } from '../../../components/CytoscapeGraph/graphs/DagreGraph';
+
+const cytoscapeGraphContainerStyle = style({ height: '300px' });
 
 type WorkloadDescriptionProps = {
   workload: Workload;
@@ -29,9 +36,17 @@ type WorkloadDescriptionProps = {
 type WorkloadDescriptionState = {};
 
 class WorkloadDescription extends React.Component<WorkloadDescriptionProps, WorkloadDescriptionState> {
+  private graphDataSource: GraphDataSource;
+
   constructor(props: WorkloadDescriptionProps) {
     super(props);
     this.state = {};
+
+    this.graphDataSource = new GraphDataSource();
+  }
+
+  componentDidMount() {
+    this.loadMiniGraphData();
   }
 
   render() {
@@ -43,7 +58,7 @@ class WorkloadDescription extends React.Component<WorkloadDescriptionProps, Work
     const runtimes = workload.runtimes.map(r => r.name).filter(name => name !== '');
     return workload ? (
       <Grid gutter="md">
-        <GridItem span={6}>
+        <GridItem span={4}>
           <Card style={{ height: '100%' }}>
             <CardBody>
               <Title headingLevel="h3" size="2xl">
@@ -92,7 +107,45 @@ class WorkloadDescription extends React.Component<WorkloadDescriptionProps, Work
             </CardBody>
           </Card>
         </GridItem>
-        <GridItem span={6}>
+        <GridItem span={4}>
+          <Card style={{ height: '100%' }}>
+            <CardBody>
+              <Title headingLevel="h3" size="2xl">
+                {' '}
+                Graph Overview{' '}
+              </Title>
+              <div style={{ height: '300px' }}>
+                <CytoscapeGraph
+                  activeNamespaces={[{ name: this.props.namespace }]}
+                  containerClassName={cytoscapeGraphContainerStyle}
+                  dataSource={this.graphDataSource}
+                  displayUnusedNodes={() => undefined}
+                  duration={300} // TODO: sync with dropdown
+                  edgeLabelMode={EdgeLabelMode.NONE}
+                  graphType={GraphType.APP}
+                  isMTLSEnabled={false}
+                  layout={DagreGraph.getLayout()}
+                  onEmptyGraphAction={() => undefined} // TODO
+                  onReady={() => undefined}
+                  refreshInterval={0}
+                  setActiveNamespaces={() => undefined} // TODO
+                  setNode={() => undefined} // TODO
+                  showCircuitBreakers={false}
+                  showMissingSidecars={true}
+                  showNodeLabels={true}
+                  showSecurity={false}
+                  showServiceNodes={true}
+                  showTrafficAnimation={true}
+                  showUnusedNodes={false}
+                  showVirtualServices={true}
+                  updateGraph={() => undefined} // TODO
+                  updateSummary={() => undefined} // TODO
+                />
+              </div>
+            </CardBody>
+          </Card>
+        </GridItem>
+        <GridItem span={4}>
           <Card style={{ height: '100%' }}>
             <CardBody>
               <Title headingLevel="h3" size="2xl">
@@ -118,6 +171,26 @@ class WorkloadDescription extends React.Component<WorkloadDescriptionProps, Work
       'Loading'
     );
   }
+
+  private loadMiniGraphData = () => {
+    this.graphDataSource.fetchGraphData({
+      namespaces: [{ name: 'bookinfo' }], // this.props.node ? [this.props.node.namespace] : this.props.activeNamespaces,
+      duration: 300, // this.props.duration,
+      graphType: GraphType.WORKLOAD, // this.props.graphType,
+      injectServiceNodes: true, // this.props.showServiceNodes,
+      edgeLabelMode: EdgeLabelMode.NONE, // this.props.edgeLabelMode,
+      showSecurity: false, // this.props.showSecurity,
+      showUnusedNodes: false, // this.props.showUnusedNodes,
+      node: {
+        app: '',
+        namespace: { name: 'bookinfo' },
+        nodeType: NodeType.WORKLOAD,
+        service: '',
+        version: 'v2',
+        workload: 'reviews-v2'
+      } // this.props.node
+    });
+  };
 }
 
 export default WorkloadDescription;
