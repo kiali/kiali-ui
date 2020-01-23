@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { renderDestServicesLinks, RenderLink, renderTitle } from './SummaryLink';
+import { renderDestServicesLinks, RenderLink, renderTitle, renderHealth } from './SummaryLink';
 import {
   getAccumulatedTrafficRateGrpc,
   getAccumulatedTrafficRateHttp,
@@ -24,7 +24,6 @@ import {
   getDatapoints,
   getNodeMetrics,
   getNodeMetricType,
-  renderNodeInfo,
   renderNoTraffic,
   mergeMetricsResponses,
   summaryHeader
@@ -309,9 +308,11 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
     return (
       <div ref={this.mainDivRef} className="panel panel-default" style={SummaryPanelNode.panelStyle}>
         <div className="panel-heading" style={summaryHeader}>
-          {renderTitle(nodeData, this.state.health)}
-          {renderNodeInfo(nodeData)}
-          {this.renderBadgeSummary(nodeData.hasCB, nodeData.hasVS, nodeData.hasMissingSC, nodeData.isDead)}
+          <div>{renderTitle(nodeData)}</div>
+          <div>
+            {renderHealth(this.state.health)}
+            {this.renderBadgeSummary(nodeData.hasCB, nodeData.hasVS, nodeData.hasMissingSC, nodeData.isDead)}
+          </div>
         </div>
         <div className="panel-body">
           {shouldRenderDestsList && (

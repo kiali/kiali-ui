@@ -110,25 +110,37 @@ export const RenderLink = (props: RenderLinkProps) => {
   );
 };
 
-export const renderTitle = (nodeData: DecoratedGraphNodeData, health?: Health) => {
+export const renderTitle = (nodeData: DecoratedGraphNodeData) => {
   const link = getLink(nodeData);
 
   return (
-    <span>
+    <>
       <span style={{ paddingRight: '0.5em' }}>
         {getTitle(nodeData)}
         {link}
       </span>
       {nodeData.isInaccessible && <KialiIcon.MtlsLock />}
+    </>
+  );
+};
+
+export const renderHealth = (health?: Health) => {
+  return (
+    <>
       {health && (
-        <HealthIndicator
-          id="graph-health-indicator"
-          mode={DisplayMode.SMALL}
-          health={health}
-          tooltipPlacement={PopoverPosition.left}
-        />
+        <Badge style={{ fontWeight: 'normal', marginTop: '4px', marginBottom: '4px' }} isRead={true}>
+          <span style={{ margin: '3px 0 1px 0' }}>
+            <HealthIndicator
+              id="graph-health-indicator"
+              mode={DisplayMode.SMALL}
+              health={health}
+              tooltipPlacement={PopoverPosition.left}
+            />
+          </span>
+          <span style={{ marginLeft: '4px' }}>health</span>
+        </Badge>
       )}
-    </span>
+    </>
   );
 };
 

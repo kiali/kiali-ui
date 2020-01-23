@@ -18,7 +18,6 @@ import {
   getNodeMetricType,
   renderNoTraffic,
   NodeMetricType,
-  renderNodeInfo,
   summaryHeader,
   summaryBodyTabs
 } from './SummaryPanelCommon';
@@ -134,7 +133,6 @@ export default class SummaryPanelEdge extends React.Component<SummaryPanelPropTy
       return (
         <div className="panel-heading label-collection" style={summaryHeader}>
           <strong>{prefix}</strong> {renderTitle(nodeData)}
-          {renderNodeInfo(nodeData)}
         </div>
       );
     };

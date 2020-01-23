@@ -1,10 +1,9 @@
 import * as React from 'react';
-import { Badge } from '@patternfly/react-core';
 import { InOutRateTableGrpc, InOutRateTableHttp } from '../../components/SummaryPanel/InOutRateTable';
 import { RpsChart, TcpChart } from '../../components/SummaryPanel/RpsChart';
 import { NodeType, SummaryPanelPropType } from '../../types/Graph';
 import { getAccumulatedTrafficRateGrpc, getAccumulatedTrafficRateHttp } from '../../utils/TrafficRate';
-import { RenderLink, renderTitle } from './SummaryLink';
+import { RenderLink, renderTitle, renderHealth } from './SummaryLink';
 import {
   shouldRefreshData,
   updateHealth,
@@ -12,17 +11,15 @@ import {
   getNodeMetrics,
   getNodeMetricType,
   renderNoTraffic,
-  summaryHeader,
-  summaryLabels
+  summaryHeader
 } from './SummaryPanelCommon';
 import { Health } from '../../types/Health';
 import { Response } from '../../services/Api';
 import { Metrics, Datapoint } from '../../types/Metrics';
 import { Reporter } from '../../types/MetricsOptions';
 import { CancelablePromise, makeCancelablePromise } from '../../utils/CancelablePromises';
-import { serverConfig } from '../../config/ServerConfig';
-import { CyNode, decoratedNodeData } from '../../components/CytoscapeGraph/CytoscapeGraphUtils';
 import { KialiIcon } from 'config/KialiIcon';
+import { decoratedNodeData, CyNode } from 'components/CytoscapeGraph/CytoscapeGraphUtils';
 
 type SummaryPanelGroupMetricsState = {
   requestCountIn: Datapoint[];
@@ -115,18 +112,14 @@ export default class SummaryPanelGroup extends React.Component<SummaryPanelPropT
   render() {
     const group = this.props.data.summaryTarget;
     const nodeData = decoratedNodeData(group);
-    const { namespace } = nodeData;
     const serviceList = this.renderServiceList(group);
     const workloadList = this.renderWorkloadList(group);
 
     return (
       <div ref={this.mainDivRef} className="panel panel-default" style={SummaryPanelGroup.panelStyle}>
         <div className={`panel-heading ${summaryHeader}`}>
-          {renderTitle(nodeData, this.state.health)}
-          <div className={`label-collection ${summaryLabels}`}>
-            <Badge>namespace: {namespace}</Badge>
-            {this.renderVersionBadges()}
-          </div>
+          {renderTitle(nodeData)}
+          {renderHealth(this.state.health)}
           {this.renderBadgeSummary(group)}
         </div>
         <div className="panel-body">
@@ -211,20 +204,6 @@ export default class SummaryPanelGroup extends React.Component<SummaryPanelPropT
       });
 
     this.setState({ loading: true, metricsLoadError: null });
-  };
-
-  private renderVersionBadges = () => {
-    const versions = this.props.data.summaryTarget.children(`node[${CyNode.version}]`).toArray();
-    return (
-      <>
-        {versions.length > 0 && <br />}
-        {versions.map((c, _i) => (
-          <Badge style={{ marginTop: '2px', marginRight: '1px' }}>
-            {serverConfig.istioLabels.versionLabelName}: value={c.data(CyNode.version)}
-          </Badge>
-        ))}
-      </>
-    );
   };
 
   private renderBadgeSummary = group => {

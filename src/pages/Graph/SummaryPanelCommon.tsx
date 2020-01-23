@@ -7,9 +7,7 @@ import * as API from '../../services/Api';
 import * as M from '../../types/Metrics';
 import { Metric } from '../../types/Metrics';
 import { Response } from '../../services/Api';
-import { serverConfig } from '../../config/ServerConfig';
 import { decoratedNodeData } from 'components/CytoscapeGraph/CytoscapeGraphUtils';
-import { Badge } from '@patternfly/react-core';
 import { PfColors } from 'components/Pf/PfColors';
 import { KialiIcon } from 'config/KialiIcon';
 
@@ -51,7 +49,7 @@ type HealthState = {
 export const updateHealth = (summaryTarget: any, stateSetter: (hs: HealthState) => void) => {
   const healthPromise = summaryTarget.data('healthPromise');
   if (healthPromise) {
-    stateSetter({ health: undefined, healthLoading: true });
+    stateSetter({ healthLoading: true });
     healthPromise
       .then(h => stateSetter({ health: h, healthLoading: false }))
       .catch(_err => stateSetter({ health: healthNotAvailable(), healthLoading: false }));
@@ -149,27 +147,6 @@ export const getDatapoints = (
     }
   }
   return [];
-};
-
-export const renderNodeInfo = (nodeData: DecoratedGraphNodeData) => {
-  const hasNamespace =
-    nodeData.nodeType !== NodeType.UNKNOWN && !(nodeData.nodeType === NodeType.SERVICE && nodeData.isServiceEntry);
-  const hasVersion = hasNamespace && nodeData.version;
-  return (
-    <>
-      <div className={`label-collection ${summaryLabels}`}>
-        {hasNamespace && <Badge>Namespace: {nodeData.namespace}</Badge>}
-        {hasVersion && (
-          <>
-            <br />
-            <Badge style={{ marginTop: '2px' }}>
-              {serverConfig.istioLabels.versionLabelName}: {nodeData.version!}
-            </Badge>
-          </>
-        )}
-      </div>
-    </>
-  );
 };
 
 export const renderNoTraffic = (protocol?: string) => {
