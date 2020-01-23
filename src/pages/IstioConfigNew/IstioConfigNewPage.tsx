@@ -95,25 +95,30 @@ class IstioConfigNewPage extends React.Component<Props, State> {
   };
 
   fetchPermissions = () => {
-    this.promises
-      .register('permissions', API.getIstioPermissions(this.props.activeNamespaces.map(n => n.name)))
-      .then(permResponse => {
-        this.setState(
-          {
-            istioPermissions: permResponse.data
-          },
-          () => {
-            this.props.activeNamespaces.forEach(ns => {
-              if (!this.canCreate(ns.name)) {
-                AlertUtils.addInfo('User has not permissions to create Istio Config on namespace: ' + ns.name);
-              }
-            });
+    if (this.props.activeNamespaces.length > 0) {
+      this.promises
+        .register('permissions', API.getIstioPermissions(this.props.activeNamespaces.map(n => n.name)))
+        .then(permResponse => {
+          this.setState(
+            {
+              istioPermissions: permResponse.data
+            },
+            () => {
+              this.props.activeNamespaces.forEach(ns => {
+                if (!this.canCreate(ns.name)) {
+                  AlertUtils.addInfo('User has not permissions to create Istio Config on namespace: ' + ns.name);
+                }
+              });
+            }
+          );
+        })
+        .catch(error => {
+          // Canceled errors are expected on this query when page is unmounted
+          if (!error.isCanceled) {
+            AlertUtils.addError('Could not fetch Permissions.', error);
           }
-        );
-      })
-      .catch(error => {
-        AlertUtils.addError('Could not fetch Service Details.', error);
-      });
+        });
+    }
   };
 
   onIstioResourceChange = (value, _) => {
@@ -130,7 +135,6 @@ class IstioConfigNewPage extends React.Component<Props, State> {
   };
 
   onIstioResourceCreate = () => {
-    console.log('DELETE onIstioResourceCreate ' + this.state.istioResource);
     switch (this.state.istioResource) {
       case GATEWAY:
         this.promises

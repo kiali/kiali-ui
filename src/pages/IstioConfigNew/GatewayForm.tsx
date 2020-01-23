@@ -168,11 +168,11 @@ class GatewayForm extends React.Component<Props, State> {
   rows() {
     return this.props.gatewayServers
       .map((gw, i) => ({
-        key: 'gw' + i,
+        key: 'gatewayServer' + i,
         cells: [
           <>
-            {gw.hosts.map(host => (
-              <div key={'gwHost_' + host}>{host}</div>
+            {gw.hosts.map((host, j) => (
+              <div key={'gwHost_' + i + '_' + j}>{host}</div>
             ))}
           </>,
           <>{gw.portNumber}</>,
@@ -190,12 +190,17 @@ class GatewayForm extends React.Component<Props, State> {
                 value={this.state.addGatewayServer.hosts.join(',')}
                 type="text"
                 id="addHosts"
+                key="addHosts"
                 aria-describedby="add hosts"
                 name="addHosts"
                 onChange={this.onAddHosts}
                 isValid={this.state.validHosts}
               />
-              {!this.state.validHosts && <div className={noGatewayServerStyle}>{hostsHelperText}</div>}
+              {!this.state.validHosts && (
+                <div key="hostsHelperText" className={noGatewayServerStyle}>
+                  {hostsHelperText}
+                </div>
+              )}
             </>,
             <>
               <TextInput
@@ -230,12 +235,13 @@ class GatewayForm extends React.Component<Props, State> {
                 onChange={this.onAddPortProtocol}
               >
                 {protocols.map((option, index) => (
-                  <FormSelectOption isDisabled={false} key={index} value={option} label={option} />
+                  <FormSelectOption isDisabled={false} key={'p' + index} value={option} label={option} />
                 ))}
               </FormSelect>
             </>,
             <>
               <Button
+                id="addServerBtn"
                 variant="secondary"
                 isDisabled={
                   !this.state.validHosts ||

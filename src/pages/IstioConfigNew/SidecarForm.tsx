@@ -156,19 +156,24 @@ class SidecarForm extends React.Component<Props, State> {
       }))
       .concat([
         {
-          key: 'egressHostNew',
+          key: 'eHNew',
           cells: [
             <>
               <TextInput
                 value={this.state.addEgressHost.host}
                 type="text"
                 id="addEgressHost"
+                key="addEgressHost"
                 aria-describedby="add egress host"
                 name="addHost"
                 onChange={this.onAddHost}
                 isValid={this.state.validEgressHost}
               />
-              {!this.state.validEgressHost && <div className={noEgressHostsStyle}>{hostsHelperText}</div>}
+              {!this.state.validEgressHost && (
+                <div key="hostsHelperText" className={noEgressHostsStyle}>
+                  {hostsHelperText}
+                </div>
+              )}
             </>,
             <>
               <Button variant="secondary" isDisabled={!this.state.validEgressHost} onClick={this.onAddEgressHost}>
