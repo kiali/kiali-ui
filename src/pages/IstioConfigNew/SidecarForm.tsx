@@ -1,12 +1,14 @@
 import * as React from 'react';
-import { ICell, Table, TableBody, TableHeader } from '@patternfly/react-table';
+import { cellWidth, ICell, Table, TableBody, TableHeader } from '@patternfly/react-table';
 import { style } from 'typestyle';
 import { PfColors } from '../../components/Pf/PfColors';
 import { Button, FormGroup, Switch, TextInput } from '@patternfly/react-core';
+import { isServerHostValid } from '../../utils/IstioConfigUtils';
 
 const headerCells: ICell[] = [
   {
     title: 'Egress Host',
+    transforms: [cellWidth(60) as any],
     props: {}
   },
   {
@@ -19,6 +21,8 @@ const noEgressHostsStyle = style({
   marginTop: 15,
   color: PfColors.Red100
 });
+
+const hostsHelperText = 'Enter a valid FQDN host.';
 
 export type EgressHost = {
   host: string;
@@ -50,6 +54,7 @@ type State = {
   addWorkloadSelector: boolean;
   workloadSelectorValid: boolean;
   workloadSelectorLabels: string;
+  validEgressHost: boolean;
 };
 
 class SidecarForm extends React.Component<Props, State> {
@@ -61,7 +66,8 @@ class SidecarForm extends React.Component<Props, State> {
       },
       addWorkloadSelector: false,
       workloadSelectorValid: false,
-      workloadSelectorLabels: ''
+      workloadSelectorLabels: '',
+      validEgressHost: false
     };
   }
 
@@ -81,10 +87,12 @@ class SidecarForm extends React.Component<Props, State> {
   };
 
   onAddHost = (value: string, _) => {
+    const host = value.trim();
     this.setState({
       addEgressHost: {
-        host: value.trim()
-      }
+        host: host
+      },
+      validEgressHost: isServerHostValid(host)
     });
   };
 
@@ -158,15 +166,12 @@ class SidecarForm extends React.Component<Props, State> {
                 aria-describedby="add egress host"
                 name="addHost"
                 onChange={this.onAddHost}
-                isValid={this.state.addEgressHost.host.length > 0}
+                isValid={this.state.validEgressHost}
               />
+              {!this.state.validEgressHost && <div className={noEgressHostsStyle}>{hostsHelperText}</div>}
             </>,
             <>
-              <Button
-                variant="secondary"
-                isDisabled={this.state.addEgressHost.host.length === 0}
-                onClick={this.onAddEgressHost}
-              >
+              <Button variant="secondary" isDisabled={!this.state.validEgressHost} onClick={this.onAddEgressHost}>
                 Add Egress Host
               </Button>
             </>
