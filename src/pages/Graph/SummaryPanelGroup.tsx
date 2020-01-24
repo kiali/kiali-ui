@@ -117,10 +117,12 @@ export default class SummaryPanelGroup extends React.Component<SummaryPanelPropT
 
     return (
       <div ref={this.mainDivRef} className="panel panel-default" style={SummaryPanelGroup.panelStyle}>
-        <div className={`panel-heading ${summaryHeader}`}>
-          {renderTitle(nodeData)}
-          {renderHealth(this.state.health)}
-          {this.renderBadgeSummary(group)}
+        <div className="panel-heading" style={summaryHeader}>
+          <div>{renderTitle(nodeData)}</div>
+          <div>
+            {renderHealth(this.state.health)}
+            {this.renderBadgeSummary(group)}
+          </div>
         </div>
         <div className="panel-body">
           {serviceList.length > 0 && (
@@ -219,7 +221,7 @@ export default class SummaryPanelGroup extends React.Component<SummaryPanelPropT
       });
 
     return (
-      <>
+      <div style={{ marginTop: '10px' }}>
         {hasCB && (
           <div>
             <KialiIcon.CircuitBreaker />
@@ -232,7 +234,7 @@ export default class SummaryPanelGroup extends React.Component<SummaryPanelPropT
             <span style={{ paddingLeft: '4px' }}>Has Virtual Service</span>
           </div>
         )}
-      </>
+      </div>
     );
   };
 

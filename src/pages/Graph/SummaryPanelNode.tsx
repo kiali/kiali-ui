@@ -546,7 +546,7 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
   // TODO:(see https://github.com/kiali/kiali-design/issues/63) If we want to show an icon for SE uncomment below
   private renderBadgeSummary = (hasCB?: boolean, hasVS?: boolean, hasMissingSC?: boolean, isDead?: boolean) => {
     return (
-      <>
+      <div style={{ marginTop: '10px' }}>
         {hasCB && (
           <div>
             <KialiIcon.CircuitBreaker />
@@ -573,7 +573,7 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
             <span style={{ paddingLeft: '4px' }}>Has No Running Pods</span>
           </div>
         )}
-      </>
+      </div>
     );
   };
 
