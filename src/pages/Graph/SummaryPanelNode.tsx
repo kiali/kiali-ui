@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { renderDestServicesLinks, RenderLink, renderTitle, renderHealth } from './SummaryLink';
+import { renderDestServicesLinks, renderTitle, renderHealth } from './SummaryLink';
 import {
   getAccumulatedTrafficRateGrpc,
   getAccumulatedTrafficRateHttp,
@@ -34,6 +34,8 @@ import { Response } from '../../services/Api';
 import { Reporter } from '../../types/MetricsOptions';
 import { CyNode, decoratedNodeData } from '../../components/CytoscapeGraph/CytoscapeGraphUtils';
 import { KialiIcon } from 'config/KialiIcon';
+import { getOptions } from 'components/CytoscapeGraph/ContextMenu/NodeContextMenu';
+import { Dropdown, DropdownToggle, DropdownItem, DropdownPosition } from '@patternfly/react-core';
 
 type SummaryPanelNodeMetricsState = {
   grpcRequestCountIn: Datapoint[];
@@ -55,6 +57,7 @@ type SummaryPanelNodeState = SummaryPanelNodeMetricsState & {
   loading: boolean;
   healthLoading: boolean;
   health?: Health;
+  isOpen: boolean;
   metricsLoadError: string | null;
 };
 
@@ -77,6 +80,7 @@ const defaultState: SummaryPanelNodeState = {
   node: null,
   loading: false,
   healthLoading: false,
+  isOpen: false,
   metricsLoadError: null,
   ...defaultMetricsState
 };
@@ -86,7 +90,7 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
     height: '100%',
     margin: 0,
     minWidth: '25em',
-    overflowY: 'auto' as 'auto',
+    overflowY: 'scroll' as 'scroll',
     width: '25em'
   };
 
@@ -305,34 +309,47 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
     const shouldRenderSvcList = servicesList && servicesList.length > 0;
     const shouldRenderWorkload = nodeType !== NodeType.WORKLOAD && nodeType !== NodeType.UNKNOWN && workload;
 
+    const actions = getOptions(nodeData, true, false, '').map(o => {
+      return (
+        <DropdownItem
+          key={o.url}
+          onClick={() => {
+            this.onClickAction(o.url);
+          }}
+        >
+          {o.text}
+        </DropdownItem>
+      );
+    });
+
     return (
       <div ref={this.mainDivRef} className="panel panel-default" style={SummaryPanelNode.panelStyle}>
         <div className="panel-heading" style={summaryHeader}>
-          <div>{renderTitle(nodeData)}</div>
           <div>
+            <div>
+              {renderTitle(nodeData)}
+              <Dropdown
+                style={{ float: 'right', fontSize: '0.5rem' }}
+                id="summary-node-actions"
+                dropdownItems={actions}
+                isOpen={this.state.isOpen}
+                position={DropdownPosition.right}
+                toggle={<DropdownToggle onToggle={this.onToggleActions}>Actions</DropdownToggle>}
+              />
+            </div>
             {renderHealth(this.state.health)}
             {this.renderBadgeSummary(nodeData.hasCB, nodeData.hasVS, nodeData.hasMissingSC, nodeData.isDead)}
+            {shouldRenderDestsList && (
+              <div>
+                <strong>Destinations: </strong>
+                {destsList}
+              </div>
+            )}
+            {shouldRenderSvcList && <div>{servicesList}</div>}
+            {shouldRenderWorkload && <div>{renderTitle(nodeData, NodeType.WORKLOAD)}</div>}
           </div>
         </div>
         <div className="panel-body">
-          {shouldRenderDestsList && (
-            <div>
-              <strong>Destinations: </strong>
-              {destsList}
-            </div>
-          )}
-          {shouldRenderSvcList && (
-            <div>
-              <strong>Services: </strong>
-              {servicesList}
-            </div>
-          )}
-          {shouldRenderWorkload && (
-            <div>
-              <strong>Workload: </strong>
-              <RenderLink nodeData={nodeData} nodeType={NodeType.WORKLOAD} />
-            </div>
-          )}
           {(shouldRenderDestsList || shouldRenderSvcList || shouldRenderWorkload) && <hr />}
           {/* TODO: link to App or Workload Details charts when available
           {nodeType !== NodeType.UNKNOWN && (
@@ -351,6 +368,14 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
       </div>
     );
   }
+
+  private onClickAction = url => {
+    console.log(`Action=${url}`);
+  };
+
+  private onToggleActions = isExpanded => {
+    this.setState({ isOpen: isExpanded });
+  };
 
   private renderGrpcRates = node => {
     const incoming = getTrafficRateGrpc(node);

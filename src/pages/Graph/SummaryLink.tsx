@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
-import { NodeType, DecoratedGraphNodeData, GraphNodeData } from '../../types/Graph';
+import { NodeType, GraphNodeData } from '../../types/Graph';
 import { CyNode, decoratedNodeData } from '../../components/CytoscapeGraph/CytoscapeGraphUtils';
 import { KialiIcon } from 'config/KialiIcon';
 import { Tooltip, Badge, PopoverPosition } from '@patternfly/react-core';
 import { Health } from 'types/Health';
 import { HealthIndicator, DisplayMode } from 'components/Health/HealthIndicator';
 
-const getTitle = (nodeData: DecoratedGraphNodeData) => {
-  switch (nodeData.nodeType) {
+const getTitle = (nodeData: GraphNodeData, nodeType?: NodeType) => {
+  switch (nodeType || nodeData.nodeType) {
     case NodeType.APP:
       return (
         <Tooltip content={<>Application</>}>
@@ -110,13 +110,13 @@ export const RenderLink = (props: RenderLinkProps) => {
   );
 };
 
-export const renderTitle = (nodeData: DecoratedGraphNodeData) => {
-  const link = getLink(nodeData);
+export const renderTitle = (nodeData: GraphNodeData, nodeType?: NodeType) => {
+  const link = getLink(nodeData, nodeType);
 
   return (
     <>
       <span style={{ paddingRight: '0.5em' }}>
-        {getTitle(nodeData)}
+        {getTitle(nodeData, nodeType)}
         {link}
       </span>
       {nodeData.isInaccessible && <KialiIcon.MtlsLock />}
@@ -153,7 +153,7 @@ export const renderDestServicesLinks = (node: any) => {
     return links;
   }
 
-  destServices.forEach((ds, index) => {
+  destServices.forEach(ds => {
     const serviceNodeData: GraphNodeData = {
       id: nodeData.id,
       app: '',
@@ -167,13 +167,14 @@ export const renderDestServicesLinks = (node: any) => {
       version: '',
       workload: ''
     };
-    links.push(<RenderLink key={`service-${index}`} nodeData={serviceNodeData} nodeType={NodeType.SERVICE} />);
-    links.push(<span key={`comma-after-${ds.name}`}>, </span>);
+    // links.push(<RenderLink key={`service-${index}`} nodeData={serviceNodeData} nodeType={NodeType.SERVICE} />);
+    // links.push(<span key={`comma-after-${ds.name}`}>, </span>);
+    links.push(renderTitle(serviceNodeData));
   });
 
-  if (links.length > 0) {
-    links.pop();
-  }
+  // if (links.length > 0) {
+  //  links.pop();
+  // }
 
   return links;
 };

@@ -106,7 +106,7 @@ export class NodeContextMenu extends React.PureComponent<Props> {
         <div className={graphContextMenuTitleStyle}>
           <strong>{name}</strong>
         </div>
-        {options.map(o => this.createMenuItem(o.url, o.display, o.target, o.external))}
+        {options.map(o => this.createMenuItem(o.url, o.text, o.target, o.external))}
       </div>
     );
   }
@@ -126,7 +126,7 @@ const getJaegerURL = (namespace: string, namespaceSelector: boolean, jaegerURL: 
 };
 
 export type ContextMenuOption = {
-  display: string;
+  text: string;
   url: string;
   external?: boolean;
   target?: string;
@@ -142,24 +142,24 @@ export const getOptions = (
   const detailsPageUrl = makeDetailsPageUrl(namespace, type, name);
   const options: ContextMenuOption[] = [];
 
-  options.push({ display: 'Show Details', url: detailsPageUrl });
+  options.push({ text: 'Show Details', url: detailsPageUrl });
   if (type !== Paths.SERVICEENTRIES) {
-    options.push({ display: 'Show Traffic', url: `${detailsPageUrl}?tab=traffic` });
+    options.push({ text: 'Show Traffic', url: `${detailsPageUrl}?tab=traffic` });
     if (type === Paths.WORKLOADS) {
-      options.push({ display: 'Show Logs', url: `${detailsPageUrl}?tab=logs` });
+      options.push({ text: 'Show Logs', url: `${detailsPageUrl}?tab=logs` });
     }
     options.push({
-      display: 'Show Inbound Metrics',
+      text: 'Show Inbound Metrics',
       url: `${detailsPageUrl}?tab=${type === Paths.SERVICES ? 'metrics' : 'in_metrics'}`
     });
     if (type !== Paths.SERVICES) {
-      options.push({ display: 'Show Outbound Metrics', url: `${detailsPageUrl}?tab=out_metrics` });
+      options.push({ text: 'Show Outbound Metrics', url: `${detailsPageUrl}?tab=out_metrics` });
     }
     if (type === Paths.SERVICES) {
       jaegerIntegration
-        ? options.push({ display: 'Show Traces', url: `${detailsPageUrl}?tab=traces` })
+        ? options.push({ text: 'Show Traces', url: `${detailsPageUrl}?tab=traces` })
         : options.push({
-            display: 'Show Traces',
+            text: 'Show Traces',
             url: getJaegerURL(namespace, namespaceSelector, jaegerUrl!, name),
             external: true,
             target: '_blank'
