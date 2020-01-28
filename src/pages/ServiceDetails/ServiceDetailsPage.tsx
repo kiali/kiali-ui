@@ -463,7 +463,7 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
     const tabsArray: any[] = [overviewTab, trafficTab, inboundMetricsTab];
 
     // Conditional Traces tab
-    if (this.props.jaegerIntegration || this.props.jaegerUrl !== '') {
+    if (this.props.jaegerIntegration || (this.props.jaegerUrl && this.props.jaegerUrl !== '')) {
       let jaegerTag: any = undefined;
       if (this.props.jaegerIntegration) {
         const jaegerTitle =

@@ -50,7 +50,7 @@ class Menu extends React.Component<MenuProps, MenuState> {
     });
     return navItems.map(item => {
       if (item.title === 'Distributed Tracing') {
-        return this.props.jaegerUrl !== '' ? (
+        return this.props.jaegerUrl && this.props.jaegerUrl !== '' ? (
           <ExternalLink key={item.to} href={this.props.jaegerUrl} name="Distributed Tracing" />
         ) : (
           ''
