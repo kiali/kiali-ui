@@ -12,6 +12,7 @@ import { icons, Paths } from './config';
 import ServiceDetailsPageContainer from './pages/ServiceDetails/ServiceDetailsPage';
 import DefaultSecondaryMasthead from './components/DefaultSecondaryMasthead/DefaultSecondaryMasthead';
 import IstioConfigNewPageContainer from './pages/IstioConfigNew/IstioConfigNewPage';
+import ThreeScaleHandlerListPage from './pages/extensions/threescale/ThreeScaleHandlerList/ThreeScaleHandlerListPage';
 
 /**
  * Return array of objects that describe vertical menu
@@ -58,6 +59,15 @@ const navItems: MenuItem[] = [
     iconClass: icons.menu.distributedTracing,
     title: 'Distributed Tracing',
     to: '/jaeger'
+  }
+];
+
+const extensionsItems: MenuItem[] = [
+  {
+    iconClass: '',
+    title: '3scale Config',
+    to: '/extensions/threescale',
+    pathsActive: [/^\/extensions\/threescale/]
   }
 ];
 
@@ -162,4 +172,11 @@ const secondaryMastheadRoutes: Path[] = [
   }
 ];
 
-export { defaultRoute, navItems, pathRoutes, secondaryMastheadRoutes };
+const extensionsRoutes: Path[] = [
+  {
+    path: '/extensions/threescale',
+    component: ThreeScaleHandlerListPage
+  }
+];
+
+export { defaultRoute, navItems, extensionsItems, pathRoutes, secondaryMastheadRoutes, extensionsRoutes };
