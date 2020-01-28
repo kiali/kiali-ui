@@ -10,7 +10,7 @@ import {
   DecoratedGraphNodeData,
   UNKNOWN
 } from '../../types/Graph';
-import { renderTitle } from './SummaryLink';
+import { renderBadgedLink } from './SummaryLink';
 import {
   shouldRefreshData,
   getDatapoints,
@@ -132,7 +132,7 @@ export default class SummaryPanelEdge extends React.Component<SummaryPanelPropTy
       const nodeData = decoratedNodeData(node);
       return (
         <div className="panel-heading label-collection" style={summaryHeader}>
-          <strong>{prefix}</strong> {renderTitle(nodeData)}
+          <strong>{prefix}</strong> {renderBadgedLink(nodeData)}
         </div>
       );
     };

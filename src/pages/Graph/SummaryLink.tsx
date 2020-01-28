@@ -7,7 +7,7 @@ import { Tooltip, Badge, PopoverPosition } from '@patternfly/react-core';
 import { Health } from 'types/Health';
 import { HealthIndicator, DisplayMode } from 'components/Health/HealthIndicator';
 
-const getTitle = (nodeData: GraphNodeData, nodeType?: NodeType) => {
+const getBadge = (nodeData: GraphNodeData, nodeType?: NodeType) => {
   switch (nodeType || nodeData.nodeType) {
     case NodeType.APP:
       return (
@@ -110,13 +110,24 @@ export const RenderLink = (props: RenderLinkProps) => {
   );
 };
 
-export const renderTitle = (nodeData: GraphNodeData, nodeType?: NodeType) => {
+export const renderBadgedHost = (host: string) => {
+  return (
+    <span>
+      <Tooltip content={<>Host</>}>
+        <Badge className="virtualitem_badge_definition">H</Badge>
+      </Tooltip>
+      {host}
+    </span>
+  );
+};
+
+export const renderBadgedLink = (nodeData: GraphNodeData, nodeType?: NodeType) => {
   const link = getLink(nodeData, nodeType);
 
   return (
     <>
-      <span style={{ paddingRight: '0.5em' }}>
-        {getTitle(nodeData, nodeType)}
+      <span style={{ marginRight: '1em', marginBottom: '3px', display: 'inline-block' }}>
+        {getBadge(nodeData, nodeType)}
         {link}
       </span>
       {nodeData.isInaccessible && <KialiIcon.MtlsLock />}
@@ -127,19 +138,21 @@ export const renderTitle = (nodeData: GraphNodeData, nodeType?: NodeType) => {
 export const renderHealth = (health?: Health) => {
   return (
     <>
-      {health && (
-        <Badge style={{ fontWeight: 'normal', marginTop: '4px', marginBottom: '4px' }} isRead={true}>
-          <span style={{ margin: '3px 0 1px 0' }}>
+      <Badge style={{ fontWeight: 'normal', marginTop: '4px', marginBottom: '4px' }} isRead={true}>
+        <span style={{ margin: '3px 0 1px 0' }}>
+          {health ? (
             <HealthIndicator
               id="graph-health-indicator"
               mode={DisplayMode.SMALL}
               health={health}
               tooltipPlacement={PopoverPosition.left}
             />
-          </span>
-          <span style={{ marginLeft: '4px' }}>health</span>
-        </Badge>
-      )}
+          ) : (
+            'n/a'
+          )}
+        </span>
+        <span style={{ marginLeft: '4px' }}>health</span>
+      </Badge>
     </>
   );
 };
@@ -167,14 +180,8 @@ export const renderDestServicesLinks = (node: any) => {
       version: '',
       workload: ''
     };
-    // links.push(<RenderLink key={`service-${index}`} nodeData={serviceNodeData} nodeType={NodeType.SERVICE} />);
-    // links.push(<span key={`comma-after-${ds.name}`}>, </span>);
-    links.push(renderTitle(serviceNodeData));
+    links.push(renderBadgedLink(serviceNodeData));
   });
-
-  // if (links.length > 0) {
-  //  links.pop();
-  // }
 
   return links;
 };

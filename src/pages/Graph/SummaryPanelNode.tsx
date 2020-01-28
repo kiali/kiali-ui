@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { renderDestServicesLinks, renderTitle, renderHealth } from './SummaryLink';
+import { renderDestServicesLinks, renderBadgedLink, renderHealth, renderBadgedHost } from './SummaryLink';
 import {
   getAccumulatedTrafficRateGrpc,
   getAccumulatedTrafficRateHttp,
@@ -323,45 +323,44 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
     });
 
     return (
-      <div ref={this.mainDivRef} className="panel panel-default" style={SummaryPanelNode.panelStyle}>
+      <div ref={this.mainDivRef} className={`panel panel-default ${SummaryPanelNode.panelStyle}`}>
         <div className="panel-heading" style={summaryHeader}>
+          <div>{renderBadgedLink(nodeData)}</div>
           <div>
-            <div>
-              {renderTitle(nodeData)}
-              <Dropdown
-                style={{ float: 'right', fontSize: '0.5rem' }}
-                id="summary-node-actions"
-                dropdownItems={actions}
-                isOpen={this.state.isOpen}
-                position={DropdownPosition.right}
-                toggle={<DropdownToggle onToggle={this.onToggleActions}>Actions</DropdownToggle>}
-              />
-            </div>
             {renderHealth(this.state.health)}
+            <Dropdown
+              id="summary-node-actions"
+              style={{ float: 'right' }}
+              dropdownItems={actions}
+              isOpen={this.state.isOpen}
+              position={DropdownPosition.right}
+              toggle={<DropdownToggle onToggle={this.onToggleActions}>Actions</DropdownToggle>}
+            />
+          </div>
+          <div>
             {this.renderBadgeSummary(nodeData.hasCB, nodeData.hasVS, nodeData.hasMissingSC, nodeData.isDead)}
-            {shouldRenderDestsList && (
-              <div>
-                <strong>Destinations: </strong>
-                {destsList}
-              </div>
-            )}
+            {shouldRenderDestsList && <div>{destsList}</div>}
             {shouldRenderSvcList && <div>{servicesList}</div>}
-            {shouldRenderWorkload && <div>{renderTitle(nodeData, NodeType.WORKLOAD)}</div>}
+            {shouldRenderWorkload && <div>{renderBadgedLink(nodeData, NodeType.WORKLOAD)}</div>}
           </div>
         </div>
         <div className="panel-body">
-          {(shouldRenderDestsList || shouldRenderSvcList || shouldRenderWorkload) && <hr />}
-          {/* TODO: link to App or Workload Details charts when available
-          {nodeType !== NodeType.UNKNOWN && (
-            <p style={{ textAlign: 'right' }}>
-              <Link to={`/namespaces/${namespace}/services/${app}?tab=metrics&groupings=local+version%2Cresponse+code`}>
-                View detailed charts <KialiIcon.AngleDoubleRight />
-              </Link>
-            </p>
-          )} */}
-          {this.hasGrpcTraffic(nodeData) && this.renderGrpcRates(node)}
-          {this.hasHttpTraffic(nodeData) && this.renderHttpRates(node)}
-          <div>{this.renderCharts(node)}</div>
+          {this.hasGrpcTraffic(nodeData) && (
+            <>
+              {this.renderGrpcRates(node)}
+              <hr style={{ margin: '10px 0' }} />
+            </>
+          )}
+          {this.hasHttpTraffic(nodeData) && (
+            <>
+              {this.renderHttpRates(node)}
+              <hr style={{ margin: '10px 0' }} />
+            </>
+          )}
+          <div>
+            {this.renderCharts(node)}
+            <hr style={{ margin: '10px 0' }} />
+          </div>
           {!this.hasGrpcTraffic(nodeData) && renderNoTraffic('GRPC')}
           {!this.hasHttpTraffic(nodeData) && renderNoTraffic('HTTP')}
         </div>
@@ -390,7 +389,6 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
           outRate={outgoing.rate}
           outRateErr={outgoing.rateErr}
         />
-        <hr />
       </>
     );
   };
@@ -412,7 +410,6 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
           outRate4xx={outgoing.rate4xx}
           outRate5xx={outgoing.rate5xx}
         />
-        <hr />
       </>
     );
   };
@@ -425,7 +422,6 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
         <>
           <div>
             <KialiIcon.Info /> Sparkline charts not supported for unknown node. Use edge for details.
-            <hr />
           </div>
         </>
       );
@@ -434,7 +430,6 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
         <>
           <div>
             <KialiIcon.Info /> Sparkline charts cannot be shown because the selected node is inaccessible.
-            <hr />
           </div>
         </>
       );
@@ -443,7 +438,6 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
         <>
           <div>
             <KialiIcon.Info /> Sparkline charts cannot be shown because the selected node is a serviceEntry.
-            <hr />
           </div>
         </>
       );
@@ -502,7 +496,6 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
               </div>
             </>
           )}
-          <hr />
         </>
       );
     }
@@ -535,7 +528,6 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
               </div>
             </>
           )}
-          <hr />
         </>
       );
     }
@@ -554,7 +546,6 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
             sentRates={this.state.tcpSentOut}
             hide={isServiceNode}
           />
-          <hr />
         </>
       );
     }
@@ -571,7 +562,7 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
   // TODO:(see https://github.com/kiali/kiali-design/issues/63) If we want to show an icon for SE uncomment below
   private renderBadgeSummary = (hasCB?: boolean, hasVS?: boolean, hasMissingSC?: boolean, isDead?: boolean) => {
     return (
-      <div style={{ marginTop: '10px' }}>
+      <div style={{ marginTop: '10px', marginBottom: '10px' }}>
         {hasCB && (
           <div>
             <KialiIcon.CircuitBreaker />
@@ -612,15 +603,9 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
 
     destServices.forEach(ds => {
       const service = ds.name;
-      const key = `${ds.namespace}.svc.${service}`;
       const displayName = service;
-      entries.push(<span key={key}>{displayName}</span>);
-      entries.push(<span key={`comma-after-${ds.name}`}>, </span>);
+      entries.push(renderBadgedHost(displayName));
     });
-
-    if (entries.length > 0) {
-      entries.pop();
-    }
 
     return entries;
   };

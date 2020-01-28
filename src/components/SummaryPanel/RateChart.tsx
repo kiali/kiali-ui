@@ -56,7 +56,12 @@ export class RateChart extends React.Component<Props, State> {
         };
       }
     });
-    const verticalAxisStyle = singleBar ? { tickLabels: { fill: 'none' } } : { tickLabels: { padding: 2 } };
+    const fontSize = getComputedStyle(document.body).getPropertyValue('--graph-side-panel--font-size');
+    const fontSizePx = getComputedStyle(document.body).getPropertyValue('--graph-side-panel--font-size-px');
+    const horizontalAxisStyle = { tickLabels: { fontSize: fontSize } };
+    const verticalAxisStyle = singleBar
+      ? { tickLabels: { fill: 'none', fontSize: fontSize } }
+      : { tickLabels: { padding: 2, fontSize: fontSize } };
     return (
       <Chart
         height={height}
@@ -91,8 +96,15 @@ export class RateChart extends React.Component<Props, State> {
           })}
         </ChartStack>
         <ChartAxis style={verticalAxisStyle} />
-        <ChartAxis dependentAxis={true} showGrid={true} crossAxis={false} tickValues={[0, 25, 50, 75, 100]} />
+        <ChartAxis
+          style={horizontalAxisStyle}
+          dependentAxis={true}
+          showGrid={true}
+          crossAxis={false}
+          tickValues={[0, 25, 50, 75, 100]}
+        />
         <VictoryLegend
+          style={{ labels: { fontSize: Number(fontSizePx) } }}
           name={this.props.baseName + '-legend'}
           data={this.props.series.map((s, idx) => {
             if (this.state.hiddenSeries.has(idx)) {
