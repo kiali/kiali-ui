@@ -11,7 +11,9 @@ import {
   getNodeMetrics,
   getNodeMetricType,
   renderNoTraffic,
-  summaryHeader
+  summaryHeader,
+  hr,
+  summaryPanel
 } from './SummaryPanelCommon';
 import { Health } from '../../types/Health';
 import { Response } from '../../services/Api';
@@ -64,14 +66,6 @@ const defaultState: SummaryPanelGroupState = {
 };
 
 export default class SummaryPanelGroup extends React.Component<SummaryPanelPropType, SummaryPanelGroupState> {
-  static readonly panelStyle = {
-    height: '100%',
-    margin: 0,
-    minWidth: '25em',
-    overflowY: 'auto' as 'auto',
-    width: '25em'
-  };
-
   private metricsPromise?: CancelablePromise<Response<Metrics>[]>;
   private readonly mainDivRef: React.RefObject<HTMLDivElement>;
 
@@ -133,7 +127,7 @@ export default class SummaryPanelGroup extends React.Component<SummaryPanelPropT
     });
 
     return (
-      <div ref={this.mainDivRef} className="panel panel-default" style={SummaryPanelGroup.panelStyle}>
+      <div ref={this.mainDivRef} className={`panel panel-default ${summaryPanel}`}>
         <div className="panel-heading" style={summaryHeader}>
           <div>{renderBadgedLink(nodeData)}</div>
           <div>
@@ -154,10 +148,24 @@ export default class SummaryPanelGroup extends React.Component<SummaryPanelPropT
           </div>
         </div>
         <div className="panel-body">
-          {(serviceList.length > 0 || workloadList.length > 0) && <hr />}
-          {this.hasGrpcTraffic(group) ? this.renderGrpcRates(group) : renderNoTraffic('GRPC')}
-          {this.hasHttpTraffic(group) ? this.renderHttpRates(group) : renderNoTraffic('HTTP')}
-          <div>{this.renderSparklines(group)}</div>
+          {this.hasGrpcTraffic(group) && (
+            <>
+              {this.renderGrpcRates(group)}
+              {hr()}
+            </>
+          )}
+          {this.hasHttpTraffic(group) && (
+            <>
+              {this.renderHttpRates(group)}
+              {hr()}
+            </>
+          )}
+          <div>
+            {this.renderSparklines(group)}
+            {hr()}
+          </div>
+          {!this.hasGrpcTraffic(group) && renderNoTraffic('GRPC')}
+          {!this.hasHttpTraffic(group) && renderNoTraffic('HTTP')}
         </div>
       </div>
     );
@@ -270,7 +278,6 @@ export default class SummaryPanelGroup extends React.Component<SummaryPanelPropT
           outRate={outgoing.rate}
           outRateErr={outgoing.rateErr}
         />
-        <hr />
       </>
     );
   };
@@ -293,7 +300,6 @@ export default class SummaryPanelGroup extends React.Component<SummaryPanelPropT
           outRate4xx={outgoing.rate4xx}
           outRate5xx={outgoing.rate5xx}
         />
-        <hr />
       </>
     );
   };
@@ -326,7 +332,6 @@ export default class SummaryPanelGroup extends React.Component<SummaryPanelPropT
             dataRps={this.state.requestCountOut}
             dataErrors={this.state.errorCountOut}
           />
-          <hr />
         </>
       );
     }
@@ -346,7 +351,6 @@ export default class SummaryPanelGroup extends React.Component<SummaryPanelPropT
             receivedRates={this.state.tcpReceivedOut}
             sentRates={this.state.tcpSentOut}
           />
-          <hr />
         </>
       );
     }

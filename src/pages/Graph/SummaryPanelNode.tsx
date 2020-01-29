@@ -26,7 +26,9 @@ import {
   getNodeMetricType,
   renderNoTraffic,
   mergeMetricsResponses,
-  summaryHeader
+  summaryHeader,
+  hr,
+  summaryPanel
 } from './SummaryPanelCommon';
 import { Health } from '../../types/Health';
 import { CancelablePromise, makeCancelablePromise } from '../../utils/CancelablePromises';
@@ -86,14 +88,6 @@ const defaultState: SummaryPanelNodeState = {
 };
 
 export default class SummaryPanelNode extends React.Component<SummaryPanelPropType, SummaryPanelNodeState> {
-  static readonly panelStyle = {
-    height: '100%',
-    margin: 0,
-    minWidth: '25em',
-    overflowY: 'scroll' as 'scroll',
-    width: '25em'
-  };
-
   private metricsPromise?: CancelablePromise<Response<Metrics>[]>;
   private readonly mainDivRef: React.RefObject<HTMLDivElement>;
 
@@ -323,7 +317,7 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
     });
 
     return (
-      <div ref={this.mainDivRef} className={`panel panel-default ${SummaryPanelNode.panelStyle}`}>
+      <div ref={this.mainDivRef} className={`panel panel-default ${summaryPanel}`}>
         <div className="panel-heading" style={summaryHeader}>
           <div>{renderBadgedLink(nodeData)}</div>
           <div>
@@ -348,18 +342,18 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
           {this.hasGrpcTraffic(nodeData) && (
             <>
               {this.renderGrpcRates(node)}
-              <hr style={{ margin: '10px 0' }} />
+              {hr()}
             </>
           )}
           {this.hasHttpTraffic(nodeData) && (
             <>
               {this.renderHttpRates(node)}
-              <hr style={{ margin: '10px 0' }} />
+              {hr()}
             </>
           )}
           <div>
             {this.renderCharts(node)}
-            <hr style={{ margin: '10px 0' }} />
+            {hr()}
           </div>
           {!this.hasGrpcTraffic(nodeData) && renderNoTraffic('GRPC')}
           {!this.hasHttpTraffic(nodeData) && renderNoTraffic('HTTP')}
