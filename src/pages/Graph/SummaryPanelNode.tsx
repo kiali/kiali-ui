@@ -37,7 +37,7 @@ import { Reporter } from '../../types/MetricsOptions';
 import { CyNode, decoratedNodeData } from '../../components/CytoscapeGraph/CytoscapeGraphUtils';
 import { KialiIcon } from 'config/KialiIcon';
 import { getOptions } from 'components/CytoscapeGraph/ContextMenu/NodeContextMenu';
-import { Dropdown, DropdownToggle, DropdownItem, DropdownPosition } from '@patternfly/react-core';
+import { Dropdown, DropdownItem, DropdownPosition, KebabToggle } from '@patternfly/react-core';
 
 type SummaryPanelNodeMetricsState = {
   grpcRequestCountIn: Datapoint[];
@@ -319,18 +319,19 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
     return (
       <div ref={this.mainDivRef} className={`panel panel-default ${summaryPanel}`}>
         <div className="panel-heading" style={summaryHeader}>
-          <div>{renderBadgedLink(nodeData)}</div>
           <div>
-            {renderHealth(this.state.health)}
+            {renderBadgedLink(nodeData)}
             <Dropdown
               id="summary-node-actions"
               style={{ float: 'right' }}
+              isPlain={true}
               dropdownItems={actions}
               isOpen={this.state.isOpen}
               position={DropdownPosition.right}
-              toggle={<DropdownToggle onToggle={this.onToggleActions}>Actions</DropdownToggle>}
+              toggle={<KebabToggle id="summary-node-kebab" onToggle={this.onToggleActions} />}
             />
           </div>
+          <div>{renderHealth(this.state.health)}</div>
           <div>
             {this.renderBadgeSummary(nodeData.hasCB, nodeData.hasVS, nodeData.hasMissingSC, nodeData.isDead)}
             {shouldRenderDestsList && <div>{destsList}</div>}

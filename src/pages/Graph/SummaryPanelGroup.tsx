@@ -22,7 +22,7 @@ import { Reporter } from '../../types/MetricsOptions';
 import { CancelablePromise, makeCancelablePromise } from '../../utils/CancelablePromises';
 import { KialiIcon } from 'config/KialiIcon';
 import { decoratedNodeData, CyNode } from 'components/CytoscapeGraph/CytoscapeGraphUtils';
-import { Dropdown, DropdownPosition, DropdownToggle, DropdownItem } from '@patternfly/react-core';
+import { Dropdown, DropdownPosition, DropdownItem, KebabToggle } from '@patternfly/react-core';
 import { getOptions } from 'components/CytoscapeGraph/ContextMenu/NodeContextMenu';
 
 type SummaryPanelGroupMetricsState = {
@@ -129,18 +129,19 @@ export default class SummaryPanelGroup extends React.Component<SummaryPanelPropT
     return (
       <div ref={this.mainDivRef} className={`panel panel-default ${summaryPanel}`}>
         <div className="panel-heading" style={summaryHeader}>
-          <div>{renderBadgedLink(nodeData)}</div>
           <div>
-            {renderHealth(this.state.health)}
+            {renderBadgedLink(nodeData)}
             <Dropdown
               id="summary-group-actions"
+              isPlain={true}
               style={{ float: 'right' }}
               dropdownItems={actions}
               isOpen={this.state.isOpen}
               position={DropdownPosition.right}
-              toggle={<DropdownToggle onToggle={this.onToggleActions}>Actions</DropdownToggle>}
+              toggle={<KebabToggle id="summary-group-kebab" onToggle={this.onToggleActions} />}
             />
           </div>
+          <div>{renderHealth(this.state.health)}</div>
           <div>
             {this.renderBadgeSummary(group)}
             {serviceList.length > 0 && <div>{serviceList}</div>}
