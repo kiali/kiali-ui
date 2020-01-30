@@ -1,14 +1,5 @@
 import * as React from 'react';
-import {
-  Tab,
-  Tooltip,
-  TooltipPosition,
-  Badge,
-  DropdownItem,
-  Dropdown,
-  DropdownPosition,
-  DropdownToggle
-} from '@patternfly/react-core';
+import { Tab, Tooltip, TooltipPosition, Badge } from '@patternfly/react-core';
 import { style } from 'typestyle';
 import _ from 'lodash';
 import { RateTableGrpc, RateTableHttp } from '../../components/SummaryPanel/RateTable';
@@ -29,7 +20,6 @@ import { Response } from '../../services/Api';
 import { Metrics, Datapoint } from '../../types/Metrics';
 import { IstioMetricsOptions } from '../../types/MetricsOptions';
 import { CancelablePromise, makeCancelablePromise, PromisesRegistry } from '../../utils/CancelablePromises';
-import { Paths } from '../../config';
 import { CyNode } from '../../components/CytoscapeGraph/CytoscapeGraphUtils';
 import { KialiIcon } from 'config/KialiIcon';
 import SimpleTabs from 'components/Tab/SimpleTabs';
@@ -272,58 +262,7 @@ export default class SummaryPanelGraph extends React.Component<SummaryPanelPropT
   };
 
   private renderNamespacesSummary = () => {
-    const options = [
-      {
-        text: 'Show applications for namespaces',
-        url: `/${Paths.APPLICATIONS}?namespaces=${this.props.namespaces.map(ns => ns.name).join(',')}`
-      },
-      {
-        text: 'Show service for namespaces',
-        url: `/${Paths.SERVICES}?namespaces=${this.props.namespaces.map(ns => ns.name).join(',')}`
-      },
-      {
-        text: 'Show workloads for namespaces',
-        url: `/${Paths.WORKLOADS}?namespaces=${this.props.namespaces.map(ns => ns.name).join(',')}`
-      },
-      {
-        text: 'Show Istio configs for namespaces',
-        url: `/${Paths.ISTIO}?namespaces=${this.props.namespaces.map(ns => ns.name).join(',')}`
-      }
-    ];
-    const items = options.map(o => {
-      return (
-        <DropdownItem
-          key={o.text}
-          onClick={() => {
-            this.onClickAction(o.url);
-          }}
-        >
-          {o.text}
-        </DropdownItem>
-      );
-    });
-    return (
-      <>
-        {this.props.namespaces.map(namespace => this.renderNamespace(namespace.name))}
-        <Dropdown
-          id="summary-graph-actions"
-          style={{ float: 'right' }}
-          dropdownItems={items}
-          isOpen={this.state.isOpen}
-          position={DropdownPosition.right}
-          toggle={<DropdownToggle onToggle={this.onToggleActions}>Actions</DropdownToggle>}
-        />
-      </>
-    );
-  };
-
-  private onClickAction = url => {
-    console.log(`Action=${url}`);
-    this.onToggleActions(false);
-  };
-
-  private onToggleActions = isOpen => {
-    this.setState({ isOpen: isOpen });
+    return <>{this.props.namespaces.map(namespace => this.renderNamespace(namespace.name))}</>;
   };
 
   private renderNamespace = (ns: string) => {
