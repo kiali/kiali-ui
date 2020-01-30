@@ -38,6 +38,9 @@ import { CyNode, decoratedNodeData } from '../../components/CytoscapeGraph/Cytos
 import { KialiIcon } from 'config/KialiIcon';
 import { getOptions } from 'components/CytoscapeGraph/ContextMenu/NodeContextMenu';
 import { Dropdown, DropdownItem, DropdownPosition, KebabToggle } from '@patternfly/react-core';
+import history from 'app/History';
+import { KialiAppState } from 'store/Store';
+import { connect } from 'react-redux';
 
 type SummaryPanelNodeMetricsState = {
   grpcRequestCountIn: Datapoint[];
@@ -87,11 +90,19 @@ const defaultState: SummaryPanelNodeState = {
   ...defaultMetricsState
 };
 
-export default class SummaryPanelNode extends React.Component<SummaryPanelPropType, SummaryPanelNodeState> {
+type ReduxProps = {
+  jaegerIntegration: boolean;
+  namespaceSelector: boolean;
+  jaegerURL: string;
+};
+
+type SummaryPanelNodeProps = ReduxProps & SummaryPanelPropType;
+
+export class SummaryPanelNode extends React.Component<SummaryPanelNodeProps, SummaryPanelNodeState> {
   private metricsPromise?: CancelablePromise<Response<Metrics>[]>;
   private readonly mainDivRef: React.RefObject<HTMLDivElement>;
 
-  constructor(props: SummaryPanelPropType) {
+  constructor(props: SummaryPanelNodeProps) {
     super(props);
     this.showRequestCountMetrics = this.showRequestCountMetrics.bind(this);
 
@@ -99,7 +110,7 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
     this.mainDivRef = React.createRef<HTMLDivElement>();
   }
 
-  static getDerivedStateFromProps(props: SummaryPanelPropType, state: SummaryPanelNodeState) {
+  static getDerivedStateFromProps(props: SummaryPanelNodeProps, state: SummaryPanelNodeState) {
     // if the summaryTarget (i.e. selected node) has changed, then init the state and set to loading. The loading
     // will actually be kicked off after the render (in componentDidMount/Update).
     return props.data.summaryTarget !== state.node
@@ -112,7 +123,7 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
     updateHealth(this.props.data.summaryTarget, this.setState.bind(this));
   }
 
-  componentDidUpdate(prevProps: SummaryPanelPropType) {
+  componentDidUpdate(prevProps: SummaryPanelNodeProps) {
     if (prevProps.data.summaryTarget !== this.props.data.summaryTarget) {
       if (this.mainDivRef.current) {
         this.mainDivRef.current.scrollTop = 0;
@@ -130,7 +141,7 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
     }
   }
 
-  updateCharts(props: SummaryPanelPropType) {
+  updateCharts(props: SummaryPanelNodeProps) {
     const target = props.data.summaryTarget;
     const nodeData = decoratedNodeData(target);
     const nodeMetricType = getNodeMetricType(nodeData);
@@ -303,7 +314,12 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
     const shouldRenderSvcList = servicesList && servicesList.length > 0;
     const shouldRenderWorkload = nodeType !== NodeType.WORKLOAD && nodeType !== NodeType.UNKNOWN && workload;
 
-    const actions = getOptions(nodeData, true, false, '').map(o => {
+    const actions = getOptions(
+      nodeData,
+      this.props.namespaceSelector,
+      this.props.jaegerIntegration,
+      this.props.jaegerURL
+    ).map(o => {
       return (
         <DropdownItem
           key={o.text}
@@ -363,9 +379,8 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
     );
   }
 
-  private onClickAction = url => {
-    console.log(`Action=${url}`);
-    this.onToggleActions(false);
+  private onClickAction = path => {
+    history.push(path);
   };
 
   private onToggleActions = isOpen => {
@@ -638,3 +653,12 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
     return data.tcpIn > 0 || data.tcpOut > 0;
   };
 }
+
+const mapStateToProps = (state: KialiAppState) => ({
+  jaegerIntegration: state.jaegerState ? state.jaegerState.integration : false,
+  namespaceSelector: state.jaegerState ? state.jaegerState.namespaceSelector : true,
+  jaegerURL: state.jaegerState ? state.jaegerState.jaegerURL : ''
+});
+
+const SummaryPanelNodeContainer = connect(mapStateToProps)(SummaryPanelNode);
+export default SummaryPanelNodeContainer;

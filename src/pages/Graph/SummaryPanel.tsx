@@ -4,8 +4,8 @@ import { SummaryPanelPropType } from '../../types/Graph';
 import SummaryPanelEdge from './SummaryPanelEdge';
 import SummaryPanelGraph from './SummaryPanelGraph';
 import SummaryPanelGroup from './SummaryPanelGroup';
-import SummaryPanelNode from './SummaryPanelNode';
 import { KialiIcon } from 'config/KialiIcon';
+import SummaryPanelNodeContainer from './SummaryPanelNode';
 
 type SummaryPanelState = {
   isVisible: boolean;
@@ -103,7 +103,7 @@ export default class SummaryPanel extends React.Component<MainSummaryPanelPropTy
           />
         ) : null}
         {this.props.data.summaryType === 'node' ? (
-          <SummaryPanelNode
+          <SummaryPanelNodeContainer
             data={this.props.data}
             queryTime={this.props.queryTime}
             namespaces={this.props.namespaces}

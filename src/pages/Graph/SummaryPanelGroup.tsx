@@ -24,6 +24,7 @@ import { KialiIcon } from 'config/KialiIcon';
 import { decoratedNodeData, CyNode } from 'components/CytoscapeGraph/CytoscapeGraphUtils';
 import { Dropdown, DropdownPosition, DropdownItem, KebabToggle } from '@patternfly/react-core';
 import { getOptions } from 'components/CytoscapeGraph/ContextMenu/NodeContextMenu';
+import history from 'app/History';
 
 type SummaryPanelGroupMetricsState = {
   requestCountIn: Datapoint[];
@@ -116,7 +117,7 @@ export default class SummaryPanelGroup extends React.Component<SummaryPanelPropT
     const actions = getOptions(nodeData, true, false, '').map(o => {
       return (
         <DropdownItem
-          key={o.url}
+          key={o.text}
           onClick={() => {
             this.onClickAction(o.url);
           }}
@@ -172,9 +173,8 @@ export default class SummaryPanelGroup extends React.Component<SummaryPanelPropT
     );
   }
 
-  private onClickAction = url => {
-    console.log(`Action=${url}`);
-    this.onToggleActions(false);
+  private onClickAction = path => {
+    history.push(path);
   };
 
   private onToggleActions = isExpanded => {
