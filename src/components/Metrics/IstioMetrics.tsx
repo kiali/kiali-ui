@@ -199,7 +199,7 @@ class IstioMetrics extends React.Component<IstioMetricsProps, MetricsState> {
 
   renderOptionsBar() {
     return (
-      <Toolbar>
+      <Toolbar style={{ paddingBottom: 8 }}>
         <ToolbarGroup>
           <ToolbarItem>
             <MetricsSettingsDropdown

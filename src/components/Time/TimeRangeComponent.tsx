@@ -43,6 +43,9 @@ export default class TimeRangeComponent extends React.Component<Props> {
     if (d) {
       this.range = guardTimeRange(this.range, durationToBounds, b => b);
       this.range.from = d.getTime();
+      if (this.range.to && this.range.from > this.range.to) {
+        this.range.from = this.range.to;
+      }
       storeBounds(this.range);
       this.props.onChanged(this.range);
     }
@@ -51,6 +54,9 @@ export default class TimeRangeComponent extends React.Component<Props> {
   onEndPickerChanged = (d?: Date) => {
     this.range = guardTimeRange(this.range, durationToBounds, b => b);
     this.range.to = d ? d.getTime() : undefined;
+    if (this.range.to && this.range.from > this.range.to) {
+      this.range.to = this.range.from;
+    }
     storeBounds(this.range);
     this.props.onChanged(this.range);
   };
@@ -78,9 +84,9 @@ export default class TimeRangeComponent extends React.Component<Props> {
       <>
         {this.renderDuration()}
         {' From '}
-        <DateTimePicker selected={bounds.from} onChange={date => this.onStartPickerChanged(date)} />
+        <DateTimePicker selected={bounds.from} onChange={date => this.onStartPickerChanged(date)} maxDate={bounds.to} />
         {' To '}
-        <DateTimePicker selected={bounds.to} onChange={date => this.onEndPickerChanged(date)} />
+        <DateTimePicker selected={bounds.to} onChange={date => this.onEndPickerChanged(date)} minDate={bounds.from} />
       </>
     );
   }
