@@ -121,12 +121,17 @@ export const renderBadgedHost = (host: string) => {
   );
 };
 
-export const renderBadgedLink = (nodeData: GraphNodeData, nodeType?: NodeType) => {
+export const renderBadgedLink = (nodeData: GraphNodeData, nodeType?: NodeType, label?: string) => {
   const link = getLink(nodeData, nodeType);
 
   return (
     <>
       <span style={{ marginRight: '1em', marginBottom: '3px', display: 'inline-block' }}>
+        {label && (
+          <span style={{ whiteSpace: 'pre' }}>
+            <b>{label}</b>
+          </span>
+        )}
         {getBadge(nodeData, nodeType)}
         {link}
       </span>

@@ -3,6 +3,13 @@
   --graph-side-panel--font-size-px: 12;
 }
 
+#summary-graph-actions .pf-c-dropdown__toggle {
+  font-size: var(--graph-side-panel--font-size);
+}
+#summary-graph-actions .pf-c-dropdown__menu-item {
+  font-size: var(--graph-side-panel--font-size);
+}
+
 #summary-group-actions .pf-c-dropdown__toggle {
   font-size: var(--graph-side-panel--font-size);
 }

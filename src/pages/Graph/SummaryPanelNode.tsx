@@ -306,7 +306,7 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
     const actions = getOptions(nodeData, true, false, '').map(o => {
       return (
         <DropdownItem
-          key={o.url}
+          key={o.text}
           onClick={() => {
             this.onClickAction(o.url);
           }}
@@ -364,10 +364,11 @@ export default class SummaryPanelNode extends React.Component<SummaryPanelPropTy
 
   private onClickAction = url => {
     console.log(`Action=${url}`);
+    this.onToggleActions(false);
   };
 
-  private onToggleActions = isExpanded => {
-    this.setState({ isOpen: isExpanded });
+  private onToggleActions = isOpen => {
+    this.setState({ isOpen: isOpen });
   };
 
   private renderGrpcRates = node => {

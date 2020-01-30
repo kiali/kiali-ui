@@ -173,6 +173,7 @@ export default class SummaryPanelGroup extends React.Component<SummaryPanelPropT
 
   private onClickAction = url => {
     console.log(`Action=${url}`);
+    this.onToggleActions(false);
   };
 
   private onToggleActions = isExpanded => {

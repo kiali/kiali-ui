@@ -1,6 +1,14 @@
 import * as React from 'react';
-import { Link } from 'react-router-dom';
-import { Tab, Tooltip, TooltipPosition, Badge } from '@patternfly/react-core';
+import {
+  Tab,
+  Tooltip,
+  TooltipPosition,
+  Badge,
+  DropdownItem,
+  Dropdown,
+  DropdownPosition,
+  DropdownToggle
+} from '@patternfly/react-core';
 import { style } from 'typestyle';
 import _ from 'lodash';
 import { RateTableGrpc, RateTableHttp } from '../../components/SummaryPanel/RateTable';
@@ -12,8 +20,10 @@ import {
   shouldRefreshData,
   getFirstDatapoints,
   mergeMetricsResponses,
+  summaryFont,
   summaryHeader,
-  summaryBodyTabs
+  summaryBodyTabs,
+  hr
 } from './SummaryPanelCommon';
 import { Response } from '../../services/Api';
 import { Metrics, Datapoint } from '../../types/Metrics';
@@ -39,6 +49,7 @@ type SummaryPanelGraphMetricsState = {
 type ValidationsMap = Map<string, ValidationStatus>;
 
 type SummaryPanelGraphState = SummaryPanelGraphMetricsState & {
+  isOpen: boolean;
   graph: any;
   loading: boolean;
   validationsLoading: boolean;
@@ -54,6 +65,7 @@ const defaultMetricsState: SummaryPanelGraphMetricsState = {
 };
 
 const defaultState: SummaryPanelGraphState = {
+  isOpen: false,
   graph: null,
   loading: false,
   validationsLoading: false,
@@ -63,10 +75,6 @@ const defaultState: SummaryPanelGraphState = {
 
 const topologyStyle = style({
   margin: '0 1em'
-});
-
-const linksStyle = style({
-  margin: '0.5em 0 0.25em 1em'
 });
 
 export default class SummaryPanelGraph extends React.Component<SummaryPanelPropType, SummaryPanelGraphState> {
@@ -149,8 +157,8 @@ export default class SummaryPanelGraph extends React.Component<SummaryPanelPropT
         </div>
         <div className={summaryBodyTabs}>
           <SimpleTabs id="graph_summary_tabs" defaultTab={0} style={{ paddingBottom: '10px' }}>
-            <Tab title="Incoming" eventKey={0}>
-              <>
+            <Tab style={summaryFont} title="Incoming" eventKey={0}>
+              <div style={summaryFont}>
                 {incomingRateGrpc.rate === 0 && incomingRateHttp.rate === 0 && (
                   <>
                     <KialiIcon.Info /> No incoming traffic.
@@ -176,10 +184,10 @@ export default class SummaryPanelGraph extends React.Component<SummaryPanelPropT
                   // We don't show a sparkline here because we need to aggregate the traffic of an
                   // ad hoc set of [root] nodes. We don't have backend support for that aggregation.
                 }
-              </>
+              </div>
             </Tab>
-            <Tab title="Outgoing" eventKey={1}>
-              <>
+            <Tab style={summaryFont} title="Outgoing" eventKey={1}>
+              <div style={summaryFont}>
                 {outgoingRateGrpc.rate === 0 && outgoingRateHttp.rate === 0 && (
                   <>
                     <KialiIcon.Info /> No outgoing traffic.
@@ -205,10 +213,10 @@ export default class SummaryPanelGraph extends React.Component<SummaryPanelPropT
                   // We don't show a sparkline here because we need to aggregate the traffic of an
                   // ad hoc set of [root] nodes. We don't have backend support for that aggregation.
                 }
-              </>
+              </div>
             </Tab>
-            <Tab title="Total" eventKey={2}>
-              <>
+            <Tab style={summaryFont} title="Total" eventKey={2}>
+              <div style={summaryFont}>
                 {totalRateGrpc.rate === 0 && totalRateHttp.rate === 0 && (
                   <>
                     <KialiIcon.Info /> No traffic.
@@ -232,11 +240,11 @@ export default class SummaryPanelGraph extends React.Component<SummaryPanelPropT
                 )}
                 {this.shouldShowRPSChart() && (
                   <div>
-                    <hr />
+                    {hr()}
                     {this.renderRpsChart()}
                   </div>
                 )}
-              </>
+              </div>
             </Tab>
           </SimpleTabs>
         </div>
@@ -263,40 +271,60 @@ export default class SummaryPanelGraph extends React.Component<SummaryPanelPropT
     };
   };
 
-  private renderNamespacesSummary = () => (
-    <>
-      {this.props.namespaces.map(namespace => this.renderNamespace(namespace.name))}
-      <Tooltip key="ns_apps" content={<>Go to applications for selected namespaces</>}>
-        <Link
-          key="appsLink"
-          to={`/${Paths.APPLICATIONS}?namespaces=${this.props.namespaces.map(ns => ns.name).join(',')}`}
+  private renderNamespacesSummary = () => {
+    const options = [
+      {
+        text: 'Show applications for namespaces',
+        url: `/${Paths.APPLICATIONS}?namespaces=${this.props.namespaces.map(ns => ns.name).join(',')}`
+      },
+      {
+        text: 'Show service for namespaces',
+        url: `/${Paths.SERVICES}?namespaces=${this.props.namespaces.map(ns => ns.name).join(',')}`
+      },
+      {
+        text: 'Show workloads for namespaces',
+        url: `/${Paths.WORKLOADS}?namespaces=${this.props.namespaces.map(ns => ns.name).join(',')}`
+      },
+      {
+        text: 'Show Istio configs for namespaces',
+        url: `/${Paths.ISTIO}?namespaces=${this.props.namespaces.map(ns => ns.name).join(',')}`
+      }
+    ];
+    const items = options.map(o => {
+      return (
+        <DropdownItem
+          key={o.text}
+          onClick={() => {
+            this.onClickAction(o.url);
+          }}
         >
-          <KialiIcon.Applications className={linksStyle} />
-        </Link>
-      </Tooltip>
-      <Tooltip key="ns_services" content={<>Go to services for selected namespaces</>}>
-        <Link
-          key="servicesLink"
-          to={`/${Paths.SERVICES}?namespaces=${this.props.namespaces.map(ns => ns.name).join(',')}`}
-        >
-          <KialiIcon.Services className={linksStyle} />
-        </Link>
-      </Tooltip>
-      <Tooltip key="ns_wls" content={<>Go to workloads for selected namespaces</>}>
-        <Link
-          key="workloadsLink"
-          to={`/${Paths.WORKLOADS}?namespaces=${this.props.namespaces.map(ns => ns.name).join(',')}`}
-        >
-          <KialiIcon.Workloads className={linksStyle} />
-        </Link>
-      </Tooltip>{' '}
-      <Tooltip key="ns_config" content={<>Go to Istio configurations for selected namespaces</>}>
-        <Link key="configsLink" to={`/${Paths.ISTIO}?namespaces=${this.props.namespaces.map(ns => ns.name).join(',')}`}>
-          <KialiIcon.IstioConfig className={linksStyle} />
-        </Link>
-      </Tooltip>{' '}
-    </>
-  );
+          {o.text}
+        </DropdownItem>
+      );
+    });
+    return (
+      <>
+        {this.props.namespaces.map(namespace => this.renderNamespace(namespace.name))}
+        <Dropdown
+          id="summary-graph-actions"
+          style={{ float: 'right' }}
+          dropdownItems={items}
+          isOpen={this.state.isOpen}
+          position={DropdownPosition.right}
+          toggle={<DropdownToggle onToggle={this.onToggleActions}>Actions</DropdownToggle>}
+        />
+      </>
+    );
+  };
+
+  private onClickAction = url => {
+    console.log(`Action=${url}`);
+    this.onToggleActions(false);
+  };
+
+  private onToggleActions = isOpen => {
+    this.setState({ isOpen: isOpen });
+  };
 
   private renderNamespace = (ns: string) => {
     const validation = this.state.validationsMap[ns];

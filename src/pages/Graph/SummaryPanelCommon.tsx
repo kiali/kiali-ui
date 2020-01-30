@@ -38,6 +38,10 @@ export const summaryPanel = style({
   width: '25em'
 });
 
+export const summaryFont: React.CSSProperties = {
+  fontSize: 'var(--graph-side-panel--font-size)'
+};
+
 export const hr = () => {
   return <hr style={{ margin: '10px 0' }} />;
 };
