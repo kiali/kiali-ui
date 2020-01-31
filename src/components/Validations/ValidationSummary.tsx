@@ -9,6 +9,7 @@ interface Props {
   id: string;
   errors: number;
   warnings: number;
+  objectCount?: number;
   style?: CSSProperties;
 }
 
@@ -53,14 +54,27 @@ export class ValidationSummary extends React.PureComponent<Props> {
     return severity;
   }
 
-  tooltipContent() {
+  tooltipSubtitle() {
     const validation = severityToValidation[this.severity()];
+    let subtitle = validation.name;
+
+    if (this.props.objectCount) {
+      const plural = this.props.objectCount > 1 ? 's' : '';
+      subtitle = this.props.objectCount + ' object' + plural + ' analyzed';
+    }
+
+    return subtitle;
+  }
+
+  tooltipContent() {
     return (
       <>
         <Text style={{ textAlign: 'left', textEmphasis: 'strong' }} component={TextVariants.h4}>
           Istio Config Validation
         </Text>
-        <Text style={{ textAlign: 'left', textEmphasis: 'strong', paddingLeft: '1em' }}>{validation.name}</Text>
+        <Text style={{ textAlign: 'left', textEmphasis: 'strong', paddingLeft: '1em' }} component={TextVariants.h5}>
+          {this.tooltipSubtitle()}
+        </Text>
         <div className={tooltipListStyle}>
           {this.severitySummary().map(cat => (
             <div key={cat}>{cat}</div>
