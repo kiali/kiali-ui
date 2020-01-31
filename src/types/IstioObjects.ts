@@ -79,7 +79,7 @@ export interface Reference {
 
 export interface ValidationStatus {
   errors: number;
-  objectCount: number;
+  objectCount?: number;
   warnings: number;
 }
 

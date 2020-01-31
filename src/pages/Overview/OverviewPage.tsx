@@ -431,7 +431,7 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
 
   renderIstioConfigStatus(ns: NamespaceInfo): JSX.Element {
     let status: any = 'N/A';
-    if (ns.validations && ns.validations.objectCount > 0) {
+    if (ns.validations) {
       status = (
         <Link to={`/${Paths.ISTIO}?namespaces=${ns.name}`}>
           <ValidationSummary

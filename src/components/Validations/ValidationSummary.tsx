@@ -20,6 +20,13 @@ const tooltipListStyle = style({
   margin: '0 0 0 0'
 });
 
+const tooltipSentenceStyle = style({
+  textAlign: 'center',
+  border: 0,
+  padding: '0 0 0 0',
+  margin: '0 0 0 0'
+});
+
 export class ValidationSummary extends React.PureComponent<Props> {
   getTypeMessage = (count: number, type: ValidationTypes): string => {
     return count > 1 ? `${count} ${type}s found` : `${count} ${type} found`;
@@ -66,7 +73,15 @@ export class ValidationSummary extends React.PureComponent<Props> {
     return subtitle;
   }
 
-  tooltipContent() {
+  tooltipNA() {
+    return <Text className={tooltipSentenceStyle}>No Istio Objects found in this namespace</Text>;
+  }
+
+  tooltipNoValidationAvailable() {
+    return <Text className={tooltipListStyle}>No validation available for this type</Text>;
+  }
+
+  tooltipSummary() {
     return (
       <>
         <Text style={{ textAlign: 'left', textEmphasis: 'strong' }} component={TextVariants.h4}>
@@ -84,6 +99,26 @@ export class ValidationSummary extends React.PureComponent<Props> {
     );
   }
 
+  tooltipContent() {
+    if (typeof this.props.objectCount !== undefined) {
+      if (this.props.objectCount === 0) {
+        return this.tooltipNA();
+      } else {
+        return this.tooltipSummary();
+      }
+    } else {
+      return this.tooltipNoValidationAvailable();
+    }
+  }
+
+  tooltipBase() {
+    return typeof this.props.objectCount === 'undefined' || this.props.objectCount > 1 ? (
+      <Validation iconStyle={this.props.style} severity={this.severity()} />
+    ) : (
+      <small>N/A</small>
+    );
+  }
+
   render() {
     return (
       <Tooltip
@@ -92,7 +127,7 @@ export class ValidationSummary extends React.PureComponent<Props> {
         enableFlip={true}
         content={this.tooltipContent()}
       >
-        <Validation iconStyle={this.props.style} severity={this.severity()} />
+        {this.tooltipBase()}
       </Tooltip>
     );
   }
