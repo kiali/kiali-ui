@@ -74,7 +74,7 @@ export class ValidationSummary extends React.PureComponent<Props> {
   }
 
   tooltipNA() {
-    return <Text className={tooltipSentenceStyle}>No Istio Objects found in this namespace</Text>;
+    return <Text className={tooltipSentenceStyle}>No Istio configuration objects found in this namespace</Text>;
   }
 
   tooltipNoValidationAvailable() {
