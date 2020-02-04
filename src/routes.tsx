@@ -1,7 +1,6 @@
 import WorkloadListPage from './pages/WorkloadList/WorkloadListPage';
 import ServiceListPage from './pages/ServiceList/ServiceListPage';
 import IstioConfigPage from './pages/IstioConfigList/IstioConfigListPage';
-import ServiceJaegerPage from './pages/ServiceJaeger/ServiceJaegerPage';
 import IstioConfigDetailsPage from './pages/IstioConfigDetails/IstioConfigDetailsPage';
 import WorkloadDetailsPage from './pages/WorkloadDetails/WorkloadDetailsPage';
 import AppListPage from './pages/AppList/AppListPage';
@@ -12,6 +11,7 @@ import GraphPageContainer from './pages/Graph/GraphPage';
 import { icons, Paths } from './config';
 import ServiceDetailsPageContainer from './pages/ServiceDetails/ServiceDetailsPage';
 import DefaultSecondaryMasthead from './components/DefaultSecondaryMasthead/DefaultSecondaryMasthead';
+import IstioConfigNewPageContainer from './pages/IstioConfigNew/IstioConfigNewPage';
 
 /**
  * Return array of objects that describe vertical menu
@@ -52,7 +52,7 @@ const navItems: MenuItem[] = [
     iconClass: icons.menu.istioConfig,
     title: 'Istio Config',
     to: '/' + Paths.ISTIO,
-    pathsActive: [new RegExp('^/namespaces/(.*)/' + Paths.ISTIO + '/(.*)')]
+    pathsActive: [new RegExp('^/namespaces/(.*)/' + Paths.ISTIO + '/(.*)'), new RegExp('/' + Paths.ISTIO + '/new')]
   },
   {
     iconClass: icons.menu.distributedTracing,
@@ -122,12 +122,16 @@ const pathRoutes: Path[] = [
     component: WorkloadDetailsPage
   },
   {
+    path: '/' + Paths.ISTIO + '/new',
+    component: IstioConfigNewPageContainer
+  },
+  {
     path: '/' + Paths.ISTIO,
     component: IstioConfigPage
   },
   {
     path: '/' + Paths.JAEGER,
-    component: ServiceJaegerPage
+    component: undefined
   }
 ];
 

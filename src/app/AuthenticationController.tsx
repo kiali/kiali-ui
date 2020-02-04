@@ -15,7 +15,7 @@ import * as AlertUtils from '../utils/AlertUtils';
 import { setServerConfig } from '../config/ServerConfig';
 import { TLSStatus } from '../types/TLSStatus';
 import { MeshTlsActions } from '../actions/MeshTlsActions';
-import JaegerInfo from '../types/JaegerInfo';
+import { JaegerInfo } from '../types/JaegerInfo';
 
 interface AuthenticationControllerReduxProps {
   authenticated: boolean;
@@ -130,17 +130,16 @@ class AuthenticationController extends React.Component<AuthenticationControllerP
   };
 
   private setJaegerInfo = (jaegerInfo: JaegerInfo) => {
-    let jaegerState: JaegerState = { jaegerURL: '', enableIntegration: false, namespaceSelector: true };
+    const jaegerState: JaegerState = {
+      jaegerURL: jaegerInfo.url,
+      integration: jaegerInfo.integration,
+      namespaceSelector: jaegerInfo.namespaceSelector,
+      integrationMessage: jaegerInfo.integrationMessage
+    };
 
-    if (jaegerInfo.url) {
-      jaegerState = {
-        jaegerURL: jaegerInfo.url,
-        // If same protocol enable integration, otherwise new tab is open
-        enableIntegration: jaegerInfo.url.startsWith(window.location.protocol),
-        namespaceSelector: jaegerInfo.namespace_selector !== undefined ? jaegerInfo.namespace_selector : true
-      };
+    if (jaegerState.integrationMessage !== '') {
+      AlertUtils.addError(jaegerState.integrationMessage, undefined, 'default', MessageType.INFO);
     }
-
     this.props.setJaegerInfo(jaegerState);
   };
 }

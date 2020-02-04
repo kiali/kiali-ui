@@ -23,6 +23,7 @@ import RefreshButtonContainer from '../../components/Refresh/RefreshButton';
 import { VirtualList } from '../../components/VirtualList/VirtualList';
 import { showInMessageCenter } from '../../utils/IstioValidationUtils';
 import { ObjectValidation } from '../../types/IstioObjects';
+import IstioActionsNamespaceDropdown from '../../components/IstioActions/IstioActionsNamespaceDropdown';
 
 interface IstioConfigListComponentState extends FilterComponent.State<IstioConfigItem> {}
 interface IstioConfigListComponentProps extends FilterComponent.Props<IstioConfigItem> {
@@ -168,11 +169,14 @@ class IstioConfigListComponent extends FilterComponent.Component<
 
   render() {
     return (
-      <VirtualList rows={this.state.listItems} scrollFilters={false} updateItems={this.updateListItems}>
+      <VirtualList rows={this.state.listItems}>
         <StatefulFilters
           initialFilters={IstioConfigListFilters.availableFilters}
           onFilterChange={this.onFilterChange}
-          rightToolbar={[<RefreshButtonContainer key={'Refresh'} handleRefresh={this.updateListItems} />]}
+          rightToolbar={[
+            <RefreshButtonContainer key={'Refresh'} handleRefresh={this.updateListItems} />,
+            <IstioActionsNamespaceDropdown />
+          ]}
         />
       </VirtualList>
     );
