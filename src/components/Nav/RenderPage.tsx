@@ -26,7 +26,7 @@ class RenderPage extends React.Component<{ isGraph: boolean }> {
     const allPathRoutes = pathRoutes.concat(
       extensionsRoutes.filter(route => {
         // Extensions are conditionally rendered
-        if (route.path === '/extensions/threescale' && serverConfig.extensions!.threescale.enabled) {
+        if (route.path.startsWith('/extensions/threescale') && serverConfig.extensions!.threescale.enabled) {
           return true;
         }
         return false;

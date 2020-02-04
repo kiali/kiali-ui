@@ -13,6 +13,7 @@ import ServiceDetailsPageContainer from './pages/ServiceDetails/ServiceDetailsPa
 import DefaultSecondaryMasthead from './components/DefaultSecondaryMasthead/DefaultSecondaryMasthead';
 import IstioConfigNewPageContainer from './pages/IstioConfigNew/IstioConfigNewPage';
 import ThreeScaleHandlerListPage from './pages/extensions/threescale/ThreeScaleHandlerList/ThreeScaleHandlerListPage';
+import ThreeScaleHandlerDetailsPage from './pages/extensions/threescale/ThreeScaleHandlerDetails/ThreeScaleHandlerDetailsPage';
 
 /**
  * Return array of objects that describe vertical menu
@@ -173,6 +174,15 @@ const secondaryMastheadRoutes: Path[] = [
 ];
 
 const extensionsRoutes: Path[] = [
+  // Keep routes ordered with the more specific URLs first
+  {
+    path: '/extensions/threescale/new',
+    component: ThreeScaleHandlerDetailsPage
+  },
+  {
+    path: '/extensions/threescale/:handlerName',
+    component: ThreeScaleHandlerDetailsPage
+  },
   {
     path: '/extensions/threescale',
     component: ThreeScaleHandlerListPage
