@@ -161,8 +161,6 @@ export default class GraphDataSource {
       previousFetchParams.graphType !== this.fetchParameters.graphType ||
       previousFetchParams.injectServiceNodes !== this.fetchParameters.injectServiceNodes;
 
-    console.log('prevInvalid:', isPreviousDataInvalid);
-
     if (isPreviousDataInvalid) {
       // Reset the graph data
       this.graphElements = EMPTY_GRAPH_DATA;

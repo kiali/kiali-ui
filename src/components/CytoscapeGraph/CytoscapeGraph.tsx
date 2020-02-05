@@ -157,6 +157,7 @@ export class CytoscapeGraph extends React.Component<CytoscapeGraphProps, Cytosca
 
     // Initial sync with data source
     this.setState({
+      elements: this.props.dataSource.graphData,
       isLoading: this.props.dataSource.isLoading,
       isError: this.props.dataSource.isError
     });
