@@ -71,12 +71,12 @@ class Menu extends React.Component<MenuProps, MenuState> {
     const { isNavOpen } = this.props;
 
     const PageNav = (
-      <Nav onSelect={() => undefined} onToggle={() => undefined} aria-label="Nav">
+      <Nav onSelect={() => undefined} onToggle={() => undefined} aria-label="Nav" theme={'dark'}>
         <NavList>{this.renderMenuItems()}</NavList>
       </Nav>
     );
 
-    return <PageSidebar isNavOpen={isNavOpen} nav={PageNav} />;
+    return <PageSidebar isNavOpen={isNavOpen} nav={PageNav} theme={'dark'} />;
   }
 }
 
