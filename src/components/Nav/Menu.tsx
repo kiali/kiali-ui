@@ -9,7 +9,7 @@ import history from '../../app/History';
 import { navItems } from '../../routes';
 
 const ExternalLink = ({ href, name }) => (
-  <NavItem isActive={false} key={name}>
+  <NavItem isActive={false} key={name} className={'external_link'}>
     <a className="pf-c-nav__link" href={href} target="_blank" rel="noopener noreferrer">
       {name} <ExternalLinkAltIcon style={{ margin: '-4px 0 0 5px' }} />
     </a>
