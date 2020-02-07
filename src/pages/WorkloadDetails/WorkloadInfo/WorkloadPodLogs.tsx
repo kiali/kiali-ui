@@ -46,8 +46,7 @@ const TailLinesOptions = {
 const logsTextarea = style({
   width: '100%',
   // 75px is the height of the toolbar inside "Logs" tab
-  // 200px is the height added by RenderComponentScroll
-  height: 'calc(var(--kiali-details-pages-tab-content-height) - 275px)',
+  height: 'calc(100% - 75px)',
   overflow: 'auto',
   resize: 'vertical',
   color: '#fff',
@@ -140,9 +139,9 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
     return (
       <RenderComponentScroll>
         {this.state.containerInfo && (
-          <Grid style={{ padding: '20px' }}>
+          <Grid style={{ padding: '20px', height: '100%' }}>
             <GridItem span={12}>
-              <Card>
+              <Card style={{ height: '100%' }}>
                 <CardBody>
                   <Toolbar className={toolbarMargin}>
                     <ToolbarGroup>
