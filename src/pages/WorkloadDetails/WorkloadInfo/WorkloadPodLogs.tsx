@@ -48,7 +48,7 @@ const logsTextarea = style({
   // 75px is the height of the toolbar inside "Logs" tab
   height: 'calc(100% - 75px)',
   overflow: 'auto',
-  resize: 'vertical',
+  resize: 'none',
   color: '#fff',
   backgroundColor: '#003145',
   fontFamily: 'monospace',
