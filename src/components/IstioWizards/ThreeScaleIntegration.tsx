@@ -20,6 +20,7 @@ import { style } from 'typestyle';
 import * as API from '../../services/Api';
 import * as AlertUtils from '../../utils/AlertUtils';
 import { PfColors } from '../Pf/PfColors';
+import { Link } from 'react-router-dom';
 
 type Props = {
   serviceName: string;
@@ -264,6 +265,15 @@ class ThreeScaleIntegration extends React.Component<Props, State> {
         Select a 3scale handler:
         {this.renderHandlers()}
         <br />
+        {this.state.threeScaleHandlers.length !== 0 ? (
+          <Link to={`/extensions/threescale`} key={'ThreeScaleHandlersLink'}>
+            View 3scale Handlers
+          </Link>
+        ) : (
+          <Link to={`/extensions/threescale/new`} key={'ThreeScaleHandlersNewLink'}>
+            Create New 3scale Handler
+          </Link>
+        )}
       </>
     );
   }
