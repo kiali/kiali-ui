@@ -16,6 +16,7 @@ import { DurationInSeconds } from '../../types/Common';
 import { DurationDropdownContainer } from '../../components/DurationDropdown/DurationDropdown';
 import RefreshButtonContainer from '../../components/Refresh/RefreshButton';
 import { VirtualList } from '../../components/VirtualList/VirtualList';
+import { EmptyState, EmptyStateBody, EmptyStateVariant, Title } from '@patternfly/react-core';
 
 type WorkloadListComponentState = FilterComponent.State<WorkloadListItem>;
 
@@ -156,7 +157,7 @@ class WorkloadListComponent extends FilterComponent.Component<
   }
 
   render() {
-    return (
+    return this.state.listItems.length > 0 ? (
       <VirtualList rows={this.state.listItems}>
         <StatefulFilters
           initialFilters={WorkloadListFilters.availableFilters}
@@ -167,6 +168,15 @@ class WorkloadListComponent extends FilterComponent.Component<
           ]}
         />
       </VirtualList>
+    ) : (
+      <EmptyState variant={EmptyStateVariant.full}>
+        <Title headingLevel="h5" size="lg">
+          No Workloads found
+        </Title>
+        <EmptyStateBody>
+          No workloads in namespaces : {this.props.activeNamespaces.map(ns => ns.name).join(', ')}
+        </EmptyStateBody>
+      </EmptyState>
     );
   }
 }

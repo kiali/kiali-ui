@@ -17,6 +17,7 @@ import { DurationInSeconds } from '../../types/Common';
 import { DurationDropdownContainer } from '../../components/DurationDropdown/DurationDropdown';
 import RefreshButtonContainer from '../../components/Refresh/RefreshButton';
 import { VirtualList } from '../../components/VirtualList/VirtualList';
+import { EmptyState, EmptyStateBody, EmptyStateVariant, Title } from '@patternfly/react-core';
 
 type AppListComponentState = FilterComponent.State<AppListItem>;
 
@@ -132,7 +133,7 @@ class AppListComponent extends FilterComponent.Component<AppListComponentProps, 
   }
 
   render() {
-    return (
+    return this.state.listItems.length > 0 ? (
       <VirtualList rows={this.state.listItems}>
         <StatefulFilters
           initialFilters={AppListFilters.availableFilters}
@@ -143,6 +144,15 @@ class AppListComponent extends FilterComponent.Component<AppListComponentProps, 
           ]}
         />
       </VirtualList>
+    ) : (
+      <EmptyState variant={EmptyStateVariant.full}>
+        <Title headingLevel="h5" size="lg">
+          No Applications found
+        </Title>
+        <EmptyStateBody>
+          No applications in namespaces : {this.props.activeNamespaces.map(ns => ns.name).join(', ')}
+        </EmptyStateBody>
+      </EmptyState>
     );
   }
 }
