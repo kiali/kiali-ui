@@ -15,7 +15,7 @@ import { decorateGraphData } from '../store/Selectors/GraphData';
 import EventEmitter from 'eventemitter3';
 import { createSelector } from 'reselect';
 
-const EMPTY_GRAPH_DATA = { nodes: [], edges: [] };
+export const EMPTY_GRAPH_DATA = { nodes: [], edges: [] };
 const PROMISE_KEY = 'CURRENT_REQUEST';
 
 type EmitEvents = {
