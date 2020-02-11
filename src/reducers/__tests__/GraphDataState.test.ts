@@ -1,4 +1,5 @@
 import graphDataState from '../GraphDataState';
+import { GraphActions } from '../../actions/GraphActions';
 import { GlobalActions } from '../../actions/GlobalActions';
 import { EdgeLabelMode, GraphType } from '../../types/Graph';
 import { DagreGraph } from '../../components/CytoscapeGraph/graphs/DagreGraph';
@@ -28,5 +29,12 @@ describe('GraphDataState', () => {
         showVirtualServices: true
       }
     });
+  });
+
+  it('should handle UPDATE_SUMMARY', () => {
+    const action = GraphActions.updateSummary({ summaryType: 'node', summaryTarget: 'mynode' });
+    const updatedState = graphDataState(undefined, action);
+
+    expect(updatedState.summaryData).toEqual({ summaryType: 'node', summaryTarget: 'mynode' });
   });
 });
