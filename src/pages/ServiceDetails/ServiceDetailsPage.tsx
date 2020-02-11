@@ -553,7 +553,7 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
 
 const mapStateToProps = (state: KialiAppState) => ({
   duration: durationSelector(state),
-  jaegerUrl: state.jaegerState ? state.jaegerState.jaegerURL : '',
+  jaegerUrl: state.jaegerState ? state.jaegerState.url : '',
   jaegerIntegration: state.jaegerState ? state.jaegerState.integration : false
 });
 

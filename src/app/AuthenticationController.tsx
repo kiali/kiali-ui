@@ -131,10 +131,11 @@ class AuthenticationController extends React.Component<AuthenticationControllerP
 
   private setJaegerInfo = (jaegerInfo: JaegerInfo) => {
     const jaegerState: JaegerState = {
-      jaegerURL: jaegerInfo.url,
+      url: jaegerInfo.url,
       integration: jaegerInfo.integration,
       namespaceSelector: jaegerInfo.namespaceSelector,
-      integrationMessage: jaegerInfo.integrationMessage
+      integrationMessage: jaegerInfo.integrationMessage,
+      whiteListIstioSystem: jaegerInfo.whiteListIstioSystem
     };
 
     if (jaegerState.integrationMessage !== '') {

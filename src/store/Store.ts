@@ -104,7 +104,7 @@ export interface UserSettings {
 }
 
 export interface JaegerState {
-  jaegerURL: string;
+  url: string;
   integration: boolean;
   namespaceSelector: boolean;
   integrationMessage: string;
