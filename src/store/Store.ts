@@ -108,6 +108,7 @@ export interface JaegerState {
   integration: boolean;
   namespaceSelector: boolean;
   integrationMessage: string;
+  whiteListIstioSystem: string[];
 }
 
 export interface TourState {

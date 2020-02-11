@@ -8,7 +8,8 @@ export const INITIAL_JAEGER_STATE: JaegerState | null = {
   jaegerURL: '',
   integration: false,
   namespaceSelector: true,
-  integrationMessage: ''
+  integrationMessage: '',
+  whiteListIstioSystem: []
 };
 
 const JaegerStateGenerator = (
@@ -33,7 +34,8 @@ const JaegerStateGenerator = (
         jaegerURL: action.payload.jaegerURL,
         integration: action.payload.integration,
         namespaceSelector: action.payload.namespaceSelector,
-        integrationMessage: action.payload.integrationMessage
+        integrationMessage: action.payload.integrationMessage,
+        whiteListIstioSystem: action.payload.whiteListIstioSystem
       });
     default:
       return state;
