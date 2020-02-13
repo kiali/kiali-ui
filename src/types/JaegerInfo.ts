@@ -7,6 +7,7 @@ export interface JaegerInfo {
   namespaceSelector: boolean;
   integration: boolean;
   integrationMessage: string;
+  whiteListIstioSystem: string[];
 }
 
 export type KeyValuePair = {

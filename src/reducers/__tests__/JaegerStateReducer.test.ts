@@ -2,10 +2,11 @@ import JaegerState from '../JaegerState';
 import { JaegerActions } from '../../actions/JaegerActions';
 
 const initialState = {
-  jaegerURL: '',
+  url: '',
   integration: false,
   namespaceSelector: true,
-  integrationMessage: ''
+  integrationMessage: '',
+  whiteListIstioSystem: []
 };
 
 describe('JaegerState reducer', () => {
@@ -16,7 +17,7 @@ describe('JaegerState reducer', () => {
 
   it('should set url', () => {
     const url = 'https://jaeger-query-istio-system.127.0.0.1.nip.io';
-    expectedState.jaegerURL = url;
+    expectedState.url = url;
     expect(JaegerState(initialState, JaegerActions.setUrl(url))).toEqual(expectedState);
   });
 
@@ -28,11 +29,17 @@ describe('JaegerState reducer', () => {
   it('should store both url and integration', () => {
     const url = 'https://jaeger-query-istio-system.127.0.0.1.nip.io';
     expectedState.integration = true;
-    expectedState.jaegerURL = url;
+    expectedState.url = url;
     expect(
       JaegerState(
         initialState,
-        JaegerActions.setinfo({ jaegerURL: url, integration: true, namespaceSelector: true, integrationMessage: '' })
+        JaegerActions.setinfo({
+          url: url,
+          integration: true,
+          namespaceSelector: true,
+          integrationMessage: '',
+          whiteListIstioSystem: []
+        })
       )
     ).toEqual(expectedState);
   });

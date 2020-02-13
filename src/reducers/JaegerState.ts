@@ -5,10 +5,11 @@ import { getType } from 'typesafe-actions';
 import { JaegerActions } from '../actions/JaegerActions';
 
 export const INITIAL_JAEGER_STATE: JaegerState | null = {
-  jaegerURL: '',
+  url: '',
   integration: false,
   namespaceSelector: true,
-  integrationMessage: ''
+  integrationMessage: '',
+  whiteListIstioSystem: []
 };
 
 const JaegerStateGenerator = (
@@ -22,7 +23,7 @@ const JaegerStateGenerator = (
       });
     case getType(JaegerActions.setUrl):
       return updateState(state, {
-        jaegerURL: action.payload.url
+        url: action.payload.url
       });
     case getType(JaegerActions.setinfo):
       if (!action.payload) {
@@ -30,10 +31,11 @@ const JaegerStateGenerator = (
       }
 
       return updateState(state, {
-        jaegerURL: action.payload.jaegerURL,
+        url: action.payload.url,
         integration: action.payload.integration,
         namespaceSelector: action.payload.namespaceSelector,
-        integrationMessage: action.payload.integrationMessage
+        integrationMessage: action.payload.integrationMessage,
+        whiteListIstioSystem: action.payload.whiteListIstioSystem
       });
     default:
       return state;
