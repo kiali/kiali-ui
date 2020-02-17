@@ -88,7 +88,7 @@ class VirtualListC<R extends TResource> extends React.Component<VirtualListProps
           marginBottom: '20px'
         }}
       >
-        {this.props.rows.length < 0 ? (
+        {this.props.rows.length > 0 ? (
           <>
             {this.props.children}
             <Table {...tableProps} sortBy={sortBy} onSort={this.onSort}>
