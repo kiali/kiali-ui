@@ -17,8 +17,7 @@ import { DurationInSeconds } from '../../types/Common';
 import { DurationDropdownContainer } from '../../components/DurationDropdown/DurationDropdown';
 import RefreshButtonContainer from '../../components/Refresh/RefreshButton';
 import { ObjectValidation, Validations } from '../../types/IstioObjects';
-import { VirtualList } from '../../components/VirtualList/VirtualList';
-import { EmptyState, EmptyStateBody, EmptyStateVariant, Title } from '@patternfly/react-core';
+import VirtualList from '../../components/VirtualList/VirtualList';
 
 type ServiceListComponentState = FilterComponent.State<ServiceListItem>;
 
@@ -160,7 +159,7 @@ class ServiceListComponent extends FilterComponent.Component<
   }
 
   render() {
-    return this.state.listItems.length > 0 ? (
+    return (
       <VirtualList rows={this.state.listItems}>
         <StatefulFilters
           initialFilters={ServiceListFilters.availableFilters}
@@ -171,15 +170,6 @@ class ServiceListComponent extends FilterComponent.Component<
           ]}
         />
       </VirtualList>
-    ) : (
-      <EmptyState variant={EmptyStateVariant.full}>
-        <Title headingLevel="h5" size="lg">
-          No Services found
-        </Title>
-        <EmptyStateBody>
-          No services in namespaces : {this.props.activeNamespaces.map(ns => ns.name).join(', ')}
-        </EmptyStateBody>
-      </EmptyState>
     );
   }
 }

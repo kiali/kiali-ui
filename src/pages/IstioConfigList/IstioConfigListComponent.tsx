@@ -20,11 +20,10 @@ import { namespaceEquals } from '../../utils/Common';
 import { KialiAppState } from '../../store/Store';
 import { activeNamespacesSelector } from '../../store/Selectors';
 import RefreshButtonContainer from '../../components/Refresh/RefreshButton';
-import { VirtualList } from '../../components/VirtualList/VirtualList';
+import VirtualList from '../../components/VirtualList/VirtualList';
 import { showInMessageCenter } from '../../utils/IstioValidationUtils';
 import { ObjectValidation } from '../../types/IstioObjects';
 import IstioActionsNamespaceDropdown from '../../components/IstioActions/IstioActionsNamespaceDropdown';
-import { EmptyState, EmptyStateBody, EmptyStateVariant, Title } from '@patternfly/react-core';
 
 interface IstioConfigListComponentState extends FilterComponent.State<IstioConfigItem> {}
 interface IstioConfigListComponentProps extends FilterComponent.Props<IstioConfigItem> {
@@ -169,7 +168,7 @@ class IstioConfigListComponent extends FilterComponent.Component<
   }
 
   render() {
-    return this.state.listItems.length > 0 ? (
+    return (
       <VirtualList rows={this.state.listItems}>
         <StatefulFilters
           initialFilters={IstioConfigListFilters.availableFilters}
@@ -180,15 +179,6 @@ class IstioConfigListComponent extends FilterComponent.Component<
           ]}
         />
       </VirtualList>
-    ) : (
-      <EmptyState variant={EmptyStateVariant.full}>
-        <Title headingLevel="h5" size="lg">
-          No Istio configurations found
-        </Title>
-        <EmptyStateBody>
-          No istio configurations in namespaces : {this.props.activeNamespaces.map(ns => ns.name).join(', ')}
-        </EmptyStateBody>
-      </EmptyState>
     );
   }
 }
