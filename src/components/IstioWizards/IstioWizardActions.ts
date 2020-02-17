@@ -521,9 +521,20 @@ export const getInitRules = (workloads: WorkloadOverview[], virtualServices: Vir
         httpRoute.match.forEach(m => (rule.matches = rule.matches.concat(parseHttpMatchRequest(m))));
       }
       if (httpRoute.route) {
-        httpRoute.route.forEach(r => rule.routes.push(wkdVersionName[r.destination.subset || '']));
+        httpRoute.route.forEach(r => {
+          const subset = r.destination.subset;
+          const workload = wkdVersionName[subset || ''];
+          // Not adding a route if a workload is not found with a destination subset
+          // That means that a workload has been deleted after a VS/DR has been generated
+          if (workload) {
+            rule.routes.push(workload);
+          }
+        });
       }
-      rules.push(rule);
+      // Not adding a rule if it has empty routes, probably this means that an existing workload was removed
+      if (rule.routes.length > 0) {
+        rules.push(rule);
+      }
     });
   }
   return rules;
