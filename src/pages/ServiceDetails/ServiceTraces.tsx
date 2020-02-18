@@ -1,7 +1,20 @@
 import * as React from 'react';
 import { RenderComponentScroll, RenderHeader } from '../../components/Nav/Page';
 import ToolbarDropdown from '../../components/ToolbarDropdown/ToolbarDropdown';
-import { Button, Card, CardBody, Checkbox, Grid, GridItem, Text, TextVariants, Tooltip } from '@patternfly/react-core';
+import {
+  Button,
+  Card,
+  CardBody,
+  Checkbox,
+  Grid,
+  GridItem,
+  Text,
+  TextVariants,
+  Toolbar,
+  ToolbarGroup,
+  ToolbarItem,
+  Tooltip
+} from '@patternfly/react-core';
 import { KialiAppState } from '../../store/Store';
 import { connect } from 'react-redux';
 import { JaegerErrors, JaegerTrace } from '../../types/JaegerInfo';
@@ -246,78 +259,93 @@ class ServiceTracesC extends React.Component<ServiceTracesProps, ServiceTracesSt
             <Card>
               <CardBody>
                 <RenderHeader>
-                  <Grid>
-                    <GridItem span={2}>
-                      <Text component={TextVariants.h5} style={{ display: '-webkit-inline-box', marginRight: '10px' }}>
-                        Interval Trace
-                      </Text>
-                      <ToolbarDropdown
-                        options={this.state.traceIntervalDuration}
-                        value={this.state.traceIntervalDuration[this.state.selectedTraceIntervalDuration]}
-                        handleSelect={key => this.handleIntervalDuration(key)}
-                      />
-                    </GridItem>
-                    <GridItem span={2}>
-                      <Text component={TextVariants.h5} style={{ display: '-webkit-inline-box', marginRight: '10px' }}>
-                        Limit Results
-                      </Text>
-                      <ToolbarDropdown
-                        options={config.tracing.configuration.limitResults}
-                        value={config.tracing.configuration.limitResults[this.state.selectedLimitSpans]}
-                        handleSelect={key => this.handleLimitDuration(key)}
-                      />
-                    </GridItem>
-                    <GridItem span={2}>
-                      <Text
-                        component={TextVariants.h5}
-                        style={{ display: '-webkit-inline-box', marginLeft: '-40px', marginRight: '10px' }}
-                      >
-                        Status Code
-                      </Text>
-                      <ToolbarDropdown
-                        options={config.tracing.configuration.statusCode}
-                        value={config.tracing.configuration.statusCode[this.state.selectedStatusCode]}
-                        handleSelect={key => this.handleStatusCode(key)}
-                      />
-                    </GridItem>
-                    <GridItem span={2}>
-                      <div style={{ marginTop: '10px' }}>
-                        <Checkbox
-                          label="Adjust time"
-                          isChecked={this.state.fixedTime}
-                          onChange={checked => {
-                            this.setState({ fixedTime: checked });
-                          }}
-                          aria-label="adjust-time-chart"
-                          id="check-adjust-time"
-                          name="check-adjust-time"
-                        />
-                      </div>
-                    </GridItem>
-                    <GridItem span={2} />
-                    <GridItem span={2}>
-                      <Tooltip content={<>{!this.state.errorTraces ? 'Show Error Traces' : 'Show All Traces'}</>}>
-                        <Button
-                          variant="tertiary"
-                          onClick={() => this.setErrorTraces()}
-                          style={this.state.errorTraces ? { backgroundColor: PfColors.Blue100 } : {}}
+                  <Toolbar>
+                    <ToolbarGroup>
+                      <ToolbarItem>
+                        <Text
+                          component={TextVariants.h5}
+                          style={{ display: '-webkit-inline-box', marginRight: '10px' }}
                         >
-                          {!this.state.errorTraces ? 'Errors' : 'All'}
-                        </Button>
-                      </Tooltip>
-                      {this.props.urlJaeger !== '' && (
-                        <Tooltip content={<>Open Chart in Jaeger UI</>}>
+                          Interval Trace
+                        </Text>
+                        <ToolbarDropdown
+                          options={this.state.traceIntervalDuration}
+                          value={this.state.traceIntervalDuration[this.state.selectedTraceIntervalDuration]}
+                          handleSelect={key => this.handleIntervalDuration(key)}
+                        />
+                      </ToolbarItem>
+                    </ToolbarGroup>
+                    <ToolbarGroup>
+                      <ToolbarItem>
+                        <Text
+                          component={TextVariants.h5}
+                          style={{ display: '-webkit-inline-box', marginRight: '10px' }}
+                        >
+                          Limit Results
+                        </Text>
+                        <ToolbarDropdown
+                          options={config.tracing.configuration.limitResults}
+                          value={config.tracing.configuration.limitResults[this.state.selectedLimitSpans]}
+                          handleSelect={key => this.handleLimitDuration(key)}
+                        />
+                      </ToolbarItem>
+                    </ToolbarGroup>
+                    <ToolbarGroup>
+                      <ToolbarItem>
+                        <Text
+                          component={TextVariants.h5}
+                          style={{ display: '-webkit-inline-box', marginRight: '10px' }}
+                        >
+                          Status Code
+                        </Text>
+                        <ToolbarDropdown
+                          options={config.tracing.configuration.statusCode}
+                          value={config.tracing.configuration.statusCode[this.state.selectedStatusCode]}
+                          handleSelect={key => this.handleStatusCode(key)}
+                        />
+                      </ToolbarItem>
+                    </ToolbarGroup>
+                    <ToolbarGroup>
+                      <ToolbarItem>
+                        <div style={{ marginTop: '10px' }}>
+                          <Checkbox
+                            label="Adjust time"
+                            isChecked={this.state.fixedTime}
+                            onChange={checked => {
+                              this.setState({ fixedTime: checked });
+                            }}
+                            aria-label="adjust-time-chart"
+                            id="check-adjust-time"
+                            name="check-adjust-time"
+                          />
+                        </div>
+                      </ToolbarItem>
+                    </ToolbarGroup>
+                    <ToolbarGroup style={{ marginLeft: 'auto' }}>
+                      <ToolbarItem>
+                        <Tooltip content={<>{!this.state.errorTraces ? 'Show Error Traces' : 'Show All Traces'}</>}>
                           <Button
-                            variant="link"
-                            onClick={() => window.open(this.getJaegerUrl(), '_blank')}
-                            style={{ marginLeft: '10px' }}
+                            variant="tertiary"
+                            onClick={() => this.setErrorTraces()}
+                            style={this.state.errorTraces ? { backgroundColor: PfColors.Blue100 } : {}}
                           >
-                            View in Tracing <ExternalLinkAltIcon />
+                            {!this.state.errorTraces ? 'Errors' : 'All'}
                           </Button>
                         </Tooltip>
-                      )}
-                    </GridItem>
-                  </Grid>
+                        {this.props.urlJaeger !== '' && (
+                          <Tooltip content={<>Open Chart in Jaeger UI</>}>
+                            <Button
+                              variant="link"
+                              onClick={() => window.open(this.getJaegerUrl(), '_blank')}
+                              style={{ marginLeft: '10px' }}
+                            >
+                              View in Tracing <ExternalLinkAltIcon />
+                            </Button>
+                          </Tooltip>
+                        )}
+                      </ToolbarItem>
+                    </ToolbarGroup>
+                  </Toolbar>
                 </RenderHeader>
                 <Grid style={{ margin: '20px' }}>
                   <GridItem span={12}>
