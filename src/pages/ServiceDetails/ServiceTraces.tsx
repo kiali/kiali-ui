@@ -20,7 +20,6 @@ import { connect } from 'react-redux';
 import { JaegerErrors, JaegerTrace } from '../../types/JaegerInfo';
 import { JaegerItem } from '../../components/JaegerIntegration/JaegerResults';
 import { JaegerScatter } from '../../components/JaegerIntegration/JaegerScatter';
-import { PfColors } from '../../components/Pf/PfColors';
 import { JaegerSearchOptions, convTagsLogfmt } from '../../components/JaegerIntegration/RouteHelper';
 import { HistoryManager, URLParam } from '../../app/History';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
@@ -133,15 +132,16 @@ class ServiceTracesC extends React.Component<ServiceTracesProps, ServiceTracesSt
     return this.props.traces.filter(trace => trace.duration >= min && trace.duration <= max);
   };
 
-  setErrorTraces = () => {
-    const errorTraces = !this.state.errorTraces;
-    this.setState({ errorTraces: !this.state.errorTraces });
+  setErrorTraces = (key: string) => {
+    let errorTraces = false;
     let tags = this.state.options.tags || '';
-    if (errorTraces) {
+    if (key === 'Error traces') {
+      errorTraces = true;
       tags === '' ? (tags = 'error=true') : (tags += ' error=true');
     } else {
       tags = tags.replace(/ ?error=true/, '');
     }
+    this.setState({ errorTraces: errorTraces });
     this.onOptionsChange('JAEGER_TAGS', tags);
     this.props.onRefresh();
   };
@@ -307,6 +307,21 @@ class ServiceTracesC extends React.Component<ServiceTracesProps, ServiceTracesSt
                     </ToolbarGroup>
                     <ToolbarGroup>
                       <ToolbarItem>
+                        <Text
+                          component={TextVariants.h5}
+                          style={{ display: '-webkit-inline-box', marginRight: '10px' }}
+                        >
+                          Display
+                        </Text>
+                        <ToolbarDropdown
+                          options={{ 'All traces': 'All traces', 'Error traces': 'Error traces' }}
+                          value={this.state.errorTraces ? 'Error traces' : 'All traces'}
+                          handleSelect={key => this.setErrorTraces(key)}
+                        />
+                      </ToolbarItem>
+                    </ToolbarGroup>
+                    <ToolbarGroup>
+                      <ToolbarItem>
                         <div style={{ marginTop: '10px' }}>
                           <Checkbox
                             label="Adjust time"
@@ -321,18 +336,9 @@ class ServiceTracesC extends React.Component<ServiceTracesProps, ServiceTracesSt
                         </div>
                       </ToolbarItem>
                     </ToolbarGroup>
-                    <ToolbarGroup style={{ marginLeft: 'auto' }}>
-                      <ToolbarItem>
-                        <Tooltip content={<>{!this.state.errorTraces ? 'Show Error Traces' : 'Show All Traces'}</>}>
-                          <Button
-                            variant="tertiary"
-                            onClick={() => this.setErrorTraces()}
-                            style={this.state.errorTraces ? { backgroundColor: PfColors.Blue100 } : {}}
-                          >
-                            {!this.state.errorTraces ? 'Errors' : 'All'}
-                          </Button>
-                        </Tooltip>
-                        {this.props.urlJaeger !== '' && (
+                    {this.props.urlJaeger !== '' && (
+                      <ToolbarGroup style={{ marginLeft: 'auto' }}>
+                        <ToolbarItem>
                           <Tooltip content={<>Open Chart in Jaeger UI</>}>
                             <Button
                               variant="link"
@@ -342,9 +348,9 @@ class ServiceTracesC extends React.Component<ServiceTracesProps, ServiceTracesSt
                               View in Tracing <ExternalLinkAltIcon />
                             </Button>
                           </Tooltip>
-                        )}
-                      </ToolbarItem>
-                    </ToolbarGroup>
+                        </ToolbarItem>
+                      </ToolbarGroup>
+                    )}
                   </Toolbar>
                 </RenderHeader>
                 <Grid style={{ margin: '20px' }}>
