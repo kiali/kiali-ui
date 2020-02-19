@@ -322,18 +322,16 @@ class ServiceTracesC extends React.Component<ServiceTracesProps, ServiceTracesSt
                     </ToolbarGroup>
                     <ToolbarGroup>
                       <ToolbarItem>
-                        <div style={{ marginTop: '10px' }}>
-                          <Checkbox
-                            label="Adjust time"
-                            isChecked={this.state.fixedTime}
-                            onChange={checked => {
-                              this.setState({ fixedTime: checked });
-                            }}
-                            aria-label="adjust-time-chart"
-                            id="check-adjust-time"
-                            name="check-adjust-time"
-                          />
-                        </div>
+                        <Checkbox
+                          label="Adjust time"
+                          isChecked={this.state.fixedTime}
+                          onChange={checked => {
+                            this.setState({ fixedTime: checked });
+                          }}
+                          aria-label="adjust-time-chart"
+                          id="check-adjust-time"
+                          name="check-adjust-time"
+                        />
                       </ToolbarItem>
                     </ToolbarGroup>
                     {this.props.urlJaeger !== '' && (
