@@ -304,13 +304,13 @@ class AppDetails extends React.Component<AppDetailsProps, AppDetailsState> {
 
   private loadMiniGraphData = () => {
     this.graphDataSource.fetchGraphData({
-      namespaces: [{ name: this.props.match.params.namespace }], // this.props.node ? [this.props.node.namespace] : this.props.activeNamespaces,
-      duration: 300, // this.props.duration,
-      graphType: GraphType.APP, // this.props.graphType,
-      injectServiceNodes: true, // this.props.showServiceNodes,
-      edgeLabelMode: EdgeLabelMode.NONE, // this.props.edgeLabelMode,
-      showSecurity: false, // this.props.showSecurity,
-      showUnusedNodes: false, // this.props.showUnusedNodes,
+      namespaces: [{ name: this.props.match.params.namespace }],
+      duration: this.props.duration,
+      graphType: GraphType.APP,
+      injectServiceNodes: true,
+      edgeLabelMode: EdgeLabelMode.NONE,
+      showSecurity: false,
+      showUnusedNodes: false,
       node: {
         app: this.props.match.params.app,
         namespace: { name: this.props.match.params.namespace },
@@ -318,7 +318,7 @@ class AppDetails extends React.Component<AppDetailsProps, AppDetailsState> {
         service: '',
         version: '',
         workload: ''
-      } // this.props.node
+      }
     });
   };
 }

@@ -26,7 +26,7 @@ import { ThreeScaleServiceRule } from '../../../types/ThreeScale';
 import { AdditionalItem } from 'types/Workload';
 import { TextOrLink } from 'components/TextOrLink';
 import { renderAPILogo } from 'components/Logo/Logos';
-import { EdgeLabelMode, GraphType, NodeType } from '../../../types/Graph';
+import { EdgeLabelMode, GraphType } from '../../../types/Graph';
 import CytoscapeGraph from '../../../components/CytoscapeGraph/CytoscapeGraph';
 import { DagreGraph } from '../../../components/CytoscapeGraph/graphs/DagreGraph';
 import GraphDataSource from '../../../services/GraphDataSource';
@@ -48,6 +48,7 @@ interface ServiceInfoDescriptionProps {
   health?: ServiceHealth;
   threeScaleServiceRule?: ThreeScaleServiceRule;
   validations?: ObjectValidation;
+  miniGraphDatasource: GraphDataSource;
 }
 
 const listStyle = style({
@@ -60,16 +61,8 @@ const ExternalNameType = 'ExternalName';
 const cytoscapeGraphContainerStyle = style({ height: '300px' });
 
 class ServiceInfoDescription extends React.Component<ServiceInfoDescriptionProps> {
-  private graphDataSource: GraphDataSource;
-
   constructor(props: ServiceInfoDescriptionProps) {
     super(props);
-
-    this.graphDataSource = new GraphDataSource();
-  }
-
-  componentDidMount() {
-    this.loadMiniGraphData();
   }
 
   getPortOver(portId: number) {
@@ -143,7 +136,7 @@ class ServiceInfoDescription extends React.Component<ServiceInfoDescriptionProps
                 <CytoscapeGraph
                   activeNamespaces={[{ name: this.props.namespace }]}
                   containerClassName={cytoscapeGraphContainerStyle}
-                  dataSource={this.graphDataSource}
+                  dataSource={this.props.miniGraphDatasource}
                   displayUnusedNodes={() => undefined}
                   duration={300} // TODO: sync with dropdown
                   edgeLabelMode={EdgeLabelMode.NONE}
@@ -248,26 +241,6 @@ class ServiceInfoDescription extends React.Component<ServiceInfoDescriptionProps
       </Grid>
     );
   }
-
-  private loadMiniGraphData = () => {
-    this.graphDataSource.fetchGraphData({
-      namespaces: [{ name: 'bookinfo' }], // this.props.node ? [this.props.node.namespace] : this.props.activeNamespaces,
-      duration: 300, // this.props.duration,
-      graphType: GraphType.WORKLOAD, // this.props.graphType,
-      injectServiceNodes: true, // this.props.showServiceNodes,
-      edgeLabelMode: EdgeLabelMode.NONE, // this.props.edgeLabelMode,
-      showSecurity: false, // this.props.showSecurity,
-      showUnusedNodes: false, // this.props.showUnusedNodes,
-      node: {
-        app: '',
-        namespace: { name: 'bookinfo' },
-        nodeType: NodeType.SERVICE,
-        service: 'productpage',
-        version: '',
-        workload: ''
-      } // this.props.node
-    });
-  };
 }
 
 export default ServiceInfoDescription;

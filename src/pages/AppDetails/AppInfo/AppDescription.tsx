@@ -175,7 +175,7 @@ class AppDescription extends React.Component<AppDescriptionProps, AppDescription
                   showNodeLabels={true}
                   showSecurity={false}
                   showServiceNodes={true}
-                  showTrafficAnimation={true}
+                  showTrafficAnimation={false}
                   showUnusedNodes={false}
                   showVirtualServices={true}
                   updateGraph={() => undefined} // TODO

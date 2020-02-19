@@ -19,7 +19,7 @@ import {
 import { TextOrLink } from 'components/TextOrLink';
 import { renderRuntimeLogo, renderAPILogo } from 'components/Logo/Logos';
 import CytoscapeGraph from '../../../components/CytoscapeGraph/CytoscapeGraph';
-import { EdgeLabelMode, GraphType, NodeType } from '../../../types/Graph';
+import { EdgeLabelMode, GraphType } from '../../../types/Graph';
 import { style } from 'typestyle';
 import GraphDataSource from '../../../services/GraphDataSource';
 import { DagreGraph } from '../../../components/CytoscapeGraph/graphs/DagreGraph';
@@ -31,22 +31,15 @@ type WorkloadDescriptionProps = {
   namespace: string;
   istioEnabled: boolean;
   health?: WorkloadHealth;
+  miniGraphDataSource: GraphDataSource;
 };
 
 type WorkloadDescriptionState = {};
 
 class WorkloadDescription extends React.Component<WorkloadDescriptionProps, WorkloadDescriptionState> {
-  private graphDataSource: GraphDataSource;
-
   constructor(props: WorkloadDescriptionProps) {
     super(props);
     this.state = {};
-
-    this.graphDataSource = new GraphDataSource();
-  }
-
-  componentDidMount() {
-    this.loadMiniGraphData();
   }
 
   render() {
@@ -118,7 +111,7 @@ class WorkloadDescription extends React.Component<WorkloadDescriptionProps, Work
                 <CytoscapeGraph
                   activeNamespaces={[{ name: this.props.namespace }]}
                   containerClassName={cytoscapeGraphContainerStyle}
-                  dataSource={this.graphDataSource}
+                  dataSource={this.props.miniGraphDataSource}
                   displayUnusedNodes={() => undefined}
                   duration={300} // TODO: sync with dropdown
                   edgeLabelMode={EdgeLabelMode.NONE}
@@ -171,26 +164,6 @@ class WorkloadDescription extends React.Component<WorkloadDescriptionProps, Work
       'Loading'
     );
   }
-
-  private loadMiniGraphData = () => {
-    this.graphDataSource.fetchGraphData({
-      namespaces: [{ name: 'bookinfo' }], // this.props.node ? [this.props.node.namespace] : this.props.activeNamespaces,
-      duration: 300, // this.props.duration,
-      graphType: GraphType.WORKLOAD, // this.props.graphType,
-      injectServiceNodes: true, // this.props.showServiceNodes,
-      edgeLabelMode: EdgeLabelMode.NONE, // this.props.edgeLabelMode,
-      showSecurity: false, // this.props.showSecurity,
-      showUnusedNodes: false, // this.props.showUnusedNodes,
-      node: {
-        app: '',
-        namespace: { name: 'bookinfo' },
-        nodeType: NodeType.WORKLOAD,
-        service: '',
-        version: 'v2',
-        workload: 'reviews-v2'
-      } // this.props.node
-    });
-  };
 }
 
 export default WorkloadDescription;
