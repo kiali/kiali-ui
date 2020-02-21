@@ -8,6 +8,7 @@ import {
   Badge,
   Card,
   CardBody,
+  CardHeader,
   DataList,
   DataListCell,
   DataListItem,
@@ -128,10 +129,12 @@ class AppDescription extends React.Component<AppDescriptionProps, AppDescription
       <Grid gutter="md">
         <GridItem span={4}>
           <Card style={{ height: '100%' }}>
-            <CardBody className="noPadding">
+            <CardHeader>
               <Title headingLevel="h3" size="2xl">
                 Application Overview
               </Title>
+            </CardHeader>
+            <CardBody className="noPadding">
               <DataList aria-label="workloads and services">
                 <DataListItem aria-labelledby="Workloads">
                   <DataListItemRow>
@@ -149,11 +152,12 @@ class AppDescription extends React.Component<AppDescriptionProps, AppDescription
         </GridItem>
         <GridItem span={4}>
           <Card style={{ height: '100%' }}>
-            <CardBody>
+            <CardHeader>
               <Title style={{ float: 'left' }} headingLevel="h3" size="2xl">
                 Graph Overview
               </Title>
-              <div style={{ float: 'right' }}>(View graph)</div>
+            </CardHeader>
+            <CardBody>
               <div style={{ height: '100%' }}>
                 <CytoscapeGraph
                   activeNamespaces={[this.props.app.namespace]}
