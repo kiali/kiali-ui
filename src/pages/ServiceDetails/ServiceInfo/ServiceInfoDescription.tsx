@@ -138,16 +138,11 @@ class ServiceInfoDescription extends React.Component<ServiceInfoDescriptionProps
                   containerClassName={cytoscapeGraphContainerStyle}
                   dataSource={this.props.miniGraphDatasource}
                   displayUnusedNodes={() => undefined}
-                  duration={300} // TODO: sync with dropdown
                   edgeLabelMode={EdgeLabelMode.NONE}
                   graphType={GraphType.APP}
                   isMTLSEnabled={false}
                   layout={DagreGraph.getLayout()}
-                  onEmptyGraphAction={() => undefined} // TODO
-                  onReady={() => undefined}
                   refreshInterval={0}
-                  setActiveNamespaces={() => undefined} // TODO
-                  setNode={() => undefined} // TODO
                   showCircuitBreakers={false}
                   showMissingSidecars={true}
                   showNodeLabels={true}
@@ -156,8 +151,6 @@ class ServiceInfoDescription extends React.Component<ServiceInfoDescriptionProps
                   showTrafficAnimation={true}
                   showUnusedNodes={false}
                   showVirtualServices={true}
-                  updateGraph={() => undefined} // TODO
-                  updateSummary={() => undefined} // TODO
                 />
               </div>
             </CardBody>

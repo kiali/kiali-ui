@@ -164,26 +164,19 @@ class AppDescription extends React.Component<AppDescriptionProps, AppDescription
                   containerClassName={cytoscapeGraphContainerStyle}
                   dataSource={this.props.miniGraphDataSource}
                   displayUnusedNodes={() => undefined}
-                  duration={300} // TODO: sync with dropdown
                   edgeLabelMode={EdgeLabelMode.NONE}
                   graphType={GraphType.WORKLOAD}
                   isMTLSEnabled={false}
                   layout={DagreGraph.getLayout()}
-                  onEmptyGraphAction={() => undefined} // TODO
-                  onReady={() => undefined}
                   refreshInterval={0}
-                  setActiveNamespaces={() => undefined} // TODO
-                  setNode={() => undefined} // TODO
                   showCircuitBreakers={false}
                   showMissingSidecars={true}
                   showNodeLabels={true}
                   showSecurity={false}
                   showServiceNodes={true}
-                  showTrafficAnimation={false}
+                  showTrafficAnimation={true}
                   showUnusedNodes={false}
                   showVirtualServices={true}
-                  updateGraph={() => undefined} // TODO
-                  updateSummary={() => undefined} // TODO
                 />
               </div>
             </CardBody>
