@@ -116,6 +116,7 @@ class WorkloadDescription extends React.Component<WorkloadDescriptionProps, Work
                   edgeLabelMode={EdgeLabelMode.NONE}
                   graphType={GraphType.APP}
                   isMTLSEnabled={false}
+                  isMiniGraph={true}
                   layout={DagreGraph.getLayout()}
                   refreshInterval={0}
                   showCircuitBreakers={false}

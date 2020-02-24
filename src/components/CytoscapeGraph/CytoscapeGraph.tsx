@@ -5,7 +5,7 @@ import history from '../../app/History';
 import Namespace from '../../types/Namespace';
 import { GraphHighlighter } from './graphs/GraphHighlighter';
 import TrafficRender from './TrafficAnimation/TrafficRenderer';
-import EmptyGraphLayout from '../EmptyGraphLayout';
+import EmptyGraphLayout from './EmptyGraphLayout';
 import { CytoscapeReactWrapper } from './CytoscapeReactWrapper';
 import * as CytoscapeGraphUtils from './CytoscapeGraphUtils';
 import { CyNode, isCore, isEdge, isNode } from './CytoscapeGraphUtils';
@@ -51,6 +51,7 @@ type CytoscapeGraphProps = {
   edgeLabelMode: EdgeLabelMode;
   focusSelector?: string;
   graphType: GraphType;
+  isMiniGraph?: boolean;
   isMTLSEnabled: boolean;
   layout: Layout;
   onEmptyGraphAction?: () => void;
@@ -240,6 +241,7 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
           isDisplayingUnusedNodes={this.props.showUnusedNodes}
           isLoading={this.state.isLoading}
           isError={this.state.isError}
+          isMiniGraph={this.props.isMiniGraph === true}
           namespaces={this.props.activeNamespaces}
         >
           <CytoscapeContextMenuWrapper

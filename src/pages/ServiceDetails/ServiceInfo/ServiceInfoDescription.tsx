@@ -61,10 +61,6 @@ const ExternalNameType = 'ExternalName';
 const cytoscapeGraphContainerStyle = style({ height: '300px' });
 
 class ServiceInfoDescription extends React.Component<ServiceInfoDescriptionProps> {
-  constructor(props: ServiceInfoDescriptionProps) {
-    super(props);
-  }
-
   getPortOver(portId: number) {
     return <ValidationList checks={this.getPortChecks(portId)} />;
   }
@@ -141,6 +137,7 @@ class ServiceInfoDescription extends React.Component<ServiceInfoDescriptionProps
                   edgeLabelMode={EdgeLabelMode.NONE}
                   graphType={GraphType.APP}
                   isMTLSEnabled={false}
+                  isMiniGraph={true}
                   layout={DagreGraph.getLayout()}
                   refreshInterval={0}
                   showCircuitBreakers={false}

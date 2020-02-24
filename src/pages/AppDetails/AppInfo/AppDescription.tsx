@@ -167,6 +167,7 @@ class AppDescription extends React.Component<AppDescriptionProps, AppDescription
                   edgeLabelMode={EdgeLabelMode.NONE}
                   graphType={GraphType.WORKLOAD}
                   isMTLSEnabled={false}
+                  isMiniGraph={true}
                   layout={DagreGraph.getLayout()}
                   refreshInterval={0}
                   showCircuitBreakers={false}
