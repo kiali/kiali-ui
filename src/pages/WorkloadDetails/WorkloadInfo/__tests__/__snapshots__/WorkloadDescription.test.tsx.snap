@@ -23,17 +23,25 @@ exports[`WorkloadDescription should render with runtimes 1`] = `
           Workload Overview
            
         </Title>
-        <Stack>
+        <Stack
+          gutter="md"
+          style={
+            Object {
+              "marginTop": "10px",
+            }
+          }
+        >
           <StackItem
             id="labels"
           >
-            <Text
-              component="h3"
+            <Title
+              headingLevel="h6"
+              size="md"
             >
                
               Labels
                
-            </Text>
+            </Title>
             <Labels
               labels={Object {}}
             />
@@ -41,21 +49,23 @@ exports[`WorkloadDescription should render with runtimes 1`] = `
           <StackItem
             id="type"
           >
-            <Text
-              component="h3"
+            <Title
+              headingLevel="h6"
+              size="md"
             >
                Type 
-            </Text>
+            </Title>
             N/A
           </StackItem>
           <StackItem
             id="created-at"
           >
-            <Text
-              component="h3"
+            <Title
+              headingLevel="h6"
+              size="md"
             >
                Created at 
-            </Text>
+            </Title>
             <LocalTime
               time=""
             />
@@ -63,11 +73,12 @@ exports[`WorkloadDescription should render with runtimes 1`] = `
           <StackItem
             id="resource-version"
           >
-            <Text
-              component="h3"
+            <Title
+              headingLevel="h6"
+              size="md"
             >
                Resource Version 
-            </Text>
+            </Title>
           </StackItem>
           <StackItem
             id="runtimes"
@@ -215,16 +226,24 @@ exports[`WorkloadDescription should render with runtimes 1`] = `
           Health Overview
            
         </Title>
-        <Stack>
+        <Stack
+          gutter="md"
+          style={
+            Object {
+              "marginTop": "10px",
+            }
+          }
+        >
           <StackItem
             className="stack_service_details"
             id="health"
           >
-            <Text
-              component="h3"
+            <Title
+              headingLevel="h6"
+              size="md"
             >
                Overall Health
-            </Text>
+            </Title>
             <HealthIndicator
               id=""
               mode={0}
