@@ -241,7 +241,7 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
           isDisplayingUnusedNodes={this.props.showUnusedNodes}
           isLoading={this.state.isLoading}
           isError={this.state.isError}
-          isMiniGraph={this.props.isMiniGraph === true}
+          isMiniGraph={!!this.props.isMiniGraph}
           namespaces={this.props.activeNamespaces}
         >
           <CytoscapeContextMenuWrapper

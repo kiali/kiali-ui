@@ -137,7 +137,9 @@ export default class EmptyGraphLayout extends React.Component<EmptyGraphLayoutPr
           </Button>
         </EmptyState>
       );
-    } else if (isGraphEmpty && this.props.isMiniGraph) {
+    }
+
+    if (isGraphEmpty && this.props.isMiniGraph) {
       return (
         <EmptyState variant={EmptyStateVariant.large} className={emptyStateStyle}>
           <Title headingLevel="h5" size="lg">
@@ -146,8 +148,8 @@ export default class EmptyGraphLayout extends React.Component<EmptyGraphLayoutPr
           <EmptyStateBody>Not enough data to generate a graph.</EmptyStateBody>
         </EmptyState>
       );
-    } else {
-      return this.props.children;
     }
+
+    return this.props.children;
   }
 }
