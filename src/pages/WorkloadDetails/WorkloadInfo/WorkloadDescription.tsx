@@ -19,10 +19,10 @@ import {
 import { TextOrLink } from 'components/TextOrLink';
 import { renderRuntimeLogo, renderAPILogo } from 'components/Logo/Logos';
 import CytoscapeGraph from '../../../components/CytoscapeGraph/CytoscapeGraph';
-import { EdgeLabelMode, GraphType } from '../../../types/Graph';
-import { style } from 'typestyle';
-import GraphDataSource from '../../../services/GraphDataSource';
 import { DagreGraph } from '../../../components/CytoscapeGraph/graphs/DagreGraph';
+import { EdgeLabelMode, GraphType } from '../../../types/Graph';
+import GraphDataSource from '../../../services/GraphDataSource';
+import { style } from 'typestyle';
 
 const cytoscapeGraphContainerStyle = style({ height: '300px' });
 

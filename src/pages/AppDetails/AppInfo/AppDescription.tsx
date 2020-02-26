@@ -25,9 +25,9 @@ import {
   TextVariants,
   Title
 } from '@patternfly/react-core';
+import { style } from 'typestyle';
 import { EdgeLabelMode, GraphType } from '../../../types/Graph';
 import CytoscapeGraph from '../../../components/CytoscapeGraph/CytoscapeGraph';
-import { style } from 'typestyle';
 import { DagreGraph } from '../../../components/CytoscapeGraph/graphs/DagreGraph';
 import GraphDataSource from '../../../services/GraphDataSource';
 

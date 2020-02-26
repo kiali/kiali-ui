@@ -12,12 +12,16 @@ import {
   Tooltip
 } from '@patternfly/react-core';
 import { EyeIcon } from '@patternfly/react-icons';
+import { style } from 'typestyle';
+import CytoscapeGraph from '../../../components/CytoscapeGraph/CytoscapeGraph';
+import { DagreGraph } from '../../../components/CytoscapeGraph/graphs/DagreGraph';
 import LocalTime from '../../../components/Time/LocalTime';
 import { DisplayMode, HealthIndicator } from '../../../components/Health/HealthIndicator';
+import GraphDataSource from '../../../services/GraphDataSource';
 import { ServiceHealth } from '../../../types/Health';
 import { Endpoints } from '../../../types/ServiceInfo';
 import { ObjectCheck, ObjectValidation, Port } from '../../../types/IstioObjects';
-import { style } from 'typestyle';
+import { EdgeLabelMode, GraphType } from '../../../types/Graph';
 import { ValidationObjectSummary } from '../../../components/Validations/ValidationObjectSummary';
 import ValidationList from '../../../components/Validations/ValidationList';
 import './ServiceInfoDescription.css';
@@ -26,10 +30,6 @@ import { ThreeScaleServiceRule } from '../../../types/ThreeScale';
 import { AdditionalItem } from 'types/Workload';
 import { TextOrLink } from 'components/TextOrLink';
 import { renderAPILogo } from 'components/Logo/Logos';
-import { EdgeLabelMode, GraphType } from '../../../types/Graph';
-import CytoscapeGraph from '../../../components/CytoscapeGraph/CytoscapeGraph';
-import { DagreGraph } from '../../../components/CytoscapeGraph/graphs/DagreGraph';
-import GraphDataSource from '../../../services/GraphDataSource';
 
 interface ServiceInfoDescriptionProps {
   name: string;
