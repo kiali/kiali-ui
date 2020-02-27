@@ -1,9 +1,15 @@
 import * as React from 'react';
 import {
   Card,
+  CardActions,
   CardBody,
+  CardHead,
+  CardHeader,
+  Dropdown,
+  DropdownItem,
   Grid,
   GridItem,
+  KebabToggle,
   Stack,
   StackItem,
   Text,
@@ -22,14 +28,16 @@ import { ServiceHealth } from '../../../types/Health';
 import { Endpoints } from '../../../types/ServiceInfo';
 import { ObjectCheck, ObjectValidation, Port } from '../../../types/IstioObjects';
 import { EdgeLabelMode, GraphType } from '../../../types/Graph';
+import { CytoscapeGraphSelectorBuilder } from '../../../components/CytoscapeGraph/CytoscapeGraphSelector';
 import { ValidationObjectSummary } from '../../../components/Validations/ValidationObjectSummary';
 import ValidationList from '../../../components/Validations/ValidationList';
-import './ServiceInfoDescription.css';
+import history from '../../../app/History';
 import Labels from '../../../components/Label/Labels';
 import { ThreeScaleServiceRule } from '../../../types/ThreeScale';
 import { AdditionalItem } from 'types/Workload';
 import { TextOrLink } from 'components/TextOrLink';
 import { renderAPILogo } from 'components/Logo/Logos';
+import './ServiceInfoDescription.css';
 
 interface ServiceInfoDescriptionProps {
   name: string;
@@ -51,6 +59,10 @@ interface ServiceInfoDescriptionProps {
   miniGraphDatasource: GraphDataSource;
 }
 
+interface ServiceInfoDescriptionState {
+  isGraphActionsOpen: boolean;
+}
+
 const listStyle = style({
   listStyleType: 'none',
   padding: 0
@@ -60,7 +72,11 @@ const ExternalNameType = 'ExternalName';
 
 const cytoscapeGraphContainerStyle = style({ height: '300px' });
 
-class ServiceInfoDescription extends React.Component<ServiceInfoDescriptionProps> {
+class ServiceInfoDescription extends React.Component<ServiceInfoDescriptionProps, ServiceInfoDescriptionState> {
+  constructor(props: ServiceInfoDescriptionProps) {
+    super(props);
+    this.state = { isGraphActionsOpen: false };
+  }
   getPortOver(portId: number) {
     return <ValidationList checks={this.getPortChecks(portId)} />;
   }
@@ -76,6 +92,12 @@ class ServiceInfoDescription extends React.Component<ServiceInfoDescriptionProps
   }
 
   render() {
+    const graphCardActions = [
+      <DropdownItem key="viewGraph" onClick={this.onViewGraph}>
+        View full graph
+      </DropdownItem>
+    ];
+
     return (
       <Grid gutter="md">
         <GridItem span={4}>
@@ -123,11 +145,23 @@ class ServiceInfoDescription extends React.Component<ServiceInfoDescriptionProps
         </GridItem>
         <GridItem span={4}>
           <Card style={{ height: '100%' }}>
+            <CardHead>
+              <CardActions>
+                <Dropdown
+                  toggle={<KebabToggle onToggle={this.onGraphActionsToggle} />}
+                  dropdownItems={graphCardActions}
+                  isPlain
+                  isOpen={this.state.isGraphActionsOpen}
+                  position={'right'}
+                />
+              </CardActions>
+              <CardHeader>
+                <Title headingLevel="h3" size="2xl">
+                  Graph Overview
+                </Title>
+              </CardHeader>
+            </CardHead>
             <CardBody>
-              <Title headingLevel="h3" size="2xl">
-                {' '}
-                Graph Overview{' '}
-              </Title>
               <div style={{ height: '100%' }}>
                 <CytoscapeGraph
                   activeNamespaces={[{ name: this.props.namespace }]}
@@ -231,6 +265,22 @@ class ServiceInfoDescription extends React.Component<ServiceInfoDescriptionProps
       </Grid>
     );
   }
+
+  private onGraphActionsToggle = (isOpen: boolean) => {
+    this.setState({
+      isGraphActionsOpen: isOpen
+    });
+  };
+
+  private onViewGraph = () => {
+    let cytoscapeGraph = new CytoscapeGraphSelectorBuilder().namespace(this.props.namespace).service(this.props.name);
+
+    const graphUrl = `/graph/namespaces?graphType=${GraphType.SERVICE}&injectServiceNodes=true&namespaces=${
+      this.props.namespace
+    }&unusedNodes=true&focusSelector=${encodeURI(cytoscapeGraph.build())}`;
+
+    history.push(graphUrl);
+  };
 }
 
 export default ServiceInfoDescription;

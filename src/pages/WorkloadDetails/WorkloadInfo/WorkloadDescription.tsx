@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { style } from 'typestyle';
 import { Workload } from '../../../types/Workload';
 import LocalTime from '../../../components/Time/LocalTime';
 import { DisplayMode, HealthIndicator } from '../../../components/Health/HealthIndicator';
@@ -6,9 +7,15 @@ import { WorkloadHealth } from '../../../types/Health';
 import Labels from '../../../components/Label/Labels';
 import {
   Card,
+  CardActions,
   CardBody,
+  CardHead,
+  CardHeader,
+  Dropdown,
+  DropdownItem,
   Grid,
   GridItem,
+  KebabToggle,
   PopoverPosition,
   Stack,
   StackItem,
@@ -18,11 +25,12 @@ import {
 } from '@patternfly/react-core';
 import { TextOrLink } from 'components/TextOrLink';
 import { renderRuntimeLogo, renderAPILogo } from 'components/Logo/Logos';
+import history from '../../../app/History';
 import CytoscapeGraph from '../../../components/CytoscapeGraph/CytoscapeGraph';
+import { CytoscapeGraphSelectorBuilder } from '../../../components/CytoscapeGraph/CytoscapeGraphSelector';
 import { DagreGraph } from '../../../components/CytoscapeGraph/graphs/DagreGraph';
 import { EdgeLabelMode, GraphType } from '../../../types/Graph';
 import GraphDataSource from '../../../services/GraphDataSource';
-import { style } from 'typestyle';
 
 const cytoscapeGraphContainerStyle = style({ height: '300px' });
 
@@ -34,12 +42,14 @@ type WorkloadDescriptionProps = {
   miniGraphDataSource: GraphDataSource;
 };
 
-type WorkloadDescriptionState = {};
+type WorkloadDescriptionState = {
+  isGraphActionsOpen: boolean;
+};
 
 class WorkloadDescription extends React.Component<WorkloadDescriptionProps, WorkloadDescriptionState> {
   constructor(props: WorkloadDescriptionProps) {
     super(props);
-    this.state = {};
+    this.state = { isGraphActionsOpen: false };
   }
 
   render() {
@@ -48,6 +58,11 @@ class WorkloadDescription extends React.Component<WorkloadDescriptionProps, Work
       workload &&
       ['Deployment', 'ReplicaSet', 'ReplicationController', 'DeploymentConfig', 'StatefulSet'].indexOf(workload.type) >=
         0;
+    const graphCardActions = [
+      <DropdownItem key="viewGraph" onClick={this.onViewGraph}>
+        View full graph
+      </DropdownItem>
+    ];
     const runtimes = workload.runtimes.map(r => r.name).filter(name => name !== '');
     return workload ? (
       <Grid gutter="md">
@@ -102,11 +117,23 @@ class WorkloadDescription extends React.Component<WorkloadDescriptionProps, Work
         </GridItem>
         <GridItem span={4}>
           <Card style={{ height: '100%' }}>
+            <CardHead>
+              <CardActions>
+                <Dropdown
+                  toggle={<KebabToggle onToggle={this.onGraphActionsToggle} />}
+                  dropdownItems={graphCardActions}
+                  isPlain
+                  isOpen={this.state.isGraphActionsOpen}
+                  position={'right'}
+                />
+              </CardActions>
+              <CardHeader>
+                <Title headingLevel="h3" size="2xl">
+                  Graph Overview{' '}
+                </Title>
+              </CardHeader>
+            </CardHead>
             <CardBody>
-              <Title headingLevel="h3" size="2xl">
-                {' '}
-                Graph Overview{' '}
-              </Title>
               <div style={{ height: '300px' }}>
                 <CytoscapeGraph
                   activeNamespaces={[{ name: this.props.namespace }]}
@@ -158,6 +185,24 @@ class WorkloadDescription extends React.Component<WorkloadDescriptionProps, Work
       'Loading'
     );
   }
+
+  private onGraphActionsToggle = (isOpen: boolean) => {
+    this.setState({
+      isGraphActionsOpen: isOpen
+    });
+  };
+
+  private onViewGraph = () => {
+    let cytoscapeGraph = new CytoscapeGraphSelectorBuilder()
+      .namespace(this.props.namespace)
+      .workload(this.props.workload.name);
+
+    const graphUrl = `/graph/namespaces?graphType=${GraphType.WORKLOAD}&injectServiceNodes=true&namespaces=${
+      this.props.namespace
+    }&unusedNodes=true&focusSelector=${encodeURI(cytoscapeGraph.build())}`;
+
+    history.push(graphUrl);
+  };
 }
 
 export default WorkloadDescription;
