@@ -20,7 +20,6 @@ import {
   CytoscapeMouseOutEvent,
   DecoratedGraphElements,
   EdgeLabelMode,
-  GraphType,
   Layout,
   NodeParamsType,
   NodeType,
@@ -41,7 +40,6 @@ import { EdgeSingular } from 'cytoscape';
 import { Core } from 'cytoscape';
 
 type CytoscapeGraphProps = {
-  activeNamespaces: Namespace[];
   containerClassName?: string;
   contextMenuEdgeComponent?: EdgeContextMenuType;
   contextMenuGroupComponent?: NodeContextMenuType;
@@ -50,7 +48,6 @@ type CytoscapeGraphProps = {
   displayUnusedNodes: () => void;
   edgeLabelMode: EdgeLabelMode;
   focusSelector?: string;
-  graphType: GraphType;
   isMiniGraph: boolean;
   isMTLSEnabled: boolean;
   layout: Layout;
@@ -245,7 +242,7 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
           isLoading={this.state.isLoading}
           isError={this.state.isError}
           isMiniGraph={this.props.isMiniGraph}
-          namespaces={this.props.activeNamespaces}
+          namespaces={this.props.dataSource.fetchParameters.namespaces}
         >
           <CytoscapeContextMenuWrapper
             ref={this.contextMenuRef}
@@ -587,9 +584,9 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
     }
 
     const globalScratchData: CytoscapeGlobalScratchData = {
-      activeNamespaces: this.props.activeNamespaces,
+      activeNamespaces: this.props.dataSource.fetchParameters.namespaces,
       edgeLabelMode: this.props.edgeLabelMode,
-      graphType: this.props.graphType,
+      graphType: this.props.dataSource.fetchParameters.graphType,
       mtlsEnabled: this.props.isMTLSEnabled,
       showCircuitBreakers: this.props.showCircuitBreakers,
       showMissingSidecars: this.props.showMissingSidecars,
@@ -772,11 +769,11 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
     }
 
     const urlParams: GraphUrlParams = {
-      activeNamespaces: this.props.activeNamespaces,
+      activeNamespaces: this.props.dataSource.fetchParameters.namespaces,
       duration: this.props.dataSource.fetchParameters.duration,
       edgeLabelMode: this.props.edgeLabelMode,
       graphLayout: this.props.layout,
-      graphType: this.props.graphType,
+      graphType: this.props.dataSource.fetchParameters.graphType,
       node: targetNode,
       refreshInterval: this.props.refreshInterval,
       showServiceNodes: this.props.showServiceNodes,

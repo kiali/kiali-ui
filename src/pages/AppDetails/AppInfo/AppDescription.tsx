@@ -7,20 +7,15 @@ import { Link } from 'react-router-dom';
 import {
   Badge,
   Card,
-  CardActions,
   CardBody,
-  CardHead,
   CardHeader,
   DataList,
   DataListCell,
   DataListItem,
   DataListItemCells,
   DataListItemRow,
-  Dropdown,
-  DropdownItem,
   Grid,
   GridItem,
-  KebabToggle,
   List,
   ListItem,
   PopoverPosition,
@@ -30,13 +25,8 @@ import {
   TextVariants,
   Title
 } from '@patternfly/react-core';
-import { style } from 'typestyle';
-import history from '../../../app/History';
-import { EdgeLabelMode, GraphType, NodeType } from '../../../types/Graph';
-import CytoscapeGraph from '../../../components/CytoscapeGraph/CytoscapeGraph';
-import { CytoscapeGraphSelectorBuilder } from '../../../components/CytoscapeGraph/CytoscapeGraphSelector';
-import { DagreGraph } from '../../../components/CytoscapeGraph/graphs/DagreGraph';
 import GraphDataSource from '../../../services/GraphDataSource';
+import MiniGraphCard from '../../../components/CytoscapeGraph/MiniGraphCard';
 
 type AppDescriptionProps = {
   app: App;
@@ -47,8 +37,6 @@ type AppDescriptionProps = {
 type AppDescriptionState = {
   isGraphActionsOpen: boolean;
 };
-
-const cytoscapeGraphContainerStyle = style({ height: '300px' });
 
 class AppDescription extends React.Component<AppDescriptionProps, AppDescriptionState> {
   constructor(props: AppDescriptionProps) {
@@ -134,12 +122,6 @@ class AppDescription extends React.Component<AppDescriptionProps, AppDescription
 
   render() {
     const app = this.props.app;
-    const graphCardActions = [
-      <DropdownItem key="viewGraph" onClick={this.onViewGraph}>
-        View full graph
-      </DropdownItem>
-    ];
-
     return app ? (
       <Grid gutter="md">
         <GridItem span={4}>
@@ -166,48 +148,7 @@ class AppDescription extends React.Component<AppDescriptionProps, AppDescription
           </Card>
         </GridItem>
         <GridItem span={4}>
-          <Card style={{ height: '100%' }}>
-            <CardHead>
-              <CardActions>
-                <Dropdown
-                  toggle={<KebabToggle onToggle={this.onGraphActionsToggle} />}
-                  dropdownItems={graphCardActions}
-                  isPlain
-                  isOpen={this.state.isGraphActionsOpen}
-                  position={'right'}
-                />
-              </CardActions>
-              <CardHeader>
-                <Title style={{ float: 'left' }} headingLevel="h3" size="2xl">
-                  Graph Overview
-                </Title>
-              </CardHeader>
-            </CardHead>
-            <CardBody>
-              <div style={{ height: '100%' }}>
-                <CytoscapeGraph
-                  activeNamespaces={[this.props.app.namespace]}
-                  containerClassName={cytoscapeGraphContainerStyle}
-                  dataSource={this.props.miniGraphDataSource}
-                  displayUnusedNodes={() => undefined}
-                  edgeLabelMode={EdgeLabelMode.NONE}
-                  graphType={GraphType.WORKLOAD}
-                  isMTLSEnabled={false}
-                  isMiniGraph={true}
-                  layout={DagreGraph.getLayout()}
-                  refreshInterval={0}
-                  showCircuitBreakers={false}
-                  showMissingSidecars={true}
-                  showNodeLabels={true}
-                  showSecurity={false}
-                  showServiceNodes={true}
-                  showTrafficAnimation={true}
-                  showUnusedNodes={false}
-                  showVirtualServices={true}
-                />
-              </div>
-            </CardBody>
-          </Card>
+          <MiniGraphCard dataSource={this.props.miniGraphDataSource} />
         </GridItem>
         <GridItem span={4}>
           <Card style={{ height: '100%' }}>
@@ -235,26 +176,6 @@ class AppDescription extends React.Component<AppDescriptionProps, AppDescription
       'Loading'
     );
   }
-
-  private onGraphActionsToggle = (isOpen: boolean) => {
-    this.setState({
-      isGraphActionsOpen: isOpen
-    });
-  };
-
-  private onViewGraph = () => {
-    let cytoscapeGraph = new CytoscapeGraphSelectorBuilder()
-      .namespace(this.props.app.namespace.name)
-      .app(this.props.app.name)
-      .nodeType(NodeType.APP)
-      .isGroup(null);
-
-    const graphUrl = `/graph/namespaces?graphType=${GraphType.APP}&injectServiceNodes=true&namespaces=${
-      this.props.app.namespace.name
-    }&unusedNodes=true&focusSelector=${encodeURI(cytoscapeGraph.build())}`;
-
-    history.push(graphUrl);
-  };
 }
 
 export default AppDescription;
