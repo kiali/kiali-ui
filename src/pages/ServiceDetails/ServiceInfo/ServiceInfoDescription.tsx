@@ -49,10 +49,6 @@ interface ServiceInfoDescriptionProps {
   miniGraphDatasource: GraphDataSource;
 }
 
-interface ServiceInfoDescriptionState {
-  isGraphActionsOpen: boolean;
-}
-
 const listStyle = style({
   listStyleType: 'none',
   padding: 0
@@ -60,11 +56,7 @@ const listStyle = style({
 
 const ExternalNameType = 'ExternalName';
 
-class ServiceInfoDescription extends React.Component<ServiceInfoDescriptionProps, ServiceInfoDescriptionState> {
-  constructor(props: ServiceInfoDescriptionProps) {
-    super(props);
-    this.state = { isGraphActionsOpen: false };
-  }
+class ServiceInfoDescription extends React.Component<ServiceInfoDescriptionProps> {
   getPortOver(portId: number) {
     return <ValidationList checks={this.getPortChecks(portId)} />;
   }

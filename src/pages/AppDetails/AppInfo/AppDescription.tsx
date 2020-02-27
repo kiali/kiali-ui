@@ -34,16 +34,7 @@ type AppDescriptionProps = {
   miniGraphDataSource: GraphDataSource;
 };
 
-type AppDescriptionState = {
-  isGraphActionsOpen: boolean;
-};
-
-class AppDescription extends React.Component<AppDescriptionProps, AppDescriptionState> {
-  constructor(props: AppDescriptionProps) {
-    super(props);
-    this.state = { isGraphActionsOpen: false };
-  }
-
+class AppDescription extends React.Component<AppDescriptionProps> {
   istioSidecar() {
     let istioSidecar = true; // true until proven otherwise (workload with missing sidecar exists)
     this.props.app.workloads.forEach(wkd => {
