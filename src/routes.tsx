@@ -14,6 +14,8 @@ import DefaultSecondaryMasthead from './components/DefaultSecondaryMasthead/Defa
 import IstioConfigNewPageContainer from './pages/IstioConfigNew/IstioConfigNewPage';
 import ThreeScaleHandlerListPage from './pages/extensions/threescale/ThreeScaleHandlerList/ThreeScaleHandlerListPage';
 import ThreeScaleHandlerDetailsPage from './pages/extensions/threescale/ThreeScaleHandlerDetails/ThreeScaleHandlerDetailsPage';
+import ExperimentListPage from './pages/extensions/iter8/ExperimentListPage';
+import ExperimentCreatePage from './pages/extensions/iter8/ExperimentCreatePage';
 
 /**
  * Return array of objects that describe vertical menu
@@ -61,6 +63,12 @@ const extensionsItems: MenuItem[] = [
     title: '3scale Config',
     to: '/extensions/threescale',
     pathsActive: [/^\/extensions\/threescale/]
+  },
+  {
+    iconClass: '',
+    title: 'Iter8 Experiment',
+    to: '/extensions/iter8/list',
+    pathsActive: [/^\/extensions\/iter8\/list/]
   }
 ];
 
@@ -162,6 +170,10 @@ const secondaryMastheadRoutes: Path[] = [
   {
     path: '/' + Paths.JAEGER,
     component: DefaultSecondaryMasthead
+  },
+  {
+    path: '/extensions/iter8/list',
+    component: DefaultSecondaryMasthead
   }
 ];
 
@@ -178,6 +190,14 @@ const extensionsRoutes: Path[] = [
   {
     path: '/extensions/threescale',
     component: ThreeScaleHandlerListPage
+  },
+  {
+    path: '/extensions/iter8/new',
+    component: ExperimentCreatePage
+  },
+  {
+    path: '/extensions/iter8/list',
+    component: ExperimentListPage
   }
 ];
 
