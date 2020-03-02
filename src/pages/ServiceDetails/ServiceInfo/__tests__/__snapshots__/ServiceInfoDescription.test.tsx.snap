@@ -122,6 +122,7 @@ exports[`#ServiceInfoDescription render correctly with data should render servic
                   "graphType": "versionedApp",
                   "injectServiceNodes": true,
                   "namespaces": Array [],
+                  "showDeadNodes": false,
                   "showSecurity": false,
                   "showUnusedNodes": false,
                 },
@@ -164,6 +165,7 @@ exports[`#ServiceInfoDescription render correctly with data should render servic
             }
             refreshInterval={0}
             showCircuitBreakers={false}
+            showDeadNodes={true}
             showMissingSidecars={true}
             showNodeLabels={true}
             showSecurity={false}

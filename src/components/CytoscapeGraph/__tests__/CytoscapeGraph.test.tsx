@@ -38,7 +38,8 @@ describe('CytoscapeGraph component test', () => {
       edgeLabelMode: myEdgeLabelMode,
       queryTime: 0,
       showSecurity: true,
-      showUnusedNodes: false
+      showUnusedNodes: false,
+      showDeadNodes: false
     });
 
     const wrapper = shallow(
@@ -55,6 +56,7 @@ describe('CytoscapeGraph component test', () => {
         setNode={testSetHandler}
         isMTLSEnabled={false}
         showCircuitBreakers={false}
+        showDeadNodes={false}
         showMissingSidecars={true}
         showNodeLabels={true}
         showSecurity={true}

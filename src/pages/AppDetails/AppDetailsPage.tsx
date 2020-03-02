@@ -310,6 +310,7 @@ class AppDetails extends React.Component<AppDetailsProps, AppDetailsState> {
       injectServiceNodes: true,
       edgeLabelMode: EdgeLabelMode.NONE,
       showSecurity: false,
+      showDeadNodes: true,
       showUnusedNodes: false,
       node: {
         app: this.props.match.params.app,

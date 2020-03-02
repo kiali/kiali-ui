@@ -84,6 +84,7 @@ type ReduxProps = {
   replayQueryTime: TimeInMilliseconds;
   setActiveNamespaces: (namespace: Namespace[]) => void;
   showCircuitBreakers: boolean;
+  showDeadNodes: boolean;
   showLegend: boolean;
   showMissingSidecars: boolean;
   showNodeLabels: boolean;
@@ -284,6 +285,7 @@ export class GraphPage extends React.Component<GraphPageProps> {
       prev.graphType !== curr.graphType ||
       (prev.lastRefreshAt !== curr.lastRefreshAt && curr.replayQueryTime === 0) ||
       prev.replayQueryTime !== curr.replayQueryTime ||
+      prev.showDeadNodes !== curr.showDeadNodes ||
       prev.showServiceNodes !== curr.showServiceNodes ||
       prev.showSecurity !== curr.showSecurity ||
       prev.showUnusedNodes !== curr.showUnusedNodes ||
@@ -436,6 +438,7 @@ export class GraphPage extends React.Component<GraphPageProps> {
       graphType: this.props.graphType,
       injectServiceNodes: this.props.showServiceNodes,
       edgeLabelMode: this.props.edgeLabelMode,
+      showDeadNodes: this.props.showDeadNodes,
       showSecurity: this.props.showSecurity,
       showUnusedNodes: this.props.showUnusedNodes,
       node: this.props.node,
@@ -469,6 +472,7 @@ const mapStateToProps = (state: KialiAppState) => ({
   replayActive: replayActiveSelector(state),
   replayQueryTime: replayQueryTimeSelector(state),
   showCircuitBreakers: state.graph.toolbarState.showCircuitBreakers,
+  showDeadNodes: state.graph.toolbarState.showDeadNodes,
   showLegend: state.graph.toolbarState.showLegend,
   showMissingSidecars: state.graph.toolbarState.showMissingSidecars,
   showNodeLabels: state.graph.toolbarState.showNodeLabels,

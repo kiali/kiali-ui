@@ -21,7 +21,8 @@ const FETCH_PARAMS = {
   namespaces: [{ name: 'foo' }],
   queryTime: 0,
   showSecurity: false,
-  showUnusedNodes: false
+  showUnusedNodes: false,
+  showDeadNodes: false
 };
 
 describe('GraphDataSource', () => {

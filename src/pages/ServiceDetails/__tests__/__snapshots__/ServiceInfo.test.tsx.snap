@@ -63,6 +63,7 @@ exports[`#ServiceInfo render correctly with data should render serviceInfo with 
               "graphType": "versionedApp",
               "injectServiceNodes": true,
               "namespaces": Array [],
+              "showDeadNodes": false,
               "showSecurity": false,
               "showUnusedNodes": false,
             },

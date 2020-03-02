@@ -11,6 +11,7 @@ export default history;
 export enum URLParam {
   AGGREGATOR = 'aggregator',
   BY_LABELS = 'bylbl',
+  DEAD_NODES = 'dead',
   DIRECTION = 'direction',
   DURATION = 'duration',
   FOCUS_SELECTOR = 'focusSelector',

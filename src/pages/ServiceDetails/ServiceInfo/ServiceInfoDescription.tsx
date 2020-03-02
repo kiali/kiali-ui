@@ -141,6 +141,7 @@ class ServiceInfoDescription extends React.Component<ServiceInfoDescriptionProps
                   layout={DagreGraph.getLayout()}
                   refreshInterval={0}
                   showCircuitBreakers={false}
+                  showDeadNodes={true}
                   showMissingSidecars={true}
                   showNodeLabels={true}
                   showSecurity={false}

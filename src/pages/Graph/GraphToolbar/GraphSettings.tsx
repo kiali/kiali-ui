@@ -12,6 +12,7 @@ import { KialiAppAction } from 'actions/KialiAppAction';
 type ReduxProps = Omit<GraphToolbarState, 'findValue' | 'hideValue' | 'showLegend' | 'showFindHelp'> & {
   // Dispatch methods
   toggleCompressOnHide(): void;
+  toggleDeadNodes(): void;
   toggleGraphCircuitBreakers(): void;
   toggleGraphMissingSidecars(): void;
   toggleGraphNodeLabels(): void;
@@ -68,6 +69,7 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
     const {
       compressOnHide,
       showCircuitBreakers,
+      showDeadNodes,
       showMissingSidecars,
       showNodeLabels,
       showSecurity,
@@ -80,6 +82,7 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
     // map our dispatchers for redux
     const {
       toggleCompressOnHide,
+      toggleDeadNodes,
       toggleGraphCircuitBreakers,
       toggleGraphMissingSidecars,
       toggleGraphNodeLabels,
@@ -121,6 +124,12 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
         labelText: 'Unused Nodes',
         value: showUnusedNodes,
         onChange: toggleUnusedNodes
+      },
+      {
+        id: 'filterDeadNodes',
+        labelText: 'Headless Services',
+        value: showDeadNodes,
+        onChange: toggleDeadNodes
       }
     ];
 
@@ -193,6 +202,7 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
 const mapStateToProps = (state: KialiAppState) => ({
   compressOnHide: state.graph.toolbarState.compressOnHide,
   showCircuitBreakers: state.graph.toolbarState.showCircuitBreakers,
+  showDeadNodes: state.graph.toolbarState.showDeadNodes,
   showMissingSidecars: state.graph.toolbarState.showMissingSidecars,
   showNodeLabels: state.graph.toolbarState.showNodeLabels,
   showSecurity: state.graph.toolbarState.showSecurity,
@@ -206,6 +216,7 @@ const mapStateToProps = (state: KialiAppState) => ({
 const mapDispatchToProps = (dispatch: ThunkDispatch<KialiAppState, void, KialiAppAction>) => {
   return {
     toggleCompressOnHide: bindActionCreators(GraphToolbarActions.toggleCompressOnHide, dispatch),
+    toggleDeadNodes: bindActionCreators(GraphToolbarActions.toggleDeadNodes, dispatch),
     toggleGraphCircuitBreakers: bindActionCreators(GraphToolbarActions.toggleGraphCircuitBreakers, dispatch),
     toggleGraphMissingSidecars: bindActionCreators(GraphToolbarActions.toggleGraphMissingSidecars, dispatch),
     toggleGraphNodeLabels: bindActionCreators(GraphToolbarActions.toggleGraphNodeLabel, dispatch),

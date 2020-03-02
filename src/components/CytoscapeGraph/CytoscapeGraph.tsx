@@ -60,6 +60,7 @@ type CytoscapeGraphProps = {
   setActiveNamespaces?: (namespace: Namespace[]) => void;
   setNode?: (node?: NodeParamsType) => void;
   showCircuitBreakers: boolean;
+  showDeadNodes: boolean;
   showMissingSidecars: boolean;
   showNodeLabels: boolean;
   showSecurity: boolean;
@@ -157,6 +158,7 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
       this.props.layout !== nextProps.layout ||
       this.state.node !== nextState.node ||
       this.props.showCircuitBreakers !== nextProps.showCircuitBreakers ||
+      this.props.showDeadNodes !== nextProps.showDeadNodes ||
       this.props.showMissingSidecars !== nextProps.showMissingSidecars ||
       this.props.showNodeLabels !== nextProps.showNodeLabels ||
       this.props.showSecurity !== nextProps.showSecurity ||
@@ -768,6 +770,7 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
       graphType: this.props.graphType,
       node: targetNode,
       refreshInterval: this.props.refreshInterval,
+      showDeadNodes: this.props.showDeadNodes,
       showServiceNodes: this.props.showServiceNodes,
       showUnusedNodes: this.props.showUnusedNodes
     };

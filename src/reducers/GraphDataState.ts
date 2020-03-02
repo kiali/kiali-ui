@@ -19,6 +19,7 @@ export const INITIAL_GRAPH_STATE: GraphState = {
     graphType: GraphType.VERSIONED_APP,
     hideValue: '',
     showCircuitBreakers: true,
+    showDeadNodes: false,
     showFindHelp: false,
     showLegend: false,
     showMissingSidecars: true,
@@ -98,6 +99,12 @@ const graphDataState = (state: GraphState = INITIAL_GRAPH_STATE, action: KialiAp
       return updateState(state, {
         toolbarState: updateState(state.toolbarState, {
           compressOnHide: !state.toolbarState.compressOnHide
+        })
+      });
+    case getType(GraphToolbarActions.toggleDeadNodes):
+      return updateState(state, {
+        toolbarState: updateState(state.toolbarState, {
+          showDeadNodes: !state.toolbarState.showDeadNodes
         })
       });
     case getType(GraphToolbarActions.toggleFindHelp):

@@ -171,6 +171,7 @@ class AppDescription extends React.Component<AppDescriptionProps, AppDescription
                   layout={DagreGraph.getLayout()}
                   refreshInterval={0}
                   showCircuitBreakers={false}
+                  showDeadNodes={true}
                   showMissingSidecars={true}
                   showNodeLabels={true}
                   showSecurity={false}

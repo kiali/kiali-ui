@@ -578,6 +578,7 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
       graphType: GraphType.WORKLOAD,
       injectServiceNodes: true,
       edgeLabelMode: EdgeLabelMode.NONE,
+      showDeadNodes: true,
       showSecurity: false,
       showUnusedNodes: false,
       node: {

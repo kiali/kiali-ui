@@ -142,6 +142,7 @@ exports[`WorkloadDescription should render with runtimes 1`] = `
                   "graphType": "versionedApp",
                   "injectServiceNodes": true,
                   "namespaces": Array [],
+                  "showDeadNodes": false,
                   "showSecurity": false,
                   "showUnusedNodes": false,
                 },
@@ -184,6 +185,7 @@ exports[`WorkloadDescription should render with runtimes 1`] = `
             }
             refreshInterval={0}
             showCircuitBreakers={false}
+            showDeadNodes={true}
             showMissingSidecars={true}
             showNodeLabels={true}
             showSecurity={false}

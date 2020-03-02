@@ -40,6 +40,7 @@ interface FetchParams {
   queryTime?: TimeInMilliseconds;
   showSecurity: boolean;
   showUnusedNodes: boolean;
+  showDeadNodes: boolean;
 }
 
 type OnEvents = {
@@ -91,7 +92,8 @@ export default class GraphDataSource {
       injectServiceNodes: true,
       namespaces: [],
       showSecurity: false,
-      showUnusedNodes: false
+      showUnusedNodes: false,
+      showDeadNodes: false
     };
     this._isError = this._isLoading = false;
   }
@@ -126,7 +128,7 @@ export default class GraphDataSource {
     }
 
     // Some appenders are expensive so only specify an appender if needed.
-    let appenders: AppenderString = 'deadNode,sidecarsCheck,serviceEntry,istio';
+    let appenders: AppenderString = 'sidecarsCheck,serviceEntry,istio';
 
     if (!fetchParams.node && fetchParams.showUnusedNodes) {
       // note we only use the unusedNode appender if this is NOT a drilled-in node graph and
@@ -136,6 +138,11 @@ export default class GraphDataSource {
 
     if (fetchParams.showSecurity) {
       appenders += ',securityPolicy';
+    }
+
+    if (!fetchParams.showDeadNodes) {
+      // note: deadNode appender *removes* dead node, so only call it when we don't want to show dead nodes
+      appenders += ',deadNode';
     }
 
     switch (fetchParams.edgeLabelMode) {
