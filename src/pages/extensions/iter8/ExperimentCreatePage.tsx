@@ -174,11 +174,9 @@ class ExperimentCreatePage extends React.Component<RouteComponentProps<Props>, S
         case 'knative':
           newExperiment.apiversion = 'serving.knative.dev/v1alpha1';
           break;
-        case 'algorithm':
-          newExperiment.trafficControl.algorithm = value.trim();
-          break;
         case 'metricName':
           newExperiment.criterias[0].metric = value.trim();
+          break;
         case 'toleranceType':
           newExperiment.criterias[0].toleranceType = value.trim();
           break;
