@@ -37,7 +37,7 @@ export default class MiniGraphCard extends React.Component<MiniGraphCardProps, M
   render() {
     const graphCardActions = [
       <DropdownItem key="viewGraph" onClick={this.onViewGraph}>
-        View full graph
+        Show full graph
       </DropdownItem>
     ];
 
@@ -75,7 +75,7 @@ export default class MiniGraphCard extends React.Component<MiniGraphCardProps, M
               showNodeLabels={true}
               showSecurity={false}
               showServiceNodes={true}
-              showTrafficAnimation={true}
+              showTrafficAnimation={false}
               showUnusedNodes={false}
               showVirtualServices={true}
             />
