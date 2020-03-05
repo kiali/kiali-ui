@@ -1,7 +1,7 @@
 import { ActiveFilter, FILTER_ACTION_APPEND, FilterType } from '../../types/Filters';
 import { AppListItem } from '../../types/AppList';
-import { SortField } from '../../types/SortFilters';
-import { getRequestErrorsStatus, WithAppHealth, hasHealth } from '../../types/Health';
+import { GenericSortField, HealthSortField } from '../../types/SortFilters';
+import { getRequestErrorsStatus, WithAppHealth } from '../../types/Health';
 import {
   istioSidecarFilter,
   healthFilter,
@@ -12,7 +12,7 @@ import {
 import { hasMissingSidecar } from '../../components/VirtualList/Config';
 import { TextInputTypes } from '@patternfly/react-core';
 
-export const sortFields: SortField<AppListItem>[] = [
+export const sortFields: GenericSortField<AppListItem>[] = [
   {
     id: 'namespace',
     title: 'Namespace',
@@ -54,24 +54,20 @@ export const sortFields: SortField<AppListItem>[] = [
     title: 'Health',
     isNumeric: false,
     param: 'he',
-    compare: (a, b) => {
-      if (hasHealth(a) && hasHealth(b)) {
-        const statusForA = a.health.getGlobalStatus();
-        const statusForB = b.health.getGlobalStatus();
+    compare: (a: WithAppHealth<AppListItem>, b: WithAppHealth<AppListItem>) => {
+      const statusForA = a.health.getGlobalStatus();
+      const statusForB = b.health.getGlobalStatus();
 
-        if (statusForA.priority === statusForB.priority) {
-          // If both apps have same health status, use error rate to determine order.
-          const ratioA = getRequestErrorsStatus(a.health.requests.errorRatio).value;
-          const ratioB = getRequestErrorsStatus(b.health.requests.errorRatio).value;
-          return ratioA === ratioB ? a.name.localeCompare(b.name) : ratioB - ratioA;
-        }
-
-        return statusForB.priority - statusForA.priority;
-      } else {
-        return 0;
+      if (statusForA.priority === statusForB.priority) {
+        // If both apps have same health status, use error rate to determine order.
+        const ratioA = getRequestErrorsStatus(a.health.requests.errorRatio).value;
+        const ratioB = getRequestErrorsStatus(b.health.requests.errorRatio).value;
+        return ratioA === ratioB ? a.name.localeCompare(b.name) : ratioB - ratioA;
       }
+
+      return statusForB.priority - statusForA.priority;
     }
-  }
+  } as HealthSortField<AppListItem>
 ];
 
 const appNameFilter: FilterType = {
@@ -132,7 +128,7 @@ export const filterBy = (appsList: AppListItem[], filters: ActiveFilter[]): Prom
 
 export const sortAppsItems = (
   unsorted: AppListItem[],
-  sortField: SortField<AppListItem>,
+  sortField: GenericSortField<AppListItem>,
   isAscending: boolean
 ): Promise<AppListItem[]> => {
   if (sortField.title === 'Health') {

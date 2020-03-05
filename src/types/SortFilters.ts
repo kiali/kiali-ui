@@ -5,6 +5,8 @@ export interface SortField<T> {
   title: string;
   isNumeric: boolean;
   param: string;
-  compare: (a: T | WithHealth<T>, b: T | WithHealth<T>) => number;
+  compare: <A extends T>(a: A, b: A) => number;
 }
-type WithHealth<T> = T & { health: Health };
+
+export type HealthSortField<T> = SortField<T & { health: typeof Health }>;
+export type GenericSortField<T> = SortField<T> | HealthSortField<T>;
