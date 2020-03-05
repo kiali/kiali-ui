@@ -170,12 +170,12 @@ class IstioConfigDetailsPage extends React.Component<RouteComponentProps<IstioCo
             );
             if (changed) {
               AlertUtils.addWarning(
-                'Istio object type [' +
-                  type +
-                  '] name [' +
+                type +
+                  ':' +
                   props.object +
-                  '] has been modified externally to Kiali. New ResourceVersion:  ' +
-                  newResourceVersion
+                  ' has a newer version (' +
+                  newResourceVersion +
+                  '). Reload to see a new version.'
               );
             }
           }
@@ -185,11 +185,7 @@ class IstioConfigDetailsPage extends React.Component<RouteComponentProps<IstioCo
             isRemoved: true
           });
           AlertUtils.addError(
-            'Could not fetch Istio object type [' +
-              props.objectType +
-              '] name [' +
-              props.object +
-              ']. Has it been removed ?',
+            'Could not fetch ' + props.objectType + ':' + props.object + '. Has it been removed ?',
             error
           );
         });
