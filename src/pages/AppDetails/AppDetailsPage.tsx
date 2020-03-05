@@ -74,7 +74,7 @@ class AppDetails extends React.Component<AppDetailsProps, AppDetailsState> {
     this.doRefresh();
 
     this.graphDataSource.on('fetchSuccess', this.graphDsFetchSuccess);
-    this.graphDataSource.on('fetchError', this.graphDsFeetchError);
+    this.graphDataSource.on('fetchError', this.graphDsFetchError);
   }
 
   componentDidUpdate(prevProps: AppDetailsProps) {
@@ -97,7 +97,7 @@ class AppDetails extends React.Component<AppDetailsProps, AppDetailsState> {
 
   componentWillUnmount(): void {
     this.graphDataSource.removeListener('fetchSuccess', this.graphDsFetchSuccess);
-    this.graphDataSource.removeListener('fetchError', this.graphDsFeetchError);
+    this.graphDataSource.removeListener('fetchError', this.graphDsFetchError);
   }
 
   doRefresh = () => {
@@ -296,7 +296,7 @@ class AppDetails extends React.Component<AppDetailsProps, AppDetailsState> {
     });
   };
 
-  private graphDsFeetchError = (errorMessage: string | null) => {
+  private graphDsFetchError = (errorMessage: string | null) => {
     if (this.state.currentTab === trafficTabName) {
       if (errorMessage !== '') {
         errorMessage = 'Could not fetch traffic data: ' + errorMessage;

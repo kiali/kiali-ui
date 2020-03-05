@@ -138,7 +138,7 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
     this.promises.cancelAll();
 
     this.graphDataSource.removeListener('fetchSuccess', this.graphDsFetchSuccess);
-    this.graphDataSource.removeListener('fetchError', this.graphDsFeetchError);
+    this.graphDataSource.removeListener('fetchError', this.graphDsFetchError);
   }
 
   servicePageURL(parsedSearch?: ParsedSearch) {
@@ -168,7 +168,7 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
     this.doRefresh();
 
     this.graphDataSource.on('fetchSuccess', this.graphDsFetchSuccess);
-    this.graphDataSource.on('fetchError', this.graphDsFeetchError);
+    this.graphDataSource.on('fetchError', this.graphDsFetchError);
   }
 
   componentDidUpdate(prevProps: ServiceDetailsProps, _prevState: ServiceDetailsState) {
@@ -568,7 +568,7 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
     });
   };
 
-  private graphDsFeetchError = (errorMessage: string | null) => {
+  private graphDsFetchError = (errorMessage: string | null) => {
     if (this.state.currentTab === trafficTabName) {
       if (errorMessage !== '') {
         errorMessage = 'Could not fetch traffic data: ' + errorMessage;

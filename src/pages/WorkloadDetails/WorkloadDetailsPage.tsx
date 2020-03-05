@@ -71,7 +71,7 @@ class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, Workload
     this.doRefresh();
 
     this.graphDataSource.on('fetchSuccess', this.graphDsFetchSuccess);
-    this.graphDataSource.on('fetchError', this.graphDsFeetchError);
+    this.graphDataSource.on('fetchError', this.graphDsFetchError);
   }
 
   componentDidUpdate(prevProps: WorkloadDetailsPageProps) {
@@ -97,7 +97,7 @@ class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, Workload
 
   componentWillUnmount(): void {
     this.graphDataSource.removeListener('fetchSuccess', this.graphDsFetchSuccess);
-    this.graphDataSource.removeListener('fetchError', this.graphDsFeetchError);
+    this.graphDataSource.removeListener('fetchError', this.graphDsFetchError);
   }
 
   // All information for validations is fetched in the workload, no need to add another call
@@ -385,7 +385,7 @@ class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, Workload
     });
   };
 
-  private graphDsFeetchError = (errorMessage: string | null) => {
+  private graphDsFetchError = (errorMessage: string | null) => {
     if (this.state.currentTab === trafficTabName) {
       if (errorMessage !== '') {
         errorMessage = 'Could not fetch traffic data: ' + errorMessage;
