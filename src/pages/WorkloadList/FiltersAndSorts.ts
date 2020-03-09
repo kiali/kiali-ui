@@ -10,6 +10,7 @@ import {
   getPresenceFilterValue,
   filterByHealth
 } from '../../components/Filters/CommonFilters';
+import { LabelFilters } from '../../components/Filters/LabelFilter';
 import { hasMissingSidecar } from '../../components/VirtualList/Config';
 import { TextInputTypes } from '@patternfly/react-core';
 
@@ -180,6 +181,16 @@ const versionLabelFilter: FilterType = {
   filterValues: presenceValues
 };
 
+const labelFilter: FilterType = {
+  id: 'label',
+  title: 'Label',
+  placeholder: 'Filter by Label',
+  filterType: FilterTypes.custom,
+  customComponent: LabelFilters,
+  action: FILTER_ACTION_APPEND,
+  filterValues: presenceValues
+};
+
 const workloadTypeFilter: FilterType = {
   id: 'workloadtype',
   title: 'Workload Type',
@@ -232,7 +243,8 @@ export const availableFilters: FilterType[] = [
   istioSidecarFilter,
   healthFilter,
   appLabelFilter,
-  versionLabelFilter
+  versionLabelFilter,
+  labelFilter
 ];
 
 /** Filter Method */
@@ -252,7 +264,7 @@ const filterByType = (items: WorkloadListItem[], filter: string[]): WorkloadList
   return items.filter(item => includeName(item.type, filter));
 };
 
-const filterByLabel = (
+const filterByLabelPresence = (
   items: WorkloadListItem[],
   istioSidecar: boolean | undefined,
   app: boolean | undefined,
@@ -268,6 +280,17 @@ const filterByLabel = (
   if (version !== undefined) {
     result = result.filter(item => item.versionLabel === version);
   }
+  return result;
+};
+
+const filterByLabel = (items: WorkloadListItem[], filter: string[]): WorkloadListItem[] => {
+  let result = items;
+  filter.map(filter => {
+    const values = filter.split('=');
+    result = result.filter(item => values[0] in item.labels && item.labels[values[0]] === values[1]);
+    return null;
+  });
+
   return result;
 };
 
@@ -287,11 +310,13 @@ export const filterBy = (
   const istioSidecar = getPresenceFilterValue(istioSidecarFilter, filters);
   const appLabel = getPresenceFilterValue(appLabelFilter, filters);
   const versionLabel = getPresenceFilterValue(versionLabelFilter, filters);
+  const labelFilters = getFilterSelectedValues(labelFilter, filters);
 
   let ret = items;
   ret = filterByType(ret, workloadTypeFilters);
   ret = filterByName(ret, workloadNamesSelected);
-  ret = filterByLabel(ret, istioSidecar, appLabel, versionLabel);
+  ret = filterByLabelPresence(ret, istioSidecar, appLabel, versionLabel);
+  ret = filterByLabel(ret, labelFilters);
 
   // We may have to perform a second round of filtering, using data fetched asynchronously (health)
   // If not, exit fast
