@@ -188,7 +188,7 @@ const labelFilter: FilterType = {
   filterType: FilterTypes.custom,
   customComponent: LabelFilters,
   action: FILTER_ACTION_APPEND,
-  filterValues: presenceValues
+  filterValues: []
 };
 
 const workloadTypeFilter: FilterType = {
