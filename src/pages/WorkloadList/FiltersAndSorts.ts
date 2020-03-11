@@ -284,14 +284,25 @@ const filterByLabelPresence = (
 };
 
 const filterByLabel = (items: WorkloadListItem[], filter: string[]): WorkloadListItem[] => {
-  let result = items;
+  let result: WorkloadListItem[] = [];
+
   filter.map(filter => {
-    const values = filter.split('=');
-    result = result.filter(item => values[0] in item.labels && item.labels[values[0]] === values[1]);
+    if (filter.includes('=')) {
+      const values = filter.split('=');
+      // Check Values
+      values[1].split(',').map(val => {
+        result = result.concat(
+          items.filter(item => values[0] in item.labels && item.labels[values[0]].startsWith(val))
+        );
+      });
+    } else {
+      // Check if has Label
+      result = result.concat(items.filter(item => filter in item.labels));
+    }
     return null;
   });
 
-  return result;
+  return filter.length > 0 ? result : items;
 };
 
 const filterByName = (items: WorkloadListItem[], names: string[]): WorkloadListItem[] => {

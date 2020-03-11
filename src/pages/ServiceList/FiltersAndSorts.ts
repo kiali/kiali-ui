@@ -159,14 +159,25 @@ const filterByName = (items: ServiceListItem[], names: string[]): ServiceListIte
 };
 
 const filterByLabel = (items: ServiceListItem[], filter: string[]): ServiceListItem[] => {
-  let result = items;
+  let result: ServiceListItem[] = [];
+
   filter.map(filter => {
-    const values = filter.split('=');
-    result = result.filter(item => values[0] in item.labels && item.labels[values[0]] === values[1]);
+    if (filter.includes('=')) {
+      const values = filter.split('=');
+      // Check Values
+      values[1].split(',').map(val => {
+        result = result.concat(
+          items.filter(item => values[0] in item.labels && item.labels[values[0]].startsWith(val))
+        );
+      });
+    } else {
+      // Check if has Label
+      result = result.concat(items.filter(item => filter in item.labels));
+    }
     return null;
   });
 
-  return result;
+  return filter.length > 0 ? result : items;
 };
 
 export const filterBy = (

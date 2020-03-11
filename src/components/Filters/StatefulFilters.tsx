@@ -254,7 +254,8 @@ export class StatefulFilters extends React.Component<StatefulFiltersProps, State
       const instance = new currentFilterType.customComponent({
         value: currentValue,
         onChange: this.updateCurrentValue,
-        onKeyPress: this.onValueKeyPress
+        filterAdd: value => this.filterAdded(currentFilterType, value),
+        duplicatesFilter: value => this.duplicatesFilter(currentFilterType, value)
       });
       return instance.render();
     } else {

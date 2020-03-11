@@ -119,14 +119,31 @@ const filterByIstioSidecar = (items: AppListItem[], istioSidecar: boolean): AppL
 };
 
 const filterByLabel = (items: AppListItem[], filter: string[]): AppListItem[] => {
-  let result = items;
+  let result: AppListItem[] = [];
+
   filter.map(filter => {
-    const values = filter.split('=');
-    result = result.filter(item => values[0] in item.labels && item.labels[values[0]] === values[1]);
+    if (filter.includes('=')) {
+      const values = filter.split('=');
+      // Check Values
+      values[1].split(',').map(val => {
+        result = result.concat(
+          items.filter(item => {
+            if (values[0] in item.labels) {
+              return item.labels[values[0]].split(',').some(appVal => appVal.startsWith(val));
+            } else {
+              return false;
+            }
+          })
+        );
+      });
+    } else {
+      // Check if has Label
+      result = result.concat(items.filter(item => filter in item.labels));
+    }
     return null;
   });
 
-  return result;
+  return filter.length > 0 ? result : items;
 };
 
 export const filterBy = (appsList: AppListItem[], filters: ActiveFilter[]): Promise<AppListItem[]> | AppListItem[] => {

@@ -59,8 +59,12 @@ export const labelFilter: FilterTypeWithFilter<NamespaceInfo> = {
   filter: (namespaces: NamespaceInfo[], filters: ActiveFilter[]) => {
     return namespaces.filter(ns =>
       filters.some(f => {
-        const [k, v] = f.value.split('=');
-        return !!ns.labels && k in ns.labels && ns.labels[k] === v;
+        if (f.value.includes('=')) {
+          const [k, v] = f.value.split('=');
+          return !!ns.labels && k in ns.labels && ns.labels[k].startsWith(v);
+        } else {
+          return !!ns.labels && f.value in ns.labels;
+        }
       })
     );
   }
