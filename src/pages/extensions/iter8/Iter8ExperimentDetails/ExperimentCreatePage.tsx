@@ -114,14 +114,13 @@ class ExperimentCreatePage extends React.Component<Props, State> {
     };
   }
 
-  // Get available namespaces first
-  componentDidMount() {
-    this.updateNamespaces();
+  componentWillUnmount() {
+    this.promises.cancelAll();
   }
 
   // Invoke the history object to update and URL and start a routing
   goExperimentsPage = () => {
-    history.push('/extensions/iter8/list');
+    history.push('/extensions/iter8');
   };
 
   // Updates state with modifications of the new/editing handler
@@ -208,41 +207,42 @@ class ExperimentCreatePage extends React.Component<Props, State> {
       API.createExperiment(JSON.stringify(this.state.experiment))
         .then(_ => this.goExperimentsPage())
         .catch(error => AlertUtils.addError('Could not create Experiment.', error));
-    } else {
-      API.updateExperiment(
-        this.state.experiment.namespace,
-        this.state.experiment.name,
-        JSON.stringify(this.state.experiment)
-      )
-        .then(_ => this.goExperimentsPage())
-        .catch(error => AlertUtils.addError('Could not update Experiment', error));
     }
   };
 
-  updateNamespaces() {
-    this.promises.cancelAll();
-    let arr: string[];
-    this.promises
-      .register('namespaces', API.getNamespaces())
-      .then(namespacesResponse => {
-        const namespacesdata: Namespace[] = namespacesResponse.data;
-        arr = [];
-        for (let ns of namespacesdata.map(namespace => namespace.name)) {
-          arr.push(ns);
-        }
-        this.setState({
-          namespaces: arr
-        });
-      })
-      .catch(namespacesError => {
-        if (!namespacesError.isCanceled) {
-          AlertUtils.addError('Could not fetch namespaces', namespacesError);
-        }
-      });
-  }
+  updateExperiment = () => {
+    API.updateExperiment(
+      this.state.experiment.namespace,
+      this.state.experiment.name,
+      JSON.stringify(this.state.experiment)
+    )
+      .then(_ => this.goExperimentsPage())
+      .catch(error => AlertUtils.addError('Could not update Experiment', error));
+  };
+
+  isMainFormValid = (): boolean => {
+    return (
+      this.state.experiment.name !== '' &&
+      this.state.experiment.service !== '' &&
+      this.props.activeNamespaces.length == 1 &&
+      this.state.experiment.baseline !== '' &&
+      this.state.experiment.candidate !== ''
+    );
+  };
+
+  isTCFormValid = (): boolean => {
+    return (
+      this.state.experiment.trafficControl.interval !== '' && this.state.experiment.trafficControl.maxIteration > 0
+    );
+  };
+
+  isSCFormValid = (): boolean => {
+    return this.state.experiment.criterias.length > 0;
+  };
 
   render() {
-    const isNamespacesValid = this.props.activeNamespaces.length > 0;
+    const isNamespacesValid = this.props.activeNamespaces.length == 1;
+    const isFormValid = this.isMainFormValid() && this.isTCFormValid() && this.isSCFormValid();
     // @ts-ignore
     return (
       <>
@@ -251,7 +251,7 @@ class ExperimentCreatePage extends React.Component<Props, State> {
             <Form isHorizontal={true}>
               <FormGroup
                 fieldId="name"
-                label="Experiment Name :"
+                label="Experiment Name"
                 isValid={this.state.experiment.name !== ''}
                 helperTextInvalid="Name cannot be empty"
               >
@@ -267,8 +267,9 @@ class ExperimentCreatePage extends React.Component<Props, State> {
                 <GridItem span={6}>
                   <FormGroup
                     fieldId="service"
-                    label="Target Service :"
+                    label="Target Service"
                     isValid={this.state.experiment.service !== ''}
+                    helperText="Target Service specifies the reference to experiment targets (i.e. reviews)"
                     helperTextInvalid="Target Service cannot be empty"
                   >
                     <TextInput
@@ -284,8 +285,8 @@ class ExperimentCreatePage extends React.Component<Props, State> {
                     label="Namespaces"
                     isRequired={true}
                     fieldId="namespaces"
-                    helperText={'Select namespace(s) where this configuration will be applied'}
-                    helperTextInvalid={'At least one namespace should be selected'}
+                    helperText={'Select namespace where this configuration will be applied'}
+                    helperTextInvalid={'Only one namespace should be selected'}
                     isValid={isNamespacesValid}
                   >
                     <TextInput
@@ -305,14 +306,15 @@ class ExperimentCreatePage extends React.Component<Props, State> {
                 <GridItem span={6}>
                   <FormGroup
                     fieldId="baseline"
-                    label="Baseline :"
+                    label="Baseline"
                     isValid={this.state.experiment.baseline !== ''}
-                    helperTextInvalid="Baseline cannot be empty"
+                    helperText="The baseline deployment of the target service (i.e. reviews-v1)"
+                    helperTextInvalid="Baseline deployment cannot be empty"
                   >
                     <TextInput
                       id="baseline"
                       value={this.state.experiment.baseline}
-                      placeholder="Service Name"
+                      placeholder="Deployment name"
                       onChange={value => this.changeExperiment('baseline', value)}
                     />
                   </FormGroup>
@@ -320,14 +322,15 @@ class ExperimentCreatePage extends React.Component<Props, State> {
                 <GridItem span={6}>
                   <FormGroup
                     fieldId="candidate"
-                    label="Candidate :"
+                    label="Candidate"
                     isValid={this.state.experiment.candidate !== ''}
-                    helperTextInvalid="Candidate cannot be empty"
+                    helperText="The candidate deployment of the target service (i.e. reviews-v2)"
+                    helperTextInvalid="Candidate deployment cannot be empty"
                   >
                     <TextInput
                       id="candidate"
                       value={this.state.experiment.candidate}
-                      placeholder="Service Name"
+                      placeholder="Deployment name"
                       onChange={value => this.changeExperiment('candidate', value)}
                     />
                   </FormGroup>
@@ -339,29 +342,32 @@ class ExperimentCreatePage extends React.Component<Props, State> {
                 <GridItem span={6}>
                   <FormGroup
                     fieldId="interval"
-                    label="Interval :"
+                    label="Interval"
                     isValid={this.state.experiment.trafficControl.interval !== ''}
-                    helperText="frequency with which the controller calls the analytics service"
+                    helperText="Frequency with which the controller calls the analytics service"
+                    helperTextInvalid="Interval cannot be empty"
                   >
                     <TextInput
                       id="interval"
                       value={this.state.experiment.trafficControl.interval}
-                      placeholder="Service Name"
-                      onChange={value => this.changeExperimentNumber('interval', Number(value))}
+                      placeholder="Time interval i.e. 30s"
+                      onChange={value => this.changeExperiment('interval', value)}
                     />
                   </FormGroup>
                 </GridItem>
                 <GridItem span={6}>
                   <FormGroup
                     fieldId="maxIteration"
-                    label="Maximum Iteration :"
-                    isValid={isNaN(this.state.experiment.trafficControl.maxIteration)}
-                    helperText="Default is 100"
+                    label="Maximum Iteration"
+                    isValid={this.state.experiment.trafficControl.maxIteration > 0}
+                    helperText="Maximum number of iterations for this experiment"
+                    helperTextInvalid="Maximun Iteration cannot be empty"
                   >
                     <TextInput
                       id="maxIteration"
+                      type="number"
                       value={this.state.experiment.trafficControl.maxIteration}
-                      placeholder="Maximum Iteration "
+                      placeholder="Maximum Iteration"
                       onChange={value => this.changeExperimentNumber('maxIteration', Number(value))}
                     />
                   </FormGroup>
@@ -371,12 +377,17 @@ class ExperimentCreatePage extends React.Component<Props, State> {
                 <GridItem span={6}>
                   <FormGroup
                     fieldId="maxTrafficPercentage"
-                    label="Maximum Traffic Percentage :"
-                    isValid={isNaN(this.state.experiment.trafficControl.maxTrafficPercentage)}
-                    helperText="Default is 50"
+                    label="Maximum Traffic Percentage"
+                    isValid={
+                      this.state.experiment.trafficControl.maxTrafficPercentage >= 0 &&
+                      this.state.experiment.trafficControl.maxTrafficPercentage <= 100
+                    }
+                    helperText="The maximum traffic percentage to send to the candidate during an experiment"
+                    helperTextInvalid="Maximum Traffic Percentage must be between 0 and 100"
                   >
                     <TextInput
                       id="maxTrafficPercentage"
+                      type="number"
                       value={this.state.experiment.trafficControl.maxTrafficPercentage}
                       placeholder="Service Name"
                       onChange={value => this.changeExperimentNumber('maxTrafficPercentage', parseFloat(value))}
@@ -385,15 +396,16 @@ class ExperimentCreatePage extends React.Component<Props, State> {
                 </GridItem>
                 <GridItem span={6}>
                   <FormGroup
-                    fieldId="maxTrafficPercentage"
-                    label="Maximum Traffic Percentage :"
-                    isValid={isNaN(this.state.experiment.trafficControl.trafficStepSize)}
-                    helperText="Default is 2"
+                    fieldId="trafficStepSize"
+                    label="Traffic Step Size"
+                    isValid={this.state.experiment.trafficControl.trafficStepSize > 0}
+                    helperText="The maximum traffic increment per iteration"
+                    helperTextInvalid="Traffic Step Size must be > 0"
                   >
                     <TextInput
-                      id="maxTrafficPercentage"
+                      id="trafficStepSize"
                       value={this.state.experiment.trafficControl.trafficStepSize}
-                      placeholder="Service Name"
+                      placeholder="Traffic Step Size"
                       onChange={value => this.changeExperimentNumber('trafficStepSize', parseFloat(value))}
                     />
                   </FormGroup>
@@ -401,9 +413,8 @@ class ExperimentCreatePage extends React.Component<Props, State> {
               </Grid>
               <FormGroup
                 fieldId="algorithm"
-                label="Algorithm :"
-                isValid={this.state.experiment.trafficControl.algorithm !== ''}
-                helperText="Default to check_and_increment"
+                label="Algorithm"
+                helperText="Strategy used to analyze the candidate and shift the traffic"
               >
                 <FormSelect
                   value={this.state.experiment.trafficControl.algorithm}
@@ -464,7 +475,11 @@ class ExperimentCreatePage extends React.Component<Props, State> {
               <ActionGroup>
                 <span style={{ float: 'left', paddingTop: '10px', paddingBottom: '10px' }}>
                   <span style={{ paddingRight: '5px' }}>
-                    <Button variant={ButtonVariant.primary} onClick={this.createExperiment}>
+                    <Button
+                      variant={ButtonVariant.primary}
+                      isDisabled={!isFormValid}
+                      onClick={() => this.createExperiment()}
+                    >
                       Create
                     </Button>
                   </span>
