@@ -1,14 +1,10 @@
 import * as React from 'react';
-import { Iter8Info } from '../../../types/Iter8';
+import { Iter8Info } from '../../../../types/Iter8';
 import { style } from 'typestyle';
-import { PfColors } from '../../../components/Pf/PfColors';
-import { Link, RouteComponentProps } from 'react-router-dom';
-import * as API from '../../../services/Api';
-import * as AlertUtils from '../../../utils/AlertUtils';
+import * as API from '../../../../services/Api';
+import * as AlertUtils from '../../../../utils/AlertUtils';
 import {
   ActionGroup,
-  Breadcrumb,
-  BreadcrumbItem,
   Button,
   ButtonVariant,
   Form,
@@ -17,18 +13,19 @@ import {
   FormSelectOption,
   Grid,
   GridItem,
-  Text,
-  TextInput,
-  TextVariants
+  TextInput
 } from '@patternfly/react-core';
-import history from '../../../app/History';
-import { RenderContent } from '../../../components/Nav/Page';
-import Namespace from '../../../types/Namespace';
+import history from '../../../../app/History';
+import { RenderContent } from '../../../../components/Nav/Page';
+import Namespace from '../../../../types/Namespace';
 import ExperimentCriteriaForm from './ExperimentCriteriaForm';
-import { PromisesRegistry } from '../../../utils/CancelablePromises';
+import { PromisesRegistry } from '../../../../utils/CancelablePromises';
+import { KialiAppState } from '../../../../store/Store';
+import { activeNamespacesSelector } from '../../../../store/Selectors';
+import { connect } from 'react-redux';
 
 interface Props {
-  experimentName: string;
+  activeNamespaces: Namespace[];
 }
 
 interface State {
@@ -69,8 +66,6 @@ export interface Criteria {
 
 // Style constants
 const containerPadding = style({ padding: '20px 20px 20px 20px' });
-const containerWhite = style({ backgroundColor: PfColors.White });
-const paddingLeft = style({ paddingLeft: '20px' });
 
 const algorithms = [
   'check_and_increment',
@@ -80,10 +75,10 @@ const algorithms = [
   'optimistic_bayesian_routing'
 ];
 
-class ExperimentCreatePage extends React.Component<RouteComponentProps<Props>, State> {
+class ExperimentCreatePage extends React.Component<Props, State> {
   private promises = new PromisesRegistry();
 
-  constructor(props: RouteComponentProps<Props>) {
+  constructor(props: Props) {
     super(props);
 
     this.state = {
@@ -123,22 +118,6 @@ class ExperimentCreatePage extends React.Component<RouteComponentProps<Props>, S
   componentDidMount() {
     this.updateNamespaces();
   }
-
-  // Page title for creating new experiment, no namespace dropdown
-  // as it is selected inside the form
-  pageTitle = (title: string) => (
-    <>
-      <div className={`breadcrumb ${containerWhite} ${paddingLeft}`}>
-        <Breadcrumb>
-          <BreadcrumbItem>
-            <Link to={'/extensions/iter8/list'}>Iter8 Experiments</Link>
-          </BreadcrumbItem>
-          <BreadcrumbItem isActive={true}>{title}</BreadcrumbItem>
-        </Breadcrumb>
-        <Text component={TextVariants.h1}>{title}</Text>
-      </div>
-    </>
-  );
 
   // Invoke the history object to update and URL and start a routing
   goExperimentsPage = () => {
@@ -263,12 +242,10 @@ class ExperimentCreatePage extends React.Component<RouteComponentProps<Props>, S
   }
 
   render() {
-    const title = 'Create New Experiment';
-
+    const isNamespacesValid = this.props.activeNamespaces.length > 0;
     // @ts-ignore
     return (
       <>
-        {this.pageTitle(title)}
         <RenderContent>
           <div className={containerPadding}>
             <Form isHorizontal={true}>
@@ -304,21 +281,23 @@ class ExperimentCreatePage extends React.Component<RouteComponentProps<Props>, S
                 </GridItem>
                 <GridItem span={6}>
                   <FormGroup
-                    fieldId="namespace"
-                    label="Namespace :"
-                    isValid={this.state.experiment.namespace !== ''}
-                    helperText="Namespace of the service"
+                    label="Namespaces"
+                    isRequired={true}
+                    fieldId="namespaces"
+                    helperText={'Select namespace(s) where this configuration will be applied'}
+                    helperTextInvalid={'At least one namespace should be selected'}
+                    isValid={isNamespacesValid}
                   >
-                    <FormSelect
-                      value={this.state.experiment.namespace}
-                      id="namespace"
-                      name="Namespace"
-                      onChange={value => this.changeExperiment('namespace', value)}
-                    >
-                      {this.state.namespaces.map((option, index) => (
-                        <FormSelectOption isDisabled={false} key={'p' + index} value={option} label={option} />
-                      ))}
-                    </FormSelect>
+                    <TextInput
+                      value={this.props.activeNamespaces.map(n => n.name).join(',')}
+                      isRequired={true}
+                      type="text"
+                      id="namespaces"
+                      aria-describedby="namespaces"
+                      name="namespaces"
+                      isDisabled={true}
+                      isValid={isNamespacesValid}
+                    />
                   </FormGroup>
                 </GridItem>
               </Grid>
@@ -509,4 +488,13 @@ class ExperimentCreatePage extends React.Component<RouteComponentProps<Props>, S
   }
 }
 
-export default ExperimentCreatePage;
+const mapStateToProps = (state: KialiAppState) => ({
+  activeNamespaces: activeNamespacesSelector(state)
+});
+
+const ExperimentCreatePageContainer = connect(
+  mapStateToProps,
+  null
+)(ExperimentCreatePage);
+
+export default ExperimentCreatePageContainer;

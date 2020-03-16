@@ -3,7 +3,7 @@ import { Criteria } from './ExperimentCreatePage';
 import * as React from 'react';
 import { Button, FormSelect, FormSelectOption, TextInput, Radio } from '@patternfly/react-core';
 import { style } from 'typestyle';
-import { PfColors } from '../../../components/Pf/PfColors';
+import { PfColors } from '../../../../components/Pf/PfColors';
 const headerCells: ICell[] = [
   {
     title: 'Matric Name',

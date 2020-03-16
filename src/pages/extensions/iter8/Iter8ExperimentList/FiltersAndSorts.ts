@@ -1,6 +1,6 @@
-import { FILTER_ACTION_APPEND, FilterType } from '../../../types/Filters';
-import { GenericSortField } from '../../../types/SortFilters';
-import { Iter8Experiment } from '../../../types/Iter8';
+import { FILTER_ACTION_APPEND, FilterType } from '../../../../types/Filters';
+import { GenericSortField } from '../../../../types/SortFilters';
+import { Iter8Experiment } from '../../../../types/Iter8';
 import { TextInputTypes } from '@patternfly/react-core';
 
 // Place Holder, not quite finished yet. Or if filter is needed, and how to use the common filters?
