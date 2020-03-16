@@ -11,8 +11,6 @@ $font-size-base: 14px;
 
 //PF4 Styles
 $pf-global--enable-reset: false;
-$pf-global--disable-fontawesome: true;
-$pf-global--font-path: '@patternfly/patternfly/assets/fonts/';
 
 body {
   margin: 0;
@@ -27,6 +25,7 @@ body {
   height: 100%;
 }
 
+@import '_fonts.scss';
 @import '_overrides';
 @import '_layout';
 

@@ -17,8 +17,8 @@ const mutIcons = {
       ascii: '\ue915 ',
       color: 'red'
     },
-    mtls: { className: 'fa pf-locked', type: 'pf', name: 'locked', ascii: '\ue923 ' },
-    disabledMtls: { className: 'fa fa-unlock', type: 'fa', name: 'unlock', ascii: '\uf09c ' },
+    mtls: { className: 'fa pf-locked', type: 'pf', name: 'locked', ascii: '\uE02a ' },
+    disabledMtls: { className: 'fa fa-unlock', type: 'fa', name: 'unlock', ascii: '\uE065 ' },
     virtualService: { className: 'fa fa-code-fork', type: 'fa', name: 'code-fork', ascii: '\uf126 ' }
   },
   menu: {
