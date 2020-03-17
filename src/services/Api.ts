@@ -553,8 +553,8 @@ export const deleteExperiment = (namespace: string, name: string) => {
   return newRequest<Iter8Experiment>(HTTP_VERBS.DELETE, urls.iter8Experiment(namespace, name), {}, {});
 };
 
-export const createExperiment = (specBody: string) => {
-  return newRequest<Iter8Experiment>(HTTP_VERBS.POST, urls.iter8ExperimentOp, {}, specBody);
+export const createExperiment = (namespace: string, specBody: string) => {
+  return newRequest<Iter8Experiment>(HTTP_VERBS.POST, urls.iter8ExperimentsByNamespace(namespace), {}, specBody);
 };
 
 export const updateExperiment = (namespace: string, name: string, specBody: string) => {

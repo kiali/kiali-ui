@@ -203,8 +203,12 @@ class ExperimentCreatePage extends React.Component<Props, State> {
 
   // It invokes backend to create  a new experiment
   createExperiment = () => {
-    if (this.state.isNew) {
-      API.createExperiment(JSON.stringify(this.state.experiment))
+    if (this.props.activeNamespaces.length === 1) {
+      const ns = this.props.activeNamespaces[0];
+      console.log('TODELETE Create Iter8 Experiment');
+      console.log(JSON.stringify(this.state.experiment));
+      this.promises
+        .register('Create Iter8 Experiment', API.createExperiment(ns.name, JSON.stringify(this.state.experiment)))
         .then(_ => this.goExperimentsPage())
         .catch(error => AlertUtils.addError('Could not create Experiment.', error));
     }
@@ -224,7 +228,7 @@ class ExperimentCreatePage extends React.Component<Props, State> {
     return (
       this.state.experiment.name !== '' &&
       this.state.experiment.service !== '' &&
-      this.props.activeNamespaces.length == 1 &&
+      this.props.activeNamespaces.length === 1 &&
       this.state.experiment.baseline !== '' &&
       this.state.experiment.candidate !== ''
     );
@@ -241,7 +245,7 @@ class ExperimentCreatePage extends React.Component<Props, State> {
   };
 
   render() {
-    const isNamespacesValid = this.props.activeNamespaces.length == 1;
+    const isNamespacesValid = this.props.activeNamespaces.length === 1;
     const isFormValid = this.isMainFormValid() && this.isTCFormValid() && this.isSCFormValid();
     // @ts-ignore
     return (

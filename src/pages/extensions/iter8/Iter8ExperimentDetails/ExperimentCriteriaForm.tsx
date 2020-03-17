@@ -1,13 +1,13 @@
 import { cellWidth, ICell, Table, TableBody, TableHeader } from '@patternfly/react-table';
 import { Criteria } from './ExperimentCreatePage';
 import * as React from 'react';
-import { Button, FormSelect, FormSelectOption, TextInput, Radio } from '@patternfly/react-core';
+import { Button, FormSelect, FormSelectOption, TextInput, Checkbox } from '@patternfly/react-core';
 import { style } from 'typestyle';
 import { PfColors } from '../../../../components/Pf/PfColors';
 const headerCells: ICell[] = [
   {
     title: 'Matric Name',
-    transforms: [cellWidth(30) as any],
+    transforms: [cellWidth(20) as any],
     props: {}
   },
   {
@@ -22,7 +22,7 @@ const headerCells: ICell[] = [
   },
   {
     title: 'Tolerance Type',
-    transforms: [cellWidth(10) as any],
+    transforms: [cellWidth(15) as any],
     props: {}
   },
   {
@@ -229,13 +229,13 @@ class ExperimentCriteriaForm extends React.Component<Props, State> {
               </FormSelect>
             </>,
             <>
-              <Radio
-                isChecked={this.state.addCriteria.stopOnFailure}
-                name="stopOnFailure"
-                onChange={this.onAddStopOnFailure}
+              <Checkbox
                 label="Stop On Failure"
                 id="stopOnFailure"
-                value={this.state.addCriteria.stopOnFailure ? 'Yes' : 'No'}
+                name="stopOnFailure"
+                aria-label="Stop On Failure"
+                isChecked={this.state.addCriteria.stopOnFailure}
+                onChange={this.onAddStopOnFailure}
               />
             </>,
             <>
