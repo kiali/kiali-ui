@@ -165,14 +165,17 @@ const filterByLabel = (items: ServiceListItem[], filter: string[]): ServiceListI
     if (filter.includes('=')) {
       const values = filter.split('=');
       // Check Values
-      values[1].split(',').map(val => {
-        result = result.concat(
-          items.filter(item => values[0] in item.labels && item.labels[values[0]].startsWith(val))
+      values[1]
+        .split(',')
+        .map(
+          val =>
+            (result = result.concat(
+              items.filter(item => values[0] in item.labels && item.labels[values[0]].startsWith(val))
+            ))
         );
-      });
     } else {
       // Check if has Label
-      result = result.concat(items.filter(item => filter in item.labels));
+      result = result.concat(items.filter(item => Object.keys(item.labels).some(key => key.startsWith(filter))));
     }
     return null;
   });

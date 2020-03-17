@@ -125,20 +125,21 @@ const filterByLabel = (items: AppListItem[], filter: string[]): AppListItem[] =>
     if (filter.includes('=')) {
       const values = filter.split('=');
       // Check Values
-      values[1].split(',').map(val => {
-        result = result.concat(
-          items.filter(item => {
-            if (values[0] in item.labels) {
-              return item.labels[values[0]].split(',').some(appVal => appVal.startsWith(val));
-            } else {
-              return false;
-            }
-          })
-        );
-      });
+      values[1].split(',').map(
+        val =>
+          (result = result.concat(
+            items.filter(item => {
+              if (values[0] in item.labels) {
+                return item.labels[values[0]].split(',').some(appVal => appVal.startsWith(val));
+              } else {
+                return false;
+              }
+            })
+          ))
+      );
     } else {
       // Check if has Label
-      result = result.concat(items.filter(item => filter in item.labels));
+      result = result.concat(items.filter(item => Object.keys(item.labels).some(key => key.startsWith(filter))));
     }
     return null;
   });

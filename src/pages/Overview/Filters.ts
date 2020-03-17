@@ -63,7 +63,7 @@ export const labelFilter: FilterTypeWithFilter<NamespaceInfo> = {
           const [k, v] = f.value.split('=');
           return !!ns.labels && k in ns.labels && ns.labels[k].startsWith(v);
         } else {
-          return !!ns.labels && f.value in ns.labels;
+          return !!ns.labels && Object.keys(ns.labels).some(label => label.startsWith(f.value));
         }
       })
     );
