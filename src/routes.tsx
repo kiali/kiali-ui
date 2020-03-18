@@ -8,7 +8,7 @@ import AppDetailsPage from './pages/AppDetails/AppDetailsPage';
 import OverviewPageContainer from './pages/Overview/OverviewPage';
 import { MenuItem, Path } from './types/Routes';
 import GraphPageContainer from './pages/Graph/GraphPage';
-import { icons, Paths } from './config';
+import { Paths } from './config';
 import ServiceDetailsPageContainer from './pages/ServiceDetails/ServiceDetailsPage';
 import DefaultSecondaryMasthead from './components/DefaultSecondaryMasthead/DefaultSecondaryMasthead';
 
@@ -18,43 +18,36 @@ import DefaultSecondaryMasthead from './components/DefaultSecondaryMasthead/Defa
  */
 const navItems: MenuItem[] = [
   {
-    iconClass: icons.menu.overview,
     title: 'Overview',
     to: '/overview',
     pathsActive: [/^\/overview\/(.*)/]
   },
   {
-    iconClass: icons.menu.graph,
     title: 'Graph',
     to: '/graph/namespaces/',
     pathsActive: [/^\/graph\/(.*)/]
   },
   {
-    iconClass: icons.menu.applications,
     title: 'Applications',
     to: '/' + Paths.APPLICATIONS,
     pathsActive: [new RegExp('^/namespaces/(.*)/' + Paths.APPLICATIONS + '/(.*)')]
   },
   {
-    iconClass: icons.menu.workloads,
     title: 'Workloads',
     to: '/' + Paths.WORKLOADS,
     pathsActive: [new RegExp('^/namespaces/(.*)/' + Paths.WORKLOADS + '/(.*)')]
   },
   {
-    iconClass: icons.menu.services,
     title: 'Services',
     to: '/' + Paths.SERVICES,
     pathsActive: [new RegExp('^/namespaces/(.*)/' + Paths.SERVICES + '/(.*)')]
   },
   {
-    iconClass: icons.menu.istioConfig,
     title: 'Istio Config',
     to: '/' + Paths.ISTIO,
     pathsActive: [new RegExp('^/namespaces/(.*)/' + Paths.ISTIO + '/(.*)')]
   },
   {
-    iconClass: icons.menu.distributedTracing,
     title: 'Distributed Tracing',
     to: '/jaeger'
   }
