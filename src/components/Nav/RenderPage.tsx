@@ -28,7 +28,7 @@ class RenderPage extends React.Component<{ isGraph: boolean }> {
         // Extensions are conditionally rendered
         if (route.path.startsWith('/extensions/threescale') && serverConfig.extensions!.threescale.enabled) {
           return true;
-        } else if (route.path.startsWith('/extensions/iter8') && serverConfig.extensions!.iter8.enabled) {
+        } else if (route.path.includes('iter8') && serverConfig.extensions!.iter8.enabled) {
           return true;
         }
         return false;

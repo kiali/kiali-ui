@@ -71,7 +71,7 @@ const algorithms = [
   'check_and_increment',
   'epsilon_greedy',
   'increment_without_check',
-  ' posterior_bayesian_routing',
+  'posterior_bayesian_routing',
   'optimistic_bayesian_routing'
 ];
 
@@ -205,8 +205,6 @@ class ExperimentCreatePage extends React.Component<Props, State> {
   createExperiment = () => {
     if (this.props.activeNamespaces.length === 1) {
       const ns = this.props.activeNamespaces[0];
-      console.log('TODELETE Create Iter8 Experiment');
-      console.log(JSON.stringify(this.state.experiment));
       this.promises
         .register('Create Iter8 Experiment', API.createExperiment(ns.name, JSON.stringify(this.state.experiment)))
         .then(_ => this.goExperimentsPage())

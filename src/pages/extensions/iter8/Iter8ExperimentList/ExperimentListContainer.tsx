@@ -1,14 +1,26 @@
 import * as React from 'react';
 import {
+  Badge,
   Dropdown,
   DropdownItem,
   DropdownPosition,
   DropdownToggle,
   Toolbar,
-  ToolbarSection
+  ToolbarSection,
+  Tooltip,
+  TooltipPosition
 } from '@patternfly/react-core';
 import { style } from 'typestyle';
-import { sortable, Table, TableBody, TableHeader, ISortBy, IRow } from '@patternfly/react-table';
+import {
+  sortable,
+  Table,
+  TableBody,
+  TableHeader,
+  ISortBy,
+  IRow,
+  SortByDirection,
+  cellWidth
+} from '@patternfly/react-table';
 import * as API from '../../../../services/Api';
 import * as AlertUtils from '../../../../utils/AlertUtils';
 import history from '../../../../app/History';
@@ -20,8 +32,6 @@ import RefreshButtonContainer from '../../../../components/Refresh/RefreshButton
 import { KialiAppState } from '../../../../store/Store';
 import { activeNamespacesSelector } from '../../../../store/Selectors';
 import { connect } from 'react-redux';
-import { IstioConfigItem } from '../../../../types/IstioConfigList';
-import { SortField } from '../../../../types/SortFilters';
 import Namespace from '../../../../types/Namespace';
 import { PromisesRegistry } from '../../../../utils/CancelablePromises';
 import { namespaceEquals } from '../../../../utils/Common';
@@ -49,8 +59,12 @@ const columns = [
     transforms: [sortable]
   },
   {
-    title: 'Phase',
+    title: 'Namespace',
     transforms: [sortable]
+  },
+  {
+    title: 'Phase',
+    transforms: [sortable, cellWidth(15) as any]
   },
   {
     title: 'Status',
@@ -63,14 +77,10 @@ const columns = [
   {
     title: 'Candidate',
     transforms: [sortable]
-  },
-  {
-    title: 'Namespace',
-    transforms: [sortable]
   }
 ];
 
-class ExperimentListPage extends FilterComponent.Component<Props, State, Iter8Experiment> {
+class ExperimentListPage extends React.Component<Props, State> {
   private promises = new PromisesRegistry();
 
   constructor(props: Props) {
@@ -150,24 +160,37 @@ class ExperimentListPage extends FilterComponent.Component<Props, State, Iter8Ex
     return [paramsSynced, activeNamespacesCompare];
   };
 
-  // place holder, need to decide what is sortable field
-  sortItemList(apps: Iter8Experiment[], sortField: SortField<IstioConfigItem>, isAscending: boolean) {
-    return this.sortExperimentItems(apps, sortField, isAscending);
-  }
-
-  sortExperimentItems = (unsorted: Iter8Experiment[], sortField: SortField<Iter8Experiment>, isAscending: boolean) => {
-    const sortPromise: Promise<Iter8Experiment[]> = new Promise(resolve => {
-      resolve(unsorted.sort(isAscending ? sortField.compare : (a, b) => sortField.compare(b, a)));
+  // Helper used for Table to sort handlers based on index column == field
+  onSort = (_event, index, direction) => {
+    const experimentList = this.state.experimentLists.sort((a, b) => {
+      switch (index) {
+        case 0:
+          return a.name < b.name ? -1 : a.name > b.name ? 1 : 0;
+        case 1:
+          return a.namespace < b.namespace ? -1 : a.namespace > b.namespace ? 1 : 0;
+        case 2:
+          return a.phase < b.phase ? -1 : a.phase > b.phase ? 1 : 0;
+        case 3:
+          return a.status < b.status ? -1 : a.status > b.status ? 1 : 0;
+        case 4:
+          return a.baseline < b.baseline ? -1 : a.baseline > b.baseline ? 1 : 0;
+        case 5:
+          return a.candidate < b.candidate ? -1 : a.candidate > b.candidate ? 1 : 0;
+      }
+      return 0;
     });
-
-    return sortPromise;
+    this.setState({
+      experimentLists: direction === SortByDirection.asc ? experimentList : experimentList.reverse(),
+      sortBy: {
+        index,
+        direction
+      }
+    });
   };
 
   updateListItems() {
     this.promises.cancelAll();
-
     const namespacesSelected = this.props.activeNamespaces.map(item => item.name);
-
     if (namespacesSelected.length === 0) {
       this.promises
         .register('namespaces', API.getNamespaces())
@@ -177,7 +200,7 @@ class ExperimentListPage extends FilterComponent.Component<Props, State, Iter8Ex
         })
         .catch(namespacesError => {
           if (!namespacesError.isCanceled) {
-            this.handleAxiosError('Could not fetch namespace list', namespacesError);
+            AlertUtils.addError('Could not fetch namespace list.', namespacesError);
           }
         });
     } else {
@@ -236,12 +259,29 @@ class ExperimentListPage extends FilterComponent.Component<Props, State, Iter8Ex
       return {
         cells: [
           <>
+            <Tooltip
+              key={'TooltipExtensionIter8Name_' + h.name}
+              position={TooltipPosition.top}
+              content={<>Iter8 Experiment</>}
+            >
+              <Badge className={'virtualitem_badge_definition'}>IT8</Badge>
+            </Tooltip>
             <Link
-              to={`/extensions/iter8/namespaces/${h.namespace}/name/${h.name}`}
+              to={`/extensions/namespaces/${h.namespace}/iter8/${h.name}`}
               key={'Experiment_' + h.namespace + '_' + h.namespace}
             >
               {h.name}
             </Link>
+          </>,
+          <>
+            <Tooltip
+              key={'TooltipExtensionNamespace_' + h.namespace}
+              position={TooltipPosition.top}
+              content={<>Namespace</>}
+            >
+              <Badge className={'virtualitem_badge_definition'}>NS</Badge>
+            </Tooltip>
+            {h.namespace}
           </>,
           <>{h.phase}</>,
           <>{h.status}</>,
@@ -251,8 +291,7 @@ class ExperimentListPage extends FilterComponent.Component<Props, State, Iter8Ex
           <>
             {h.candidate}
             <br /> {h.candidatePercentage}%
-          </>,
-          <>{h.namespace}</>
+          </>
         ]
       };
     });
@@ -262,7 +301,13 @@ class ExperimentListPage extends FilterComponent.Component<Props, State, Iter8Ex
     return (
       <div className={containerPadding}>
         {this.toolbar()}
-        <Table aria-label="Sortable Table" sortBy={this.state.sortBy} cells={columns} rows={this.rows()}>
+        <Table
+          aria-label="Sortable Table"
+          sortBy={this.state.sortBy}
+          cells={columns}
+          rows={this.rows()}
+          onSort={this.onSort}
+        >
           <TableHeader />
           <TableBody />
         </Table>
