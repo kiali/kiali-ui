@@ -43,6 +43,11 @@ describe('SerivceLink component', () => {
       const wrapper = serviceLink('bookinfo', 'reviews.bookinfo.svc.cluster.local', false);
       testPlain(wrapper, 'reviews.bookinfo.svc.cluster.local');
     });
+
+    it('and has wildcard, it should render a link', () => {
+      let wrapper = serviceLink('bookinfo', '*.bookinfo.svc.cluster.local', true);
+      testPlain(wrapper, '*.bookinfo.svc.cluster.local');
+    });
   });
 
   describe('when is shortname', () => {
@@ -99,6 +104,13 @@ describe('SerivceLink component', () => {
     it('when invalid, should render a hyphen, not linked', () => {
       let wrapper = serviceLink('bookinfo', 'kiali.io', false);
       testPlain(wrapper, 'kiali.io');
+    });
+  });
+
+  describe('when is *.local', () => {
+    it("shouldn't render link", () => {
+      let wrapper = serviceLink('bookinfo', '*.local', true);
+      testPlain(wrapper, '*.local');
     });
   });
 });

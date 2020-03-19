@@ -27,8 +27,16 @@ class ServiceLink extends React.PureComponent<Props> {
     return this.props.host.split('.').length === 1;
   };
 
+  isWildCardScoped = (): boolean => {
+    return this.props.host.startsWith('*');
+  };
+
   showLink = (): boolean => {
-    return this.props.isValid && (this.isFQDN() || this.isTwoPartsService() || this.isShortName());
+    return (
+      this.props.isValid &&
+      !this.isWildCardScoped() &&
+      (this.isFQDN() || this.isTwoPartsService() || this.isShortName())
+    );
   };
 
   hostParts = (): string[] => {
