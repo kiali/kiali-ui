@@ -61,7 +61,7 @@ export const labelFilter: FilterTypeWithFilter<NamespaceInfo> = {
       filters.some(f => {
         if (f.value.includes('=')) {
           const [k, v] = f.value.split('=');
-          return !!ns.labels && k in ns.labels && ns.labels[k].startsWith(v);
+          return v.split(',').some(val => !!ns.labels && k in ns.labels && ns.labels[k].startsWith(val));
         } else {
           return !!ns.labels && Object.keys(ns.labels).some(label => label.startsWith(f.value));
         }
