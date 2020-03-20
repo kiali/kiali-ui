@@ -29,11 +29,11 @@ interface Props {
 }
 
 interface State {
-  isNew: boolean;
-  isModified: boolean;
   iter8Info: Iter8Info;
   experiment: ExperimentSpec;
   namespaces: string[];
+  services: string[];
+  workloads: string[];
 }
 
 interface ExperimentSpec {
@@ -82,8 +82,6 @@ class ExperimentCreatePage extends React.Component<Props, State> {
     super(props);
 
     this.state = {
-      isNew: true,
-      isModified: false,
       iter8Info: {
         enabled: false,
         permissions: {
@@ -92,7 +90,6 @@ class ExperimentCreatePage extends React.Component<Props, State> {
           delete: true
         }
       },
-
       experiment: {
         name: '',
         namespace: 'default',
@@ -107,15 +104,101 @@ class ExperimentCreatePage extends React.Component<Props, State> {
           maxTrafficPercentage: 50,
           trafficStepSize: 2
         },
-
         criterias: []
       },
-      namespaces: []
+      namespaces: [],
+      services: [],
+      workloads: []
     };
   }
 
   componentWillUnmount() {
     this.promises.cancelAll();
+  }
+
+  fetchServices = () => {
+    if (this.props.activeNamespaces.length === 1) {
+      const ns = this.props.activeNamespaces[0];
+      if (!this.promises.has('servicesByNamespace')) {
+        this.promises
+          .register('servicesByNamespace', API.getServices(ns.name))
+          .then(response => {
+            const services: string[] = response.data.services.map(svc => svc.name);
+            if (services.length > 0) {
+              this.promises
+                .register('firstServiceDetails', API.getServiceDetail(ns.name, services[0], false))
+                .then(responseDetail => {
+                  let workloads: string[] = [];
+                  if (responseDetail.workloads) {
+                    workloads = responseDetail.workloads.map(w => w.name);
+                  }
+                  this.setState(prevState => {
+                    prevState.experiment.service = services[0];
+                    if (workloads.length > 0) {
+                      prevState.experiment.baseline = workloads[0];
+                      prevState.experiment.candidate = workloads[0];
+                    }
+                    return {
+                      services: services,
+                      workloads: workloads,
+                      experiment: prevState.experiment
+                    };
+                  });
+                  this.promises.cancel('firstServiceDetails');
+                })
+                .catch(svcDetailError => {
+                  if (!svcDetailError.isCanceled) {
+                    AlertUtils.addError('Could not fetch Service Detail.', svcDetailError);
+                  }
+                });
+            }
+            // Clean promise from register
+            this.promises.cancel('servicesByNamespace');
+          })
+          .catch(svcError => {
+            if (!svcError.isCanceled) {
+              AlertUtils.addError('Could not fetch Services list.', svcError);
+            }
+          });
+      }
+    }
+  };
+
+  fetchWorkloads = (namespace, serviceName: string) => {
+    this.promises
+      .register('serviceDetails', API.getServiceDetail(namespace, serviceName, false))
+      .then(responseDetail => {
+        let workloads: string[] = [];
+        if (responseDetail.workloads) {
+          workloads = responseDetail.workloads.map(w => w.name);
+        }
+        this.setState(prevState => {
+          if (workloads.length > 0) {
+            prevState.experiment.baseline = workloads[0];
+            prevState.experiment.candidate = workloads[0];
+          }
+          return {
+            workloads: workloads,
+            experiment: prevState.experiment
+          };
+        });
+      })
+      .catch(svcDetailError => {
+        if (!svcDetailError.isCanceled) {
+          AlertUtils.addError('Could not fetch Service Detail.', svcDetailError);
+        }
+      });
+  };
+
+  componentDidUpdate(prevProps: Props, _prevState: State) {
+    if (
+      this.props.activeNamespaces.length === 1 &&
+      (prevProps.activeNamespaces.length !== 1 ||
+        (prevProps.activeNamespaces.length === 1 && this.props.activeNamespaces[0] !== prevProps.activeNamespaces[0]) ||
+        this.state.services.length === 0)
+    ) {
+      this.fetchServices();
+    }
   }
 
   // Invoke the history object to update and URL and start a routing
@@ -164,8 +247,6 @@ class ExperimentCreatePage extends React.Component<Props, State> {
         default:
       }
       return {
-        isNew: prevState.isNew,
-        isModified: true,
         experiment: newExperiment
       };
     });
@@ -194,8 +275,6 @@ class ExperimentCreatePage extends React.Component<Props, State> {
         default:
       }
       return {
-        isNew: prevState.isNew,
-        isModified: true,
         experiment: newExperiment
       };
     });
@@ -210,16 +289,6 @@ class ExperimentCreatePage extends React.Component<Props, State> {
         .then(_ => this.goExperimentsPage())
         .catch(error => AlertUtils.addError('Could not create Experiment.', error));
     }
-  };
-
-  updateExperiment = () => {
-    API.updateExperiment(
-      this.state.experiment.namespace,
-      this.state.experiment.name,
-      JSON.stringify(this.state.experiment)
-    )
-      .then(_ => this.goExperimentsPage())
-      .catch(error => AlertUtils.addError('Could not update Experiment', error));
   };
 
   isMainFormValid = (): boolean => {
@@ -274,12 +343,22 @@ class ExperimentCreatePage extends React.Component<Props, State> {
                     helperText="Target Service specifies the reference to experiment targets (i.e. reviews)"
                     helperTextInvalid="Target Service cannot be empty"
                   >
-                    <TextInput
+                    <FormSelect
                       id="service"
                       value={this.state.experiment.service}
                       placeholder="Target Service"
-                      onChange={value => this.changeExperiment('service', value)}
-                    />
+                      onChange={value => {
+                        this.changeExperiment('service', value);
+                        if (this.props.activeNamespaces.length === 1) {
+                          const ns = this.props.activeNamespaces[0].name;
+                          this.fetchWorkloads(ns, value);
+                        }
+                      }}
+                    >
+                      {this.state.services.map((svc, index) => (
+                        <FormSelectOption label={svc} key={'service' + index} value={svc} />
+                      ))}
+                    </FormSelect>
                   </FormGroup>
                 </GridItem>
                 <GridItem span={6}>
@@ -313,12 +392,16 @@ class ExperimentCreatePage extends React.Component<Props, State> {
                     helperText="The baseline deployment of the target service (i.e. reviews-v1)"
                     helperTextInvalid="Baseline deployment cannot be empty"
                   >
-                    <TextInput
+                    <FormSelect
                       id="baseline"
                       value={this.state.experiment.baseline}
-                      placeholder="Deployment name"
+                      placeholder="Baseline Deployment"
                       onChange={value => this.changeExperiment('baseline', value)}
-                    />
+                    >
+                      {this.state.workloads.map((wk, index) => (
+                        <FormSelectOption label={wk} key={'workloadBaseline' + index} value={wk} />
+                      ))}
+                    </FormSelect>
                   </FormGroup>
                 </GridItem>
                 <GridItem span={6}>
@@ -329,12 +412,16 @@ class ExperimentCreatePage extends React.Component<Props, State> {
                     helperText="The candidate deployment of the target service (i.e. reviews-v2)"
                     helperTextInvalid="Candidate deployment cannot be empty"
                   >
-                    <TextInput
+                    <FormSelect
                       id="candidate"
                       value={this.state.experiment.candidate}
-                      placeholder="Deployment name"
+                      placeholder="Candidate Deployment"
                       onChange={value => this.changeExperiment('candidate', value)}
-                    />
+                    >
+                      {this.state.workloads.map((wk, index) => (
+                        <FormSelectOption label={wk} key={'workloadCandidate' + index} value={wk} />
+                      ))}
+                    </FormSelect>
                   </FormGroup>
                 </GridItem>
               </Grid>
@@ -437,8 +524,6 @@ class ExperimentCreatePage extends React.Component<Props, State> {
                   this.setState(prevState => {
                     prevState.experiment.criterias.push(newCriteria);
                     return {
-                      isNew: prevState.isNew,
-                      isModified: prevState.isModified,
                       iter8Info: prevState.iter8Info,
                       experiment: {
                         name: prevState.experiment.name,
@@ -457,8 +542,6 @@ class ExperimentCreatePage extends React.Component<Props, State> {
                   this.setState(prevState => {
                     prevState.experiment.criterias.splice(index, 1);
                     return {
-                      isNew: prevState.isNew,
-                      isModified: prevState.isModified,
                       iter8Info: prevState.iter8Info,
                       experiment: {
                         name: prevState.experiment.name,
