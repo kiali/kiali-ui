@@ -1,11 +1,26 @@
 import * as React from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { RenderHeader } from '../../../../components/Nav/Page';
-import { Breadcrumb, BreadcrumbItem, Grid, GridItem, Text, TextVariants } from '@patternfly/react-core';
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  Card,
+  CardBody,
+  Grid,
+  GridItem,
+  Stack,
+  StackItem,
+  Text,
+  TextVariants,
+  Title
+} from '@patternfly/react-core';
 import { style } from 'typestyle';
 import * as API from '../../../../services/Api';
 import * as AlertUtils from '../../../../utils/AlertUtils';
 import { Iter8ExpDetailsInfo } from '../../../../types/Iter8';
+import RefreshButtonContainer from '../../../../components/Refresh/RefreshButton';
+import Iter8Dropdown from './Iter8Dropdown';
+import history from '../../../../app/History';
 
 interface Props {
   namespace: string;
@@ -14,19 +29,24 @@ interface Props {
 
 interface State {
   experiment?: Iter8ExpDetailsInfo;
+  canDelete: boolean;
 }
 
 const containerPadding = style({ padding: '20px 20px 20px 20px' });
+const tabsPadding = style({ height: '40px', padding: '0px ', backgroundColor: 'white' });
 
 class ExperimentDetailsPage extends React.Component<RouteComponentProps<Props>, State> {
   constructor(props: RouteComponentProps<Props>) {
     super(props);
     this.state = {
-      experiment: undefined
+      experiment: undefined,
+      canDelete: false
     };
   }
 
-  fetchExperiment = (namespace: string, name: string) => {
+  fetchExperiment = () => {
+    const namespace = this.props.match.params.namespace;
+    const name = this.props.match.params.name;
     API.getIter8Info()
       .then(result => {
         const iter8Info = result.data;
@@ -34,7 +54,8 @@ class ExperimentDetailsPage extends React.Component<RouteComponentProps<Props>, 
           API.getExperiment(namespace, name)
             .then(result => {
               this.setState({
-                experiment: result.data
+                experiment: result.data,
+                canDelete: iter8Info.permissions.delete
               });
             })
             .catch(error => {
@@ -50,9 +71,7 @@ class ExperimentDetailsPage extends React.Component<RouteComponentProps<Props>, 
   };
 
   componentDidMount() {
-    const ns = this.props.match.params.namespace;
-    const name = this.props.match.params.name;
-    this.fetchExperiment(ns, name);
+    this.fetchExperiment();
   }
 
   // Extensions breadcrumb,
@@ -76,19 +95,121 @@ class ExperimentDetailsPage extends React.Component<RouteComponentProps<Props>, 
   };
 
   renderOverview = () => {
-    return 'Overview';
+    return (
+      <Card style={{ height: '100%' }}>
+        <CardBody>
+          <Title headingLevel="h3" size="2xl">
+            {' '}
+            Target Service{' '}
+          </Title>
+          <Stack>
+            <StackItem id={'targetService'}>
+              <Text component={TextVariants.h3}> Service </Text>
+              {this.state.experiment ? this.state.experiment.experimentItem.targetService : ''}
+            </StackItem>
+            <StackItem id={'baseline'}>
+              <Text component={TextVariants.h3}> Baseline </Text>
+              {this.state.experiment
+                ? this.state.experiment.experimentItem.baseline +
+                  ' - Traffic Split: ' +
+                  this.state.experiment.experimentItem.baselinePercentage +
+                  ' % '
+                : ''}
+            </StackItem>
+            <StackItem id={'candidate'}>
+              <Text component={TextVariants.h3}> Candidate </Text>
+              {this.state.experiment
+                ? this.state.experiment.experimentItem.candidate +
+                  ' - Traffic Split: ' +
+                  this.state.experiment.experimentItem.candidatePercentage +
+                  ' % '
+                : ''}
+            </StackItem>
+          </Stack>
+        </CardBody>
+      </Card>
+    );
   };
 
   renderTrafficControl = () => {
-    return 'TrafficControl';
-  };
-
-  renderSucessCriteria = () => {
-    return 'SuccessCriteria';
+    return (
+      <Card style={{ height: '100%' }}>
+        <CardBody>
+          <Title headingLevel="h3" size="2xl">
+            {' '}
+            Traffic Control{' '}
+          </Title>
+          <Stack>
+            <StackItem id={'strategy'}>
+              <Text component={TextVariants.h3}> Strategy </Text>
+              {this.state.experiment ? this.state.experiment.trafficControl.algorithm : ''}
+            </StackItem>
+            <StackItem id={'maxTrafficPercentage'}>
+              <Text component={TextVariants.h3}> Max Traffic Percentage </Text>
+              {this.state.experiment ? this.state.experiment.trafficControl.maxTrafficPercentage : ''}
+            </StackItem>
+          </Stack>
+        </CardBody>
+      </Card>
+    );
   };
 
   renderStatus = () => {
-    return 'Status';
+    return (
+      <Card style={{ height: '100%' }}>
+        <CardBody>
+          <Title headingLevel="h3" size="2xl">
+            {' '}
+            Status{' '}
+          </Title>
+          <Stack>
+            <StackItem id={'phase'}>
+              <Text component={TextVariants.h3}> Phase </Text>
+              {this.state.experiment ? this.state.experiment.experimentItem.phase : ''}
+            </StackItem>
+            <StackItem id={'status'}>
+              <Text component={TextVariants.h3}> Status </Text>
+              {this.state.experiment ? this.state.experiment.experimentItem.status : ''}
+            </StackItem>
+            <StackItem id={'started'}>
+              <Text component={TextVariants.h3}> Started </Text>
+              {this.state.experiment ? this.state.experiment.experimentItem.startedAt : ''}
+            </StackItem>
+            <StackItem id={'ended'}>
+              <Text component={TextVariants.h3}> Ended </Text>
+              {this.state.experiment ? this.state.experiment.experimentItem.endedAt : ''}
+            </StackItem>
+          </Stack>
+        </CardBody>
+      </Card>
+    );
+  };
+
+  backToList = () => {
+    // Back to list page
+    history.push(`/extensions/iter8?namespaces=${this.props.match.params.namespace}`);
+  };
+
+  doRefresh = () => {
+    this.fetchExperiment();
+  };
+
+  doDelete = () => {
+    console.log('TODELETE Invoke Delete experiment call');
+    this.backToList();
+  };
+
+  renderRightToolbar = () => {
+    return (
+      <span style={{ position: 'absolute', right: '50px', zIndex: 1 }}>
+        <RefreshButtonContainer handleRefresh={this.doRefresh} />
+        <Iter8Dropdown
+          experimentName={this.props.match.params.name}
+          canDelete={this.state.canDelete}
+          onDelete={this.doDelete}
+        />
+      </span>
+    );
   };
 
   render() {
@@ -97,13 +218,14 @@ class ExperimentDetailsPage extends React.Component<RouteComponentProps<Props>, 
         <RenderHeader>
           {this.breadcrumb()}
           <Text component={TextVariants.h1}>{this.props.match.params.name}</Text>
+          {this.renderRightToolbar()}
         </RenderHeader>
+        <div className={tabsPadding} />
         <div className={containerPadding}>
           <Grid gutter={'md'}>
-            <GridItem>{this.renderOverview()}</GridItem>
-            <GridItem>{this.renderTrafficControl()}</GridItem>
-            <GridItem>{this.renderSucessCriteria()}</GridItem>
-            <GridItem>{this.renderStatus()}</GridItem>
+            <GridItem span={4}>{this.renderOverview()}</GridItem>
+            <GridItem span={4}>{this.renderTrafficControl()}</GridItem>
+            <GridItem span={4}>{this.renderStatus()}</GridItem>
           </Grid>
         </div>
       </>

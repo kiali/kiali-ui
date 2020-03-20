@@ -21,23 +21,36 @@ export interface ExpId {
   name: string;
 }
 
+export interface TrafficControl {
+  algorithm: string;
+  interval: string;
+  maxIteration: number;
+  maxTrafficPercentage: number;
+  trafficStepSide: number;
+}
+
 export interface Iter8ExpDetailsInfo {
   experimentItem: ExperimentItem;
   criterias: SuccessCriteria[];
+  trafficControl: TrafficControl;
 }
 
 export interface ExperimentItem {
   name: string;
+  namespace: string;
   phase: string;
   status: string;
-  labels?: { [key: string]: string };
   createdAt: string;
-  resourceVersion: string;
+  startedAt: string;
+  endedAt: string;
   baseline: string;
   baselinePercentage: number;
   candidate: string;
   candidatePercentage: number;
-  namespace: string;
+  targetService: string;
+  targetServiceNamespace: string;
+  labels?: { [key: string]: string };
+  resourceVersion: string;
 }
 export interface SuccessCriteria {
   name: string;
