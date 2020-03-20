@@ -137,6 +137,9 @@ class ExperimentCreatePage extends React.Component<Props, State> {
                     if (workloads.length > 0) {
                       prevState.experiment.baseline = workloads[0];
                       prevState.experiment.candidate = workloads[0];
+                    } else {
+                      prevState.experiment.baseline = '';
+                      prevState.experiment.candidate = '';
                     }
                     return {
                       services: services,
@@ -176,6 +179,9 @@ class ExperimentCreatePage extends React.Component<Props, State> {
           if (workloads.length > 0) {
             prevState.experiment.baseline = workloads[0];
             prevState.experiment.candidate = workloads[0];
+          } else {
+            prevState.experiment.baseline = '';
+            prevState.experiment.candidate = '';
           }
           return {
             workloads: workloads,
