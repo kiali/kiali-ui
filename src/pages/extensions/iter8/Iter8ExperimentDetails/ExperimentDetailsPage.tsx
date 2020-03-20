@@ -108,19 +108,19 @@ class ExperimentDetailsPage extends React.Component<RouteComponentProps<Props>, 
               {this.state.experiment ? this.state.experiment.experimentItem.targetService : ''}
             </StackItem>
             <StackItem id={'baseline'}>
-              <Text component={TextVariants.h3}> Baseline </Text>
+              <Text component={TextVariants.h3}> Baseline / Traffic Split</Text>
               {this.state.experiment
                 ? this.state.experiment.experimentItem.baseline +
-                  ' - Traffic Split: ' +
+                  ' / ' +
                   this.state.experiment.experimentItem.baselinePercentage +
                   ' % '
                 : ''}
             </StackItem>
             <StackItem id={'candidate'}>
-              <Text component={TextVariants.h3}> Candidate </Text>
+              <Text component={TextVariants.h3}> Candidate / Traffic Split</Text>
               {this.state.experiment
                 ? this.state.experiment.experimentItem.candidate +
-                  ' - Traffic Split: ' +
+                  ' / ' +
                   this.state.experiment.experimentItem.candidatePercentage +
                   ' % '
                 : ''}
