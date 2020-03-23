@@ -1,11 +1,11 @@
 import { FILTER_ACTION_APPEND, FilterType } from '../../../../types/Filters';
-import { GenericSortField } from '../../../../types/SortFilters';
+import { SortField } from '../../../../types/SortFilters';
 import { Iter8Experiment } from '../../../../types/Iter8';
 import { TextInputTypes } from '@patternfly/react-core';
 
 // Place Holder, not quite finished yet. Or if filter is needed, and how to use the common filters?
 
-export const sortFields: GenericSortField<Iter8Experiment>[] = [
+export const sortFields: SortField<Iter8Experiment>[] = [
   {
     id: 'namespace',
     title: 'Namespace',
@@ -64,7 +64,7 @@ export const availableFilters: FilterType[] = [appNameFilter];
 
 export const sortAppsItems = (
   unsorted: Iter8Experiment[],
-  sortField: GenericSortField<Iter8Experiment>,
+  sortField: SortField<Iter8Experiment>,
   isAscending: boolean
 ): Promise<Iter8Experiment[]> => {
   const sorted = unsorted.sort(isAscending ? sortField.compare : (a, b) => sortField.compare(b, a));

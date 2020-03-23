@@ -10,6 +10,7 @@ const ExperimentListPage: React.SFC<{}> = () => {
       <ExperimentListContainer
         currentSortField={FilterHelper.currentSortField(ExpListFilters.sortFields)}
         isSortAscending={FilterHelper.isCurrentSortAscending()}
+        activeNamespaces={[]}
       />
     </RenderContent>
   );
