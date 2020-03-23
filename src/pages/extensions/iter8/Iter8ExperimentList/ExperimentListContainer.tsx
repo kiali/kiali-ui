@@ -40,7 +40,7 @@ import { namespaceEquals } from '../../../../utils/Common';
 const rightToolbar = style({ marginLeft: 'auto' });
 const containerPadding = style({ padding: '20px 20px 20px 20px' });
 
-interface Props extends FilterComponent.State<Iter8Experiment> {
+interface Props extends FilterComponent.Props<Iter8Experiment> {
   activeNamespaces: Namespace[];
 }
 
