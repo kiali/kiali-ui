@@ -295,12 +295,16 @@ const filterByLabel = (items: WorkloadListItem[], filter: string[]): WorkloadLis
         .map(
           val =>
             (result = result.concat(
-              items.filter(item => values[0] in item.labels && item.labels[values[0]].startsWith(val))
+              items.filter(
+                item => values[0] in item.labels && item.labels[values[0]].startsWith(val) && !result.includes(item)
+              )
             ))
         );
     } else {
       // Check if has Label
-      result = result.concat(items.filter(item => Object.keys(item.labels).some(key => key.startsWith(filter))));
+      result = result.concat(
+        items.filter(item => Object.keys(item.labels).some(key => key.startsWith(filter) && !result.includes(item)))
+      );
     }
     return null;
   });

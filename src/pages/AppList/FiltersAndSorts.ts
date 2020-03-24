@@ -130,7 +130,9 @@ const filterByLabel = (items: AppListItem[], filter: string[]): AppListItem[] =>
           (result = result.concat(
             items.filter(item => {
               if (values[0] in item.labels) {
-                return item.labels[values[0]].split(',').some(appVal => appVal.startsWith(val));
+                return item.labels[values[0]]
+                  .split(',')
+                  .some(appVal => appVal.startsWith(val) && !result.includes(item));
               } else {
                 return false;
               }
@@ -139,7 +141,9 @@ const filterByLabel = (items: AppListItem[], filter: string[]): AppListItem[] =>
       );
     } else {
       // Check if has Label
-      result = result.concat(items.filter(item => Object.keys(item.labels).some(key => key.startsWith(filter))));
+      result = result.concat(
+        items.filter(item => Object.keys(item.labels).some(key => key.startsWith(filter) && !result.includes(item)))
+      );
     }
     return null;
   });
