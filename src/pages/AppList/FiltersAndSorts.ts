@@ -122,8 +122,8 @@ const filterByLabel = (items: AppListItem[], filter: string[]): AppListItem[] =>
   let result: AppListItem[] = [];
 
   filter.map(filter => {
-    if (filter.includes('=')) {
-      const values = filter.split('=');
+    if (filter.includes(':')) {
+      const values = filter.split(':');
       // Check Values
       values[1].split(',').map(
         val =>

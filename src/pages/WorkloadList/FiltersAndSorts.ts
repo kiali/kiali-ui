@@ -287,8 +287,8 @@ const filterByLabel = (items: WorkloadListItem[], filter: string[]): WorkloadLis
   let result: WorkloadListItem[] = [];
 
   filter.map(filter => {
-    if (filter.includes('=')) {
-      const values = filter.split('=');
+    if (filter.includes(':')) {
+      const values = filter.split(':');
       // Check Values
       values[1]
         .split(',')

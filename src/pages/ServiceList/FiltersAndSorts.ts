@@ -162,8 +162,8 @@ const filterByLabel = (items: ServiceListItem[], filter: string[]): ServiceListI
   let result: ServiceListItem[] = [];
 
   filter.map(filter => {
-    if (filter.includes('=')) {
-      const values = filter.split('=');
+    if (filter.includes(':')) {
+      const values = filter.split(':');
       // Check Values
       values[1]
         .split(',')
