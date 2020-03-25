@@ -66,7 +66,7 @@ const extensionsItems: MenuItem[] = [
     pathsActive: [/^\/extensions\/threescale/]
   },
   {
-    title: 'Iter8 Experiment',
+    title: 'Iter8 Experiments',
     to: '/extensions/iter8',
     pathsActive: [/^\/extensions\/iter8/, new RegExp('^/extensions/namespaces/(.*)/iter8')]
   }

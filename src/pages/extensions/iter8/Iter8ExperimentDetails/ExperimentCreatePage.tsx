@@ -67,13 +67,7 @@ export interface Criteria {
 // Style constants
 const containerPadding = style({ padding: '20px 20px 20px 20px' });
 
-const algorithms = [
-  'check_and_increment',
-  'epsilon_greedy',
-  'increment_without_check',
-  'posterior_bayesian_routing',
-  'optimistic_bayesian_routing'
-];
+const algorithms = ['check_and_increment', 'epsilon_greedy'];
 
 class ExperimentCreatePage extends React.Component<Props, State> {
   private promises = new PromisesRegistry();
@@ -112,6 +106,7 @@ class ExperimentCreatePage extends React.Component<Props, State> {
   }
 
   fetchServices = () => {
+    console.log('TODO fetchServices ' + new Date().toString());
     if (this.props.activeNamespaces.length === 1) {
       const ns = this.props.activeNamespaces[0];
       if (!this.promises.has('servicesByNamespace')) {
@@ -190,6 +185,10 @@ class ExperimentCreatePage extends React.Component<Props, State> {
         }
       });
   };
+
+  componentDidMount() {
+    this.fetchServices();
+  }
 
   componentDidUpdate(prevProps: Props, _prevState: State) {
     if (
@@ -324,13 +323,14 @@ class ExperimentCreatePage extends React.Component<Props, State> {
               <FormGroup
                 fieldId="name"
                 label="Experiment Name"
+                isRequired={true}
                 isValid={this.state.experiment.name !== ''}
                 helperTextInvalid="Name cannot be empty"
               >
                 <TextInput
                   id="name"
                   value={this.state.experiment.name}
-                  placeholder="Exteriment Name"
+                  placeholder="Experiment Name"
                   onChange={value => this.changeExperiment('name', value)}
                 />
               </FormGroup>
@@ -340,6 +340,7 @@ class ExperimentCreatePage extends React.Component<Props, State> {
                   <FormGroup
                     fieldId="service"
                     label="Target Service"
+                    isRequired={true}
                     isValid={this.state.experiment.service !== ''}
                     helperText="Target Service specifies the reference to experiment targets (i.e. reviews)"
                     helperTextInvalid="Target Service cannot be empty"
@@ -389,6 +390,7 @@ class ExperimentCreatePage extends React.Component<Props, State> {
                   <FormGroup
                     fieldId="baseline"
                     label="Baseline"
+                    isRequired={true}
                     isValid={this.state.experiment.baseline !== ''}
                     helperText="The baseline deployment of the target service (i.e. reviews-v1)"
                     helperTextInvalid="Baseline deployment cannot be empty"
@@ -409,6 +411,7 @@ class ExperimentCreatePage extends React.Component<Props, State> {
                   <FormGroup
                     fieldId="candidate"
                     label="Candidate"
+                    isRequired={true}
                     isValid={this.state.experiment.candidate !== ''}
                     helperText="The candidate deployment of the target service (i.e. reviews-v2)"
                     helperTextInvalid="Candidate deployment cannot be empty"
