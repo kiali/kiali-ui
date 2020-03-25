@@ -5,6 +5,10 @@ import {
   DropdownItem,
   DropdownPosition,
   DropdownToggle,
+  EmptyState,
+  EmptyStateBody,
+  EmptyStateVariant,
+  Title,
   Toolbar,
   ToolbarSection,
   Tooltip,
@@ -87,12 +91,7 @@ class ExperimentListPage extends React.Component<Props, State> {
     super(props);
     this.state = {
       iter8Info: {
-        enabled: false,
-        permissions: {
-          create: false,
-          update: false,
-          delete: false
-        }
+        enabled: false
       },
       experimentLists: [],
       sortBy: {},
@@ -309,7 +308,25 @@ class ExperimentListPage extends React.Component<Props, State> {
           onSort={this.onSort}
         >
           <TableHeader />
-          <TableBody />
+          {this.state.experimentLists.length > 0 ? (
+            <TableBody />
+          ) : (
+            <tr>
+              <td colSpan={columns.length}>
+                <EmptyState variant={EmptyStateVariant.full}>
+                  <Title headingLevel="h5" size="lg">
+                    No Iter8 Experiments found
+                  </Title>
+                  <EmptyStateBody>
+                    No Iter8 Experiments in namespace
+                    {this.props.activeNamespaces.length === 1
+                      ? ` ${this.props.activeNamespaces[0].name}`
+                      : `s: ${this.props.activeNamespaces.map(ns => ns.name).join(', ')}`}
+                  </EmptyStateBody>
+                </EmptyState>
+              </td>
+            </tr>
+          )}
         </Table>
       </div>
     );

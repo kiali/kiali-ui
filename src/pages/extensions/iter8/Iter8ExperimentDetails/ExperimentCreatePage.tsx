@@ -51,7 +51,7 @@ interface ExperimentSpec {
 interface TrafficControl {
   algorithm: string;
   interval: string;
-  maxIteration: number;
+  maxIterations: number;
   maxTrafficPercentage: number;
   trafficStepSize: number;
 }
@@ -83,12 +83,7 @@ class ExperimentCreatePage extends React.Component<Props, State> {
 
     this.state = {
       iter8Info: {
-        enabled: false,
-        permissions: {
-          create: true,
-          update: true,
-          delete: true
-        }
+        enabled: false
       },
       experiment: {
         name: '',
@@ -100,7 +95,7 @@ class ExperimentCreatePage extends React.Component<Props, State> {
         trafficControl: {
           algorithm: 'check_and_increment',
           interval: '30s',
-          maxIteration: 100,
+          maxIterations: 100,
           maxTrafficPercentage: 50,
           trafficStepSize: 2
         },
@@ -264,7 +259,7 @@ class ExperimentCreatePage extends React.Component<Props, State> {
       const newExperiment = prevState.experiment;
       switch (field) {
         case 'maxIteration':
-          newExperiment.trafficControl.maxIteration = value;
+          newExperiment.trafficControl.maxIterations = value;
           break;
         case 'maxTrafficPercentage':
           newExperiment.trafficControl.maxTrafficPercentage = value;
@@ -309,7 +304,7 @@ class ExperimentCreatePage extends React.Component<Props, State> {
 
   isTCFormValid = (): boolean => {
     return (
-      this.state.experiment.trafficControl.interval !== '' && this.state.experiment.trafficControl.maxIteration > 0
+      this.state.experiment.trafficControl.interval !== '' && this.state.experiment.trafficControl.maxIterations > 0
     );
   };
 
@@ -454,14 +449,14 @@ class ExperimentCreatePage extends React.Component<Props, State> {
                   <FormGroup
                     fieldId="maxIteration"
                     label="Maximum Iteration"
-                    isValid={this.state.experiment.trafficControl.maxIteration > 0}
+                    isValid={this.state.experiment.trafficControl.maxIterations > 0}
                     helperText="Maximum number of iterations for this experiment"
                     helperTextInvalid="Maximun Iteration cannot be empty"
                   >
                     <TextInput
                       id="maxIteration"
                       type="number"
-                      value={this.state.experiment.trafficControl.maxIteration}
+                      value={this.state.experiment.trafficControl.maxIterations}
                       placeholder="Maximum Iteration"
                       onChange={value => this.changeExperimentNumber('maxIteration', Number(value))}
                     />

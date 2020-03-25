@@ -55,7 +55,7 @@ class ExperimentDetailsPage extends React.Component<RouteComponentProps<Props>, 
             .then(result => {
               this.setState({
                 experiment: result.data,
-                canDelete: iter8Info.permissions.delete
+                canDelete: result.data.permissions.delete
               });
             })
             .catch(error => {
@@ -144,9 +144,17 @@ class ExperimentDetailsPage extends React.Component<RouteComponentProps<Props>, 
               <Text component={TextVariants.h3}> Strategy </Text>
               {this.state.experiment ? this.state.experiment.trafficControl.algorithm : ''}
             </StackItem>
+            <StackItem id={'maxIterations'}>
+              <Text component={TextVariants.h3}> Max Iterations </Text>
+              {this.state.experiment ? this.state.experiment.trafficControl.maxIterations : ''}
+            </StackItem>
             <StackItem id={'maxTrafficPercentage'}>
               <Text component={TextVariants.h3}> Max Traffic Percentage </Text>
               {this.state.experiment ? this.state.experiment.trafficControl.maxTrafficPercentage : ''}
+            </StackItem>
+            <StackItem id={'trafficStepSide'}>
+              <Text component={TextVariants.h3}> Traffic Step Side </Text>
+              {this.state.experiment ? this.state.experiment.trafficControl.trafficStepSide : ''}
             </StackItem>
           </Stack>
         </CardBody>
@@ -195,8 +203,11 @@ class ExperimentDetailsPage extends React.Component<RouteComponentProps<Props>, 
   };
 
   doDelete = () => {
-    console.log('TODELETE Invoke Delete experiment call');
-    this.backToList();
+    API.deleteExperiment(this.props.match.params.namespace, this.props.match.params.name)
+      .then(() => this.backToList())
+      .catch(error => {
+        AlertUtils.addError('Could not delete Iter8 Experiment.', error);
+      });
   };
 
   renderRightToolbar = () => {

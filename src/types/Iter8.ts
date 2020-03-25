@@ -2,7 +2,6 @@ import { ResourcePermissions } from './Permissions';
 
 export interface Iter8Info {
   enabled: boolean;
-  permissions: ResourcePermissions;
 }
 
 export interface Iter8Experiment {
@@ -24,7 +23,7 @@ export interface ExpId {
 export interface TrafficControl {
   algorithm: string;
   interval: string;
-  maxIteration: number;
+  maxIterations: number;
   maxTrafficPercentage: number;
   trafficStepSide: number;
 }
@@ -33,6 +32,7 @@ export interface Iter8ExpDetailsInfo {
   experimentItem: ExperimentItem;
   criterias: SuccessCriteria[];
   trafficControl: TrafficControl;
+  permissions: ResourcePermissions;
 }
 
 export interface ExperimentItem {
