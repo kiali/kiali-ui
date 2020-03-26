@@ -53,7 +53,7 @@
   },
   "dependencies": {
     "@kiali/k-charted-pf4": "0.5.0",
-    "@patternfly/patternfly": "2.44.2",
+    "@patternfly/patternfly": "2.66.0",
     "@patternfly/react-charts": "5.2.2",
     "@patternfly/react-core": "3.124.1",
     "@patternfly/react-styles": "3.6.11",
