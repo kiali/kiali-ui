@@ -106,7 +106,6 @@ class ExperimentCreatePage extends React.Component<Props, State> {
   }
 
   fetchServices = () => {
-    console.log('TODO fetchServices ' + new Date().toString());
     if (this.props.activeNamespaces.length === 1) {
       const ns = this.props.activeNamespaces[0];
       if (!this.promises.has('servicesByNamespace')) {
