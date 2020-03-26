@@ -91,7 +91,7 @@ export default class SummaryPanelGraph extends React.Component<SummaryPanelPropT
     // if the summaryTarget (i.e. graph) has changed, then init the state and set to loading. The loading
     // will actually be kicked off after the render (in componentDidMount/Update).
     return props.data.summaryTarget !== state.graph
-      ? { node: props.data.summaryTarget, loading: true, ...defaultMetricsState }
+      ? { graph: props.data.summaryTarget, loading: true, ...defaultMetricsState }
       : null;
   }
 
