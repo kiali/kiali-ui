@@ -14,19 +14,17 @@ const titles = [
 ];
 export default class DefaultSecondaryMasthead extends React.Component {
   showTitle() {
-    const path = window.location.pathname.replace('/console/', '');
-
+    let path = window.location.pathname;
+    path = path.substr(path.lastIndexOf('/console') + '/console'.length + 1);
     if (titles.includes(path)) {
       let title = path.charAt(0).toUpperCase() + path.slice(1);
       if (path === 'istio/new') {
         title = 'Create New Istio Config';
       } else if (path === 'istio') {
         title = 'Istio Config';
-      }
-      if (path === 'extensions/iter8') {
+      } else if (path === 'extensions/iter8') {
         title = 'Iter8 Experiments';
-      }
-      if (path === 'extensions/iter8/new') {
+      } else if (path === 'extensions/iter8/new') {
         title = 'Create New Iter8 Experiment';
       }
       return (
@@ -41,7 +39,6 @@ export default class DefaultSecondaryMasthead extends React.Component {
 
   render() {
     const title = this.showTitle();
-
     return (
       <SecondaryMasthead title={title ? true : false}>
         <NamespaceDropdownContainer disabled={false} />
