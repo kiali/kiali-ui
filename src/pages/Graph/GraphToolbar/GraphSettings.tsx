@@ -1,4 +1,4 @@
-import { Select, SelectGroup, SelectOption, SelectVariant } from '@patternfly/react-core';
+import { Select, SelectGroup, SelectOption, SelectVariant, Radio } from '@patternfly/react-core';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
@@ -6,11 +6,13 @@ import { bindActionCreators } from 'redux';
 import { HistoryManager, URLParam } from '../../../app/History';
 import { GraphToolbarState, KialiAppState } from '../../../store/Store';
 import { GraphToolbarActions } from '../../../actions/GraphToolbarActions';
-import { GraphType } from '../../../types/Graph';
+import { GraphType, EdgeLabelMode } from '../../../types/Graph';
 import { KialiAppAction } from 'actions/KialiAppAction';
+import * as _ from 'lodash';
+import { edgeLabelModeSelector } from 'store/Selectors';
 
 type ReduxProps = Omit<GraphToolbarState, 'findValue' | 'hideValue' | 'showLegend' | 'showFindHelp'> & {
-  // Dispatch methods
+  setEdgeLabelMode: (edgeLabelMode: EdgeLabelMode) => void;
   toggleCompressOnHide(): void;
   toggleGraphCircuitBreakers(): void;
   toggleGraphMissingSidecars(): void;
@@ -26,7 +28,7 @@ type GraphSettingsProps = ReduxProps;
 
 type GraphSettingsState = { isOpen: boolean };
 
-interface VisibilityLayersType {
+interface DisplayOptionType {
   id: string;
   disabled?: boolean;
   labelText: string;
@@ -67,6 +69,7 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
     // map our attributes from redux
     const {
       compressOnHide,
+      edgeLabelMode,
       showCircuitBreakers,
       showMissingSidecars,
       showNodeLabels,
@@ -90,7 +93,34 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
       toggleUnusedNodes
     } = this.props;
 
-    const visibilityLayers: VisibilityLayersType[] = [
+    const edgeLabelOptions: DisplayOptionType[] = [
+      {
+        id: EdgeLabelMode.NONE,
+        labelText: _.capitalize(_.startCase(EdgeLabelMode.NONE)),
+        value: edgeLabelMode === EdgeLabelMode.NONE,
+        onChange: this.setEdgeLabelModeNone
+      },
+      {
+        id: EdgeLabelMode.REQUESTS_PER_SECOND,
+        labelText: _.capitalize(_.startCase(EdgeLabelMode.REQUESTS_PER_SECOND)),
+        value: edgeLabelMode === EdgeLabelMode.REQUESTS_PER_SECOND,
+        onChange: this.setEdgeLabelModeRPS
+      },
+      {
+        id: EdgeLabelMode.REQUESTS_PERCENTAGE,
+        labelText: _.capitalize(_.startCase(EdgeLabelMode.REQUESTS_PERCENTAGE)),
+        value: edgeLabelMode === EdgeLabelMode.REQUESTS_PERCENTAGE,
+        onChange: this.setEdgeLabelModePCT
+      },
+      {
+        id: EdgeLabelMode.RESPONSE_TIME_95TH_PERCENTILE,
+        labelText: _.capitalize(_.startCase(EdgeLabelMode.RESPONSE_TIME_95TH_PERCENTILE)),
+        value: edgeLabelMode === EdgeLabelMode.RESPONSE_TIME_95TH_PERCENTILE,
+        onChange: this.setEdgeLabelModeRT
+      }
+    ];
+
+    const visibilityOptions: DisplayOptionType[] = [
       {
         id: 'filterHide',
         labelText: 'Compress Hidden',
@@ -124,7 +154,7 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
       }
     ];
 
-    const badges: VisibilityLayersType[] = [
+    const badgeOptions: DisplayOptionType[] = [
       {
         id: 'filterCB',
         labelText: 'Circuit Breakers',
@@ -153,23 +183,40 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
 
     const { isOpen } = this.state;
 
-    const selection = visibilityLayers
-      .filter((item: VisibilityLayersType) => item.value)
-      .concat(badges.filter((item: VisibilityLayersType) => item.value))
-      .map((item: VisibilityLayersType) => item.labelText);
+    const selections = edgeLabelOptions
+      .filter((item: DisplayOptionType) => item.value)
+      .concat(visibilityOptions.filter((item: DisplayOptionType) => item.value))
+      .concat(badgeOptions.filter((item: DisplayOptionType) => item.value))
+      .map((item: DisplayOptionType) => item.labelText);
 
     return (
       <Select
+        style={{ overflow: 'hidden', overflowY: 'auto' }}
+        maxHeight={650}
         placeholderText="Display"
         onToggle={this.onToggle}
         onSelect={() => undefined}
         isExpanded={isOpen}
         variant={SelectVariant.checkbox}
         isGrouped={true}
-        selections={selection}
+        selections={selections}
       >
+        <SelectGroup label="Show Edge Labels" key="edges">
+          {edgeLabelOptions.map((item: DisplayOptionType) => (
+            <label className="pf-c-select__menu-item">
+              <Radio
+                id={item.id}
+                name="edgeLabels"
+                isChecked={item.value}
+                key={item.id}
+                label={item.labelText}
+                onChange={item.onChange}
+              />
+            </label>
+          ))}
+        </SelectGroup>
         <SelectGroup label="Show" key="visibilityLayers">
-          {visibilityLayers.map((item: VisibilityLayersType) => (
+          {visibilityOptions.map((item: DisplayOptionType) => (
             <SelectOption
               isChecked={item.value}
               isDisabled={item.disabled}
@@ -180,18 +227,41 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
           ))}
         </SelectGroup>
         <SelectGroup label="Show Badges" key="badges">
-          {badges.map((item: VisibilityLayersType) => (
+          {badgeOptions.map((item: DisplayOptionType) => (
             <SelectOption isChecked={item.value} key={item.id} value={item.labelText} onClick={item.onChange} />
           ))}
         </SelectGroup>
       </Select>
     );
   }
+
+  private setEdgeLabelModeNone = () => {
+    this.setEdgeLabelMode(EdgeLabelMode.NONE);
+  };
+
+  private setEdgeLabelModeRPS = () => {
+    this.setEdgeLabelMode(EdgeLabelMode.REQUESTS_PER_SECOND);
+  };
+
+  private setEdgeLabelModePCT = () => {
+    this.setEdgeLabelMode(EdgeLabelMode.REQUESTS_PERCENTAGE);
+  };
+
+  private setEdgeLabelModeRT = () => {
+    this.setEdgeLabelMode(EdgeLabelMode.RESPONSE_TIME_95TH_PERCENTILE);
+  };
+
+  private setEdgeLabelMode = (mode: EdgeLabelMode) => {
+    if (this.props.edgeLabelMode !== mode) {
+      this.props.setEdgeLabelMode(mode);
+    }
+  };
 }
 
 // Allow Redux to map sections of our global app state to our props
 const mapStateToProps = (state: KialiAppState) => ({
   compressOnHide: state.graph.toolbarState.compressOnHide,
+  edgeLabelMode: edgeLabelModeSelector(state),
   showCircuitBreakers: state.graph.toolbarState.showCircuitBreakers,
   showMissingSidecars: state.graph.toolbarState.showMissingSidecars,
   showNodeLabels: state.graph.toolbarState.showNodeLabels,
@@ -205,6 +275,7 @@ const mapStateToProps = (state: KialiAppState) => ({
 // Map our actions to Redux
 const mapDispatchToProps = (dispatch: ThunkDispatch<KialiAppState, void, KialiAppAction>) => {
   return {
+    setEdgeLabelMode: bindActionCreators(GraphToolbarActions.setEdgelLabelMode, dispatch),
     toggleCompressOnHide: bindActionCreators(GraphToolbarActions.toggleCompressOnHide, dispatch),
     toggleGraphCircuitBreakers: bindActionCreators(GraphToolbarActions.toggleGraphCircuitBreakers, dispatch),
     toggleGraphMissingSidecars: bindActionCreators(GraphToolbarActions.toggleGraphMissingSidecars, dispatch),
