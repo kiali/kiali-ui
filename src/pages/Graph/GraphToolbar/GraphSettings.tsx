@@ -1,4 +1,4 @@
-import { Select, SelectGroup, SelectOption, SelectVariant, Radio } from '@patternfly/react-core';
+import { Radio, Dropdown, DropdownToggle, Checkbox } from '@patternfly/react-core';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
@@ -10,6 +10,11 @@ import { GraphType, EdgeLabelMode } from '../../../types/Graph';
 import { KialiAppAction } from 'actions/KialiAppAction';
 import * as _ from 'lodash';
 import { edgeLabelModeSelector } from 'store/Selectors';
+import {
+  BoundingClientAwareComponent,
+  PropertyType
+} from 'components/BoundingClientAwareComponent/BoundingClientAwareComponent';
+import { style } from 'typestyle';
 
 type ReduxProps = Omit<GraphToolbarState, 'findValue' | 'hideValue' | 'showLegend' | 'showFindHelp'> & {
   setEdgeLabelMode: (edgeLabelMode: EdgeLabelMode) => void;
@@ -35,6 +40,30 @@ interface DisplayOptionType {
   value: boolean;
   onChange: () => void;
 }
+
+const marginBottom = 20;
+
+const containerStyle = style({
+  overflow: 'auto'
+});
+
+const menuStyle = style({
+  fontSize: '14px'
+});
+
+const firstTitleStyle = style({
+  margin: '0.5em 0.25em 0.5em 0.25em',
+  fontWeight: 'bold'
+});
+
+const titleStyle = style({
+  margin: '1em 0.25em 0.5em 0.25em',
+  fontWeight: 'bold'
+});
+
+const checkboxStyle = style({
+  margin: '0.25em 0.5em 0.25em 0.5em'
+});
 
 class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSettingsState> {
   constructor(props: GraphSettingsProps) {
@@ -66,6 +95,22 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
   }
 
   render() {
+    const { isOpen } = this.state;
+    return (
+      <Dropdown
+        toggle={
+          <DropdownToggle id={'display-settings'} onToggle={this.onToggle}>
+            Display
+          </DropdownToggle>
+        }
+        isOpen={isOpen}
+      >
+        {this.getPopoverContent()}
+      </Dropdown>
+    );
+  }
+
+  getPopoverContent() {
     // map our attributes from redux
     const {
       compressOnHide,
@@ -181,30 +226,17 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
       }
     ];
 
-    const { isOpen } = this.state;
-
-    const selections = edgeLabelOptions
-      .filter((item: DisplayOptionType) => item.value)
-      .concat(visibilityOptions.filter((item: DisplayOptionType) => item.value))
-      .concat(badgeOptions.filter((item: DisplayOptionType) => item.value))
-      .map((item: DisplayOptionType) => item.labelText);
-
     return (
-      <Select
-        style={{ overflow: 'hidden', overflowY: 'auto' }}
-        maxHeight={650}
-        placeholderText="Display"
-        onToggle={this.onToggle}
-        onSelect={() => undefined}
-        isExpanded={isOpen}
-        variant={SelectVariant.checkbox}
-        isGrouped={true}
-        selections={selections}
+      <BoundingClientAwareComponent
+        className={containerStyle}
+        maxHeight={{ type: PropertyType.VIEWPORT_HEIGHT_MINUS_TOP, margin: marginBottom }}
       >
-        <SelectGroup label="Show Edge Labels" key="edges">
+        <div className={menuStyle}>
+          <div className={firstTitleStyle}>Edge Labels</div>
           {edgeLabelOptions.map((item: DisplayOptionType) => (
             <label className="pf-c-select__menu-item">
               <Radio
+                className={checkboxStyle}
                 id={item.id}
                 name="edgeLabels"
                 isChecked={item.value}
@@ -214,24 +246,34 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
               />
             </label>
           ))}
-        </SelectGroup>
-        <SelectGroup label="Show" key="visibilityLayers">
+          <div className={titleStyle}>Show</div>
           {visibilityOptions.map((item: DisplayOptionType) => (
-            <SelectOption
-              isChecked={item.value}
-              isDisabled={item.disabled}
-              key={item.id}
-              value={item.labelText}
-              onClick={item.onChange}
-            />
+            <label className="pf-c-select__menu-item">
+              <Checkbox
+                className={checkboxStyle}
+                id={item.id}
+                isChecked={item.value}
+                key={item.id}
+                label={item.labelText}
+                onChange={item.onChange}
+              />
+            </label>
           ))}
-        </SelectGroup>
-        <SelectGroup label="Show Badges" key="badges">
+          <div className={titleStyle}>Show Badges</div>
           {badgeOptions.map((item: DisplayOptionType) => (
-            <SelectOption isChecked={item.value} key={item.id} value={item.labelText} onClick={item.onChange} />
+            <label className="pf-c-select__menu-item">
+              <Checkbox
+                className={checkboxStyle}
+                id={item.id}
+                isChecked={item.value}
+                key={item.id}
+                label={item.labelText}
+                onChange={item.onChange}
+              />
+            </label>
           ))}
-        </SelectGroup>
-      </Select>
+        </div>
+      </BoundingClientAwareComponent>
     );
   }
 
