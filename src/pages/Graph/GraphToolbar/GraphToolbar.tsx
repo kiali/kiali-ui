@@ -61,6 +61,10 @@ const rightToolbarStyle = style({
   marginLeft: 'auto'
 });
 
+const leftSpacerStyle = style({
+  marginLeft: '10px'
+});
+
 export class GraphToolbar extends React.PureComponent<GraphToolbarProps> {
   /**
    *  Key-value pair object representation of GraphType enum.  Values are human-readable versions of enum keys.
@@ -192,11 +196,11 @@ export class GraphToolbar extends React.PureComponent<GraphToolbarProps> {
                 </Tooltip>
               </>
             )}
-            <TourStopContainer info={GraphTourStops.Display}>
-              <TourStopContainer info={GraphTourStops.EdgeLabels}>
+            <div className={leftSpacerStyle}>
+              <TourStopContainer info={GraphTourStops.Display}>
                 <GraphSettingsContainer graphType={this.props.graphType} />
               </TourStopContainer>
-            </TourStopContainer>
+            </div>
           </div>
           <GraphFindContainer />
           <ToolbarGroup className={rightToolbarStyle} aria-label="graph_refresh_toolbar">
