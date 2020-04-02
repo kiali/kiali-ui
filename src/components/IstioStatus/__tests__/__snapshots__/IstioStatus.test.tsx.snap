@@ -1,0 +1,233 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`When addon component has a problem the Icon shows is displayed in orange 1`] = `
+<Tooltip
+  appendTo={[Function]}
+  aria="describedby"
+  boundary="window"
+  className=""
+  content={
+    <IstioStatusList
+      status={
+        Array [
+          Object {
+            "is_core": false,
+            "name": "grafana",
+            "status": "Not Running",
+          },
+          Object {
+            "is_core": true,
+            "name": "istio-egressgateway",
+            "status": "Running",
+          },
+        ]
+      }
+    />
+  }
+  distance={15}
+  enableFlip={true}
+  entryDelay={500}
+  exitDelay={500}
+  flipBehavior={
+    Array [
+      "top",
+      "right",
+      "bottom",
+      "left",
+      "top",
+      "right",
+      "bottom",
+    ]
+  }
+  id=""
+  isAppLauncher={false}
+  isContentLeftAligned={false}
+  isVisible={true}
+  maxWidth="18.75rem"
+  position="left"
+  tippyProps={Object {}}
+  trigger="manual"
+  zIndex={9999}
+>
+  <ResourcesFullIcon
+    color="var(--pf-global--warning-color--100)"
+    noVerticalAlign={false}
+    size="sm"
+    title={null}
+  />
+</Tooltip>
+`;
+
+exports[`When all components are good the Icon shows is displayed in green 1`] = `
+<Tooltip
+  appendTo={[Function]}
+  aria="describedby"
+  boundary="window"
+  className=""
+  content={
+    <IstioStatusList
+      status={
+        Array [
+          Object {
+            "is_core": false,
+            "name": "grafana",
+            "status": "Running",
+          },
+          Object {
+            "is_core": true,
+            "name": "istio-egressgateway",
+            "status": "Running",
+          },
+        ]
+      }
+    />
+  }
+  distance={15}
+  enableFlip={true}
+  entryDelay={500}
+  exitDelay={500}
+  flipBehavior={
+    Array [
+      "top",
+      "right",
+      "bottom",
+      "left",
+      "top",
+      "right",
+      "bottom",
+    ]
+  }
+  id=""
+  isAppLauncher={false}
+  isContentLeftAligned={false}
+  isVisible={true}
+  maxWidth="18.75rem"
+  position="left"
+  tippyProps={Object {}}
+  trigger="manual"
+  zIndex={9999}
+>
+  <ResourcesFullIcon
+    color="#3e8635"
+    noVerticalAlign={false}
+    size="sm"
+    title={null}
+  />
+</Tooltip>
+`;
+
+exports[`When both core and addon component have problems the Icon shows is displayed in red 1`] = `
+<Tooltip
+  appendTo={[Function]}
+  aria="describedby"
+  boundary="window"
+  className=""
+  content={
+    <IstioStatusList
+      status={
+        Array [
+          Object {
+            "is_core": false,
+            "name": "grafana",
+            "status": "Not Running",
+          },
+          Object {
+            "is_core": true,
+            "name": "istio-egressgateway",
+            "status": "Not Running",
+          },
+        ]
+      }
+    />
+  }
+  distance={15}
+  enableFlip={true}
+  entryDelay={500}
+  exitDelay={500}
+  flipBehavior={
+    Array [
+      "top",
+      "right",
+      "bottom",
+      "left",
+      "top",
+      "right",
+      "bottom",
+    ]
+  }
+  id=""
+  isAppLauncher={false}
+  isContentLeftAligned={false}
+  isVisible={true}
+  maxWidth="18.75rem"
+  position="left"
+  tippyProps={Object {}}
+  trigger="manual"
+  zIndex={9999}
+>
+  <ResourcesFullIcon
+    color="var(--pf-global--danger-color--100)"
+    noVerticalAlign={false}
+    size="sm"
+    title={null}
+  />
+</Tooltip>
+`;
+
+exports[`When core component has a problem the Icon shows is displayed in Red 1`] = `
+<Tooltip
+  appendTo={[Function]}
+  aria="describedby"
+  boundary="window"
+  className=""
+  content={
+    <IstioStatusList
+      status={
+        Array [
+          Object {
+            "is_core": false,
+            "name": "grafana",
+            "status": "Running",
+          },
+          Object {
+            "is_core": true,
+            "name": "istio-egressgateway",
+            "status": "Not Running",
+          },
+        ]
+      }
+    />
+  }
+  distance={15}
+  enableFlip={true}
+  entryDelay={500}
+  exitDelay={500}
+  flipBehavior={
+    Array [
+      "top",
+      "right",
+      "bottom",
+      "left",
+      "top",
+      "right",
+      "bottom",
+    ]
+  }
+  id=""
+  isAppLauncher={false}
+  isContentLeftAligned={false}
+  isVisible={true}
+  maxWidth="18.75rem"
+  position="left"
+  tippyProps={Object {}}
+  trigger="manual"
+  zIndex={9999}
+>
+  <ResourcesFullIcon
+    color="var(--pf-global--danger-color--100)"
+    noVerticalAlign={false}
+    size="sm"
+    title={null}
+  />
+</Tooltip>
+`;
