@@ -38,8 +38,8 @@ interface DisplayOptionType {
   id: string;
   disabled?: boolean;
   labelText: string;
-  value: boolean;
-  onChange: () => void;
+  isChecked: boolean;
+  onChange?: () => void;
 }
 
 const marginBottom = 20;
@@ -145,26 +145,22 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
       {
         id: EdgeLabelMode.NONE,
         labelText: _.startCase(EdgeLabelMode.NONE),
-        value: edgeLabelMode === EdgeLabelMode.NONE,
-        onChange: this.setEdgeLabelModeNone
+        isChecked: edgeLabelMode === EdgeLabelMode.NONE
       },
       {
         id: EdgeLabelMode.REQUESTS_PER_SECOND,
         labelText: _.startCase(EdgeLabelMode.REQUESTS_PER_SECOND),
-        value: edgeLabelMode === EdgeLabelMode.REQUESTS_PER_SECOND,
-        onChange: this.setEdgeLabelModeRPS
+        isChecked: edgeLabelMode === EdgeLabelMode.REQUESTS_PER_SECOND
       },
       {
         id: EdgeLabelMode.REQUESTS_PERCENTAGE,
         labelText: _.startCase(EdgeLabelMode.REQUESTS_PERCENTAGE),
-        value: edgeLabelMode === EdgeLabelMode.REQUESTS_PERCENTAGE,
-        onChange: this.setEdgeLabelModePCT
+        isChecked: edgeLabelMode === EdgeLabelMode.REQUESTS_PERCENTAGE
       },
       {
         id: EdgeLabelMode.RESPONSE_TIME_95TH_PERCENTILE,
         labelText: _.startCase(EdgeLabelMode.RESPONSE_TIME_95TH_PERCENTILE),
-        value: edgeLabelMode === EdgeLabelMode.RESPONSE_TIME_95TH_PERCENTILE,
-        onChange: this.setEdgeLabelModeRT
+        isChecked: edgeLabelMode === EdgeLabelMode.RESPONSE_TIME_95TH_PERCENTILE
       }
     ];
 
@@ -172,32 +168,32 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
       {
         id: 'filterHide',
         labelText: 'Compress Hidden',
-        value: compressOnHide,
+        isChecked: compressOnHide,
         onChange: toggleCompressOnHide
       },
       {
         id: 'filterNodes',
         labelText: 'Node Names',
-        value: showNodeLabels,
+        isChecked: showNodeLabels,
         onChange: toggleGraphNodeLabels
       },
       {
         id: 'filterServiceNodes',
         disabled: this.props.graphType === GraphType.SERVICE,
         labelText: 'Service Nodes',
-        value: showServiceNodes,
+        isChecked: showServiceNodes,
         onChange: toggleServiceNodes
       },
       {
         id: 'filterTrafficAnimation',
         labelText: 'Traffic Animation',
-        value: showTrafficAnimation,
+        isChecked: showTrafficAnimation,
         onChange: toggleTrafficAnimation
       },
       {
         id: 'filterUnusedNodes',
         labelText: 'Unused Nodes',
-        value: showUnusedNodes,
+        isChecked: showUnusedNodes,
         onChange: toggleUnusedNodes
       }
     ];
@@ -206,25 +202,25 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
       {
         id: 'filterCB',
         labelText: 'Circuit Breakers',
-        value: showCircuitBreakers,
+        isChecked: showCircuitBreakers,
         onChange: toggleGraphCircuitBreakers
       },
       {
         id: 'filterSidecars',
         labelText: 'Missing Sidecars',
-        value: showMissingSidecars,
+        isChecked: showMissingSidecars,
         onChange: toggleGraphMissingSidecars
       },
       {
         id: 'filterVS',
         labelText: 'Virtual Services',
-        value: showVirtualServices,
+        isChecked: showVirtualServices,
         onChange: toggleGraphVirtualServices
       },
       {
         id: 'filterSecurity',
         labelText: 'Security',
-        value: showSecurity,
+        isChecked: showSecurity,
         onChange: toggleGraphSecurity
       }
     ];
@@ -241,22 +237,23 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
               <Radio
                 id={item.id}
                 name="edgeLabels"
-                isChecked={item.value}
+                isChecked={item.isChecked}
                 label={item.labelText}
-                onChange={item.onChange}
+                onChange={this.setEdgeLabelMode}
+                value={item.id}
               />
             </label>
           ))}
           <div className={titleStyle}>Show</div>
           {visibilityOptions.map((item: DisplayOptionType) => (
             <label key={item.id} className={itemStyle}>
-              <Checkbox id={item.id} isChecked={item.value} label={item.labelText} onChange={item.onChange} />
+              <Checkbox id={item.id} isChecked={item.isChecked} label={item.labelText} onChange={item.onChange} />
             </label>
           ))}
           <div className={titleStyle}>Show Badges</div>
           {badgeOptions.map((item: DisplayOptionType) => (
             <label key={item.id} className={itemStyle}>
-              <Checkbox id={item.id} isChecked={item.value} label={item.labelText} onChange={item.onChange} />
+              <Checkbox id={item.id} isChecked={item.isChecked} label={item.labelText} onChange={item.onChange} />
             </label>
           ))}
         </div>
@@ -264,23 +261,8 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
     );
   }
 
-  private setEdgeLabelModeNone = () => {
-    this.setEdgeLabelMode(EdgeLabelMode.NONE);
-  };
-
-  private setEdgeLabelModeRPS = () => {
-    this.setEdgeLabelMode(EdgeLabelMode.REQUESTS_PER_SECOND);
-  };
-
-  private setEdgeLabelModePCT = () => {
-    this.setEdgeLabelMode(EdgeLabelMode.REQUESTS_PERCENTAGE);
-  };
-
-  private setEdgeLabelModeRT = () => {
-    this.setEdgeLabelMode(EdgeLabelMode.RESPONSE_TIME_95TH_PERCENTILE);
-  };
-
-  private setEdgeLabelMode = (mode: EdgeLabelMode) => {
+  private setEdgeLabelMode = (_, event) => {
+    const mode = event.target.value as EdgeLabelMode;
     if (this.props.edgeLabelMode !== mode) {
       this.props.setEdgeLabelMode(mode);
     }
