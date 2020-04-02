@@ -15,6 +15,7 @@ import {
   PropertyType
 } from 'components/BoundingClientAwareComponent/BoundingClientAwareComponent';
 import { style } from 'typestyle';
+import { PfColors } from 'components/Pf/PfColors';
 
 type ReduxProps = Omit<GraphToolbarState, 'findValue' | 'hideValue' | 'showLegend' | 'showFindHelp'> & {
   setEdgeLabelMode: (edgeLabelMode: EdgeLabelMode) => void;
@@ -47,22 +48,24 @@ const containerStyle = style({
   overflow: 'auto'
 });
 
+// this emulates Select component .pf-c-select__menu
 const menuStyle = style({
   fontSize: '14px'
 });
 
-const firstTitleStyle = style({
-  margin: '0.5em 0.25em 0.5em 0.25em',
-  fontWeight: 'bold'
-});
-
+// this emulates Select component .pf-c-select__menu-group-title but with less bottom padding to conserve space
 const titleStyle = style({
-  margin: '1em 0.25em 0.5em 0.25em',
-  fontWeight: 'bold'
+  padding: '8px 16px 2px 16px',
+  fontWeight: 700,
+  color: PfColors.Black600
 });
 
-const checkboxStyle = style({
-  margin: '0.25em 0.5em 0.25em 0.5em'
+// this emulates Select component .pf-c-select__menu-item but with less vertical padding to conserve space
+const itemStyle = style({
+  alignItems: 'center',
+  whiteSpace: 'nowrap',
+  margin: 0,
+  padding: '6px 16px'
 });
 
 class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSettingsState> {
@@ -141,25 +144,25 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
     const edgeLabelOptions: DisplayOptionType[] = [
       {
         id: EdgeLabelMode.NONE,
-        labelText: _.capitalize(_.startCase(EdgeLabelMode.NONE)),
+        labelText: _.upperFirst(_.startCase(EdgeLabelMode.NONE)),
         value: edgeLabelMode === EdgeLabelMode.NONE,
         onChange: this.setEdgeLabelModeNone
       },
       {
         id: EdgeLabelMode.REQUESTS_PER_SECOND,
-        labelText: _.capitalize(_.startCase(EdgeLabelMode.REQUESTS_PER_SECOND)),
+        labelText: _.upperFirst(_.startCase(EdgeLabelMode.REQUESTS_PER_SECOND)),
         value: edgeLabelMode === EdgeLabelMode.REQUESTS_PER_SECOND,
         onChange: this.setEdgeLabelModeRPS
       },
       {
         id: EdgeLabelMode.REQUESTS_PERCENTAGE,
-        labelText: _.capitalize(_.startCase(EdgeLabelMode.REQUESTS_PERCENTAGE)),
+        labelText: _.upperFirst(_.startCase(EdgeLabelMode.REQUESTS_PERCENTAGE)),
         value: edgeLabelMode === EdgeLabelMode.REQUESTS_PERCENTAGE,
         onChange: this.setEdgeLabelModePCT
       },
       {
         id: EdgeLabelMode.RESPONSE_TIME_95TH_PERCENTILE,
-        labelText: _.capitalize(_.startCase(EdgeLabelMode.RESPONSE_TIME_95TH_PERCENTILE)),
+        labelText: _.upperFirst(_.startCase(EdgeLabelMode.RESPONSE_TIME_95TH_PERCENTILE)),
         value: edgeLabelMode === EdgeLabelMode.RESPONSE_TIME_95TH_PERCENTILE,
         onChange: this.setEdgeLabelModeRT
       }
@@ -232,11 +235,10 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
         maxHeight={{ type: PropertyType.VIEWPORT_HEIGHT_MINUS_TOP, margin: marginBottom }}
       >
         <div className={menuStyle}>
-          <div className={firstTitleStyle}>Edge Labels</div>
+          <div className={titleStyle}>Show Edge Labels</div>
           {edgeLabelOptions.map((item: DisplayOptionType) => (
-            <label className="pf-c-select__menu-item">
+            <label className={itemStyle}>
               <Radio
-                className={checkboxStyle}
                 id={item.id}
                 name="edgeLabels"
                 isChecked={item.value}
@@ -248,9 +250,8 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
           ))}
           <div className={titleStyle}>Show</div>
           {visibilityOptions.map((item: DisplayOptionType) => (
-            <label className="pf-c-select__menu-item">
+            <label className={itemStyle}>
               <Checkbox
-                className={checkboxStyle}
                 id={item.id}
                 isChecked={item.value}
                 key={item.id}
@@ -261,9 +262,8 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
           ))}
           <div className={titleStyle}>Show Badges</div>
           {badgeOptions.map((item: DisplayOptionType) => (
-            <label className="pf-c-select__menu-item">
+            <label className={itemStyle}>
               <Checkbox
-                className={checkboxStyle}
                 id={item.id}
                 isChecked={item.value}
                 key={item.id}
