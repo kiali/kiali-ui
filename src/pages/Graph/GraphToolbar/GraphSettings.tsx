@@ -113,7 +113,7 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
     );
   }
 
-  getPopoverContent() {
+  private getPopoverContent() {
     // map our attributes from redux
     const {
       compressOnHide,
@@ -234,15 +234,14 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
         className={containerStyle}
         maxHeight={{ type: PropertyType.VIEWPORT_HEIGHT_MINUS_TOP, margin: marginBottom }}
       >
-        <div className={menuStyle}>
+        <div id="graph-display-menu" className={menuStyle}>
           <div className={titleStyle}>Show Edge Labels</div>
           {edgeLabelOptions.map((item: DisplayOptionType) => (
-            <label className={itemStyle}>
+            <label key={item.id} className={itemStyle}>
               <Radio
                 id={item.id}
                 name="edgeLabels"
                 isChecked={item.value}
-                key={item.id}
                 label={item.labelText}
                 onChange={item.onChange}
               />
@@ -250,26 +249,14 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
           ))}
           <div className={titleStyle}>Show</div>
           {visibilityOptions.map((item: DisplayOptionType) => (
-            <label className={itemStyle}>
-              <Checkbox
-                id={item.id}
-                isChecked={item.value}
-                key={item.id}
-                label={item.labelText}
-                onChange={item.onChange}
-              />
+            <label key={item.id} className={itemStyle}>
+              <Checkbox id={item.id} isChecked={item.value} label={item.labelText} onChange={item.onChange} />
             </label>
           ))}
           <div className={titleStyle}>Show Badges</div>
           {badgeOptions.map((item: DisplayOptionType) => (
-            <label className={itemStyle}>
-              <Checkbox
-                id={item.id}
-                isChecked={item.value}
-                key={item.id}
-                label={item.labelText}
-                onChange={item.onChange}
-              />
+            <label key={item.id} className={itemStyle}>
+              <Checkbox id={item.id} isChecked={item.value} label={item.labelText} onChange={item.onChange} />
             </label>
           ))}
         </div>
