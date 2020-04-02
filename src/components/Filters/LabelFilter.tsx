@@ -41,8 +41,11 @@ export class LabelFilters extends React.Component<LabelFiltersProps> {
                 <li>Filter by label presence: label</li>
                 <li>Filter by label and value: label:value</li>
                 <li>
-                  Filter by more than one label and one or more values: label:value label2:value2,value2-2 (separate
-                  with ' ')
+                  Filter by more than one label and one or more values:
+                  <br />
+                  label:value label2:value2,value2-2
+                  <br />
+                  (separate with ' ')
                 </li>
               </ul>
             </>
