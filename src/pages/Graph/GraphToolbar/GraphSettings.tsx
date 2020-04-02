@@ -144,25 +144,25 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
     const edgeLabelOptions: DisplayOptionType[] = [
       {
         id: EdgeLabelMode.NONE,
-        labelText: _.upperFirst(_.startCase(EdgeLabelMode.NONE)),
+        labelText: _.startCase(EdgeLabelMode.NONE),
         value: edgeLabelMode === EdgeLabelMode.NONE,
         onChange: this.setEdgeLabelModeNone
       },
       {
         id: EdgeLabelMode.REQUESTS_PER_SECOND,
-        labelText: _.upperFirst(_.startCase(EdgeLabelMode.REQUESTS_PER_SECOND)),
+        labelText: _.startCase(EdgeLabelMode.REQUESTS_PER_SECOND),
         value: edgeLabelMode === EdgeLabelMode.REQUESTS_PER_SECOND,
         onChange: this.setEdgeLabelModeRPS
       },
       {
         id: EdgeLabelMode.REQUESTS_PERCENTAGE,
-        labelText: _.upperFirst(_.startCase(EdgeLabelMode.REQUESTS_PERCENTAGE)),
+        labelText: _.startCase(EdgeLabelMode.REQUESTS_PERCENTAGE),
         value: edgeLabelMode === EdgeLabelMode.REQUESTS_PERCENTAGE,
         onChange: this.setEdgeLabelModePCT
       },
       {
         id: EdgeLabelMode.RESPONSE_TIME_95TH_PERCENTILE,
-        labelText: _.upperFirst(_.startCase(EdgeLabelMode.RESPONSE_TIME_95TH_PERCENTILE)),
+        labelText: _.startCase(EdgeLabelMode.RESPONSE_TIME_95TH_PERCENTILE),
         value: edgeLabelMode === EdgeLabelMode.RESPONSE_TIME_95TH_PERCENTILE,
         onChange: this.setEdgeLabelModeRT
       }
