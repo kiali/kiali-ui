@@ -1,4 +1,5 @@
 import { ResourcePermissions } from './Permissions';
+import { MetricsQuery } from '@kiali/k-charted-pf4';
 
 export interface Iter8Info {
   enabled: boolean;
@@ -7,12 +8,16 @@ export interface Iter8Info {
 export interface Iter8Experiment {
   name: string;
   phase: string;
+  targetService?: string;
   status: string;
   baseline: string;
   baselinePercentage: number;
   candidate: string;
   candidatePercentage: number;
   namespace: string;
+  createdAt: number;
+  startedAt: number;
+  endedAt: number;
 }
 
 export interface ExpId {
@@ -37,18 +42,19 @@ export interface Iter8ExpDetailsInfo {
 
 export interface ExperimentItem {
   name: string;
-  namespace: string;
   phase: string;
   status: string;
-  createdAt: string;
-  startedAt: string;
-  endedAt: string;
+  createdAt: number;
+  startedAt: number;
+  endedAt: number;
   baseline: string;
   baselinePercentage: number;
   candidate: string;
   candidatePercentage: number;
+  namespace: string;
   targetService: string;
   targetServiceNamespace: string;
+  assessmentConclusion: string[];
   labels?: { [key: string]: string };
   resourceVersion: string;
 }
@@ -70,3 +76,19 @@ export interface Criteria {
   sampleSize: number;
   stopOnFailure: boolean;
 }
+
+export interface Iter8MetricsOptions extends MetricsQuery {
+  direction: Direction;
+  filters?: string[];
+  requestProtocol?: string;
+  reporter: Reporter;
+  charts?: string;
+  startTime?: number;
+  endTime?: number;
+  timeWindowType?: string;
+  baseline?: string;
+  candidate?: string;
+}
+
+export type Reporter = 'source' | 'destination';
+export type Direction = 'inbound' | 'outbound';

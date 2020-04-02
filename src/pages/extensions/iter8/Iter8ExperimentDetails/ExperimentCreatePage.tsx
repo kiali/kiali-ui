@@ -67,7 +67,13 @@ export interface Criteria {
 // Style constants
 const containerPadding = style({ padding: '20px 20px 20px 20px' });
 
-const algorithms = ['check_and_increment', 'epsilon_greedy'];
+const algorithms = [
+  'check_and_increment',
+  'epsilon_greedy',
+  'increment_without_check',
+  'posterior_bayesian_routing',
+  'optimistic_bayesian_routing'
+];
 
 class ExperimentCreatePage extends React.Component<Props, State> {
   private promises = new PromisesRegistry();

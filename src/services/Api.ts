@@ -230,6 +230,10 @@ export const getServiceDashboard = (namespace: string, service: string, params: 
   return newRequest<DashboardModel>(HTTP_VERBS.GET, urls.serviceDashboard(namespace, service), params, {});
 };
 
+export const getIter8Dashboard = (namespace: string, service: string, params: IstioMetricsOptions) => {
+  return newRequest<DashboardModel>(HTTP_VERBS.GET, urls.iter8Dashboard(namespace, service), params, {});
+};
+
 export const getApp = (namespace: string, app: string) => {
   return newRequest<App>(HTTP_VERBS.GET, urls.app(namespace, app), {}, {});
 };
