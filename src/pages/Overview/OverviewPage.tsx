@@ -374,7 +374,7 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
     return (
       <>
         <RenderHeader>
-          <Breadcrumb style={{ marginTop: '10px' }}>
+          <Breadcrumb style={{ padding: '10px 0 0 10px' }}>
             <BreadcrumbItem isActive={true}>Namespaces</BreadcrumbItem>
           </Breadcrumb>
           <OverviewToolbarContainer
