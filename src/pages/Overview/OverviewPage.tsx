@@ -25,6 +25,7 @@ import {
   FAILURE,
   Health,
   HEALTHY,
+  UNDESIRED,
   NamespaceAppHealth,
   NamespaceServiceHealth,
   NamespaceWorkloadHealth
@@ -215,6 +216,7 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
       .then(results => {
         results.forEach(result => {
           const nsStatus: NamespaceStatus = {
+            inUndesiredReplica: [],
             inError: [],
             inWarning: [],
             inSuccess: [],
@@ -229,6 +231,8 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
               nsStatus.inWarning.push(item);
             } else if (status === HEALTHY) {
               nsStatus.inSuccess.push(item);
+            } else if (status === UNDESIRED) {
+              nsStatus.inUndesiredReplica.push(item);
             } else {
               nsStatus.notAvailable.push(item);
             }

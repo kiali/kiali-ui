@@ -12,6 +12,7 @@ export type NamespaceInfo = {
 };
 
 export type NamespaceStatus = {
+  inUndesiredReplica: string[];
   inError: string[];
   inWarning: string[];
   inSuccess: string[];

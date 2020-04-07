@@ -1,4 +1,10 @@
-import { CheckCircleIcon, ExclamationCircleIcon, ExclamationTriangleIcon, UnknownIcon } from '@patternfly/react-icons';
+import {
+  CheckCircleIcon,
+  ExclamationCircleIcon,
+  ExclamationTriangleIcon,
+  MinusCircleIcon,
+  UnknownIcon
+} from '@patternfly/react-icons';
 import { IconType } from '@patternfly/react-icons/dist/js/createIcon';
 import { getName } from '../utils/RateIntervals';
 import { PFAlertColor, PfColors } from 'components/Pf/PfColors';
@@ -35,6 +41,14 @@ export interface Status {
   icon: IconType;
   class: string;
 }
+
+export const UNDESIRED: Status = {
+  name: 'Undesired Replica',
+  color: PFAlertColor.InfoBackground,
+  priority: 3,
+  icon: MinusCircleIcon,
+  class: 'icon-degraded'
+};
 
 export const FAILURE: Status = {
   name: 'Failure',
@@ -98,6 +112,10 @@ export const ratioCheck = (availableReplicas: number, currentReplicas: number, d
   // Pending Pods means problems
   if (desiredReplicas === availableReplicas && availableReplicas !== currentReplicas) {
     return FAILURE;
+  }
+  // Undesired Replica
+  if (currentReplicas < desiredReplicas) {
+    return UNDESIRED;
   }
   // Health condition
   if (desiredReplicas === currentReplicas && currentReplicas === availableReplicas) {
