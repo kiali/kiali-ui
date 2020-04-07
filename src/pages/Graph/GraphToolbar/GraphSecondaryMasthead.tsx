@@ -27,6 +27,13 @@ const leftSpacerStyle = style({
   marginLeft: '10px'
 });
 
+const vrStyle = style({
+  border: '1px inset',
+  height: '20px',
+  margin: '4px 0 0 10px',
+  width: '1px'
+});
+
 const rightToolbarStyle = style({
   float: 'right'
 });
@@ -46,6 +53,7 @@ export default class GraphSecondaryMasthead extends React.PureComponent<GraphSec
       <SecondaryMasthead title={false}>
         <div className={mastheadStyle}>
           <NamespaceDropdownContainer disabled={false} />
+          <span className={vrStyle} />
           <TourStopContainer info={GraphTourStops.GraphType}>
             <span className={leftSpacerStyle}>
               <ToolbarDropdown
