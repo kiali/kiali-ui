@@ -16,6 +16,7 @@ import * as AlertUtils from '../../utils/AlertUtils';
 import history from '../../app/History';
 import { buildGateway, buildSidecar } from '../../components/IstioWizards/IstioWizardActions';
 import { MessageType } from '../../types/MessageCenter';
+import AuthorizationPolicyForm from './AuthorizationPolicyForm';
 
 type Props = {
   activeNamespaces: Namespace[];
@@ -31,17 +32,21 @@ type State = {
 
 const formPadding = style({ padding: '30px 20px 30px 20px' });
 
+const AUTHORIZACION_POLICY = 'AuthorizationPolicy';
+const AUTHORIZATION_POLICIES = 'authorizationpolicies';
 const GATEWAY = 'Gateway';
 const GATEWAYS = 'gateways';
 const SIDECAR = 'Sidecar';
 const SIDECARS = 'sidecars';
 
 const DIC = {
+  AuthorizationPolicy: AUTHORIZATION_POLICIES,
   Gateway: GATEWAYS,
   Sidecar: SIDECARS
 };
 
 const istioResourceOptions = [
+  { value: AUTHORIZACION_POLICY, label: AUTHORIZACION_POLICY, disabled: false },
   { value: GATEWAY, label: GATEWAY, disabled: false },
   { value: SIDECAR, label: SIDECAR, disabled: false }
 ];
@@ -136,6 +141,9 @@ class IstioConfigNewPage extends React.Component<Props, State> {
 
   onIstioResourceCreate = () => {
     switch (this.state.istioResource) {
+      case AUTHORIZACION_POLICY:
+        console.log('TODELETE Invoke backend to create an AuthorizationPolicy object');
+        break;
       case GATEWAY:
         this.promises
           .registerAll(
@@ -188,6 +196,10 @@ class IstioConfigNewPage extends React.Component<Props, State> {
     history.push(`/${Paths.ISTIO}?namespaces=${this.props.activeNamespaces.join(',')}`);
   };
 
+  isAuthorizationPolicyValid = (): boolean => {
+    return this.state.istioResource === AUTHORIZACION_POLICY;
+  };
+
   isGatewayValid = (): boolean => {
     return this.state.istioResource === GATEWAY && this.state.gateway.gatewayServers.length > 0;
   };
@@ -204,7 +216,10 @@ class IstioConfigNewPage extends React.Component<Props, State> {
   render() {
     const isNameValid = this.state.name.length > 0;
     const isNamespacesValid = this.props.activeNamespaces.length > 0;
-    const isFormValid = isNameValid && isNamespacesValid && (this.isGatewayValid() || this.isSidecarValid());
+    const isFormValid =
+      isNameValid &&
+      isNamespacesValid &&
+      (this.isGatewayValid() || this.isSidecarValid() || this.isAuthorizationPolicyValid());
     return (
       <RenderContent>
         <Form className={formPadding} isHorizontal={true}>
@@ -258,6 +273,7 @@ class IstioConfigNewPage extends React.Component<Props, State> {
               isValid={isNamespacesValid}
             />
           </FormGroup>
+          {this.state.istioResource === AUTHORIZACION_POLICY && <AuthorizationPolicyForm />}
           {this.state.istioResource === GATEWAY && (
             <GatewayForm
               gatewayServers={this.state.gateway.gatewayServers}
