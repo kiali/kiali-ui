@@ -57,7 +57,7 @@
     "@patternfly/react-charts": "5.2.2",
     "@patternfly/react-core": "3.124.1",
     "@patternfly/react-styles": "3.6.11",
-    "@patternfly/react-table": "2.24.41",
+    "@patternfly/react-table": "2.28.15",
     "@patternfly/react-tokens": "2.7.10",
     "@webcomponents/custom-elements": "1.2.4",
     "axios": "0.19.2",
