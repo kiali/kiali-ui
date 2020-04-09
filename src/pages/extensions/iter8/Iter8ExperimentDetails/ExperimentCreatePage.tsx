@@ -7,6 +7,7 @@ import {
   ActionGroup,
   Button,
   ButtonVariant,
+  Expandable,
   Form,
   FormGroup,
   FormSelect,
@@ -34,6 +35,8 @@ interface State {
   namespaces: string[];
   services: string[];
   workloads: string[];
+  showAdvanced: boolean;
+  showTrafficStep: boolean;
 }
 
 interface ExperimentSpec {
@@ -60,12 +63,11 @@ export interface Criteria {
   metric: string;
   toleranceType: string;
   tolerance: number;
-  sampleSize: number;
   stopOnFailure: boolean;
 }
 
 // Style constants
-const containerPadding = style({ padding: '20px 20px 20px 20px' });
+const containerPadding = style({ padding: '10px 10px 20px 20px' });
 
 const algorithms = [
   'check_and_increment',
@@ -103,7 +105,9 @@ class ExperimentCreatePage extends React.Component<Props, State> {
       },
       namespaces: [],
       services: [],
-      workloads: []
+      workloads: [],
+      showAdvanced: false,
+      showTrafficStep: true
     };
   }
 
@@ -226,6 +230,15 @@ class ExperimentCreatePage extends React.Component<Props, State> {
           newExperiment.service = value.trim();
           break;
         case 'algorithm':
+          if (value.trim() === 'check_and_increment') {
+            this.setState({
+              showTrafficStep: true
+            });
+          } else {
+            this.setState({
+              showTrafficStep: false
+            });
+          }
           newExperiment.trafficControl.algorithm = value.trim();
           break;
         case 'baseline':
@@ -270,9 +283,6 @@ class ExperimentCreatePage extends React.Component<Props, State> {
           break;
         case 'trafficStepSize':
           newExperiment.trafficControl.trafficStepSize = value;
-          break;
-        case 'sampleSize':
-          newExperiment.criterias[0].sampleSize = value;
           break;
         case 'tolerance':
           newExperiment.criterias[0].tolerance = value;
@@ -435,98 +445,7 @@ class ExperimentCreatePage extends React.Component<Props, State> {
                 </GridItem>
               </Grid>
               <hr />
-              <h1 className="pf-c-title pf-m-xl">Traffic Control</h1>
-              <Grid gutter="md">
-                <GridItem span={6}>
-                  <FormGroup
-                    fieldId="interval"
-                    label="Interval"
-                    isValid={this.state.experiment.trafficControl.interval !== ''}
-                    helperText="Frequency with which the controller calls the analytics service"
-                    helperTextInvalid="Interval cannot be empty"
-                  >
-                    <TextInput
-                      id="interval"
-                      value={this.state.experiment.trafficControl.interval}
-                      placeholder="Time interval i.e. 30s"
-                      onChange={value => this.changeExperiment('interval', value)}
-                    />
-                  </FormGroup>
-                </GridItem>
-                <GridItem span={6}>
-                  <FormGroup
-                    fieldId="maxIteration"
-                    label="Maximum Iteration"
-                    isValid={this.state.experiment.trafficControl.maxIterations > 0}
-                    helperText="Maximum number of iterations for this experiment"
-                    helperTextInvalid="Maximun Iteration cannot be empty"
-                  >
-                    <TextInput
-                      id="maxIteration"
-                      type="number"
-                      value={this.state.experiment.trafficControl.maxIterations}
-                      placeholder="Maximum Iteration"
-                      onChange={value => this.changeExperimentNumber('maxIteration', Number(value))}
-                    />
-                  </FormGroup>
-                </GridItem>
-              </Grid>
-              <Grid gutter="md">
-                <GridItem span={6}>
-                  <FormGroup
-                    fieldId="maxTrafficPercentage"
-                    label="Maximum Traffic Percentage"
-                    isValid={
-                      this.state.experiment.trafficControl.maxTrafficPercentage >= 0 &&
-                      this.state.experiment.trafficControl.maxTrafficPercentage <= 100
-                    }
-                    helperText="The maximum traffic percentage to send to the candidate during an experiment"
-                    helperTextInvalid="Maximum Traffic Percentage must be between 0 and 100"
-                  >
-                    <TextInput
-                      id="maxTrafficPercentage"
-                      type="number"
-                      value={this.state.experiment.trafficControl.maxTrafficPercentage}
-                      placeholder="Service Name"
-                      onChange={value => this.changeExperimentNumber('maxTrafficPercentage', parseFloat(value))}
-                    />
-                  </FormGroup>
-                </GridItem>
-                <GridItem span={6}>
-                  <FormGroup
-                    fieldId="trafficStepSize"
-                    label="Traffic Step Size"
-                    isValid={this.state.experiment.trafficControl.trafficStepSize > 0}
-                    helperText="The maximum traffic increment per iteration"
-                    helperTextInvalid="Traffic Step Size must be > 0"
-                  >
-                    <TextInput
-                      id="trafficStepSize"
-                      value={this.state.experiment.trafficControl.trafficStepSize}
-                      placeholder="Traffic Step Size"
-                      onChange={value => this.changeExperimentNumber('trafficStepSize', parseFloat(value))}
-                    />
-                  </FormGroup>
-                </GridItem>
-              </Grid>
-              <FormGroup
-                fieldId="algorithm"
-                label="Algorithm"
-                helperText="Strategy used to analyze the candidate and shift the traffic"
-              >
-                <FormSelect
-                  value={this.state.experiment.trafficControl.algorithm}
-                  id="algorithm"
-                  name="Algorithm"
-                  onChange={value => this.changeExperiment('algorithm', value)}
-                >
-                  {algorithms.map((option, index) => (
-                    <FormSelectOption isDisabled={false} key={'p' + index} value={option} label={option} />
-                  ))}
-                </FormSelect>
-              </FormGroup>
-              <hr />
-              <h1 className="pf-c-title pf-m-xl">Success Criteria</h1>
+              <h1 className="pf-c-title pf-m-xl">Assessment Criteria</h1>
               <ExperimentCriteriaForm
                 criterias={this.state.experiment.criterias}
                 onAdd={newCriteria => {
@@ -566,8 +485,93 @@ class ExperimentCreatePage extends React.Component<Props, State> {
                   });
                 }}
               />
+              <hr />
+              <Expandable
+                toggleText={(this.state.showAdvanced ? 'Hide' : 'Show') + ' Advanced Options'}
+                isExpanded={this.state.showAdvanced}
+                onToggle={() => {
+                  this.setState({
+                    showAdvanced: !this.state.showAdvanced
+                  });
+                }}
+              >
+                <h1 className="pf-c-title pf-m-xl">Traffic Control</h1>
+                <Grid gutter="md">
+                  <GridItem span={6}>
+                    <FormGroup
+                      fieldId="interval"
+                      label="Interval"
+                      isValid={this.state.experiment.trafficControl.interval !== ''}
+                      helperText="Frequency with which the controller calls the analytics service"
+                      helperTextInvalid="Interval cannot be empty"
+                    >
+                      <TextInput
+                        id="interval"
+                        value={this.state.experiment.trafficControl.interval}
+                        placeholder="Time interval i.e. 30s"
+                        onChange={value => this.changeExperiment('interval', value)}
+                      />
+                    </FormGroup>
+                  </GridItem>
+                  <GridItem span={6}>
+                    <FormGroup
+                      fieldId="maxIteration"
+                      label="Maximum Iteration"
+                      isValid={this.state.experiment.trafficControl.maxIterations > 0}
+                      helperText="Maximum number of iterations for this experiment"
+                      helperTextInvalid="Maximun Iteration cannot be empty"
+                    >
+                      <TextInput
+                        id="maxIteration"
+                        type="number"
+                        value={this.state.experiment.trafficControl.maxIterations}
+                        placeholder="Maximum Iteration"
+                        onChange={value => this.changeExperimentNumber('maxIteration', Number(value))}
+                      />
+                    </FormGroup>
+                  </GridItem>
+                </Grid>
+
+                <Grid gutter="md">
+                  <GridItem span={6}>
+                    <FormGroup
+                      fieldId="algorithm"
+                      label="Algorithm"
+                      helperText="Strategy used to analyze the candidate and shift the traffic"
+                    >
+                      <FormSelect
+                        value={this.state.experiment.trafficControl.algorithm}
+                        id="algorithm"
+                        name="Algorithm"
+                        onChange={value => this.changeExperiment('algorithm', value)}
+                      >
+                        {algorithms.map((option, index) => (
+                          <FormSelectOption isDisabled={false} key={'p' + index} value={option} label={option} />
+                        ))}
+                      </FormSelect>
+                    </FormGroup>
+                  </GridItem>
+                  <GridItem span={6}>
+                    <FormGroup
+                      style={this.state.showTrafficStep ? {} : { display: 'none' }}
+                      fieldId="trafficStepSize"
+                      label="Traffic Step Size"
+                      isValid={this.state.experiment.trafficControl.trafficStepSize > 0}
+                      helperText="The maximum traffic increment per iteration"
+                      helperTextInvalid="Traffic Step Size must be > 0"
+                    >
+                      <TextInput
+                        id="trafficStepSize"
+                        value={this.state.experiment.trafficControl.trafficStepSize}
+                        placeholder="Traffic Step Size"
+                        onChange={value => this.changeExperimentNumber('trafficStepSize', parseFloat(value))}
+                      />
+                    </FormGroup>
+                  </GridItem>
+                </Grid>
+              </Expandable>
               <ActionGroup>
-                <span style={{ float: 'left', paddingTop: '10px', paddingBottom: '10px' }}>
+                <span style={{ float: 'left' }}>
                   <span style={{ paddingRight: '5px' }}>
                     <Button
                       variant={ButtonVariant.primary}

@@ -5,8 +5,6 @@ import {
   DropdownItem,
   DropdownPosition,
   DropdownToggle,
-  Toolbar,
-  ToolbarSection,
   Tooltip,
   TooltipPosition
 } from '@patternfly/react-core';
@@ -27,19 +25,21 @@ import history from '../../../../app/History';
 import { Iter8Info, Iter8Experiment } from '../../../../types/Iter8';
 import { Link } from 'react-router-dom';
 import * as FilterComponent from '../../../../components/FilterList/FilterComponent';
-
-import RefreshButtonContainer from '../../../../components/Refresh/RefreshButton';
 import { KialiAppState } from '../../../../store/Store';
 import { activeNamespacesSelector } from '../../../../store/Selectors';
 import { connect } from 'react-redux';
+import RefreshButtonContainer from '../../../../components/Refresh/RefreshButton';
+import { FilterSelected, StatefulFilters } from '../../../../components/Filters/StatefulFilters';
+
 import Namespace from '../../../../types/Namespace';
 import { PromisesRegistry } from '../../../../utils/CancelablePromises';
 import { namespaceEquals } from '../../../../utils/Common';
 import { KialiIcon } from '../../../../config/KialiIcon';
 import { OkIcon } from '@patternfly/react-icons';
+// import IstioActionsNamespaceDropdown from '../../../../components/IstioActions/IstioActionsNamespaceDropdown';
+import * as Iter8ExperimentListFilters from './FiltersAndSorts';
 
 // Style constants
-const rightToolbar = style({ marginLeft: 'auto' });
 const containerPadding = style({ padding: '20px 20px 20px 20px' });
 const greenIconStyle = style({
   fontSize: '1.0em',
@@ -64,6 +64,7 @@ interface State extends FilterComponent.State<Iter8Experiment> {
   experimentLists: Iter8Experiment[];
   sortBy: ISortBy; // ?? not used yet
   dropdownOpen: boolean;
+  onFilterChange: boolean;
 }
 
 const columns = [
@@ -76,17 +77,17 @@ const columns = [
     transforms: [sortable]
   },
   {
-    title: 'Target Service',
+    title: 'Service',
     transforms: [sortable]
   },
   {
     title: 'Phase',
     transforms: [sortable, cellWidth(15) as any]
   },
-  {
-    title: 'Status',
-    transforms: [sortable]
-  },
+  // {
+  //  title: 'Status',
+  // ransforms: [sortable]
+  // },
   {
     title: 'Baseline',
     transforms: [sortable]
@@ -111,7 +112,8 @@ class ExperimentListPage extends React.Component<Props, State> {
       dropdownOpen: false,
       listItems: [],
       currentSortField: this.props.currentSortField,
-      isSortAscending: this.props.isSortAscending
+      isSortAscending: this.props.isSortAscending,
+      onFilterChange: false
     };
   }
 
@@ -123,9 +125,10 @@ class ExperimentListPage extends React.Component<Props, State> {
           API.getExperiments(namespaces)
             .then(result => {
               this.setState(prevState => {
+                let explists = Iter8ExperimentListFilters.filterBy(result.data, FilterSelected.getSelected());
                 return {
                   iter8Info: iter8Info,
-                  experimentLists: result.data,
+                  experimentLists: explists,
                   sortBy: prevState.sortBy
                 };
               });
@@ -254,62 +257,81 @@ class ExperimentListPage extends React.Component<Props, State> {
     );
   };
 
+  onFilterChange = () => {
+    // Resetting pagination when filters change
+    this.updateListItems();
+  };
+
   // This is a simplified toolbar for refresh and actions.
   // Kiali has a shared component toolbar for more complex scenarios like filtering
   // It renders actions only if user has permissions
   toolbar = () => {
     return (
-      <Toolbar className="pf-l-toolbar pf-u-justify-content-space-between pf-u-mx-xl pf-u-my-md">
-        <ToolbarSection aria-label="ToolbarSection">
-          <Toolbar className={rightToolbar}>
-            <RefreshButtonContainer key={'Refresh'} handleRefresh={() => this.updateListItems()} />
-            {this.actionsToolbar()}
-          </Toolbar>
-        </ToolbarSection>
-      </Toolbar>
+      <StatefulFilters
+        initialFilters={Iter8ExperimentListFilters.availableFilters}
+        onFilterChange={this.onFilterChange}
+        rightToolbar={[
+          <RefreshButtonContainer key={'Refresh'} handleRefresh={this.updateListItems} />,
+          <>{this.actionsToolbar()},</>
+        ]}
+      />
     );
   };
 
-  experimentStatusIcon = (phase: string, candidate: number) => {
+  getStatusString = (status: string) => {
+    if (status.length > 0) {
+      const values = status.split(':');
+      return values.slice(1);
+    }
+
+    return status;
+  };
+
+  experimentStatusIcon = (phase: string, candidate: number, status: string) => {
     let className = greenIconStyle;
-    let phaseStr = phase;
+    // let phaseStr = phase;
+    let statusString = this.getStatusString(status);
     if (candidate === 0) {
-      phaseStr = 'Completed, but failed';
+      // phaseStr = 'Completed, but failed';
       className = redIconStyle;
     }
     switch (phase) {
       case 'Initializing':
         return (
-          <Tooltip content={<>{phase}</>}>
+          <Tooltip content={<>{statusString}</>}>
             <KialiIcon.PendingIcon className={statusIconStyle} />
           </Tooltip>
         );
       case 'Progressing':
         return (
-          <Tooltip content={<>{phase}</>}>
+          <Tooltip content={<>{statusString}</>}>
             <KialiIcon.InProgress className={statusIconStyle} />
           </Tooltip>
         );
       case 'Pause':
         return (
-          <Tooltip content={<>{phase}</>}>
+          <Tooltip content={<>{statusString}</>}>
             <KialiIcon.PauseCircle className={statusIconStyle} />
           </Tooltip>
         );
       case 'Completed':
         return (
-          <Tooltip content={<>{phaseStr}</>}>
+          <Tooltip content={<>{statusString}</>}>
             <OkIcon className={className} />
           </Tooltip>
         );
       default:
         return (
-          <Tooltip content={<>{phase}</>}>
+          <Tooltip content={<>{statusString}</>}>
             <KialiIcon.InProgress className={statusIconStyle} />
           </Tooltip>
         );
     }
   };
+
+  workloadLink(namespace: string, workload: string) {
+    return '/namespaces/' + namespace + '/workloads/' + workload;
+  }
 
   // Helper used to build the table content.
   rows = (): IRow[] => {
@@ -354,14 +376,15 @@ class ExperimentListPage extends React.Component<Props, State> {
             {h.targetService ? this.serviceLink(h.namespace, h.targetService) : ''}
           </>,
           <>
-            {h.phase} {this.experimentStatusIcon(h.phase, h.candidatePercentage)}
+            {h.phase} {this.experimentStatusIcon(h.phase, h.candidatePercentage, h.status)}
           </>,
-          <>{h.status}</>,
+
           <>
-            {h.baseline} <br /> {h.baselinePercentage}%
+            <Link to={this.workloadLink(h.namespace, h.baseline)}>{h.baseline}</Link>
+            <br /> {h.baselinePercentage}%
           </>,
           <>
-            {h.candidate}
+            <Link to={this.workloadLink(h.namespace, h.candidate)}>{h.candidate}</Link>
             <br /> {h.candidatePercentage}%
           </>
         ]

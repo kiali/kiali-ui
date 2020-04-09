@@ -79,8 +79,8 @@ class CriteriaInfoDescription extends React.Component<ExperimentInfoDescriptionP
       </DataListCell>,
       <DataListCell key={'tolerance' + idx} width={2}>
         <ul>
-          <li>Tolerance : {criteria.criteria.tolerance}</li>
-          <li>Tolerance Type: {criteria.criteria.toleranceType}</li>
+          <li>Threshold : {criteria.criteria.tolerance}</li>
+          <li>Threshold Type: {criteria.criteria.toleranceType}</li>
           <li>Sample Size: {criteria.criteria.sampleSize}</li>
         </ul>
       </DataListCell>,

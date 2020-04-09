@@ -59,7 +59,6 @@ class CriteriaTable extends React.Component<CriteriaTableProps> {
         cells: [
           { title: <> {cIdx + 1}</> },
           { title: <>{criteria.name}</> },
-          { title: <>{criteria.criteria.sampleSize}</> },
           { title: <>{criteria.criteria.tolerance}</> },
           { title: <>{criteria.criteria.toleranceType}</> }
         ]
