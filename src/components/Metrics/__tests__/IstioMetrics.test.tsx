@@ -47,11 +47,16 @@ const createMetricChart = (name: string): ChartModel => {
     name: name,
     unit: 'B',
     spans: 12,
-    metric: [
+    metrics: [
       {
-        labelSet: { __name__: name },
-        values: [[1111, 5], [2222, 10]],
-        name: ''
+        name: 'B',
+        single: [
+          {
+            labelSet: { __name__: name },
+            values: [[1111, 5], [2222, 10]],
+            name: ''
+          }
+        ]
       }
     ]
   };
@@ -62,36 +67,41 @@ const createHistogramChart = (name: string): ChartModel => {
     name: name,
     unit: 'B',
     spans: 12,
-    histogram: {
-      average: [
-        {
-          labelSet: { __name__: name },
-          values: [[1111, 10], [2222, 11]],
-          name: name
+    metrics: [
+      {
+        name: 'B',
+        histogram: {
+          average: [
+            {
+              labelSet: { __name__: name },
+              values: [[1111, 10], [2222, 11]],
+              name: name
+            }
+          ],
+          median: [
+            {
+              labelSet: { __name__: name },
+              values: [[1111, 20], [2222, 21]],
+              name: name
+            }
+          ],
+          percentile95: [
+            {
+              labelSet: { __name__: name },
+              values: [[1111, 30], [2222, 31]],
+              name: name
+            }
+          ],
+          percentile99: [
+            {
+              labelSet: { __name__: name },
+              values: [[1111, 40], [2222, 41]],
+              name: name
+            }
+          ]
         }
-      ],
-      median: [
-        {
-          labelSet: { __name__: name },
-          values: [[1111, 20], [2222, 21]],
-          name: name
-        }
-      ],
-      percentile95: [
-        {
-          labelSet: { __name__: name },
-          values: [[1111, 30], [2222, 31]],
-          name: name
-        }
-      ],
-      percentile99: [
-        {
-          labelSet: { __name__: name },
-          values: [[1111, 40], [2222, 41]],
-          name: name
-        }
-      ]
-    }
+      }
+    ]
   };
 };
 

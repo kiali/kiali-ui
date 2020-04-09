@@ -14,9 +14,7 @@ describe('#GetErrorString', () => {
         statusText: 'InternalError',
         headers: null,
         config: {}
-      },
-      isAxiosError: true,
-      toJSON: () => ({})
+      }
     };
     expect(API.getErrorString(axErr)).toEqual(`InternalError`);
   });
@@ -32,9 +30,7 @@ describe('#GetErrorString', () => {
         statusText: 'InternalError',
         headers: null,
         config: {}
-      },
-      isAxiosError: true,
-      toJSON: () => ({})
+      }
     };
     expect(API.getErrorString(axErr)).toEqual(`${responseServerError}`);
   });
@@ -51,9 +47,7 @@ describe('#GetErrorString', () => {
         statusText: 'InternalError',
         headers: null,
         config: {}
-      },
-      isAxiosError: true,
-      toJSON: () => ({})
+      }
     };
     expect(API.getErrorDetail(axErr)).toEqual(`${responseServerDetail}`);
   });
@@ -68,9 +62,7 @@ describe('#GetErrorString', () => {
         statusText: 'Unauthorized',
         headers: null,
         config: {}
-      },
-      isAxiosError: true,
-      toJSON: () => ({})
+      }
     };
     expect(API.getErrorString(axErr)).toEqual(`Unauthorized: Has your session expired? Try logging in again.`);
   });
