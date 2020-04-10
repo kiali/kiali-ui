@@ -21,7 +21,6 @@ import {
 } from '@patternfly/react-table';
 import * as API from '../../../../services/Api';
 import * as AlertUtils from '../../../../utils/AlertUtils';
-import history from '../../../../app/History';
 import { Iter8Info, Iter8Experiment } from '../../../../types/Iter8';
 import { Link } from 'react-router-dom';
 import * as FilterComponent from '../../../../components/FilterList/FilterComponent';
@@ -38,7 +37,7 @@ import { KialiIcon } from '../../../../config/KialiIcon';
 import { OkIcon } from '@patternfly/react-icons';
 // import IstioActionsNamespaceDropdown from '../../../../components/IstioActions/IstioActionsNamespaceDropdown';
 import * as Iter8ExperimentListFilters from './FiltersAndSorts';
-
+import ExperimentCreatePageContainer from '../Iter8ExperimentDetails/ExperimentCreatePage';
 // Style constants
 const containerPadding = style({ padding: '20px 20px 20px 20px' });
 const greenIconStyle = style({
@@ -65,6 +64,7 @@ interface State extends FilterComponent.State<Iter8Experiment> {
   sortBy: ISortBy; // ?? not used yet
   dropdownOpen: boolean;
   onFilterChange: boolean;
+  showWizard: boolean;
 }
 
 const columns = [
@@ -113,9 +113,16 @@ class ExperimentListPage extends React.Component<Props, State> {
       listItems: [],
       currentSortField: this.props.currentSortField,
       isSortAscending: this.props.isSortAscending,
-      onFilterChange: false
+      onFilterChange: false,
+      showWizard: false
     };
   }
+
+  handler = val => {
+    this.setState({
+      showWizard: val
+    });
+  };
 
   fetchExperiments = (namespaces: string[]) => {
     API.getIter8Info()
@@ -224,8 +231,12 @@ class ExperimentListPage extends React.Component<Props, State> {
   }
 
   // Invoke the history object to update and URL and start a routing
+  // goNewExperimentPage = () => {
+  //  history.push('/extensions/iter8/new');
+  //  };
+
   goNewExperimentPage = () => {
-    history.push('/extensions/iter8/new');
+    this.setState({ showWizard: true });
   };
 
   serviceLink(namespace: string, workload: string) {
@@ -406,6 +417,12 @@ class ExperimentListPage extends React.Component<Props, State> {
           <TableHeader />
           <TableBody />
         </Table>
+
+        <ExperimentCreatePageContainer
+          activeNamespaces={[]}
+          showWizard={this.state.showWizard}
+          handler={this.handler.bind(this)}
+        />
       </div>
     );
   }

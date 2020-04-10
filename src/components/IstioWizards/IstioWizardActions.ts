@@ -27,6 +27,7 @@ export const WIZARD_WEIGHTED_ROUTING = 'weighted_routing';
 export const WIZARD_MATCHING_ROUTING = 'matching_routing';
 export const WIZARD_SUSPEND_TRAFFIC = 'suspend_traffic';
 export const WIZARD_THREESCALE_INTEGRATION = 'threescale';
+export const WIZARD_ITER8_INTEGRATION = 'iter8';
 
 export const WIZARD_ACTIONS = [WIZARD_WEIGHTED_ROUTING, WIZARD_MATCHING_ROUTING, WIZARD_SUSPEND_TRAFFIC];
 
@@ -34,7 +35,8 @@ export const WIZARD_TITLES = {
   [WIZARD_WEIGHTED_ROUTING]: 'Create Weighted Routing',
   [WIZARD_MATCHING_ROUTING]: 'Create Matching Routing',
   [WIZARD_SUSPEND_TRAFFIC]: 'Suspend Traffic',
-  [WIZARD_THREESCALE_INTEGRATION]: 'Add 3scale API Management Rule'
+  [WIZARD_THREESCALE_INTEGRATION]: 'Add 3scale API Management Rule',
+  [WIZARD_ITER8_INTEGRATION]: 'Create New Iter8 Experiment'
 };
 
 export const WIZARD_UPDATE_TITLES = {
