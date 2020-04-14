@@ -74,8 +74,7 @@ class MeshMTLSStatus extends React.Component<Props> {
 
   iconStyle() {
     return style({
-      marginTop: -3,
-      marginRight: 8,
+      marginRight: 18,
       width: 13
     });
   }

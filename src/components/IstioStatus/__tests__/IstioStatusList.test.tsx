@@ -4,28 +4,28 @@ import { ComponentStatus, Status } from '../../../types/IstioStatus';
 import IstioStatusList from '../IstioStatusList';
 import { shallowToJson } from 'enzyme-to-json';
 
-it("lists all the components grouped", () => {
+it('lists all the components grouped', () => {
   const components: ComponentStatus[] = [
     {
-      name: "grafana",
+      name: 'grafana',
       status: Status.Healthy,
-      is_core: false,
+      is_core: false
     },
     {
-      name: "prometheus",
+      name: 'prometheus',
       status: Status.Healthy,
-      is_core: false,
+      is_core: false
     },
     {
-      name: "istiod",
+      name: 'istiod',
       status: Status.Unhealthy,
-      is_core: true,
+      is_core: true
     },
     {
-      name: "istio-egressgateway",
+      name: 'istio-egressgateway',
       status: Status.Unhealthy,
-      is_core: true,
-    },
+      is_core: true
+    }
   ];
 
   const wrapper = shallow(<IstioStatusList status={components} />);

@@ -11,26 +11,26 @@ import { KialiDispatch } from '../../types/Redux';
 import { bindActionCreators } from 'redux';
 import { IstioStatusActions } from '../../actions/IstioStatusActions';
 import { connect } from 'react-redux';
-import { ResourcesFullIcon } from '@patternfly/react-icons';
 import { Tooltip, TooltipPosition } from '@patternfly/react-core';
 import IstioStatusList from './IstioStatusList';
 import { PFAlertColor } from '../Pf/PfColors';
 import './IstioStatus.css';
+import { ResourcesFullIcon } from '@patternfly/react-icons';
 
 type ReduxProps = {
   lastRefreshAt: TimeInMilliseconds;
   setIstioStatus: (istioStatus: ComponentStatus[]) => void;
   namespaces: Namespace[] | undefined;
   status: ComponentStatus[];
-}
+};
 
-type Props = ReduxProps & {}
+type Props = ReduxProps & {};
 
 const ValidToColor = {
-  "false-false": PFAlertColor.Danger,
-  "false-true": PFAlertColor.Danger,
-  "true-false": PFAlertColor.Warning,
-  "true-true": PFAlertColor.Success,
+  'false-false': PFAlertColor.Danger,
+  'false-true': PFAlertColor.Danger,
+  'true-false': PFAlertColor.Warning,
+  'true-true': PFAlertColor.Success
 };
 
 export class IstioStatus extends React.Component<Props> {
@@ -47,7 +47,6 @@ export class IstioStatus extends React.Component<Props> {
   fetchStatus = () => {
     API.getIstioStatus()
       .then(response => {
-
         return this.props.setIstioStatus(response.data);
       })
       .catch(error => {
@@ -71,7 +70,7 @@ export class IstioStatus extends React.Component<Props> {
 
     Object.keys(this.props.status || {}).forEach((compKey: string) => {
       const { status, is_core } = this.props.status[compKey];
-      const isHealthy: boolean = status == Status.Healthy;
+      const isHealthy: boolean = status === Status.Healthy;
 
       if (is_core) {
         coreHealthy = coreHealthy && isHealthy;
@@ -85,17 +84,13 @@ export class IstioStatus extends React.Component<Props> {
 
   render() {
     return (
-      <Tooltip
-        position={TooltipPosition.left}
-        enableFlip={true}
-        content={this.tooltipContent()}
-        maxWidth={'25rem'}
-      >
-        <ResourcesFullIcon color={this.tooltipColor()} />
+      <Tooltip position={TooltipPosition.left} enableFlip={true} content={this.tooltipContent()} maxWidth={'25rem'}>
+        <ResourcesFullIcon color={this.tooltipColor()} style={{ verticalAlign: '-0.3em', marginRight: 8 }} />
       </Tooltip>
-    )
+    );
   }
 }
+
 const mapStateToProps = (state: KialiAppState) => ({
   status: istioStatusSelector(state),
   lastRefreshAt: lastRefreshAtSelector(state),
@@ -107,8 +102,8 @@ const mapDispatchToProps = (dispatch: KialiDispatch) => ({
 });
 
 const IstioStatusConnected = connect(
-    mapStateToProps,
-    mapDispatchToProps
+  mapStateToProps,
+  mapDispatchToProps
 )(IstioStatus);
 
 export default IstioStatusConnected;

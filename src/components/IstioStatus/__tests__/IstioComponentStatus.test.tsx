@@ -5,74 +5,70 @@ import { shallowToJson } from 'enzyme-to-json';
 import { shallow } from 'enzyme';
 
 const mockComponent = (cs: ComponentStatus) => {
-  return (
-    shallow(
-      <IstioComponentStatus componentStatus={cs} />
-    )
-  )
+  return shallow(<IstioComponentStatus componentStatus={cs} />);
 };
 
-describe("IstioComponentStatus renders", () => {
-  it("success icon when core component is running", () => {
+describe('IstioComponentStatus renders', () => {
+  it('success icon when core component is running', () => {
     const wrapper = mockComponent({
-      name: "isito-ingress",
+      name: 'isito-ingress',
       status: Status.Healthy,
-      is_core: true,
+      is_core: true
     });
 
     expect(shallowToJson(wrapper)).toBeDefined();
     expect(shallowToJson(wrapper)).toMatchSnapshot();
   });
 
-  it("error icon when core component is not running", () => {
+  it('error icon when core component is not running', () => {
     const wrapper = mockComponent({
-      name: "isito-ingress",
+      name: 'isito-ingress',
       status: Status.Unhealthy,
-      is_core: true,
+      is_core: true
     });
 
     expect(shallowToJson(wrapper)).toBeDefined();
     expect(shallowToJson(wrapper)).toMatchSnapshot();
   });
 
-  it("error icon when core component is not found", () => {
+  it('error icon when core component is not found', () => {
     const wrapper = mockComponent({
-      name: "isito-ingress",
+      name: 'isito-ingress',
       status: Status.NotFound,
-      is_core: true,
+      is_core: true
     });
 
     expect(shallowToJson(wrapper)).toBeDefined();
     expect(shallowToJson(wrapper)).toMatchSnapshot();
   });
 
-  it("success icon when core component is running", () => {
+  it('success icon when core component is running', () => {
     const wrapper = mockComponent({
-      name: "prometheus",
+      name: 'prometheus',
       status: Status.Healthy,
-      is_core: false,
+      is_core: false
     });
 
     expect(shallowToJson(wrapper)).toBeDefined();
     expect(shallowToJson(wrapper)).toMatchSnapshot();
   });
 
-  it("warning icon when core component is not running", () => {
+  it('warning icon when core component is not running', () => {
     const wrapper = mockComponent({
-      name: "prometheus",
+      name: 'prometheus',
       status: Status.Unhealthy,
-      is_core: false,
+      is_core: false
     });
 
     expect(shallowToJson(wrapper)).toBeDefined();
     expect(shallowToJson(wrapper)).toMatchSnapshot();
   });
 
-  it("warning icon when core component is not found", () => {
+  it('warning icon when core component is not found', () => {
     const wrapper = mockComponent({
-      name: "prometheus",
+      name: 'prometheus',
       status: Status.NotFound,
-      is_core: false,
+      is_core: false
     });
 
     expect(shallowToJson(wrapper)).toBeDefined();

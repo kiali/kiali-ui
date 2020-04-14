@@ -7,7 +7,7 @@ import { PfColors } from '../Pf/PfColors';
 
 type Props = {
   status: ComponentStatus[];
-}
+};
 
 class IstioStatusList extends React.Component<Props> {
   coreComponentsStatus = () => {
@@ -20,24 +20,24 @@ class IstioStatusList extends React.Component<Props> {
 
   renderComponentList = () => {
     const groups = {
-      'core': this.coreComponentsStatus,
-      'addon': this.addonComponentsStatus,
+      core: this.coreComponentsStatus,
+      addon: this.addonComponentsStatus
     };
 
     return ['core', 'addon'].map((group: string) => {
       return (
         <>
-          {groups[group]().map((status) => {
-            return <IstioComponentStatus componentStatus={status} />
+          {groups[group]().map(status => {
+            return <IstioComponentStatus componentStatus={status} />;
           })}
         </>
-      )
+      );
     });
   };
 
   render() {
     return (
-      <TextContent style={{color: PfColors.White}}>
+      <TextContent style={{ color: PfColors.White }}>
         <Text component={TextVariants.h4}>Istio Components Status</Text>
         <List id="istio-status" aria-label="Istio Component List">
           {this.renderComponentList()}

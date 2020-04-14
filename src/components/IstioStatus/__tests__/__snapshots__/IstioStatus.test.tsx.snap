@@ -53,6 +53,12 @@ exports[`When addon component has a problem the Icon shows is displayed in orang
     color="var(--pf-global--warning-color--100)"
     noVerticalAlign={false}
     size="sm"
+    style={
+      Object {
+        "marginRight": 8,
+        "verticalAlign": "-0.3em",
+      }
+    }
     title={null}
   />
 </Tooltip>
@@ -111,6 +117,12 @@ exports[`When all components are good the Icon shows is displayed in green 1`] =
     color="#3e8635"
     noVerticalAlign={false}
     size="sm"
+    style={
+      Object {
+        "marginRight": 8,
+        "verticalAlign": "-0.3em",
+      }
+    }
     title={null}
   />
 </Tooltip>
@@ -169,6 +181,12 @@ exports[`When both core and addon component have problems the Icon shows is disp
     color="var(--pf-global--danger-color--100)"
     noVerticalAlign={false}
     size="sm"
+    style={
+      Object {
+        "marginRight": 8,
+        "verticalAlign": "-0.3em",
+      }
+    }
     title={null}
   />
 </Tooltip>
@@ -227,6 +245,12 @@ exports[`When core component has a problem the Icon shows is displayed in Red 1`
     color="var(--pf-global--danger-color--100)"
     noVerticalAlign={false}
     size="sm"
+    style={
+      Object {
+        "marginRight": 8,
+        "verticalAlign": "-0.3em",
+      }
+    }
     title={null}
   />
 </Tooltip>

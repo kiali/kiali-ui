@@ -19,7 +19,6 @@ const mockIcon = (componentList: ComponentStatus[]) => {
 const testSnapshot = (wrapper: any) => {
   expect(shallowToJson(wrapper)).toBeDefined();
   expect(shallowToJson(wrapper)).toMatchSnapshot();
-
 };
 
 const testTooltip = (wrapper: any) => {
@@ -41,41 +40,39 @@ const testIcon = (wrapper: any, color: any) => {
 
 describe('When core component has a problem', () => {
   it('the Icon shows is displayed in Red', () => {
-    const wrapper = mockIcon( [
-        {
-            name: "grafana",
-            status: Status.Healthy,
-            is_core: false,
-        },
-        {
-            name: "istio-egressgateway",
-            status: Status.Unhealthy,
-            is_core: true,
-        },
-      ]
-    );
+    const wrapper = mockIcon([
+      {
+        name: 'grafana',
+        status: Status.Healthy,
+        is_core: false
+      },
+      {
+        name: 'istio-egressgateway',
+        status: Status.Unhealthy,
+        is_core: true
+      }
+    ]);
 
     testSnapshot(wrapper);
     testTooltip(wrapper);
     testIcon(wrapper, PFAlertColor.Danger);
-  })
+  });
 });
 
 describe('When addon component has a problem', () => {
   it('the Icon shows is displayed in orange', () => {
-    const wrapper = mockIcon( [
-        {
-          name: "grafana",
-          status: Status.Unhealthy,
-          is_core: false,
-        },
-        {
-          name: "istio-egressgateway",
-          status: Status.Healthy,
-          is_core: true,
-        },
-      ]
-    );
+    const wrapper = mockIcon([
+      {
+        name: 'grafana',
+        status: Status.Unhealthy,
+        is_core: false
+      },
+      {
+        name: 'istio-egressgateway',
+        status: Status.Healthy,
+        is_core: true
+      }
+    ]);
 
     testSnapshot(wrapper);
     testTooltip(wrapper);
@@ -85,19 +82,18 @@ describe('When addon component has a problem', () => {
 
 describe('When both core and addon component have problems', () => {
   it('the Icon shows is displayed in red', () => {
-    const wrapper = mockIcon( [
-        {
-          name: "grafana",
-          status: Status.Unhealthy,
-          is_core: false,
-        },
-        {
-          name: "istio-egressgateway",
-          status: Status.Unhealthy,
-          is_core: true,
-        },
-      ]
-    );
+    const wrapper = mockIcon([
+      {
+        name: 'grafana',
+        status: Status.Unhealthy,
+        is_core: false
+      },
+      {
+        name: 'istio-egressgateway',
+        status: Status.Unhealthy,
+        is_core: true
+      }
+    ]);
 
     testSnapshot(wrapper);
     testTooltip(wrapper);
@@ -107,19 +103,18 @@ describe('When both core and addon component have problems', () => {
 
 describe('When all components are good', () => {
   it('the Icon shows is displayed in green', () => {
-    const wrapper = mockIcon( [
-        {
-          name: "grafana",
-          status: Status.Healthy,
-          is_core: false,
-        },
-        {
-          name: "istio-egressgateway",
-          status: Status.Healthy,
-          is_core: true,
-        },
-      ]
-    );
+    const wrapper = mockIcon([
+      {
+        name: 'grafana',
+        status: Status.Healthy,
+        is_core: false
+      },
+      {
+        name: 'istio-egressgateway',
+        status: Status.Healthy,
+        is_core: true
+      }
+    ]);
 
     testSnapshot(wrapper);
     testTooltip(wrapper);
