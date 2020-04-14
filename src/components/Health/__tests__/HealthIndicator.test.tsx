@@ -39,7 +39,7 @@ describe('HealthIndicator', () => {
     expect(html).toContain(PFAlertColor.Success);
   });
 
-  it('renders workloads degraded', () => {
+  it('renders workloads undesired', () => {
     const health = new AppHealth(
       [
         { name: 'A', availableReplicas: 1, currentReplicas: 1, desiredReplicas: 10 },
@@ -52,12 +52,12 @@ describe('HealthIndicator', () => {
     // SMALL
     let wrapper = shallow(<HealthIndicator id="svc" health={health} mode={DisplayMode.SMALL} />);
     let html = wrapper.html();
-    expect(html).toContain(PFAlertColor.Warning);
+    expect(html).toContain(PFAlertColor.InfoBackground);
 
     // LARGE
     wrapper = shallow(<HealthIndicator id="svc" health={health} mode={DisplayMode.LARGE} />);
     html = wrapper.html();
-    expect(html).toContain(PFAlertColor.Warning);
+    expect(html).toContain(PFAlertColor.InfoBackground);
     expect(html).toContain('1 / 10');
   });
 

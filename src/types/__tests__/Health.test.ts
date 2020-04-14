@@ -79,7 +79,7 @@ describe('Health', () => {
     );
     expect(health.getGlobalStatus()).toEqual(H.HEALTHY);
   });
-  it('should aggregate degraded workload', () => {
+  it('should aggregate undesired workload', () => {
     const health = new H.AppHealth(
       [
         { availableReplicas: 1, currentReplicas: 1, desiredReplicas: 1, name: 'a' },
@@ -88,7 +88,7 @@ describe('Health', () => {
       { errorRatio: 0, inboundErrorRatio: 0, outboundErrorRatio: 0 },
       { rateInterval: 60, hasSidecar: true }
     );
-    expect(health.getGlobalStatus()).toEqual(H.DEGRADED);
+    expect(health.getGlobalStatus()).toEqual(H.UNDESIRED);
   });
   it('should aggregate failing requests', () => {
     const health = new H.AppHealth(
