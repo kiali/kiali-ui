@@ -205,7 +205,7 @@ const labelActivate = (filters: ActiveFilter[], key: string, value: string) => {
       if (filter.value.includes(':')) {
         const [k, v] = filter.value.split(':');
         if (k === key) {
-          return v.split(',').some(val => value.split(',').some(vl => val.trim() === vl.trim()));
+          return v.split(',').some(val => value.split(',').some(vl => vl.trim().startsWith(val.trim())));
         }
         return false;
       }
