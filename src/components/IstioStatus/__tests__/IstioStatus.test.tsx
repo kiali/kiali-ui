@@ -44,12 +44,12 @@ describe('When core component has a problem', () => {
     const wrapper = mockIcon( [
         {
             name: "grafana",
-            status: Status.Running,
+            status: Status.Healthy,
             is_core: false,
         },
         {
             name: "istio-egressgateway",
-            status: Status.NotRunning,
+            status: Status.Unhealthy,
             is_core: true,
         },
       ]
@@ -66,12 +66,12 @@ describe('When addon component has a problem', () => {
     const wrapper = mockIcon( [
         {
           name: "grafana",
-          status: Status.NotRunning,
+          status: Status.Unhealthy,
           is_core: false,
         },
         {
           name: "istio-egressgateway",
-          status: Status.Running,
+          status: Status.Healthy,
           is_core: true,
         },
       ]
@@ -88,12 +88,12 @@ describe('When both core and addon component have problems', () => {
     const wrapper = mockIcon( [
         {
           name: "grafana",
-          status: Status.NotRunning,
+          status: Status.Unhealthy,
           is_core: false,
         },
         {
           name: "istio-egressgateway",
-          status: Status.NotRunning,
+          status: Status.Unhealthy,
           is_core: true,
         },
       ]
@@ -110,12 +110,12 @@ describe('When all components are good', () => {
     const wrapper = mockIcon( [
         {
           name: "grafana",
-          status: Status.Running,
+          status: Status.Healthy,
           is_core: false,
         },
         {
           name: "istio-egressgateway",
-          status: Status.Running,
+          status: Status.Healthy,
           is_core: true,
         },
       ]

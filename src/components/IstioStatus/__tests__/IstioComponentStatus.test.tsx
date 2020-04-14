@@ -16,7 +16,7 @@ describe("IstioComponentStatus renders", () => {
   it("success icon when core component is running", () => {
     const wrapper = mockComponent({
       name: "isito-ingress",
-      status: Status.Running,
+      status: Status.Healthy,
       is_core: true,
     });
 
@@ -27,7 +27,7 @@ describe("IstioComponentStatus renders", () => {
   it("error icon when core component is not running", () => {
     const wrapper = mockComponent({
       name: "isito-ingress",
-      status: Status.NotRunning,
+      status: Status.Unhealthy,
       is_core: true,
     });
 
@@ -49,7 +49,7 @@ describe("IstioComponentStatus renders", () => {
   it("success icon when core component is running", () => {
     const wrapper = mockComponent({
       name: "prometheus",
-      status: Status.Running,
+      status: Status.Healthy,
       is_core: false,
     });
 
@@ -60,7 +60,7 @@ describe("IstioComponentStatus renders", () => {
   it("warning icon when core component is not running", () => {
     const wrapper = mockComponent({
       name: "prometheus",
-      status: Status.NotRunning,
+      status: Status.Unhealthy,
       is_core: false,
     });
 

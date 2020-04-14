@@ -1,15 +1,11 @@
 export enum Status {
-  Running = 'Running',
-  NotRunning = 'Not Running',
-  NotFound = 'Not Found',
+  Healthy = 'Healthy',
+  Unhealthy = 'Unhealthy',
+  NotFound = 'NotFound',
 }
 
 export interface ComponentStatus {
   name: string;
   status: Status;
   is_core: boolean;
-}
-
-export interface ComponentStatuses {
-  [name: string]: ComponentStatus;
 }

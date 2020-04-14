@@ -39,7 +39,7 @@ export const validToIcon: { [valid: string]: ComponentIcon } = {
 
 class IstioComponentStatus extends React.Component<Props> {
   renderIcon = (status: Status, isCore: boolean) => {
-    const compIcon = validToIcon[`${status == Status.Running}-${isCore}`];
+    const compIcon = validToIcon[`${status == Status.Healthy}-${isCore}`];
     const IconComponent = compIcon.icon;
     return (
       <IconComponent style={{color: compIcon.color}} />

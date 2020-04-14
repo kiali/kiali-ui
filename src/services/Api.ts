@@ -33,7 +33,7 @@ import { ThreeScaleHandler, ThreeScaleInfo, ThreeScaleServiceRule } from '../typ
 import { GrafanaInfo } from '../types/GrafanaInfo';
 import { Span, TracingQuery } from 'types/Tracing';
 import { Iter8ExpDetailsInfo, Iter8Experiment, Iter8Info } from '../types/Iter8';
-import { ComponentStatuses } from '../types/IstioStatus';
+import { ComponentStatus } from '../types/IstioStatus';
 
 export const ANONYMOUS_USER = 'anonymous';
 
@@ -123,7 +123,7 @@ export const getMeshTls = () => {
 };
 
 export const getIstioStatus = () => {
-  return newRequest<ComponentStatuses>(HTTP_VERBS.GET, urls.istioStatus(), {}, {});
+  return newRequest<ComponentStatus[]>(HTTP_VERBS.GET, urls.istioStatus(), {}, {});
 };
 
 export const getNamespaceTls = (namespace: string) => {

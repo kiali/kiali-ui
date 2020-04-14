@@ -8,22 +8,22 @@ it("lists all the components grouped", () => {
   const components: ComponentStatus[] = [
     {
       name: "grafana",
-      status: Status.Running,
+      status: Status.Healthy,
       is_core: false,
     },
     {
       name: "prometheus",
-      status: Status.Running,
+      status: Status.Healthy,
       is_core: false,
     },
     {
       name: "istiod",
-      status: Status.NotRunning,
+      status: Status.Unhealthy,
       is_core: true,
     },
     {
       name: "istio-egressgateway",
-      status: Status.NotRunning,
+      status: Status.Unhealthy,
       is_core: true,
     },
   ];

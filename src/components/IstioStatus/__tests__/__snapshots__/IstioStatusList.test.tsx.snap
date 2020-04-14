@@ -13,7 +13,7 @@ exports[`lists all the components grouped 1`] = `
   >
     Istio Components Status
   </Text>
-  <DataList
+  <List
     aria-label="Istio Component List"
     id="istio-status"
   >
@@ -22,7 +22,7 @@ exports[`lists all the components grouped 1`] = `
         Object {
           "is_core": true,
           "name": "istiod",
-          "status": "Not Running",
+          "status": "Unhealthy",
         }
       }
     />
@@ -31,7 +31,7 @@ exports[`lists all the components grouped 1`] = `
         Object {
           "is_core": true,
           "name": "istio-egressgateway",
-          "status": "Not Running",
+          "status": "Unhealthy",
         }
       }
     />
@@ -40,7 +40,7 @@ exports[`lists all the components grouped 1`] = `
         Object {
           "is_core": false,
           "name": "grafana",
-          "status": "Running",
+          "status": "Healthy",
         }
       }
     />
@@ -49,10 +49,10 @@ exports[`lists all the components grouped 1`] = `
         Object {
           "is_core": false,
           "name": "prometheus",
-          "status": "Running",
+          "status": "Healthy",
         }
       }
     />
-  </DataList>
+  </List>
 </TextContent>
 `;

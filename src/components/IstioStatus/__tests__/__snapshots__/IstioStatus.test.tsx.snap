@@ -13,12 +13,12 @@ exports[`When addon component has a problem the Icon shows is displayed in orang
           Object {
             "is_core": false,
             "name": "grafana",
-            "status": "Not Running",
+            "status": "Unhealthy",
           },
           Object {
             "is_core": true,
             "name": "istio-egressgateway",
-            "status": "Running",
+            "status": "Healthy",
           },
         ]
       }
@@ -42,11 +42,11 @@ exports[`When addon component has a problem the Icon shows is displayed in orang
   id=""
   isAppLauncher={false}
   isContentLeftAligned={false}
-  isVisible={true}
-  maxWidth="18.75rem"
+  isVisible={false}
+  maxWidth="25rem"
   position="left"
   tippyProps={Object {}}
-  trigger="manual"
+  trigger="mouseenter focus"
   zIndex={9999}
 >
   <ResourcesFullIcon
@@ -71,12 +71,12 @@ exports[`When all components are good the Icon shows is displayed in green 1`] =
           Object {
             "is_core": false,
             "name": "grafana",
-            "status": "Running",
+            "status": "Healthy",
           },
           Object {
             "is_core": true,
             "name": "istio-egressgateway",
-            "status": "Running",
+            "status": "Healthy",
           },
         ]
       }
@@ -100,11 +100,11 @@ exports[`When all components are good the Icon shows is displayed in green 1`] =
   id=""
   isAppLauncher={false}
   isContentLeftAligned={false}
-  isVisible={true}
-  maxWidth="18.75rem"
+  isVisible={false}
+  maxWidth="25rem"
   position="left"
   tippyProps={Object {}}
-  trigger="manual"
+  trigger="mouseenter focus"
   zIndex={9999}
 >
   <ResourcesFullIcon
@@ -129,12 +129,12 @@ exports[`When both core and addon component have problems the Icon shows is disp
           Object {
             "is_core": false,
             "name": "grafana",
-            "status": "Not Running",
+            "status": "Unhealthy",
           },
           Object {
             "is_core": true,
             "name": "istio-egressgateway",
-            "status": "Not Running",
+            "status": "Unhealthy",
           },
         ]
       }
@@ -158,11 +158,11 @@ exports[`When both core and addon component have problems the Icon shows is disp
   id=""
   isAppLauncher={false}
   isContentLeftAligned={false}
-  isVisible={true}
-  maxWidth="18.75rem"
+  isVisible={false}
+  maxWidth="25rem"
   position="left"
   tippyProps={Object {}}
-  trigger="manual"
+  trigger="mouseenter focus"
   zIndex={9999}
 >
   <ResourcesFullIcon
@@ -187,12 +187,12 @@ exports[`When core component has a problem the Icon shows is displayed in Red 1`
           Object {
             "is_core": false,
             "name": "grafana",
-            "status": "Running",
+            "status": "Healthy",
           },
           Object {
             "is_core": true,
             "name": "istio-egressgateway",
-            "status": "Not Running",
+            "status": "Unhealthy",
           },
         ]
       }
@@ -216,11 +216,11 @@ exports[`When core component has a problem the Icon shows is displayed in Red 1`
   id=""
   isAppLauncher={false}
   isContentLeftAligned={false}
-  isVisible={true}
-  maxWidth="18.75rem"
+  isVisible={false}
+  maxWidth="25rem"
   position="left"
   tippyProps={Object {}}
-  trigger="manual"
+  trigger="mouseenter focus"
   zIndex={9999}
 >
   <ResourcesFullIcon

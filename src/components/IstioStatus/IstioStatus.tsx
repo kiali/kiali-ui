@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as API from '../../services/Api';
 import * as AlertUtils from '../../utils/AlertUtils';
 import { TimeInMilliseconds } from '../../types/Common';
-import { ComponentStatus, ComponentStatuses, Status } from '../../types/IstioStatus';
+import { ComponentStatus, Status } from '../../types/IstioStatus';
 import { MessageType } from '../../types/MessageCenter';
 import Namespace from '../../types/Namespace';
 import { KialiAppState } from '../../store/Store';
@@ -44,20 +44,11 @@ export class IstioStatus extends React.Component<Props> {
     }
   }
 
-  mapToArray = (s: ComponentStatuses): ComponentStatus[] => {
-    return Object.keys(s).map<ComponentStatus>((k: string) => {
-     return {
-       name: k,
-       is_core: s[k].is_core,
-       status: s[k].status,
-     }
-    });
-  };
-
   fetchStatus = () => {
     API.getIstioStatus()
       .then(response => {
-        return this.props.setIstioStatus(this.mapToArray(response.data));
+
+        return this.props.setIstioStatus(response.data);
       })
       .catch(error => {
         // User without namespaces can't have access to mTLS information. Reduce severity to info.
@@ -80,7 +71,7 @@ export class IstioStatus extends React.Component<Props> {
 
     Object.keys(this.props.status || {}).forEach((compKey: string) => {
       const { status, is_core } = this.props.status[compKey];
-      const isHealthy: boolean = status == Status.Running;
+      const isHealthy: boolean = status == Status.Healthy;
 
       if (is_core) {
         coreHealthy = coreHealthy && isHealthy;
