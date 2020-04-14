@@ -4,7 +4,7 @@ import SourceBuilder from './From/SourceBuilder';
 import SourceList from './From/SourceList';
 import OperationBuilder from './To/OperationBuilder';
 import OperationList from './To/OperationList';
-import ConditionBuilder from './When/ConditionBuilder';
+import ConditionBuilder, { Condition } from './When/ConditionBuilder';
 import ConditionList from './When/ConditionList';
 
 type Props = {};
@@ -14,6 +14,8 @@ type State = {
   addToSwitch: boolean;
   addWhenSwitch: boolean;
   fromList: { [key: string]: string[] }[];
+  toList: { [key: string]: string[] }[];
+  conditionList: Condition[];
 };
 
 class RuleBuilder extends React.Component<Props, State> {
@@ -23,7 +25,9 @@ class RuleBuilder extends React.Component<Props, State> {
       addFromSwitch: false,
       addToSwitch: false,
       addWhenSwitch: false,
-      fromList: []
+      fromList: [],
+      toList: [],
+      conditionList: []
     };
   }
 
@@ -41,6 +45,42 @@ class RuleBuilder extends React.Component<Props, State> {
       prevState.fromList.splice(index, 1);
       return {
         fromList: prevState.fromList
+      };
+    });
+  };
+
+  onAddTo = (operation: { [key: string]: string[] }): void => {
+    this.setState(prevState => {
+      prevState.toList.push(operation);
+      return {
+        toList: prevState.toList
+      };
+    });
+  };
+
+  onRemoveTo = (index: number): void => {
+    this.setState(prevState => {
+      prevState.toList.splice(index, 1);
+      return {
+        toList: prevState.toList
+      };
+    });
+  };
+
+  onAddCondition = (condition: Condition): void => {
+    this.setState(prevState => {
+      prevState.conditionList.push(condition);
+      return {
+        conditionList: prevState.conditionList
+      };
+    });
+  };
+
+  onRemoveCondition = (index: number): void => {
+    this.setState(prevState => {
+      prevState.conditionList.splice(index, 1);
+      return {
+        conditionList: prevState.conditionList
       };
     });
   };
@@ -85,10 +125,14 @@ class RuleBuilder extends React.Component<Props, State> {
           />
         </FormGroup>
         {this.state.addToSwitch && (
-          <FormGroup fieldId="operationBuilder">
-            <OperationBuilder />
-            <OperationList />
-          </FormGroup>
+          <>
+            <FormGroup label="Operation Builder" fieldId="operationBuilder">
+              <OperationBuilder onAddTo={this.onAddTo} />
+            </FormGroup>
+            <FormGroup label="To List" fieldId="operationList">
+              <OperationList toList={this.state.toList} onRemoveTo={this.onRemoveTo} />
+            </FormGroup>
+          </>
         )}
         <FormGroup label="Add When" fieldId="addWhenSwitch">
           <Switch
@@ -104,10 +148,14 @@ class RuleBuilder extends React.Component<Props, State> {
           />
         </FormGroup>
         {this.state.addWhenSwitch && (
-          <FormGroup fieldId="conditionBuilder">
-            <ConditionBuilder />
-            <ConditionList />
-          </FormGroup>
+          <>
+            <FormGroup label="Condition Builder" fieldId="conditionBuilder">
+              <ConditionBuilder onAddCondition={this.onAddCondition} />
+            </FormGroup>
+            <FormGroup label="Condition List" fieldId="conditionList">
+              <ConditionList conditionList={this.state.conditionList} onRemoveCondition={this.onRemoveCondition} />
+            </FormGroup>
+          </>
         )}
         <ActionGroup>
           <Button variant="primary">Add Rule</Button>

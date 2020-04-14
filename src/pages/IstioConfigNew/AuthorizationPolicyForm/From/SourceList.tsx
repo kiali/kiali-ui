@@ -31,11 +31,11 @@ class SourceList extends React.Component<Props, State> {
         key: 'fromSource' + i,
         cells: [
           <>
-            {Object.keys(source).map(field => {
+            {Object.keys(source).map((field, j) => {
               return (
-                <>
+                <div key={'sourceField' + j}>
                   <b>{field}</b>: [{source[field].join(',')}]<br />
-                </>
+                </div>
               );
             })}
           </>,
