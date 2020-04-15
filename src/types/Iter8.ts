@@ -30,7 +30,7 @@ export interface TrafficControl {
   interval: string;
   maxIterations: number;
   maxTrafficPercentage: number;
-  trafficStepSide: number;
+  trafficStepSize: number;
 }
 
 export interface Iter8ExpDetailsInfo {
@@ -75,7 +75,10 @@ export interface Criteria {
   toleranceType: string;
   stopOnFailure: boolean;
 }
-
+export type NameValuePair = {
+  name: string;
+  value: any;
+};
 export interface Iter8MetricsOptions extends MetricsQuery {
   direction: Direction;
   filters?: string[];
@@ -88,6 +91,35 @@ export interface Iter8MetricsOptions extends MetricsQuery {
   baseline?: string;
   candidate?: string;
 }
+
+export interface ExperimentSpec {
+  name: string;
+  namespace: string;
+  service: string;
+  apiversion: string;
+  baseline: string;
+  candidate: string;
+  // canaryVersion: string;
+  trafficControl: TrafficControl;
+  criterias: Criteria[];
+}
+
+export const EmptyExperimentSpec = {
+  name: '',
+  namespace: 'default',
+  apiversion: 'v1',
+  service: '',
+  baseline: '',
+  candidate: '',
+  trafficControl: {
+    algorithm: 'check_and_increment',
+    interval: '30s',
+    maxIterations: 100,
+    maxTrafficPercentage: 50,
+    trafficStepSize: 2
+  },
+  criterias: []
+};
 
 export type Reporter = 'source' | 'destination';
 export type Direction = 'inbound' | 'outbound';

@@ -1,12 +1,9 @@
 import * as React from 'react';
-import { Iter8Info } from '../../../../types/Iter8';
+import { Iter8Info, ExperimentSpec } from '../../../../types/Iter8';
 import { style } from 'typestyle';
 import * as API from '../../../../services/Api';
 import * as AlertUtils from '../../../../utils/AlertUtils';
 import {
-  ActionGroup,
-  Button,
-  ButtonVariant,
   Expandable,
   Form,
   FormGroup,
@@ -14,7 +11,6 @@ import {
   FormSelectOption,
   Grid,
   GridItem,
-  Modal,
   TextInput
 } from '@patternfly/react-core';
 import history from '../../../../app/History';
@@ -25,12 +21,10 @@ import { PromisesRegistry } from '../../../../utils/CancelablePromises';
 import { KialiAppState } from '../../../../store/Store';
 import { activeNamespacesSelector } from '../../../../store/Selectors';
 import { connect } from 'react-redux';
-import { WIZARD_ITER8_INTEGRATION, WIZARD_TITLES } from '../../../../components/IstioWizards/IstioWizardActions';
 
 interface Props {
   activeNamespaces: Namespace[];
-  showWizard: boolean;
-  handler: any;
+  onChange: (experiment: ExperimentSpec) => void;
 }
 
 interface State {
@@ -39,35 +33,10 @@ interface State {
   namespaces: string[];
   services: string[];
   workloads: string[];
+  metricNames: string[];
   showAdvanced: boolean;
   showTrafficStep: boolean;
-}
-
-interface ExperimentSpec {
-  name: string;
-  namespace: string;
-  service: string;
-  apiversion: string;
-  baseline: string;
-  candidate: string;
-  // canaryVersion: string;
-  trafficControl: TrafficControl;
-  criterias: Criteria[];
-}
-
-interface TrafficControl {
-  algorithm: string;
-  interval: string;
-  maxIterations: number;
-  maxTrafficPercentage: number;
-  trafficStepSize: number;
-}
-
-export interface Criteria {
-  metric: string;
-  toleranceType: string;
-  tolerance: number;
-  stopOnFailure: boolean;
+  reloadService: boolean;
 }
 
 // Style constants
@@ -92,7 +61,7 @@ class ExperimentCreatePage extends React.Component<Props, State> {
       },
       experiment: {
         name: '',
-        namespace: 'default',
+        namespace: '',
         apiversion: 'v1',
         service: '',
         baseline: '',
@@ -109,8 +78,10 @@ class ExperimentCreatePage extends React.Component<Props, State> {
       namespaces: [],
       services: [],
       workloads: [],
+      metricNames: [],
       showAdvanced: false,
-      showTrafficStep: true
+      showTrafficStep: true,
+      reloadService: false
     };
   }
 
@@ -118,17 +89,72 @@ class ExperimentCreatePage extends React.Component<Props, State> {
     this.promises.cancelAll();
   }
 
-  fetchServices = () => {
-    if (this.props.activeNamespaces.length === 1) {
-      const ns = this.props.activeNamespaces[0];
+  fetchNamespaces = () => {
+    this.promises.register('namespaces', API.getNamespaces()).then(namespacesResponse => {
+      let allNamespaces = namespacesResponse.data.map(nsInfo => {
+        return nsInfo.name;
+      });
+      this.setState(prevState => {
+        const newExperiment = prevState.experiment;
+        newExperiment.baseline = '';
+        newExperiment.candidate = '';
+        if (this.props.activeNamespaces.length === 1 && prevState.experiment.namespace === '') {
+          newExperiment.namespace = this.props.activeNamespaces[0].name;
+        } else {
+          newExperiment.namespace = allNamespaces[0];
+        }
+
+        return {
+          experiment: newExperiment,
+          namespaces: allNamespaces,
+          reloadService: true
+        };
+      });
+    });
+  };
+
+  fetchMetrics = () => {
+    this.promises
+      .register('iter8Metrics', API.getIter8Metrics())
+      .then(mresponse => {
+        let metricsNames: string[] = ['-- select one ---'];
+        metricsNames = metricsNames.concat(mresponse.data);
+        this.setState(prevState => {
+          return {
+            iter8Info: prevState.iter8Info,
+            experiment: prevState.experiment,
+            reloadService: false,
+            metricNames: metricsNames
+          };
+        });
+      })
+      .catch(metricsError => {
+        if (!metricsError.isCanceled) {
+          AlertUtils.addError('Could not fetch Iter8 Metric  Detail.', metricsError);
+        }
+      });
+  };
+
+  fetchServices = (selectedNS: string) => {
+    let _namespace = '';
+    if (selectedNS != '') {
+      _namespace = selectedNS;
+    } else if (this.state.experiment.namespace != '') {
+      _namespace = this.state.experiment.namespace;
+    } else if (this.props.activeNamespaces.length > 0) {
+      _namespace = this.props.activeNamespaces[0].name;
+    }
+
+    if (_namespace.length > 0) {
+      // const ns = this.props.activeNamespaces[0];
       if (!this.promises.has('servicesByNamespace')) {
         this.promises
-          .register('servicesByNamespace', API.getServices(ns.name))
+          .register('servicesByNamespace', API.getServices(_namespace))
           .then(response => {
             const services: string[] = response.data.services.map(svc => svc.name);
             if (services.length > 0) {
               this.promises
-                .register('firstServiceDetails', API.getServiceDetail(ns.name, services[0], false))
+                .register('firstServiceDetails', API.getServiceDetail(_namespace, services[0], false))
                 .then(responseDetail => {
                   let workloads: string[] = [];
                   if (responseDetail.workloads) {
@@ -146,7 +172,8 @@ class ExperimentCreatePage extends React.Component<Props, State> {
                     return {
                       services: services,
                       workloads: workloads,
-                      experiment: prevState.experiment
+                      experiment: prevState.experiment,
+                      reloadService: false
                     };
                   });
                   this.promises.cancel('firstServiceDetails');
@@ -199,17 +226,14 @@ class ExperimentCreatePage extends React.Component<Props, State> {
   };
 
   componentDidMount() {
-    this.fetchServices();
+    this.fetchNamespaces();
+    this.fetchMetrics();
+    this.fetchServices('');
   }
 
-  componentDidUpdate(prevProps: Props, _prevState: State) {
-    if (
-      this.props.activeNamespaces.length === 1 &&
-      (prevProps.activeNamespaces.length !== 1 ||
-        (prevProps.activeNamespaces.length === 1 && this.props.activeNamespaces[0] !== prevProps.activeNamespaces[0]) ||
-        this.state.services.length === 0)
-    ) {
-      this.fetchServices();
+  componentDidUpdate(_: Props, _prevState: State) {
+    if (this.state.reloadService) {
+      this.fetchServices('');
     }
   }
 
@@ -220,93 +244,91 @@ class ExperimentCreatePage extends React.Component<Props, State> {
 
   // Updates state with modifications of the new/editing handler
   changeExperiment = (field: string, value: string) => {
-    this.setState(prevState => {
-      const newExperiment = prevState.experiment;
-      switch (field) {
-        case 'name':
-          newExperiment.name = value.trim();
-          break;
-        case 'namespace':
-          newExperiment.namespace = value.trim();
-          break;
-        case 'service':
-          newExperiment.service = value.trim();
-          break;
-        case 'algorithm':
-          if (value.trim() === 'check_and_increment') {
-            this.setState({
-              showTrafficStep: true
-            });
-          } else {
-            this.setState({
-              showTrafficStep: false
-            });
-          }
-          newExperiment.trafficControl.algorithm = value.trim();
-          break;
-        case 'baseline':
-          newExperiment.baseline = value.trim();
-          break;
-        case 'candidate':
-          newExperiment.candidate = value.trim();
-          break;
-        case 'kubernets':
-          newExperiment.apiversion = 'v1';
-          break;
-        case 'knative':
-          newExperiment.apiversion = 'serving.knative.dev/v1alpha1';
-          break;
-        case 'metricName':
-          newExperiment.criterias[0].metric = value.trim();
-          break;
-        case 'toleranceType':
-          newExperiment.criterias[0].toleranceType = value.trim();
-          break;
-        case 'interval':
-          newExperiment.trafficControl.interval = value.trim();
-          break;
-        default:
-      }
-      return {
-        experiment: newExperiment
-      };
-    });
+    this.setState(
+      prevState => {
+        let reloadService = prevState.reloadService;
+        const newExperiment = prevState.experiment;
+        switch (field) {
+          case 'name':
+            newExperiment.name = value.trim();
+            break;
+          case 'namespace':
+            newExperiment.namespace = value.trim();
+            reloadService = true;
+            break;
+          case 'service':
+            newExperiment.service = value.trim();
+            break;
+          case 'algorithm':
+            if (value.trim() === 'check_and_increment') {
+              this.setState({
+                showTrafficStep: true
+              });
+            } else {
+              this.setState({
+                showTrafficStep: false
+              });
+            }
+            newExperiment.trafficControl.algorithm = value.trim();
+            break;
+          case 'baseline':
+            newExperiment.baseline = value.trim();
+            break;
+          case 'candidate':
+            newExperiment.candidate = value.trim();
+            break;
+          case 'kubernets':
+            newExperiment.apiversion = 'v1';
+            break;
+          case 'knative':
+            newExperiment.apiversion = 'serving.knative.dev/v1alpha1';
+            break;
+          case 'metricName':
+            newExperiment.criterias[0].metric = value.trim();
+            break;
+          case 'toleranceType':
+            newExperiment.criterias[0].toleranceType = value.trim();
+            break;
+          case 'interval':
+            newExperiment.trafficControl.interval = value.trim();
+            break;
+          default:
+        }
+        return {
+          experiment: newExperiment,
+          reloadService: reloadService
+        };
+      },
+      () => this.props.onChange(this.state.experiment)
+    );
   };
 
   // Updates state with modifications of the new/editing handler
   changeExperimentNumber = (field: string, value: number) => {
-    this.setState(prevState => {
-      const newExperiment = prevState.experiment;
-      switch (field) {
-        case 'maxIteration':
-          newExperiment.trafficControl.maxIterations = value;
-          break;
-        case 'maxTrafficPercentage':
-          newExperiment.trafficControl.maxTrafficPercentage = value;
-          break;
-        case 'trafficStepSize':
-          newExperiment.trafficControl.trafficStepSize = value;
-          break;
-        case 'tolerance':
-          newExperiment.criterias[0].tolerance = value;
-          break;
-        default:
-      }
-      return {
-        experiment: newExperiment
-      };
-    });
-  };
-
-  // It invokes backend to create  a new experiment
-  createExperiment = () => {
-    if (this.props.activeNamespaces.length === 1) {
-      const ns = this.props.activeNamespaces[0];
-      this.promises
-        .register('Create Iter8 Experiment', API.createExperiment(ns.name, JSON.stringify(this.state.experiment)))
-        .then(_ => this.goExperimentsPage())
-        .catch(error => AlertUtils.addError('Could not create Experiment.', error));
-    }
+    this.setState(
+      prevState => {
+        const newExperiment = prevState.experiment;
+        switch (field) {
+          case 'maxIteration':
+            newExperiment.trafficControl.maxIterations = value;
+            break;
+          case 'maxTrafficPercentage':
+            newExperiment.trafficControl.maxTrafficPercentage = value;
+            break;
+          case 'trafficStepSize':
+            newExperiment.trafficControl.trafficStepSize = value;
+            break;
+          case 'tolerance':
+            newExperiment.criterias[0].tolerance = value;
+            break;
+          default:
+        }
+        return {
+          experiment: newExperiment
+        };
+      },
+      () => this.props.onChange(this.state.experiment)
+    );
   };
 
   isMainFormValid = (): boolean => {
@@ -329,295 +351,255 @@ class ExperimentCreatePage extends React.Component<Props, State> {
     return this.state.experiment.criterias.length > 0;
   };
 
-  onClose = () => {
-    this.props.handler(false);
-  };
-
   render() {
     const isNamespacesValid = this.props.activeNamespaces.length === 1;
-    const isFormValid = this.isMainFormValid() && this.isTCFormValid() && this.isSCFormValid();
+
+    // const isFormValid = this.isMainFormValid() && this.isTCFormValid() && this.isSCFormValid();
     // @ts-ignore
     return (
       <>
-        <Modal
-          width={'75%'}
-          title={WIZARD_TITLES[WIZARD_ITER8_INTEGRATION]}
-          isOpen={this.props.showWizard}
-          onClose={() => this.onClose()}
-          actions={[
-            <Button key="create" variant="secondary" onClick={() => this.onClose()}>
-              Cancel
-            </Button>,
-            <Button key="confirm" variant="primary" onClick={() => this.createExperiment()}>
-              {'Create'}
-            </Button>
-          ]}
-        >
-          <RenderContent>
-            <div className={containerPadding}>
-              <Form isHorizontal={true}>
-                <FormGroup
-                  fieldId="name"
-                  label="Experiment Name"
-                  isRequired={true}
-                  isValid={this.state.experiment.name !== ''}
-                  helperTextInvalid="Name cannot be empty"
-                >
-                  <TextInput
-                    id="name"
-                    value={this.state.experiment.name}
-                    placeholder="Experiment Name"
-                    onChange={value => this.changeExperiment('name', value)}
-                  />
-                </FormGroup>
+        <RenderContent>
+          <div className={containerPadding}>
+            <Form isHorizontal={true}>
+              <FormGroup
+                fieldId="name"
+                label="Experiment Name"
+                isRequired={true}
+                isValid={this.state.experiment.name !== ''}
+                helperTextInvalid="Name cannot be empty"
+              >
+                <TextInput
+                  id="name"
+                  value={this.state.experiment.name}
+                  placeholder="Experiment Name"
+                  onChange={value => this.changeExperiment('name', value)}
+                />
+              </FormGroup>
 
+              <Grid gutter="md">
+                <GridItem span={6}>
+                  <FormGroup
+                    fieldId="service"
+                    label="Target Service"
+                    isRequired={true}
+                    isValid={this.state.experiment.service !== ''}
+                    helperText="Target Service specifies the reference to experiment targets (i.e. reviews)"
+                    helperTextInvalid="Target Service cannot be empty"
+                  >
+                    <FormSelect
+                      id="service"
+                      value={this.state.experiment.service}
+                      placeholder="Target Service"
+                      onChange={value => {
+                        this.changeExperiment('service', value);
+                        const ns = this.state.experiment.namespace;
+                        this.fetchWorkloads(ns, value);
+                      }}
+                    >
+                      {this.state.services.map((svc, index) => (
+                        <FormSelectOption label={svc} key={'service' + index} value={svc} />
+                      ))}
+                    </FormSelect>
+                  </FormGroup>
+                </GridItem>
+                <GridItem span={6}>
+                  <FormGroup
+                    label="Namespaces"
+                    isRequired={true}
+                    fieldId="namespaces"
+                    helperText={'Select namespace where this configuration will be applied'}
+                    isValid={isNamespacesValid}
+                  >
+                    <FormSelect
+                      id="namespaces"
+                      value={this.state.experiment.namespace}
+                      placeholder="Namespace"
+                      onChange={value => {
+                        this.changeExperiment('namespace', value);
+                        this.fetchServices(value);
+                      }}
+                    >
+                      {this.state.namespaces.map((svc, index) => (
+                        <FormSelectOption label={svc} key={'namespace' + index} value={svc} />
+                      ))}
+                    </FormSelect>
+                  </FormGroup>
+                </GridItem>
+              </Grid>
+              <Grid gutter="md">
+                <GridItem span={6}>
+                  <FormGroup
+                    fieldId="baseline"
+                    label="Baseline"
+                    isRequired={true}
+                    isValid={this.state.experiment.baseline !== ''}
+                    helperText="The baseline deployment of the target service (i.e. reviews-v1)"
+                    helperTextInvalid="Baseline deployment cannot be empty"
+                  >
+                    <FormSelect
+                      id="baseline"
+                      value={this.state.experiment.baseline}
+                      placeholder="Baseline Deployment"
+                      onChange={value => this.changeExperiment('baseline', value)}
+                    >
+                      {this.state.workloads.map((wk, index) => (
+                        <FormSelectOption label={wk} key={'workloadBaseline' + index} value={wk} />
+                      ))}
+                    </FormSelect>
+                  </FormGroup>
+                </GridItem>
+                <GridItem span={6}>
+                  <FormGroup
+                    fieldId="candidate"
+                    label="Candidate"
+                    isRequired={true}
+                    isValid={this.state.experiment.candidate !== ''}
+                    helperText="The candidate deployment of the target service (i.e. reviews-v2)"
+                    helperTextInvalid="Candidate deployment cannot be empty"
+                  >
+                    <FormSelect
+                      id="candidate"
+                      value={this.state.experiment.candidate}
+                      placeholder="Candidate Deployment"
+                      onChange={value => this.changeExperiment('candidate', value)}
+                    >
+                      {this.state.workloads.map((wk, index) => (
+                        <FormSelectOption label={wk} key={'workloadCandidate' + index} value={wk} />
+                      ))}
+                    </FormSelect>
+                  </FormGroup>
+                </GridItem>
+              </Grid>
+              <hr />
+              <h1 className="pf-c-title pf-m-xl">Assessment Criteria</h1>
+              <ExperimentCriteriaForm
+                criterias={this.state.experiment.criterias}
+                metricNames={this.state.metricNames}
+                onAdd={newCriteria => {
+                  this.setState(prevState => {
+                    prevState.experiment.criterias.push(newCriteria);
+                    return {
+                      iter8Info: prevState.iter8Info,
+                      experiment: {
+                        name: prevState.experiment.name,
+                        namespace: prevState.experiment.namespace,
+                        service: prevState.experiment.service,
+                        apiversion: prevState.experiment.apiversion,
+                        baseline: prevState.experiment.baseline,
+                        candidate: prevState.experiment.candidate,
+                        trafficControl: prevState.experiment.trafficControl,
+                        criterias: prevState.experiment.criterias
+                      }
+                    };
+                  });
+                }}
+                onRemove={index => {
+                  this.setState(prevState => {
+                    prevState.experiment.criterias.splice(index, 1);
+                    return {
+                      iter8Info: prevState.iter8Info,
+                      experiment: {
+                        name: prevState.experiment.name,
+                        namespace: prevState.experiment.namespace,
+                        service: prevState.experiment.service,
+                        apiversion: prevState.experiment.apiversion,
+                        baseline: prevState.experiment.baseline,
+                        candidate: prevState.experiment.candidate,
+                        trafficControl: prevState.experiment.trafficControl,
+                        criterias: prevState.experiment.criterias
+                      }
+                    };
+                  });
+                }}
+              />
+              <hr />
+              <Expandable
+                toggleText={(this.state.showAdvanced ? 'Hide' : 'Show') + ' Advanced Options'}
+                isExpanded={this.state.showAdvanced}
+                onToggle={() => {
+                  this.setState({
+                    showAdvanced: !this.state.showAdvanced
+                  });
+                }}
+              >
+                <h1 className="pf-c-title pf-m-xl">Traffic Control</h1>
                 <Grid gutter="md">
                   <GridItem span={6}>
                     <FormGroup
-                      fieldId="service"
-                      label="Target Service"
-                      isRequired={true}
-                      isValid={this.state.experiment.service !== ''}
-                      helperText="Target Service specifies the reference to experiment targets (i.e. reviews)"
-                      helperTextInvalid="Target Service cannot be empty"
+                      fieldId="interval"
+                      label="Interval"
+                      isValid={this.state.experiment.trafficControl.interval !== ''}
+                      helperText="Frequency with which the controller calls the analytics service"
+                      helperTextInvalid="Interval cannot be empty"
                     >
-                      <FormSelect
-                        id="service"
-                        value={this.state.experiment.service}
-                        placeholder="Target Service"
-                        onChange={value => {
-                          this.changeExperiment('service', value);
-                          if (this.props.activeNamespaces.length === 1) {
-                            const ns = this.props.activeNamespaces[0].name;
-                            this.fetchWorkloads(ns, value);
-                          }
-                        }}
-                      >
-                        {this.state.services.map((svc, index) => (
-                          <FormSelectOption label={svc} key={'service' + index} value={svc} />
-                        ))}
-                      </FormSelect>
+                      <TextInput
+                        id="interval"
+                        value={this.state.experiment.trafficControl.interval}
+                        placeholder="Time interval i.e. 30s"
+                        onChange={value => this.changeExperiment('interval', value)}
+                      />
                     </FormGroup>
                   </GridItem>
                   <GridItem span={6}>
                     <FormGroup
-                      label="Namespaces"
-                      isRequired={true}
-                      fieldId="namespaces"
-                      helperText={'Select namespace where this configuration will be applied'}
-                      helperTextInvalid={'Only one namespace should be selected'}
-                      isValid={isNamespacesValid}
+                      fieldId="maxIteration"
+                      label="Maximum Iteration"
+                      isValid={this.state.experiment.trafficControl.maxIterations > 0}
+                      helperText="Maximum number of iterations for this experiment"
+                      helperTextInvalid="Maximun Iteration cannot be empty"
                     >
                       <TextInput
-                        value={this.props.activeNamespaces.map(n => n.name).join(',')}
-                        isRequired={true}
-                        type="text"
-                        id="namespaces"
-                        aria-describedby="namespaces"
-                        name="namespaces"
-                        isDisabled={true}
-                        isValid={isNamespacesValid}
+                        id="maxIteration"
+                        type="number"
+                        value={this.state.experiment.trafficControl.maxIterations}
+                        placeholder="Maximum Iteration"
+                        onChange={value => this.changeExperimentNumber('maxIteration', Number(value))}
                       />
                     </FormGroup>
                   </GridItem>
                 </Grid>
+
                 <Grid gutter="md">
                   <GridItem span={6}>
                     <FormGroup
-                      fieldId="baseline"
-                      label="Baseline"
-                      isRequired={true}
-                      isValid={this.state.experiment.baseline !== ''}
-                      helperText="The baseline deployment of the target service (i.e. reviews-v1)"
-                      helperTextInvalid="Baseline deployment cannot be empty"
+                      fieldId="algorithm"
+                      label="Algorithm"
+                      helperText="Strategy used to analyze the candidate and shift the traffic"
                     >
                       <FormSelect
-                        id="baseline"
-                        value={this.state.experiment.baseline}
-                        placeholder="Baseline Deployment"
-                        onChange={value => this.changeExperiment('baseline', value)}
+                        value={this.state.experiment.trafficControl.algorithm}
+                        id="algorithm"
+                        name="Algorithm"
+                        onChange={value => this.changeExperiment('algorithm', value)}
                       >
-                        {this.state.workloads.map((wk, index) => (
-                          <FormSelectOption label={wk} key={'workloadBaseline' + index} value={wk} />
+                        {algorithms.map((option, index) => (
+                          <FormSelectOption isDisabled={false} key={'p' + index} value={option} label={option} />
                         ))}
                       </FormSelect>
                     </FormGroup>
                   </GridItem>
                   <GridItem span={6}>
                     <FormGroup
-                      fieldId="candidate"
-                      label="Candidate"
-                      isRequired={true}
-                      isValid={this.state.experiment.candidate !== ''}
-                      helperText="The candidate deployment of the target service (i.e. reviews-v2)"
-                      helperTextInvalid="Candidate deployment cannot be empty"
+                      style={this.state.showTrafficStep ? {} : { display: 'none' }}
+                      fieldId="trafficStepSize"
+                      label="Traffic Step Size"
+                      isValid={this.state.experiment.trafficControl.trafficStepSize > 0}
+                      helperText="The maximum traffic increment per iteration"
+                      helperTextInvalid="Traffic Step Size must be > 0"
                     >
-                      <FormSelect
-                        id="candidate"
-                        value={this.state.experiment.candidate}
-                        placeholder="Candidate Deployment"
-                        onChange={value => this.changeExperiment('candidate', value)}
-                      >
-                        {this.state.workloads.map((wk, index) => (
-                          <FormSelectOption label={wk} key={'workloadCandidate' + index} value={wk} />
-                        ))}
-                      </FormSelect>
+                      <TextInput
+                        id="trafficStepSize"
+                        value={this.state.experiment.trafficControl.trafficStepSize}
+                        placeholder="Traffic Step Size"
+                        onChange={value => this.changeExperimentNumber('trafficStepSize', parseFloat(value))}
+                      />
                     </FormGroup>
                   </GridItem>
                 </Grid>
-                <hr />
-                <h1 className="pf-c-title pf-m-xl">Assessment Criteria</h1>
-                <ExperimentCriteriaForm
-                  criterias={this.state.experiment.criterias}
-                  onAdd={newCriteria => {
-                    this.setState(prevState => {
-                      prevState.experiment.criterias.push(newCriteria);
-                      return {
-                        iter8Info: prevState.iter8Info,
-                        experiment: {
-                          name: prevState.experiment.name,
-                          namespace: prevState.experiment.namespace,
-                          service: prevState.experiment.service,
-                          apiversion: prevState.experiment.apiversion,
-                          baseline: prevState.experiment.baseline,
-                          candidate: prevState.experiment.candidate,
-                          trafficControl: prevState.experiment.trafficControl,
-                          criterias: prevState.experiment.criterias
-                        }
-                      };
-                    });
-                  }}
-                  onRemove={index => {
-                    this.setState(prevState => {
-                      prevState.experiment.criterias.splice(index, 1);
-                      return {
-                        iter8Info: prevState.iter8Info,
-                        experiment: {
-                          name: prevState.experiment.name,
-                          namespace: prevState.experiment.namespace,
-                          service: prevState.experiment.service,
-                          apiversion: prevState.experiment.apiversion,
-                          baseline: prevState.experiment.baseline,
-                          candidate: prevState.experiment.candidate,
-                          trafficControl: prevState.experiment.trafficControl,
-                          criterias: prevState.experiment.criterias
-                        }
-                      };
-                    });
-                  }}
-                />
-                <hr />
-                <Expandable
-                  toggleText={(this.state.showAdvanced ? 'Hide' : 'Show') + ' Advanced Options'}
-                  isExpanded={this.state.showAdvanced}
-                  onToggle={() => {
-                    this.setState({
-                      showAdvanced: !this.state.showAdvanced
-                    });
-                  }}
-                >
-                  <h1 className="pf-c-title pf-m-xl">Traffic Control</h1>
-                  <Grid gutter="md">
-                    <GridItem span={6}>
-                      <FormGroup
-                        fieldId="interval"
-                        label="Interval"
-                        isValid={this.state.experiment.trafficControl.interval !== ''}
-                        helperText="Frequency with which the controller calls the analytics service"
-                        helperTextInvalid="Interval cannot be empty"
-                      >
-                        <TextInput
-                          id="interval"
-                          value={this.state.experiment.trafficControl.interval}
-                          placeholder="Time interval i.e. 30s"
-                          onChange={value => this.changeExperiment('interval', value)}
-                        />
-                      </FormGroup>
-                    </GridItem>
-                    <GridItem span={6}>
-                      <FormGroup
-                        fieldId="maxIteration"
-                        label="Maximum Iteration"
-                        isValid={this.state.experiment.trafficControl.maxIterations > 0}
-                        helperText="Maximum number of iterations for this experiment"
-                        helperTextInvalid="Maximun Iteration cannot be empty"
-                      >
-                        <TextInput
-                          id="maxIteration"
-                          type="number"
-                          value={this.state.experiment.trafficControl.maxIterations}
-                          placeholder="Maximum Iteration"
-                          onChange={value => this.changeExperimentNumber('maxIteration', Number(value))}
-                        />
-                      </FormGroup>
-                    </GridItem>
-                  </Grid>
-
-                  <Grid gutter="md">
-                    <GridItem span={6}>
-                      <FormGroup
-                        fieldId="algorithm"
-                        label="Algorithm"
-                        helperText="Strategy used to analyze the candidate and shift the traffic"
-                      >
-                        <FormSelect
-                          value={this.state.experiment.trafficControl.algorithm}
-                          id="algorithm"
-                          name="Algorithm"
-                          onChange={value => this.changeExperiment('algorithm', value)}
-                        >
-                          {algorithms.map((option, index) => (
-                            <FormSelectOption isDisabled={false} key={'p' + index} value={option} label={option} />
-                          ))}
-                        </FormSelect>
-                      </FormGroup>
-                    </GridItem>
-                    <GridItem span={6}>
-                      <FormGroup
-                        style={this.state.showTrafficStep ? {} : { display: 'none' }}
-                        fieldId="trafficStepSize"
-                        label="Traffic Step Size"
-                        isValid={this.state.experiment.trafficControl.trafficStepSize > 0}
-                        helperText="The maximum traffic increment per iteration"
-                        helperTextInvalid="Traffic Step Size must be > 0"
-                      >
-                        <TextInput
-                          id="trafficStepSize"
-                          value={this.state.experiment.trafficControl.trafficStepSize}
-                          placeholder="Traffic Step Size"
-                          onChange={value => this.changeExperimentNumber('trafficStepSize', parseFloat(value))}
-                        />
-                      </FormGroup>
-                    </GridItem>
-                  </Grid>
-                </Expandable>
-                <ActionGroup>
-                  <span style={{ float: 'right' }}>
-                    <span style={{ paddingRight: '5px' }}>
-                      <Button
-                        variant={ButtonVariant.primary}
-                        isDisabled={!isFormValid}
-                        onClick={() => this.createExperiment()}
-                      >
-                        Create
-                      </Button>
-                    </span>
-                    <span style={{ paddingRight: '5px' }}>
-                      <Button
-                        variant={ButtonVariant.secondary}
-                        onClick={() => {
-                          this.goExperimentsPage();
-                        }}
-                      >
-                        Cancel
-                      </Button>
-                    </span>
-                  </span>
-                </ActionGroup>
-              </Form>
-            </div>
-          </RenderContent>
-        </Modal>
+              </Expandable>
+            </Form>
+          </div>
+        </RenderContent>
       </>
     );
   }

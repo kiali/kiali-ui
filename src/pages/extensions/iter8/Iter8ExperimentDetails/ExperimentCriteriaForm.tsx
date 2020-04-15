@@ -1,9 +1,10 @@
 import { cellWidth, ICell, Table, TableBody, TableHeader } from '@patternfly/react-table';
-import { Criteria } from './ExperimentCreatePage';
+import { Criteria, NameValuePair } from '../../../../types/Iter8';
 import * as React from 'react';
 import { Button, FormSelect, FormSelectOption, TextInput, Checkbox } from '@patternfly/react-core';
 import { style } from 'typestyle';
 import { PfColors } from '../../../../components/Pf/PfColors';
+
 const headerCells: ICell[] = [
   {
     title: 'Metric Name',
@@ -30,8 +31,17 @@ const headerCells: ICell[] = [
   }
 ];
 
-const metrics = ['', 'iter8_latency', 'iter8_error_count', 'iter8_error_rate'];
-const toleranceType = ['absolute', 'relative'];
+// const metrics = ['', 'iter8_latency', 'iter8_error_count', 'iter8_error_rate'];
+const toleranceType: NameValuePair[] = [
+  {
+    name: 'threshold',
+    value: 'absolute'
+  },
+  {
+    name: 'relative',
+    value: 'delta'
+  }
+];
 
 const noCriteriaStyle = style({
   marginTop: 15,
@@ -40,6 +50,7 @@ const noCriteriaStyle = style({
 
 type Props = {
   criterias: Criteria[];
+  metricNames: string[];
   onAdd: (server: Criteria) => void;
   onRemove: (index: number) => void;
 };
@@ -83,7 +94,7 @@ class ExperimentCriteriaForm extends React.Component<Props, State> {
     return [];
   };
 
-  onAddMetricName = (value: string, _) => {
+  onAddMetricName = (value: string) => {
     this.setState(prevState => ({
       addCriteria: {
         metric: value.trim(),
@@ -172,7 +183,7 @@ class ExperimentCriteriaForm extends React.Component<Props, State> {
                 name="addMetricName"
                 onChange={this.onAddMetricName}
               >
-                {metrics.map((option, index) => (
+                {this.props.metricNames.map((option, index) => (
                   <FormSelectOption isDisabled={false} key={'p' + index} value={option} label={option} />
                 ))}
               </FormSelect>
@@ -196,7 +207,7 @@ class ExperimentCriteriaForm extends React.Component<Props, State> {
                 onChange={this.onAddToleranceType}
               >
                 {toleranceType.map((option, index) => (
-                  <FormSelectOption isDisabled={false} key={'p' + index} value={option} label={option} />
+                  <FormSelectOption isDisabled={false} key={'p' + index} value={option.name} label={option.value} />
                 ))}
               </FormSelect>
             </>,

@@ -181,7 +181,7 @@ class ExperimentDetailsPage extends React.Component<RouteComponentProps<Props>, 
             </StackItem>
             <StackItem id={'trafficStepSide'}>
               <Text component={TextVariants.h3}> Traffic Step Side </Text>
-              {this.state.experiment ? this.state.experiment.trafficControl.trafficStepSide : ''}
+              {this.state.experiment ? this.state.experiment.trafficControl.trafficStepSize : ''}
             </StackItem>
           </Stack>
         </CardBody>
