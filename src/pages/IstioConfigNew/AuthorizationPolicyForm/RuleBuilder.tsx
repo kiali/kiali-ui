@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ActionGroup, Button, FormGroup, Switch } from '@patternfly/react-core';
+import { Button, FormGroup, Switch } from '@patternfly/react-core';
 import SourceBuilder from './From/SourceBuilder';
 import SourceList from './From/SourceList';
 import OperationBuilder from './To/OperationBuilder';
@@ -7,7 +7,15 @@ import OperationList from './To/OperationList';
 import ConditionBuilder, { Condition } from './When/ConditionBuilder';
 import ConditionList from './When/ConditionList';
 
-type Props = {};
+type Props = {
+  onAddRule: (rule: Rule) => void;
+};
+
+export type Rule = {
+  from: { [key: string]: string[] }[];
+  to: { [key: string]: string[] }[];
+  when: Condition[];
+};
 
 type State = {
   addFromSwitch: boolean;
@@ -152,14 +160,14 @@ class RuleBuilder extends React.Component<Props, State> {
             <FormGroup label="Condition Builder" fieldId="conditionBuilder">
               <ConditionBuilder onAddCondition={this.onAddCondition} />
             </FormGroup>
-            <FormGroup label="Condition List" fieldId="conditionList">
+            <FormGroup label="When List" fieldId="conditionList">
               <ConditionList conditionList={this.state.conditionList} onRemoveCondition={this.onRemoveCondition} />
             </FormGroup>
           </>
         )}
-        <ActionGroup>
-          <Button variant="primary">Add Rule</Button>
-        </ActionGroup>
+        <FormGroup fieldId="addRule">
+          <Button variant="secondary">Add Rule</Button>
+        </FormGroup>
       </>
     );
   }

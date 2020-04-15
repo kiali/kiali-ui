@@ -16,7 +16,10 @@ import * as AlertUtils from '../../utils/AlertUtils';
 import history from '../../app/History';
 import { buildGateway, buildSidecar } from '../../components/IstioWizards/IstioWizardActions';
 import { MessageType } from '../../types/MessageCenter';
-import AuthorizationPolicyForm from './AuthorizationPolicyForm';
+import AuthorizationPolicyForm, {
+  AuthorizationPolicyState,
+  INIT_AUTHORIZATION_POLICY
+} from './AuthorizationPolicyForm';
 
 type Props = {
   activeNamespaces: Namespace[];
@@ -26,6 +29,7 @@ type State = {
   istioResource: string;
   name: string;
   istioPermissions: IstioPermissions;
+  authorizationPolicy: AuthorizationPolicyState;
   gateway: GatewayState;
   sidecar: SidecarState;
 };
@@ -60,6 +64,7 @@ class IstioConfigNewPage extends React.Component<Props, State> {
       istioResource: istioResourceOptions[0].value,
       name: '',
       istioPermissions: {},
+      authorizationPolicy: INIT_AUTHORIZATION_POLICY,
       gateway: {
         gatewayServers: []
       },
@@ -213,6 +218,18 @@ class IstioConfigNewPage extends React.Component<Props, State> {
     );
   };
 
+  onChangeAuthorizationPolicy = (authorizationPolicy: AuthorizationPolicyState) => {
+    this.setState(prevState => {
+      prevState.authorizationPolicy.workloadSelector = authorizationPolicy.workloadSelector;
+      prevState.authorizationPolicy.action = authorizationPolicy.action;
+      prevState.authorizationPolicy.policy = authorizationPolicy.policy;
+      prevState.authorizationPolicy.rules = authorizationPolicy.rules;
+      return {
+        authorizationPolicy: prevState.authorizationPolicy
+      };
+    });
+  };
+
   render() {
     const isNameValid = this.state.name.length > 0;
     const isNamespacesValid = this.props.activeNamespaces.length > 0;
@@ -273,7 +290,12 @@ class IstioConfigNewPage extends React.Component<Props, State> {
               isValid={isNamespacesValid}
             />
           </FormGroup>
-          {this.state.istioResource === AUTHORIZACION_POLICY && <AuthorizationPolicyForm />}
+          {this.state.istioResource === AUTHORIZACION_POLICY && (
+            <AuthorizationPolicyForm
+              authorizationPolicy={this.state.authorizationPolicy}
+              onChange={this.onChangeAuthorizationPolicy}
+            />
+          )}
           {this.state.istioResource === GATEWAY && (
             <GatewayForm
               gatewayServers={this.state.gateway.gatewayServers}

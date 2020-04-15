@@ -142,7 +142,7 @@ class ConditionBuilder extends React.Component<Props, State> {
           isDisabled={this.state.condition.key.length === 0}
           onClick={this.onAddConditionToList}
         >
-          Add Condition to Condition List
+          Add Condition to When List
         </Button>
       </>
     );

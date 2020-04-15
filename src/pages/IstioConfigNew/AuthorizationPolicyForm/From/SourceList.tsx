@@ -10,7 +10,7 @@ type State = {};
 
 const headerCells: ICell[] = [
   {
-    title: 'Source Matches',
+    title: 'Source Matches of a Request',
     transforms: [cellWidth(100) as any],
     props: {}
   },
@@ -33,7 +33,7 @@ class SourceList extends React.Component<Props, State> {
           <>
             {Object.keys(source).map((field, j) => {
               return (
-                <div key={'sourceField' + j}>
+                <div key={'sourceField_' + field + '_' + i + '_' + j}>
                   <b>{field}</b>: [{source[field].join(',')}]<br />
                 </div>
               );

@@ -33,7 +33,7 @@ class OperationList extends React.Component<Props, State> {
           <>
             {Object.keys(operation).map((field, j) => {
               return (
-                <div key={'operationField' + j}>
+                <div key={'operationField_' + i + '_' + j}>
                   <b>{field}</b>: [{operation[field].join(',')}]<br />
                 </div>
               );

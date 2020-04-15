@@ -1,9 +1,19 @@
 import * as React from 'react';
 import { FormGroup, FormSelect, FormSelectOption, Switch, TextInput } from '@patternfly/react-core';
-import RuleBuilder from './AuthorizationPolicyForm/RuleBuilder';
+import RuleBuilder, { Rule } from './AuthorizationPolicyForm/RuleBuilder';
 import RuleList from './AuthorizationPolicyForm/RuleList';
 
-type Props = {};
+type Props = {
+  authorizationPolicy: AuthorizationPolicyState;
+  onChange: (authorizationPolicy: AuthorizationPolicyState) => void;
+};
+
+export type AuthorizationPolicyState = {
+  policy: string;
+  workloadSelector: string;
+  action: string;
+  rules: Rule[];
+};
 
 type State = {
   // Used to identify DENY_ALL, ALLOW_ALL or RULES
@@ -12,6 +22,7 @@ type State = {
   workloadSelectorValid: boolean;
   workloadSelectorLabels: string;
   action: string;
+  rules: Rule[];
 };
 
 const DENY_ALL = 'DENY_ALL';
@@ -29,15 +40,23 @@ const HELPER_TEXT = {
 const rulesFormValues = [DENY_ALL, ALLOW_ALL, RULES];
 const actions = [ALLOW, DENY];
 
+export const INIT_AUTHORIZATION_POLICY: AuthorizationPolicyState = {
+  policy: DENY_ALL,
+  workloadSelector: '',
+  action: ALLOW,
+  rules: []
+};
+
 class AuthorizationPolicyForm extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      rulesForm: DENY_ALL,
+      rulesForm: this.props.authorizationPolicy.policy,
       addWorkloadSelector: false,
       workloadSelectorValid: false,
-      workloadSelectorLabels: '',
-      action: ALLOW
+      workloadSelectorLabels: this.props.authorizationPolicy.workloadSelector,
+      action: this.props.authorizationPolicy.action,
+      rules: []
     };
   }
 
@@ -84,6 +103,24 @@ class AuthorizationPolicyForm extends React.Component<Props, State> {
   onActionChange = (value, _) => {
     this.setState({
       action: value
+    });
+  };
+
+  onAddRule = (rule: Rule) => {
+    this.setState(prevState => {
+      prevState.rules.push(rule);
+      return {
+        rules: prevState.rules
+      };
+    });
+  };
+
+  onRemoveRule = (index: number) => {
+    this.setState(prevState => {
+      prevState.rules.splice(index, 1);
+      return {
+        rules: prevState.rules
+      };
     });
   };
 
@@ -139,8 +176,8 @@ class AuthorizationPolicyForm extends React.Component<Props, State> {
             </FormSelect>
           </FormGroup>
         )}
-        {this.state.rulesForm === RULES && <RuleBuilder />}
-        {this.state.rulesForm === RULES && <RuleList />}
+        {this.state.rulesForm === RULES && <RuleBuilder onAddRule={this.onAddRule} />}
+        {this.state.rulesForm === RULES && <RuleList ruleList={this.state.rules} onRemoveRule={this.onRemoveRule} />}
       </>
     );
   }
