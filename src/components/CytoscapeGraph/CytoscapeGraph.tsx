@@ -73,6 +73,7 @@ type CytoscapeGraphState = {
   isError: boolean;
   isLoading: boolean;
   node?: NodeParamsType;
+  timestamp: TimeInSeconds;
 };
 
 type Position = {
@@ -124,7 +125,8 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
 
     this.state = {
       isLoading: false,
-      isError: false
+      isError: false,
+      timestamp: 0
     };
   }
 
@@ -141,7 +143,8 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
     this.setState({
       elements: this.props.dataSource.graphData,
       isLoading: this.props.dataSource.isLoading,
-      isError: this.props.dataSource.isError
+      isError: this.props.dataSource.isError,
+      timestamp: this.props.dataSource.graphTimestamp
     });
   }
 
@@ -175,6 +178,11 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
   componentDidUpdate(prevProps: CytoscapeGraphProps, prevState: CytoscapeGraphState) {
     const cy = this.getCy();
     if (!cy) {
+      return;
+    }
+
+    // Skip processGraphUpdate when we are actively refreshing
+    if (this.state.isLoading) {
       return;
     }
 
@@ -217,7 +225,7 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
     }
 
     if (this.props.updateGraph) {
-      this.props.updateGraph({ updateTimestamp: Date.now(), cyRef: cy });
+      this.props.updateGraph({ updateTimestamp: this.state.timestamp, cyRef: cy });
     }
   }
 
@@ -280,7 +288,7 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
   };
 
   private fetchSuccessHandler = (
-    _graphTimestamp: TimeInSeconds,
+    graphTimestamp: TimeInSeconds,
     _graphDuration: DurationInSeconds,
     graphData: DecoratedGraphElements
   ) => {
@@ -288,7 +296,8 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
       elements: graphData,
       node: this.props.dataSource.fetchParameters.node,
       isError: this.props.dataSource.isError,
-      isLoading: this.props.dataSource.isLoading
+      isLoading: this.props.dataSource.isLoading,
+      timestamp: graphTimestamp
     });
   };
 
