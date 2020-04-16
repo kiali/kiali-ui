@@ -10,6 +10,7 @@ import RefreshButtonContainer from '../../../components/Refresh/RefreshButton';
 import { RenderComponentScroll } from '../../../components/Nav/Page';
 import { retrieveDuration } from 'components/Time/TimeRangeHelper';
 import TimeRangeComponent from 'components/Time/TimeRangeComponent';
+import Splitter from 'm-react-splitters';
 
 export interface WorkloadPodLogsProps {
   namespace: string;
@@ -45,9 +46,13 @@ const TailLinesOptions = {
   '5000': 'Last 5000 lines'
 };
 
+const logsDiv = style({
+  height: '100%'
+});
+
 const logsTextarea = style({
   width: '100%',
-  height: 'calc(50% - 40px)',
+  height: 'calc(100% - 80px)',
   overflow: 'auto',
   resize: 'none',
   color: '#fff',
@@ -190,22 +195,37 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
                       </ToolbarItem>
                     </ToolbarGroup>
                   </Toolbar>
-                  <Title size="lg" headingLevel="h5">{`${this.props.pods[this.state.podValue!].name} Logs`}</Title>
-                  <textarea
-                    className={logsTextarea}
-                    readOnly={true}
-                    value={this.state.podLogs ? this.state.podLogs.logs : 'Loading logs...'}
-                    aria-label="Pod logs text"
-                  />
-                  <Title size="lg" headingLevel="h5">
-                    Proxy Logs
-                  </Title>
-                  <textarea
-                    className={logsTextarea}
-                    readOnly={true}
-                    value={this.state.containerLogs ? this.state.containerLogs.logs : 'Loading container logs...'}
-                    aria-label="Container logs text"
-                  />
+                  <Splitter
+                    position="horizontal"
+                    primaryPaneMaxHeight="100%"
+                    primaryPaneMinHeight={0}
+                    primaryPaneHeight="50%"
+                    dispatchResize={true}
+                    postPoned={true}
+                  >
+                    <div className={logsDiv}>
+                      <Title size="lg" headingLevel="h5">
+                        {this.formatAppLogLabel(this.props.pods[this.state.podValue!])} Logs
+                      </Title>
+                      <textarea
+                        className={logsTextarea}
+                        readOnly={true}
+                        value={this.state.podLogs ? this.state.podLogs.logs : 'Loading logs...'}
+                        aria-label="Pod logs text"
+                      />
+                    </div>
+                    <div className={logsDiv}>
+                      <Title size="lg" headingLevel="h5">
+                        Proxy Logs
+                      </Title>
+                      <textarea
+                        className={logsTextarea}
+                        readOnly={true}
+                        value={this.state.containerLogs ? this.state.containerLogs.logs : 'Loading container logs...'}
+                        aria-label="Container logs text"
+                      />
+                    </div>
+                  </Splitter>
                 </CardBody>
               </Card>
             </GridItem>
@@ -232,7 +252,6 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
 
   private handleRefresh = () => {
     const pod = this.props.pods[this.state.podValue!];
-    console.dir(pod);
     this.fetchLogs(
       this.props.namespace,
       pod.name,
@@ -251,6 +270,18 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
       options[c] = c;
     });
     return { container: containerNames[0] };
+  };
+
+  private formatAppLogLabel = (pod: Pod): string => {
+    const labels = pod.labels;
+    let label = 'N/A';
+
+    if (labels) {
+      const app = pod.appLabel ? labels['app'] : 'No App';
+      const version = pod.versionLabel ? labels['version'] : '';
+      label = app + '-' + version;
+    }
+    return label;
   };
 
   private fetchLogs = (
