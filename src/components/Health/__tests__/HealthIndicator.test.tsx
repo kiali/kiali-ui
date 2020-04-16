@@ -4,7 +4,7 @@ import { shallowToJson } from 'enzyme-to-json';
 
 import { HealthIndicator, DisplayMode } from '../HealthIndicator';
 import { AppHealth } from '../../../types/Health';
-import { PFAlertColor } from 'components/Pf/PfColors';
+import { PFAlertColor, PfColors } from 'components/Pf/PfColors';
 
 describe('HealthIndicator', () => {
   it('renders when empty', () => {
@@ -96,12 +96,12 @@ describe('HealthIndicator', () => {
     // SMALL
     let wrapper = shallow(<HealthIndicator id="svc" health={health} mode={DisplayMode.SMALL} />);
     let html = wrapper.html();
-    expect(html).toContain(PFAlertColor.Danger);
+    expect(html).toContain(PfColors.Gray);
 
     // LARGE
     wrapper = shallow(<HealthIndicator id="svc" health={health} mode={DisplayMode.LARGE} />);
     html = wrapper.html();
-    expect(html).toContain(PFAlertColor.Danger);
+    expect(html).toContain(PfColors.Gray);
   });
 
   it('renders error rate failure', () => {
