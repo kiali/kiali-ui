@@ -17,10 +17,10 @@ class Masthead extends React.Component {
         </ToolbarGroup>
         <ToolbarGroup>
           <ToolbarItem>
-            <MeshMTLSStatus />
+            <IstioStatus />
           </ToolbarItem>
           <ToolbarItem>
-            <IstioStatus />
+            <MeshMTLSStatus />
           </ToolbarItem>
           <ToolbarItem>
             <MessageCenterTriggerContainer />
