@@ -101,7 +101,7 @@ interface ThresholdStatus {
 const RATIO_NA = -1;
 
 export const ratioCheck = (availableReplicas: number, currentReplicas: number, desiredReplicas: number): Status => {
-  // No Pods returns No Health Info
+  // No Pods returns No Health
   if (desiredReplicas === 0 && currentReplicas === 0) {
     return NA;
   }
@@ -222,12 +222,8 @@ export class AppHealth extends Health {
     const items: HealthItem[] = [];
     {
       // Pods
-      let countInactive = 0;
       const children: HealthSubItem[] = workloadStatuses.map(d => {
         const status = ratioCheck(d.availableReplicas, d.currentReplicas, d.desiredReplicas);
-        if (status === NA) {
-          countInactive++;
-        }
         return {
           text: d.name + ': ' + d.availableReplicas + ' / ' + d.desiredReplicas,
           status: status
@@ -239,10 +235,6 @@ export class AppHealth extends Health {
         status: podsStatus,
         children: children
       };
-      if (countInactive > 0 && countInactive === workloadStatuses.length) {
-        // No active deployment => special case for failure
-        item.status = FAILURE;
-      }
       items.push(item);
     }
     // Request errors
