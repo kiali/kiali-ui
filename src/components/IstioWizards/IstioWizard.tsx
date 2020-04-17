@@ -225,7 +225,7 @@ class IstioWizard extends React.Component<WizardProps, WizardState> {
       .then(results => {
         if (results.length > 0) {
           AlertUtils.add(
-            (this.state.newExperiment ? 'Experiment' : 'Istio Config ') +
+            (this.state.newExperiment ? 'Experiment ' : 'Istio Config ') +
               (this.props.update ? 'updated' : 'created') +
               ' for ' +
               this.props.serviceName +
@@ -436,7 +436,12 @@ class IstioWizard extends React.Component<WizardProps, WizardState> {
           </Expandable>
         )}
         {this.props.type === WIZARD_ITER8_INTEGRATION && (
-          <ExperimentCreatePageContainer activeNamespaces={[]} onChange={this.onExperimentChange} />
+          <ExperimentCreatePageContainer
+            serviceName={this.props.serviceName}
+            namespace={this.props.namespace}
+            activeNamespaces={[]}
+            onChange={this.onExperimentChange}
+          />
         )}
       </Modal>
     );

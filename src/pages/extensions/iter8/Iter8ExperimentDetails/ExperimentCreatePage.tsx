@@ -4,6 +4,7 @@ import { style } from 'typestyle';
 import * as API from '../../../../services/Api';
 import * as AlertUtils from '../../../../utils/AlertUtils';
 import {
+  Button,
   Expandable,
   Form,
   FormGroup,
@@ -24,6 +25,8 @@ import { connect } from 'react-redux';
 
 interface Props {
   activeNamespaces: Namespace[];
+  serviceName: string;
+  namespace: string;
   onChange: (experiment: ExperimentSpec) => void;
 }
 
@@ -41,6 +44,7 @@ interface State {
 
 // Style constants
 const containerPadding = style({ padding: '10px 10px 20px 20px' });
+const regex = new RegExp('^[a-zA-Z]+[a-zA-Z0-9\\-]*$');
 
 const algorithms = [
   'check_and_increment',
@@ -61,9 +65,9 @@ class ExperimentCreatePage extends React.Component<Props, State> {
       },
       experiment: {
         name: '',
-        namespace: '',
+        namespace: this.props.namespace,
         apiversion: 'v1',
-        service: '',
+        service: this.props.serviceName,
         baseline: '',
         candidate: '',
         trafficControl: {
@@ -107,7 +111,7 @@ class ExperimentCreatePage extends React.Component<Props, State> {
         return {
           experiment: newExperiment,
           namespaces: allNamespaces,
-          reloadService: true
+          reloadService: !history.location.pathname.endsWith('/new')
         };
       });
     });
@@ -123,7 +127,7 @@ class ExperimentCreatePage extends React.Component<Props, State> {
           return {
             iter8Info: prevState.iter8Info,
             experiment: prevState.experiment,
-            reloadService: false,
+            reloadService: prevState.reloadService,
             metricNames: metricsNames
           };
         });
@@ -226,9 +230,43 @@ class ExperimentCreatePage extends React.Component<Props, State> {
   };
 
   componentDidMount() {
-    this.fetchNamespaces();
-    this.fetchMetrics();
-    this.fetchServices('');
+    if (this.state.namespaces.length === 0 && this.props.namespace == undefined) {
+      this.promises
+        .register('namespaces', API.getNamespaces())
+        .then(namespacesResponse => {
+          const namespace: Namespace[] = namespacesResponse.data;
+          let allNamespaces = namespace.map(nsInfo => {
+            return nsInfo.name;
+          });
+          this.setState(prevState => {
+            const newExperiment = prevState.experiment;
+            if (this.props.activeNamespaces.length === 1) {
+              newExperiment.namespace = this.props.activeNamespaces[0].name;
+            } else {
+              newExperiment.namespace = allNamespaces[0];
+            }
+            return {
+              experiment: newExperiment,
+              namespaces: allNamespaces,
+              reloadService: false
+            };
+          });
+        })
+        .then(() => {
+          this.fetchServices(this.state.experiment.namespace);
+        })
+        .then(() => {
+          this.fetchMetrics();
+        })
+        .catch(namespacesError => {
+          if (!namespacesError.isCanceled) {
+            AlertUtils.addError('Could not fetch namespace list', namespacesError);
+          }
+        });
+    } else if (this.props.namespace !== undefined && this.props.serviceName != undefined) {
+      this.fetchWorkloads(this.props.namespace, this.props.serviceName);
+      this.fetchMetrics();
+    }
   }
 
   componentDidUpdate(_: Props, _prevState: State) {
@@ -237,9 +275,25 @@ class ExperimentCreatePage extends React.Component<Props, State> {
     }
   }
 
+  onExperimentChange = (newexperiment: ExperimentSpec) => {
+    this.setState({
+      experiment: newexperiment
+    });
+  };
   // Invoke the history object to update and URL and start a routing
   goExperimentsPage = () => {
     history.push('/extensions/iter8');
+  };
+
+  // It invokes backend to create  a new experiment
+  createExperiment = () => {
+    // if (this.props.activeNamespaces.length === 1) {
+    const nsName = this.state.experiment.namespace;
+    this.promises
+      .register('Create Iter8 Experiment', API.createExperiment(nsName, JSON.stringify(this.state.experiment)))
+      .then(_ => this.goExperimentsPage())
+      .catch(error => AlertUtils.addError('Could not create Experiment.', error));
+    //  }
   };
 
   // Updates state with modifications of the new/editing handler
@@ -299,7 +353,11 @@ class ExperimentCreatePage extends React.Component<Props, State> {
           reloadService: reloadService
         };
       },
-      () => this.props.onChange(this.state.experiment)
+      () => {
+        history.location.pathname.endsWith('/new')
+          ? this.onExperimentChange(this.state.experiment)
+          : this.props.onChange(this.state.experiment);
+      }
     );
   };
 
@@ -327,13 +385,18 @@ class ExperimentCreatePage extends React.Component<Props, State> {
           experiment: newExperiment
         };
       },
-      () => this.props.onChange(this.state.experiment)
+      () => {
+        history.location.pathname.endsWith('/new')
+          ? this.onExperimentChange(this.state.experiment)
+          : this.props.onChange(this.state.experiment);
+      }
     );
   };
 
   isMainFormValid = (): boolean => {
     return (
       this.state.experiment.name !== '' &&
+      regex.test(this.state.experiment.name) &&
       this.state.experiment.service !== '' &&
       this.props.activeNamespaces.length === 1 &&
       this.state.experiment.baseline !== '' &&
@@ -354,7 +417,7 @@ class ExperimentCreatePage extends React.Component<Props, State> {
   render() {
     const isNamespacesValid = this.props.activeNamespaces.length === 1;
 
-    // const isFormValid = this.isMainFormValid() && this.isTCFormValid() && this.isSCFormValid();
+    const isFormValid = this.isMainFormValid() && this.isTCFormValid() && this.isSCFormValid();
     // @ts-ignore
     return (
       <>
@@ -375,57 +438,60 @@ class ExperimentCreatePage extends React.Component<Props, State> {
                   onChange={value => this.changeExperiment('name', value)}
                 />
               </FormGroup>
-
-              <Grid gutter="md">
-                <GridItem span={6}>
-                  <FormGroup
-                    fieldId="service"
-                    label="Target Service"
-                    isRequired={true}
-                    isValid={this.state.experiment.service !== ''}
-                    helperText="Target Service specifies the reference to experiment targets (i.e. reviews)"
-                    helperTextInvalid="Target Service cannot be empty"
-                  >
-                    <FormSelect
-                      id="service"
-                      value={this.state.experiment.service}
-                      placeholder="Target Service"
-                      onChange={value => {
-                        this.changeExperiment('service', value);
-                        const ns = this.state.experiment.namespace;
-                        this.fetchWorkloads(ns, value);
-                      }}
+              {history.location.pathname.endsWith('/new') ? (
+                <Grid gutter="md">
+                  <GridItem span={6}>
+                    <FormGroup
+                      label="Namespaces"
+                      isRequired={true}
+                      fieldId="namespaces"
+                      helperText={'Select namespace where this configuration will be applied'}
+                      isValid={isNamespacesValid}
                     >
-                      {this.state.services.map((svc, index) => (
-                        <FormSelectOption label={svc} key={'service' + index} value={svc} />
-                      ))}
-                    </FormSelect>
-                  </FormGroup>
-                </GridItem>
-                <GridItem span={6}>
-                  <FormGroup
-                    label="Namespaces"
-                    isRequired={true}
-                    fieldId="namespaces"
-                    helperText={'Select namespace where this configuration will be applied'}
-                    isValid={isNamespacesValid}
-                  >
-                    <FormSelect
-                      id="namespaces"
-                      value={this.state.experiment.namespace}
-                      placeholder="Namespace"
-                      onChange={value => {
-                        this.changeExperiment('namespace', value);
-                        this.fetchServices(value);
-                      }}
+                      <FormSelect
+                        id="namespaces"
+                        value={this.state.experiment.namespace}
+                        placeholder="Namespace"
+                        onChange={value => {
+                          this.changeExperiment('namespace', value);
+                          this.fetchServices(value);
+                        }}
+                      >
+                        {this.state.namespaces.map((svc, index) => (
+                          <FormSelectOption label={svc} key={'namespace' + index} value={svc} />
+                        ))}
+                      </FormSelect>
+                    </FormGroup>
+                  </GridItem>
+                  <GridItem span={6}>
+                    <FormGroup
+                      fieldId="service"
+                      label="Target Service"
+                      isRequired={true}
+                      isValid={this.state.experiment.service !== ''}
+                      helperText="Target Service specifies the reference to experiment targets (i.e. reviews)"
+                      helperTextInvalid="Target Service cannot be empty"
                     >
-                      {this.state.namespaces.map((svc, index) => (
-                        <FormSelectOption label={svc} key={'namespace' + index} value={svc} />
-                      ))}
-                    </FormSelect>
-                  </FormGroup>
-                </GridItem>
-              </Grid>
+                      <FormSelect
+                        id="service"
+                        value={this.state.experiment.service}
+                        placeholder="Target Service"
+                        onChange={value => {
+                          this.changeExperiment('service', value);
+                          const ns = this.state.experiment.namespace;
+                          this.fetchWorkloads(ns, value);
+                        }}
+                      >
+                        {this.state.services.map((svc, index) => (
+                          <FormSelectOption label={svc} key={'service' + index} value={svc} />
+                        ))}
+                      </FormSelect>
+                    </FormGroup>
+                  </GridItem>
+                </Grid>
+              ) : (
+                ''
+              )}
               <Grid gutter="md">
                 <GridItem span={6}>
                   <FormGroup
@@ -597,6 +663,33 @@ class ExperimentCreatePage extends React.Component<Props, State> {
                   </GridItem>
                 </Grid>
               </Expandable>
+              {history.location.pathname.endsWith('/new') ? (
+                <div className="text-right">
+                  <span style={{ paddingRight: '5px' }}>
+                    <Button
+                      className="float-right"
+                      key="create"
+                      variant="secondary"
+                      onClick={() => this.goExperimentsPage()}
+                    >
+                      Cancel
+                    </Button>
+                  </span>
+                  <span style={{ paddingRight: '5px' }}>
+                    <Button
+                      className="float-right"
+                      key="confirm"
+                      variant="primary"
+                      isDisabled={!isFormValid}
+                      onClick={() => this.createExperiment()}
+                    >
+                      Create
+                    </Button>
+                  </span>
+                </div>
+              ) : (
+                ''
+              )}
             </Form>
           </div>
         </RenderContent>

@@ -233,13 +233,9 @@ class ExperimentListPage extends React.Component<Props, State> {
     }
   };
 
-  // Invoke the history object to update and URL and start a routing
-  // goNewExperimentPage = () => {
-  //  history.push('/extensions/iter8/new');
-  //  };
-
   goNewExperimentPage = () => {
-    this.setState({ showWizard: true });
+    // this.setState({ showWizard: true }); // uncomment to use Wizard
+    history.push('/extensions/iter8/new');
   };
 
   serviceLink(namespace: string, workload: string) {
@@ -464,7 +460,12 @@ class ExperimentListPage extends React.Component<Props, State> {
             </Button>
           ]}
         >
-          <ExperimentCreatePageContainer activeNamespaces={[]} onChange={this.onExperimentChange} />
+          <ExperimentCreatePageContainer
+            namespace=""
+            serviceName=""
+            activeNamespaces={[]}
+            onChange={this.onExperimentChange}
+          />
         </Modal>
       </div>
     );
