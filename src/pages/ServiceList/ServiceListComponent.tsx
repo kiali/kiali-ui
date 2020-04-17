@@ -14,10 +14,9 @@ import { namespaceEquals } from '../../utils/Common';
 import { KialiAppState } from '../../store/Store';
 import { activeNamespacesSelector, durationSelector } from '../../store/Selectors';
 import { DurationInSeconds } from '../../types/Common';
-import { DurationDropdownContainer } from '../../components/DurationDropdown/DurationDropdown';
-import RefreshButtonContainer from '../../components/Refresh/RefreshButton';
 import { ObjectValidation, Validations } from '../../types/IstioObjects';
 import VirtualList from '../../components/VirtualList/VirtualList';
+import TimeControlsContainer from 'components/Time/TimeControls';
 
 type ServiceListComponentState = FilterComponent.State<ServiceListItem>;
 
@@ -115,7 +114,7 @@ class ServiceListComponent extends FilterComponent.Component<
         healthPromise: API.getServiceHealth(data.namespace.name, service.name, rateInterval, service.istioSidecar),
         validation: this.getServiceValidation(service.name, data.validations),
         additionalDetailSample: service.additionalDetailSample,
-        labels: service.labels
+        labels: service.labels || {}
       }));
     }
     return [];
@@ -166,8 +165,12 @@ class ServiceListComponent extends FilterComponent.Component<
           initialFilters={ServiceListFilters.availableFilters}
           onFilterChange={this.onFilterChange}
           rightToolbar={[
-            <DurationDropdownContainer key={'DurationDropdown'} id="service-list-duration-dropdown" />,
-            <RefreshButtonContainer key={'Refresh'} handleRefresh={this.updateListItems} />
+            <TimeControlsContainer
+              key={'DurationDropdown'}
+              id="service-list-duration-dropdown"
+              handleRefresh={this.updateListItems}
+              disabled={false}
+            />
           ]}
         />
       </VirtualList>

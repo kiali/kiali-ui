@@ -52,15 +52,15 @@ export const labelFilter: FilterTypeWithFilter<NamespaceInfo> = {
   id: 'label',
   title: 'Label',
   placeholder: 'Filter by Label',
-  filterType: FilterTypes.custom,
+  filterType: FilterTypes.label,
   customComponent: LabelFilters,
   action: FILTER_ACTION_APPEND,
   filterValues: [],
   filter: (namespaces: NamespaceInfo[], filters: ActiveFilter[]) => {
     return namespaces.filter(ns =>
       filters.some(f => {
-        if (f.value.includes('=')) {
-          const [k, v] = f.value.split('=');
+        if (f.value.includes(':')) {
+          const [k, v] = f.value.split(':');
           return v.split(',').some(val => !!ns.labels && k in ns.labels && ns.labels[k].startsWith(val));
         } else {
           return !!ns.labels && Object.keys(ns.labels).some(label => label.startsWith(f.value));

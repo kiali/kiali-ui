@@ -1,4 +1,4 @@
-import { ActiveFilter, FilterType, FILTER_ACTION_APPEND, FilterTypes } from '../../types/Filters';
+import { ActiveFilter, FilterType, FILTER_ACTION_APPEND, LabelFilter } from '../../types/Filters';
 import { getRequestErrorsStatus, WithServiceHealth, hasHealth } from '../../types/Health';
 import { ServiceListItem } from '../../types/ServiceList';
 import { SortField } from '../../types/SortFilters';
@@ -11,7 +11,7 @@ import {
 } from '../../components/Filters/CommonFilters';
 import { hasMissingSidecar } from '../../components/VirtualList/Config';
 import { TextInputTypes } from '@patternfly/react-core';
-import { LabelFilters } from '../../components/Filters/LabelFilter';
+import { filterByLabel } from '../../helpers/LabelFilterHelper';
 
 export const sortFields: SortField<ServiceListItem>[] = [
   {
@@ -126,17 +126,7 @@ const serviceNameFilter: FilterType = {
   filterValues: []
 };
 
-const labelFilter: FilterType = {
-  id: 'label',
-  title: 'Label',
-  placeholder: 'Filter by Label',
-  filterType: FilterTypes.custom,
-  customComponent: LabelFilters,
-  action: FILTER_ACTION_APPEND,
-  filterValues: []
-};
-
-export const availableFilters: FilterType[] = [serviceNameFilter, istioSidecarFilter, healthFilter, labelFilter];
+export const availableFilters: FilterType[] = [serviceNameFilter, istioSidecarFilter, healthFilter, LabelFilter];
 
 const filterByIstioSidecar = (items: ServiceListItem[], istioSidecar: boolean): ServiceListItem[] => {
   return items.filter(item => item.istioSidecar === istioSidecar);
@@ -158,31 +148,6 @@ const filterByName = (items: ServiceListItem[], names: string[]): ServiceListIte
   });
 };
 
-const filterByLabel = (items: ServiceListItem[], filter: string[]): ServiceListItem[] => {
-  let result: ServiceListItem[] = [];
-
-  filter.map(filter => {
-    if (filter.includes('=')) {
-      const values = filter.split('=');
-      // Check Values
-      values[1]
-        .split(',')
-        .map(
-          val =>
-            (result = result.concat(
-              items.filter(item => values[0] in item.labels && item.labels[values[0]].startsWith(val))
-            ))
-        );
-    } else {
-      // Check if has Label
-      result = result.concat(items.filter(item => Object.keys(item.labels).some(key => key.startsWith(filter))));
-    }
-    return null;
-  });
-
-  return filter.length > 0 ? result : items;
-};
-
 export const filterBy = (
   items: ServiceListItem[],
   filters: ActiveFilter[]
@@ -198,9 +163,9 @@ export const filterBy = (
     ret = filterByName(ret, serviceNamesSelected);
   }
 
-  const serviceFilterSelected = getFilterSelectedValues(labelFilter, filters);
+  const serviceFilterSelected = getFilterSelectedValues(LabelFilter, filters);
   if (serviceFilterSelected.length > 0) {
-    ret = filterByLabel(ret, serviceFilterSelected);
+    ret = filterByLabel(ret, serviceFilterSelected) as ServiceListItem[];
   }
   // We may have to perform a second round of filtering, using data fetched asynchronously (health)
   // If not, exit fast
