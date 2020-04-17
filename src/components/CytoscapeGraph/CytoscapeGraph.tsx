@@ -64,7 +64,7 @@ type CytoscapeGraphProps = {
   showTrafficAnimation: boolean;
   showUnusedNodes: boolean;
   showVirtualServices: boolean;
-  updateGraph?: (cyData: CyData) => void;
+  updateGraph?: (cyData?: CyData) => void;
   updateSummary?: (event: CytoscapeClickEvent) => void;
 };
 
@@ -178,6 +178,10 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
   componentDidUpdate(prevProps: CytoscapeGraphProps, prevState: CytoscapeGraphState) {
     const cy = this.getCy();
     if (!cy) {
+      // If the graph is empty then reflect that fact in the graph state
+      if (this.props.updateGraph) {
+        this.props.updateGraph();
+      }
       return;
     }
 

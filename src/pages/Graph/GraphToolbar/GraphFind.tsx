@@ -19,7 +19,7 @@ import { GraphTourStops } from 'pages/Graph/GraphHelpTour';
 
 type ReduxProps = {
   compressOnHide: boolean;
-  cyData: CyData | null;
+  cyData?: CyData;
   edgeLabelMode: EdgeLabelMode;
   findValue: string;
   hideValue: string;
@@ -88,10 +88,11 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
     const hideChanged = this.props.hideValue !== prevProps.hideValue;
     const compressOnHideChanged = this.props.compressOnHide !== prevProps.compressOnHide;
     const layoutChanged = this.props.layout !== prevProps.layout;
-    const hadCyData = prevProps.cyData != null;
-    const hasCyData = this.props.cyData != null;
+    const hadCyData = !!prevProps.cyData;
+    const hasCyData = !!this.props.cyData;
     const graphChanged =
       (!hadCyData && hasCyData) ||
+      (hadCyData && !hasCyData) ||
       (hadCyData && hasCyData && this.props.cyData!.updateTimestamp !== prevProps.cyData!.updateTimestamp);
 
     // make sure the value is updated if there was a change
@@ -105,6 +106,7 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
     if (findChanged || (graphChanged && this.props.findValue)) {
       this.handleFind();
     }
+
     if (hideChanged || compressOnHideChanged || (graphChanged && this.props.hideValue)) {
       this.handleHide(graphChanged, hideChanged, compressOnHideChanged, layoutChanged);
     }
@@ -262,11 +264,13 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
     compressOnHideChanged: boolean,
     layoutChanged: boolean
   ) => {
+    // If the graph is now empty make sure we release any removed elements we may be holding
     if (!this.props.cyData) {
+      this.removedElements = undefined;
       return;
     }
 
-    const cy = this.props.cyData.cyRef;
+    const cy = this.props.cyData!.cyRef;
     const selector = this.parseValue(this.props.hideValue);
 
     cy.startBatch();
@@ -335,7 +339,7 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
       return;
     }
 
-    const cy = this.props.cyData.cyRef;
+    const cy = this.props.cyData!.cyRef;
     const selector = this.parseValue(this.props.findValue);
 
     cy.startBatch();

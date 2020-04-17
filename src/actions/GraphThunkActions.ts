@@ -15,7 +15,7 @@ const GraphThunkActions = {
       );
     };
   },
-  updateGraph: (cyData: CyData) => {
+  updateGraph: (cyData?: CyData) => {
     return (dispatch: ThunkDispatch<KialiAppState, void, KialiAppAction>) => {
       dispatch(GraphActions.updateGraph(cyData));
     };

@@ -62,7 +62,7 @@ export interface MessageCenterState {
 
 export interface GraphState {
   // cyData is updated when the graph is fully rendered (i.e. after refresh)
-  cyData: CyData | null;
+  cyData?: CyData;
   layout: Layout;
   node?: NodeParamsType;
   summaryData: SummaryData | null;

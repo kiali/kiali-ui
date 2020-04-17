@@ -93,7 +93,7 @@ type ReduxProps = {
   showUnusedNodes: boolean;
   showVirtualServices: boolean;
   summaryData: SummaryData | null;
-  updateGraph: (cyData: CyData) => void;
+  updateGraph: (cyData?: CyData) => void;
   updateSummary: (event: CytoscapeClickEvent) => void;
   mtlsEnabled: boolean;
 
@@ -490,7 +490,7 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<KialiAppState, void, KialiAp
   setNode: bindActionCreators(GraphActions.setNode, dispatch),
   startTour: bindActionCreators(TourActions.startTour, dispatch),
   toggleLegend: bindActionCreators(GraphToolbarActions.toggleLegend, dispatch),
-  updateGraph: (cyData: CyData) => dispatch(GraphActions.updateGraph(cyData)),
+  updateGraph: (cyData?: CyData) => dispatch(GraphActions.updateGraph(cyData)),
   updateSummary: (event: CytoscapeClickEvent) => dispatch(GraphActions.updateSummary(event))
 });
 
