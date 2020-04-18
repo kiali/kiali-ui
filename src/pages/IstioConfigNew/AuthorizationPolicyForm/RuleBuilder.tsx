@@ -93,6 +93,29 @@ class RuleBuilder extends React.Component<Props, State> {
     });
   };
 
+  onAddRule = (): void => {
+    const newRule: Rule = {
+      from: Object.assign([], this.state.fromList),
+      to: Object.assign([], this.state.toList),
+      when: Object.assign([], this.state.conditionList)
+    };
+    this.setState(
+      {
+        addFromSwitch: false,
+        addToSwitch: false,
+        addWhenSwitch: false,
+        fromList: [],
+        toList: [],
+        conditionList: []
+      },
+      () => this.props.onAddRule(newRule)
+    );
+  };
+
+  canAddRule = (): boolean => {
+    return this.state.fromList.length > 0 || this.state.toList.length > 0 || this.state.conditionList.length > 0;
+  };
+
   render() {
     return (
       <>
@@ -166,7 +189,9 @@ class RuleBuilder extends React.Component<Props, State> {
           </>
         )}
         <FormGroup fieldId="addRule">
-          <Button variant="secondary">Add Rule</Button>
+          <Button variant="secondary" onClick={this.onAddRule} isDisabled={!this.canAddRule()}>
+            Add Rule
+          </Button>
         </FormGroup>
       </>
     );

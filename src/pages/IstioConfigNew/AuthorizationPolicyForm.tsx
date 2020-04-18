@@ -61,9 +61,12 @@ class AuthorizationPolicyForm extends React.Component<Props, State> {
   }
 
   onRulesFormChange = (value, _) => {
-    this.setState({
-      rulesForm: value
-    });
+    this.setState(
+      {
+        rulesForm: value
+      },
+      () => this.onAuthorizationChange()
+    );
   };
 
   addWorkloadLabels = (value: string, _) => {
@@ -94,34 +97,56 @@ class AuthorizationPolicyForm extends React.Component<Props, State> {
         break;
       }
     }
-    this.setState({
-      workloadSelectorValid: isValid,
-      workloadSelectorLabels: value
-    });
+    this.setState(
+      {
+        workloadSelectorValid: isValid,
+        workloadSelectorLabels: value
+      },
+      () => this.onAuthorizationChange()
+    );
   };
 
   onActionChange = (value, _) => {
-    this.setState({
-      action: value
-    });
+    this.setState(
+      {
+        action: value
+      },
+      () => this.onAuthorizationChange()
+    );
   };
 
   onAddRule = (rule: Rule) => {
-    this.setState(prevState => {
-      prevState.rules.push(rule);
-      return {
-        rules: prevState.rules
-      };
-    });
+    this.setState(
+      prevState => {
+        prevState.rules.push(rule);
+        return {
+          rules: prevState.rules
+        };
+      },
+      () => this.onAuthorizationChange()
+    );
   };
 
   onRemoveRule = (index: number) => {
-    this.setState(prevState => {
-      prevState.rules.splice(index, 1);
-      return {
-        rules: prevState.rules
-      };
-    });
+    this.setState(
+      prevState => {
+        prevState.rules.splice(index, 1);
+        return {
+          rules: prevState.rules
+        };
+      },
+      () => this.onAuthorizationChange()
+    );
+  };
+
+  onAuthorizationChange = () => {
+    const authorizationPolicy: AuthorizationPolicyState = {
+      policy: this.state.rulesForm,
+      workloadSelector: this.state.workloadSelectorLabels,
+      action: this.state.action,
+      rules: this.state.rules
+    };
+    this.props.onChange(authorizationPolicy);
   };
 
   render() {

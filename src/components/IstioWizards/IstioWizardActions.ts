@@ -4,6 +4,8 @@ import { WorkloadWeight } from './WeightedRouting';
 import { Rule } from './MatchingRouting/Rules';
 import { SuspendedRoute } from './SuspendTraffic';
 import {
+  AuthorizationPolicy,
+  AuthorizationPolicyRule,
   DestinationRule,
   DestinationRules,
   DestinationWeight,
@@ -11,10 +13,13 @@ import {
   HTTPMatchRequest,
   HTTPRoute,
   LoadBalancerSettings,
+  Operation,
   Sidecar,
+  Source,
   StringMatch,
   VirtualService,
-  VirtualServices
+  VirtualServices,
+  WorkloadSelector
 } from '../../types/IstioObjects';
 import { serverConfig } from '../../config';
 import { ThreeScaleServiceRule } from '../../types/ThreeScale';
@@ -22,6 +27,7 @@ import { GatewaySelectorState } from './GatewaySelector';
 import { ConsistentHashType, MUTUAL, TrafficPolicyState } from './TrafficPolicy';
 import { GatewayState } from '../../pages/IstioConfigNew/GatewayForm';
 import { SidecarState } from '../../pages/IstioConfigNew/SidecarForm';
+import { AuthorizationPolicyState } from '../../pages/IstioConfigNew/AuthorizationPolicyForm';
 
 export const WIZARD_WEIGHTED_ROUTING = 'weighted_routing';
 export const WIZARD_MATCHING_ROUTING = 'matching_routing';
@@ -635,6 +641,91 @@ export const getInitGateway = (virtualServices: VirtualServices): [string, boole
     return [selectedGateway, meshPresent];
   }
   return ['', false];
+};
+
+export const buildAuthorizationPolicy = (
+  name: string,
+  namespace: string,
+  state: AuthorizationPolicyState
+): AuthorizationPolicy => {
+  const ap: AuthorizationPolicy = {
+    metadata: {
+      name: name,
+      namespace: namespace,
+      labels: {
+        [KIALI_WIZARD_LABEL]: 'AuthorizationPolicy'
+      }
+    },
+    spec: {}
+  };
+
+  console.log('TODELETE state');
+  console.log(state);
+
+  // DENY_ALL and ALLOW_ALL are two specific cases
+  if (state.policy === 'DENY_ALL') {
+    return ap;
+  }
+
+  if (state.policy === 'ALLOW_ALL') {
+    ap.spec.rules = [{}];
+    console.log('TODELETE ap');
+    console.log(ap);
+    return ap;
+  }
+
+  // RULES use case
+  if (state.workloadSelector.length > 0) {
+    const workloadSelector: WorkloadSelector = {
+      labels: {}
+    };
+    state.workloadSelector.split(',').forEach(label => {
+      label = label.trim();
+      const labelDetails = label.split('=');
+      if (labelDetails.length === 2) {
+        workloadSelector.labels[labelDetails[0]] = labelDetails[1];
+      }
+    });
+    ap.spec.selector = workloadSelector;
+  }
+
+  if (state.rules.length > 0) {
+    ap.spec.rules = [];
+    state.rules.forEach(rule => {
+      const apRule: AuthorizationPolicyRule = {
+        from: rule.from.map(fromItem => {
+          const source: Source = {};
+          Object.keys(fromItem).forEach(key => {
+            source[key] = fromItem[key];
+          });
+          return {
+            source: source
+          };
+        }),
+        to: rule.to.map(toItem => {
+          const operation: Operation = {};
+          Object.keys(toItem).forEach(key => {
+            operation[key] = operation[key];
+          });
+          return {
+            operation: operation
+          };
+        }),
+        when: rule.when.map(condition => {
+          return {
+            key: condition.key,
+            values: condition.values,
+            notValues: condition.notValues
+          };
+        })
+      };
+      ap.spec.rules!.push(apRule);
+    });
+  }
+  if (state.action.length > 0) {
+    ap.spec.action = state.action;
+  }
+  return ap;
 };
 
 export const buildGateway = (name: string, namespace: string, state: GatewayState): Gateway => {

@@ -14,7 +14,7 @@ import * as API from '../../services/Api';
 import { IstioPermissions } from '../../types/IstioConfigDetails';
 import * as AlertUtils from '../../utils/AlertUtils';
 import history from '../../app/History';
-import { buildGateway, buildSidecar } from '../../components/IstioWizards/IstioWizardActions';
+import { buildAuthorizationPolicy, buildGateway, buildSidecar } from '../../components/IstioWizards/IstioWizardActions';
 import { MessageType } from '../../types/MessageCenter';
 import AuthorizationPolicyForm, {
   AuthorizationPolicyState,
@@ -147,7 +147,26 @@ class IstioConfigNewPage extends React.Component<Props, State> {
   onIstioResourceCreate = () => {
     switch (this.state.istioResource) {
       case AUTHORIZACION_POLICY:
-        console.log('TODELETE Invoke backend to create an AuthorizationPolicy object');
+        this.promises
+          .registerAll(
+            'Create AuthorizationPolicies',
+            this.props.activeNamespaces.map(ns =>
+              API.createIstioConfigDetail(
+                ns.name,
+                'authorizationpolicies',
+                JSON.stringify(buildAuthorizationPolicy(this.state.name, ns.name, this.state.authorizationPolicy))
+              )
+            )
+          )
+          .then(results => {
+            if (results.length > 0) {
+              AlertUtils.add('Istio AuthorizationPolicy created', 'default', MessageType.SUCCESS);
+            }
+            this.backToList();
+          })
+          .catch(error => {
+            AlertUtils.addError('Could not create Istio AuthorizationPolicy objects.', error);
+          });
         break;
       case GATEWAY:
         this.promises
