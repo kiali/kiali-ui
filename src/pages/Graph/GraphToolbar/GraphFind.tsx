@@ -10,20 +10,24 @@ import { KialiAppAction } from '../../../actions/KialiAppAction';
 import GraphHelpFind from '../../../pages/Graph/GraphHelpFind';
 import { CyNode, CyEdge } from '../../../components/CytoscapeGraph/CytoscapeGraphUtils';
 import * as CytoscapeGraphUtils from '../../../components/CytoscapeGraph/CytoscapeGraphUtils';
-import { Layout, EdgeLabelMode, CyData, NodeType } from '../../../types/Graph';
+import { Layout, EdgeLabelMode, NodeType } from '../../../types/Graph';
 import * as AlertUtils from '../../../utils/AlertUtils';
 import { KialiIcon, defaultIconStyle } from 'config/KialiIcon';
 import { style } from 'typestyle';
 import TourStopContainer from 'components/Tour/TourStop';
 import { GraphTourStops } from 'pages/Graph/GraphHelpTour';
+// import { GraphActions } from 'actions/GraphActions';
+import { TimeInMilliseconds } from 'types/Common';
 
 type ReduxProps = {
   compressOnHide: boolean;
-  cyData?: CyData;
   edgeLabelMode: EdgeLabelMode;
   findValue: string;
   hideValue: string;
+  lastElementsUpdate: TimeInMilliseconds;
+  lastSettingsUpdate: TimeInMilliseconds;
   layout: Layout;
+  // removedElements?: any;
   showFindHelp: boolean;
   showSecurity: boolean;
   showUnusedNodes: boolean;
@@ -31,17 +35,22 @@ type ReduxProps = {
   setEdgeLabelMode: (val: EdgeLabelMode) => void;
   setFindValue: (val: string) => void;
   setHideValue: (val: string) => void;
+  // setRemovedElements: (val?: any) => void;
   toggleFindHelp: () => void;
   toggleGraphSecurity: () => void;
   toggleUnusedNodes: () => void;
 };
 
-type GraphFindProps = ReduxProps;
+type GraphFindProps = ReduxProps & {
+  cy: any;
+  isLoading: boolean;
+};
 
 type GraphFindState = {
   errorMessage: string;
   findInputValue: string;
   hideInputValue: string;
+  isLoading: boolean;
 };
 
 type ParsedExpression = {
@@ -73,7 +82,7 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
     super(props);
     const findValue = props.findValue ? props.findValue : '';
     const hideValue = props.hideValue ? props.hideValue : '';
-    this.state = { errorMessage: '', findInputValue: findValue, hideInputValue: hideValue };
+    this.state = { errorMessage: '', findInputValue: findValue, hideInputValue: hideValue, isLoading: props.isLoading };
     if (props.showFindHelp) {
       props.toggleFindHelp();
     }
@@ -83,17 +92,51 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
   // the graph loading, we can't perform this graph "post-processing" until we have a valid cy graph.  We can assume
   // that applying the find/hide on update is sufficient because  we will be updated after the cy is loaded
   // due to a change notification for this.props.cyData.
-  componentDidUpdate(prevProps: GraphFindProps) {
+  componentDidUpdate(prevProps: GraphFindProps, prevState: GraphFindState) {
+    console.log(
+      `GraphFind:componentDidUpdate (cyChanged= ${this.props.cy !== prevProps.cy ||
+        (this.props.cy && prevProps.cy && this.props.cy.current !== prevProps.cy.current)}) (numElems=${
+        this.props.cy ? this.props.cy.elements().length : 0
+      })`
+    );
+
     const findChanged = this.props.findValue !== prevProps.findValue;
     const hideChanged = this.props.hideValue !== prevProps.hideValue;
     const compressOnHideChanged = this.props.compressOnHide !== prevProps.compressOnHide;
     const layoutChanged = this.props.layout !== prevProps.layout;
-    const hadCyData = !!prevProps.cyData;
-    const hasCyData = !!this.props.cyData;
-    const graphChanged =
-      (!hadCyData && hasCyData) ||
-      (hadCyData && !hasCyData) ||
-      (hadCyData && hasCyData && this.props.cyData!.updateTimestamp !== prevProps.cyData!.updateTimestamp);
+    const elementsChanged = this.props.lastElementsUpdate !== prevProps.lastElementsUpdate;
+    const settingsChanged = this.props.lastSettingsUpdate !== prevProps.lastSettingsUpdate;
+
+    console.log(`elementsChanged= ${elementsChanged}`);
+    console.log(`settingsChanged= ${settingsChanged}`);
+    console.log(`compressOnHideChanged= ${compressOnHideChanged}`);
+    console.log(`layoutChanged= ${layoutChanged}`);
+
+    // if (elementsChanged && !!this.removedElements) {
+    if (this.props.isLoading !== this.state.isLoading) {
+      console.log(`setState.isLoading=${this.props.isLoading}`);
+      this.setState({ isLoading: this.props.isLoading });
+      return;
+    }
+
+    if (this.state.isLoading) {
+      console.log('isLoading... return');
+      return;
+    }
+    if (!this.props.isLoading && prevState.isLoading && !!this.removedElements) {
+      console.log(`New elems loaded: unsetting ${this.removedElements.length} elements`);
+      this.removedElements = undefined;
+    }
+
+    if (!this.props.cy) {
+      console.log('no cy');
+      return;
+    }
+
+    // if (settingsChanged && this.props.isLoading) {
+    //   console.log('disabled, return');
+    //  return;
+    // }
 
     // make sure the value is updated if there was a change
     if (findChanged) {
@@ -103,12 +146,20 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
       this.setState({ hideInputValue: this.props.hideValue });
     }
 
-    if (findChanged || (graphChanged && this.props.findValue)) {
-      this.handleFind();
+    if (findChanged || (elementsChanged && this.props.findValue)) {
+      this.handleFind(this.props.cy);
     }
 
-    if (hideChanged || compressOnHideChanged || (graphChanged && this.props.hideValue)) {
-      this.handleHide(graphChanged, hideChanged, compressOnHideChanged, layoutChanged);
+    if (hideChanged || !!this.props.hideValue) {
+      // && (elementsChanged || settingsChanged))) {
+      this.handleHide(
+        this.props.cy,
+        hideChanged,
+        // elementsChanged,
+        // settingsChanged,
+        compressOnHideChanged,
+        layoutChanged
+      );
     }
   }
 
@@ -259,18 +310,15 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
   };
 
   private handleHide = (
-    graphChanged: boolean,
+    cy: any,
     hideChanged: boolean,
+    // elementsChanged: boolean,
+    // settingsChanged: boolean,
     compressOnHideChanged: boolean,
     layoutChanged: boolean
   ) => {
-    // If the graph is now empty make sure we release any removed elements we may be holding
-    if (!this.props.cyData) {
-      this.removedElements = undefined;
-      return;
-    }
+    console.log(`HandleHide`);
 
-    const cy = this.props.cyData!.cyRef;
     const selector = this.parseValue(this.props.hideValue);
 
     cy.startBatch();
@@ -283,11 +331,15 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
       // Only restore the removed nodes if we are working with the same graph.  If the graph has changed
       // (i.e. refresh) then we have new nodes, and therefore a potential ID conflict. don't restore the
       // removed nodes, instead, just remove our reference and they should get garbage collected.
-      if (!graphChanged) {
-        this.removedElements.restore();
-      }
+      // if (!elementsChanged) {
+      console.log(`Restoring ${this.removedElements.length} elements`);
+      this.removedElements.restore();
       this.removedElements = undefined;
+      // }
+      // this.props.setRemovedElements();
     }
+
+    // let removedElements: any = undefined;
     if (selector) {
       // select the new hide-hits
       let hiddenElements = cy.$(selector);
@@ -305,6 +357,8 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
         // now subtract any appboxes that don't have any visible children
         const hiddenAppBoxes = cy.$('$node[isGroup]').subtract(cy.$('$node[isGroup] > :inside'));
         this.removedElements = this.removedElements.add(cy.remove(hiddenAppBoxes));
+        // this.props.setRemovedElements(removedElements);
+        console.log(`removed ${this.removedElements.length} elements`);
       } else {
         // set the remaining hide-hits hidden
         this.hiddenElements = hiddenElements;
@@ -318,8 +372,8 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
 
     cy.endBatch();
 
-    const removedElements: boolean = this.removedElements && this.removedElements.size() > 0;
-    if (hideChanged || (compressOnHideChanged && selector) || removedElements) {
+    const hasRemovedElements: boolean = !!this.removedElements && this.removedElements.length > 0;
+    if (hideChanged || (compressOnHideChanged && selector) || hasRemovedElements) {
       const zoom = cy.zoom();
       const pan = cy.pan();
       CytoscapeGraphUtils.runLayout(cy, this.props.layout);
@@ -334,12 +388,7 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
     }
   };
 
-  private handleFind = () => {
-    if (!this.props.cyData) {
-      return;
-    }
-
-    const cy = this.props.cyData!.cyRef;
+  private handleFind = (cy: any) => {
     const selector = this.parseValue(this.props.findValue);
 
     cy.startBatch();
@@ -681,11 +730,13 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
 
 const mapStateToProps = (state: KialiAppState) => ({
   compressOnHide: state.graph.toolbarState.compressOnHide,
-  cyData: state.graph.cyData,
   edgeLabelMode: edgeLabelModeSelector(state),
   findValue: findValueSelector(state),
   hideValue: hideValueSelector(state),
+  lastElementsUpdate: state.graph.lastElementsUpdate,
+  lastSettingsUpdate: state.graph.lastSettingsUpdate,
   layout: state.graph.layout,
+  // removedElements: state.graph.removedElements,
   showFindHelp: state.graph.toolbarState.showFindHelp,
   showSecurity: state.graph.toolbarState.showSecurity,
   showUnusedNodes: state.graph.toolbarState.showUnusedNodes
@@ -695,9 +746,10 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<KialiAppState, void, KialiAp
   return {
     setEdgeLabelMode: bindActionCreators(GraphToolbarActions.setEdgelLabelMode, dispatch),
     setFindValue: bindActionCreators(GraphToolbarActions.setFindValue, dispatch),
-    toggleGraphSecurity: bindActionCreators(GraphToolbarActions.toggleGraphSecurity, dispatch),
     setHideValue: bindActionCreators(GraphToolbarActions.setHideValue, dispatch),
+    // setRemovedElements: bindActionCreators(GraphActions.setRemovedElements, dispatch),
     toggleFindHelp: bindActionCreators(GraphToolbarActions.toggleFindHelp, dispatch),
+    toggleGraphSecurity: bindActionCreators(GraphToolbarActions.toggleGraphSecurity, dispatch),
     toggleUnusedNodes: bindActionCreators(GraphToolbarActions.toggleUnusedNodes, dispatch)
   };
 };

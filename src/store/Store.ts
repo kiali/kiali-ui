@@ -8,7 +8,7 @@ import {
   TimeInMilliseconds,
   ReplayWindow
 } from '../types/Common';
-import { EdgeLabelMode, Layout, GraphType, SummaryData, CyData, NodeParamsType } from '../types/Graph';
+import { EdgeLabelMode, Layout, GraphType, SummaryData, NodeParamsType } from '../types/Graph';
 import { TLSStatus } from '../types/TLSStatus';
 import { StatusState } from '../types/StatusState';
 import { TourInfo } from 'components/Tour/TourStop';
@@ -61,10 +61,11 @@ export interface MessageCenterState {
 }
 
 export interface GraphState {
-  // cyData is updated when the graph is fully rendered (i.e. after refresh)
-  cyData?: CyData;
+  lastElementsUpdate: TimeInMilliseconds;
+  lastSettingsUpdate: TimeInMilliseconds;
   layout: Layout;
   node?: NodeParamsType;
+  removedElements?: any; // set when graph hide removes elements from the graph
   summaryData: SummaryData | null;
   toolbarState: GraphToolbarState;
 }

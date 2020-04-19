@@ -11,7 +11,6 @@ import * as CytoscapeGraphUtils from './CytoscapeGraphUtils';
 import { CyNode, isCore, isEdge, isNode } from './CytoscapeGraphUtils';
 import * as API from '../../services/Api';
 import {
-  CyData,
   CytoscapeBaseEvent,
   CytoscapeClickEvent,
   CytoscapeGlobalScratchData,
@@ -29,7 +28,7 @@ import * as H from '../../types/Health';
 import { MessageType } from '../../types/MessageCenter';
 import { NamespaceAppHealth, NamespaceServiceHealth, NamespaceWorkloadHealth } from '../../types/Health';
 import { GraphUrlParams, makeNodeGraphUrlFromParams } from '../Nav/NavUtils';
-import { DurationInSeconds, IntervalInMilliseconds, TimeInSeconds } from '../../types/Common';
+import { DurationInSeconds, IntervalInMilliseconds, TimeInSeconds, TimeInMilliseconds } from '../../types/Common';
 import GraphDataSource from '../../services/GraphDataSource';
 import * as AlertUtils from '../../utils/AlertUtils';
 import FocusAnimation from './FocusAnimation';
@@ -55,6 +54,8 @@ type CytoscapeGraphProps = {
   onReady?: (cytoscapeRef: any) => void;
   refreshInterval: IntervalInMilliseconds;
   setActiveNamespaces?: (namespace: Namespace[]) => void;
+  setLastElementsUpdate?: (val: TimeInMilliseconds) => void;
+  setLastSettingsUpdate?: (val: TimeInMilliseconds) => void;
   setNode?: (node?: NodeParamsType) => void;
   showCircuitBreakers: boolean;
   showMissingSidecars: boolean;
@@ -64,7 +65,6 @@ type CytoscapeGraphProps = {
   showTrafficAnimation: boolean;
   showUnusedNodes: boolean;
   showVirtualServices: boolean;
-  updateGraph?: (cyData?: CyData) => void;
   updateSummary?: (event: CytoscapeClickEvent) => void;
 };
 
@@ -176,12 +176,18 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
   }
 
   componentDidUpdate(prevProps: CytoscapeGraphProps, prevState: CytoscapeGraphState) {
+    if (prevState.timestamp !== this.state.timestamp) {
+      if (this.props.setLastElementsUpdate) {
+        this.props.setLastElementsUpdate(this.state.timestamp * 1000);
+      }
+    }
+
     const cy = this.getCy();
     if (!cy) {
       // If the graph is empty then reflect that fact in the graph state
-      if (this.props.updateGraph) {
-        this.props.updateGraph();
-      }
+      // if (this.props.updateCyData) {
+      //   this.props.updateCyData();
+      // }
       return;
     }
 
@@ -228,12 +234,13 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
       this.updateHealth(cy);
     }
 
-    if (this.props.updateGraph) {
-      this.props.updateGraph({ updateTimestamp: this.state.timestamp, cyRef: cy });
+    if (this.props.setLastSettingsUpdate) {
+      this.props.setLastSettingsUpdate(Date.now());
     }
   }
 
   componentWillUnmount(): void {
+    console.log('CytoscapeGraph: UNMOUNT');
     // Remove data source events listeners.
     this.props.dataSource.removeListener('loadStart', this.loadStartHandler);
     this.props.dataSource.removeListener('emptyNamespaces', this.emptyNamespacesHandler);
@@ -620,6 +627,7 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
     }
 
     // update the entire set of nodes and edges to keep the graph up-to-date
+    console.log('JSON JSON');
     cy.json({ elements: this.state.elements });
 
     cy.endBatch();

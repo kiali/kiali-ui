@@ -10,7 +10,6 @@ import { store } from '../../store/ConfigStore';
 import { DurationInSeconds, IntervalInMilliseconds, TimeInMilliseconds } from '../../types/Common';
 import Namespace from '../../types/Namespace';
 import {
-  CyData,
   CytoscapeClickEvent,
   EdgeLabelMode,
   GraphType,
@@ -83,6 +82,8 @@ type ReduxProps = {
   replayActive: boolean;
   replayQueryTime: TimeInMilliseconds;
   setActiveNamespaces: (namespace: Namespace[]) => void;
+  setLastElementsUpdate: (val: TimeInMilliseconds) => void;
+  setLastSettingsUpdate: (val: TimeInMilliseconds) => void;
   showCircuitBreakers: boolean;
   showLegend: boolean;
   showMissingSidecars: boolean;
@@ -93,11 +94,10 @@ type ReduxProps = {
   showUnusedNodes: boolean;
   showVirtualServices: boolean;
   summaryData: SummaryData | null;
-  updateGraph: (cyData?: CyData) => void;
   updateSummary: (event: CytoscapeClickEvent) => void;
   mtlsEnabled: boolean;
 
-  graphChanged: () => void;
+  onNamespaceChange: () => void;
   setNode: (node?: NodeParamsType) => void;
   toggleLegend: () => void;
   endTour: () => void;
@@ -273,7 +273,7 @@ export class GraphPage extends React.Component<GraphPageProps> {
 
     // Ensure we initialize the graph when there is a change to activeNamespaces.
     if (activeNamespacesChanged) {
-      this.props.graphChanged();
+      this.props.onNamespaceChange();
     }
 
     if (
@@ -324,11 +324,12 @@ export class GraphPage extends React.Component<GraphPageProps> {
       Object.keys(this.graphDataSource.graphData.nodes).length > 0 &&
       !this.graphDataSource.isError;
     const isReplayReady = this.props.replayActive && !!this.props.replayQueryTime;
+    const cy = this.cytoscapeGraphRef && this.cytoscapeGraphRef.current ? this.cytoscapeGraphRef.current.getCy() : null;
     return (
       <>
         <FlexView className={conStyle} column={true}>
           <div>
-            <GraphToolbarContainer disabled={this.graphDataSource.isLoading} onToggleHelp={this.toggleHelp} />
+            <GraphToolbarContainer cy={cy} disabled={this.graphDataSource.isLoading} onToggleHelp={this.toggleHelp} />
           </div>
           <FlexView
             grow={true}
@@ -484,13 +485,14 @@ const mapStateToProps = (state: KialiAppState) => ({
 const mapDispatchToProps = (dispatch: ThunkDispatch<KialiAppState, void, KialiAppAction>) => ({
   displayUnusedNodes: bindActionCreators(GraphToolbarActions.toggleUnusedNodes, dispatch),
   endTour: bindActionCreators(TourActions.endTour, dispatch),
-  graphChanged: bindActionCreators(GraphActions.changed, dispatch),
+  onNamespaceChange: bindActionCreators(GraphActions.onNamespaceChange, dispatch),
   onReady: (cy: Cy.Core) => dispatch(GraphThunkActions.graphReady(cy)),
   setActiveNamespaces: (namespaces: Namespace[]) => dispatch(NamespaceActions.setActiveNamespaces(namespaces)),
+  setLastElementsUpdate: (val: TimeInMilliseconds) => dispatch(GraphActions.setLastElementsUpdate(val)),
+  setLastSettingsUpdate: (val: TimeInMilliseconds) => dispatch(GraphActions.setLastSettingsUpdate(val)),
   setNode: bindActionCreators(GraphActions.setNode, dispatch),
   startTour: bindActionCreators(TourActions.startTour, dispatch),
   toggleLegend: bindActionCreators(GraphToolbarActions.toggleLegend, dispatch),
-  updateGraph: (cyData?: CyData) => dispatch(GraphActions.updateGraph(cyData)),
   updateSummary: (event: CytoscapeClickEvent) => dispatch(GraphActions.updateSummary(event))
 });
 

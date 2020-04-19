@@ -11,7 +11,7 @@ describe('Parse find value test', () => {
   it('should return the correct selector for raw find values', () => {
     const wrapper = shallow(
       <GraphFind
-        cyData={{ updateTimestamp: 123, cyRef: 'dummyRef' }}
+        cyData={{ elementsUpdateTime: 123, cyRef: 'dummyRef' }}
         edgeLabelMode={EdgeLabelMode.NONE}
         findValue="testFind"
         hideValue="testHide"

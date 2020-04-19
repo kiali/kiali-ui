@@ -8,10 +8,12 @@ import { DagreGraph } from '../components/CytoscapeGraph/graphs/DagreGraph';
 import { updateState } from '../utils/Reducer';
 
 export const INITIAL_GRAPH_STATE: GraphState = {
-  cyData: undefined,
+  lastElementsUpdate: 0,
+  lastSettingsUpdate: 0,
   layout: DagreGraph.getLayout(),
   node: undefined,
   summaryData: null,
+  removedElements: undefined,
   toolbarState: {
     compressOnHide: true,
     edgeLabelMode: EdgeLabelMode.NONE,
@@ -34,8 +36,10 @@ export const INITIAL_GRAPH_STATE: GraphState = {
 // This Reducer allows changes to the 'graphDataState' portion of Redux Store
 const graphDataState = (state: GraphState = INITIAL_GRAPH_STATE, action: KialiAppAction): GraphState => {
   switch (action.type) {
-    case getType(GraphActions.changed):
+    case getType(GraphActions.onNamespaceChange):
+      // console.log(`NamespaceChange, clearing ${!!state.removedElements ? state.removedElements.length : 0} elements`);
       return updateState(state, {
+        // removedElements: undefined,
         summaryData: INITIAL_GRAPH_STATE.summaryData
       });
     case getType(GraphActions.setLayout):
@@ -46,15 +50,20 @@ const graphDataState = (state: GraphState = INITIAL_GRAPH_STATE, action: KialiAp
         // TODO: This should be handled in GraphPage.ComponentDidUpdate (Init graph on node change)
         summaryData: INITIAL_GRAPH_STATE.summaryData
       });
-    case getType(GraphActions.updateGraph):
-      const newCyData = !!action.payload
-        ? {
-            updateTimestamp: action.payload.updateTimestamp,
-            cyRef: action.payload.cyRef
-          }
-        : undefined;
+    case getType(GraphActions.setLastElementsUpdate):
+      console.log(`elementsUpdate at ${action.payload}`);
       return updateState(state, {
-        cyData: newCyData
+        lastElementsUpdate: action.payload
+      });
+    case getType(GraphActions.setLastSettingsUpdate):
+      console.log(`settingsUpdate at ${action.payload}`);
+      return updateState(state, {
+        lastSettingsUpdate: action.payload
+      });
+    case getType(GraphActions.setRemovedElements):
+      console.log(`setting ${!!action.payload ? action.payload.length : 0} elements`);
+      return updateState(state, {
+        removedElements: action.payload
       });
     case getType(GraphActions.updateSummary):
       return updateState(state, {
