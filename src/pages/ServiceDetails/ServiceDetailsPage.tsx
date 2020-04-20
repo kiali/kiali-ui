@@ -323,6 +323,9 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
         });
     } else {
       const params = getQueryJaeger();
+      if (this.lastFetchTraceMicros) {
+        params[URLParam.JAEGER_START_TIME] = this.lastFetchTraceMicros;
+      }
       fetchTraces(this.props.match.params.namespace, this.props.match.params.service, params)
         .then(traces => {
           const appendTraces = this.lastFetchTraceMicros !== undefined;
@@ -334,6 +337,8 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
               : traces.data;
             if (traces.data.length === 0) {
               myState['selectedTrace'] = undefined;
+            } else {
+              this.lastFetchTraceMicros = Math.max(...this.traces.map(t => t.startTime));
             }
           }
           myState['errorTraces'] = traces
