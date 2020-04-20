@@ -6,6 +6,8 @@ import { SuspendedRoute } from './SuspendTraffic';
 import {
   AuthorizationPolicy,
   AuthorizationPolicyRule,
+  AuthorizationPolicyWorkloadSelector,
+  Condition,
   DestinationRule,
   DestinationRules,
   DestinationWeight,
@@ -18,8 +20,7 @@ import {
   Source,
   StringMatch,
   VirtualService,
-  VirtualServices,
-  WorkloadSelector
+  VirtualServices
 } from '../../types/IstioObjects';
 import { serverConfig } from '../../config';
 import { ThreeScaleServiceRule } from '../../types/ThreeScale';
@@ -669,21 +670,19 @@ export const buildAuthorizationPolicy = (
 
   if (state.policy === 'ALLOW_ALL') {
     ap.spec.rules = [{}];
-    console.log('TODELETE ap');
-    console.log(ap);
     return ap;
   }
 
   // RULES use case
   if (state.workloadSelector.length > 0) {
-    const workloadSelector: WorkloadSelector = {
-      labels: {}
+    const workloadSelector: AuthorizationPolicyWorkloadSelector = {
+      matchLabels: {}
     };
     state.workloadSelector.split(',').forEach(label => {
       label = label.trim();
       const labelDetails = label.split('=');
       if (labelDetails.length === 2) {
-        workloadSelector.labels[labelDetails[0]] = labelDetails[1];
+        workloadSelector.matchLabels[labelDetails[0]] = labelDetails[1];
       }
     });
     ap.spec.selector = workloadSelector;
@@ -692,8 +691,13 @@ export const buildAuthorizationPolicy = (
   if (state.rules.length > 0) {
     ap.spec.rules = [];
     state.rules.forEach(rule => {
-      const apRule: AuthorizationPolicyRule = {
-        from: rule.from.map(fromItem => {
+      const appRule: AuthorizationPolicyRule = {
+        from: undefined,
+        to: undefined,
+        when: undefined
+      };
+      if (rule.from.length > 0) {
+        appRule.from = rule.from.map(fromItem => {
           const source: Source = {};
           Object.keys(fromItem).forEach(key => {
             source[key] = fromItem[key];
@@ -701,30 +705,43 @@ export const buildAuthorizationPolicy = (
           return {
             source: source
           };
-        }),
-        to: rule.to.map(toItem => {
+        });
+      }
+      if (rule.to.length > 0) {
+        appRule.to = rule.to.map(toItem => {
           const operation: Operation = {};
           Object.keys(toItem).forEach(key => {
-            operation[key] = operation[key];
+            operation[key] = toItem[key];
           });
           return {
             operation: operation
           };
-        }),
-        when: rule.when.map(condition => {
-          return {
-            key: condition.key,
-            values: condition.values,
-            notValues: condition.notValues
+        });
+      }
+      if (rule.when.length > 0) {
+        appRule.when = rule.when.map(condition => {
+          const cond: Condition = {
+            key: condition.key
           };
-        })
-      };
-      ap.spec.rules!.push(apRule);
+          if (condition.values && condition.values.length > 0) {
+            cond.values = condition.values;
+          }
+          if (condition.notValues && condition.notValues.length > 0) {
+            cond.notValues = condition.notValues;
+          }
+          return cond;
+        });
+      }
+      ap.spec.rules!.push(appRule);
     });
   }
   if (state.action.length > 0) {
     ap.spec.action = state.action;
   }
+
+  console.log('TODELETE ap');
+  console.log(ap);
+
   return ap;
 };
 

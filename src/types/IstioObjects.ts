@@ -615,8 +615,12 @@ export interface AuthorizationPolicy extends IstioObject {
   spec: AuthorizationPolicySpec;
 }
 
+export interface AuthorizationPolicyWorkloadSelector {
+  matchLabels: { [key: string]: string };
+}
+
 export interface AuthorizationPolicySpec {
-  selector?: WorkloadSelector;
+  selector?: AuthorizationPolicyWorkloadSelector;
   rules?: AuthorizationPolicyRule[];
   action?: string;
 }
