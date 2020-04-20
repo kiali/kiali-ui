@@ -22,7 +22,7 @@ exports[`lists all the components grouped 1`] = `
         Object {
           "is_core": true,
           "name": "istiod",
-          "status": "Unhealthy",
+          "status": "NotFound",
         }
       }
     />
@@ -31,6 +31,24 @@ exports[`lists all the components grouped 1`] = `
         Object {
           "is_core": true,
           "name": "istio-egressgateway",
+          "status": "Unhealthy",
+        }
+      }
+    />
+    <IstioComponentStatus
+      componentStatus={
+        Object {
+          "is_core": false,
+          "name": "grafana",
+          "status": "NotFound",
+        }
+      }
+    />
+    <IstioComponentStatus
+      componentStatus={
+        Object {
+          "is_core": false,
+          "name": "prometheus",
           "status": "Unhealthy",
         }
       }

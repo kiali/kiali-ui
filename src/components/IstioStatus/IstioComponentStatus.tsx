@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { ComponentStatus, Status } from '../../types/IstioStatus';
-import { GutterSize, Split, SplitItem } from '@patternfly/react-core';
 import { IconType } from '@patternfly/react-icons/dist/js/createIcon';
 import { PFAlertColor } from '../Pf/PfColors';
 import { CheckCircleIcon, ExclamationCircleIcon, ExclamationTriangleIcon } from '@patternfly/react-icons';
+import { Split, SplitItem } from '@patternfly/react-core';
 
 type Props = {
   componentStatus: ComponentStatus;
@@ -53,7 +53,7 @@ class IstioComponentStatus extends React.Component<Props> {
     const comp = this.props.componentStatus;
 
     return [
-      <Split key={'cell-status-icon-' + comp.name} gutter={GutterSize.md}>
+      <Split key={'cell-status-icon-' + comp.name} gutter={'md'}>
         <SplitItem>{this.renderIcon(this.props.componentStatus.status, this.props.componentStatus.is_core)}</SplitItem>
         <SplitItem isFilled={true}>{comp.name}</SplitItem>
         <SplitItem>{statusMsg[comp.status]}</SplitItem>
