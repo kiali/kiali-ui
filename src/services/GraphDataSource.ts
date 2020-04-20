@@ -20,18 +20,19 @@ export const EMPTY_GRAPH_DATA = { nodes: [], edges: [] };
 const PROMISE_KEY = 'CURRENT_REQUEST';
 
 type EmitEvents = {
-  (eventName: 'loadStart', isPreviousDataInvalid: boolean): void;
-  (eventName: 'emptyNamespaces'): void;
-  (eventName: 'fetchError', errorMessage: string | null): void;
+  (eventName: 'loadStart', isPreviousDataInvalid: boolean, fetchParams: FetchParams): void;
+  (eventName: 'emptyNamespaces', fetchParams: FetchParams): void;
+  (eventName: 'fetchError', errorMessage: string | null, fetchParams: FetchParams): void;
   (
     eventName: 'fetchSuccess',
     graphTimestamp: TimeInSeconds,
     graphDuration: DurationInSeconds,
-    graphData: DecoratedGraphElements
+    graphData: DecoratedGraphElements,
+    fetchParams: FetchParams
   ): void;
 };
 
-interface FetchParams {
+export interface FetchParams {
   duration: DurationInSeconds;
   edgeLabelMode: EdgeLabelMode;
   graphType: GraphType;
@@ -44,15 +45,16 @@ interface FetchParams {
 }
 
 type OnEvents = {
-  (eventName: 'loadStart', callback: (isPreviousDataInvalid: boolean) => void): void;
-  (eventName: 'emptyNamespaces', callback: () => void): void;
-  (eventName: 'fetchError', callback: (errorMessage: string | null) => void): void;
+  (eventName: 'loadStart', callback: (isPreviousDataInvalid: boolean, fetchParams: FetchParams) => void): void;
+  (eventName: 'emptyNamespaces', callback: (fetchParams: FetchParams) => void): void;
+  (eventName: 'fetchError', callback: (errorMessage: string | null, fetchParams: FetchParams) => void): void;
   (
     eventName: 'fetchSuccess',
     callback: (
       graphTimestamp: TimeInSeconds,
       graphDuration: DurationInSeconds,
-      graphData: DecoratedGraphElements
+      graphData: DecoratedGraphElements,
+      fetchParams: FetchParams
     ) => void
   ): void;
 };
@@ -108,7 +110,7 @@ export default class GraphDataSource {
       this.graphElements = EMPTY_GRAPH_DATA;
       this.graphDuration = 0;
       this.graphTimestamp = 0;
-      this.emit('emptyNamespaces');
+      this.emit('emptyNamespaces', fetchParams);
       return;
     }
 
@@ -169,7 +171,7 @@ export default class GraphDataSource {
       this.graphTimestamp = 0;
     }
 
-    this.emit('loadStart', isPreviousDataInvalid);
+    this.emit('loadStart', isPreviousDataInvalid, fetchParams);
     if (fetchParams.node) {
       this.fetchDataForNode(restParams);
     } else {
@@ -200,7 +202,7 @@ export default class GraphDataSource {
         this.graphTimestamp = responseData && responseData.timestamp ? responseData.timestamp : 0;
         this.graphDuration = responseData && responseData.duration ? responseData.duration : 0;
         this._isLoading = this._isError = false;
-        this.emit('fetchSuccess', this.graphTimestamp, this.graphDuration, this.graphData);
+        this.emit('fetchSuccess', this.graphTimestamp, this.graphDuration, this.graphData, this.fetchParameters);
       },
       error => {
         this._isLoading = false;
@@ -211,7 +213,7 @@ export default class GraphDataSource {
         this._isError = true;
         this._errorMessage = API.getErrorString(error);
         AlertUtils.addError('Cannot load the graph', error);
-        this.emit('fetchError', `Cannot load the graph: ${this.errorMessage}`);
+        this.emit('fetchError', `Cannot load the graph: ${this.errorMessage}`, this.fetchParameters);
       }
     );
   };
@@ -224,7 +226,7 @@ export default class GraphDataSource {
         this.graphTimestamp = responseData && responseData.timestamp ? responseData.timestamp : 0;
         this.graphDuration = responseData && responseData.duration ? responseData.duration : 0;
         this._isLoading = this._isError = false;
-        this.emit('fetchSuccess', this.graphTimestamp, this.graphDuration, this.graphData);
+        this.emit('fetchSuccess', this.graphTimestamp, this.graphDuration, this.graphData, this.fetchParameters);
       },
       error => {
         this._isLoading = false;
@@ -235,7 +237,7 @@ export default class GraphDataSource {
         this._isError = true;
         this._errorMessage = API.getErrorString(error);
         AlertUtils.addError('Cannot load the graph', error);
-        this.emit('fetchError', this.errorMessage);
+        this.emit('fetchError', this.errorMessage, this.fetchParameters);
       }
     );
   };

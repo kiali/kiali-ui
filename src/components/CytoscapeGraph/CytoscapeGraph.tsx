@@ -37,7 +37,7 @@ import { angleBetweenVectors, squaredDistance, normalize } from '../../utils/Mat
 import { NodeSingular } from 'cytoscape';
 import { EdgeSingular } from 'cytoscape';
 import { Core } from 'cytoscape';
-import GraphDataSource from 'services/GraphDataSource';
+import { GraphData } from 'pages/Graph/GraphPage';
 
 type CytoscapeGraphProps = {
   compressOnHide: boolean;
@@ -45,12 +45,10 @@ type CytoscapeGraphProps = {
   contextMenuEdgeComponent?: EdgeContextMenuType;
   contextMenuGroupComponent?: NodeContextMenuType;
   contextMenuNodeComponent?: NodeContextMenuType;
-  dataSource: GraphDataSource;
   displayUnusedNodes: () => void;
   edgeLabelMode: EdgeLabelMode;
+  graphData: GraphData;
   focusSelector?: string;
-  isEmpty: boolean;
-  isLoading: boolean;
   isMiniGraph: boolean;
   isMTLSEnabled: boolean;
   layout: Layout;
@@ -154,19 +152,19 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
 
   shouldComponentUpdate(nextProps: CytoscapeGraphProps) {
     // }, nextState: CytoscapeGraphState) {
-    if (nextProps.isLoading) {
+    if (nextProps.graphData.isLoading) {
       console.log('skip cyGraph update');
       return false;
     }
 
     this.nodeChanged =
-      this.nodeChanged || this.props.dataSource.fetchParameters.node !== nextProps.dataSource.fetchParameters.node; // side-effect?  Should this move to componentDidUpdate?
+      this.nodeChanged || this.props.graphData.fetchParams.node !== nextProps.graphData.fetchParams.node;
 
     // don't update due to duration or refreshInterval changes, those don't affect display
     let result =
       this.props.edgeLabelMode !== nextProps.edgeLabelMode ||
-      this.props.isLoading !== nextProps.isLoading ||
-      this.props.isEmpty !== nextProps.isEmpty ||
+      this.props.graphData.isLoading !== nextProps.graphData.isLoading ||
+      this.props.graphData.elements !== nextProps.graphData.elements ||
       this.props.layout !== nextProps.layout ||
       this.props.compressOnHide !== nextProps.compressOnHide ||
       this.props.showCircuitBreakers !== nextProps.showCircuitBreakers ||
@@ -181,7 +179,7 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
     // if (!nextState.elements || !nextState.elements.nodes || nextState.elements.nodes.length < 1) {
     //   result = true;
     // }
-    console.log(`cyGraph:shouldUpdate=${result} err=${this.props.isEmpty} nerr=${nextProps.isEmpty}`);
+    console.log(`cyGraph:shouldUpdate=${result}`);
     return result;
   }
 
@@ -200,8 +198,8 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
     let updateLayout = false;
     if (
       this.nodeNeedsRelayout() ||
-      this.namespaceNeedsRelayout(prevProps.dataSource.graphData, this.props.dataSource.graphData) ||
-      this.elementsNeedRelayout(prevProps.dataSource.graphData, this.props.dataSource.graphData) ||
+      this.namespaceNeedsRelayout(prevProps.graphData.elements, this.props.graphData.elements) ||
+      this.elementsNeedRelayout(prevProps.graphData.elements, this.props.graphData.elements) ||
       this.props.layout.name !== prevProps.layout.name
     ) {
       updateLayout = true;
@@ -210,7 +208,7 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
     this.processGraphUpdate(cy, updateLayout);
 
     // pre-select node if provided
-    const node = this.props.dataSource.fetchParameters.node;
+    const node = this.props.graphData.fetchParams.node;
     if (node && cy && cy.$(':selected').length === 0) {
       let selector = "[nodeType = '" + node.nodeType + "']";
       switch (node.nodeType) {
@@ -231,7 +229,7 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
         this.selectTargetAndUpdateSummary(eles[0]);
       }
     }
-    if (this.props.dataSource.graphData !== prevProps.dataSource.graphData) {
+    if (this.props.graphData.elements !== prevProps.graphData.elements) {
       this.updateHealth(cy);
     }
 
@@ -250,20 +248,19 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
   }
 
   render() {
-    const elements = this.props.isEmpty ? { edges: [], nodes: [] } : this.props.dataSource.graphData;
     return (
       <div id="cytoscape-container" className={this.props.containerClassName}>
         <ReactResizeDetector handleWidth={true} handleHeight={true} skipOnMount={false} onResize={this.onResize} />
         <EmptyGraphLayout
           action={this.props.onEmptyGraphAction}
           displayUnusedNodes={this.props.displayUnusedNodes}
-          elements={elements}
-          error={this.props.dataSource.errorMessage ? this.props.dataSource.errorMessage : undefined}
+          elements={this.props.graphData.elements}
+          error={this.props.graphData.errorMessage}
           isDisplayingUnusedNodes={this.props.showUnusedNodes}
-          isLoading={this.props.isLoading}
-          isError={this.props.dataSource.isError}
+          isLoading={this.props.graphData.isLoading}
+          isError={!!this.props.graphData.isError}
           isMiniGraph={this.props.isMiniGraph}
-          namespaces={this.props.dataSource.fetchParameters.namespaces}
+          namespaces={this.props.graphData.fetchParams.namespaces}
         >
           <CytoscapeContextMenuWrapper
             ref={this.contextMenuRef}
@@ -612,9 +609,9 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
     }
 
     const globalScratchData: CytoscapeGlobalScratchData = {
-      activeNamespaces: this.props.dataSource.fetchParameters.namespaces,
+      activeNamespaces: this.props.graphData.fetchParams.namespaces,
       edgeLabelMode: this.props.edgeLabelMode,
-      graphType: this.props.dataSource.fetchParameters.graphType,
+      graphType: this.props.graphData.fetchParams.graphType,
       mtlsEnabled: this.props.isMTLSEnabled,
       showCircuitBreakers: this.props.showCircuitBreakers,
       showMissingSidecars: this.props.showMissingSidecars,
@@ -636,7 +633,7 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
 
     // update the entire set of nodes and edges to keep the graph up-to-date
     console.log('JSON JSON');
-    cy.json({ elements: this.props.dataSource.graphData });
+    cy.json({ elements: this.props.graphData.elements });
 
     cy.endBatch();
 
@@ -779,7 +776,7 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
     };
 
     let sameNode = false;
-    const node = this.props.dataSource.fetchParameters.node;
+    const node = this.props.graphData.fetchParams.node;
     if (node) {
       sameNode = node && node.nodeType === nodeType;
       switch (nodeType) {
@@ -804,11 +801,11 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
     }
 
     const urlParams: GraphUrlParams = {
-      activeNamespaces: this.props.dataSource.fetchParameters.namespaces,
-      duration: this.props.dataSource.fetchParameters.duration,
+      activeNamespaces: this.props.graphData.fetchParams.namespaces,
+      duration: this.props.graphData.fetchParams.duration,
       edgeLabelMode: this.props.edgeLabelMode,
       graphLayout: this.props.layout,
-      graphType: this.props.dataSource.fetchParameters.graphType,
+      graphType: this.props.graphData.fetchParams.graphType,
       node: targetNode,
       refreshInterval: this.props.refreshInterval,
       showServiceNodes: this.props.showServiceNodes,
@@ -902,7 +899,7 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
     if (!cy) {
       return;
     }
-    const duration = this.props.dataSource.fetchParameters.duration;
+    const duration = this.props.graphData.fetchParams.duration;
     // Keep a map of namespace x promises in order not to fetch several times the same data per namespace
     const appHealthPerNamespace = new Map<string, Promise<NamespaceAppHealth>>();
     const serviceHealthPerNamespace = new Map<string, Promise<NamespaceServiceHealth>>();
