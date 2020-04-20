@@ -69,6 +69,7 @@ type GraphURLPathProps = {
 type ReduxProps = {
   activeNamespaces: Namespace[];
   activeTour?: TourInfo;
+  compressOnHide: boolean;
   displayUnusedNodes: () => void;
   duration: DurationInSeconds; // current duration (dropdown) setting
   edgeLabelMode: EdgeLabelMode;
@@ -245,6 +246,12 @@ export class GraphPage extends React.Component<GraphPageProps> {
   }
 
   componentDidMount() {
+    // Connect to graph data source updates
+    this.graphDataSource.on('loadStart', this.handleGraphDataSourceStart);
+    this.graphDataSource.on('fetchError', this.handleGraphDataSourceError);
+    this.graphDataSource.on('fetchSuccess', this.handleGraphDataSourceSuccess);
+    this.graphDataSource.on('emptyNamespaces', this.handleGraphDataSourceEmpty);
+
     // This is a special bookmarking case. If the initial URL is for a node graph then
     // defer the graph fetch until the first component update, when the node is set.
     // (note: to avoid direct store access we could parse the URL again, perhaps that
@@ -253,15 +260,10 @@ export class GraphPage extends React.Component<GraphPageProps> {
     if (!store.getState().graph.node) {
       this.loadGraphDataFromBackend();
     }
-
-    // Connect to graph data source updates
-    this.graphDataSource.on('loadStart', this.handleGraphDataSourceUpdate);
-    this.graphDataSource.on('fetchError', this.handleGraphDataSourceUpdate);
-    this.graphDataSource.on('fetchSuccess', this.handleGraphDataSourceUpdate);
-    this.graphDataSource.on('emptyNamespaces', this.handleGraphDataSourceUpdate);
   }
 
   componentDidUpdate(prev: GraphPageProps) {
+    console.log('GraphPage update');
     // schedule an immediate graph fetch if needed
     const curr = this.props;
 
@@ -308,10 +310,10 @@ export class GraphPage extends React.Component<GraphPageProps> {
 
   componentWillUnmount() {
     // Disconnect from graph data source updates
-    this.graphDataSource.removeListener('loadStart', this.handleGraphDataSourceUpdate);
-    this.graphDataSource.removeListener('fetchError', this.handleGraphDataSourceUpdate);
-    this.graphDataSource.removeListener('fetchSuccess', this.handleGraphDataSourceUpdate);
-    this.graphDataSource.removeListener('emptyNamespaces', this.handleGraphDataSourceUpdate);
+    this.graphDataSource.removeListener('loadStart', this.handleGraphDataSourceStart);
+    this.graphDataSource.removeListener('fetchError', this.handleGraphDataSourceError);
+    this.graphDataSource.removeListener('fetchSuccess', this.handleGraphDataSourceSuccess);
+    this.graphDataSource.removeListener('emptyNamespaces', this.handleGraphDataSourceEmpty);
   }
 
   render() {
@@ -319,10 +321,11 @@ export class GraphPage extends React.Component<GraphPageProps> {
     if (isKioskMode()) {
       conStyle = kioskContainerStyle;
     }
-    const isReady =
-      this.graphDataSource.graphData.nodes &&
-      Object.keys(this.graphDataSource.graphData.nodes).length > 0 &&
-      !this.graphDataSource.isError;
+    const isEmpty = !(
+      this.graphDataSource.graphData.nodes && Object.keys(this.graphDataSource.graphData.nodes).length > 0
+    );
+    const isReady = !(isEmpty || this.graphDataSource.isError);
+    console.log(`isReady=${isReady}, isError=${this.graphDataSource.graphData.nodes}`);
     const isReplayReady = this.props.replayActive && !!this.props.replayQueryTime;
     const cy = this.cytoscapeGraphRef && this.cytoscapeGraphRef.current ? this.cytoscapeGraphRef.current.getCy() : null;
     return (
@@ -373,6 +376,8 @@ export class GraphPage extends React.Component<GraphPageProps> {
                       contextMenuNodeComponent={NodeContextMenuContainer}
                       contextMenuGroupComponent={NodeContextMenuContainer}
                       dataSource={this.graphDataSource}
+                      isEmpty={isEmpty}
+                      isLoading={this.graphDataSource.isLoading}
                       {...this.props}
                     />
                   </TourStopContainer>
@@ -406,7 +411,23 @@ export class GraphPage extends React.Component<GraphPageProps> {
     this.loadGraphDataFromBackend();
   };
 
-  private handleGraphDataSourceUpdate = () => {
+  private handleGraphDataSourceSuccess = () => {
+    console.log(`End Load: ts=${this.graphDataSource.graphTimestamp}`);
+    this.forceUpdate();
+  };
+
+  private handleGraphDataSourceError = () => {
+    console.log('Error Load');
+    this.forceUpdate();
+  };
+
+  private handleGraphDataSourceEmpty = () => {
+    console.log('Empty Load');
+    this.forceUpdate();
+  };
+
+  private handleGraphDataSourceStart = () => {
+    console.log(`Start Load: ts=${this.graphDataSource.graphTimestamp}`);
     this.forceUpdate();
   };
 
@@ -459,6 +480,7 @@ export class GraphPage extends React.Component<GraphPageProps> {
 const mapStateToProps = (state: KialiAppState) => ({
   activeNamespaces: activeNamespacesSelector(state),
   activeTour: state.tourState.activeTour,
+  compressOnHide: state.graph.toolbarState.compressOnHide,
   duration: durationSelector(state),
   edgeLabelMode: edgeLabelModeSelector(state),
   graphType: graphTypeSelector(state),
