@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { List, Text, TextContent, TextVariants } from '@patternfly/react-core';
-import { ComponentStatus } from '../../types/IstioStatus';
-import _ from 'lodash';
+import { ComponentStatus, Status } from '../../types/IstioStatus';
 import IstioComponentStatus from './IstioComponentStatus';
 import { PfColors } from '../Pf/PfColors';
 
@@ -10,12 +9,16 @@ type Props = {
 };
 
 class IstioStatusList extends React.Component<Props> {
+  nonhealthyComponents = () => {
+    return this.props.status.filter((c: ComponentStatus) => c.status !== Status.Healthy);
+  };
+
   coreComponentsStatus = () => {
-    return _.filter(this.props.status, (s: ComponentStatus) => s.is_core);
+    return this.nonhealthyComponents().filter((s: ComponentStatus) => s.is_core);
   };
 
   addonComponentsStatus = () => {
-    return _.filter(this.props.status, (s: ComponentStatus) => !s.is_core);
+    return this.nonhealthyComponents().filter((s: ComponentStatus) => !s.is_core);
   };
 
   renderComponentList = () => {

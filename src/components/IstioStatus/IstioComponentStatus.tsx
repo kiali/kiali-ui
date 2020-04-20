@@ -30,18 +30,23 @@ const SuccessComponent: ComponentIcon = {
 };
 
 // Mapping Valid-Core to Icon representation.
-export const validToIcon: { [valid: string]: ComponentIcon } = {
+const validToIcon: { [valid: string]: ComponentIcon } = {
   'false-false': ErrorAddonComponent,
   'false-true': ErrorCoreComponent,
   'true-false': SuccessComponent,
   'true-true': SuccessComponent
 };
 
+const statusMsg = {
+  [Status.NotFound]: 'Not found',
+  [Status.Unhealthy]: 'Not healty'
+};
+
 class IstioComponentStatus extends React.Component<Props> {
   renderIcon = (status: Status, isCore: boolean) => {
     const compIcon = validToIcon[`${status === Status.Healthy}-${isCore}`];
     const IconComponent = compIcon.icon;
-    return <IconComponent style={{ color: compIcon.color }} />;
+    return <IconComponent style={{ color: compIcon.color, marginTop: 5 }} />;
   };
 
   renderCells = () => {
@@ -51,7 +56,7 @@ class IstioComponentStatus extends React.Component<Props> {
       <Split key={'cell-status-icon-' + comp.name} gutter={GutterSize.md}>
         <SplitItem>{this.renderIcon(this.props.componentStatus.status, this.props.componentStatus.is_core)}</SplitItem>
         <SplitItem isFilled={true}>{comp.name}</SplitItem>
-        <SplitItem>{comp.status}</SplitItem>
+        <SplitItem>{statusMsg[comp.status]}</SplitItem>
       </Split>
     ];
   };

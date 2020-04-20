@@ -116,8 +116,6 @@ describe('When all components are good', () => {
       }
     ]);
 
-    testSnapshot(wrapper);
-    testTooltip(wrapper);
-    testIcon(wrapper, PFAlertColor.Success);
+    expect(wrapper.isEmptyRender()).toBeTruthy();
   });
 });

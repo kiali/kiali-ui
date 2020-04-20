@@ -82,12 +82,22 @@ export class IstioStatus extends React.Component<Props> {
     return ValidToColor[`${coreHealthy}-${addonHealthy}`];
   };
 
+  healthyComponents = () => {
+    return this.props.status.reduce((healthy: boolean, compStatus: ComponentStatus) => {
+      return healthy && compStatus.status === Status.Healthy;
+    }, true);
+  };
+
   render() {
-    return (
-      <Tooltip position={TooltipPosition.left} enableFlip={true} content={this.tooltipContent()} maxWidth={'25rem'}>
-        <ResourcesFullIcon color={this.tooltipColor()} style={{ verticalAlign: '-0.3em', marginRight: 8 }} />
-      </Tooltip>
-    );
+    if (!this.healthyComponents()) {
+      return (
+        <Tooltip position={TooltipPosition.left} enableFlip={true} content={this.tooltipContent()} maxWidth={'25rem'}>
+          <ResourcesFullIcon color={this.tooltipColor()} style={{ verticalAlign: '-0.3em', marginRight: 8 }} />
+        </Tooltip>
+      );
+    }
+
+    return null;
   }
 }
 

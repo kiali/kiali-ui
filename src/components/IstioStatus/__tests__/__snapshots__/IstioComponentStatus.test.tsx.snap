@@ -13,6 +13,7 @@ exports[`IstioComponentStatus renders error icon when core component is not foun
       style={
         Object {
           "color": "var(--pf-global--danger-color--100)",
+          "marginTop": 5,
         }
       }
       title={null}
@@ -24,7 +25,7 @@ exports[`IstioComponentStatus renders error icon when core component is not foun
     isito-ingress
   </SplitItem>
   <SplitItem>
-    NotFound
+    Not found
   </SplitItem>
 </Split>
 `;
@@ -42,6 +43,7 @@ exports[`IstioComponentStatus renders error icon when core component is not runn
       style={
         Object {
           "color": "var(--pf-global--danger-color--100)",
+          "marginTop": 5,
         }
       }
       title={null}
@@ -53,7 +55,7 @@ exports[`IstioComponentStatus renders error icon when core component is not runn
     isito-ingress
   </SplitItem>
   <SplitItem>
-    Unhealthy
+    Not healty
   </SplitItem>
 </Split>
 `;
@@ -71,6 +73,7 @@ exports[`IstioComponentStatus renders success icon when core component is runnin
       style={
         Object {
           "color": "#3e8635",
+          "marginTop": 5,
         }
       }
       title={null}
@@ -81,9 +84,7 @@ exports[`IstioComponentStatus renders success icon when core component is runnin
   >
     isito-ingress
   </SplitItem>
-  <SplitItem>
-    Healthy
-  </SplitItem>
+  <SplitItem />
 </Split>
 `;
 
@@ -100,6 +101,7 @@ exports[`IstioComponentStatus renders success icon when core component is runnin
       style={
         Object {
           "color": "#3e8635",
+          "marginTop": 5,
         }
       }
       title={null}
@@ -110,9 +112,7 @@ exports[`IstioComponentStatus renders success icon when core component is runnin
   >
     prometheus
   </SplitItem>
-  <SplitItem>
-    Healthy
-  </SplitItem>
+  <SplitItem />
 </Split>
 `;
 
@@ -129,6 +129,7 @@ exports[`IstioComponentStatus renders warning icon when core component is not fo
       style={
         Object {
           "color": "var(--pf-global--warning-color--100)",
+          "marginTop": 5,
         }
       }
       title={null}
@@ -140,7 +141,7 @@ exports[`IstioComponentStatus renders warning icon when core component is not fo
     prometheus
   </SplitItem>
   <SplitItem>
-    NotFound
+    Not found
   </SplitItem>
 </Split>
 `;
@@ -158,6 +159,7 @@ exports[`IstioComponentStatus renders warning icon when core component is not ru
       style={
         Object {
           "color": "var(--pf-global--warning-color--100)",
+          "marginTop": 5,
         }
       }
       title={null}
@@ -169,7 +171,7 @@ exports[`IstioComponentStatus renders warning icon when core component is not ru
     prometheus
   </SplitItem>
   <SplitItem>
-    Unhealthy
+    Not healty
   </SplitItem>
 </Split>
 `;

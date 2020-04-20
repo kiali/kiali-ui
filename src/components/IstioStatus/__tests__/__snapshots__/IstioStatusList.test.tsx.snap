@@ -35,24 +35,6 @@ exports[`lists all the components grouped 1`] = `
         }
       }
     />
-    <IstioComponentStatus
-      componentStatus={
-        Object {
-          "is_core": false,
-          "name": "grafana",
-          "status": "Healthy",
-        }
-      }
-    />
-    <IstioComponentStatus
-      componentStatus={
-        Object {
-          "is_core": false,
-          "name": "prometheus",
-          "status": "Healthy",
-        }
-      }
-    />
   </List>
 </TextContent>
 `;
