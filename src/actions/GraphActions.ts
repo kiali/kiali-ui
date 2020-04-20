@@ -7,9 +7,7 @@ export const GraphActions = {
   onNamespaceChange: createAction(ActionKeys.GRAPH_ON_NAMESPACE_CHANGE),
   setLayout: createStandardAction(ActionKeys.GRAPH_SET_LAYOUT)<Layout>(),
   setNode: createStandardAction(ActionKeys.GRAPH_SET_NODE)<NodeParamsType | undefined>(),
-  setLastElementsUpdate: createStandardAction(ActionKeys.GRAPH_SET_LAST_ELEMENTS_UPDATE)<TimeInMilliseconds>(),
-  setLastSettingsUpdate: createStandardAction(ActionKeys.GRAPH_SET_LAST_SETTINGS_UPDATE)<TimeInMilliseconds>(),
-  setRemovedElements: createStandardAction(ActionKeys.GRAPH_SET_REMOVED_ELEMENTS)<any | undefined>(),
+  setUpdateTime: createStandardAction(ActionKeys.GRAPH_SET_UPDATE_TIME)<TimeInMilliseconds>(),
   updateSummary: createStandardAction(ActionKeys.GRAPH_UPDATE_SUMMARY)<CytoscapeClickEvent>()
 };
 

@@ -8,12 +8,9 @@ import { DagreGraph } from '../components/CytoscapeGraph/graphs/DagreGraph';
 import { updateState } from '../utils/Reducer';
 
 export const INITIAL_GRAPH_STATE: GraphState = {
-  lastElementsUpdate: 0,
-  lastSettingsUpdate: 0,
   layout: DagreGraph.getLayout(),
   node: undefined,
   summaryData: null,
-  removedElements: undefined,
   toolbarState: {
     compressOnHide: true,
     edgeLabelMode: EdgeLabelMode.NONE,
@@ -30,7 +27,8 @@ export const INITIAL_GRAPH_STATE: GraphState = {
     showTrafficAnimation: false,
     showUnusedNodes: false,
     showVirtualServices: true
-  }
+  },
+  updateTime: 0
 };
 
 // This Reducer allows changes to the 'graphDataState' portion of Redux Store
@@ -50,20 +48,10 @@ const graphDataState = (state: GraphState = INITIAL_GRAPH_STATE, action: KialiAp
         // TODO: This should be handled in GraphPage.ComponentDidUpdate (Init graph on node change)
         summaryData: INITIAL_GRAPH_STATE.summaryData
       });
-    case getType(GraphActions.setLastElementsUpdate):
+    case getType(GraphActions.setUpdateTime):
       console.log(`elementsUpdate at ${action.payload}`);
       return updateState(state, {
-        lastElementsUpdate: action.payload
-      });
-    case getType(GraphActions.setLastSettingsUpdate):
-      console.log(`settingsUpdate at ${action.payload}`);
-      return updateState(state, {
-        lastSettingsUpdate: action.payload
-      });
-    case getType(GraphActions.setRemovedElements):
-      console.log(`setting ${!!action.payload ? action.payload.length : 0} elements`);
-      return updateState(state, {
-        removedElements: action.payload
+        updateTime: action.payload
       });
     case getType(GraphActions.updateSummary):
       return updateState(state, {

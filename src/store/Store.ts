@@ -61,13 +61,11 @@ export interface MessageCenterState {
 }
 
 export interface GraphState {
-  lastElementsUpdate: TimeInMilliseconds;
-  lastSettingsUpdate: TimeInMilliseconds;
   layout: Layout;
   node?: NodeParamsType;
-  removedElements?: any; // set when graph hide removes elements from the graph
   summaryData: SummaryData | null;
   toolbarState: GraphToolbarState;
+  updateTime: TimeInMilliseconds;
 }
 
 export enum LoginStatus {

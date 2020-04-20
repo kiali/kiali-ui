@@ -84,8 +84,7 @@ type ReduxProps = {
   replayActive: boolean;
   replayQueryTime: TimeInMilliseconds;
   setActiveNamespaces: (namespace: Namespace[]) => void;
-  setLastElementsUpdate: (val: TimeInMilliseconds) => void;
-  setLastSettingsUpdate: (val: TimeInMilliseconds) => void;
+  setUpdateTime: (val: TimeInMilliseconds) => void;
   showCircuitBreakers: boolean;
   showLegend: boolean;
   showMissingSidecars: boolean;
@@ -575,9 +574,8 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<KialiAppState, void, KialiAp
   onNamespaceChange: bindActionCreators(GraphActions.onNamespaceChange, dispatch),
   onReady: (cy: Cy.Core) => dispatch(GraphThunkActions.graphReady(cy)),
   setActiveNamespaces: (namespaces: Namespace[]) => dispatch(NamespaceActions.setActiveNamespaces(namespaces)),
-  setLastElementsUpdate: (val: TimeInMilliseconds) => dispatch(GraphActions.setLastElementsUpdate(val)),
-  setLastSettingsUpdate: (val: TimeInMilliseconds) => dispatch(GraphActions.setLastSettingsUpdate(val)),
   setNode: bindActionCreators(GraphActions.setNode, dispatch),
+  setUpdateTime: (val: TimeInMilliseconds) => dispatch(GraphActions.setUpdateTime(val)),
   startTour: bindActionCreators(TourActions.startTour, dispatch),
   toggleLegend: bindActionCreators(GraphToolbarActions.toggleLegend, dispatch),
   updateSummary: (event: CytoscapeClickEvent) => dispatch(GraphActions.updateSummary(event))

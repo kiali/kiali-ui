@@ -23,11 +23,11 @@ type ReduxProps = {
   edgeLabelMode: EdgeLabelMode;
   findValue: string;
   hideValue: string;
-  lastElementsUpdate: TimeInMilliseconds;
   layout: Layout;
   showFindHelp: boolean;
   showSecurity: boolean;
   showUnusedNodes: boolean;
+  updateTime: TimeInMilliseconds;
 
   setEdgeLabelMode: (val: EdgeLabelMode) => void;
   setFindValue: (val: string) => void;
@@ -89,7 +89,7 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
   shouldComponentUpdate(nextProps: GraphFindProps) {
     const findChanged = this.props.findValue !== nextProps.findValue;
     const hideChanged = this.props.hideValue !== nextProps.hideValue;
-    const graphChanged = this.props.lastElementsUpdate !== nextProps.lastElementsUpdate;
+    const graphChanged = this.props.updateTime !== nextProps.updateTime;
 
     return findChanged || hideChanged || graphChanged;
   }
@@ -110,7 +110,7 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
     }
 
     const findChanged = this.props.findValue !== prevProps.findValue;
-    const graphChanged = this.props.lastElementsUpdate !== prevProps.lastElementsUpdate;
+    const graphChanged = this.props.updateTime !== prevProps.updateTime;
 
     // make sure the value is updated if there was a change
     if (findChanged || (graphChanged && !!this.props.findValue)) {
@@ -289,7 +289,7 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
 
     cy.startBatch();
 
-    // make visible old hide-hits
+    // unhide hidden elements when we are dealing with the same graph. Either way,release for garbage collection
     if (!!this.hiddenElements) {
       if (!graphChanged) {
         this.hiddenElements.style({ visibility: 'visible' });
@@ -297,9 +297,7 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
       this.hiddenElements = undefined;
     }
 
-    // Only restore the removed nodes if we are working with the same graph.  If the graph has changed
-    // then we have new nodes, and therefore a potential ID conflict. In that case don't restore the
-    // removed nodes, instead, just remove our reference and they should get garbage collected.
+    // restore removed elements when we are working with the same graph. . Either way,release for garbage collection.  If the graph has changed
     if (!!this.removedElements) {
       if (!graphChanged) {
         console.log(`Restoring ${this.removedElements.length} elements`);
@@ -701,11 +699,11 @@ const mapStateToProps = (state: KialiAppState) => ({
   edgeLabelMode: edgeLabelModeSelector(state),
   findValue: findValueSelector(state),
   hideValue: hideValueSelector(state),
-  lastElementsUpdate: state.graph.lastElementsUpdate,
   layout: state.graph.layout,
   showFindHelp: state.graph.toolbarState.showFindHelp,
   showSecurity: state.graph.toolbarState.showSecurity,
-  showUnusedNodes: state.graph.toolbarState.showUnusedNodes
+  showUnusedNodes: state.graph.toolbarState.showUnusedNodes,
+  updateTime: state.graph.updateTime
 });
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<KialiAppState, void, KialiAppAction>) => {

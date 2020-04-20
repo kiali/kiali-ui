@@ -56,9 +56,8 @@ type CytoscapeGraphProps = {
   onReady?: (cytoscapeRef: any) => void;
   refreshInterval: IntervalInMilliseconds;
   setActiveNamespaces?: (namespace: Namespace[]) => void;
-  setLastElementsUpdate?: (val: TimeInMilliseconds) => void;
-  setLastSettingsUpdate?: (val: TimeInMilliseconds) => void;
   setNode?: (node?: NodeParamsType) => void;
+  setUpdateTime?: (val: TimeInMilliseconds) => void;
   showCircuitBreakers: boolean;
   showMissingSidecars: boolean;
   showNodeLabels: boolean;
@@ -68,14 +67,6 @@ type CytoscapeGraphProps = {
   showUnusedNodes: boolean;
   showVirtualServices: boolean;
   updateSummary?: (event: CytoscapeClickEvent) => void;
-};
-
-type CytoscapeGraphState = {
-  // elements?: DecoratedGraphElements;
-  // isError: boolean;
-  // isLoading: boolean;
-  // node?: NodeParamsType;
-  // timestamp: TimeInSeconds;
 };
 
 type Position = {
@@ -89,7 +80,7 @@ type InitialValues = {
 };
 
 // exporting this class for testing
-export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps, CytoscapeGraphState> {
+export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps> {
   static contextTypes = {
     router: () => null
   };
@@ -231,10 +222,6 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
     }
     if (this.props.graphData.elements !== prevProps.graphData.elements) {
       this.updateHealth(cy);
-    }
-
-    if (this.props.setLastSettingsUpdate) {
-      this.props.setLastSettingsUpdate(Date.now());
     }
   }
 
@@ -663,8 +650,8 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
     }
 
     // notify that the graph has been updated
-    if (this.props.setLastElementsUpdate) {
-      this.props.setLastElementsUpdate(Date.now());
+    if (this.props.setUpdateTime) {
+      this.props.setUpdateTime(Date.now());
     }
   }
 
