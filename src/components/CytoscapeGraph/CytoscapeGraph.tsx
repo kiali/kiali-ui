@@ -17,7 +17,6 @@ import {
   CytoscapeGlobalScratchNamespace,
   CytoscapeMouseInEvent,
   CytoscapeMouseOutEvent,
-  // DecoratedGraphElements,
   EdgeLabelMode,
   Layout,
   NodeParamsType,
@@ -29,7 +28,6 @@ import { MessageType } from '../../types/MessageCenter';
 import { NamespaceAppHealth, NamespaceServiceHealth, NamespaceWorkloadHealth } from '../../types/Health';
 import { GraphUrlParams, makeNodeGraphUrlFromParams } from '../Nav/NavUtils';
 import { IntervalInMilliseconds, TimeInMilliseconds } from '../../types/Common';
-// import GraphDataSource from '../../services/GraphDataSource';
 import * as AlertUtils from '../../utils/AlertUtils';
 import FocusAnimation from './FocusAnimation';
 import { CytoscapeContextMenuWrapper, NodeContextMenuType, EdgeContextMenuType } from './CytoscapeContextMenu';
@@ -230,45 +228,6 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
   getCy() {
     return this.cytoscapeReactWrapperRef.current ? this.cytoscapeReactWrapperRef.current.getCy() : null;
   }
-
-  /*
-  private loadStartHandler = () => {
-    console.log('Start');
-    this.setState({
-      isLoading: this.props.dataSource.isLoading
-      // isError: this.props.dataSource.isError,
-      // elements: this.props.dataSource.graphData
-    });
-  };
-
-  private emptyNamespacesHandler = () => {
-    console.log('Empty');
-    this.setState({
-      elements: { edges: [], nodes: [] },
-      node: this.props.dataSource.fetchParameters.node
-    });
-  };
-
-  private fetchErrorHandler = () => {
-    console.log('Error');
-    this.setState({ isError: this.props.dataSource.isError });
-  };
-
-  private fetchSuccessHandler = (
-    graphTimestamp: TimeInSeconds,
-    _graphDuration: DurationInSeconds,
-    graphData: DecoratedGraphElements
-  ) => {
-    console.log('End');
-    this.setState({
-      elements: graphData,
-      node: this.props.dataSource.fetchParameters.node,
-      isError: this.props.dataSource.isError,
-      isLoading: this.props.dataSource.isLoading,
-      timestamp: graphTimestamp
-    });
-  };
-  */
 
   private setCytoscapeReactWrapperRef(cyRef: any) {
     this.cytoscapeReactWrapperRef.current = cyRef;

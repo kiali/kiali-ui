@@ -11,14 +11,14 @@ import { DurationInSeconds, IntervalInMilliseconds, TimeInMilliseconds, TimeInSe
 import Namespace from '../../types/Namespace';
 import {
   CytoscapeClickEvent,
+  DecoratedGraphElements,
   EdgeLabelMode,
   GraphType,
   Layout,
   NodeParamsType,
   NodeType,
   SummaryData,
-  UNKNOWN,
-  DecoratedGraphElements
+  UNKNOWN
 } from '../../types/Graph';
 import { computePrometheusRateParams } from '../../services/Prometheus';
 import * as AlertUtils from '../../utils/AlertUtils';
