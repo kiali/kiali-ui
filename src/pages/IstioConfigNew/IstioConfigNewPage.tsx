@@ -55,31 +55,33 @@ const istioResourceOptions = [
   { value: SIDECAR, label: SIDECAR, disabled: false }
 ];
 
+const INIT_STATE: State = {
+  istioResource: istioResourceOptions[0].value,
+  name: '',
+  istioPermissions: {},
+  authorizationPolicy: INIT_AUTHORIZATION_POLICY,
+  gateway: {
+    gatewayServers: []
+  },
+  sidecar: {
+    egressHosts: [
+      // Init with the istio-system/* for sidecar
+      {
+        host: serverConfig.istioNamespace + '/*'
+      }
+    ],
+    addWorkloadSelector: false,
+    workloadSelectorValid: false,
+    workloadSelectorLabels: ''
+  }
+};
+
 class IstioConfigNewPage extends React.Component<Props, State> {
   private promises = new PromisesRegistry();
 
   constructor(props: Props) {
     super(props);
-    this.state = {
-      istioResource: istioResourceOptions[0].value,
-      name: '',
-      istioPermissions: {},
-      authorizationPolicy: INIT_AUTHORIZATION_POLICY,
-      gateway: {
-        gatewayServers: []
-      },
-      sidecar: {
-        egressHosts: [
-          // Init with the istio-system/* for sidecar
-          {
-            host: serverConfig.istioNamespace + '/*'
-          }
-        ],
-        addWorkloadSelector: false,
-        workloadSelectorValid: false,
-        workloadSelectorLabels: ''
-      }
-    };
+    this.state = INIT_STATE;
   }
 
   componentWillUnmount() {
@@ -87,6 +89,8 @@ class IstioConfigNewPage extends React.Component<Props, State> {
   }
 
   componentDidMount() {
+    // Init component state
+    this.setState(INIT_STATE);
     this.fetchPermissions();
   }
 
