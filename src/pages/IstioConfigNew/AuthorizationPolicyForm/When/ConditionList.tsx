@@ -7,8 +7,6 @@ type Props = {
   onRemoveCondition: (index: number) => void;
 };
 
-type State = {};
-
 const headerCells: ICell[] = [
   {
     title: 'Additional Conditions of a Request',
@@ -21,11 +19,7 @@ const headerCells: ICell[] = [
   }
 ];
 
-class ConditionList extends React.Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-  }
-
+class ConditionList extends React.Component<Props> {
   rows = () => {
     return this.props.conditionList.map((condition, i) => {
       return {
@@ -38,6 +32,7 @@ class ConditionList extends React.Component<Props, State> {
                 <b>values: </b> [{condition.values}]<br />
               </>
             )}
+            , State
             {condition.notValues && (
               <>
                 <b>notValues: </b> [{condition.notValues}]<br />

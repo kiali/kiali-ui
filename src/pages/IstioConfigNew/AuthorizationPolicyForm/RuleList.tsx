@@ -8,8 +8,6 @@ type Props = {
   onRemoveRule: (index: number) => void;
 };
 
-type State = {};
-
 const headerCells: ICell[] = [
   {
     title: 'Rules to match the request',
@@ -26,11 +24,7 @@ const rulesPadding = style({
   paddingLeft: 10
 });
 
-class RuleList extends React.Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-  }
-
+class RuleList extends React.Component<Props> {
   rows = () => {
     return this.props.ruleList.map((rule, i) => {
       return {

@@ -6,8 +6,6 @@ type Props = {
   onRemoveFrom: (index: number) => void;
 };
 
-type State = {};
-
 const headerCells: ICell[] = [
   {
     title: 'Source Matches of a Request',
@@ -20,11 +18,7 @@ const headerCells: ICell[] = [
   }
 ];
 
-class SourceList extends React.Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-  }
-
+class SourceList extends React.Component<Props> {
   rows = () => {
     return this.props.fromList.map((source, i) => {
       return {

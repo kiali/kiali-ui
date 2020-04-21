@@ -6,8 +6,6 @@ type Props = {
   onRemoveTo: (index: number) => void;
 };
 
-type State = {};
-
 const headerCells: ICell[] = [
   {
     title: 'Operations of a Request',
@@ -20,11 +18,7 @@ const headerCells: ICell[] = [
   }
 ];
 
-class OperationList extends React.Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-  }
-
+class OperationList extends React.Component<Props> {
   rows = () => {
     return this.props.toList.map((operation, i) => {
       return {
