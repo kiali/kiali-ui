@@ -87,11 +87,13 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
   // in processing (compressOnHide, layout, etc), a change to those settings will generate a graph change, so we
   // wait for the graph change to do the update.
   shouldComponentUpdate(nextProps: GraphFindProps) {
+    const cyChanged = this.props.cy !== nextProps.cy;
     const findChanged = this.props.findValue !== nextProps.findValue;
     const hideChanged = this.props.hideValue !== nextProps.hideValue;
     const graphChanged = this.props.updateTime !== nextProps.updateTime;
 
-    return findChanged || hideChanged || graphChanged;
+    console.log(`GraphFind:shouldComponentUpdate=${cyChanged || findChanged || hideChanged || graphChanged}`);
+    return cyChanged || findChanged || hideChanged || graphChanged;
   }
 
   // Note that we may have redux hide/find values set at mount-time. But because the toolbar mounts prior to
@@ -105,25 +107,25 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
     console.log(`GraphFind:componentDidUpdate (cyChanged= ${cyChanged}) (numElems=${numElems})`);
 
     if (!this.props.cy) {
-      console.log('no cy');
+      this.hiddenElements = undefined;
+      console.log(`Releasing ${!!this.removedElements ? this.removedElements.length : 0} elements`);
+      this.removedElements = undefined;
+      console.log('skip GraphFind:componentDidUpdate, no cy');
       return;
     }
 
     const findChanged = this.props.findValue !== prevProps.findValue;
+    const hideChanged = this.props.hideValue !== prevProps.hideValue;
     const graphChanged = this.props.updateTime !== prevProps.updateTime;
 
     // make sure the value is updated if there was a change
     if (findChanged || (graphChanged && !!this.props.findValue)) {
-      // this.setState({ findInputValue: this.props.findValue });
       this.handleFind(this.props.cy);
     }
 
-    const compressOnHideChanged = this.props.compressOnHide !== prevProps.compressOnHide;
-    const hideChanged = this.props.hideValue !== prevProps.hideValue;
-    const layoutChanged = this.props.layout !== prevProps.layout;
-
     if (hideChanged || (graphChanged && !!this.props.hideValue)) {
-      // this.setState({ hideInputValue: this.props.hideValue });
+      const compressOnHideChanged = this.props.compressOnHide !== prevProps.compressOnHide;
+      const layoutChanged = this.props.layout !== prevProps.layout;
       this.handleHide(this.props.cy, hideChanged, graphChanged, compressOnHideChanged, layoutChanged);
     }
 
@@ -319,6 +321,7 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
       hiddenElements = hiddenElements.add(nodesWithOnlyHiddenEdges);
       // subtract any appbox hits, we only hide empty appboxes
       hiddenElements = hiddenElements.subtract(hiddenElements.filter('$node[isGroup]'));
+
       if (this.props.compressOnHide) {
         this.removedElements = cy.remove(hiddenElements);
         // now subtract any appboxes that don't have any visible children

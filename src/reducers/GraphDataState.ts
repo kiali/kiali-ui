@@ -35,9 +35,7 @@ export const INITIAL_GRAPH_STATE: GraphState = {
 const graphDataState = (state: GraphState = INITIAL_GRAPH_STATE, action: KialiAppAction): GraphState => {
   switch (action.type) {
     case getType(GraphActions.onNamespaceChange):
-      // console.log(`NamespaceChange, clearing ${!!state.removedElements ? state.removedElements.length : 0} elements`);
       return updateState(state, {
-        // removedElements: undefined,
         summaryData: INITIAL_GRAPH_STATE.summaryData
       });
     case getType(GraphActions.setLayout):
@@ -49,7 +47,7 @@ const graphDataState = (state: GraphState = INITIAL_GRAPH_STATE, action: KialiAp
         summaryData: INITIAL_GRAPH_STATE.summaryData
       });
     case getType(GraphActions.setUpdateTime):
-      console.log(`elementsUpdate at ${action.payload}`);
+      console.log(`setUpdateTime=${action.payload}`);
       return updateState(state, {
         updateTime: action.payload
       });

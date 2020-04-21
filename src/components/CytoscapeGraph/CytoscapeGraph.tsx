@@ -115,34 +115,13 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
     };
     this.cytoscapeReactWrapperRef = React.createRef();
     this.contextMenuRef = React.createRef<CytoscapeContextMenuWrapper>();
-
-    // this.state = {
-    // isLoading: false,
-    // isError: false,
-    // timestamp: 0
-    // };
   }
 
   componentDidMount() {
     this.cyInitialization(this.getCy());
-
-    // Listen to data source events.
-    // this.props.dataSource.on('loadStart', this.loadStartHandler);
-    // this.props.dataSource.on('emptyNamespaces', this.emptyNamespacesHandler);
-    // this.props.dataSource.on('fetchSuccess', this.fetchSuccessHandler);
-    // this.props.dataSource.on('fetchError', this.fetchErrorHandler);
-
-    // Initial sync with data source
-    // this.setState({
-    //  elements: this.props.dataSource.graphData,
-    //  isLoading: this.props.dataSource.isLoading,
-    //  isError: this.props.dataSource.isError,
-    // timestamp: this.props.dataSource.graphTimestamp
-    //});
   }
 
   shouldComponentUpdate(nextProps: CytoscapeGraphProps) {
-    // }, nextState: CytoscapeGraphState) {
     if (nextProps.graphData.isLoading) {
       console.log('skip cyGraph update');
       return false;
@@ -167,24 +146,24 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
       this.props.showUnusedNodes !== nextProps.showUnusedNodes ||
       this.props.showVirtualServices !== nextProps.showVirtualServices;
 
-    // if (!nextState.elements || !nextState.elements.nodes || nextState.elements.nodes.length < 1) {
-    //   result = true;
+    // if (
+    //  !nextProps.graphData.elements ||
+    //  !nextProps.graphData.elements.nodes ||
+    //  nextProps.graphData.elements.nodes.length < 1
+    //) {
+    //  result = true;
     // }
+
     console.log(`cyGraph:shouldUpdate=${result}`);
     return result;
   }
 
   componentDidUpdate(prevProps: CytoscapeGraphProps) {
-    // }, prevState: CytoscapeGraphState) {
     const cy = this.getCy();
     if (!cy) {
+      console.log('skip cyGraph:componentDidUpdate, no cy');
       return;
     }
-
-    // Skip processGraphUpdate when we are actively refreshing
-    // if (this.state.isLoading) {
-    //    return;
-    // }
 
     let updateLayout = false;
     if (
@@ -227,11 +206,6 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
 
   componentWillUnmount(): void {
     console.log('CytoscapeGraph: UNMOUNT');
-    // Remove data source events listeners.
-    // this.props.dataSource.removeListener('loadStart', this.loadStartHandler);
-    //this.props.dataSource.removeListener('emptyNamespaces', this.emptyNamespacesHandler);
-    //this.props.dataSource.removeListener('fetchSuccess', this.fetchSuccessHandler);
-    //this.props.dataSource.removeListener('fetchError', this.fetchErrorHandler);
   }
 
   render() {
@@ -580,10 +554,6 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
   }
 
   private processGraphUpdate(cy: Cy.Core, updateLayout: boolean) {
-    if (!cy) {
-      return;
-    }
-
     this.trafficRenderer!.stop();
 
     const isTheGraphSelected = cy.$(':selected').length === 0;

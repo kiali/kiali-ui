@@ -295,7 +295,7 @@ export class GraphPage extends React.Component<GraphPageProps, GraphPageState> {
   }
 
   componentDidUpdate(prev: GraphPageProps) {
-    console.log('GraphPage update');
+    console.log('GraphPage:componentDidUpdate');
     // schedule an immediate graph fetch if needed
     const curr = this.props;
 
