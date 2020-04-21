@@ -146,14 +146,6 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
       this.props.showUnusedNodes !== nextProps.showUnusedNodes ||
       this.props.showVirtualServices !== nextProps.showVirtualServices;
 
-    // if (
-    //  !nextProps.graphData.elements ||
-    //  !nextProps.graphData.elements.nodes ||
-    //  nextProps.graphData.elements.nodes.length < 1
-    //) {
-    //  result = true;
-    // }
-
     console.log(`cyGraph:shouldUpdate=${result}`);
     return result;
   }
