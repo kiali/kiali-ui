@@ -4,7 +4,7 @@ import { shallowToJson } from 'enzyme-to-json';
 
 import { HealthIndicator, DisplayMode } from '../HealthIndicator';
 import { AppHealth } from '../../../types/Health';
-import { PFAlertColor, PfColors } from 'components/Pf/PfColors';
+import { PFAlertColor } from 'components/Pf/PfColors';
 
 describe('HealthIndicator', () => {
   it('renders when empty', () => {
@@ -39,7 +39,7 @@ describe('HealthIndicator', () => {
     expect(html).toContain(PFAlertColor.Success);
   });
 
-  it('renders workloads undesired', () => {
+  it('renders workloads defraded', () => {
     const health = new AppHealth(
       [
         { name: 'A', availableReplicas: 1, currentReplicas: 1, desiredReplicas: 10 },
@@ -52,12 +52,12 @@ describe('HealthIndicator', () => {
     // SMALL
     let wrapper = shallow(<HealthIndicator id="svc" health={health} mode={DisplayMode.SMALL} />);
     let html = wrapper.html();
-    expect(html).toContain(PFAlertColor.InfoBackground);
+    expect(html).toContain(PFAlertColor.Warning);
 
     // LARGE
     wrapper = shallow(<HealthIndicator id="svc" health={health} mode={DisplayMode.LARGE} />);
     html = wrapper.html();
-    expect(html).toContain(PFAlertColor.InfoBackground);
+    expect(html).toContain(PFAlertColor.Warning);
     expect(html).toContain('1 / 10');
   });
 
@@ -74,12 +74,12 @@ describe('HealthIndicator', () => {
     // SMALL
     let wrapper = shallow(<HealthIndicator id="svc" health={health} mode={DisplayMode.SMALL} />);
     let html = wrapper.html();
-    expect(html).toContain(PFAlertColor.Success);
+    expect(html).toContain(PFAlertColor.InfoBackground);
 
     // LARGE
     wrapper = shallow(<HealthIndicator id="svc" health={health} mode={DisplayMode.LARGE} />);
     html = wrapper.html();
-    expect(html).toContain(PFAlertColor.Success);
+    expect(html).toContain(PFAlertColor.InfoBackground);
     expect(html).toContain('0 / 0');
   });
 
@@ -96,12 +96,12 @@ describe('HealthIndicator', () => {
     // SMALL
     let wrapper = shallow(<HealthIndicator id="svc" health={health} mode={DisplayMode.SMALL} />);
     let html = wrapper.html();
-    expect(html).toContain(PfColors.Gray);
+    expect(html).toContain(PFAlertColor.InfoBackground);
 
     // LARGE
     wrapper = shallow(<HealthIndicator id="svc" health={health} mode={DisplayMode.LARGE} />);
     html = wrapper.html();
-    expect(html).toContain(PfColors.Gray);
+    expect(html).toContain(PFAlertColor.InfoBackground);
   });
 
   it('renders error rate failure', () => {

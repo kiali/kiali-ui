@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { Text, TextVariants } from '@patternfly/react-core';
 
-import { DEGRADED, FAILURE, HEALTHY, UNDESIRED } from '../../types/Health';
+import { DEGRADED, FAILURE, HEALTHY, IDLE } from '../../types/Health';
 import OverviewStatus from './OverviewStatus';
 import { OverviewType } from './OverviewToolbar';
 import { NamespaceStatus } from './NamespaceInfo';
@@ -51,7 +51,7 @@ class OverviewCardContentExpanded extends React.Component<Props> {
       status.inWarning.length +
       status.inSuccess.length +
       status.notAvailable.length +
-      status.inUndesiredReplica.length;
+      status.inIdle.length;
     let text: string;
     if (nbItems === 1) {
       text = switchType(this.props.type, '1 Application', '1 Service', '1 Workload');
@@ -73,12 +73,12 @@ class OverviewCardContentExpanded extends React.Component<Props> {
         <OverviewCardBars status={this.props.status} />
         <div style={{ marginTop: -20, position: 'relative' }}>
           <Text component={TextVariants.h2} style={{ marginTop: 0 }}>
-            {status.inUndesiredReplica.length > 0 && (
+            {status.inIdle.length > 0 && (
               <OverviewStatus
                 id={name + '-undesired'}
                 namespace={name}
-                status={UNDESIRED}
-                items={status.inUndesiredReplica}
+                status={IDLE}
+                items={status.inIdle}
                 targetPage={targetPage}
               />
             )}

@@ -42,12 +42,12 @@ export interface Status {
   class: string;
 }
 
-export const UNDESIRED: Status = {
-  name: 'Undesired Replica',
+export const IDLE: Status = {
+  name: 'Idle',
   color: PFAlertColor.InfoBackground,
   priority: 3,
   icon: MinusCircleIcon,
-  class: 'icon-degraded'
+  class: 'icon-idle'
 };
 
 export const FAILURE: Status = {
@@ -101,26 +101,67 @@ interface ThresholdStatus {
 const RATIO_NA = -1;
 
 export const ratioCheck = (availableReplicas: number, currentReplicas: number, desiredReplicas: number): Status => {
-  // No Pods returns No Health
-  if (desiredReplicas === 0 && currentReplicas === 0) {
-    return NA;
+  /*
+    IDLE STATE
+ */
+  // User performed the action
+  if (desiredReplicas === 0) {
+    return IDLE;
   }
-  // No available Pods when there are desired and current means a Failure
+
+  /*
+   DEGRADED STATE
+  */
+  if (
+    desiredReplicas > 0 &&
+    currentReplicas > 0 &&
+    availableReplicas > 0 &&
+    (currentReplicas < desiredReplicas || availableReplicas < desiredReplicas)
+  ) {
+    return DEGRADED;
+  }
+
+  /*
+     FAILURE STATE
+  */
+  if (desiredReplicas > 0 && (currentReplicas === 0 || availableReplicas === 0)) {
+    return FAILURE;
+  }
+
+  // Some pods are up but not ready
   if (desiredReplicas > 0 && currentReplicas > 0 && availableReplicas === 0) {
     return FAILURE;
   }
+
+  if (desiredReplicas > 0 && currentReplicas < desiredReplicas) {
+    return FAILURE;
+  }
+
+  if (desiredReplicas === currentReplicas && availableReplicas > currentReplicas) {
+    return FAILURE;
+  }
+
   // Pending Pods means problems
   if (desiredReplicas === availableReplicas && availableReplicas !== currentReplicas) {
     return FAILURE;
   }
-  // Undesired Replica
-  if (currentReplicas < desiredReplicas) {
-    return UNDESIRED;
+
+  // No available Pods when there are desired and current means a Failure
+  if (desiredReplicas > 0 && currentReplicas > 0 && availableReplicas === 0) {
+    return FAILURE;
   }
-  // Health condition
-  if (desiredReplicas === currentReplicas && currentReplicas === availableReplicas) {
+
+  /*
+     HEALTHY STATE
+  */
+  if (
+    desiredReplicas === currentReplicas &&
+    currentReplicas === availableReplicas &&
+    availableReplicas === desiredReplicas
+  ) {
     return HEALTHY;
   }
+
   // Other combination could mean a degraded situation
   return DEGRADED;
 };
