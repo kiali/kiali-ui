@@ -327,7 +327,7 @@ class ExperimentListPage extends React.Component<Props, State> {
     return status;
   };
 
-  experimentStatusIcon = (phase: string, candidate: number, status: string) => {
+  experimentStatusIcon = (key: string, phase: string, candidate: number, status: string) => {
     let className = greenIconStyle;
     // let phaseStr = phase;
     let statusString = this.getStatusString(status);
@@ -338,31 +338,31 @@ class ExperimentListPage extends React.Component<Props, State> {
     switch (phase) {
       case 'Initializing':
         return (
-          <Tooltip content={<>{statusString}</>}>
+          <Tooltip key={'Initializing_' + key} content={<>{statusString}</>}>
             <KialiIcon.InProgressIcon className={statusIconStyle} />
           </Tooltip>
         );
       case 'Progressing':
         return (
-          <Tooltip content={<>{statusString}</>}>
+          <Tooltip key={'Progressing_' + key} content={<>{statusString}</>}>
             <KialiIcon.OnRunningIcon className={statusIconStyle} />
           </Tooltip>
         );
       case 'Pause':
         return (
-          <Tooltip content={<>{statusString}</>}>
+          <Tooltip key={'Pause_' + key} content={<>{statusString}</>}>
             <KialiIcon.PauseCircle className={statusIconStyle} />
           </Tooltip>
         );
       case 'Completed':
         return (
-          <Tooltip content={<>{statusString}</>}>
+          <Tooltip key={'Completed_' + key} content={<>{statusString}</>}>
             <OkIcon className={className} />
           </Tooltip>
         );
       default:
         return (
-          <Tooltip content={<>{statusString}</>}>
+          <Tooltip key={'default_' + key} content={<>{statusString}</>}>
             <KialiIcon.OnRunningIcon className={statusIconStyle} />
           </Tooltip>
         );
@@ -416,7 +416,7 @@ class ExperimentListPage extends React.Component<Props, State> {
             {h.targetService ? this.serviceLink(h.namespace, h.targetService) : ''}
           </>,
           <>
-            {h.phase} {this.experimentStatusIcon(h.phase, h.candidatePercentage, h.status)}
+            {h.phase} {this.experimentStatusIcon(h.name + '_' + h.namespace, h.phase, h.candidatePercentage, h.status)}
           </>,
 
           <>

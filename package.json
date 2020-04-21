@@ -1,6 +1,6 @@
 {
   "name": "@kiali/kiali-ui",
-  "version": "1.16.0",
+  "version": "1.17.0",
   "proxy": "https://52.116.156.242:32263/kiali/",
   "description": "React UI for [Kiali](https://github.com/kiali/kiali).",
   "keywords": [
