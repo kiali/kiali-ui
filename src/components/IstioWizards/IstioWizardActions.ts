@@ -660,9 +660,6 @@ export const buildAuthorizationPolicy = (
     spec: {}
   };
 
-  console.log('TODELETE state');
-  console.log(state);
-
   // DENY_ALL and ALLOW_ALL are two specific cases
   if (state.policy === 'DENY_ALL') {
     return ap;
@@ -738,10 +735,6 @@ export const buildAuthorizationPolicy = (
   if (state.action.length > 0) {
     ap.spec.action = state.action;
   }
-
-  console.log('TODELETE ap');
-  console.log(ap);
-
   return ap;
 };
 

@@ -151,10 +151,6 @@ class IstioConfigNewPage extends React.Component<Props, State> {
   onIstioResourceCreate = () => {
     switch (this.state.istioResource) {
       case AUTHORIZACION_POLICY:
-        console.log('TODELETE');
-        console.log(
-          JSON.stringify(buildAuthorizationPolicy(this.state.name, 'default', this.state.authorizationPolicy))
-        );
         this.promises
           .registerAll(
             'Create AuthorizationPolicies',
