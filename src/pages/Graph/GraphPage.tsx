@@ -295,7 +295,6 @@ export class GraphPage extends React.Component<GraphPageProps, GraphPageState> {
   }
 
   componentDidUpdate(prev: GraphPageProps) {
-    console.log('GraphPage:componentDidUpdate');
     // schedule an immediate graph fetch if needed
     const curr = this.props;
 
@@ -446,7 +445,6 @@ export class GraphPage extends React.Component<GraphPageProps, GraphPageState> {
     elements: DecoratedGraphElements,
     fetchParams: FetchParams
   ) => {
-    console.log(`End Load: ts=${graphTimestamp}`);
     this.setState({
       graphData: {
         elements: elements,
@@ -458,7 +456,6 @@ export class GraphPage extends React.Component<GraphPageProps, GraphPageState> {
   };
 
   private handleGraphDataSourceError = (errorMessage: string | null, fetchParams: FetchParams) => {
-    console.log('Error Load');
     this.setState({
       graphData: {
         elements: { edges: [], nodes: [] },
@@ -472,7 +469,6 @@ export class GraphPage extends React.Component<GraphPageProps, GraphPageState> {
   };
 
   private handleGraphDataSourceEmpty = (fetchParams: FetchParams) => {
-    console.log('Empty Load');
     this.setState({
       graphData: {
         elements: { edges: [], nodes: [] },
@@ -484,7 +480,6 @@ export class GraphPage extends React.Component<GraphPageProps, GraphPageState> {
   };
 
   private handleGraphDataSourceStart = (_, fetchParams: FetchParams) => {
-    console.log(`Start Load}`);
     this.setState({
       graphData: {
         elements: this.state.graphData.elements,

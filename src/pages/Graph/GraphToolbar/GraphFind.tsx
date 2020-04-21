@@ -92,7 +92,6 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
     const hideChanged = this.props.hideValue !== nextProps.hideValue;
     const graphChanged = this.props.updateTime !== nextProps.updateTime;
 
-    console.log(`GraphFind:shouldComponentUpdate=${cyChanged || findChanged || hideChanged || graphChanged}`);
     return cyChanged || findChanged || hideChanged || graphChanged;
   }
 
@@ -100,17 +99,9 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
   // the graph loading, we can't perform this graph "post-processing" until we have a valid cy graph.  But the
   // find/hide processing will be initiated externally (CytoscapeGraph:processgraphUpdate) when the graph is ready.
   componentDidUpdate(prevProps: GraphFindProps) {
-    const cyChanged =
-      this.props.cy !== prevProps.cy ||
-      (this.props.cy && prevProps.cy && this.props.cy.current !== prevProps.cy.current);
-    const numElems = this.props.cy ? this.props.cy.elements().length : 0;
-    console.log(`GraphFind:componentDidUpdate (cyChanged= ${cyChanged}) (numElems=${numElems})`);
-
     if (!this.props.cy) {
       this.hiddenElements = undefined;
-      console.log(`Releasing ${!!this.removedElements ? this.removedElements.length : 0} elements`);
       this.removedElements = undefined;
-      console.log('skip GraphFind:componentDidUpdate, no cy');
       return;
     }
 
@@ -128,8 +119,6 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
       const layoutChanged = this.props.layout !== prevProps.layout;
       this.handleHide(this.props.cy, hideChanged, graphChanged, compressOnHideChanged, layoutChanged);
     }
-
-    console.log(`GraphFind:after (numElems=${this.props.cy.elements().length})`);
   }
 
   render() {
@@ -285,8 +274,6 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
     compressOnHideChanged: boolean,
     layoutChanged: boolean
   ) => {
-    console.log(`HandleHide`);
-
     const selector = this.parseValue(this.props.hideValue);
 
     cy.startBatch();
@@ -302,10 +289,8 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
     // restore removed elements when we are working with the same graph. . Either way,release for garbage collection.  If the graph has changed
     if (!!this.removedElements) {
       if (!graphChanged) {
-        console.log(`Restoring ${this.removedElements.length} elements`);
         this.removedElements.restore();
       }
-      console.log(`Releasing ${this.removedElements.length} elements`);
       this.removedElements = undefined;
     }
 
@@ -327,7 +312,6 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
         // now subtract any appboxes that don't have any visible children
         const hiddenAppBoxes = cy.$('$node[isGroup]').subtract(cy.$('$node[isGroup] > :inside'));
         this.removedElements = this.removedElements.add(cy.remove(hiddenAppBoxes));
-        console.log(`removed ${this.removedElements.length} elements`);
       } else {
         // set the remaining hide-hits hidden
         this.hiddenElements = hiddenElements;

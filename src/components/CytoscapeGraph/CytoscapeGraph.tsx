@@ -121,7 +121,6 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
 
   shouldComponentUpdate(nextProps: CytoscapeGraphProps) {
     if (nextProps.graphData.isLoading) {
-      console.log('skip cyGraph update');
       return false;
     }
 
@@ -144,14 +143,12 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
       this.props.showUnusedNodes !== nextProps.showUnusedNodes ||
       this.props.showVirtualServices !== nextProps.showVirtualServices;
 
-    console.log(`cyGraph:shouldUpdate=${result}`);
     return result;
   }
 
   componentDidUpdate(prevProps: CytoscapeGraphProps) {
     const cy = this.getCy();
     if (!cy) {
-      console.log('skip cyGraph:componentDidUpdate, no cy');
       return;
     }
 
@@ -192,10 +189,6 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
     if (this.props.graphData.elements !== prevProps.graphData.elements) {
       this.updateHealth(cy);
     }
-  }
-
-  componentWillUnmount(): void {
-    console.log('CytoscapeGraph: UNMOUNT');
   }
 
   render() {
@@ -540,7 +533,6 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
     }
 
     // update the entire set of nodes and edges to keep the graph up-to-date
-    console.log('JSON JSON');
     cy.json({ elements: this.props.graphData.elements });
 
     cy.endBatch();

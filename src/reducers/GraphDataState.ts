@@ -47,7 +47,6 @@ const graphDataState = (state: GraphState = INITIAL_GRAPH_STATE, action: KialiAp
         summaryData: INITIAL_GRAPH_STATE.summaryData
       });
     case getType(GraphActions.setUpdateTime):
-      console.log(`setUpdateTime=${action.payload}`);
       return updateState(state, {
         updateTime: action.payload
       });
