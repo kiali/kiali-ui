@@ -31,7 +31,7 @@ import { DurationDropdownContainer } from '../../components/DurationDropdown/Dur
 import RefreshButtonContainer from '../../components/Refresh/RefreshButton';
 import IstioWizardDropdown from '../../components/IstioWizards/IstioWizardDropdown';
 import { JaegerErrors, JaegerTrace, JaegerInfo } from '../../types/JaegerInfo';
-import { getQueryJaeger } from '../../components/JaegerIntegration/RouteHelper';
+import { getQueryJaeger, changeParams } from '../../components/JaegerIntegration/RouteHelper';
 import RefreshContainer from '../../components/Refresh/Refresh';
 import { PfColors } from '../../components/Pf/PfColors';
 import TimeRangeComponent from 'components/Time/TimeRangeComponent';
@@ -108,6 +108,7 @@ const tabIndex: { [tab: string]: number } = {
 class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetailsState> {
   private promises = new PromisesRegistry();
   private traces: JaegerTrace[] = [];
+  private traceParams: any = {};
   private lastFetchTraceMicros: number | undefined = undefined;
   private lastFetchTracesError = false;
   private graphDataSource: GraphDataSource;
@@ -322,7 +323,13 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
           }
         });
     } else {
-      const params = getQueryJaeger();
+      let params = changeParams(this.traceParams);
+      if (params) {
+        this.traceParams = params;
+        this.lastFetchTraceMicros = undefined;
+      } else {
+        params = getQueryJaeger();
+      }
       if (this.lastFetchTraceMicros) {
         params[URLParam.JAEGER_START_TIME] = this.lastFetchTraceMicros;
       }
@@ -333,7 +340,7 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
           let myState = {};
           if (traces && traces.data) {
             this.traces = appendTraces
-              ? this.traces.filter(t => t.startTime >= params[URLParam.JAEGER_START_TIME]).concat(traces.data)
+              ? this.traces.filter(t => t.startTime <= params[URLParam.JAEGER_START_TIME]).concat(traces.data)
               : traces.data;
             if (traces.data.length === 0) {
               myState['selectedTrace'] = undefined;

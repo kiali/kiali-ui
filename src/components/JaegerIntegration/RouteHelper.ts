@@ -48,3 +48,14 @@ export const getQueryJaeger = () => {
   HistoryManager.setParam(URLParam.JAEGER_END_TIME, String(rangeMicros[1]));
   return params;
 };
+
+export const changeParams = (params: any) => {
+  const newParams = getQueryJaeger();
+  if (
+    newParams[URLParam.JAEGER_TAGS] !== params[URLParam.JAEGER_TAGS] ||
+    newParams[URLParam.JAEGER_LIMIT_TRACES] !== params[URLParam.JAEGER_LIMIT_TRACES]
+  ) {
+    return newParams;
+  }
+  return undefined;
+};
