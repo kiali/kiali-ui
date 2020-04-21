@@ -46,13 +46,17 @@ const TailLinesOptions = {
   '5000': 'Last 5000 lines'
 };
 
-const logsDiv = style({
+const appLogsDiv = style({
+  height: 'calc(100% + 30px)'
+});
+
+const proxyLogsDiv = style({
   height: '100%'
 });
 
 const logsTextarea = style({
   width: '100%',
-  height: 'calc(100% - 80px)',
+  height: 'calc(100% - 70px)',
   overflow: 'auto',
   resize: 'none',
   color: '#fff',
@@ -203,7 +207,7 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
                     dispatchResize={true}
                     postPoned={true}
                   >
-                    <div className={logsDiv}>
+                    <div className={appLogsDiv}>
                       <Title size="lg" headingLevel="h5">
                         {this.formatAppLogLabel(this.props.pods[this.state.podValue!])} Logs
                       </Title>
@@ -214,7 +218,7 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
                         aria-label="Pod logs text"
                       />
                     </div>
-                    <div className={logsDiv}>
+                    <div className={proxyLogsDiv}>
                       <Title size="lg" headingLevel="h5">
                         Proxy Logs
                       </Title>
