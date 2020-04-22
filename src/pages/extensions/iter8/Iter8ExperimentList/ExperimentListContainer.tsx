@@ -8,6 +8,9 @@ import {
   EmptyState,
   EmptyStateBody,
   EmptyStateVariant,
+  PopoverPosition,
+  Text,
+  TextContent,
   Title,
   Tooltip,
   TooltipPosition
@@ -31,7 +34,7 @@ import { Link } from 'react-router-dom';
 import * as FilterComponent from '../../../../components/FilterList/FilterComponent';
 
 import { KialiAppState } from '../../../../store/Store';
-import { activeNamespacesSelector } from '../../../../store/Selectors';
+import { activeNamespacesSelector, durationSelector } from '../../../../store/Selectors';
 import { connect } from 'react-redux';
 import Namespace from '../../../../types/Namespace';
 import { PromisesRegistry } from '../../../../utils/CancelablePromises';
@@ -40,8 +43,9 @@ import { namespaceEquals } from '../../../../utils/Common';
 import { KialiIcon } from '../../../../config/KialiIcon';
 import { OkIcon } from '@patternfly/react-icons';
 import * as Iter8ExperimentListFilters from './FiltersAndSorts';
-import RefreshButtonContainer from '../../../../components/Refresh/RefreshButton';
 import { FilterSelected, StatefulFilters } from '../../../../components/Filters/StatefulFilters';
+// import { DurationInSeconds } from '../../../../types/Common';
+import TimeControlsContainer from '../../../../components/Time/TimeControls';
 
 // Style constants
 const containerPadding = style({ padding: '20px 20px 20px 20px' });
@@ -268,27 +272,46 @@ class ExperimentListPage extends React.Component<Props, State> {
         initialFilters={Iter8ExperimentListFilters.availableFilters}
         onFilterChange={this.onFilterChange}
         rightToolbar={[
-          <RefreshButtonContainer key={'Refresh'} handleRefresh={this.updateListItems} />,
+          <TimeControlsContainer
+            key={'DurationDropdown'}
+            id="exp-list-duration-dropdown"
+            handleRefresh={this.updateListItems}
+            disabled={false}
+          />,
           <>{this.actionsToolbar()},</>
         ]}
       />
     );
   };
 
-  getStatusString = (status: string) => {
+  getStatusString = (phase: string, status: string) => {
+    let statusValue = 'Status: Succeeded';
+    let retStatus = status;
     if (status.length > 0) {
       const values = status.split(':');
       if (values.length > 1) {
-        return values.slice(1);
+        retStatus = values.slice(1)[0];
+      }
+      if (status.includes('Failed')) {
+        statusValue = 'Status: Failed';
       }
     }
-    return status;
+    return (
+      <TextContent>
+        <Text>
+          <h2>Phase: </h2> {phase}
+        </Text>
+        <Text>
+          <h2>{statusValue}</h2> {retStatus}
+        </Text>
+      </TextContent>
+    );
   };
 
   experimentStatusIcon = (key: string, phase: string, candidate: number, status: string) => {
     let className = greenIconStyle;
     // let phaseStr = phase;
-    let statusString = this.getStatusString(status);
+    let statusString = this.getStatusString(phase, status);
     if (candidate === 0) {
       // phaseStr = 'Completed, but failed';
       className = redIconStyle;
@@ -296,31 +319,61 @@ class ExperimentListPage extends React.Component<Props, State> {
     switch (phase) {
       case 'Initializing':
         return (
-          <Tooltip key={'Initializing_' + key} content={<>{statusString}</>}>
+          <Tooltip
+            key={'Initializing_' + key}
+            aria-label={'Status Indicatorr'}
+            position={PopoverPosition.auto}
+            className={'health_indicator'}
+            content={<>{statusString}</>}
+          >
             <KialiIcon.InProgressIcon className={statusIconStyle} />
           </Tooltip>
         );
       case 'Progressing':
         return (
-          <Tooltip key={'Progressing_' + key} content={<>{statusString}</>}>
+          <Tooltip
+            key={'Progressing_' + key}
+            aria-label={'Status Indicatorr'}
+            position={PopoverPosition.auto}
+            className={'health_indicator'}
+            content={<>{statusString}</>}
+          >
             <KialiIcon.OnRunningIcon className={statusIconStyle} />
           </Tooltip>
         );
       case 'Pause':
         return (
-          <Tooltip key={'Pause_' + key} content={<>{statusString}</>}>
+          <Tooltip
+            key={'Pause_' + key}
+            aria-label={'Status Indicatorr'}
+            position={PopoverPosition.auto}
+            className={'health_indicator'}
+            content={<>{statusString}</>}
+          >
             <KialiIcon.PauseCircle className={statusIconStyle} />
           </Tooltip>
         );
       case 'Completed':
         return (
-          <Tooltip key={'Completed_' + key} content={<>{statusString}</>}>
+          <Tooltip
+            key={'Completed_' + key}
+            aria-label={'Status Indicatorr'}
+            position={PopoverPosition.auto}
+            className={'health_indicator'}
+            content={<>{statusString}</>}
+          >
             <OkIcon className={className} />
           </Tooltip>
         );
       default:
         return (
-          <Tooltip key={'default_' + key} content={<>{statusString}</>}>
+          <Tooltip
+            key={'default_' + key}
+            aria-label={'Status Indicatorr'}
+            position={PopoverPosition.auto}
+            className={'health_indicator'}
+            content={<>{statusString}</>}
+          >
             <KialiIcon.OnRunningIcon className={statusIconStyle} />
           </Tooltip>
         );
@@ -371,9 +424,7 @@ class ExperimentListPage extends React.Component<Props, State> {
             </Tooltip>
             {h.targetService ? this.serviceLink(h.namespace, h.targetService) : ''}
           </>,
-          <>
-            {h.phase} {this.experimentStatusIcon(h.name + '_' + h.namespace, h.phase, h.candidatePercentage, h.status)}
-          </>,
+          <>{this.experimentStatusIcon(h.name + '_' + h.namespace, h.phase, h.candidatePercentage, h.status)}</>,
 
           <>
             <Link to={this.workloadLink(h.namespace, h.baseline)}>{h.baseline}</Link>
@@ -426,7 +477,8 @@ class ExperimentListPage extends React.Component<Props, State> {
 }
 
 const mapStateToProps = (state: KialiAppState) => ({
-  activeNamespaces: activeNamespacesSelector(state)
+  activeNamespaces: activeNamespacesSelector(state),
+  duration: durationSelector(state)
 });
 
 const ExperimentListPageContainer = connect(
