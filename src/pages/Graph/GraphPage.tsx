@@ -54,7 +54,7 @@ import GraphTour, { GraphTourStops } from './GraphHelpTour';
 import { Badge, Chip } from '@patternfly/react-core';
 import { toRangeString } from 'components/Time/Utils';
 import { replayBorder } from 'components/Time/Replay';
-import GraphDataSource, { FetchParams } from '../../services/GraphDataSource';
+import GraphDataSource, { FetchParams, EMPTY_GRAPH_DATA } from '../../services/GraphDataSource';
 import { NamespaceActions } from '../../actions/NamespaceAction';
 import GraphThunkActions from '../../actions/GraphThunkActions';
 
@@ -472,7 +472,7 @@ export class GraphPage extends React.Component<GraphPageProps, GraphPageState> {
   private handleGraphDataSourceEmpty = (fetchParams: FetchParams) => {
     this.setState({
       graphData: {
-        elements: { edges: [], nodes: [] },
+        elements: EMPTY_GRAPH_DATA,
         isLoading: false,
         fetchParams: fetchParams,
         timestamp: Date.now()
@@ -480,14 +480,13 @@ export class GraphPage extends React.Component<GraphPageProps, GraphPageState> {
     });
   };
 
-  private handleGraphDataSourceStart = (_, fetchParams: FetchParams) => {
-    console.log('load start');
+  private handleGraphDataSourceStart = (isPreviousDataInvalid: boolean, fetchParams: FetchParams) => {
     this.setState({
       graphData: {
-        elements: this.state.graphData.elements,
+        elements: isPreviousDataInvalid ? EMPTY_GRAPH_DATA : this.state.graphData.elements,
         fetchParams: fetchParams,
         isLoading: true,
-        timestamp: this.state.graphData.timestamp
+        timestamp: isPreviousDataInvalid ? Date.now() : this.state.graphData.timestamp
       }
     });
   };

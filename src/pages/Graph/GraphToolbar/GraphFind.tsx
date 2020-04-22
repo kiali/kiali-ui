@@ -39,7 +39,6 @@ type ReduxProps = {
 
 type GraphFindProps = ReduxProps & {
   cy: any;
-  isLoading: boolean;
 };
 
 type GraphFindState = {

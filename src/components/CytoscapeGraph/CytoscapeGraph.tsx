@@ -120,14 +120,12 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
   }
 
   shouldComponentUpdate(nextProps: CytoscapeGraphProps) {
-    if (nextProps.graphData.isLoading) {
-      return false;
-    }
-
     this.nodeChanged =
       this.nodeChanged || this.props.graphData.fetchParams.node !== nextProps.graphData.fetchParams.node;
 
-    // don't update due to duration or refreshInterval changes, those don't affect display
+    // only update on display changes for the existing graph. Duration or refreshInterval changes don't
+    // affect display. Options that trigger a graph refresh will have an update when the refresh
+    // completes (showSecurity, showServiceNodes, showUnusedNodes, etc).
     let result =
       this.props.edgeLabelMode !== nextProps.edgeLabelMode ||
       this.props.graphData.isLoading !== nextProps.graphData.isLoading ||
@@ -137,17 +135,17 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
       this.props.showCircuitBreakers !== nextProps.showCircuitBreakers ||
       this.props.showMissingSidecars !== nextProps.showMissingSidecars ||
       this.props.showNodeLabels !== nextProps.showNodeLabels ||
-      this.props.showSecurity !== nextProps.showSecurity ||
-      this.props.showServiceNodes !== nextProps.showServiceNodes ||
       this.props.showTrafficAnimation !== nextProps.showTrafficAnimation ||
-      this.props.showUnusedNodes !== nextProps.showUnusedNodes ||
       this.props.showVirtualServices !== nextProps.showVirtualServices;
 
     return result;
   }
 
   componentDidUpdate(prevProps: CytoscapeGraphProps) {
-    console.log('cyGraph:componentDidUpdate');
+    if (this.props.graphData.isLoading) {
+      return;
+    }
+
     const cy = this.getCy();
     if (!cy) {
       return;
