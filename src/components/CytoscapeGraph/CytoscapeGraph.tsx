@@ -147,6 +147,7 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
   }
 
   componentDidUpdate(prevProps: CytoscapeGraphProps) {
+    console.log('cyGraph:componentDidUpdate');
     const cy = this.getCy();
     if (!cy) {
       return;
@@ -223,6 +224,7 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
   }
 
   private setCytoscapeReactWrapperRef(cyRef: any) {
+    console.log(`setCytoscapeReactWrapperRef=${cyRef}`);
     this.cytoscapeReactWrapperRef.current = cyRef;
     this.cyInitialization(this.getCy());
   }
