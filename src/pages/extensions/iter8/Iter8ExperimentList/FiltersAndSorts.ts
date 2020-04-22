@@ -1,4 +1,4 @@
-import { ActiveFilter, FILTER_ACTION_APPEND, FilterType, FilterTypes } from '../../../../types/Filters';
+import { ActiveFilter, FILTER_ACTION_APPEND, FilterType } from '../../../../types/Filters';
 import { SortField } from '../../../../types/SortFilters';
 import { Iter8Experiment } from '../../../../types/Iter8';
 import { TextInputTypes } from '@patternfly/react-core';
@@ -98,22 +98,6 @@ const filterByCandidate = (items: Iter8Experiment[], names: string[]): Iter8Expe
   });
 };
 
-const filterByPhase = (items: Iter8Experiment[], names: string[]): Iter8Experiment[] => {
-  return items.filter(item => {
-    let phaseFiltered = true;
-    if (names.length > 0) {
-      phaseFiltered = false;
-      for (let i = 0; i < names.length; i++) {
-        if (item.phase.includes(names[i])) {
-          phaseFiltered = true;
-          break;
-        }
-      }
-    }
-    return phaseFiltered;
-  });
-};
-
 export const filterBy = (iter8Experiment: Iter8Experiment[], filters: ActiveFilter[]): Iter8Experiment[] => {
   let ret = iter8Experiment;
 
@@ -133,18 +117,13 @@ export const filterBy = (iter8Experiment: Iter8Experiment[], filters: ActiveFilt
   if (candidateSelected.length > 0) {
     return filterByCandidate(ret, candidateSelected);
   }
-
-  const phaseSelected = getFilterSelectedValues(phaseFilter, filters);
-  if (phaseSelected.length > 0) {
-    return filterByPhase(ret, phaseSelected);
-  }
   return ret;
 };
 
 const targetServiceFilter: FilterType = {
   id: 'targetService',
   title: 'Service',
-  placeholder: 'Filter by Service Name',
+  placeholder: 'Filter by Servicet Name',
   filterType: TextInputTypes.text,
   action: FILTER_ACTION_APPEND,
   filterValues: []
@@ -166,33 +145,7 @@ const candidateFilter: FilterType = {
   action: FILTER_ACTION_APPEND,
   filterValues: []
 };
-
-export const phaseFilter: FilterType = {
-  id: 'phase',
-  title: 'Phase',
-  placeholder: 'Filter by Phase',
-  filterType: FilterTypes.select,
-  action: FILTER_ACTION_APPEND,
-  filterValues: [
-    {
-      id: 'Initializing',
-      title: 'Initializing'
-    },
-    {
-      id: 'Progressing',
-      title: 'Progressing'
-    },
-    {
-      id: 'Pause',
-      title: 'Pause'
-    },
-    {
-      id: 'Completed',
-      title: 'Completed'
-    }
-  ]
-};
-export const availableFilters: FilterType[] = [targetServiceFilter, baselineFilter, candidateFilter, phaseFilter];
+export const availableFilters: FilterType[] = [targetServiceFilter, baselineFilter, candidateFilter];
 
 /** Sort Method */
 
