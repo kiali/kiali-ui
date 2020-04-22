@@ -98,6 +98,7 @@ const filterByCandidate = (items: Iter8Experiment[], names: string[]): Iter8Expe
   });
 };
 
+
 const filterByPhase = (items: Iter8Experiment[], names: string[]): Iter8Experiment[] => {
   return items.filter(item => {
     let phaseFiltered = true;
@@ -193,6 +194,7 @@ export const phaseFilter: FilterType = {
   ]
 };
 export const availableFilters: FilterType[] = [targetServiceFilter, baselineFilter, candidateFilter, phaseFilter];
+
 
 /** Sort Method */
 

@@ -23,6 +23,7 @@ import {
   WIZARD_MATCHING_ROUTING,
   WIZARD_SUSPEND_TRAFFIC,
   WIZARD_THREESCALE_INTEGRATION,
+  WIZARD_ITER8_INTEGRATION,
   WIZARD_TITLES,
   WIZARD_UPDATE_TITLES,
   WIZARD_WEIGHTED_ROUTING
@@ -166,6 +167,13 @@ class IstioWizardDropdown extends React.Component<Props, State> {
         });
         break;
       }
+      case WIZARD_ITER8_INTEGRATION: {
+        this.setState({
+          showWizard: true,
+          wizardType: key
+        });
+        break;
+      }
       case DELETE_TRAFFIC_ROUTING: {
         this.setState({ showConfirmDelete: true, deleteAction: key });
         break;
@@ -294,6 +302,25 @@ class IstioWizardDropdown extends React.Component<Props, State> {
             )
           : deleteItem;
       case WIZARD_THREESCALE_INTEGRATION:
+        const iter8Item = (
+          <DropdownItem key={eventKey} component="button" onClick={() => this.onAction(eventKey)}>
+            {updateLabel === eventKey ? WIZARD_UPDATE_TITLES[eventKey] : WIZARD_TITLES[eventKey]}
+          </DropdownItem>
+        );
+        return iter8Item;
+      case DELETE_THREESCALE_INTEGRATION:
+        const deleteThreeScaleItem = (
+          <DropdownItem
+            key={eventKey}
+            component="button"
+            onClick={() => this.onAction(eventKey)}
+            isDisabled={!this.props.threeScaleServiceRule || this.state.isDeleting}
+          >
+            Delete 3Scale API Management Rule
+          </DropdownItem>
+        );
+        return deleteThreeScaleItem;
+      case WIZARD_ITER8_INTEGRATION:
         const threeScaleEnabledItem =
           !this.props.threeScaleServiceRule || (this.props.threeScaleServiceRule && updateLabel === eventKey);
         const threeScaleItem = (
@@ -310,18 +337,6 @@ class IstioWizardDropdown extends React.Component<Props, State> {
         return !threeScaleEnabledItem
           ? this.renderTooltip(eventKey, TooltipPosition.left, toolTipMsgExists, threeScaleItem)
           : threeScaleItem;
-      case DELETE_THREESCALE_INTEGRATION:
-        const deleteThreeScaleItem = (
-          <DropdownItem
-            key={eventKey}
-            component="button"
-            onClick={() => this.onAction(eventKey)}
-            isDisabled={!this.props.threeScaleServiceRule || this.state.isDeleting}
-          >
-            Delete 3Scale API Management Rule
-          </DropdownItem>
-        );
-        return deleteThreeScaleItem;
       default:
         return <>Unsupported</>;
     }

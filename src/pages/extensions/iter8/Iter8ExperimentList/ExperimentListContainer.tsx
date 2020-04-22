@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {
   Badge,
+  Button,
   Dropdown,
   DropdownItem,
   DropdownPosition,
@@ -12,6 +13,7 @@ import {
   Text,
   TextContent,
   Title,
+  Modal,
   Tooltip,
   TooltipPosition
 } from '@patternfly/react-core';
@@ -28,24 +30,29 @@ import {
 } from '@patternfly/react-table';
 import * as API from '../../../../services/Api';
 import * as AlertUtils from '../../../../utils/AlertUtils';
-import history from '../../../../app/History';
-import { Iter8Info, Iter8Experiment } from '../../../../types/Iter8';
+import { Iter8Info, Iter8Experiment, ExperimentSpec, EmptyExperimentSpec } from '../../../../types/Iter8';
 import { Link } from 'react-router-dom';
 import * as FilterComponent from '../../../../components/FilterList/FilterComponent';
 
 import { KialiAppState } from '../../../../store/Store';
 import { activeNamespacesSelector, durationSelector } from '../../../../store/Selectors';
 import { connect } from 'react-redux';
+import RefreshButtonContainer from '../../../../components/Refresh/RefreshButton';
+import { FilterSelected, StatefulFilters } from '../../../../components/Filters/StatefulFilters';
+
 import Namespace from '../../../../types/Namespace';
 import { PromisesRegistry } from '../../../../utils/CancelablePromises';
 import { namespaceEquals } from '../../../../utils/Common';
 
 import { KialiIcon } from '../../../../config/KialiIcon';
 import { OkIcon } from '@patternfly/react-icons';
+// import IstioActionsNamespaceDropdown from '../../../../components/IstioActions/IstioActionsNamespaceDropdown';
 import * as Iter8ExperimentListFilters from './FiltersAndSorts';
 import { FilterSelected, StatefulFilters } from '../../../../components/Filters/StatefulFilters';
-// import { DurationInSeconds } from '../../../../types/Common';
 import TimeControlsContainer from '../../../../components/Time/TimeControls';
+import ExperimentCreatePageContainer from '../Iter8ExperimentDetails/ExperimentCreatePage';
+import { WIZARD_ITER8_INTEGRATION, WIZARD_TITLES } from '../../../../components/IstioWizards/IstioWizardActions';
+import history from '../../../../app/History';
 
 // Style constants
 const containerPadding = style({ padding: '20px 20px 20px 20px' });
@@ -70,9 +77,12 @@ interface Props extends FilterComponent.Props<Iter8Experiment> {
 interface State extends FilterComponent.State<Iter8Experiment> {
   iter8Info: Iter8Info;
   experimentLists: Iter8Experiment[];
+  newExperiment: ExperimentSpec;
   sortBy: ISortBy; // ?? not used yet
   dropdownOpen: boolean;
   onFilterChange: boolean;
+  showWizard: boolean;
+
 }
 
 const columns = [
@@ -92,6 +102,10 @@ const columns = [
     title: 'Phase',
     transforms: [sortable, cellWidth(15) as any]
   },
+  // {
+  //  title: 'Status',
+  // ransforms: [sortable]
+  // },
   {
     title: 'Baseline',
     transforms: [sortable]
@@ -111,15 +125,23 @@ class ExperimentListPage extends React.Component<Props, State> {
       iter8Info: {
         enabled: false
       },
+      newExperiment: EmptyExperimentSpec,
       experimentLists: [],
       sortBy: {},
       dropdownOpen: false,
       listItems: [],
       currentSortField: this.props.currentSortField,
       isSortAscending: this.props.isSortAscending,
-      onFilterChange: false
+      onFilterChange: false,
+      showWizard: false
     };
   }
+
+  handler = val => {
+    this.setState({
+      showWizard: val
+    });
+  };
 
   fetchExperiments = (namespaces: string[]) => {
     API.getIter8Info()
@@ -209,6 +231,7 @@ class ExperimentListPage extends React.Component<Props, State> {
   updateListItems = () => {
     this.promises.cancelAll();
     const namespacesSelected = this.props.activeNamespaces.map(item => item.name);
+
     if (namespacesSelected.length === 0) {
       this.promises
         .register('namespaces', API.getNamespaces())
@@ -226,8 +249,8 @@ class ExperimentListPage extends React.Component<Props, State> {
     }
   };
 
-  // Invoke the history object to update and URL and start a routing
   goNewExperimentPage = () => {
+    // this.setState({ showWizard: true }); // uncomment to use Wizard
     history.push('/extensions/iter8/new');
   };
 
@@ -263,7 +286,38 @@ class ExperimentListPage extends React.Component<Props, State> {
   onFilterChange = () => {
     // Resetting pagination when filters change
     this.updateListItems();
-  }; // This is a simplified toolbar for refresh and actions.
+  };
+
+  goExperimentsPage = () => {
+    history.push('/extensions/iter8');
+  };
+
+  // It invokes backend to create  a new experiment
+  createExperiment = () => {
+    // if (this.props.activeNamespaces.length === 1) {
+    const nsName = this.state.newExperiment.namespace;
+    this.promises
+      .register('Create Iter8 Experiment', API.createExperiment(nsName, JSON.stringify(this.state.newExperiment)))
+      .then(() => {
+        this.setState({ showWizard: false });
+      })
+      .catch(error => AlertUtils.addError('Could not create Experiment.', error));
+    //  }
+  };
+
+  onExperimentChange = (experiment: ExperimentSpec) => {
+    this.setState({
+      newExperiment: experiment
+    });
+  };
+
+  onClose = () => {
+    this.setState({
+      showWizard: false
+    });
+  };
+
+  // This is a simplified toolbar for refresh and actions.
   // Kiali has a shared component toolbar for more complex scenarios like filtering
   // It renders actions only if user has permissions
   toolbar = () => {
@@ -312,6 +366,7 @@ class ExperimentListPage extends React.Component<Props, State> {
     let className = greenIconStyle;
     // let phaseStr = phase;
     let statusString = this.getStatusString(phase, status);
+
     if (candidate === 0) {
       // phaseStr = 'Completed, but failed';
       className = redIconStyle;
@@ -398,7 +453,9 @@ class ExperimentListPage extends React.Component<Props, State> {
               <Badge className={'virtualitem_badge_definition'}>IT8</Badge>
             </Tooltip>
             <Link
-              to={`/extensions/namespaces/${h.namespace}/iter8/${h.name}`}
+              to={`/extensions/namespaces/${h.namespace}/iter8/${h.name}?target=${h.targetService}&startTime=${
+                h.startedAt
+              }&endTime=${h.endedAt}&baseline=${h.baseline}&candidate=${h.candidate}`}
               key={'Experiment_' + h.namespace + '_' + h.namespace}
             >
               {h.name}
@@ -430,6 +487,7 @@ class ExperimentListPage extends React.Component<Props, State> {
             <Link to={this.workloadLink(h.namespace, h.baseline)}>{h.baseline}</Link>
             <br /> {h.baselinePercentage}%
           </>,
+
           <>
             <Link to={this.workloadLink(h.namespace, h.candidate)}>{h.candidate}</Link>
             <br /> {h.candidatePercentage}%
@@ -451,26 +509,29 @@ class ExperimentListPage extends React.Component<Props, State> {
           onSort={this.onSort}
         >
           <TableHeader />
-          {this.state.experimentLists.length > 0 ? (
-            <TableBody />
-          ) : (
-            <tr>
-              <td colSpan={columns.length}>
-                <EmptyState variant={EmptyStateVariant.full}>
-                  <Title headingLevel="h5" size="lg">
-                    No Iter8 Experiments found
-                  </Title>
-                  <EmptyStateBody>
-                    No Iter8 Experiments in namespace
-                    {this.props.activeNamespaces.length === 1
-                      ? ` ${this.props.activeNamespaces[0].name}`
-                      : `s: ${this.props.activeNamespaces.map(ns => ns.name).join(', ')}`}
-                  </EmptyStateBody>
-                </EmptyState>
-              </td>
-            </tr>
-          )}
+          <TableBody />
         </Table>
+        <Modal
+          width={'75%'}
+          title={WIZARD_TITLES[WIZARD_ITER8_INTEGRATION]}
+          isOpen={this.state.showWizard}
+          onClose={() => this.onClose()}
+          actions={[
+            <Button key="create" variant="secondary" onClick={() => this.onClose()}>
+              Cancel
+            </Button>,
+            <Button key="confirm" variant="primary" onClick={() => this.createExperiment()}>
+              {'Create'}
+            </Button>
+          ]}
+        >
+          <ExperimentCreatePageContainer
+            namespace=""
+            serviceName=""
+            activeNamespaces={[]}
+            onChange={this.onExperimentChange}
+          />
+        </Modal>
       </div>
     );
   }
