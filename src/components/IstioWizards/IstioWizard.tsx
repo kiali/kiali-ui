@@ -30,7 +30,6 @@ import {
   WIZARD_TITLES,
   WIZARD_UPDATE_TITLES,
   WIZARD_WEIGHTED_ROUTING,
-  WIZARD_ITER8_INTEGRATION,
   WizardProps,
   WizardState
 } from './IstioWizardActions';
@@ -39,8 +38,6 @@ import ThreeScaleIntegration from './ThreeScaleIntegration';
 import { ThreeScaleServiceRule } from '../../types/ThreeScale';
 import GatewaySelector, { GatewaySelectorState } from './GatewaySelector';
 import VirtualServiceHosts from './VirtualServiceHosts';
-import ExperimentCreatePageContainer from '../../pages/extensions/iter8/Iter8ExperimentDetails/ExperimentCreatePage';
-import { ExperimentSpec } from '../../types/Iter8';
 
 const emptyWizardState = (fqdnServiceName: string): WizardState => {
   return {
@@ -206,12 +203,6 @@ class IstioWizard extends React.Component<WizardProps, WizardState> {
           }
         }
         break;
-      case WIZARD_ITER8_INTEGRATION:
-        if (this.state.newExperiment) {
-          const nsName = this.state.newExperiment.namespace;
-          promises.push(API.createExperiment(nsName, JSON.stringify(this.state.newExperiment)));
-        }
-
       default:
     }
     // Disable button before promise is completed. Then Wizard is closed.
@@ -225,7 +216,7 @@ class IstioWizard extends React.Component<WizardProps, WizardState> {
       .then(results => {
         if (results.length > 0) {
           AlertUtils.add(
-            (this.state.newExperiment ? 'Experiment ' : 'Istio Config ') +
+            'Istio Config ' +
               (this.props.update ? 'updated' : 'created') +
               ' for ' +
               this.props.serviceName +
@@ -237,12 +228,7 @@ class IstioWizard extends React.Component<WizardProps, WizardState> {
         this.onClose(true);
       })
       .catch(error => {
-        AlertUtils.addError(
-          'Could not ' +
-            (this.props.update ? 'update' : 'create') +
-            (this.state.newExperiment ? ' Experiment' : ' Istio config objects.'),
-          error
-        );
+        AlertUtils.addError('Could not ' + (this.props.update ? 'update' : 'create') + ' Istio config objects.', error);
         this.onClose(true);
       });
   };
@@ -320,25 +306,15 @@ class IstioWizard extends React.Component<WizardProps, WizardState> {
     });
   };
 
-  onExperimentChange = (experiment: ExperimentSpec) => {
-    this.setState({
-      newExperiment: experiment
-    });
-  };
-
   isValid = (state: WizardState): boolean => {
     return state.valid.mainWizard && state.valid.vsHosts && state.valid.tls && state.valid.lb && state.valid.gateway;
   };
 
   render() {
     const [gatewaySelected, isMesh] = getInitGateway(this.props.virtualServices);
-    let modalWidth = '50%';
-    if (this.props.type === WIZARD_ITER8_INTEGRATION) {
-      modalWidth = '75%';
-    }
     return (
       <Modal
-        width={modalWidth}
+        width={'50%'}
         title={
           this.props.type.length > 0
             ? this.props.update
@@ -434,14 +410,6 @@ class IstioWizard extends React.Component<WizardProps, WizardState> {
             />
             <br />
           </Expandable>
-        )}
-        {this.props.type === WIZARD_ITER8_INTEGRATION && (
-          <ExperimentCreatePageContainer
-            serviceName={this.props.serviceName}
-            namespace={this.props.namespace}
-            activeNamespaces={[]}
-            onChange={this.onExperimentChange}
-          />
         )}
       </Modal>
     );

@@ -4,31 +4,6 @@ import { Iter8Experiment } from '../../../../types/Iter8';
 import { TextInputTypes } from '@patternfly/react-core';
 import { getFilterSelectedValues } from '../../../../components/Filters/CommonFilters';
 
-export const phaseFilter: FilterType = {
-  id: 'phase',
-  title: 'Phase',
-  placeholder: 'Filter by Phase',
-  filterType: FilterTypes.select,
-  action: FILTER_ACTION_APPEND,
-  filterValues: [
-    {
-      id: 'Initializing',
-      title: 'Initializing'
-    },
-    {
-      id: 'Progressing',
-      title: 'Progressing'
-    },
-    {
-      id: 'Pause',
-      title: 'Pause'
-    },
-    {
-      id: 'Completed',
-      title: 'Completed'
-    }
-  ]
-};
 export const sortFields: SortField<Iter8Experiment>[] = [
   {
     id: 'namespace',
@@ -189,7 +164,33 @@ const candidateFilter: FilterType = {
   action: FILTER_ACTION_APPEND,
   filterValues: []
 };
-export const availableFilters: FilterType[] = [targetServiceFilter, baselineFilter, candidateFilter];
+
+export const phaseFilter: FilterType = {
+  id: 'phase',
+  title: 'Phase',
+  placeholder: 'Filter by Phase',
+  filterType: FilterTypes.select,
+  action: FILTER_ACTION_APPEND,
+  filterValues: [
+    {
+      id: 'Initializing',
+      title: 'Initializing'
+    },
+    {
+      id: 'Progressing',
+      title: 'Progressing'
+    },
+    {
+      id: 'Pause',
+      title: 'Pause'
+    },
+    {
+      id: 'Completed',
+      title: 'Completed'
+    }
+  ]
+};
+export const availableFilters: FilterType[] = [targetServiceFilter, baselineFilter, candidateFilter, phaseFilter];
 
 /** Sort Method */
 

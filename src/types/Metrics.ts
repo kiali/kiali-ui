@@ -25,6 +25,5 @@ export type Datapoint = [number, number];
 export enum MetricsObjectTypes {
   SERVICE,
   WORKLOAD,
-  APP,
-  ITER8
+  APP
 }

@@ -25,7 +25,7 @@ export default class DefaultSecondaryMasthead extends React.Component {
       } else if (path === 'extensions/iter8') {
         title = 'Iter8 Experiments';
       } else if (path === 'extensions/iter8/new') {
-        title = 'Create Iter8 Experiment';
+        title = 'Create New Iter8 Experiment';
       }
       return (
         <Title headingLevel="h1" size="4xl" style={{ margin: '20px 0 20px' }}>

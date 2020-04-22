@@ -1,6 +1,4 @@
 import * as React from 'react';
-
-import ParameterizedTabs, { activeTab } from '../../../../components/Tab/Tabs';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { RenderHeader } from '../../../../components/Nav/Page';
 import {
@@ -8,24 +6,21 @@ import {
   BreadcrumbItem,
   Card,
   CardBody,
+  Grid,
+  GridItem,
   Stack,
   StackItem,
-  Tab,
   Text,
   TextVariants,
   Title
 } from '@patternfly/react-core';
-// import { style } from 'typestyle';
+import { style } from 'typestyle';
 import * as API from '../../../../services/Api';
 import * as AlertUtils from '../../../../utils/AlertUtils';
 import { Iter8ExpDetailsInfo } from '../../../../types/Iter8';
 import RefreshButtonContainer from '../../../../components/Refresh/RefreshButton';
 import Iter8Dropdown from './Iter8Dropdown';
 import history from '../../../../app/History';
-import * as FilterHelper from '../../../../components/FilterList/FilterHelper';
-
-import ExperimentInfoDescription from './ExperimentInfoDescription';
-import CriteriaInfoDescription from './CriteriaInfoDescription';
 
 interface Props {
   namespace: string;
@@ -34,40 +29,18 @@ interface Props {
 
 interface State {
   experiment?: Iter8ExpDetailsInfo;
-  currentTab: string;
   canDelete: boolean;
-  target: string;
-  startTime: number;
-  endTime: number;
-  baseline: string;
-  candidate: string;
 }
 
-// const containerPadding = style({ padding: '20px 20px 20px 20px' });
-// const tabsPadding = style({ height: '40px', padding: '0px ', backgroundColor: 'white' });
-const tabName = 'tab';
-const defaultTab = 'info';
-// const criteriaTab = 'criteria';
-
-const tabIndex: { [tab: string]: number } = {
-  info: 0,
-  criteria: 1
-};
+const containerPadding = style({ padding: '20px 20px 20px 20px' });
+const tabsPadding = style({ height: '40px', padding: '0px ', backgroundColor: 'white' });
 
 class ExperimentDetailsPage extends React.Component<RouteComponentProps<Props>, State> {
   constructor(props: RouteComponentProps<Props>) {
     super(props);
-
-    const urlParams = new URLSearchParams(history.location.search);
     this.state = {
       experiment: undefined,
-      canDelete: false,
-      currentTab: activeTab(tabName, defaultTab),
-      target: urlParams.get('target') || '',
-      startTime: parseInt(urlParams.get('startTime') || '') || 0,
-      endTime: parseInt(urlParams.get('endTime') || '') || 0,
-      baseline: urlParams.get('baseline') || '',
-      candidate: urlParams.get('candidate') || ''
+      canDelete: false
     };
   }
 
@@ -181,7 +154,7 @@ class ExperimentDetailsPage extends React.Component<RouteComponentProps<Props>, 
             </StackItem>
             <StackItem id={'trafficStepSide'}>
               <Text component={TextVariants.h3}> Traffic Step Side </Text>
-              {this.state.experiment ? this.state.experiment.trafficControl.trafficStepSize : ''}
+              {this.state.experiment ? this.state.experiment.trafficControl.trafficStepSide : ''}
             </StackItem>
           </Stack>
         </CardBody>
@@ -238,50 +211,19 @@ class ExperimentDetailsPage extends React.Component<RouteComponentProps<Props>, 
   };
 
   renderRightToolbar = () => {
-    let component;
-    switch (this.state.currentTab) {
-      case defaultTab:
-        component = (
-          <Iter8Dropdown
-            experimentName={this.props.match.params.name}
-            canDelete={this.state.canDelete}
-            onDelete={this.doDelete}
-          />
-        );
-        break;
-      default:
-        return undefined;
-    }
     return (
       <span style={{ position: 'absolute', right: '50px', zIndex: 1 }}>
         <RefreshButtonContainer handleRefresh={this.doRefresh} />
-        {component}
+        <Iter8Dropdown
+          experimentName={this.props.match.params.name}
+          canDelete={this.state.canDelete}
+          onDelete={this.doDelete}
+        />
       </span>
     );
   };
 
   render() {
-    const overviewTab = (
-      <Tab eventKey={0} title="Overview" key="Overview">
-        <ExperimentInfoDescription
-          namespace={this.props.match.params.namespace}
-          experiment={this.props.match.params.name}
-          target={this.state.target}
-          experimentDetails={this.state.experiment}
-          duration={FilterHelper.currentDuration()}
-          startTime={this.state.startTime}
-          endTime={this.state.endTime}
-          baseline={this.state.baseline}
-          candidate={this.state.candidate}
-        />
-      </Tab>
-    );
-    const criteriaTab = (
-      <Tab eventKey={1} title="Criteria" key="Criteria">
-        <CriteriaInfoDescription criterias={this.state.experiment ? this.state.experiment.criterias : []} />
-      </Tab>
-    );
-    const tabsArray: any[] = [overviewTab, criteriaTab];
     return (
       <>
         <RenderHeader>
@@ -289,22 +231,14 @@ class ExperimentDetailsPage extends React.Component<RouteComponentProps<Props>, 
           <Text component={TextVariants.h1}>{this.props.match.params.name}</Text>
           {this.renderRightToolbar()}
         </RenderHeader>
-
-        <ParameterizedTabs
-          id="basic-tabs"
-          onSelect={tabValue => {
-            this.setState({ currentTab: tabValue });
-          }}
-          tabMap={tabIndex}
-          tabName={tabName}
-          defaultTab={defaultTab}
-          postHandler={this.fetchExperiment}
-          activeTab={this.state.currentTab}
-          mountOnEnter={false}
-          unmountOnExit={true}
-        >
-          {tabsArray}
-        </ParameterizedTabs>
+        <div className={tabsPadding} />
+        <div className={containerPadding}>
+          <Grid gutter={'md'}>
+            <GridItem span={4}>{this.renderOverview()}</GridItem>
+            <GridItem span={4}>{this.renderTrafficControl()}</GridItem>
+            <GridItem span={4}>{this.renderStatus()}</GridItem>
+          </Grid>
+        </div>
       </>
     );
   }
