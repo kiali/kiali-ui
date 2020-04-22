@@ -40,12 +40,12 @@ const HELPER_TEXT = {
 const rulesFormValues = [DENY_ALL, ALLOW_ALL, RULES];
 const actions = [ALLOW, DENY];
 
-export const INIT_AUTHORIZATION_POLICY: AuthorizationPolicyState = {
+export const INIT_AUTHORIZATION_POLICY = (): AuthorizationPolicyState => ({
   policy: DENY_ALL,
   workloadSelector: '',
   action: ALLOW,
   rules: []
-};
+});
 
 class AuthorizationPolicyForm extends React.Component<Props, State> {
   constructor(props: Props) {
@@ -58,6 +58,17 @@ class AuthorizationPolicyForm extends React.Component<Props, State> {
       action: this.props.authorizationPolicy.action,
       rules: []
     };
+  }
+
+  componentDidMount() {
+    this.setState({
+      rulesForm: this.props.authorizationPolicy.policy,
+      addWorkloadSelector: false,
+      workloadSelectorValid: false,
+      workloadSelectorLabels: this.props.authorizationPolicy.workloadSelector,
+      action: this.props.authorizationPolicy.action,
+      rules: []
+    });
   }
 
   onRulesFormChange = (value, _) => {

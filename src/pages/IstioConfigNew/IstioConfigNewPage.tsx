@@ -55,11 +55,11 @@ const istioResourceOptions = [
   { value: SIDECAR, label: SIDECAR, disabled: false }
 ];
 
-const INIT_STATE: State = {
+const INIT_STATE = (): State => ({
   istioResource: istioResourceOptions[0].value,
   name: '',
   istioPermissions: {},
-  authorizationPolicy: INIT_AUTHORIZATION_POLICY,
+  authorizationPolicy: INIT_AUTHORIZATION_POLICY(),
   gateway: {
     gatewayServers: []
   },
@@ -74,14 +74,14 @@ const INIT_STATE: State = {
     workloadSelectorValid: false,
     workloadSelectorLabels: ''
   }
-};
+});
 
 class IstioConfigNewPage extends React.Component<Props, State> {
   private promises = new PromisesRegistry();
 
   constructor(props: Props) {
     super(props);
-    this.state = INIT_STATE;
+    this.state = INIT_STATE();
   }
 
   componentWillUnmount() {
@@ -90,7 +90,7 @@ class IstioConfigNewPage extends React.Component<Props, State> {
 
   componentDidMount() {
     // Init component state
-    this.setState(INIT_STATE);
+    this.setState(Object.assign({}, INIT_STATE));
     this.fetchPermissions();
   }
 
@@ -220,8 +220,10 @@ class IstioConfigNewPage extends React.Component<Props, State> {
   };
 
   backToList = () => {
-    // Back to list page
-    history.push(`/${Paths.ISTIO}?namespaces=${this.props.activeNamespaces.join(',')}`);
+    this.setState(INIT_STATE(), () => {
+      // Back to list page
+      history.push(`/${Paths.ISTIO}?namespaces=${this.props.activeNamespaces.join(',')}`);
+    });
   };
 
   isAuthorizationPolicyValid = (): boolean => {
@@ -403,9 +405,11 @@ class IstioConfigNewPage extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = (state: KialiAppState) => ({
-  activeNamespaces: activeNamespacesSelector(state)
-});
+const mapStateToProps = (state: KialiAppState) => {
+  return {
+    activeNamespaces: activeNamespacesSelector(state)
+  };
+};
 
 const IstioConfigNewPageContainer = connect(
   mapStateToProps,

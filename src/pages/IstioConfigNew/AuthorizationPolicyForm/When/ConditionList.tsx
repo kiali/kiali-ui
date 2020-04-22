@@ -32,7 +32,6 @@ class ConditionList extends React.Component<Props> {
                 <b>values: </b> [{condition.values}]<br />
               </>
             )}
-            , State
             {condition.notValues && (
               <>
                 <b>notValues: </b> [{condition.notValues}]<br />
