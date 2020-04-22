@@ -230,6 +230,10 @@ export const getServiceDashboard = (namespace: string, service: string, params: 
   return newRequest<DashboardModel>(HTTP_VERBS.GET, urls.serviceDashboard(namespace, service), params, {});
 };
 
+export const getIter8Dashboard = (namespace: string, service: string, params: IstioMetricsOptions) => {
+  return newRequest<DashboardModel>(HTTP_VERBS.GET, urls.iter8Dashboard(namespace, service), params, {});
+};
+
 export const getApp = (namespace: string, app: string) => {
   return newRequest<App>(HTTP_VERBS.GET, urls.app(namespace, app), {}, {});
 };
@@ -537,6 +541,10 @@ export const getIter8Info = () => {
   return newRequest<Iter8Info>(HTTP_VERBS.GET, urls.iter8, {}, {});
 };
 
+export const getIter8Metrics = () => {
+  return newRequest<string[]>(HTTP_VERBS.GET, urls.iter8Metrics, {}, {});
+};
+
 export const getExperiments = (namespaces: string[]) => {
   return newRequest<Iter8Experiment[]>(HTTP_VERBS.GET, urls.iter8Experiments, { namespaces: namespaces.join(',') }, {});
 };
@@ -554,7 +562,7 @@ export const deleteExperiment = (namespace: string, name: string) => {
 };
 
 export const createExperiment = (namespace: string, specBody: string) => {
-  return newRequest<Iter8Experiment>(HTTP_VERBS.POST, urls.iter8ExperimentsByNamespace(namespace), {}, specBody);
+  return newRequest<string>(HTTP_VERBS.POST, urls.iter8ExperimentsByNamespace(namespace), {}, specBody);
 };
 
 export const updateExperiment = (namespace: string, name: string, specBody: string) => {

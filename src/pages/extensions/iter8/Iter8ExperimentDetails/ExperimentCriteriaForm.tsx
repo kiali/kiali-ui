@@ -1,27 +1,23 @@
 import { cellWidth, ICell, Table, TableBody, TableHeader } from '@patternfly/react-table';
-import { Criteria } from './ExperimentCreatePage';
+import { Criteria, NameValuePair } from '../../../../types/Iter8';
 import * as React from 'react';
 import { Button, FormSelect, FormSelectOption, TextInput, Checkbox } from '@patternfly/react-core';
 import { style } from 'typestyle';
 import { PfColors } from '../../../../components/Pf/PfColors';
+
 const headerCells: ICell[] = [
   {
-    title: 'Matric Name',
+    title: 'Metric Name',
     transforms: [cellWidth(20) as any],
     props: {}
   },
   {
-    title: 'Sample Size',
+    title: 'Threshold',
     transforms: [cellWidth(10) as any],
     props: {}
   },
   {
-    title: 'Tolerance',
-    transforms: [cellWidth(10) as any],
-    props: {}
-  },
-  {
-    title: 'Tolerance Type',
+    title: 'Threshold Type',
     transforms: [cellWidth(15) as any],
     props: {}
   },
@@ -35,8 +31,17 @@ const headerCells: ICell[] = [
   }
 ];
 
-const metrics = ['', 'iter8_latency', 'iter8_error_count', 'iter8_error_rate'];
-const toleranceType = ['threshold', 'delta'];
+// const metrics = ['', 'iter8_latency', 'iter8_error_count', 'iter8_error_rate'];
+const toleranceType: NameValuePair[] = [
+  {
+    name: 'threshold',
+    value: 'absolute'
+  },
+  {
+    name: 'relative',
+    value: 'delta'
+  }
+];
 
 const noCriteriaStyle = style({
   marginTop: 15,
@@ -45,6 +50,7 @@ const noCriteriaStyle = style({
 
 type Props = {
   criterias: Criteria[];
+  metricNames: string[];
   onAdd: (server: Criteria) => void;
   onRemove: (index: number) => void;
 };
@@ -65,7 +71,6 @@ class ExperimentCriteriaForm extends React.Component<Props, State> {
     this.state = {
       addCriteria: {
         metric: '',
-        sampleSize: 100,
         tolerance: 0.2,
         toleranceType: 'threshold',
         stopOnFailure: false
@@ -89,11 +94,10 @@ class ExperimentCriteriaForm extends React.Component<Props, State> {
     return [];
   };
 
-  onAddMetricName = (value: string, _) => {
+  onAddMetricName = (value: string) => {
     this.setState(prevState => ({
       addCriteria: {
         metric: value.trim(),
-        sampleSize: prevState.addCriteria.sampleSize,
         tolerance: prevState.addCriteria.tolerance,
         toleranceType: prevState.addCriteria.toleranceType,
         stopOnFailure: prevState.addCriteria.stopOnFailure
@@ -119,7 +123,6 @@ class ExperimentCriteriaForm extends React.Component<Props, State> {
     this.setState(prevState => ({
       addCriteria: {
         metric: prevState.addCriteria.metric,
-        sampleSize: prevState.addCriteria.sampleSize,
         tolerance: parseFloat(value.trim()),
         toleranceType: prevState.addCriteria.toleranceType,
         stopOnFailure: prevState.addCriteria.stopOnFailure
@@ -131,7 +134,6 @@ class ExperimentCriteriaForm extends React.Component<Props, State> {
     this.setState(prevState => ({
       addCriteria: {
         metric: prevState.addCriteria.metric,
-        sampleSize: prevState.addCriteria.sampleSize,
         tolerance: prevState.addCriteria.tolerance,
         toleranceType: value.trim(),
         stopOnFailure: prevState.addCriteria.stopOnFailure
@@ -144,7 +146,6 @@ class ExperimentCriteriaForm extends React.Component<Props, State> {
     this.setState(prevState => ({
       addCriteria: {
         metric: prevState.addCriteria.metric,
-        sampleSize: prevState.addCriteria.sampleSize,
         tolerance: prevState.addCriteria.tolerance,
         toleranceType: prevState.addCriteria.toleranceType,
         stopOnFailure: value
@@ -158,7 +159,6 @@ class ExperimentCriteriaForm extends React.Component<Props, State> {
     this.setState({
       addCriteria: {
         metric: '',
-        sampleSize: 100,
         tolerance: 0.2,
         toleranceType: 'threshold',
         stopOnFailure: false
@@ -170,13 +170,7 @@ class ExperimentCriteriaForm extends React.Component<Props, State> {
     return this.props.criterias
       .map((gw, i) => ({
         key: 'criteria' + i,
-        cells: [
-          <>{gw.metric}</>,
-          <>{gw.sampleSize}</>,
-          <>{gw.tolerance}</>,
-          <>{gw.toleranceType}</>,
-          <>{gw.stopOnFailure}</>
-        ]
+        cells: [<>{gw.metric}</>, <>{gw.tolerance}</>, <>{gw.toleranceType}</>, <>{gw.stopOnFailure}</>]
       }))
       .concat([
         {
@@ -189,21 +183,10 @@ class ExperimentCriteriaForm extends React.Component<Props, State> {
                 name="addMetricName"
                 onChange={this.onAddMetricName}
               >
-                {metrics.map((option, index) => (
+                {this.props.metricNames.map((option, index) => (
                   <FormSelectOption isDisabled={false} key={'p' + index} value={option} label={option} />
                 ))}
               </FormSelect>
-            </>,
-            <>
-              <TextInput
-                value={this.state.addCriteria.sampleSize}
-                type="number"
-                id="addSampleSize"
-                aria-describedby="Sample Size"
-                name="addSampleSize"
-                onChange={this.onAddSampleSize}
-                isValid={!isNaN(this.state.addCriteria.sampleSize)}
-              />
             </>,
             <>
               <TextInput
@@ -213,7 +196,7 @@ class ExperimentCriteriaForm extends React.Component<Props, State> {
                 aria-describedby="Tolerance"
                 name="addTolerance"
                 onChange={this.onAddTolerance}
-                isValid={!isNaN(this.state.addCriteria.sampleSize)}
+                isValid={!isNaN(this.state.addCriteria.tolerance)}
               />
             </>,
             <>
@@ -224,7 +207,7 @@ class ExperimentCriteriaForm extends React.Component<Props, State> {
                 onChange={this.onAddToleranceType}
               >
                 {toleranceType.map((option, index) => (
-                  <FormSelectOption isDisabled={false} key={'p' + index} value={option} label={option} />
+                  <FormSelectOption isDisabled={false} key={'p' + index} value={option.name} label={option.value} />
                 ))}
               </FormSelect>
             </>,
