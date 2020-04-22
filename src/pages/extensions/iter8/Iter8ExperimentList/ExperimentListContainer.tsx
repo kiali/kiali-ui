@@ -8,6 +8,7 @@ import {
   EmptyState,
   EmptyStateBody,
   EmptyStateVariant,
+  PopoverPosition,
   Text,
   TextContent,
   Title,
@@ -319,31 +320,61 @@ class ExperimentListPage extends React.Component<Props, State> {
     switch (phase) {
       case 'Initializing':
         return (
-          <Tooltip key={'Initializing_' + key} content={<>{statusString}</>}>
+          <Tooltip
+            key={'Initializing_' + key}
+            aria-label={'Status Indicatorr'}
+            position={PopoverPosition.auto}
+            className={'health_indicator'}
+            content={<>{statusString}</>}
+          >
             <KialiIcon.InProgressIcon className={statusIconStyle} />
           </Tooltip>
         );
       case 'Progressing':
         return (
-          <Tooltip key={'Progressing_' + key} content={<>{statusString}</>}>
+          <Tooltip
+            key={'Progressing_' + key}
+            aria-label={'Status Indicatorr'}
+            position={PopoverPosition.auto}
+            className={'health_indicator'}
+            content={<>{statusString}</>}
+          >
             <KialiIcon.OnRunningIcon className={statusIconStyle} />
           </Tooltip>
         );
       case 'Pause':
         return (
-          <Tooltip key={'Pause_' + key} content={<>{statusString}</>}>
+          <Tooltip
+            key={'Pause_' + key}
+            aria-label={'Status Indicatorr'}
+            position={PopoverPosition.auto}
+            className={'health_indicator'}
+            content={<>{statusString}</>}
+          >
             <KialiIcon.PauseCircle className={statusIconStyle} />
           </Tooltip>
         );
       case 'Completed':
         return (
-          <Tooltip key={'Completed_' + key} content={<>{statusString}</>}>
+          <Tooltip
+            key={'Completed_' + key}
+            aria-label={'Status Indicatorr'}
+            position={PopoverPosition.auto}
+            className={'health_indicator'}
+            content={<>{statusString}</>}
+          >
             <OkIcon className={className} />
           </Tooltip>
         );
       default:
         return (
-          <Tooltip key={'default_' + key} content={<>{statusString}</>}>
+          <Tooltip
+            key={'default_' + key}
+            aria-label={'Status Indicatorr'}
+            position={PopoverPosition.auto}
+            className={'health_indicator'}
+            content={<>{statusString}</>}
+          >
             <KialiIcon.OnRunningIcon className={statusIconStyle} />
           </Tooltip>
         );
@@ -394,9 +425,7 @@ class ExperimentListPage extends React.Component<Props, State> {
             </Tooltip>
             {h.targetService ? this.serviceLink(h.namespace, h.targetService) : ''}
           </>,
-          <>
-            {h.phase} {this.experimentStatusIcon(h.name + '_' + h.namespace, h.phase, h.candidatePercentage, h.status)}
-          </>,
+          <>{this.experimentStatusIcon(h.name + '_' + h.namespace, h.phase, h.candidatePercentage, h.status)}</>,
 
           <>
             <Link to={this.workloadLink(h.namespace, h.baseline)}>{h.baseline}</Link>
