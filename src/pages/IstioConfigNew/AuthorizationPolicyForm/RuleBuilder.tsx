@@ -6,6 +6,8 @@ import OperationBuilder from './To/OperationBuilder';
 import OperationList from './To/OperationList';
 import ConditionBuilder, { Condition } from './When/ConditionBuilder';
 import ConditionList from './When/ConditionList';
+import { style } from 'typestyle';
+import { PfColors } from '../../../components/Pf/PfColors';
 
 type Props = {
   onAddRule: (rule: Rule) => void;
@@ -25,6 +27,12 @@ type State = {
   toList: { [key: string]: string[] }[];
   conditionList: Condition[];
 };
+
+const warningStyle = style({
+  marginLeft: 25,
+  color: PfColors.Red100,
+  textAlign: 'center'
+});
 
 class RuleBuilder extends React.Component<Props, State> {
   constructor(props: Props) {
@@ -192,6 +200,11 @@ class RuleBuilder extends React.Component<Props, State> {
           <Button variant="secondary" onClick={this.onAddRule} isDisabled={!this.canAddRule()}>
             Add Rule
           </Button>
+          {!this.canAddRule() && (
+            <span className={warningStyle}>
+              A Rule needs at least an item in "Add From", "Add To" or "Add When" sections
+            </span>
+          )}
         </FormGroup>
       </>
     );

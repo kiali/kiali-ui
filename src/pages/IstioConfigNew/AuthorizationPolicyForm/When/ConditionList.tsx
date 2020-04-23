@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { Condition } from './ConditionBuilder';
 import { cellWidth, ICell, Table, TableBody, TableHeader } from '@patternfly/react-table';
+import { style } from 'typestyle';
+import { PfColors } from '../../../../components/Pf/PfColors';
 
 type Props = {
   conditionList: Condition[];
@@ -18,6 +20,13 @@ const headerCells: ICell[] = [
     props: {}
   }
 ];
+
+const noConditionsStyle = style({
+  marginTop: 10,
+  color: PfColors.Red100,
+  textAlign: 'center',
+  width: '100%'
+});
 
 class ConditionList extends React.Component<Props> {
   rows = () => {
@@ -69,6 +78,7 @@ class ConditionList extends React.Component<Props> {
           <TableHeader />
           <TableBody />
         </Table>
+        {this.props.conditionList.length === 0 && <div className={noConditionsStyle}>No Conditions Defined</div>}
       </>
     );
   }

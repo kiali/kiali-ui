@@ -1,5 +1,7 @@
 import * as React from 'react';
 import { cellWidth, ICell, Table, TableBody, TableHeader } from '@patternfly/react-table';
+import { style } from 'typestyle';
+import { PfColors } from '../../../../components/Pf/PfColors';
 
 type Props = {
   toList: { [key: string]: string[] }[];
@@ -17,6 +19,13 @@ const headerCells: ICell[] = [
     props: {}
   }
 ];
+
+const noOperationsStyle = style({
+  marginTop: 10,
+  color: PfColors.Red100,
+  textAlign: 'center',
+  width: '100%'
+});
 
 class OperationList extends React.Component<Props> {
   rows = () => {
@@ -64,6 +73,7 @@ class OperationList extends React.Component<Props> {
           <TableHeader />
           <TableBody />
         </Table>
+        {this.props.toList.length === 0 && <div className={noOperationsStyle}>No Operations Defined</div>}
       </>
     );
   }

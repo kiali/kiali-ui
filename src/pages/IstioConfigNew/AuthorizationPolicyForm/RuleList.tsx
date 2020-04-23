@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Rule } from './RuleBuilder';
 import { cellWidth, ICell, Table, TableBody, TableHeader } from '@patternfly/react-table';
 import { style } from 'typestyle';
+import { PfColors } from '../../../components/Pf/PfColors';
 
 type Props = {
   ruleList: Rule[];
@@ -22,6 +23,12 @@ const headerCells: ICell[] = [
 
 const rulesPadding = style({
   paddingLeft: 10
+});
+
+const noRulesStyle = style({
+  color: PfColors.Red100,
+  textAlign: 'center',
+  width: '100%'
 });
 
 class RuleList extends React.Component<Props> {
@@ -125,6 +132,7 @@ class RuleList extends React.Component<Props> {
           <TableHeader />
           <TableBody />
         </Table>
+        {this.props.ruleList.length === 0 && <div className={noRulesStyle}>No Rules Defined</div>}
       </>
     );
   }
