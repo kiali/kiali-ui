@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { FormGroup, FormSelect, FormSelectOption, Switch, TextInput } from '@patternfly/react-core';
+import { FormGroup, FormSelect, FormSelectOption, Switch, TextInputBase as TextInput } from '@patternfly/react-core';
 import RuleBuilder, { Rule } from './AuthorizationPolicyForm/RuleBuilder';
 import RuleList from './AuthorizationPolicyForm/RuleList';
 
