@@ -24,7 +24,7 @@ const PROMISE_KEY = 'CURRENT_REQUEST';
 //
 // GraphDataSource (GDS) emits events asynchronously and has the potential to disrupt the expected
 // react+redux workflow typical of our components.  To avoid unexpected results here are some
-// are some [anti-]patterns for using GraphDataSource:
+// [anti-]patterns for using GraphDataSource:
 //   - Do not set up GDS callbacks in nested components.  It is better to process the callbacks in the
 //     top-level component and then update props (via react or redux) and let the lower components update normally.
 //       - if A embeds B, do not have callbacks for the same GDS in A and B, just A
