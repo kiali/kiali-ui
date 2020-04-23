@@ -90,8 +90,9 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
     const findChanged = this.props.findValue !== nextProps.findValue;
     const hideChanged = this.props.hideValue !== nextProps.hideValue;
     const graphChanged = this.props.updateTime !== nextProps.updateTime;
+    const showFindHelpChanged = this.props.showFindHelp !== nextProps.showFindHelp;
 
-    return cyChanged || findChanged || hideChanged || graphChanged;
+    return cyChanged || findChanged || hideChanged || graphChanged || showFindHelpChanged;
   }
 
   // Note that we may have redux hide/find values set at mount-time. But because the toolbar mounts prior to

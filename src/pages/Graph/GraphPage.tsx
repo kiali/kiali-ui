@@ -445,7 +445,6 @@ export class GraphPage extends React.Component<GraphPageProps, GraphPageState> {
     elements: DecoratedGraphElements,
     fetchParams: FetchParams
   ) => {
-    console.log('load success');
     this.setState({
       graphData: {
         elements: elements,
@@ -508,7 +507,6 @@ export class GraphPage extends React.Component<GraphPageProps, GraphPageState> {
   }
 
   private loadGraphDataFromBackend = () => {
-    console.log('Loading graph...');
     const queryTime: TimeInMilliseconds | undefined = !!this.props.replayQueryTime
       ? this.props.replayQueryTime
       : undefined;

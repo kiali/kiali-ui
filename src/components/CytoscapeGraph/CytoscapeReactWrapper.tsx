@@ -63,12 +63,10 @@ export class CytoscapeReactWrapper extends React.Component<CytoscapeReactWrapper
   }
 
   componentDidMount() {
-    console.log('wrapper mount');
     this.build();
   }
 
   componentWillUnmount() {
-    console.log('wrapper unmount');
     this.destroy();
   }
 
