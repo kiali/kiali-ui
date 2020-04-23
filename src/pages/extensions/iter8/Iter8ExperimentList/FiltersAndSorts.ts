@@ -142,7 +142,7 @@ export const filterBy = (iter8Experiment: Iter8Experiment[], filters: ActiveFilt
 const targetServiceFilter: FilterType = {
   id: 'targetService',
   title: 'Service',
-  placeholder: 'Filter by Servicet Name',
+  placeholder: 'Filter by Service Name',
   filterType: TextInputTypes.text,
   action: FILTER_ACTION_APPEND,
   filterValues: []
