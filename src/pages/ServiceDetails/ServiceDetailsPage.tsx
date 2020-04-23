@@ -325,12 +325,13 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
     } else {
       // Get actual Params
       const params = getQueryJaeger();
-      const fetchParams = { ...params }; // copy
-      // If user change tha params like tags or limit so we need to reset lastFetchTraceMicros
       if (changeParams(this.traceParams)) {
+        // The user changed the params like tags or limit so we need to reset lastFetchTraceMicros
+        this.traceParams = params;
         this.lastFetchTraceMicros = undefined;
-      } else {
-        // If not we need to set out fetch to the lastFetchTraceMicros
+      }
+      const fetchParams = { ...params };
+      if (this.lastFetchTraceMicros) {
         fetchParams[URLParam.JAEGER_START_TIME] = this.lastFetchTraceMicros;
       }
       fetchTraces(this.props.match.params.namespace, this.props.match.params.service, fetchParams)
@@ -341,7 +342,7 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
           if (traces && traces.data) {
             // We get new trace results so we need to concatenate them to the results that we have
             this.traces = appendTraces
-              ? this.traces.filter(t => t.startTime >= fetchParams[URLParam.JAEGER_START_TIME]).concat(traces.data)
+              ? this.traces.filter(t => t.startTime >= params[URLParam.JAEGER_START_TIME]).concat(traces.data)
               : traces.data;
             if (traces.data.length === 0) {
               myState['selectedTrace'] = undefined;
