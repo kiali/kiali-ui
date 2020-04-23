@@ -15,7 +15,6 @@ describe('Parse find value test', () => {
         edgeLabelMode={EdgeLabelMode.NONE}
         findValue="testFind"
         hideValue="testHide"
-        isLoading={false}
         showFindHelp={false}
         showSecurity={false}
         showUnusedNodes={false}
