@@ -15,7 +15,7 @@ describe('#GetErrorString', () => {
         headers: null,
         config: {}
       }
-    };
+    } as AxiosError;
     expect(API.getErrorString(axErr)).toEqual(`InternalError`);
   });
   it('should return an error message with data', () => {
@@ -31,7 +31,7 @@ describe('#GetErrorString', () => {
         headers: null,
         config: {}
       }
-    };
+    } as AxiosError;
     expect(API.getErrorString(axErr)).toEqual(`${responseServerError}`);
   });
   it('should return a detail error message with data', () => {
@@ -48,7 +48,7 @@ describe('#GetErrorString', () => {
         headers: null,
         config: {}
       }
-    };
+    } as AxiosError;
     expect(API.getErrorDetail(axErr)).toEqual(`${responseServerDetail}`);
   });
   it('should return specific error message for unauthorized', () => {
@@ -63,7 +63,7 @@ describe('#GetErrorString', () => {
         headers: null,
         config: {}
       }
-    };
+    } as AxiosError;
     expect(API.getErrorString(axErr)).toEqual(`Unauthorized: Has your session expired? Try logging in again.`);
   });
 });
