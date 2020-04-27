@@ -301,9 +301,16 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
   };
 
   fetchTracesData = (cleanTrace: boolean = false, traceId?: string) => {
+    /*
+     Remove selected trace
+    */
     if (cleanTrace) {
       this.setState({ selectedTrace: undefined });
     }
+
+    /*
+      Fetch for a specific trace with ID traceId
+    */
     if (traceId) {
       fetchTrace(this.props.match.params.namespace, this.props.match.params.service, traceId)
         .then(trace => {
@@ -323,30 +330,55 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
           }
         });
     } else {
-      // Get actual Params
+      /*
+       Refresh traces
+       - params: Actual params that user selected in refresh moment like limit, tags, duration/frame
+       - traceParams: Params stored in the object
+       - lastFetchTraceMicros: In a interval from 't' to 't+1', we store in this value the last trace startTime,
+           so this value will be <= 't+1'
+      */
       const params = getQueryJaeger();
+      /*
+       changeParams return true if the specific params like limit or tag changed. In this case the refresh must be a new search.
+          - we store the new params in traceParams
+          - we set to undefined the frame that we use to search the new traces
+      */
       if (changeParams(this.traceParams)) {
         // The user changed the params like tags or limit so we need to reset lastFetchTraceMicros
         this.traceParams = params;
         this.lastFetchTraceMicros = undefined;
       }
       const fetchParams = { ...params };
+      /*
+       If we are adding new traces to the frame we set the startTime param in the search to the last startTime trace that we have.
+       Why?
+       Think in the case that we have a frame from 't-5' to 't'. And our last trace has the startTime in 't-2'.
+       If we fetch traces from t to t+duration we can miss a trace in the t-1 moment. So we are going to fetch traces from the last trace that we got.
+      */
       if (this.lastFetchTraceMicros) {
         fetchParams[URLParam.JAEGER_START_TIME] = this.lastFetchTraceMicros;
       }
       fetchTraces(this.props.match.params.namespace, this.props.match.params.service, fetchParams)
         .then(traces => {
+          /*
+            If lastFetchTraceMicros is defined that means that we are in a incremental refresh case.
+          */
           const appendTraces = this.lastFetchTraceMicros !== undefined;
           this.lastFetchTracesError = false;
           let myState = {};
           if (traces && traces.data) {
-            // We get new trace results so we need to concatenate them to the results that we have
+            /*
+             In the case that we need to increment we are going to filter the traces in the frame and concatenate the results with the traces that we got
+            */
             this.traces = appendTraces
               ? this.traces.filter(t => t.startTime >= params[URLParam.JAEGER_START_TIME]).concat(traces.data)
               : traces.data;
             if (traces.data.length === 0) {
               myState['selectedTrace'] = undefined;
             } else {
+              /*
+                We store the last trace startTime that er got-
+              */
               this.lastFetchTraceMicros = Math.max(...this.traces.map(t => t.startTime));
             }
           }
