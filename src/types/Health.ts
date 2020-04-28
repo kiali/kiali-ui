@@ -104,7 +104,7 @@ export const ratioCheck = (availableReplicas: number, currentReplicas: number, d
   /*
     IDLE STATE
  */
-  // User performed the action
+  // User has scaled down a workload, then desired replicas will be 0 and it's not an error condition
   if (desiredReplicas === 0) {
     return IDLE;
   }
@@ -112,6 +112,7 @@ export const ratioCheck = (availableReplicas: number, currentReplicas: number, d
   /*
    DEGRADED STATE
   */
+  // When a workload has available pods but less than desired defined by user it should be marked as degraded
   if (
     desiredReplicas > 0 &&
     currentReplicas > 0 &&
@@ -124,30 +125,13 @@ export const ratioCheck = (availableReplicas: number, currentReplicas: number, d
   /*
      FAILURE STATE
   */
-  if (desiredReplicas > 0 && (currentReplicas === 0 || availableReplicas === 0)) {
-    return FAILURE;
-  }
-
-  // Some pods are up but not ready
-  if (desiredReplicas > 0 && currentReplicas > 0 && availableReplicas === 0) {
-    return FAILURE;
-  }
-
-  if (desiredReplicas > 0 && currentReplicas < desiredReplicas) {
-    return FAILURE;
-  }
-
-  if (desiredReplicas === currentReplicas && availableReplicas > currentReplicas) {
+  // When availableReplicas is 0 but user has marked a desired > 0, that's an error condition
+  if (desiredReplicas > 0 && availableReplicas === 0) {
     return FAILURE;
   }
 
   // Pending Pods means problems
   if (desiredReplicas === availableReplicas && availableReplicas !== currentReplicas) {
-    return FAILURE;
-  }
-
-  // No available Pods when there are desired and current means a Failure
-  if (desiredReplicas > 0 && currentReplicas > 0 && availableReplicas === 0) {
     return FAILURE;
   }
 

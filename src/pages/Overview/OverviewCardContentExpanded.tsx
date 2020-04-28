@@ -75,7 +75,7 @@ class OverviewCardContentExpanded extends React.Component<Props> {
           <Text component={TextVariants.h2} style={{ marginTop: 0 }}>
             {status.inIdle.length > 0 && (
               <OverviewStatus
-                id={name + '-undesired'}
+                id={name + '-iddle'}
                 namespace={name}
                 status={IDLE}
                 items={status.inIdle}

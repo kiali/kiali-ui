@@ -39,7 +39,7 @@ describe('HealthIndicator', () => {
     expect(html).toContain(PFAlertColor.Success);
   });
 
-  it('renders workloads defraded', () => {
+  it('renders workloads degraded', () => {
     const health = new AppHealth(
       [
         { name: 'A', availableReplicas: 1, currentReplicas: 1, desiredReplicas: 10 },
