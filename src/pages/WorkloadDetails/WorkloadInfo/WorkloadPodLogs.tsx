@@ -86,11 +86,15 @@ const tailToolbarMargin = style({
 export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodLogsState> {
   private loadPodLogsPromise?: CancelablePromise<Response<PodLogs>[]>;
   private loadContainerLogsPromise?: CancelablePromise<Response<PodLogs>[]>;
+  private podLogsRef: any;
+  private proxyLogsRef: any;
   private podOptions: object = {};
 
   constructor(props: WorkloadPodLogsProps) {
     super(props);
 
+    this.podLogsRef = React.createRef();
+    this.proxyLogsRef = React.createRef();
     if (this.props.pods.length < 1) {
       this.state = {
         duration: retrieveDuration() || 600,
@@ -147,6 +151,8 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
       const pod = this.props.pods[this.state.podValue!];
       this.fetchLogs(this.props.namespace, pod.name, newContainer!, this.state.tailLines, this.state.duration);
     }
+    this.proxyLogsRef.current.scrollTop = this.proxyLogsRef.current.scrollHeight;
+    this.podLogsRef.current.scrollTop = this.podLogsRef.current.scrollHeight;
   }
 
   renderItem = object => {
@@ -213,6 +219,7 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
                       </Title>
                       <textarea
                         className={logsTextarea}
+                        ref={this.podLogsRef}
                         readOnly={true}
                         value={this.state.podLogs ? this.state.podLogs.logs : 'Loading logs...'}
                         aria-label="Pod logs text"
@@ -224,6 +231,7 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
                       </Title>
                       <textarea
                         className={logsTextarea}
+                        ref={this.proxyLogsRef}
                         readOnly={true}
                         value={this.state.containerLogs ? this.state.containerLogs.logs : 'Loading container logs...'}
                         aria-label="Container logs text"
@@ -314,6 +322,7 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
           loadingPodLogs: false,
           podLogs: podLogs.logs ? podLogs : { logs: 'No logs found for the time period.' }
         });
+        this.podLogsRef.current.scrollTop = this.podLogsRef.current.scrollHeight;
         return;
       })
       .catch(error => {
@@ -336,6 +345,7 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
           loadingContainerLogs: false,
           containerLogs: containerLogs.logs ? containerLogs : { logs: 'No container logs found for the time period.' }
         });
+        this.podLogsRef.current.scrollTop = this.podLogsRef.current.scrollHeight;
         return;
       })
       .catch(error => {
