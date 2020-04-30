@@ -63,7 +63,8 @@ const logsTextarea = style({
   backgroundColor: '#003145',
   fontFamily: 'monospace',
   fontSize: '11pt',
-  padding: '10px'
+  padding: '10px',
+  whiteSpace: 'pre'
 });
 
 const toolbarRight = style({
