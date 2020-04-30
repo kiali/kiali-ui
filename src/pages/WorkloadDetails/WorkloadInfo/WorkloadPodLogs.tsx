@@ -6,11 +6,11 @@ import { getPodLogs, Response } from '../../../services/Api';
 import { CancelablePromise, makeCancelablePromise } from '../../../utils/CancelablePromises';
 import { ToolbarDropdown } from '../../../components/ToolbarDropdown/ToolbarDropdown';
 import { DurationInSeconds, TimeRange } from '../../../types/Common';
-import RefreshButtonContainer from '../../../components/Refresh/RefreshButton';
 import { RenderComponentScroll } from '../../../components/Nav/Page';
 import { retrieveDuration } from 'components/Time/TimeRangeHelper';
 import TimeRangeComponent from 'components/Time/TimeRangeComponent';
 import Splitter from 'm-react-splitters';
+import RefreshContainer from '../../../components/Refresh/Refresh';
 
 export interface WorkloadPodLogsProps {
   namespace: string;
@@ -86,8 +86,8 @@ const tailToolbarMargin = style({
 export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodLogsState> {
   private loadPodLogsPromise?: CancelablePromise<Response<PodLogs>[]>;
   private loadContainerLogsPromise?: CancelablePromise<Response<PodLogs>[]>;
-  private podLogsRef: any;
-  private proxyLogsRef: any;
+  private readonly podLogsRef: any;
+  private readonly proxyLogsRef: any;
   private podOptions: object = {};
 
   constructor(props: WorkloadPodLogsProps) {
@@ -201,7 +201,12 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
                         />
                       </ToolbarItem>
                       <ToolbarItem>
-                        <RefreshButtonContainer disabled={!this.state.podLogs} handleRefresh={this.handleRefresh} />
+                        <RefreshContainer
+                          id="workload_logging_refresh"
+                          hideLabel={true}
+                          disabled={!this.state.podLogs}
+                          handleRefresh={this.handleRefresh}
+                        />
                       </ToolbarItem>
                     </ToolbarGroup>
                   </Toolbar>
