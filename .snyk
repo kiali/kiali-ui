@@ -1,5 +1,5 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
-version: v1.13.3
+version: v1.14.1
 # ignores vulnerabilities until expiry date; change duration by modifying expiry date
 ignore:
   'npm:bootstrap:20160627':
@@ -780,3 +780,166 @@ patch:
   SNYK-JS-AXIOS-174505:
     - axios:
         patched: '2019-05-06T06:42:36.811Z'
+  SNYK-JS-LODASH-567746:
+    - lodash:
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-table > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
+    - logfmt > lodash:
+        patched: '2020-05-01T06:42:42.389Z'
+    - react-resize-detector > lodash:
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-charts > victory-core > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-charts > victory-legend > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
+    - cytoscape-dagre > dagre > lodash:
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-charts > victory > victory-core > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-charts > victory-legend > victory-core > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-charts > victory > victory-area > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-charts > victory > victory-axis > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-charts > victory > victory-bar > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-charts > victory > victory-box-plot > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-charts > victory > victory-brush-container > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-charts > victory > victory-brush-line > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-charts > victory > victory-candlestick > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-charts > victory > victory-polar-axis > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-charts > victory > victory-shared-events > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-charts > victory > victory-chart > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-charts > victory > victory-cursor-container > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-charts > victory > victory-selection-container > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-charts > victory > victory-tooltip > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-charts > victory > victory-voronoi-container > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-charts > victory > victory-zoom-container > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-charts > victory > victory-create-container > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-charts > victory > victory-errorbar > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-charts > victory > victory-group > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-charts > victory > victory-legend > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-charts > victory > victory-line > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-charts > victory > victory-pie > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-charts > victory > victory-scatter > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-charts > victory > victory-stack > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-charts > victory > victory-voronoi > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
+    - cytoscape-dagre > dagre > graphlib > lodash:
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-charts > victory > victory-area > victory-core > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-charts > victory > victory-axis > victory-core > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-charts > victory > victory-bar > victory-core > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-charts > victory > victory-box-plot > victory-core > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-charts > victory > victory-brush-container > victory-core > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-charts > victory > victory-brush-line > victory-core > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-charts > victory > victory-candlestick > victory-core > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-charts > victory > victory-polar-axis > victory-core > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-charts > victory > victory-shared-events > victory-core > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-charts > victory > victory-chart > victory-core > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-charts > victory > victory-cursor-container > victory-core > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-charts > victory > victory-selection-container > victory-core > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-charts > victory > victory-tooltip > victory-core > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-charts > victory > victory-voronoi-container > victory-core > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-charts > victory > victory-zoom-container > victory-core > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-charts > victory > victory-create-container > victory-core > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-charts > victory > victory-errorbar > victory-core > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-charts > victory > victory-group > victory-core > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-charts > victory > victory-legend > victory-core > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-charts > victory > victory-line > victory-core > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-charts > victory > victory-pie > victory-core > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-charts > victory > victory-scatter > victory-core > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-charts > victory > victory-stack > victory-core > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-charts > victory > victory-voronoi > victory-core > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-charts > victory > victory-chart > victory-axis > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-charts > victory > victory-create-container > victory-brush-container > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-charts > victory > victory-chart > victory-polar-axis > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-charts > victory > victory-chart > victory-shared-events > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-charts > victory > victory-create-container > victory-cursor-container > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-charts > victory > victory-create-container > victory-selection-container > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-charts > victory > victory-voronoi-container > victory-tooltip > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-charts > victory > victory-create-container > victory-voronoi-container > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-charts > victory > victory-create-container > victory-zoom-container > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-styles > emotion > babel-plugin-emotion > @babel/helper-module-imports > @babel/types > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-charts > victory > victory-chart > victory-axis > victory-core > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-charts > victory > victory-create-container > victory-brush-container > victory-core > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-charts > victory > victory-chart > victory-polar-axis > victory-core > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-charts > victory > victory-chart > victory-shared-events > victory-core > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-charts > victory > victory-create-container > victory-cursor-container > victory-core > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-charts > victory > victory-create-container > victory-selection-container > victory-core > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-charts > victory > victory-voronoi-container > victory-tooltip > victory-core > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-charts > victory > victory-create-container > victory-voronoi-container > victory-core > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-charts > victory > victory-create-container > victory-zoom-container > victory-core > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-charts > victory > victory-create-container > victory-voronoi-container > victory-tooltip > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-table > @patternfly/react-styles > emotion > babel-plugin-emotion > @babel/helper-module-imports > @babel/types > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-charts > victory > victory-create-container > victory-voronoi-container > victory-tooltip > victory-core > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
+    - '@patternfly/react-table > @patternfly/react-core > @patternfly/react-styles > emotion > babel-plugin-emotion > @babel/helper-module-imports > @babel/types > lodash':
+        patched: '2020-05-01T06:42:42.389Z'
