@@ -14,6 +14,9 @@ export interface Iter8Experiment {
   candidate: string;
   candidatePercentage: number;
   namespace: string;
+  createdAt: number;
+  startedAt: number;
+  endedAt: number;
 }
 
 export interface ExpId {
@@ -26,7 +29,7 @@ export interface TrafficControl {
   interval: string;
   maxIterations: number;
   maxTrafficPercentage: number;
-  trafficStepSide: number;
+  trafficStepSize: number;
 }
 
 export interface Iter8ExpDetailsInfo {
@@ -38,18 +41,19 @@ export interface Iter8ExpDetailsInfo {
 
 export interface ExperimentItem {
   name: string;
-  namespace: string;
   phase: string;
   status: string;
-  createdAt: string;
-  startedAt: string;
-  endedAt: string;
+  createdAt: number;
+  startedAt: number;
+  endedAt: number;
   baseline: string;
   baselinePercentage: number;
   candidate: string;
   candidatePercentage: number;
+  namespace: string;
   targetService: string;
   targetServiceNamespace: string;
+  assessmentConclusion: string[];
   labels?: { [key: string]: string };
   resourceVersion: string;
 }

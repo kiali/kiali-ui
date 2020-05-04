@@ -44,7 +44,7 @@ import { KialiIcon } from '../../../../config/KialiIcon';
 import { OkIcon } from '@patternfly/react-icons';
 import * as Iter8ExperimentListFilters from './FiltersAndSorts';
 import { FilterSelected, StatefulFilters } from '../../../../components/Filters/StatefulFilters';
-// import { DurationInSeconds } from '../../../../types/Common';
+import { PfColors } from 'components/Pf/PfColors';
 import TimeControlsContainer from '../../../../components/Time/TimeControls';
 
 // Style constants
@@ -70,7 +70,7 @@ interface Props extends FilterComponent.Props<Iter8Experiment> {
 interface State extends FilterComponent.State<Iter8Experiment> {
   iter8Info: Iter8Info;
   experimentLists: Iter8Experiment[];
-  sortBy: ISortBy; // ?? not used yet
+  sortBy: ISortBy;
   dropdownOpen: boolean;
   onFilterChange: boolean;
 }
@@ -265,9 +265,6 @@ class ExperimentListPage extends React.Component<Props, State> {
     this.updateListItems();
   };
 
-  // This is a simplified toolbar for refresh and actions.
-  // Kiali has a shared component toolbar for more complex scenarios like filtering
-  // It renders actions only if user has permissions
   toolbar = () => {
     return (
       <StatefulFilters
@@ -299,7 +296,7 @@ class ExperimentListPage extends React.Component<Props, State> {
       }
     }
     return (
-      <TextContent>
+      <TextContent style={{ color: PfColors.White }}>
         <Text>
           <h2>Phase: </h2> {phase}
         </Text>
@@ -312,11 +309,9 @@ class ExperimentListPage extends React.Component<Props, State> {
 
   experimentStatusIcon = (key: string, phase: string, candidate: number, status: string) => {
     let className = greenIconStyle;
-    // let phaseStr = phase;
 
     let statusString = this.getStatusString(phase, status);
     if (candidate === 0) {
-      // phaseStr = 'Completed, but failed';
       className = redIconStyle;
     }
     switch (phase) {
