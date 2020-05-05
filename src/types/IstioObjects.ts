@@ -705,7 +705,7 @@ export interface PeerAuthentication extends IstioObject {
   selector?: PeerAuthenticationWorkloadSelector;
   mtls?: PeerAuthenticationMutualTls;
   portLevelMtls?: Map<number, PeerAuthenticationMutualTls>;
-};
+}
 
 export interface PeerAuthenticationWorkloadSelector {
   matchLabels: Map<string, string>;
@@ -716,8 +716,8 @@ export interface PeerAuthenticationMutualTls {
 }
 
 export enum PeerAuthenticationMutualTLSMode {
-  UNSET = "UNSET",
-  DISABLE = "DISABLE",
-  PERMISSIVE = "PERMISSIVE",
-  STRICT = "STRICT",
+  UNSET = 'UNSET',
+  DISABLE = 'DISABLE',
+  PERMISSIVE = 'PERMISSIVE',
+  STRICT = 'STRICT'
 }

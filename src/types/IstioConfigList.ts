@@ -8,7 +8,8 @@ import {
   IstioAdapter,
   IstioRule,
   IstioTemplate,
-  ObjectValidation, PeerAuthentication,
+  ObjectValidation,
+  PeerAuthentication,
   Policy,
   QuotaSpec,
   QuotaSpecBinding,
@@ -118,7 +119,7 @@ export const dicIstioType = {
   servicerolebindings: 'ServiceRoleBinding',
   servicemeshpolicies: 'ServiceMeshPolicy',
   servicemeshrbacconfigs: 'ServiceMeshRbacConfig',
-  peerauthentications: 'PeerAuthentication',
+  peerauthentications: 'PeerAuthentication'
 };
 
 const includeName = (name: string, names: string[]) => {
