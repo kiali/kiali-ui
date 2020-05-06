@@ -102,7 +102,9 @@ class AuthenticationController extends React.Component<AuthenticationControllerP
           AlertUtils.addError('Error fetching server status.', error, 'default', MessageType.WARNING);
         });
       const getJaegerInfoPromise = API.getJaegerInfo()
-        .then(response => this.setJaegerInfo(response.data))
+        .then(response => {
+          (response.data as any).error ? this.props.setJaegerInfo(null) : this.setJaegerInfo(response.data);
+        })
         .catch(error => {
           this.props.setJaegerInfo(null);
           AlertUtils.addError(
