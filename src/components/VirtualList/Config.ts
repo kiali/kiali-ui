@@ -180,7 +180,10 @@ export const IstioTypes = {
   servicemeshrbacconfig: { name: 'ServiceMeshRbacConfig', url: 'servicemeshrbacconfigs', icon: 'SRC' },
   sidecar: { name: 'Sidecar', url: 'sidecars', icon: 'S' },
   servicerole: { name: 'ServiceRole', url: 'serviceroles', icon: 'SR' },
-  servicerolebinding: { name: 'ServiceRoleBinding', url: 'servicerolebindings', icon: 'SRB' }
+  servicerolebinding: { name: 'ServiceRoleBinding', url: 'servicerolebindings', icon: 'SRB' },
+  peerauthentication: { name: 'PeerAuthentication', url: 'peerauthentications', icon: 'PA' },
+  requestauthentication: { name: 'RequestAuthentication', url: 'requestauthentications', icon: 'RA' },
+  workloadentry: { name: 'WorkloadEntry', url: 'workloadentries', icon: 'WE' }
 };
 
 export type Resource = {

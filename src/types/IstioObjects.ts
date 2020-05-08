@@ -698,5 +698,61 @@ export interface ServiceRoleBindingSpec {
 
 export interface ServiceRoleBindingSubject {
   user: string;
-  properties: Map<string, string>;
+  properties: { [key: string]: string };
+}
+
+export interface PeerAuthentication extends IstioObject {
+  selector?: PeerAuthenticationWorkloadSelector;
+  mtls?: PeerAuthenticationMutualTls;
+  portLevelMtls?: { [key: number]: PeerAuthenticationMutualTls };
+}
+
+export interface PeerAuthenticationWorkloadSelector {
+  matchLabels: { [key: string]: string };
+}
+
+export interface PeerAuthenticationMutualTls {
+  mode: PeerAuthenticationMutualTLSMode;
+}
+
+export enum PeerAuthenticationMutualTLSMode {
+  UNSET = 'UNSET',
+  DISABLE = 'DISABLE',
+  PERMISSIVE = 'PERMISSIVE',
+  STRICT = 'STRICT'
+}
+
+export interface WorkloadEntry extends IstioObject {
+  address: string;
+  ports?: { [key: string]: number };
+  labels?: { [key: string]: string };
+  network?: string;
+  locality?: string;
+  weight?: number;
+  serviceAccount?: string;
+}
+
+export interface WorkloadEntrySelector {
+  matchLabels: { [key: string]: string };
+}
+
+export interface JWTHeader {
+  name: string;
+  prefix?: string;
+}
+
+export interface JWTRule {
+  issuer: string;
+  audiences?: string[];
+  jwksUri?: string;
+  jwks?: string;
+  fromHeaders?: JWTHeader[];
+  fromParams?: string[];
+  outputPayloadToHeader?: string;
+  forwardOriginalToken?: boolean;
+}
+
+export interface RequestAuthentication extends IstioObject {
+  selector?: WorkloadEntrySelector;
+  jwtRules: JWTRule[];
 }

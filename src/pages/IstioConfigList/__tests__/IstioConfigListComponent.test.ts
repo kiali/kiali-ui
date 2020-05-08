@@ -26,6 +26,9 @@ const mockIstioConfigList = (names: string[]): IstioConfigList => {
     sidecars: [],
     serviceRoles: [],
     serviceRoleBindings: [],
+    peerAuthentications: [],
+    requestAuthentications: [],
+    workloadEntries: [],
     validations: {},
     permissions: {}
   };

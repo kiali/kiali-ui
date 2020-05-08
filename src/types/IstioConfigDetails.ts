@@ -20,7 +20,10 @@ import {
   ClusterRbacConfig,
   Sidecar,
   ServiceMeshRbacConfig,
-  IstioObject
+  IstioObject,
+  PeerAuthentication,
+  RequestAuthentication,
+  WorkloadEntry
 } from './IstioObjects';
 
 export interface IstioConfigId {
@@ -37,6 +40,7 @@ export interface IstioConfigDetails {
   destinationRule: DestinationRule;
   serviceEntry: ServiceEntry;
   sidecar: Sidecar;
+  workloadEntry: WorkloadEntry;
   rule: IstioRule;
   adapter: IstioAdapter;
   template: IstioTemplate;
@@ -51,6 +55,8 @@ export interface IstioConfigDetails {
   serviceMeshRbacConfig: ServiceMeshRbacConfig;
   serviceRole: ServiceRole;
   serviceRoleBinding: ServiceRoleBinding;
+  peerAuthentication: PeerAuthentication;
+  requestAuthentication: RequestAuthentication;
   permissions: ResourcePermissions;
   validation: ObjectValidation;
 }

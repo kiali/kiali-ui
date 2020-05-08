@@ -30,6 +30,8 @@ export const getIstioObject = (istioObjectDetails?: IstioConfigDetails) => {
       istioObject = istioObjectDetails.destinationRule;
     } else if (istioObjectDetails.serviceEntry) {
       istioObject = istioObjectDetails.serviceEntry;
+    } else if (istioObjectDetails.workloadEntry) {
+      istioObject = istioObjectDetails.workloadEntry;
     } else if (istioObjectDetails.rule) {
       istioObject = istioObjectDetails.rule;
     } else if (istioObjectDetails.adapter) {
@@ -58,6 +60,10 @@ export const getIstioObject = (istioObjectDetails?: IstioConfigDetails) => {
       istioObject = istioObjectDetails.serviceRole;
     } else if (istioObjectDetails.serviceRoleBinding) {
       istioObject = istioObjectDetails.serviceRoleBinding;
+    } else if (istioObjectDetails.peerAuthentication) {
+      istioObject = istioObjectDetails.peerAuthentication;
+    } else if (istioObjectDetails.requestAuthentication) {
+      istioObject = istioObjectDetails.requestAuthentication;
     } else if (istioObjectDetails.sidecar) {
       istioObject = istioObjectDetails.sidecar;
     }
