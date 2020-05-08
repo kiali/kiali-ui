@@ -32,6 +32,7 @@ export const setFiltersToURL = (filterTypes: FilterType[], filters: ActiveFilter
     urlParams.delete(type.id);
   });
   const cleanFilters: ActiveFilter[] = [];
+
   filters.forEach(activeFilter => {
     const filterType = filterTypes.find(filter => filter.title === activeFilter.category);
     if (!filterType) {

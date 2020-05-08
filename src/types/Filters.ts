@@ -11,7 +11,8 @@ enum NonInputTypes {
   typeAhead = 'typeahead',
   select = 'select',
   label = 'label',
-  nsLabel = 'nsLabel'
+  nsLabel = 'nsLabel',
+  opLabel = 'oplabel'
 }
 
 export const FilterTypes = {
@@ -55,4 +56,14 @@ export const LabelFilter: FilterType = {
   customComponent: LabelFilters,
   action: FILTER_ACTION_APPEND,
   filterValues: []
+};
+
+export const OpLabelFilter: FilterType = {
+  id: 'opLabel',
+  title: 'Operation Label',
+  placeholder: 'Sort op',
+  filterType: FilterTypes.opLabel,
+  customComponent: undefined,
+  action: FILTER_ACTION_UPDATE,
+  filterValues: [{ id: 'or', title: 'or' }, { id: 'and', title: 'and' }]
 };

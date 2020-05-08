@@ -1,4 +1,4 @@
-import { ActiveFilter, FILTER_ACTION_APPEND, FilterType, LabelFilter } from '../../types/Filters';
+import { ActiveFilter, FILTER_ACTION_APPEND, FilterType, LabelFilter, OpLabelFilter } from '../../types/Filters';
 import { AppListItem } from '../../types/AppList';
 import { SortField } from '../../types/SortFilters';
 import { getRequestErrorsStatus, WithAppHealth, hasHealth } from '../../types/Health';
@@ -84,7 +84,13 @@ const appNameFilter: FilterType = {
   filterValues: []
 };
 
-export const availableFilters: FilterType[] = [appNameFilter, istioSidecarFilter, healthFilter, LabelFilter];
+export const availableFilters: FilterType[] = [
+  appNameFilter,
+  istioSidecarFilter,
+  healthFilter,
+  LabelFilter,
+  OpLabelFilter
+];
 
 /** Filter Method */
 

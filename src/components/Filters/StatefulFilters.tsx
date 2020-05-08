@@ -15,7 +15,14 @@ import {
   ToolbarItem,
   ToolbarSection
 } from '@patternfly/react-core';
-import { ActiveFilter, FILTER_ACTION_UPDATE, FilterType, FilterTypes } from '../../types/Filters';
+import {
+  ActiveFilter,
+  FILTER_ACTION_UPDATE,
+  FilterType,
+  FilterTypes,
+  LabelFilter,
+  OpLabelFilter
+} from '../../types/Filters';
 import * as FilterHelper from '../FilterList/FilterHelper';
 import { PromisesRegistry } from '../../utils/CancelablePromises';
 import { style } from 'typestyle';
@@ -34,6 +41,7 @@ export interface StatefulFiltersState {
   activeFilters: ActiveFilter[];
   currentValue: string;
   isExpanded: boolean;
+  labelSortOperation: string;
 }
 
 export class FilterSelected {
@@ -51,6 +59,7 @@ export class FilterSelected {
     return FilterSelected.selectedFilters !== undefined;
   };
 }
+
 const rightToolbar = style({
   marginLeft: 'auto'
 });
@@ -63,7 +72,6 @@ export class StatefulFilters extends React.Component<StatefulFiltersProps, State
 
   constructor(props: StatefulFiltersProps) {
     super(props);
-
     let active = FilterSelected.getSelected();
     if (!FilterSelected.isInitialized()) {
       active = FilterHelper.getFiltersFromURL(this.props.initialFilters);
@@ -78,7 +86,8 @@ export class StatefulFilters extends React.Component<StatefulFiltersProps, State
       filterTypes: this.props.initialFilters,
       activeFilters: active,
       isExpanded: false,
-      currentValue: ''
+      currentValue: '',
+      labelSortOperation: OpLabelFilter.filterValues[0].id
     };
   }
 
@@ -144,6 +153,19 @@ export class StatefulFilters extends React.Component<StatefulFiltersProps, State
     this.updateActiveFilters(activeFilters);
   };
 
+  updateOpSortLabel = (value: string) => {
+    let activeFilters = this.state.activeFilters;
+    console.log(activeFilters);
+    const index = activeFilters.findIndex(filt => filt.category === OpLabelFilter.title);
+    console.log(index);
+    index > -1
+      ? (activeFilters[index].value = value)
+      : activeFilters.push({ category: OpLabelFilter.title, value: value });
+    this.setState({ labelSortOperation: value });
+    console.log(activeFilters);
+    this.updateActiveFilters(activeFilters);
+  };
+
   selectFilterType = (value: string) => {
     const { currentFilterType } = this.state;
     const filterType = this.state.filterTypes.filter(filter => filter.id === value)[0];
@@ -164,7 +186,6 @@ export class StatefulFilters extends React.Component<StatefulFiltersProps, State
   filterValueSelected = (value: any) => {
     const { currentFilterType, currentValue } = this.state;
     const filterValue = currentFilterType.filterValues.filter(filter => filter.id === value)[0];
-
     if (
       filterValue &&
       filterValue.id !== currentValue &&
@@ -216,7 +237,7 @@ export class StatefulFilters extends React.Component<StatefulFiltersProps, State
   renderInput() {
     const { currentFilterType, currentValue } = this.state;
 
-    if (!currentFilterType) {
+    if (!currentFilterType || currentFilterType.filterType === FilterTypes.opLabel) {
       return null;
     }
     if (currentFilterType.filterType === FilterTypes.typeAhead) {
@@ -284,26 +305,28 @@ export class StatefulFilters extends React.Component<StatefulFiltersProps, State
 
   renderChildren = () => {
     return (
-      <ToolbarGroup>
-        {Array.isArray(this.props.children) ? (
-          (this.props.children as Array<any>).map(
-            (child, index) =>
-              child && (
-                <ToolbarItem
-                  key={'toolbar_statefulFilters_' + index}
-                  className={classNames(
-                    'pf-u-mr-md',
-                    index === (this.props.children as Array<any>).length - 1 ? paddingStyle : dividerStyle
-                  )}
-                >
-                  {child}
-                </ToolbarItem>
-              )
-          )
-        ) : (
-          <ToolbarItem>{this.props.children}</ToolbarItem>
-        )}
-      </ToolbarGroup>
+      this.props.children && (
+        <ToolbarGroup>
+          {Array.isArray(this.props.children) ? (
+            (this.props.children as Array<any>).map(
+              (child, index) =>
+                child && (
+                  <ToolbarItem
+                    key={'toolbar_statefulFilters_' + index}
+                    className={classNames(
+                      'pf-u-mr-md',
+                      index === (this.props.children as Array<any>).length - 1 ? paddingStyle : dividerStyle
+                    )}
+                  >
+                    {child}
+                  </ToolbarItem>
+                )
+            )
+          ) : (
+            <ToolbarItem>{this.props.children}</ToolbarItem>
+          )}
+        </ToolbarGroup>
+      )
     );
   };
 
@@ -323,8 +346,7 @@ export class StatefulFilters extends React.Component<StatefulFiltersProps, State
   };
 
   render() {
-    const { currentFilterType, activeFilters } = this.state;
-
+    const { currentFilterType, activeFilters, labelSortOperation } = this.state;
     return (
       <Toolbar className="pf-l-toolbar pf-u-justify-content-space-between pf-u-mx-xl pf-u-my-md">
         <ToolbarSection aria-label="ToolbarSection">
@@ -336,14 +358,34 @@ export class StatefulFilters extends React.Component<StatefulFiltersProps, State
                 onChange={this.selectFilterType}
                 style={{ width: 'auto', backgroundColor: '#ededed', borderColor: '#bbb' }}
               >
-                {this.state.filterTypes.map(option => (
-                  <FormSelectOption key={option.id} value={option.id} label={option.title} />
-                ))}
+                {this.state.filterTypes
+                  .filter(f => f.title !== OpLabelFilter.title)
+                  .map(option => (
+                    <FormSelectOption key={option.id} value={option.id} label={option.title} />
+                  ))}
               </FormSelect>
               {this.renderInput()}
             </ToolbarItem>
           </ToolbarGroup>
           {this.renderChildren()}
+          {(this.state.activeFilters.filter(f => f.category === LabelFilter.title).length > 0 ||
+            this.state.currentFilterType.filterType === FilterTypes.label) && (
+            <ToolbarGroup>
+              <ToolbarItem className={classNames('pf-u-mr-md')}>
+                <span className={classNames(paddingStyle)}>Label Operation</span>
+                <FormSelect
+                  value={labelSortOperation}
+                  onChange={this.updateOpSortLabel}
+                  aria-label="filter_select_value"
+                  style={{ width: 'auto' }}
+                >
+                  {OpLabelFilter.filterValues.map((filter, index) => (
+                    <FormSelectOption key={'filter_' + index} value={filter.id} label={filter.title} />
+                  ))}
+                </FormSelect>
+              </ToolbarItem>
+            </ToolbarGroup>
+          )}
           {this.props.rightToolbar && this.renderRightToolbar()}
         </ToolbarSection>
         {activeFilters && activeFilters.length > 0 && (
@@ -351,7 +393,9 @@ export class StatefulFilters extends React.Component<StatefulFiltersProps, State
             <>{'Active Filters:'}</>
             <div style={{ marginLeft: '5px', display: 'inline-flex', height: '80%' }}>
               <ChipGroup defaultIsOpen={true} withToolbar={true}>
-                {Object.entries(this.groupBy(activeFilters, 'category')).map(([category, item]) => (
+                {Object.entries(
+                  this.groupBy(activeFilters.filter(filt => filt.category !== OpLabelFilter.title), 'category')
+                ).map(([category, item]) => (
                   <ChipGroupToolbarItem key={category} categoryName={category}>
                     {(item as Array<ActiveFilter>).map(subItem => (
                       <Chip
