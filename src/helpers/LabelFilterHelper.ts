@@ -36,7 +36,9 @@ const filterLabelByOp = (labels: { [key: string]: string }, filters: string[], o
             .split(',')
             .some(labelValue => labelValue.trim().startsWith(v.trim()));
         }
+        return undefined;
       });
+      return undefined;
     });
     return filterOkForLabel;
   }
@@ -50,6 +52,7 @@ const filterLabelByOp = (labels: { [key: string]: string }, filters: string[], o
     if (!labelKeys.includes(k) && filterOkForLabel) {
       filterOkForLabel = false;
     }
+    return undefined;
   });
 
   // If label presence is validated we continue checking with key,value
@@ -63,12 +66,14 @@ const filterLabelByOp = (labels: { [key: string]: string }, filters: string[], o
           if (!labels[key].split(',').some(labelVal => labelVal.trim().startsWith(val.trim()))) {
             filterOkForLabel = false;
           }
+          return undefined;
         });
       } else {
         // The key is not in the labels so not match AND operation
 
         filterOkForLabel = false;
       }
+      return undefined;
     });
   }
 
@@ -83,6 +88,7 @@ export const filterByLabel = (items: itemsType[], filter: string[], op: string =
         if (filterLabelByOp(item.labels, filter, op)) {
           result = result.concat(item);
         }
+        return undefined;
       });
   return result;
 };
