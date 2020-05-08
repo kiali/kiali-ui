@@ -38,7 +38,7 @@ const toleranceType: NameValuePair[] = [
     value: 'absolute'
   },
   {
-    name: 'relative',
+    name: 'delta',
     value: 'delta'
   }
 ];
