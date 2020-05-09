@@ -213,7 +213,7 @@ class ServiceInfoDescription extends React.Component<ServiceInfoDescriptionProps
                         {(this.props.ports || []).map((port, i) => (
                           <li key={'port_' + i}>
                             {this.hasIssue(i) ? this.getPortOver(i) : undefined} {port.protocol} {port.name} (
-                            {port.port})
+                            {port.number})
                           </li>
                         ))}
                       </ul>

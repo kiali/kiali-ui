@@ -55,7 +55,7 @@ class WorkloadServices extends React.Component<WorkloadServicesProps> {
         {(ports || []).map((port, i) => (
           <li key={'port_' + i}>
             <span style={{ whiteSpace: 'nowrap' }}>
-              {port.protocol} {port.name} ({port.port})
+              {port.protocol} {port.name} ({port.number})
             </span>
           </li>
         ))}

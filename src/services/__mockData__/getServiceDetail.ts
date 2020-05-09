@@ -15,7 +15,7 @@ export const SERVICE_DETAILS: ServiceDetailsInfo = {
       {
         name: 'http',
         protocol: 'TCP',
-        port: 9080
+        number: 9080
       }
     ],
     resourceVersion: '2652'
@@ -44,7 +44,7 @@ export const SERVICE_DETAILS: ServiceDetailsInfo = {
         {
           name: 'http',
           protocol: 'TCP',
-          port: 9080
+          number: 9080
         }
       ]
     }
