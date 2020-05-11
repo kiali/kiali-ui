@@ -92,7 +92,7 @@ export const Service: ServiceDetailsInfo = {
     selectors: { app: 'details' },
     type: 'ClusterIP',
     ip: '172.30.118.205',
-    ports: [{ name: 'http', protocol: 'TCP', port: 9080 }],
+    ports: [{ name: 'http', protocol: 'TCP', number: 9080 }],
     externalName: ''
   },
   istioSidecar: true,
