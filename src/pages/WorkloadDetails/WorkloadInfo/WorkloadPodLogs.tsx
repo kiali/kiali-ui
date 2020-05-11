@@ -45,7 +45,7 @@ interface WorkloadPodLogsState {
   tailLines: number;
   isLogWindowSelectExpanded: boolean;
   logWindowSelections: any[];
-  verticalOrientation: boolean;
+  sideBySideOrientation: boolean;
 }
 
 const TailLinesDefault = 500;
@@ -128,7 +128,7 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
         tailLines: TailLinesDefault,
         isLogWindowSelectExpanded: false,
         logWindowSelections: [],
-        verticalOrientation: true
+        sideBySideOrientation: false
       };
       return;
     }
@@ -152,7 +152,7 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
       tailLines: TailLinesDefault,
       isLogWindowSelectExpanded: false,
       logWindowSelections: [],
-      verticalOrientation: true
+      sideBySideOrientation: false
     };
   }
 
@@ -189,7 +189,7 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
   };
 
   render() {
-    const { verticalOrientation } = this.state;
+    const { sideBySideOrientation } = this.state;
     return (
       <RenderComponentScroll>
         {this.state.containerInfo && (
@@ -215,9 +215,8 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
                       <ToolbarItem>
                         <Switch
                           id="simple-switch"
-                          label="Vertical"
-                          labelOff="Horizontal"
-                          isChecked={verticalOrientation}
+                          label="Side by Side"
+                          isChecked={sideBySideOrientation}
                           onChange={this.handleOrientationChange}
                         />
                       </ToolbarItem>
@@ -252,14 +251,14 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
                     </ToolbarGroup>
                   </Toolbar>
                   <Splitter
-                    position={!this.state.verticalOrientation ? 'vertical' : 'horizontal'}
+                    position={!this.state.sideBySideOrientation ? 'horizontal' : 'vertical'}
                     primaryPaneMaxHeight="100%"
                     primaryPaneMinHeight={0}
                     primaryPaneHeight="50%"
                     dispatchResize={true}
                     postPoned={true}
                   >
-                    <div className={verticalOrientation ? appLogsDivVertical : appLogsDivHorizontal}>
+                    <div className={sideBySideOrientation ? appLogsDivHorizontal : appLogsDivVertical}>
                       <Title size="lg" headingLevel="h5" className={logsTitle}>
                         {this.formatAppLogLabel(this.props.pods[this.state.podValue!])}
                       </Title>
@@ -309,7 +308,7 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
   };
 
   private handleOrientationChange = (isChecked: boolean) => {
-    this.setState({ verticalOrientation: isChecked });
+    this.setState({ sideBySideOrientation: isChecked });
   };
 
   private handleRefresh = () => {
