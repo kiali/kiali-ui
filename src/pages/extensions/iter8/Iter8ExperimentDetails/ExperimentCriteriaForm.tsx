@@ -31,7 +31,6 @@ const headerCells: ICell[] = [
   }
 ];
 
-// const metrics = ['', 'iter8_latency', 'iter8_error_count', 'iter8_error_rate'];
 const toleranceType: NameValuePair[] = [
   {
     name: 'threshold',

@@ -324,7 +324,6 @@ class ExperimentCreatePage extends React.Component<Props, State> {
       .register('Create Iter8 Experiment', API.createExperiment(nsName, JSON.stringify(this.state.experiment)))
       .then(_ => this.goExperimentsPage())
       .catch(error => AlertUtils.addError('Could not create Experiment.', error));
-    //  }
   };
 
   // Updates state with modifications of the new/editing handler
@@ -429,7 +428,7 @@ class ExperimentCreatePage extends React.Component<Props, State> {
       this.state.experiment.name !== '' &&
       this.state.experiment.name.search(regex) === 0 &&
       this.state.experiment.service !== '' &&
-      this.props.activeNamespaces.length === 1 &&
+      this.state.experiment.namespace != '' &&
       this.state.experiment.baseline !== '' &&
       this.state.experiment.candidate !== ''
     );
@@ -442,12 +441,12 @@ class ExperimentCreatePage extends React.Component<Props, State> {
   };
 
   isSCFormValid = (): boolean => {
-    return this.state.experiment.criterias.length > 0;
+    return this.state.experiment.criterias.length !== 0;
   };
 
   render() {
     const isNamespacesValid = this.props.activeNamespaces.length === 1;
-    const isFormValid = this.isMainFormValid() && this.isTCFormValid() && this.isSCFormValid();
+    const isFormValid = this.isMainFormValid() && this.isSCFormValid();
     // @ts-ignore
     return (
       <>
@@ -458,7 +457,7 @@ class ExperimentCreatePage extends React.Component<Props, State> {
                 fieldId="name"
                 label="Experiment Name"
                 isRequired={true}
-                isValid={this.state.experiment.name !== '' && this.state.experiment.name.search(regex) === 0} // && regex.test(this.state.experiment.name)}
+                isValid={this.state.experiment.name !== '' && this.state.experiment.name.search(regex) === 0}
                 helperTextInvalid="Name cannot be empty and must be a DNS subdomain name as defined in RFC 1123."
               >
                 <TextInput
