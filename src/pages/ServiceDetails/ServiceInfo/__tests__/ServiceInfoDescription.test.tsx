@@ -29,7 +29,7 @@ const endpoints = [
       {
         name: 'http',
         protocol: 'TCP',
-        port: 9080
+        number: 9080
       }
     ]
   }
