@@ -17,7 +17,6 @@ import {
   Text,
   TextVariants
 } from '@patternfly/react-core';
-import './ExperimentInfoDescription.css';
 
 import LocalTime from '../../../../components/Time/LocalTime';
 import { Link } from 'react-router-dom';
