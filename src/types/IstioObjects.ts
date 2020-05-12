@@ -1,5 +1,6 @@
 import Namespace from './Namespace';
 import { ResourcePermissions } from './Permissions';
+import { ServicePort } from './ServiceInfo';
 
 // Common types
 
@@ -122,7 +123,7 @@ export interface Service {
   labels?: { [key: string]: string };
   type: string;
   ip: string;
-  ports?: Port[];
+  ports?: ServicePort[];
 }
 
 export interface Host {
