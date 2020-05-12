@@ -165,7 +165,7 @@ class ExperimentCriteriaForm extends React.Component<Props, State> {
         cells: [
           <>{gw.metric}</>,
           <>{gw.tolerance}</>,
-          <>{gw.toleranceType == 'threshold' ? 'abosulte' : 'delta'}</>,
+          <>{gw.toleranceType === 'threshold' ? 'abosulte' : 'delta'}</>,
           <>{gw.stopOnFailure ? 'true' : 'false'}</>
         ]
       }))

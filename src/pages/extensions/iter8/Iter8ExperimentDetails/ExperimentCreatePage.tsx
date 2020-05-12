@@ -172,9 +172,9 @@ class ExperimentCreatePage extends React.Component<Props, State> {
 
   fetchServices = (selectedNS: string) => {
     let _namespace = '';
-    if (selectedNS != '') {
+    if (selectedNS !== '') {
       _namespace = selectedNS;
-    } else if (this.state.experiment.namespace != '') {
+    } else if (this.state.experiment.namespace !== '') {
       _namespace = this.state.experiment.namespace;
     } else if (this.props.activeNamespaces.length > 0) {
       _namespace = this.props.activeNamespaces[0].name;
@@ -261,7 +261,7 @@ class ExperimentCreatePage extends React.Component<Props, State> {
   };
 
   componentDidMount() {
-    if (this.state.namespaces.length === 0 && this.props.namespace == undefined) {
+    if (this.state.namespaces.length === 0 && this.props.namespace === undefined) {
       this.promises
         .register('namespaces', API.getNamespaces())
         .then(namespacesResponse => {
@@ -428,7 +428,7 @@ class ExperimentCreatePage extends React.Component<Props, State> {
       this.state.experiment.name !== '' &&
       this.state.experiment.name.search(regex) === 0 &&
       this.state.experiment.service !== '' &&
-      this.state.experiment.namespace != '' &&
+      this.state.experiment.namespace !== '' &&
       this.state.experiment.baseline !== '' &&
       this.state.experiment.candidate !== ''
     );
