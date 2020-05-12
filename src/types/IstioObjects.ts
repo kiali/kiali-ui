@@ -583,7 +583,7 @@ export interface ServiceEntrySpec {
   ports?: Port[];
   location?: string;
   resolution?: string;
-  endpoints?: WorkloadEntry[];
+  endpoints?: WorkloadEntrySpec[];
   exportTo?: string[];
   subjectAltNames?: string[];
 }
@@ -835,6 +835,10 @@ export interface ServiceRoleBindingSubject {
 }
 
 export interface PeerAuthentication extends IstioObject {
+  spec: PeerAuthenticationSpec;
+}
+
+export interface PeerAuthenticationSpec {
   selector?: PeerAuthenticationWorkloadSelector;
   mtls?: PeerAuthenticationMutualTls;
   portLevelMtls?: { [key: number]: PeerAuthenticationMutualTls };
@@ -857,6 +861,10 @@ export enum PeerAuthenticationMutualTLSMode {
 
 // 1.6
 export interface WorkloadEntry extends IstioObject {
+  spec: WorkloadEntrySpec;
+}
+
+export interface WorkloadEntrySpec {
   address: string;
   ports?: { [key: string]: number };
   labels?: { [key: string]: string };
@@ -886,7 +894,13 @@ export interface JWTRule {
   forwardOriginalToken?: boolean;
 }
 
+// 1.6
 export interface RequestAuthentication extends IstioObject {
+  spec: RequestAuthenticationSpec;
+}
+
+// 1.6
+export interface RequestAuthenticationSpec {
   selector?: WorkloadEntrySelector;
   jwtRules: JWTRule[];
 }
