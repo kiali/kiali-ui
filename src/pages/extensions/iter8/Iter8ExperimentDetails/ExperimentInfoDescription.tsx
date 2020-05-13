@@ -112,7 +112,7 @@ class ExperimentInfoDescription extends React.Component<ExperimentInfoDescriptio
       : this.props.target;
     return (
       <RenderComponentScroll>
-        <Grid gutter="md">
+        <Grid gutter="md" style={{ margin: '30px' }}>
           <GridItem span={6}>
             <Card style={{ height: '100%' }}>
               <CardBody>

@@ -1,9 +1,9 @@
 import * as React from 'react';
-import './CriteriaInfoDescription.css';
 import {
   Card,
   CardBody,
   DataList,
+  DataListItem,
   DataListItemCells,
   DataListItemRow,
   Grid,
@@ -11,7 +11,6 @@ import {
   DataListCell,
   List,
   ListItem,
-  TextVariants,
   Text,
   DataListContent,
   DataListToggle,
@@ -46,16 +45,16 @@ class CriteriaInfoDescription extends React.Component<ExperimentInfoDescriptionP
   criteriaHeader() {
     return [
       <DataListCell width={2}>
-        <Text component={TextVariants.h3}> Metric Name</Text>
+        <Text style={{ fontWeight: 'bold' }}> Metric Name</Text>
       </DataListCell>,
       <DataListCell width={2}>
-        <Text component={TextVariants.h3}>Definitions</Text>
+        <Text style={{ fontWeight: 'bold' }}>Definitions</Text>
       </DataListCell>,
       <DataListCell width={5}>
-        <Text component={TextVariants.h3}>Success Criteria Conclusions</Text>
+        <Text style={{ fontWeight: 'bold' }}>Success Criteria Conclusions</Text>
       </DataListCell>,
       <DataListCell width={1}>
-        <Text component={TextVariants.h3}>Success</Text>
+        <Text style={{ fontWeight: 'bold' }}>Status</Text>
       </DataListCell>
     ];
   }
@@ -128,13 +127,17 @@ class CriteriaInfoDescription extends React.Component<ExperimentInfoDescriptionP
   render() {
     return (
       <RenderComponentScroll>
-        <Grid>
+        <Grid gutter="md" style={{ margin: '30px' }}>
           <GridItem span={12}>
             <Card>
               <CardBody>
                 <DataList aria-label="simple-item1">
                   <DataListItemRow>
-                    <DataListToggle id={'none'} className={'headertoggle'} />
+                    <DataListToggle
+                      id={'none'}
+                      className={'pf-c-button.pf-m-plain'}
+                      style={{ display: 'block', visibility: 'hidden' }}
+                    />
                     {this.criteriaHeader()}
                   </DataListItemRow>
                 </DataList>
@@ -146,25 +149,30 @@ class CriteriaInfoDescription extends React.Component<ExperimentInfoDescriptionP
                   ];
                   return (
                     <DataList aria-label="simple-item2">
-                      <DataListItemRow>
-                        <DataListToggle
-                          onClick={() => this.onCriteriaToggle('criteria' + idx)}
-                          isExpanded={this.state.criteriaExpanded.includes('criteria' + idx)}
-                          id={'criteria' + idx}
-                          aria-controls={'criteria' + idx}
-                        />
-                        <DataListItemCells dataListCells={this.criteriaList(criteria, idx)} />
-                      </DataListItemRow>
-                      <DataListContent
-                        aria-label={'criteria' + idx}
-                        id={'criteria' + idx + 'content'}
-                        isHidden={!this.state.criteriaExpanded.includes('criteria' + idx)}
+                      <DataListItem
+                        aria-labelledby={'criteria' + idx}
+                        isExpanded={this.state.criteriaExpanded.includes('criteria' + idx)}
                       >
-                        <Table aria-label="Simple Table" cells={this.columns()} rows={rows}>
-                          <TableHeader />
-                          <TableBody />
-                        </Table>
-                      </DataListContent>
+                        <DataListItemRow>
+                          <DataListToggle
+                            onClick={() => this.onCriteriaToggle('criteria' + idx)}
+                            isExpanded={this.state.criteriaExpanded.includes('criteria' + idx)}
+                            id={'criteria' + idx}
+                            aria-controls={'criteria' + idx}
+                          />
+                          <DataListItemCells dataListCells={this.criteriaList(criteria, idx)} />
+                        </DataListItemRow>
+                        <DataListContent
+                          aria-label={'criteria' + idx}
+                          id={'criteria' + idx + 'content'}
+                          isHidden={!this.state.criteriaExpanded.includes('criteria' + idx)}
+                        >
+                          <Table aria-label="Simple Table" cells={this.columns()} rows={rows}>
+                            <TableHeader />
+                            <TableBody />
+                          </Table>
+                        </DataListContent>
+                      </DataListItem>
                     </DataList>
                   );
                 })}

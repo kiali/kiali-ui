@@ -15,6 +15,7 @@ import {
   TextVariants,
   Title
 } from '@patternfly/react-core';
+import { style } from 'typestyle';
 import * as API from '../../../../services/Api';
 import * as AlertUtils from '../../../../utils/AlertUtils';
 import { Iter8ExpDetailsInfo } from '../../../../types/Iter8';
@@ -28,6 +29,7 @@ import ExperimentInfoDescription from './ExperimentInfoDescription';
 import CriteriaInfoDescription from './CriteriaInfoDescription';
 import { KialiAppState } from '../../../../store/Store';
 import { durationSelector } from '../../../../store/Selectors';
+import { PfColors } from '../../../../components/Pf/PfColors';
 
 interface Props {
   namespace: string;
@@ -44,12 +46,19 @@ interface State {
 }
 
 const tabName = 'tab';
-const defaultTab = 'info';
+const defaultTab = 'overview';
 
 const tabIndex: { [tab: string]: number } = {
   info: 0,
   criteria: 1
 };
+const extensionHeader = style({
+  padding: '0px 20px 16px 0px',
+  backgroundColor: PfColors.White
+});
+const breadcrumbPadding = style({
+  padding: '22px 0 5px 0'
+});
 
 class ExperimentDetailsPage extends React.Component<RouteComponentProps<Props>, State> {
   constructor(props: RouteComponentProps<Props>) {
@@ -96,12 +105,22 @@ class ExperimentDetailsPage extends React.Component<RouteComponentProps<Props>, 
     this.fetchExperiment();
   }
 
+  componentDidUpdate() {
+    if (this.state.currentTab !== activeTab(tabName, defaultTab)) {
+      this.setState(
+        {
+          currentTab: activeTab(tabName, defaultTab)
+        },
+        () => this.doRefresh()
+      );
+    }
+  }
   // Extensions breadcrumb,
   // It is a simplified view of BreadcrumbView with fixed rendering
   breadcrumb = () => {
     return (
-      <div className="breadcrumb">
-        <Breadcrumb>
+      <div className={extensionHeader}>
+        <Breadcrumb className={breadcrumbPadding}>
           <BreadcrumbItem>
             <Link to={`/extensions/iter8`}>Iter8 Experiments</Link>
           </BreadcrumbItem>
@@ -110,7 +129,15 @@ class ExperimentDetailsPage extends React.Component<RouteComponentProps<Props>, 
               Namespace: {this.props.match.params.namespace}
             </Link>
           </BreadcrumbItem>
-          <BreadcrumbItem isActive={true}>{this.props.match.params.name}</BreadcrumbItem>
+          <BreadcrumbItem isActive={true}>
+            <Link
+              to={
+                '/extensions/namespaces/' + this.props.match.params.namespace + '/iter8/' + this.props.match.params.name
+              }
+            >
+              {this.props.match.params.name}
+            </Link>
+          </BreadcrumbItem>
         </Breadcrumb>
       </div>
     );
@@ -233,24 +260,14 @@ class ExperimentDetailsPage extends React.Component<RouteComponentProps<Props>, 
   };
 
   renderRightToolbar = () => {
-    let component;
-    switch (this.state.currentTab) {
-      case defaultTab:
-        component = (
-          <Iter8Dropdown
-            experimentName={this.props.match.params.name}
-            canDelete={this.state.canDelete}
-            onDelete={this.doDelete}
-          />
-        );
-        break;
-      default:
-        return undefined;
-    }
     return (
-      <span style={{ position: 'absolute', right: '50px', zIndex: 1 }}>
+      <span style={{ position: 'absolute', right: '20px', zIndex: 1 }}>
         <RefreshButtonContainer handleRefresh={this.doRefresh} />
-        {component}
+        <Iter8Dropdown
+          experimentName={this.props.match.params.name}
+          canDelete={this.state.canDelete}
+          onDelete={this.doDelete}
+        />
       </span>
     );
   };
@@ -279,7 +296,6 @@ class ExperimentDetailsPage extends React.Component<RouteComponentProps<Props>, 
       <>
         <RenderHeader>
           {this.breadcrumb()}
-          <Text component={TextVariants.h1}>{this.props.match.params.name}</Text>
           {this.renderRightToolbar()}
         </RenderHeader>
 
