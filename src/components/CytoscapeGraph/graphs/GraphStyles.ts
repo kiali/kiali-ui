@@ -367,7 +367,7 @@ export class GraphStyles {
       }
 
       const mtlsPercentage = edgeData.isMTLS;
-      if (cyGlobal.showSecurity && mtlsPercentage && mtlsPercentage >= 0) {
+      if (cyGlobal.showSecurity) {
         if (mtlsPercentage > 0 && !cyGlobal.mtlsEnabled) {
           content = `${EdgeIconMTLS} ${content}`;
         } else if (mtlsPercentage < 100 && cyGlobal.mtlsEnabled) {
