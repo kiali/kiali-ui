@@ -1,17 +1,21 @@
 import * as React from 'react';
 import {
+  Button,
+  ButtonVariant,
   Card,
   CardBody,
   Grid,
   GridItem,
   Switch,
+  TextInput,
   Title,
   Toolbar,
   ToolbarGroup,
   ToolbarItem,
+  Tooltip
 } from '@patternfly/react-core';
 import { style } from 'typestyle';
-import { Pod, PodLogs } from '../../../types/IstioObjects';
+import { Logs, Pod, PodLogs } from '../../../types/IstioObjects';
 import { getPodLogs, Response } from '../../../services/Api';
 import { CancelablePromise, makeCancelablePromise } from '../../../utils/CancelablePromises';
 import { ToolbarDropdown } from '../../../components/ToolbarDropdown/ToolbarDropdown';
@@ -21,6 +25,7 @@ import { retrieveDuration } from 'components/Time/TimeRangeHelper';
 import TimeRangeComponent from 'components/Time/TimeRangeComponent';
 import Splitter from 'm-react-splitters';
 import RefreshContainer from '../../../components/Refresh/Refresh';
+import { KialiIcon } from '../../../config/KialiIcon';
 
 export interface WorkloadPodLogsProps {
   namespace: string;
@@ -41,11 +46,14 @@ interface WorkloadPodLogsState {
   loadingProxyLogsError?: string;
   podValue?: number;
   appLogs?: PodLogs;
+  filteredAppLogs?: Logs;
   proxyLogs?: PodLogs;
+  filteredProxyLogs?: Logs;
   tailLines: number;
   isLogWindowSelectExpanded: boolean;
   logWindowSelections: any[];
   sideBySideOrientation: boolean;
+  hideLogValue: string;
   splitPercent: string;
 }
 
@@ -141,6 +149,8 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
         isLogWindowSelectExpanded: false,
         logWindowSelections: [],
         sideBySideOrientation: false,
+        hideLogValue: '',
+        sideBySideOrientation: false,
         splitPercent: '50%',
       };
       return;
@@ -165,6 +175,8 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
       tailLines: TailLinesDefault,
       isLogWindowSelectExpanded: false,
       logWindowSelections: [],
+      sideBySideOrientation: false,
+      hideLogValue: '',
       sideBySideOrientation: false,
       splitPercent: '50%',
     };
@@ -235,6 +247,28 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
                         />
                       </ToolbarItem>
                     </ToolbarGroup>
+                    <ToolbarGroup>
+                      <ToolbarItem>
+                        <TextInput
+                          id="log_hide"
+                          name="log_hide"
+                          autoComplete="on"
+                          type="text"
+                          onChange={this.handleHideLogLines}
+                          defaultValue={this.state.hideLogValue}
+                          placeholder="Hide Log Lines..."
+                        />
+                      </ToolbarItem>
+                      <ToolbarItem>
+                        {this.state.hideLogValue && (
+                          <Tooltip key="clear_hide_log" position="top" content="Clear Hide Log Lines...">
+                            <Button variant={ButtonVariant.control} onClick={this.clearHide}>
+                              <KialiIcon.Close/>
+                            </Button>
+                          </Tooltip>
+                        )}
+                      </ToolbarItem>
+                    </ToolbarGroup>
                     <ToolbarGroup className={toolbarRight}>
                       <ToolbarItem className={displayFlex}>
                         <ToolbarDropdown
@@ -270,7 +304,7 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
                     primaryPaneMinHeight={30}
                     primaryPaneHeight={this.state.splitPercent}
                     dispatchResize={true}
-                    postPoned={false}
+                    postPoned={true}
                   >
                     <div className={sideBySideOrientation ? appLogsDivHorizontal : appLogsDivVertical}>
                       <ToolbarDropdown
@@ -288,7 +322,7 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
                         )}
                         ref={this.appLogsRef}
                         readOnly={true}
-                        value={this.state.appLogs ? this.state.appLogs.logs : 'Loading logs...'}
+                        value={this.state.filteredAppLogs ? this.state.filteredAppLogs : this.state.appLogs?.logs}
                         aria-label="Pod logs text"
                       />
                     </div>
@@ -300,8 +334,9 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
                         className={logsTextarea(this.state.proxyLogs?.logs !== NoProxyLogsFoundMessage)}
                         ref={this.proxyLogsRef}
                         readOnly={true}
-                        value={this.state.proxyLogs ? this.state.proxyLogs.logs : 'Loading container logs...'}
                         aria-label="Proxy logs text"
+                        value={this.state.filteredProxyLogs ? this.state.filteredProxyLogs : this.state.proxyLogs?.logs}
+                        aria-label="Container logs text"
                       />
                     </div>
                   </Splitter>
@@ -348,6 +383,44 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
       this.state.tailLines,
       this.state.duration
     );
+  };
+
+  private handleHideLogLines = (filterValue: string) => {
+    if (filterValue !== '' && this.state.appLogs?.logs && this.state.proxyLogs?.logs) {
+      const lines: string[] = this.state.appLogs.logs.split('\n');
+      const proxyLogLines: string[] = this.state.proxyLogs.logs.split('\n');
+
+      const filteredAppLogLines = lines.map((line: string) => {
+        return !line.includes(filterValue) ? line : undefined;
+      }).filter((line) => {
+        // return non-undefined lines
+        return line;
+      }).join('\n ');
+
+      const filteredProxyLogLines = proxyLogLines.map((line: string) => {
+        return !line.includes(filterValue) ? line : undefined;
+      }).filter((line) => {
+        // return non-undefined lines
+        return line;
+      }).join('\n ');
+
+      this.setState({
+        hideLogValue: filterValue,
+        filteredAppLogs: filteredAppLogLines,
+        filteredProxyLogs: filteredProxyLogLines
+      });
+    }
+  };
+
+  private clearHide = () => {
+    // TODO: when TextInput refs are fixed in PF4 then use the ref and remove the direct HTMLElement usage
+    // this.hideInputRef.value = '';
+    const htmlInputElement: HTMLInputElement = document.getElementById('log_hide') as HTMLInputElement;
+    if (htmlInputElement !== null) {
+      htmlInputElement.value = '';
+    }
+
+    this.setState({ hideLogValue: '', filteredAppLogs: undefined, filteredProxyLogs: undefined });
   };
 
   private getContainerInfo = (pod: Pod): ContainerInfo => {
