@@ -12,7 +12,7 @@ import {
   Toolbar,
   ToolbarGroup,
   ToolbarItem,
-  Tooltip
+  Tooltip,
 } from '@patternfly/react-core';
 import { style } from 'typestyle';
 import { Logs, Pod, PodLogs } from '../../../types/IstioObjects';
@@ -89,6 +89,10 @@ const logsTitle = style({
   margin: '15px 0 0 10px',
 });
 
+const hideLogHelp = style({
+  width: '24px',
+});
+
 const containerDropdown = style({
   margin: '0 0 3px 10px',
 });
@@ -150,7 +154,6 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
         logWindowSelections: [],
         sideBySideOrientation: false,
         hideLogValue: '',
-        sideBySideOrientation: false,
         splitPercent: '50%',
       };
       return;
@@ -177,7 +180,6 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
       logWindowSelections: [],
       sideBySideOrientation: false,
       hideLogValue: '',
-      sideBySideOrientation: false,
       splitPercent: '50%',
     };
   }
@@ -252,21 +254,27 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
                         <TextInput
                           id="log_hide"
                           name="log_hide"
+                          style={{ width: '10em' }}
                           autoComplete="on"
                           type="text"
                           onChange={this.handleHideLogLines}
                           defaultValue={this.state.hideLogValue}
-                          placeholder="Hide Log Lines..."
+                          placeholder="Hide..."
                         />
                       </ToolbarItem>
                       <ToolbarItem>
                         {this.state.hideLogValue && (
-                          <Tooltip key="clear_hide_log" position="top" content="Clear Hide Log Lines...">
+                          <Tooltip key="clear_hide_log" position="top" content="Clear Hide Log Entries...">
                             <Button variant={ButtonVariant.control} onClick={this.clearHide}>
-                              <KialiIcon.Close/>
+                              <KialiIcon.Close />
                             </Button>
                           </Tooltip>
                         )}
+                      </ToolbarItem>
+                      <ToolbarItem style={{ marginLeft: '5px' }}>
+                        <Tooltip key="help_hide_log" position="top" content="Type a string to hide log entries.">
+                          <KialiIcon.Help className={hideLogHelp} />
+                        </Tooltip>
                       </ToolbarItem>
                     </ToolbarGroup>
                     <ToolbarGroup className={toolbarRight}>
@@ -336,7 +344,6 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
                         readOnly={true}
                         aria-label="Proxy logs text"
                         value={this.state.filteredProxyLogs ? this.state.filteredProxyLogs : this.state.proxyLogs?.logs}
-                        aria-label="Container logs text"
                       />
                     </div>
                   </Splitter>
@@ -390,24 +397,30 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
       const lines: string[] = this.state.appLogs.logs.split('\n');
       const proxyLogLines: string[] = this.state.proxyLogs.logs.split('\n');
 
-      const filteredAppLogLines = lines.map((line: string) => {
-        return !line.includes(filterValue) ? line : undefined;
-      }).filter((line) => {
-        // return non-undefined lines
-        return line;
-      }).join('\n ');
+      const filteredAppLogLines = lines
+        .map((line: string) => {
+          return !line.includes(filterValue) ? line : undefined;
+        })
+        .filter((line) => {
+          // return non-undefined lines
+          return line;
+        })
+        .join('\n ');
 
-      const filteredProxyLogLines = proxyLogLines.map((line: string) => {
-        return !line.includes(filterValue) ? line : undefined;
-      }).filter((line) => {
-        // return non-undefined lines
-        return line;
-      }).join('\n ');
+      const filteredProxyLogLines = proxyLogLines
+        .map((line: string) => {
+          return !line.includes(filterValue) ? line : undefined;
+        })
+        .filter((line) => {
+          // return non-undefined lines
+          return line;
+        })
+        .join('\n ');
 
       this.setState({
         hideLogValue: filterValue,
         filteredAppLogs: filteredAppLogLines,
-        filteredProxyLogs: filteredProxyLogLines
+        filteredProxyLogs: filteredProxyLogLines,
       });
     }
   };
