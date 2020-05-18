@@ -14,7 +14,8 @@ const orLabelOperation = (labels: { [key: string]: string }, filters: string[]):
   const labelKeys = Object.keys(labels);
 
   // Check presence label
-  let filterOkForLabel = labelKeys.filter(label => keys.map(key => label.startsWith(key))).length > 0;
+  let filterOkForLabel = labelKeys.filter(label => keys.some(key => label.startsWith(key))).length > 0;
+
   if (filterOkForLabel) {
     return true;
   }
@@ -29,6 +30,7 @@ const orLabelOperation = (labels: { [key: string]: string }, filters: string[]):
           .trim()
           .split(',')
           .some(labelValue => labelValue.trim().startsWith(v.trim()));
+        console.log();
       }
       return undefined;
     });
