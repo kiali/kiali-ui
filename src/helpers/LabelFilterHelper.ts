@@ -4,49 +4,52 @@ import { ServiceListItem } from '../types/ServiceList';
 
 type itemsType = AppListItem | ServiceListItem | WorkloadListItem;
 
-const filterLabelByOp = (labels: { [key: string]: string }, filters: string[], op: string = 'or'): boolean => {
-  let filterOkForLabel: boolean = false;
-  // keys => List of filters with only Label Presence
-  // keyValues => List of filters with Label and value
-  /*
-    TS Error but this works...
-  */
-  // const [keys, keyValues] = filters.reduce(([p, f], e) => (!e.includes(':') ? [[...p, e], f] : [p, [...f, e]]), [[], []]);
-  const keys = filters.filter(f => !f.includes(':'));
-  const keyValues = filters.filter(f => f.includes(':'));
+/*
+ OR Operation for labels
+*/
+const orLabelOperation = (labels: { [key: string]: string }, filters: string[]): boolean => {
+  const { keys, keyValues } = getKeyAndValues(filters);
 
   // Get all keys of labels
   const labelKeys = Object.keys(labels);
-  // Case OR operation
-  if (op === 'or') {
-    // Check presence label
-    filterOkForLabel = labelKeys.filter(label => keys.map(key => label.startsWith(key))).length > 0;
-    if (filterOkForLabel) {
-      return true;
-    }
-    // Check key and value
-    keyValues.map(filter => {
-      const [key, value] = filter.split(':');
-      // Check if multiple values
-      value.split(',').map(v => {
-        if (key in labels && !filterOkForLabel) {
-          // Split label values for serviceList Case where we can have multiple values for a label
-          filterOkForLabel = labels[key]
-            .trim()
-            .split(',')
-            .some(labelValue => labelValue.trim().startsWith(v.trim()));
-        }
-        return undefined;
-      });
+
+  // Check presence label
+  let filterOkForLabel = labelKeys.filter(label => keys.map(key => label.startsWith(key))).length > 0;
+  if (filterOkForLabel) {
+    return true;
+  }
+  // Check key and value
+  keyValues.map(filter => {
+    const [key, value] = filter.split(':');
+    // Check if multiple values
+    value.split(',').map(v => {
+      if (key in labels && !filterOkForLabel) {
+        // Split label values for serviceList Case where we can have multiple values for a label
+        filterOkForLabel = labels[key]
+          .trim()
+          .split(',')
+          .some(labelValue => labelValue.trim().startsWith(v.trim()));
+      }
       return undefined;
     });
-    return filterOkForLabel;
-  }
+    return undefined;
+  });
+  return filterOkForLabel;
+};
 
-  // Case AND operation
+/*
+ AND Operation for labels
+*/
 
+const andLabelOperation = (labels: { [key: string]: string }, filters: string[]): boolean => {
   // We expect this label is ok for the filters with And Operation
-  filterOkForLabel = true;
+  let filterOkForLabel: boolean = true;
+
+  const { keys, keyValues } = getKeyAndValues(filters);
+
+  // Get all keys of labels
+  const labelKeys = Object.keys(labels);
+
   // Start check label presence
   keys.map(k => {
     if (!labelKeys.includes(k) && filterOkForLabel) {
@@ -64,13 +67,14 @@ const filterLabelByOp = (labels: { [key: string]: string }, filters: string[], o
         value.split(',').map(val => {
           // Split label values for serviceList Case where we can have multiple values for a label
           if (!labels[key].split(',').some(labelVal => labelVal.trim().startsWith(val.trim()))) {
+            console.log(labels[key].split(','));
+            console.log(val);
             filterOkForLabel = false;
           }
           return undefined;
         });
       } else {
         // The key is not in the labels so not match AND operation
-
         filterOkForLabel = false;
       }
       return undefined;
@@ -80,15 +84,22 @@ const filterLabelByOp = (labels: { [key: string]: string }, filters: string[], o
   return filterOkForLabel;
 };
 
+const filterLabelByOp = (labels: { [key: string]: string }, filters: string[], op: string = 'or'): boolean => {
+  return op === 'or' ? orLabelOperation(labels, filters) : andLabelOperation(labels, filters);
+};
+
 export const filterByLabel = (items: itemsType[], filter: string[], op: string = 'or'): itemsType[] => {
-  let result: itemsType[] = [];
-  filter.length === 0
-    ? (result = items)
-    : items.map(item => {
-        if (filterLabelByOp(item.labels, filter, op)) {
-          result = result.concat(item);
-        }
-        return undefined;
-      });
-  return result;
+  return filter.length === 0 ? items : items.filter(item => filterLabelByOp(item.labels, filter, op));
+};
+
+const getKeyAndValues = (filters: string[]): { keys: string[]; keyValues: string[] } => {
+  // keys => List of filters with only Label Presence
+  // keyValues => List of filters with Label and value
+  /*
+    TS Error but this works...
+  */
+  // const [keys, keyValues] = filters.reduce(([p, f], e) => (!e.includes(':') ? [[...p, e], f] : [p, [...f, e]]), [[], []]);
+  const keys = filters.filter(f => !f.includes(':'));
+  const keyValues = filters.filter(f => f.includes(':'));
+  return { keys, keyValues };
 };

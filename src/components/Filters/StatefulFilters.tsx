@@ -155,11 +155,6 @@ export class StatefulFilters extends React.Component<StatefulFiltersProps, State
     this.updateActiveFilters(activeFilters);
   };
 
-  updateOpSortLabel = (value: LabelOperation) => {
-    this.setState({ activeFilters: { filters: this.state.activeFilters.filters, op: value } });
-    this.updateActiveFilters({ filters: this.state.activeFilters.filters, op: value });
-  };
-
   selectFilterType = (value: string) => {
     const { currentFilterType } = this.state;
     const filterType = this.state.filterTypes.filter(filter => filter.id === value)[0];
@@ -367,7 +362,9 @@ export class StatefulFilters extends React.Component<StatefulFiltersProps, State
                 <span className={classNames(paddingStyle)}>Label Operation</span>
                 <FormSelect
                   value={activeFilters.op}
-                  onChange={value => this.updateOpSortLabel(value as LabelOperation)}
+                  onChange={value =>
+                    this.updateActiveFilters({ filters: this.state.activeFilters.filters, op: value as LabelOperation })
+                  }
                   aria-label="filter_select_value"
                   style={{ width: 'auto' }}
                 >
