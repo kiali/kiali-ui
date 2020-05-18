@@ -1,4 +1,4 @@
-import { ActiveFilter, FILTER_ACTION_APPEND, FilterType, LabelFilter, OpLabelFilter } from '../../types/Filters';
+import { ActiveFiltersInfo, FILTER_ACTION_APPEND, FilterType, LabelFilter } from '../../types/Filters';
 import { AppListItem } from '../../types/AppList';
 import { SortField } from '../../types/SortFilters';
 import { getRequestErrorsStatus, WithAppHealth, hasHealth } from '../../types/Health';
@@ -84,13 +84,7 @@ const appNameFilter: FilterType = {
   filterValues: []
 };
 
-export const availableFilters: FilterType[] = [
-  appNameFilter,
-  istioSidecarFilter,
-  healthFilter,
-  LabelFilter,
-  OpLabelFilter
-];
+export const availableFilters: FilterType[] = [appNameFilter, istioSidecarFilter, healthFilter, LabelFilter];
 
 /** Filter Method */
 
@@ -114,7 +108,10 @@ const filterByIstioSidecar = (items: AppListItem[], istioSidecar: boolean): AppL
   return items.filter(item => item.istioSidecar === istioSidecar);
 };
 
-export const filterBy = (appsList: AppListItem[], filters: ActiveFilter[]): Promise<AppListItem[]> | AppListItem[] => {
+export const filterBy = (
+  appsList: AppListItem[],
+  filters: ActiveFiltersInfo
+): Promise<AppListItem[]> | AppListItem[] => {
   let ret = appsList;
   const istioSidecar = getPresenceFilterValue(istioSidecarFilter, filters);
   if (istioSidecar !== undefined) {
@@ -128,7 +125,7 @@ export const filterBy = (appsList: AppListItem[], filters: ActiveFilter[]): Prom
 
   const appLabelsSelected = getFilterSelectedValues(LabelFilter, filters);
   if (appLabelsSelected.length > 0) {
-    ret = filterByLabel(ret, appLabelsSelected) as AppListItem[];
+    ret = filterByLabel(ret, appLabelsSelected, filters.op) as AppListItem[];
   }
 
   // We may have to perform a second round of filtering, using data fetched asynchronously (health)

@@ -35,7 +35,7 @@ export interface FilterType {
 }
 
 export interface FilterTypeWithFilter<T> extends FilterType {
-  filter: (items: T[], filters: ActiveFilter[]) => T[];
+  filter: (items: T[], filters: ActiveFiltersInfo) => T[];
 }
 
 export const FILTER_ACTION_APPEND = 'append';
@@ -44,6 +44,15 @@ export const FILTER_ACTION_UPDATE = 'update';
 export interface ActiveFilter {
   category: string;
   value: string;
+}
+
+export type LabelOperation = 'and' | 'or';
+export const ID_LABEL_OPERATION = 'opLabel';
+export const DEFAULT_LABEL_OPERATION: LabelOperation = 'or';
+
+export interface ActiveFiltersInfo {
+  filters: ActiveFilter[];
+  op: LabelOperation;
 }
 
 // labelFilter common to lists
@@ -56,14 +65,4 @@ export const LabelFilter: FilterType = {
   customComponent: LabelFilters,
   action: FILTER_ACTION_APPEND,
   filterValues: []
-};
-
-export const OpLabelFilter: FilterType = {
-  id: 'opLabel',
-  title: 'Operation Label',
-  placeholder: 'Sort op',
-  filterType: FilterTypes.opLabel,
-  customComponent: undefined,
-  action: FILTER_ACTION_UPDATE,
-  filterValues: [{ id: 'or', title: 'or' }, { id: 'and', title: 'and' }]
 };

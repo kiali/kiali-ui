@@ -1,11 +1,10 @@
 import {
-  ActiveFilter,
+  ActiveFiltersInfo,
   FILTER_ACTION_APPEND,
   FILTER_ACTION_UPDATE,
   FilterType,
   FilterTypes,
-  LabelFilter,
-  OpLabelFilter
+  LabelFilter
 } from '../../types/Filters';
 import { WorkloadListItem, WorkloadType } from '../../types/Workload';
 import { SortField } from '../../types/SortFilters';
@@ -252,8 +251,7 @@ export const availableFilters: FilterType[] = [
   healthFilter,
   appLabelFilter,
   versionLabelFilter,
-  LabelFilter,
-  OpLabelFilter
+  LabelFilter
 ];
 
 /** Filter Method */
@@ -301,7 +299,7 @@ const filterByName = (items: WorkloadListItem[], names: string[]): WorkloadListI
 
 export const filterBy = (
   items: WorkloadListItem[],
-  filters: ActiveFilter[]
+  filters: ActiveFiltersInfo
 ): Promise<WorkloadListItem[]> | WorkloadListItem[] => {
   const workloadTypeFilters = getFilterSelectedValues(workloadTypeFilter, filters);
   const workloadNamesSelected = getFilterSelectedValues(workloadNameFilter, filters);
@@ -309,13 +307,12 @@ export const filterBy = (
   const appLabel = getPresenceFilterValue(appLabelFilter, filters);
   const versionLabel = getPresenceFilterValue(versionLabelFilter, filters);
   const labelFilters = getFilterSelectedValues(LabelFilter, filters);
-  const opLabelFilter = getFilterSelectedValues(OpLabelFilter, filters);
 
   let ret = items;
   ret = filterByType(ret, workloadTypeFilters);
   ret = filterByName(ret, workloadNamesSelected);
   ret = filterByLabelPresence(ret, istioSidecar, appLabel, versionLabel);
-  ret = filterByLabel(ret, labelFilters, opLabelFilter[0]) as WorkloadListItem[];
+  ret = filterByLabel(ret, labelFilters, filters.op) as WorkloadListItem[];
 
   // We may have to perform a second round of filtering, using data fetched asynchronously (health)
   // If not, exit fast
