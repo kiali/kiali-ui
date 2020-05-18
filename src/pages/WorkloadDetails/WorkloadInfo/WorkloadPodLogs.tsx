@@ -210,6 +210,17 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
                           options={this.podOptions!}
                         />
                       </ToolbarItem>
+                      <ToolbarItem className={displayFlex}>
+                        <ToolbarDropdown
+                          id={'wpl_containers'}
+                          nameDropdown="&nbsp;&nbsp;&nbsp;Container"
+                          tooltip="Display logs for the selected pod container"
+                          handleSelect={key => this.setContainer(key)}
+                          value={this.state.containerInfo.container}
+                          label={this.state.containerInfo.container}
+                          options={this.state.containerInfo.containerOptions!}
+                        />
+                      </ToolbarItem>
                     </ToolbarGroup>
                     <ToolbarGroup>
                       <ToolbarItem>
@@ -299,6 +310,12 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
     this.setState({ containerInfo: containerInfo, podValue: Number(podValue) });
   };
 
+  private setContainer = (container: string) => {
+    this.setState({
+      containerInfo: { container: container, containerOptions: this.state.containerInfo!.containerOptions }
+    });
+  };
+
   private setTimeRange = (range: TimeRange) => {
     this.setState({ duration: range as DurationInSeconds });
   };
@@ -328,7 +345,10 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
     const containerNames: string[] = containers.map(c => c.name);
     const options: any[] = [];
     containerNames.forEach(c => {
-      options[c] = c;
+      // ignore the proxy
+      if (c !== 'istio-proxy') {
+        options[c] = c;
+      }
     });
     return { container: containerNames[0], containerOptions: options };
   };
