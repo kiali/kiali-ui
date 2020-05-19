@@ -11,8 +11,7 @@ enum NonInputTypes {
   typeAhead = 'typeahead',
   select = 'select',
   label = 'label',
-  nsLabel = 'nsLabel',
-  opLabel = 'oplabel'
+  nsLabel = 'nsLabel'
 }
 
 export const FilterTypes = {

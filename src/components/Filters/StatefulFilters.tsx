@@ -226,7 +226,7 @@ export class StatefulFilters extends React.Component<StatefulFiltersProps, State
   renderInput() {
     const { currentFilterType, currentValue } = this.state;
 
-    if (!currentFilterType || currentFilterType.filterType === FilterTypes.opLabel) {
+    if (!currentFilterType) {
       return null;
     }
     if (currentFilterType.filterType === FilterTypes.typeAhead) {
