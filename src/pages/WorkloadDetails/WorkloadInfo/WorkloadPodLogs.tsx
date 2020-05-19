@@ -48,6 +48,9 @@ interface WorkloadPodLogsState {
   sideBySideOrientation: boolean;
 }
 
+const NoAppLogsFoundMessage = 'No logs found for the time period.';
+const NoProxyLogsFoundMessage = 'Failed to fetch container logs: container istio-proxy is not valid for pod two-containers';
+
 const TailLinesDefault = 500;
 const TailLinesOptions = {
   '-1': 'All lines',
@@ -75,19 +78,26 @@ const logsTitle = style({
   marginLeft: '10px'
 });
 
-const logsTextarea = style({
-  width: 'calc(100% - 15px)',
-  height: 'calc(100% - 70px)',
-  overflow: 'auto',
-  resize: 'none',
-  color: '#fff',
-  backgroundColor: '#003145',
-  fontFamily: 'monospace',
-  fontSize: '11pt',
-  padding: '10px',
-  whiteSpace: 'pre',
-  margin: '0 10px 0 10px'
+const containerDropdown = style({
+  marginLeft: '10px'
 });
+
+const logTextAreaBackground = (enabled = true) => ({ backgroundColor: enabled ? '#003145' : 'gray' });
+
+const logsTextarea = (enabled = true) => style(
+  logTextAreaBackground(enabled),
+  {
+    width: 'calc(100% - 15px)',
+    height: 'calc(100% - 70px)',
+    overflow: 'auto',
+    resize: 'none',
+    color: '#fff',
+    fontFamily: 'monospace',
+    fontSize: '11pt',
+    padding: '10px',
+    whiteSpace: 'pre',
+    margin: '0 10px 0 10px'
+  });
 
 const toolbarRight = style({
   right: '50px',
@@ -210,17 +220,6 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
                           options={this.podOptions!}
                         />
                       </ToolbarItem>
-                      <ToolbarItem className={displayFlex}>
-                        <ToolbarDropdown
-                          id={'wpl_containers'}
-                          nameDropdown="&nbsp;&nbsp;&nbsp;Container"
-                          tooltip="Display logs for the selected pod container"
-                          handleSelect={key => this.setContainer(key)}
-                          value={this.state.containerInfo.container}
-                          label={this.state.containerInfo.container}
-                          options={this.state.containerInfo.containerOptions!}
-                        />
-                      </ToolbarItem>
                     </ToolbarGroup>
                     <ToolbarGroup>
                       <ToolbarItem>
@@ -270,11 +269,17 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
                     postPoned={true}
                   >
                     <div className={sideBySideOrientation ? appLogsDivHorizontal : appLogsDivVertical}>
-                      <Title size="lg" headingLevel="h5" className={logsTitle}>
-                        {this.formatAppLogLabel(this.props.pods[this.state.podValue!])}
-                      </Title>
+                      <ToolbarDropdown
+                        id={'wpl_containers'}
+                        tooltip="Choose container for selected pod"
+                        classNameSelect={containerDropdown}
+                        handleSelect={key => this.setContainer(key)}
+                        value={this.state.containerInfo.container}
+                        label={this.state.containerInfo.container}
+                        options={this.state.containerInfo.containerOptions!}
+                      />
                       <textarea
-                        className={logsTextarea}
+                        className={logsTextarea(!this.state.loadingAppLogs && this.state.appLogs?.logs !== NoAppLogsFoundMessage)}
                         ref={this.appLogsRef}
                         readOnly={true}
                         value={this.state.appLogs ? this.state.appLogs.logs : 'Loading logs...'}
@@ -283,10 +288,10 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
                     </div>
                     <div className={proxyLogsDiv}>
                       <Title size="lg" headingLevel="h5" className={logsTitle}>
-                        Istio proxy
+                        Istio proxy (sidecar)
                       </Title>
                       <textarea
-                        className={logsTextarea}
+                        className={logsTextarea(this.state.proxyLogs?.logs !== NoProxyLogsFoundMessage)}
                         ref={this.proxyLogsRef}
                         readOnly={true}
                         value={this.state.proxyLogs ? this.state.proxyLogs.logs : 'Loading container logs...'}
@@ -344,6 +349,7 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
     containers.push(...(pod.istioContainers ? pod.istioContainers : []));
     const containerNames: string[] = containers.map(c => c.name);
     const options: any[] = [];
+
     containerNames.forEach(c => {
       // ignore the proxy
       if (c !== 'istio-proxy') {
@@ -351,18 +357,6 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
       }
     });
     return { container: containerNames[0], containerOptions: options };
-  };
-
-  private formatAppLogLabel = (pod: Pod): string => {
-    const labels = pod.labels;
-    let label = 'N/A';
-
-    if (labels) {
-      const app = pod.appLabel ? labels['app'] : 'No App';
-      const version = pod.versionLabel ? labels['version'] : '';
-      label = app + '-' + version;
-    }
-    return label;
   };
 
   private fetchLogs = (
@@ -389,7 +383,7 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
         const podLogs = response[0].data;
         this.setState({
           loadingAppLogs: false,
-          appLogs: podLogs.logs ? podLogs : { logs: 'No logs found for the time period.' }
+          appLogs: podLogs.logs ? podLogs : { logs: NoAppLogsFoundMessage }
         });
         this.appLogsRef.current.scrollTop = this.appLogsRef.current.scrollHeight;
         return;
@@ -412,7 +406,7 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
         const containerLogs = response[0].data;
         this.setState({
           loadingProxyLogs: false,
-          proxyLogs: containerLogs.logs ? containerLogs : { logs: 'No container logs found for the time period.' }
+          proxyLogs: containerLogs.logs ? containerLogs : { logs: NoProxyLogsFoundMessage }
         });
         this.appLogsRef.current.scrollTop = this.appLogsRef.current.scrollHeight;
         return;
