@@ -135,6 +135,7 @@ export class LoginDispatcher {
     this.strategyMapping.set(AuthStrategy.openshift, new OpenshiftLogin());
     this.strategyMapping.set(AuthStrategy.ldap, new LdapLogin());
     this.strategyMapping.set(AuthStrategy.token, new TokenLogin());
+    this.strategyMapping.set(AuthStrategy.openid, new OpenshiftLogin());
   }
 
   public async prepare(): Promise<AuthResult> {

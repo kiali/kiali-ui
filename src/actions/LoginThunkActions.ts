@@ -22,7 +22,10 @@ const loginSuccess = async (dispatch: KialiDispatch, session: LoginSession) => {
 // different kinds of data (such as e-mail/password, tokens).
 const performLogin = (dispatch: KialiDispatch, state: KialiAppState, data?: any) => {
   const bail = (loginResult: Login.LoginResult) => {
-    if (authenticationConfig.strategy === AuthStrategy.openshift) {
+    if (
+      authenticationConfig.strategy === AuthStrategy.openshift ||
+      authenticationConfig.strategy === AuthStrategy.openid
+    ) {
       dispatch(LoginActions.loginFailure(loginResult.error));
     } else {
       data ? dispatch(LoginActions.loginFailure(loginResult.error)) : dispatch(LoginActions.logoutSuccess());
