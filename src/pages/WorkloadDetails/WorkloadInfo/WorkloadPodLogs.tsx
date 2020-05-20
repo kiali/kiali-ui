@@ -46,6 +46,7 @@ interface WorkloadPodLogsState {
   isLogWindowSelectExpanded: boolean;
   logWindowSelections: any[];
   sideBySideOrientation: boolean;
+  splitPercent: string;
 }
 
 const NoAppLogsFoundMessage = 'No logs found for the time period.';
@@ -140,6 +141,7 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
         isLogWindowSelectExpanded: false,
         logWindowSelections: [],
         sideBySideOrientation: false,
+        splitPercent: '50%',
       };
       return;
     }
@@ -164,6 +166,7 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
       isLogWindowSelectExpanded: false,
       logWindowSelections: [],
       sideBySideOrientation: false,
+      splitPercent: '50%',
     };
   }
 
@@ -264,10 +267,10 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
                   <Splitter
                     position={!sideBySideOrientation ? 'horizontal' : 'vertical'}
                     primaryPaneMaxHeight="100%"
-                    primaryPaneMinHeight={0}
-                    primaryPaneHeight="50%"
+                    primaryPaneMinHeight={30}
+                    primaryPaneHeight={this.state.splitPercent}
                     dispatchResize={true}
-                    postPoned={true}
+                    postPoned={false}
                   >
                     <div className={sideBySideOrientation ? appLogsDivHorizontal : appLogsDivVertical}>
                       <ToolbarDropdown
@@ -333,7 +336,7 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
   };
 
   private handleOrientationChange = (isChecked: boolean) => {
-    this.setState({ sideBySideOrientation: isChecked });
+    this.setState({ sideBySideOrientation: isChecked, splitPercent: '50%' });
   };
 
   private handleRefresh = () => {
