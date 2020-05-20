@@ -10,17 +10,22 @@ import {
   Condition,
   DestinationRule,
   DestinationRules,
-  HTTPRouteDestination,
   Gateway,
   HTTPMatchRequest,
   HTTPRoute,
+  HTTPRouteDestination,
   LoadBalancerSettings,
   Operation,
+  PeerAuthentication,
+  PeerAuthenticationMutualTLSMode,
+  PeerAuthenticationWorkloadSelector,
+  RequestAuthentication,
   Sidecar,
   Source,
   StringMatch,
   VirtualService,
-  VirtualServices
+  VirtualServices,
+  WorkloadEntrySelector
 } from '../../types/IstioObjects';
 import { serverConfig } from '../../config';
 import { ThreeScaleServiceRule } from '../../types/ThreeScale';
@@ -29,6 +34,8 @@ import { ConsistentHashType, MUTUAL, TrafficPolicyState } from './TrafficPolicy'
 import { GatewayState } from '../../pages/IstioConfigNew/GatewayForm';
 import { SidecarState } from '../../pages/IstioConfigNew/SidecarForm';
 import { AuthorizationPolicyState } from '../../pages/IstioConfigNew/AuthorizationPolicyForm';
+import { PeerAuthenticationState } from '../../pages/IstioConfigNew/PeerAuthenticationForm';
+import { RequestAuthenticationState } from '../../pages/IstioConfigNew/RequestAuthenticationForm';
 
 export const WIZARD_WEIGHTED_ROUTING = 'weighted_routing';
 export const WIZARD_MATCHING_ROUTING = 'matching_routing';
@@ -763,6 +770,93 @@ export const buildGateway = (name: string, namespace: string, state: GatewayStat
     }
   };
   return gw;
+};
+
+export const buildPeerAuthentication = (
+  name: string,
+  namespace: string,
+  state: PeerAuthenticationState
+): PeerAuthentication => {
+  const pa: PeerAuthentication = {
+    metadata: {
+      name: name,
+      namespace: namespace,
+      labels: {
+        [KIALI_WIZARD_LABEL]: 'PeerAuthentication'
+      }
+    },
+    spec: {}
+  };
+
+  if (state.workloadSelector.length > 0) {
+    const workloadSelector: PeerAuthenticationWorkloadSelector = {
+      matchLabels: {}
+    };
+    state.workloadSelector.split(',').forEach(label => {
+      label = label.trim();
+      const labelDetails = label.split('=');
+      if (labelDetails.length === 2) {
+        workloadSelector.matchLabels[labelDetails[0]] = labelDetails[1];
+      }
+    });
+    pa.spec.selector = workloadSelector;
+  }
+
+  // Kiali is always adding this field
+  pa.spec.mtls = {
+    mode: PeerAuthenticationMutualTLSMode[state.mtls]
+  };
+
+  if (state.portLevelMtls.length > 0) {
+    pa.spec.portLevelMtls = {};
+    state.portLevelMtls.forEach(p => {
+      if (pa.spec.portLevelMtls) {
+        pa.spec.portLevelMtls[Number(p.port)] = {
+          mode: PeerAuthenticationMutualTLSMode[p.mtls]
+        };
+      }
+    });
+  }
+
+  return pa;
+};
+
+export const buildRequestAuthentication = (
+  name: string,
+  namespace: string,
+  state: RequestAuthenticationState
+): RequestAuthentication => {
+  const ra: RequestAuthentication = {
+    metadata: {
+      name: name,
+      namespace: namespace,
+      labels: {
+        [KIALI_WIZARD_LABEL]: 'RequestAuthentication'
+      }
+    },
+    spec: {
+      jwtRules: []
+    }
+  };
+
+  if (state.workloadSelector.length > 0) {
+    const workloadSelector: WorkloadEntrySelector = {
+      matchLabels: {}
+    };
+    state.workloadSelector.split(',').forEach(label => {
+      label = label.trim();
+      const labelDetails = label.split('=');
+      if (labelDetails.length === 2) {
+        workloadSelector.matchLabels[labelDetails[0]] = labelDetails[1];
+      }
+    });
+    ra.spec.selector = workloadSelector;
+  }
+
+  if (state.jwtRules.length > 0) {
+    ra.spec.jwtRules = state.jwtRules;
+  }
+  return ra;
 };
 
 export const buildSidecar = (name: string, namespace: string, state: SidecarState): Sidecar => {

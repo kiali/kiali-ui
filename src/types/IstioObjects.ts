@@ -884,7 +884,7 @@ export interface JWTHeader {
 }
 
 export interface JWTRule {
-  issuer: string;
+  issuer?: string;
   audiences?: string[];
   jwksUri?: string;
   jwks?: string;
