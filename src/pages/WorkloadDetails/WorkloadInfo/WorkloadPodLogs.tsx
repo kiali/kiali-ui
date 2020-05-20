@@ -69,6 +69,7 @@ const appLogsDivVertical = style({
 });
 const appLogsDivHorizontal = style({
   height: '100%',
+  marginRight: '5px',
 });
 
 const proxyLogsDiv = style({
@@ -76,7 +77,7 @@ const proxyLogsDiv = style({
 });
 
 const logsTitle = style({
-  marginLeft: '10px',
+  margin: '12px 0 0 10px',
 });
 
 const containerDropdown = style({
@@ -297,7 +298,7 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
                         ref={this.proxyLogsRef}
                         readOnly={true}
                         value={this.state.proxyLogs ? this.state.proxyLogs.logs : 'Loading container logs...'}
-                        aria-label="Container logs text"
+                        aria-label="Proxy logs text"
                       />
                     </div>
                   </Splitter>
