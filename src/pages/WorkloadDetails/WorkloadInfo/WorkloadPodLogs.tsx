@@ -77,11 +77,11 @@ const proxyLogsDiv = style({
 });
 
 const logsTitle = style({
-  margin: '12px 0 0 10px',
+  margin: '15px 0 0 10px',
 });
 
 const containerDropdown = style({
-  marginLeft: '10px',
+  margin: '0 0 3px 10px',
 });
 
 const logTextAreaBackground = (enabled = true) => ({ backgroundColor: enabled ? '#003145' : 'gray' });
@@ -89,7 +89,7 @@ const logTextAreaBackground = (enabled = true) => ({ backgroundColor: enabled ? 
 const logsTextarea = (enabled = true) =>
   style(logTextAreaBackground(enabled), {
     width: 'calc(100% - 15px)',
-    height: 'calc(100% - 70px)',
+    height: 'calc(100% - 75px)',
     overflow: 'auto',
     resize: 'none',
     color: '#fff',
