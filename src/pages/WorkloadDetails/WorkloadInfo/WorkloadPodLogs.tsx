@@ -355,7 +355,11 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
     containerNames.forEach((c) => {
       // ignore the proxy
       if (c !== 'istio-proxy') {
-        options[c] = c;
+        if (pod.appLabel && pod.labels) {
+          options[c] = c + '-' + pod.labels['version'];
+        } else {
+          options[c] = c;
+        }
       }
     });
     return { container: containerNames[0], containerOptions: options };
