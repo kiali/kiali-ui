@@ -89,7 +89,7 @@ const logTextAreaBackground = (enabled = true) => ({ backgroundColor: enabled ? 
 const logsTextarea = (enabled = true) =>
   style(logTextAreaBackground(enabled), {
     width: 'calc(100% - 15px)',
-    height: 'calc(100% - 75px)',
+    height: 'calc(100% - 85px)',
     overflow: 'auto',
     resize: 'none',
     color: '#fff',
