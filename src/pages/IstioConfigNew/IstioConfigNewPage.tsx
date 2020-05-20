@@ -120,7 +120,7 @@ class IstioConfigNewPage extends React.Component<Props, State> {
             () => {
               this.props.activeNamespaces.forEach(ns => {
                 if (!this.canCreate(ns.name)) {
-                  AlertUtils.addInfo('User has not permissions to create Istio Config on namespace: ' + ns.name);
+                  AlertUtils.addWarning('User has not permissions to create Istio Config on namespace: ' + ns.name);
                 }
               });
             }
