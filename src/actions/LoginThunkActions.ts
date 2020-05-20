@@ -53,19 +53,14 @@ const LoginThunkActions = {
   },
   checkCredentials: () => {
     return (dispatch: KialiDispatch, getState: () => KialiAppState) => {
-      // If Openshift login strategy is enabled, or anonymous mode is enabled,
-      // perform the login cycle. Else, it doesn't make sense to login with
-      // blank credentials.
-      if (authenticationConfig.strategy !== AuthStrategy.login) {
-        const state: KialiAppState = getState();
+      const state: KialiAppState = getState();
 
-        dispatch(LoginActions.loginRequest());
+      dispatch(LoginActions.loginRequest());
 
-        if (shouldRelogin(state.authentication)) {
-          performLogin(dispatch, state);
-        } else {
-          loginSuccess(dispatch, state.authentication!.session!);
-        }
+      if (shouldRelogin(state.authentication)) {
+        performLogin(dispatch, state);
+      } else {
+        loginSuccess(dispatch, state.authentication!.session!);
       }
     };
   },

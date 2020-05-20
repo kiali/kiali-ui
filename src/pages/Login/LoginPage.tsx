@@ -27,7 +27,6 @@ type LoginProps = {
   message?: string;
   error?: any;
   authenticate: (username: string, password: string) => void;
-  checkCredentials: () => void;
   isPostLoginPerforming: boolean;
   postLoginErrorMsg?: string;
 };
@@ -63,9 +62,6 @@ export class LoginPage extends React.Component<LoginProps, LoginState> {
   }
 
   componentDidMount() {
-    // handle initial path from the browser
-    this.props.checkCredentials();
-
     const loginInput = document.getElementById('pf-login-username-id');
     if (loginInput) {
       loginInput.focus();
@@ -284,8 +280,7 @@ const mapStateToProps = (state: KialiAppState) => ({
 });
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<KialiAppState, void, KialiAppAction>) => ({
-  authenticate: (username: string, password: string) => dispatch(LoginThunkActions.authenticate(username, password)),
-  checkCredentials: () => dispatch(LoginThunkActions.checkCredentials())
+  authenticate: (username: string, password: string) => dispatch(LoginThunkActions.authenticate(username, password))
 });
 
 const LoginPageContainer = connect(mapStateToProps, mapDispatchToProps)(LoginPage);
