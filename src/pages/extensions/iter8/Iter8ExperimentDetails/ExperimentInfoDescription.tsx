@@ -129,16 +129,23 @@ class ExperimentInfoDescription extends React.Component<ExperimentInfoDescriptio
     // In Iter8 v1alpha2 this will be 60
     let interval = 60;
 
-    let unit = this.props.experimentDetails.trafficControl.interval.substr(this.props.experimentDetails.trafficControl.interval.length - 1);
-    let valueInInterval = Number(this.props.experimentDetails.trafficControl.interval.substring(0, this.props.experimentDetails.trafficControl.interval.length - 1));
+    let unit = this.props.experimentDetails.trafficControl.interval.substr(
+      this.props.experimentDetails.trafficControl.interval.length - 1
+    );
+    let valueInInterval = Number(
+      this.props.experimentDetails.trafficControl.interval.substring(
+        0,
+        this.props.experimentDetails.trafficControl.interval.length - 1
+      )
+    );
     switch (unit) {
-      case 's' :
+      case 's':
         interval = valueInInterval;
         break;
-      case 'm' :
+      case 'm':
         interval = valueInInterval * 60;
         break;
-      case 'h' :
+      case 'h':
         interval = valueInInterval * 60 * 60;
         break;
     }
@@ -155,10 +162,14 @@ class ExperimentInfoDescription extends React.Component<ExperimentInfoDescriptio
     let targetService = this.props.experimentDetails
       ? this.props.experimentDetails.experimentItem.targetService
       : this.props.target;
-    const graphCardActions = [<DropdownItem key="viewGraph" onClick={this.showFullMetric}>Show service inbound
-      metrics</DropdownItem>,
-      <DropdownItem key="viewGraph" onClick={this.showFullGraph}>Show traffic graph</DropdownItem>];
-
+    const graphCardActions = [
+      <DropdownItem key="viewGraph" onClick={this.showFullMetric}>
+        Show service inbound metrics
+      </DropdownItem>,
+      <DropdownItem key="viewGraph" onClick={this.showFullGraph}>
+        Show traffic graph
+      </DropdownItem>
+    ];
 
     return (
       <RenderComponentScroll>
@@ -168,7 +179,7 @@ class ExperimentInfoDescription extends React.Component<ExperimentInfoDescriptio
               <CardHead>
                 <CardActions>
                   <Dropdown
-                    toggle={<KebabToggle onToggle={this.onGraphActionsToggle}/>}
+                    toggle={<KebabToggle onToggle={this.onGraphActionsToggle} />}
                     dropdownItems={graphCardActions}
                     isPlain
                     isOpen={this.state.isKebabOpen}
@@ -177,7 +188,7 @@ class ExperimentInfoDescription extends React.Component<ExperimentInfoDescriptio
                 </CardActions>
                 <CardHeader>
                   <Title style={{ float: 'left' }} headingLevel="h3" size="2xl">
-                    {this.props.experimentDetails?.experimentItem.name}
+                    {this.props.experimentDetails != undefined ? this.props.experimentDetails.experimentItem.name : ''}
                   </Title>
                 </CardHeader>
               </CardHead>
@@ -185,8 +196,8 @@ class ExperimentInfoDescription extends React.Component<ExperimentInfoDescriptio
                 <DataList aria-label="baseline and candidate">
                   <DataListItem aria-labelledby="target">
                     <DataListItemRow>
-                      <DataListItemCells dataListCells={this.serviceInfo()}/>
-                      <DataListItemCells dataListCells={this.serviceLinkCell(targetNamespace, targetService)}/>
+                      <DataListItemCells dataListCells={this.serviceInfo()} />
+                      <DataListItemCells dataListCells={this.serviceLinkCell(targetNamespace, targetService)} />
                     </DataListItemRow>
                   </DataListItem>
 
@@ -257,8 +268,8 @@ class ExperimentInfoDescription extends React.Component<ExperimentInfoDescriptio
                             time={
                               this.props.experimentDetails && this.props.experimentDetails.experimentItem.createdAt
                                 ? new Date(
-                                this.props.experimentDetails.experimentItem.createdAt / 1000000
-                                ).toISOString()
+                                    this.props.experimentDetails.experimentItem.createdAt / 1000000
+                                  ).toISOString()
                                 : ''
                             }
                           />
@@ -271,8 +282,8 @@ class ExperimentInfoDescription extends React.Component<ExperimentInfoDescriptio
                             time={
                               this.props.experimentDetails && this.props.experimentDetails.experimentItem.startedAt
                                 ? new Date(
-                                this.props.experimentDetails.experimentItem.startedAt / 1000000
-                                ).toISOString()
+                                    this.props.experimentDetails.experimentItem.startedAt / 1000000
+                                  ).toISOString()
                                 : ''
                             }
                           />
@@ -292,13 +303,14 @@ class ExperimentInfoDescription extends React.Component<ExperimentInfoDescriptio
                       </GridItem>
                     </Grid>
                   </StackItem>
-                  {this.props.experimentDetails && this.props.experimentDetails.experimentItem.endedAt
-                    ? '' :
+                  {this.props.experimentDetails && this.props.experimentDetails.experimentItem.endedAt ? (
+                    ''
+                  ) : (
                     <StackItem id={'totalDurationTime'}>
                       <Text component={TextVariants.h3}> Estimated experiment duration: </Text>
                       {this.getTotalDuration()}
                     </StackItem>
-                  }
+                  )}
                 </Stack>
               </CardBody>
             </Card>
@@ -316,14 +328,25 @@ class ExperimentInfoDescription extends React.Component<ExperimentInfoDescriptio
 
   private showFullGraph = () => {
     let graphType: GraphType = GraphType.WORKLOAD;
-    const graphUrl = `/graph/namespaces?graphType=${graphType}&injectServiceNodes=true&namespaces=${this.props.namespace}&unusedNodes=false&edges=requestsPercentage&`;
+    const graphUrl = `/graph/namespaces?graphType=${graphType}&injectServiceNodes=true&namespaces=${
+      this.props.namespace
+    }&unusedNodes=false&edges=requestsPercentage&`;
     history.push(graphUrl);
   };
 
   private showFullMetric = () => {
-    const params = `=${this.props.experimentDetails?.experimentItem.baselineVersion},${this.props.experimentDetails?.experimentItem.candidateVersion}`;
-    const graphUrl = `/namespaces/${this.props.namespace}/services/${this.props.target}?tab=metrics&bylbl=destination_version`;
-    history.push(graphUrl + encodeURIComponent(params));
+    const graphUrl = `/namespaces/${this.props.namespace}/services/${
+      this.props.target
+    }?tab=metrics&bylbl=destination_version`;
+
+    if (this.props.experimentDetails != undefined) {
+      const params = `=${this.props.experimentDetails.experimentItem.baselineVersion},${
+        this.props.experimentDetails.experimentItem.candidateVersion
+      }`;
+      history.push(graphUrl + encodeURIComponent(params));
+    } else {
+      history.push(graphUrl);
+    }
   };
 }
 
