@@ -168,18 +168,18 @@ class ExperimentDetailsPage extends React.Component<Props, State> {
               <Text component={TextVariants.h3}> Baseline / Traffic Split</Text>
               {this.state.experiment
                 ? this.state.experiment.experimentItem.baseline +
-                ' / ' +
-                this.state.experiment.experimentItem.baselinePercentage +
-                ' % '
+                  ' / ' +
+                  this.state.experiment.experimentItem.baselinePercentage +
+                  ' % '
                 : ''}
             </StackItem>
             <StackItem id={'candidate'}>
               <Text component={TextVariants.h3}> Candidate / Traffic Split</Text>
               {this.state.experiment
                 ? this.state.experiment.experimentItem.candidate +
-                ' / ' +
-                this.state.experiment.experimentItem.candidatePercentage +
-                ' % '
+                  ' / ' +
+                  this.state.experiment.experimentItem.candidatePercentage +
+                  ' % '
                 : ''}
             </StackItem>
           </Stack>
@@ -312,22 +312,23 @@ class ExperimentDetailsPage extends React.Component<Props, State> {
       });
   };
 
-
   renderRightToolbar = () => {
     return (
       <span style={{ position: 'absolute', right: '20px', zIndex: 1 }}>
-         <TimeControlsContainer
-           key={'DurationDropdown'}
-           id="experiment-duration-dropdown"
-           handleRefresh={this.doRefresh}
-           disabled={false}
-         />
+        <TimeControlsContainer
+          key={'DurationDropdown'}
+          id="experiment-duration-dropdown"
+          handleRefresh={this.doRefresh}
+          disabled={false}
+        />
         <Iter8Dropdown
           experimentName={this.props.match.params.name}
           canDelete={this.state.canDelete}
-          canPause={this.state.experiment?.experimentItem.phase === 'Progressing'}
-          canResume={(this.state.experiment?.experimentItem.phase === 'Pause')}
-          canOverride={(this.state.experiment?.experimentItem.phase !== 'Completed')}
+          canPause={this.state.experiment !== undefined && this.state.experiment.experimentItem.phase === 'Progressing'}
+          canResume={this.state.experiment !== undefined && this.state.experiment.experimentItem.phase === 'Pause'}
+          canOverride={
+            this.state.experiment !== undefined && this.state.experiment.experimentItem.phase !== 'Completed'
+          }
           onDelete={this.doDelete}
           onResume={() => this.doIter8Action('resume')}
           onPause={() => this.doIter8Action('pause')}
@@ -354,7 +355,7 @@ class ExperimentDetailsPage extends React.Component<Props, State> {
     );
     const criteriaTab = (
       <Tab eventKey={1} title="Criteria" key="Criteria">
-        <CriteriaInfoDescription criterias={this.state.experiment ? this.state.experiment.criterias : []}/>
+        <CriteriaInfoDescription criterias={this.state.experiment ? this.state.experiment.criterias : []} />
       </Tab>
     );
     const tabsArray: any[] = [overviewTab, criteriaTab];
