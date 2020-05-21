@@ -1,7 +1,7 @@
 import { cellWidth, ICell, Table, TableBody, TableHeader } from '@patternfly/react-table';
 import { Criteria, NameValuePair } from '../../../../types/Iter8';
 import * as React from 'react';
-import { Button, FormSelect, FormGroup, FormSelectOption, TextInput, Checkbox } from '@patternfly/react-core';
+import { Button, Checkbox, FormGroup, FormSelect, FormSelectOption, TextInput } from '@patternfly/react-core';
 import { style } from 'typestyle';
 import { PfColors } from '../../../../components/Pf/PfColors';
 
@@ -233,6 +233,7 @@ class ExperimentCriteriaForm extends React.Component<Props, State> {
         }
       ]);
   }
+
   render() {
     return (
       <>

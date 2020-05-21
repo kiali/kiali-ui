@@ -17,19 +17,19 @@ import {
 } from '@patternfly/react-core';
 import { style } from 'typestyle';
 import {
+  cellWidth,
+  IRow,
+  ISortBy,
   sortable,
+  SortByDirection,
   Table,
   TableBody,
-  TableHeader,
-  ISortBy,
-  IRow,
-  SortByDirection,
-  cellWidth
+  TableHeader
 } from '@patternfly/react-table';
 import * as API from '../../../../services/Api';
 import * as AlertUtils from '../../../../utils/AlertUtils';
 import history from '../../../../app/History';
-import { Iter8Info, Iter8Experiment } from '../../../../types/Iter8';
+import { Iter8Experiment, Iter8Info } from '../../../../types/Iter8';
 import { Link } from 'react-router-dom';
 import * as FilterComponent from '../../../../components/FilterList/FilterComponent';
 

@@ -3,21 +3,21 @@ import {
   Card,
   CardBody,
   DataList,
+  DataListCell,
+  DataListContent,
   DataListItem,
   DataListItemCells,
   DataListItemRow,
+  DataListToggle,
   Grid,
   GridItem,
-  DataListCell,
   List,
   ListItem,
   Text,
-  DataListContent,
-  DataListToggle,
   Tooltip
 } from '@patternfly/react-core';
 import { SuccessCriteria } from '../../../../types/Iter8';
-import { Table, TableBody, TableHeader, IRow, ICell, cellWidth } from '@patternfly/react-table';
+import { cellWidth, ICell, IRow, Table, TableBody, TableHeader } from '@patternfly/react-table';
 import { KialiIcon } from '../../../../config/KialiIcon';
 import { style } from 'typestyle';
 import { RenderComponentScroll } from '../../../../components/Nav/Page';
