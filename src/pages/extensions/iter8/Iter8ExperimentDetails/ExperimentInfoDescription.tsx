@@ -123,7 +123,7 @@ class ExperimentInfoDescription extends React.Component<ExperimentInfoDescriptio
   }
 
   getTotalDuration = () => {
-    if (this.props.experimentDetails == undefined) {
+    if (this.props.experimentDetails === undefined) {
       return 'Unknown';
     }
     // In Iter8 v1alpha2 this will be 60
