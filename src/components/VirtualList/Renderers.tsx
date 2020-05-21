@@ -5,11 +5,11 @@ import * as FilterHelper from '../FilterList/FilterHelper';
 import { appLabelFilter, versionLabelFilter } from '../../pages/WorkloadList/FiltersAndSorts';
 
 import MissingSidecar from '../MissingSidecar/MissingSidecar';
-import { hasMissingSidecar, IstioTypes, Renderer, Resource, TResource, SortResource } from './Config';
+import { hasMissingSidecar, IstioTypes, Renderer, Resource, SortResource, TResource } from './Config';
 import { DisplayMode, HealthIndicator } from '../Health/HealthIndicator';
 import { ValidationObjectSummary } from '../Validations/ValidationObjectSummary';
 import { WorkloadListItem } from '../../types/Workload';
-import { dicIstioType, IstioConfigItem } from '../../types/IstioConfigList';
+import { IstioConfigItem } from '../../types/IstioConfigList';
 import { AppListItem } from '../../types/AppList';
 import { ServiceListItem } from '../../types/ServiceList';
 import { ActiveFilter, LabelFilter } from '../../types/Filters';
@@ -45,7 +45,7 @@ const getIstioLink = (item: TResource) => {
     const subtype = type === 'adapter' ? item['adapter']!.adapters : item['template']!.templates;
     to = to + '/' + istioType + '/' + subtype + '/' + name;
   } else {
-    to = to + '/' + dicIstioType[IstioTypes[type].name] + '/' + name;
+    to = to + '/' + IstioTypes[type].url + '/' + name;
   }
   return to;
 };
