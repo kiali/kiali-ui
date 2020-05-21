@@ -188,7 +188,7 @@ class ExperimentInfoDescription extends React.Component<ExperimentInfoDescriptio
                 </CardActions>
                 <CardHeader>
                   <Title style={{ float: 'left' }} headingLevel="h3" size="2xl">
-                    {this.props.experimentDetails != undefined ? this.props.experimentDetails.experimentItem.name : ''}
+                    {this.props.experimentDetails !== undefined ? this.props.experimentDetails.experimentItem.name : ''}
                   </Title>
                 </CardHeader>
               </CardHead>
@@ -339,7 +339,7 @@ class ExperimentInfoDescription extends React.Component<ExperimentInfoDescriptio
       this.props.target
     }?tab=metrics&bylbl=destination_version`;
 
-    if (this.props.experimentDetails != undefined) {
+    if (this.props.experimentDetails !== undefined) {
       const params = `=${this.props.experimentDetails.experimentItem.baselineVersion},${
         this.props.experimentDetails.experimentItem.candidateVersion
       }`;
