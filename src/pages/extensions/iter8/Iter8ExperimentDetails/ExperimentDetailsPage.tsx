@@ -325,9 +325,9 @@ class ExperimentDetailsPage extends React.Component<Props, State> {
         <Iter8Dropdown
           experimentName={this.props.match.params.name}
           canDelete={this.state.canDelete}
-          canPause={(this.state.experiment?.experimentItem.phase === 'Progressing') ? true : false}
-          canResume={this.state.experiment?.experimentItem.phase === 'Pause' ? true : false}
-          canOverride={(this.state.experiment?.experimentItem.phase !== 'Completed') ? true : false}
+          canPause={this.state.experiment?.experimentItem.phase === 'Progressing'}
+          canResume={(this.state.experiment?.experimentItem.phase === 'Pause')}
+          canOverride={(this.state.experiment?.experimentItem.phase !== 'Completed')}
           onDelete={this.doDelete}
           onResume={() => this.doIter8Action('resume')}
           onPause={() => this.doIter8Action('pause')}
