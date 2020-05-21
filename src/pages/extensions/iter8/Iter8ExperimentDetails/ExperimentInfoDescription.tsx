@@ -2,26 +2,35 @@ import * as React from 'react';
 import {
   Badge,
   Card,
+  CardActions,
   CardBody,
+  CardHead,
+  CardHeader,
   DataList,
   DataListCell,
   DataListItem,
   DataListItemCells,
   DataListItemRow,
+  Dropdown,
+  DropdownItem,
   Grid,
   GridItem,
+  KebabToggle,
   List,
   ListItem,
   Stack,
   StackItem,
   Text,
-  TextVariants
+  TextVariants,
+  Title
 } from '@patternfly/react-core';
 
 import LocalTime from '../../../../components/Time/LocalTime';
 import { Link } from 'react-router-dom';
 import { Iter8ExpDetailsInfo } from '../../../../types/Iter8';
 import { RenderComponentScroll } from '../../../../components/Nav/Page';
+import { GraphType } from '../../../../types/Graph';
+import history from '../../../../app/History';
 
 interface ExperimentInfoDescriptionProps {
   target: string;
@@ -33,7 +42,16 @@ interface ExperimentInfoDescriptionProps {
   candidate: string;
 }
 
-class ExperimentInfoDescription extends React.Component<ExperimentInfoDescriptionProps> {
+type MiniGraphCardState = {
+  isKebabOpen: boolean;
+};
+
+class ExperimentInfoDescription extends React.Component<ExperimentInfoDescriptionProps, MiniGraphCardState> {
+  constructor(props) {
+    super(props);
+    this.state = { isKebabOpen: false };
+  }
+
   serviceLink(namespace: string, workload: string) {
     return '/namespaces/' + namespace + '/services/' + workload;
   }
@@ -58,6 +76,7 @@ class ExperimentInfoDescription extends React.Component<ExperimentInfoDescriptio
       </DataListCell>
     ];
   }
+
   workloadLink(namespace: string, workload: string) {
     return '/namespaces/' + namespace + '/workloads/' + workload;
   }
@@ -103,6 +122,32 @@ class ExperimentInfoDescription extends React.Component<ExperimentInfoDescriptio
     );
   }
 
+  getTotalDuration = () => {
+    if (this.props.experimentDetails == undefined) {
+      return 'Unknown';
+    }
+    // In Iter8 v1alpha2 this will be 60
+    let interval = 60;
+
+    let unit = this.props.experimentDetails.trafficControl.interval.substr(this.props.experimentDetails.trafficControl.interval.length - 1);
+    let valueInInterval = Number(this.props.experimentDetails.trafficControl.interval.substring(0, this.props.experimentDetails.trafficControl.interval.length - 1));
+    switch (unit) {
+      case 's' :
+        interval = valueInInterval;
+        break;
+      case 'm' :
+        interval = valueInInterval * 60;
+        break;
+      case 'h' :
+        interval = valueInInterval * 60 * 60;
+        break;
+    }
+    const totalSecond = this.props.experimentDetails.trafficControl.maxIterations * interval;
+    const hours = Math.floor(totalSecond / 60 / 60);
+    const minutes = Math.floor(totalSecond / 60) - hours * 60;
+    return hours + ' hours ' + minutes + ' minutes ' + (totalSecond % 60) + ' seconds';
+  };
+
   render() {
     let targetNamespace = this.props.experimentDetails
       ? this.props.experimentDetails.experimentItem.targetServiceNamespace
@@ -110,17 +155,38 @@ class ExperimentInfoDescription extends React.Component<ExperimentInfoDescriptio
     let targetService = this.props.experimentDetails
       ? this.props.experimentDetails.experimentItem.targetService
       : this.props.target;
+    const graphCardActions = [<DropdownItem key="viewGraph" onClick={this.showFullMetric}>Show service inbound
+      metrics</DropdownItem>,
+      <DropdownItem key="viewGraph" onClick={this.showFullGraph}>Show traffic graph</DropdownItem>];
+
+
     return (
       <RenderComponentScroll>
         <Grid gutter="md" style={{ margin: '10px' }}>
           <GridItem span={6}>
             <Card style={{ height: '100%' }}>
+              <CardHead>
+                <CardActions>
+                  <Dropdown
+                    toggle={<KebabToggle onToggle={this.onGraphActionsToggle}/>}
+                    dropdownItems={graphCardActions}
+                    isPlain
+                    isOpen={this.state.isKebabOpen}
+                    position={'right'}
+                  />
+                </CardActions>
+                <CardHeader>
+                  <Title style={{ float: 'left' }} headingLevel="h3" size="2xl">
+                    {this.props.experimentDetails?.experimentItem.name}
+                  </Title>
+                </CardHeader>
+              </CardHead>
               <CardBody>
                 <DataList aria-label="baseline and candidate">
                   <DataListItem aria-labelledby="target">
                     <DataListItemRow>
-                      <DataListItemCells dataListCells={this.serviceInfo()} />
-                      <DataListItemCells dataListCells={this.serviceLinkCell(targetNamespace, targetService)} />
+                      <DataListItemCells dataListCells={this.serviceInfo()}/>
+                      <DataListItemCells dataListCells={this.serviceLinkCell(targetNamespace, targetService)}/>
                     </DataListItemRow>
                   </DataListItem>
 
@@ -191,8 +257,8 @@ class ExperimentInfoDescription extends React.Component<ExperimentInfoDescriptio
                             time={
                               this.props.experimentDetails && this.props.experimentDetails.experimentItem.createdAt
                                 ? new Date(
-                                    this.props.experimentDetails.experimentItem.createdAt / 1000000
-                                  ).toISOString()
+                                this.props.experimentDetails.experimentItem.createdAt / 1000000
+                                ).toISOString()
                                 : ''
                             }
                           />
@@ -205,8 +271,8 @@ class ExperimentInfoDescription extends React.Component<ExperimentInfoDescriptio
                             time={
                               this.props.experimentDetails && this.props.experimentDetails.experimentItem.startedAt
                                 ? new Date(
-                                    this.props.experimentDetails.experimentItem.startedAt / 1000000
-                                  ).toISOString()
+                                this.props.experimentDetails.experimentItem.startedAt / 1000000
+                                ).toISOString()
                                 : ''
                             }
                           />
@@ -226,6 +292,13 @@ class ExperimentInfoDescription extends React.Component<ExperimentInfoDescriptio
                       </GridItem>
                     </Grid>
                   </StackItem>
+                  {this.props.experimentDetails && this.props.experimentDetails.experimentItem.endedAt
+                    ? '' :
+                    <StackItem id={'totalDurationTime'}>
+                      <Text component={TextVariants.h3}> Estimated experiment duration: </Text>
+                      {this.getTotalDuration()}
+                    </StackItem>
+                  }
                 </Stack>
               </CardBody>
             </Card>
@@ -234,6 +307,24 @@ class ExperimentInfoDescription extends React.Component<ExperimentInfoDescriptio
       </RenderComponentScroll>
     );
   }
+
+  private onGraphActionsToggle = (isOpen: boolean) => {
+    this.setState({
+      isKebabOpen: isOpen
+    });
+  };
+
+  private showFullGraph = () => {
+    let graphType: GraphType = GraphType.WORKLOAD;
+    const graphUrl = `/graph/namespaces?graphType=${graphType}&injectServiceNodes=true&namespaces=${this.props.namespace}&unusedNodes=false&edges=requestsPercentage&`;
+    history.push(graphUrl);
+  };
+
+  private showFullMetric = () => {
+    const params = `=${this.props.experimentDetails?.experimentItem.baselineVersion},${this.props.experimentDetails?.experimentItem.candidateVersion}`;
+    const graphUrl = `/namespaces/${this.props.namespace}/services/${this.props.target}?tab=metrics&bylbl=destination_version`;
+    history.push(graphUrl + encodeURIComponent(params));
+  };
 }
 
 export default ExperimentInfoDescription;

@@ -11,8 +11,10 @@ export interface Iter8Experiment {
   status: string;
   baseline: string;
   baselinePercentage: number;
+  baselineVersion: string;
   candidate: string;
   candidatePercentage: number;
+  candidateVersion: string;
   namespace: string;
   createdAt: number;
   startedAt: number;
@@ -49,19 +51,23 @@ export interface ExperimentItem {
   endedAt: number;
   baseline: string;
   baselinePercentage: number;
+  baselineVersion: string;
   candidate: string;
   candidatePercentage: number;
+  candidateVersion: string;
   targetService: string;
   targetServiceNamespace: string;
   assessmentConclusion: string[];
   labels?: { [key: string]: string };
   resourceVersion: string;
 }
+
 export interface SuccessCriteria {
   name: string;
   criteria: Criteria;
   metric: Metric;
 }
+
 export interface Metric {
   absent_value: string;
   is_count: boolean;
@@ -80,6 +86,10 @@ export interface Criteria {
   toleranceType: string;
   sampleSize: number;
   stopOnFailure: boolean;
+}
+
+export interface ExperimentAction {
+  action: string;
 }
 
 export interface ExperimentSpec {

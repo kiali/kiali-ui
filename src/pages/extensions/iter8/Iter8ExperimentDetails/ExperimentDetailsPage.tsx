@@ -18,8 +18,7 @@ import {
 import { style } from 'typestyle';
 import * as API from '../../../../services/Api';
 import * as AlertUtils from '../../../../utils/AlertUtils';
-import { Iter8ExpDetailsInfo } from '../../../../types/Iter8';
-import RefreshButtonContainer from '../../../../components/Refresh/RefreshButton';
+import { ExperimentAction, Iter8ExpDetailsInfo } from '../../../../types/Iter8';
 import Iter8Dropdown from './Iter8Dropdown';
 import history from '../../../../app/History';
 import * as FilterHelper from '../../../../components/FilterList/FilterHelper';
@@ -30,10 +29,16 @@ import CriteriaInfoDescription from './CriteriaInfoDescription';
 import { KialiAppState } from '../../../../store/Store';
 import { durationSelector } from '../../../../store/Selectors';
 import { PfColors } from '../../../../components/Pf/PfColors';
+import { DurationInSeconds } from '../../../../types/Common';
+import TimeControlsContainer from '../../../../components/Time/TimeControls';
 
-interface Props {
+interface ExpeerimentId {
   namespace: string;
   name: string;
+}
+
+interface Props extends RouteComponentProps<ExpeerimentId> {
+  duration: DurationInSeconds;
 }
 
 interface State {
@@ -60,8 +65,8 @@ const breadcrumbPadding = style({
   padding: '22px 0 5px 0'
 });
 
-class ExperimentDetailsPage extends React.Component<RouteComponentProps<Props>, State> {
-  constructor(props: RouteComponentProps<Props>) {
+class ExperimentDetailsPage extends React.Component<Props, State> {
+  constructor(props: Props) {
     super(props);
 
     const urlParams = new URLSearchParams(history.location.search);
@@ -105,7 +110,7 @@ class ExperimentDetailsPage extends React.Component<RouteComponentProps<Props>, 
     this.fetchExperiment();
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps: Props, _prevState: State) {
     if (this.state.currentTab !== activeTab(tabName, defaultTab)) {
       this.setState(
         {
@@ -113,8 +118,11 @@ class ExperimentDetailsPage extends React.Component<RouteComponentProps<Props>, 
         },
         () => this.doRefresh()
       );
+    } else if (prevProps.duration !== this.props.duration) {
+      this.doRefresh();
     }
   }
+
   // Extensions breadcrumb,
   // It is a simplified view of BreadcrumbView with fixed rendering
   breadcrumb = () => {
@@ -160,18 +168,18 @@ class ExperimentDetailsPage extends React.Component<RouteComponentProps<Props>, 
               <Text component={TextVariants.h3}> Baseline / Traffic Split</Text>
               {this.state.experiment
                 ? this.state.experiment.experimentItem.baseline +
-                  ' / ' +
-                  this.state.experiment.experimentItem.baselinePercentage +
-                  ' % '
+                ' / ' +
+                this.state.experiment.experimentItem.baselinePercentage +
+                ' % '
                 : ''}
             </StackItem>
             <StackItem id={'candidate'}>
               <Text component={TextVariants.h3}> Candidate / Traffic Split</Text>
               {this.state.experiment
                 ? this.state.experiment.experimentItem.candidate +
-                  ' / ' +
-                  this.state.experiment.experimentItem.candidatePercentage +
-                  ' % '
+                ' / ' +
+                this.state.experiment.experimentItem.candidatePercentage +
+                ' % '
                 : ''}
             </StackItem>
           </Stack>
@@ -259,14 +267,72 @@ class ExperimentDetailsPage extends React.Component<RouteComponentProps<Props>, 
       });
   };
 
+  doPause = () => {
+    const action: ExperimentAction = {
+      action: 'pause'
+    };
+    API.updateExperiment(this.props.match.params.namespace, this.props.match.params.name, JSON.stringify(action))
+      .then(() => this.backToList())
+      .catch(error => {
+        AlertUtils.addError('Could not pause Iter8 Experiment.', error);
+      });
+  };
+
+  doResume = () => {
+    const action: ExperimentAction = {
+      action: 'resume'
+    };
+    API.updateExperiment(this.props.match.params.namespace, this.props.match.params.name, JSON.stringify(action))
+      .then(() => this.backToList())
+      .catch(error => {
+        AlertUtils.addError('Could not resume Iter8 Experiment.', error);
+      });
+  };
+
+  doSuccess = () => {
+    const action: ExperimentAction = {
+      action: 'override_success'
+    };
+    API.updateExperiment(this.props.match.params.namespace, this.props.match.params.name, JSON.stringify(action))
+      .then(() => this.backToList())
+      .catch(error => {
+        AlertUtils.addError('Could not resume Iter8 Experiment.', error);
+      });
+  };
+
+  doIter8Action = (requestAction: string): void => {
+    let errMsg = 'Could not' + requestAction + ' Iter8 Experiment';
+    const action: ExperimentAction = {
+      action: requestAction
+    };
+    API.updateExperiment(this.props.match.params.namespace, this.props.match.params.name, JSON.stringify(action))
+      .then(() => this.doRefresh())
+      .catch(error => {
+        AlertUtils.addError(errMsg, error);
+      });
+  };
+
+
   renderRightToolbar = () => {
     return (
       <span style={{ position: 'absolute', right: '20px', zIndex: 1 }}>
-        <RefreshButtonContainer handleRefresh={this.doRefresh} />
+         <TimeControlsContainer
+           key={'DurationDropdown'}
+           id="experiment-duration-dropdown"
+           handleRefresh={this.doRefresh}
+           disabled={false}
+         />
         <Iter8Dropdown
           experimentName={this.props.match.params.name}
           canDelete={this.state.canDelete}
+          canPause={(this.state.experiment?.experimentItem.phase === 'Progressing') ? true : false}
+          canResume={this.state.experiment?.experimentItem.phase === 'Pause' ? true : false}
+          canOverride={(this.state.experiment?.experimentItem.phase !== 'Completed') ? true : false}
           onDelete={this.doDelete}
+          onResume={() => this.doIter8Action('resume')}
+          onPause={() => this.doIter8Action('pause')}
+          onSuccess={() => this.doIter8Action('override_success')}
+          onFailure={() => this.doIter8Action('override_failure')}
         />
       </span>
     );
@@ -288,7 +354,7 @@ class ExperimentDetailsPage extends React.Component<RouteComponentProps<Props>, 
     );
     const criteriaTab = (
       <Tab eventKey={1} title="Criteria" key="Criteria">
-        <CriteriaInfoDescription criterias={this.state.experiment ? this.state.experiment.criterias : []} />
+        <CriteriaInfoDescription criterias={this.state.experiment ? this.state.experiment.criterias : []}/>
       </Tab>
     );
     const tabsArray: any[] = [overviewTab, criteriaTab];
