@@ -173,7 +173,7 @@ class IstioConfigNewPage extends React.Component<Props, State> {
 
   onIstioResourceCreate = () => {
     const jsonIstioObjects: { namespace: string; json: string }[] = [];
-    this.props.activeNamespaces.map(ns => {
+    this.props.activeNamespaces.forEach(ns => {
       switch (this.state.istioResource) {
         case AUTHORIZACION_POLICY:
           jsonIstioObjects.push({
