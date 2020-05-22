@@ -397,7 +397,7 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
   };
 
   private handleHideLogLines = (filterValue: string) => {
-    if (filterValue == '') {
+    if (filterValue === '') {
       this.setState({ showClearHideLogButton: false });
     }
     if (filterValue !== '' && this.state.appLogs?.logs && this.state.proxyLogs?.logs) {
