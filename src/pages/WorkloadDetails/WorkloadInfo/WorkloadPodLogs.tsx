@@ -406,7 +406,7 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
 
       const filteredAppLogLines = lines
         .map((line: string) => {
-          return !line.includes(filterValue) ? line : undefined;
+          return !line.toLowerCase().includes(filterValue.toLowerCase()) ? line : undefined;
         })
         .filter((line) => {
           // return non-undefined lines
@@ -416,7 +416,7 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
 
       const filteredProxyLogLines = proxyLogLines
         .map((line: string) => {
-          return !line.includes(filterValue) ? line : undefined;
+          return !line.toLowerCase().includes(filterValue.toLowerCase()) ? line : undefined;
         })
         .filter((line) => {
           // return non-undefined lines
