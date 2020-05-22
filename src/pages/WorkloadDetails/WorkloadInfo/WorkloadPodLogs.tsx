@@ -54,6 +54,7 @@ interface WorkloadPodLogsState {
   logWindowSelections: any[];
   sideBySideOrientation: boolean;
   hideLogValue: string;
+  showClearHideLogButton: boolean;
   splitPercent: string;
 }
 
@@ -154,6 +155,7 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
         logWindowSelections: [],
         sideBySideOrientation: false,
         hideLogValue: '',
+        showClearHideLogButton: false,
         splitPercent: '50%',
       };
       return;
@@ -180,6 +182,7 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
       logWindowSelections: [],
       sideBySideOrientation: false,
       hideLogValue: '',
+      showClearHideLogButton: false,
       splitPercent: '50%',
     };
   }
@@ -259,11 +262,12 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
                           type="text"
                           onChange={this.handleHideLogLines}
                           defaultValue={this.state.hideLogValue}
+                          aria-label="log hide text"
                           placeholder="Hide..."
                         />
                       </ToolbarItem>
                       <ToolbarItem>
-                        {this.state.hideLogValue && (
+                        {this.state.showClearHideLogButton && (
                           <Tooltip key="clear_hide_log" position="top" content="Clear Hide Log Entries...">
                             <Button variant={ButtonVariant.control} onClick={this.clearHide}>
                               <KialiIcon.Close />
@@ -393,6 +397,9 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
   };
 
   private handleHideLogLines = (filterValue: string) => {
+    if (filterValue == '') {
+      this.setState({ showClearHideLogButton: false });
+    }
     if (filterValue !== '' && this.state.appLogs?.logs && this.state.proxyLogs?.logs) {
       const lines: string[] = this.state.appLogs.logs.split('\n');
       const proxyLogLines: string[] = this.state.proxyLogs.logs.split('\n');
@@ -419,6 +426,7 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
 
       this.setState({
         hideLogValue: filterValue,
+        showClearHideLogButton: true,
         filteredAppLogs: filteredAppLogLines,
         filteredProxyLogs: filteredProxyLogLines,
       });
