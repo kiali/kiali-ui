@@ -276,6 +276,8 @@ class IstioConfigNewPage extends React.Component<Props, State> {
   onChangePeerAuthentication = (peerAuthentication: PeerAuthenticationState) => {
     this.setState(prevState => {
       prevState.peerAuthentication.workloadSelector = peerAuthentication.workloadSelector;
+      prevState.peerAuthentication.mtls = peerAuthentication.mtls;
+      prevState.peerAuthentication.portLevelMtls = peerAuthentication.portLevelMtls;
       return {
         peerAuthentication: prevState.peerAuthentication
       };
