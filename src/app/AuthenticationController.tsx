@@ -23,6 +23,7 @@ import { JaegerInfo } from '../types/JaegerInfo';
 interface AuthenticationControllerReduxProps {
   authenticated: boolean;
   checkCredentials: () => void;
+  isLoginError: boolean;
   setJaegerInfo: (jaegerInfo: JaegerInfo | null) => void;
   setServerStatus: (serverStatus: ServerStatus) => void;
   setMeshTlsStatus: (meshStatus: TLSStatus) => void;
@@ -107,6 +108,10 @@ class AuthenticationController extends React.Component<AuthenticationControllerP
       this.setState({ stage: LoginStage.LOGIN });
     }
 
+    if (!prevProps.isLoginError && this.props.isLoginError) {
+      this.setState({ stage: LoginStage.LOGIN });
+    }
+
     this.setDocLayout();
   }
 
@@ -185,7 +190,8 @@ const processServerStatus = (dispatch: KialiDispatch, serverStatus: ServerStatus
 };
 
 const mapStateToProps = (state: KialiAppState) => ({
-  authenticated: state.authentication.status === LoginStatus.loggedIn
+  authenticated: state.authentication.status === LoginStatus.loggedIn,
+  isLoginError: state.authentication.status === LoginStatus.error
 });
 
 const mapDispatchToProps = (dispatch: KialiDispatch) => ({

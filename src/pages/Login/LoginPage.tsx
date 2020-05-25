@@ -253,9 +253,19 @@ export class LoginPage extends React.Component<LoginProps, LoginState> {
       );
     } else {
       loginPane = (
-        <Button onClick={this.handleSubmit} style={{ width: '100%' }} variant="primary">
-          {loginLabel}
-        </Button>
+        <Form>
+          <FormHelperText
+            isError={this.props.status === LoginStatus.error}
+            isHidden={this.props.status !== LoginStatus.error && this.props.message === '' && messages.length === 0}
+          >
+            {messages}
+          </FormHelperText>
+          <ActionGroup>
+            <Button type="submit" onClick={this.handleSubmit} style={{ width: '100%' }} variant="primary">
+              {loginLabel}
+            </Button>
+          </ActionGroup>
+        </Form>
       );
     }
 
