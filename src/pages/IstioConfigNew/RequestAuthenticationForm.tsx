@@ -13,6 +13,9 @@ type Props = {
 export type RequestAuthenticationState = {
   workloadSelector: string;
   jwtRules: JWTRule[];
+  addWorkloadSelector: boolean;
+  workloadSelectorValid: boolean;
+  addJWTRules: boolean;
 };
 
 export const REQUEST_AUTHENTICATION = 'RequestAuthentication';
@@ -20,40 +23,70 @@ export const REQUEST_AUTHENTICATIONS = 'requestauthentications';
 
 export const initRequestAuthentication = (): RequestAuthenticationState => ({
   workloadSelector: '',
-  jwtRules: []
+  jwtRules: [],
+  addWorkloadSelector: false,
+  workloadSelectorValid: false,
+  addJWTRules: false
 });
 
-type State = {
-  addWorkloadSelector: boolean;
-  workloadSelectorValid: boolean;
-  workloadSelectorLabels: string;
-  addJWTRules: boolean;
-  jwtRules: JWTRule[];
-};
-
-export const isRequestAuthenticationStateValid = (_ra: RequestAuthenticationState): boolean => {
+export const isRequestAuthenticationStateValid = (ra: RequestAuthenticationState): boolean => {
+  const workloadSelectorRule = ra.addWorkloadSelector ? ra.workloadSelectorValid : true;
+  const jwtRulesRule = ra.addJWTRules ? ra.jwtRules.length > 0 : true;
   // Not yet used
-  return true;
+  return workloadSelectorRule && jwtRulesRule;
 };
 
-class RequestAuthenticationForm extends React.Component<Props, State> {
+class RequestAuthenticationForm extends React.Component<Props, RequestAuthenticationState> {
   constructor(props: Props) {
     super(props);
-    this.state = {
-      addWorkloadSelector: false,
-      workloadSelectorValid: false,
-      workloadSelectorLabels: this.props.requestAuthentication.workloadSelector,
-      addJWTRules: false,
-      jwtRules: []
-    };
+    this.state = initRequestAuthentication();
   }
+
+  componentDidMount() {
+    this.setState({
+      workloadSelector: this.props.requestAuthentication.workloadSelector,
+      jwtRules: this.props.requestAuthentication.jwtRules,
+      addWorkloadSelector: this.props.requestAuthentication.addWorkloadSelector,
+      workloadSelectorValid: this.props.requestAuthentication.workloadSelectorValid,
+      addJWTRules: this.props.requestAuthentication.addJWTRules
+    });
+  }
+
+  onRequestAuthenticationChange = () => {
+    this.props.onChange(this.state);
+  };
+
+  onChangeWorkloadSelector = () => {
+    this.setState(
+      prevState => {
+        return {
+          addWorkloadSelector: !prevState.addWorkloadSelector
+        };
+      },
+      () => this.onRequestAuthenticationChange()
+    );
+  };
+
+  onChangeJwtRules = () => {
+    this.setState(
+      prevState => {
+        return {
+          addJWTRules: !prevState.addJWTRules
+        };
+      },
+      () => this.onRequestAuthenticationChange()
+    );
+  };
 
   addWorkloadLabels = (value: string, _) => {
     if (value.length === 0) {
-      this.setState({
-        workloadSelectorValid: false,
-        workloadSelectorLabels: ''
-      });
+      this.setState(
+        {
+          workloadSelectorValid: false,
+          workloadSelector: ''
+        },
+        () => this.onRequestAuthenticationChange()
+      );
       return;
     }
     value = value.trim();
@@ -79,18 +112,10 @@ class RequestAuthenticationForm extends React.Component<Props, State> {
     this.setState(
       {
         workloadSelectorValid: isValid,
-        workloadSelectorLabels: value
+        workloadSelector: value
       },
       () => this.onRequestAuthenticationChange()
     );
-  };
-
-  onRequestAuthenticationChange = () => {
-    const requestAuthentication: RequestAuthenticationState = {
-      workloadSelector: this.state.workloadSelectorLabels,
-      jwtRules: this.state.jwtRules
-    };
-    this.props.onChange(requestAuthentication);
   };
 
   onAddJwtRule = (jwtRule: JWTRule) => {
@@ -126,11 +151,7 @@ class RequestAuthenticationForm extends React.Component<Props, State> {
             label={' '}
             labelOff={' '}
             isChecked={this.state.addWorkloadSelector}
-            onChange={() => {
-              this.setState(prevState => ({
-                addWorkloadSelector: !prevState.addWorkloadSelector
-              }));
-            }}
+            onChange={this.onChangeWorkloadSelector}
           />
         </FormGroup>
         {this.state.addWorkloadSelector && (
@@ -145,7 +166,7 @@ class RequestAuthenticationForm extends React.Component<Props, State> {
               id="gwHosts"
               name="gwHosts"
               isDisabled={!this.state.addWorkloadSelector}
-              value={this.state.workloadSelectorLabels}
+              value={this.state.workloadSelector}
               onChange={this.addWorkloadLabels}
               isValid={this.state.workloadSelectorValid}
             />
@@ -157,11 +178,7 @@ class RequestAuthenticationForm extends React.Component<Props, State> {
             label={' '}
             labelOff={' '}
             isChecked={this.state.addJWTRules}
-            onChange={() => {
-              this.setState(prevState => ({
-                addJWTRules: !prevState.addJWTRules
-              }));
-            }}
+            onChange={this.onChangeJwtRules}
           />
         </FormGroup>
         {this.state.addJWTRules && (
