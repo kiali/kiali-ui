@@ -6,8 +6,8 @@ import Namespace from '../../types/Namespace';
 import { ActionGroup, Button, Form, FormGroup, FormSelect, FormSelectOption, TextInput } from '@patternfly/react-core';
 import { RenderContent } from '../../components/Nav/Page';
 import { style } from 'typestyle';
-import GatewayForm, { GatewayState } from './GatewayForm';
-import SidecarForm, { SidecarState } from './SidecarForm';
+import GatewayForm, { GATEWAY, GATEWAYS, GatewayState, initGateway, isGatewayStateValid } from './GatewayForm';
+import SidecarForm, { initSidecar, isSidecarStateValid, SIDECAR, SIDECARS, SidecarState } from './SidecarForm';
 import { Paths, serverConfig } from '../../config';
 import { PromisesRegistry } from '../../utils/CancelablePromises';
 import * as API from '../../services/Api';
@@ -23,14 +23,27 @@ import {
 } from '../../components/IstioWizards/IstioWizardActions';
 import { MessageType } from '../../types/MessageCenter';
 import AuthorizationPolicyForm, {
+  AUTHORIZACION_POLICY,
+  AUTHORIZATION_POLICIES,
   AuthorizationPolicyState,
-  INIT_AUTHORIZATION_POLICY
+  initAuthorizationPolicy,
+  isAuthorizationPolicyStateValid
 } from './AuthorizationPolicyForm';
-import PeerAuthenticationForm, { INIT_PEER_AUTHENTICATION, PeerAuthenticationState } from './PeerAuthenticationForm';
+import PeerAuthenticationForm, {
+  initPeerAuthentication,
+  isPeerAuthenticationStateValid,
+  PEER_AUTHENTICATION,
+  PEER_AUTHENTICATIONS,
+  PeerAuthenticationState
+} from './PeerAuthenticationForm';
 import RequestAuthenticationForm, {
-  INIT_REQUEST_AUTHENTICATION,
+  initRequestAuthentication,
+  isRequestAuthenticationStateValid,
+  REQUEST_AUTHENTICATION,
+  REQUEST_AUTHENTICATIONS,
   RequestAuthenticationState
 } from './RequestAuthenticationForm';
+import { isValidK8SName } from '../../helpers/ValidationHelpers';
 
 type Props = {
   activeNamespaces: Namespace[];
@@ -49,17 +62,6 @@ type State = {
 
 const formPadding = style({ padding: '30px 20px 30px 20px' });
 
-const AUTHORIZACION_POLICY = 'AuthorizationPolicy';
-const AUTHORIZATION_POLICIES = 'authorizationpolicies';
-const GATEWAY = 'Gateway';
-const GATEWAYS = 'gateways';
-const PEER_AUTHENTICATION = 'PeerAuthentication';
-const PEER_AUTHENTICATIONS = 'peerauthentications';
-const REQUEST_AUTHENTICATION = 'RequestAuthentication';
-const REQUEST_AUTHENTICATIONS = 'requestauthentications';
-const SIDECAR = 'Sidecar';
-const SIDECARS = 'sidecars';
-
 const DIC = {
   AuthorizationPolicy: AUTHORIZATION_POLICIES,
   Gateway: GATEWAYS,
@@ -76,27 +78,16 @@ const istioResourceOptions = [
   { value: SIDECAR, label: SIDECAR, disabled: false }
 ];
 
-const INIT_STATE = (): State => ({
+const initState = (): State => ({
   istioResource: istioResourceOptions[0].value,
   name: '',
   istioPermissions: {},
-  authorizationPolicy: INIT_AUTHORIZATION_POLICY(),
-  gateway: {
-    gatewayServers: []
-  },
-  peerAuthentication: INIT_PEER_AUTHENTICATION(),
-  requestAuthentication: INIT_REQUEST_AUTHENTICATION(),
-  sidecar: {
-    egressHosts: [
-      // Init with the istio-system/* for sidecar
-      {
-        host: serverConfig.istioNamespace + '/*'
-      }
-    ],
-    addWorkloadSelector: false,
-    workloadSelectorValid: false,
-    workloadSelectorLabels: ''
-  }
+  authorizationPolicy: initAuthorizationPolicy(),
+  gateway: initGateway(),
+  peerAuthentication: initPeerAuthentication(),
+  requestAuthentication: initRequestAuthentication(),
+  // Init with the istio-system/* for sidecar
+  sidecar: initSidecar(serverConfig.istioNamespace + '/*')
 });
 
 class IstioConfigNewPage extends React.Component<Props, State> {
@@ -104,7 +95,7 @@ class IstioConfigNewPage extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    this.state = INIT_STATE();
+    this.state = initState();
   }
 
   componentWillUnmount() {
@@ -113,7 +104,7 @@ class IstioConfigNewPage extends React.Component<Props, State> {
 
   componentDidMount() {
     // Init component state
-    this.setState(Object.assign({}, INIT_STATE));
+    this.setState(Object.assign({}, initState));
     this.fetchPermissions();
   }
 
@@ -225,59 +216,55 @@ class IstioConfigNewPage extends React.Component<Props, State> {
   };
 
   backToList = () => {
-    this.setState(INIT_STATE(), () => {
+    this.setState(initState(), () => {
       // Back to list page
       history.push(`/${Paths.ISTIO}?namespaces=${this.props.activeNamespaces.join(',')}`);
     });
   };
 
-  isAuthorizationPolicyValid = (): boolean => {
-    return this.state.istioResource === AUTHORIZACION_POLICY;
-  };
-
-  isGatewayValid = (): boolean => {
-    return this.state.istioResource === GATEWAY && this.state.gateway.gatewayServers.length > 0;
-  };
-
-  isPeerAuthenticationValid = (): boolean => {
-    const validPortsMtls =
-      this.state.peerAuthentication.portLevelMtls.length > 0 &&
-      this.state.peerAuthentication.workloadSelector.length === 0
-        ? false
-        : true;
-    return this.state.istioResource === PEER_AUTHENTICATION && validPortsMtls;
-  };
-
-  isRequestAuthenticationValid = (): boolean => {
-    return this.state.istioResource === REQUEST_AUTHENTICATION;
-  };
-
-  isSidecarValid = (): boolean => {
-    return (
-      this.state.istioResource === SIDECAR &&
-      this.state.sidecar.egressHosts.length > 0 &&
-      (!this.state.sidecar.addWorkloadSelector ||
-        (this.state.sidecar.addWorkloadSelector && this.state.sidecar.workloadSelectorValid))
-    );
+  isIstioFormValid = (): boolean => {
+    switch (this.state.istioResource) {
+      case AUTHORIZACION_POLICY:
+        return isAuthorizationPolicyStateValid(this.state.authorizationPolicy);
+      case GATEWAY:
+        return isGatewayStateValid(this.state.gateway);
+      case PEER_AUTHENTICATION:
+        return isPeerAuthenticationStateValid(this.state.peerAuthentication);
+      case REQUEST_AUTHENTICATION:
+        return isRequestAuthenticationStateValid(this.state.requestAuthentication);
+      case SIDECAR:
+        return isSidecarStateValid(this.state.sidecar);
+      default:
+        return false;
+    }
+    return false;
   };
 
   onChangeAuthorizationPolicy = (authorizationPolicy: AuthorizationPolicyState) => {
     this.setState(prevState => {
-      prevState.authorizationPolicy.workloadSelector = authorizationPolicy.workloadSelector;
-      prevState.authorizationPolicy.action = authorizationPolicy.action;
-      prevState.authorizationPolicy.policy = authorizationPolicy.policy;
-      prevState.authorizationPolicy.rules = authorizationPolicy.rules;
+      Object.keys(prevState.authorizationPolicy).forEach(
+        key => (prevState.authorizationPolicy[key] = authorizationPolicy[key])
+      );
       return {
         authorizationPolicy: prevState.authorizationPolicy
       };
     });
   };
 
+  onChangeGateway = (gateway: GatewayState) => {
+    this.setState(prevState => {
+      Object.keys(prevState.gateway).forEach(key => (prevState.gateway[key] = gateway[key]));
+      return {
+        gateway: prevState.gateway
+      };
+    });
+  };
+
   onChangePeerAuthentication = (peerAuthentication: PeerAuthenticationState) => {
     this.setState(prevState => {
-      prevState.peerAuthentication.workloadSelector = peerAuthentication.workloadSelector;
-      prevState.peerAuthentication.mtls = peerAuthentication.mtls;
-      prevState.peerAuthentication.portLevelMtls = peerAuthentication.portLevelMtls;
+      Object.keys(prevState.peerAuthentication).forEach(
+        key => (prevState.peerAuthentication[key] = peerAuthentication[key])
+      );
       return {
         peerAuthentication: prevState.peerAuthentication
       };
@@ -286,27 +273,29 @@ class IstioConfigNewPage extends React.Component<Props, State> {
 
   onChangeRequestAuthentication = (requestAuthentication: RequestAuthenticationState) => {
     this.setState(prevState => {
-      prevState.requestAuthentication.workloadSelector = requestAuthentication.workloadSelector;
-      prevState.requestAuthentication.jwtRules = requestAuthentication.jwtRules;
+      Object.keys(prevState.requestAuthentication).forEach(
+        key => (prevState.requestAuthentication[key] = requestAuthentication[key])
+      );
       return {
         requestAuthentication: prevState.requestAuthentication
       };
     });
   };
 
+  onChangeSidecar = (sidecar: SidecarState) => {
+    this.setState(prevState => {
+      Object.keys(prevState.sidecar).forEach(key => (prevState.sidecar[key] = sidecar[key]));
+      return {
+        sidecar: prevState.sidecar
+      };
+    });
+  };
+
   render() {
     const canCreate = this.props.activeNamespaces.every(ns => this.canCreate(ns.name));
-    const isNameValid = this.state.name.length > 0;
+    const isNameValid = isValidK8SName(this.state.name);
     const isNamespacesValid = this.props.activeNamespaces.length > 0;
-    const isFormValid =
-      canCreate &&
-      isNameValid &&
-      isNamespacesValid &&
-      (this.isGatewayValid() ||
-        this.isSidecarValid() ||
-        this.isAuthorizationPolicyValid() ||
-        this.isPeerAuthenticationValid() ||
-        this.isRequestAuthenticationValid());
+    const isFormValid = canCreate && isNameValid && isNamespacesValid && this.isIstioFormValid();
     return (
       <RenderContent>
         <Form className={formPadding} isHorizontal={true}>
@@ -346,7 +335,7 @@ class IstioConfigNewPage extends React.Component<Props, State> {
             isRequired={true}
             fieldId="name"
             helperText={this.state.istioResource + ' name'}
-            helperTextInvalid={this.state.istioResource + ' name is required'}
+            helperTextInvalid={'A valid ' + this.state.istioResource + ' name is required'}
             isValid={isNameValid}
           >
             <TextInput
@@ -367,29 +356,7 @@ class IstioConfigNewPage extends React.Component<Props, State> {
             />
           )}
           {this.state.istioResource === GATEWAY && (
-            <GatewayForm
-              gatewayServers={this.state.gateway.gatewayServers}
-              onAdd={gatewayServer => {
-                this.setState(prevState => {
-                  prevState.gateway.gatewayServers.push(gatewayServer);
-                  return {
-                    gateway: {
-                      gatewayServers: prevState.gateway.gatewayServers
-                    }
-                  };
-                });
-              }}
-              onRemove={index => {
-                this.setState(prevState => {
-                  prevState.gateway.gatewayServers.splice(index, 1);
-                  return {
-                    gateway: {
-                      gatewayServers: prevState.gateway.gatewayServers
-                    }
-                  };
-                });
-              }}
-            />
+            <GatewayForm gateway={this.state.gateway} onChange={this.onChangeGateway} />
           )}
           {this.state.istioResource === PEER_AUTHENTICATION && (
             <PeerAuthenticationForm
@@ -404,49 +371,7 @@ class IstioConfigNewPage extends React.Component<Props, State> {
             />
           )}
           {this.state.istioResource === SIDECAR && (
-            <SidecarForm
-              egressHosts={this.state.sidecar.egressHosts}
-              addWorkloadSelector={this.state.sidecar.addWorkloadSelector}
-              workloadSelectorLabels={this.state.sidecar.workloadSelectorLabels}
-              onAddEgressHost={egressHost => {
-                this.setState(prevState => {
-                  prevState.sidecar.egressHosts.push(egressHost);
-                  return {
-                    sidecar: {
-                      egressHosts: prevState.sidecar.egressHosts,
-                      addWorkloadSelector: prevState.sidecar.addWorkloadSelector,
-                      workloadSelectorValid: prevState.sidecar.workloadSelectorValid,
-                      workloadSelectorLabels: prevState.sidecar.workloadSelectorLabels
-                    }
-                  };
-                });
-              }}
-              onChangeSelector={(addWorkloadSelector, workloadSelectorValid, workloadSelectorLabels) => {
-                this.setState(prevState => {
-                  return {
-                    sidecar: {
-                      egressHosts: prevState.sidecar.egressHosts,
-                      addWorkloadSelector: addWorkloadSelector,
-                      workloadSelectorValid: workloadSelectorValid,
-                      workloadSelectorLabels: workloadSelectorLabels
-                    }
-                  };
-                });
-              }}
-              onRemoveEgressHost={index => {
-                this.setState(prevState => {
-                  prevState.sidecar.egressHosts.splice(index, 1);
-                  return {
-                    sidecar: {
-                      egressHosts: prevState.sidecar.egressHosts,
-                      addWorkloadSelector: prevState.sidecar.addWorkloadSelector,
-                      workloadSelectorValid: prevState.sidecar.workloadSelectorValid,
-                      workloadSelectorLabels: prevState.sidecar.workloadSelectorLabels
-                    }
-                  };
-                });
-              }}
-            />
+            <SidecarForm sidecar={this.state.sidecar} onChange={this.onChangeSidecar} />
           )}
           <ActionGroup>
             <Button variant="primary" isDisabled={!isFormValid} onClick={() => this.onIstioResourceCreate()}>

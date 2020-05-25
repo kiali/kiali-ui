@@ -56,29 +56,30 @@ describe('Validate JSON Patchs', () => {
 
 describe('Validate Gateway/Sidecar Server Host ', () => {
   it('No Namespace prefix', () => {
-    expect(isServerHostValid('*')).toBeTruthy();
-    expect(isServerHostValid('productpage')).toBeFalsy();
-    expect(isServerHostValid('productpage.example.com')).toBeTruthy();
-    expect(isServerHostValid('*.example.com')).toBeTruthy();
+    expect(isServerHostValid('*', false)).toBeTruthy();
+    expect(isServerHostValid('*', true)).toBeFalsy();
+    expect(isServerHostValid('productpage', false)).toBeFalsy();
+    expect(isServerHostValid('productpage.example.com', false)).toBeTruthy();
+    expect(isServerHostValid('*.example.com', false)).toBeTruthy();
   });
 
   it('Namespace prefix', () => {
-    expect(isServerHostValid('bookinfo/*')).toBeTruthy();
-    expect(isServerHostValid('*/*')).toBeTruthy();
-    expect(isServerHostValid('./*')).toBeTruthy();
-    expect(isServerHostValid('bookinfo/productpage')).toBeFalsy();
-    expect(isServerHostValid('*/productpage')).toBeFalsy();
-    expect(isServerHostValid('./productpage')).toBeFalsy();
-    expect(isServerHostValid('bookinfo/productpage.example.com')).toBeTruthy();
-    expect(isServerHostValid('*/productpage.example.com')).toBeTruthy();
-    expect(isServerHostValid('./productpage.example.com')).toBeTruthy();
-    expect(isServerHostValid('bookinfo/*.example.com')).toBeTruthy();
-    expect(isServerHostValid('*/*.example.com')).toBeTruthy();
-    expect(isServerHostValid('./*.example.com')).toBeTruthy();
+    expect(isServerHostValid('bookinfo/*', true)).toBeTruthy();
+    expect(isServerHostValid('*/*', true)).toBeTruthy();
+    expect(isServerHostValid('./*', true)).toBeTruthy();
+    expect(isServerHostValid('bookinfo/productpage', true)).toBeFalsy();
+    expect(isServerHostValid('*/productpage', true)).toBeFalsy();
+    expect(isServerHostValid('./productpage', true)).toBeFalsy();
+    expect(isServerHostValid('bookinfo/productpage.example.com', true)).toBeTruthy();
+    expect(isServerHostValid('*/productpage.example.com', true)).toBeTruthy();
+    expect(isServerHostValid('./productpage.example.com', true)).toBeTruthy();
+    expect(isServerHostValid('bookinfo/*.example.com', true)).toBeTruthy();
+    expect(isServerHostValid('*/*.example.com', true)).toBeTruthy();
+    expect(isServerHostValid('./*.example.com', true)).toBeTruthy();
   });
 
   it('Catch bad urls', () => {
-    expect(isServerHostValid('bookinfo//reviews')).toBeFalsy();
-    expect(isServerHostValid('bookinf*/reviews')).toBeFalsy();
+    expect(isServerHostValid('bookinfo//reviews', true)).toBeFalsy();
+    expect(isServerHostValid('bookinf*/reviews', true)).toBeFalsy();
   });
 });

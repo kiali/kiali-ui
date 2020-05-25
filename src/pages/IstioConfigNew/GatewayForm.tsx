@@ -4,7 +4,7 @@ import { cellWidth, ICell, Table, TableBody, TableHeader } from '@patternfly/rea
 import { Button, FormSelect, FormSelectOption, TextInputBase as TextInput } from '@patternfly/react-core';
 import { style } from 'typestyle';
 import { PfColors } from '../../components/Pf/PfColors';
-import { isServerHostValid } from '../../utils/IstioConfigUtils';
+import { isGatewayHostValid } from '../../utils/IstioConfigUtils';
 
 const headerCells: ICell[] = [
   {
@@ -33,6 +33,9 @@ const headerCells: ICell[] = [
   }
 ];
 
+export const GATEWAY = 'Gateway';
+export const GATEWAYS = 'gateways';
+
 const protocols = ['HTTP', 'HTTPS', 'GRPC', 'HTTP2', 'MONGO', 'TCP', 'TLS'];
 
 const noGatewayServerStyle = style({
@@ -43,9 +46,8 @@ const noGatewayServerStyle = style({
 const hostsHelperText = 'One or more valid FQDN host separated by comma.';
 
 type Props = {
-  gatewayServers: GatewayServer[];
-  onAdd: (server: GatewayServer) => void;
-  onRemove: (index: number) => void;
+  gateway: GatewayState;
+  onChange: (gateway: GatewayState) => void;
 };
 
 export type GatewayServer = {
@@ -58,25 +60,33 @@ export type GatewayServer = {
 // Gateway and Sidecar states are consolidated in the parent page
 export type GatewayState = {
   gatewayServers: GatewayServer[];
-};
-
-type State = {
   addGatewayServer: GatewayServer;
   validHosts: boolean;
 };
 
-class GatewayForm extends React.Component<Props, State> {
+export const initGateway = (): GatewayState => ({
+  gatewayServers: [],
+  addGatewayServer: {
+    hosts: [],
+    portNumber: '80',
+    portName: 'http',
+    portProtocol: 'HTTP'
+  },
+  validHosts: false
+});
+
+export const isGatewayStateValid = (g: GatewayState): boolean => {
+  return g.gatewayServers.length > 0;
+};
+
+class GatewayForm extends React.Component<Props, GatewayState> {
   constructor(props: Props) {
     super(props);
-    this.state = {
-      addGatewayServer: {
-        hosts: [],
-        portNumber: '80',
-        portName: 'http',
-        portProtocol: 'HTTP'
-      },
-      validHosts: false
-    };
+    this.state = initGateway();
+  }
+
+  componentDidMount() {
+    this.setState(this.props.gateway);
   }
 
   // @ts-ignore
@@ -85,10 +95,18 @@ class GatewayForm extends React.Component<Props, State> {
       title: 'Remove Server',
       // @ts-ignore
       onClick: (event, rowIndex, rowData, extraData) => {
-        this.props.onRemove(rowIndex);
+        this.setState(
+          prevState => {
+            prevState.gatewayServers.splice(rowIndex, 1);
+            return {
+              gatewayServers: prevState.gatewayServers
+            };
+          },
+          () => this.props.onChange(this.state)
+        );
       }
     };
-    if (rowIndex < this.props.gatewayServers.length) {
+    if (rowIndex < this.state.gatewayServers.length) {
       return [removeAction];
     }
     return [];
@@ -141,15 +159,21 @@ class GatewayForm extends React.Component<Props, State> {
   };
 
   onAddServer = () => {
-    this.props.onAdd(this.state.addGatewayServer);
-    this.setState({
-      addGatewayServer: {
-        hosts: [],
-        portNumber: '80',
-        portName: 'http',
-        portProtocol: 'HTTP'
-      }
-    });
+    this.setState(
+      prevState => {
+        prevState.gatewayServers.push(prevState.addGatewayServer);
+        return {
+          gatewayServers: prevState.gatewayServers,
+          addGatewayServer: {
+            hosts: [],
+            portNumber: '80',
+            portName: 'http',
+            portProtocol: 'HTTP'
+          }
+        };
+      },
+      () => this.props.onChange(this.state)
+    );
   };
 
   areValidHosts = (hosts: string[]): boolean => {
@@ -158,7 +182,7 @@ class GatewayForm extends React.Component<Props, State> {
     }
     let isValid = true;
     for (let i = 0; i < hosts.length; i++) {
-      if (!isServerHostValid(hosts[i])) {
+      if (!isGatewayHostValid(hosts[i])) {
         isValid = false;
         break;
       }
@@ -167,7 +191,7 @@ class GatewayForm extends React.Component<Props, State> {
   };
 
   rows() {
-    return this.props.gatewayServers
+    return this.state.gatewayServers
       .map((gw, i) => ({
         key: 'gatewayServer' + i,
         cells: [
@@ -274,7 +298,7 @@ class GatewayForm extends React.Component<Props, State> {
           <TableHeader />
           <TableBody />
         </Table>
-        {this.props.gatewayServers.length === 0 && (
+        {this.state.gatewayServers.length === 0 && (
           <div className={noGatewayServerStyle}>Gateway has no Servers Defined</div>
         )}
       </>

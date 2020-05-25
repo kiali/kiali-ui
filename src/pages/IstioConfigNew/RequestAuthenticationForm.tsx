@@ -15,7 +15,10 @@ export type RequestAuthenticationState = {
   jwtRules: JWTRule[];
 };
 
-export const INIT_REQUEST_AUTHENTICATION = (): RequestAuthenticationState => ({
+export const REQUEST_AUTHENTICATION = 'RequestAuthentication';
+export const REQUEST_AUTHENTICATIONS = 'requestauthentications';
+
+export const initRequestAuthentication = (): RequestAuthenticationState => ({
   workloadSelector: '',
   jwtRules: []
 });
@@ -26,6 +29,11 @@ type State = {
   workloadSelectorLabels: string;
   addJWTRules: boolean;
   jwtRules: JWTRule[];
+};
+
+export const isRequestAuthenticationStateValid = (_ra: RequestAuthenticationState): boolean => {
+  // Not yet used
+  return true;
 };
 
 class RequestAuthenticationForm extends React.Component<Props, State> {

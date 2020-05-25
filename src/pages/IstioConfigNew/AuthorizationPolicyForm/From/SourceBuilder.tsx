@@ -3,6 +3,9 @@ import { cellWidth, ICell, Table, TableBody, TableHeader } from '@patternfly/rea
 // Use TextInputBase like workaround while PF4 team work in https://github.com/patternfly/patternfly-react/issues/4072
 import { Button, FormSelect, FormSelectOption, TextInputBase as TextInput } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons';
+import { isValidIp } from '../../../../utils/IstioConfigUtils';
+import { style } from 'typestyle';
+import { PfColors } from '../../../../components/Pf/PfColors';
 
 type Props = {
   onAddFrom: (source: { [key: string]: string[] }) => void;
@@ -27,6 +30,10 @@ const INIT_SOURCE_FIELDS = [
   'ipBlocks',
   'notIpBlocks'
 ].sort();
+
+const noSourceStyle = style({
+  color: PfColors.Red100
+});
 
 const headerCells: ICell[] = [
   {
@@ -99,6 +106,20 @@ class SourceBuilder extends React.Component<Props, State> {
     );
   };
 
+  // Helper to identify when some values are valid
+  isValidSource = (): [boolean, string] => {
+    if (this.state.newSourceField === 'ipBlocks' || this.state.newSourceField === 'notIpBlocks') {
+      const validIp = isValidIp(this.state.newValues);
+      if (!validIp) {
+        return [false, 'Not valid IP'];
+      }
+    }
+    if (this.state.newValues.length === 0) {
+      return [false, 'Empty value'];
+    }
+    return [true, ''];
+  };
+
   // @ts-ignore
   actionResolver = (rowData, { rowIndex }) => {
     const removeAction = {
@@ -127,6 +148,7 @@ class SourceBuilder extends React.Component<Props, State> {
   };
 
   rows = () => {
+    const [isValidSource, invalidText] = this.isValidSource();
     return Object.keys(this.state.source)
       .map((sourceField, i) => {
         return {
@@ -159,11 +181,22 @@ class SourceBuilder extends React.Component<Props, State> {
                 aria-describedby="add new source values"
                 name="addNewValues"
                 onChange={this.onAddNewValues}
+                isValid={isValidSource}
               />
+              {!isValidSource && (
+                <div key="hostsHelperText" className={noSourceStyle}>
+                  {invalidText}
+                </div>
+              )}
             </>,
             <>
               {this.state.sourceFields.length > 0 && (
-                <Button variant="link" icon={<PlusCircleIcon />} onClick={this.onAddSource} />
+                <Button
+                  variant="link"
+                  icon={<PlusCircleIcon />}
+                  onClick={this.onAddSource}
+                  isDisabled={!isValidSource}
+                />
               )}
             </>
           ]

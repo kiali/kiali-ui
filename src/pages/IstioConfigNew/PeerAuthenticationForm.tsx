@@ -44,7 +44,10 @@ export type PeerAuthenticationState = {
   portLevelMtls: PortMtls[];
 };
 
-export const INIT_PEER_AUTHENTICATION = (): PeerAuthenticationState => ({
+export const PEER_AUTHENTICATION = 'PeerAuthentication';
+export const PEER_AUTHENTICATIONS = 'peerauthentications';
+
+export const initPeerAuthentication = (): PeerAuthenticationState => ({
   workloadSelector: '',
   mtls: PeerAuthenticationMutualTLSMode.UNSET,
   portLevelMtls: []
@@ -58,6 +61,11 @@ type State = {
   addPortMtls: boolean;
   portLevelMtls: PortMtls[];
   addNewPortMtls: PortMtls;
+};
+
+export const isPeerAuthenticationStateValid = (pa: PeerAuthenticationState): boolean => {
+  const validPortsMtls = pa.portLevelMtls.length > 0 && pa.workloadSelector.length === 0 ? false : true;
+  return validPortsMtls;
 };
 
 class PeerAuthenticationForm extends React.Component<Props, State> {
