@@ -239,7 +239,6 @@ class IstioConfigNewPage extends React.Component<Props, State> {
       default:
         return false;
     }
-    return false;
   };
 
   onChangeAuthorizationPolicy = (authorizationPolicy: AuthorizationPolicyState) => {
