@@ -77,7 +77,7 @@ class ConditionBuilder extends React.Component<Props, State> {
 
   onAddNewValues = (value: string, _) => {
     this.setState(prevState => {
-      prevState.condition.values = value.split(',');
+      prevState.condition.values = value.length === 0 ? [] : value.split(',');
       return {
         condition: prevState.condition
       };
@@ -86,7 +86,7 @@ class ConditionBuilder extends React.Component<Props, State> {
 
   onAddNewNotValues = (notValues: string, _) => {
     this.setState(prevState => {
-      prevState.condition.notValues = notValues.split(',');
+      prevState.condition.notValues = notValues.length === 0 ? [] : notValues.split(',');
       return {
         condition: prevState.condition
       };
@@ -132,13 +132,15 @@ class ConditionBuilder extends React.Component<Props, State> {
     }
     const values = this.state.condition.values;
     const notValues = this.state.condition.notValues;
-    if ((!values && !notValues) || (values && notValues && values.length === 0 && notValues.length === 0)) {
-      return [true, false, false, 'Values and NotValues cannot be both empty'];
+    if ((!values || values.length === 0) && (!notValues || notValues.length === 0)) {
+      return [true, false, false, 'Values and NotValues cannot be empty'];
     }
-    if (values && notValues && (key === 'source.ip' || key === 'destination.ip')) {
+    if (key === 'source.ip' || key === 'destination.ip') {
       // If some value is not an IP, then is not valid
-      const valuesValid = !values.some(value => !isValidIp(value));
-      const notValuesValid = !notValues.some(value => !isValidIp(value));
+      // @ts-ignore
+      const valuesValid = values ? !values.some(value => !isValidIp(value)) : true;
+      // @ts-ignore
+      const notValuesValid = notValues ? !notValues.some(value => !isValidIp(value)) : true;
       return [true, valuesValid, notValuesValid, 'Not valid IP'];
     }
     return [true, true, true, ''];
