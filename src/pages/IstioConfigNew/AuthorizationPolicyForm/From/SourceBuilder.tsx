@@ -109,12 +109,13 @@ class SourceBuilder extends React.Component<Props, State> {
   // Helper to identify when some values are valid
   isValidSource = (): [boolean, string] => {
     if (this.state.newSourceField === 'ipBlocks' || this.state.newSourceField === 'notIpBlocks') {
-      const validIp = isValidIp(this.state.newValues);
+      const validIp = this.state.newValues.split(',').every((ip) => isValidIp(ip));
       if (!validIp) {
         return [false, 'Not valid IP'];
       }
     }
-    if (this.state.newValues.length === 0) {
+    const emptyValues = this.state.newValues.split(',').every((v) => v.length === 0);
+    if (emptyValues) {
       return [false, 'Empty value'];
     }
     return [true, ''];
@@ -149,14 +150,15 @@ class SourceBuilder extends React.Component<Props, State> {
 
   rows = () => {
     const [isValidSource, invalidText] = this.isValidSource();
-    return Object.keys(this.state.source)
-      .map((sourceField, i) => {
-        return {
-          key: 'sourceKey' + i,
-          cells: [<>{sourceField}</>, <>{this.state.source[sourceField].join(',')}</>, <></>],
-        };
-      })
-      .concat([
+
+    const sourceRows = Object.keys(this.state.source).map((sourceField, i) => {
+      return {
+        key: 'sourceKey' + i,
+        cells: [<>{sourceField}</>, <>{this.state.source[sourceField].join(',')}</>, <></>],
+      };
+    });
+    if (this.state.sourceFields.length > 0) {
+      return sourceRows.concat([
         {
           key: 'sourceKeyNew',
           cells: [
@@ -202,6 +204,8 @@ class SourceBuilder extends React.Component<Props, State> {
           ],
         },
       ]);
+    }
+    return sourceRows;
   };
 
   render() {

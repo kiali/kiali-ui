@@ -4,6 +4,8 @@ import { cellWidth, ICell, Table, TableBody, TableHeader } from '@patternfly/rea
 import { Button, FormSelect, FormSelectOption } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons';
 import { TextInputBase as TextInput } from '@patternfly/react-core/dist/js/components/TextInput/TextInput';
+import { style } from 'typestyle';
+import { PfColors } from '../../../components/Pf/PfColors';
 
 type Props = {
   onAddJwtRule: (rule: JWTRule) => void;
@@ -44,12 +46,24 @@ const headerCells: ICell[] = [
   },
 ];
 
+const noValidStyle = style({
+  color: PfColors.Red100,
+});
+
+const warningStyle = style({
+  marginLeft: 25,
+  color: PfColors.Red100,
+  textAlign: 'center',
+});
+
 export const formatJwtField = (jwtField: string, jwtRule: JWTRule): string => {
   switch (jwtField) {
     case 'issuer':
       return jwtRule.issuer ? jwtRule.issuer : '';
     case 'audiences':
       return jwtRule.audiences ? jwtRule.audiences.join(',') : '';
+    case 'jwks':
+      return jwtRule.jwks ? jwtRule.jwks : '';
     case 'jwksUri':
       return jwtRule.jwksUri ? jwtRule.jwksUri : '';
     case 'fromHeaders':
@@ -110,6 +124,9 @@ class JwtRuleBuilder extends React.Component<Props, State> {
           break;
         case 'audiences':
           prevState.jwtRule.audiences = prevState.newValues.split(',');
+          break;
+        case 'jwks':
+          prevState.jwtRule.jwks = prevState.newValues;
           break;
         case 'jwksUri':
           prevState.jwtRule.jwksUri = prevState.newValues;
@@ -194,19 +211,28 @@ class JwtRuleBuilder extends React.Component<Props, State> {
     return [];
   };
 
+  isJwtFieldValid = (): [boolean, string] => {
+    const isEmptyValue = this.state.newValues.split(',').every((v) => v.length === 0);
+    if (isEmptyValue) {
+      return [false, 'Value cannot be empty'];
+    }
+    return [true, ''];
+  };
+
   isJwtRuleValid = (): boolean => {
     return this.state.jwtRule.issuer ? this.state.jwtRule.issuer.length > 0 : false;
   };
 
   rows = () => {
-    return Object.keys(this.state.jwtRule)
-      .map((jwtField, i) => {
-        return {
-          key: 'jwtField' + i,
-          cells: [<>{jwtField}</>, <>{formatJwtField(jwtField, this.state.jwtRule)}</>, <></>],
-        };
-      })
-      .concat([
+    const jwtRuleRows = Object.keys(this.state.jwtRule).map((jwtField, i) => {
+      return {
+        key: 'jwtField' + i,
+        cells: [<>{jwtField}</>, <>{formatJwtField(jwtField, this.state.jwtRule)}</>, <></>],
+      };
+    });
+    if (this.state.jwtRuleFields.length > 0) {
+      const [isJwtFieldValid, validText] = this.isJwtFieldValid();
+      return jwtRuleRows.concat([
         {
           key: 'jwtFieldKeyNew',
           cells: [
@@ -232,15 +258,33 @@ class JwtRuleBuilder extends React.Component<Props, State> {
                 name="addNewValues"
                 onChange={this.onAddNewValues}
               />
+              {this.state.newJwtField === 'fromHeaders' && (
+                <div key="fromHeadersHelperText">
+                  List of header locations from which JWT is expected. <br />
+                  I.e. "x-jwt-assertion: Bearer ,Authorization: Bearer "
+                </div>
+              )}
+              {!isJwtFieldValid && (
+                <div key="hostsHelperText" className={noValidStyle}>
+                  {validText}
+                </div>
+              )}
             </>,
             <>
               {this.state.jwtRuleFields.length > 0 && (
-                <Button variant="link" icon={<PlusCircleIcon />} onClick={this.onUpdateJwtRule} />
+                <Button
+                  variant="link"
+                  icon={<PlusCircleIcon />}
+                  onClick={this.onUpdateJwtRule}
+                  isDisabled={!isJwtFieldValid}
+                />
               )}
             </>,
           ],
         },
       ]);
+    }
+    return jwtRuleRows;
   };
 
   render() {
@@ -263,6 +307,7 @@ class JwtRuleBuilder extends React.Component<Props, State> {
           onClick={this.onAddJwtRuleToList}
         >
           Add JWT Rule
+          {!this.isJwtRuleValid() && <span className={warningStyle}>A JWT Rule needs an "issuer"</span>}
         </Button>
       </>
     );
