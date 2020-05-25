@@ -42,6 +42,10 @@ export type PeerAuthenticationState = {
   workloadSelector: string;
   mtls: string;
   portLevelMtls: PortMtls[];
+  addWorkloadSelector: boolean;
+  workloadSelectorValid: boolean;
+  addPortMtls: boolean;
+  addNewPortMtls: PortMtls;
 };
 
 export const PEER_AUTHENTICATION = 'PeerAuthentication';
@@ -50,31 +54,30 @@ export const PEER_AUTHENTICATIONS = 'peerauthentications';
 export const initPeerAuthentication = (): PeerAuthenticationState => ({
   workloadSelector: '',
   mtls: PeerAuthenticationMutualTLSMode.UNSET,
-  portLevelMtls: []
+  portLevelMtls: [],
+  addWorkloadSelector: false,
+  workloadSelectorValid: false,
+  addPortMtls: false,
+  addNewPortMtls: {
+    port: '',
+    mtls: PeerAuthenticationMutualTLSMode.UNSET
+  }
 });
 
-type State = {
-  addWorkloadSelector: boolean;
-  workloadSelectorValid: boolean;
-  workloadSelectorLabels: string;
-  mtls: string;
-  addPortMtls: boolean;
-  portLevelMtls: PortMtls[];
-  addNewPortMtls: PortMtls;
-};
-
 export const isPeerAuthenticationStateValid = (pa: PeerAuthenticationState): boolean => {
-  const validPortsMtls = pa.portLevelMtls.length > 0 && pa.workloadSelector.length === 0 ? false : true;
-  return validPortsMtls;
+  const workloadSelectorRule = pa.addWorkloadSelector ? pa.workloadSelectorValid : true;
+  const validPortsMtlsRule = pa.addPortMtls ? pa.workloadSelectorValid && pa.portLevelMtls.length > 0 : true;
+  console.log('TODELETE workloadSelectorRule ' + workloadSelectorRule + ' validPortsMtlsRule ' + validPortsMtlsRule);
+  return workloadSelectorRule && validPortsMtlsRule;
 };
 
-class PeerAuthenticationForm extends React.Component<Props, State> {
+class PeerAuthenticationForm extends React.Component<Props, PeerAuthenticationState> {
   constructor(props: Props) {
     super(props);
     this.state = {
       addWorkloadSelector: false,
       workloadSelectorValid: false,
-      workloadSelectorLabels: this.props.peerAuthentication.workloadSelector,
+      workloadSelector: this.props.peerAuthentication.workloadSelector,
       mtls: this.props.peerAuthentication.mtls,
       addPortMtls: false,
       portLevelMtls: this.props.peerAuthentication.portLevelMtls,
@@ -85,12 +88,49 @@ class PeerAuthenticationForm extends React.Component<Props, State> {
     };
   }
 
+  componentDidMount() {
+    this.setState({
+      addWorkloadSelector: this.props.peerAuthentication.addWorkloadSelector,
+      workloadSelectorValid: this.props.peerAuthentication.workloadSelectorValid,
+      workloadSelector: this.props.peerAuthentication.workloadSelector,
+      mtls: this.props.peerAuthentication.mtls,
+      addPortMtls: this.props.peerAuthentication.addPortMtls,
+      portLevelMtls: this.props.peerAuthentication.portLevelMtls,
+      addNewPortMtls: this.props.peerAuthentication.addNewPortMtls
+    });
+  }
+
+  onChangeWorkloadSelector = () => {
+    this.setState(
+      prevState => {
+        return {
+          addWorkloadSelector: !prevState.addWorkloadSelector
+        };
+      },
+      () => this.onPeerAuthenticationChange()
+    );
+  };
+
+  onChangeAddPortMtls = () => {
+    this.setState(
+      prevState => {
+        return {
+          addPortMtls: !prevState.addPortMtls
+        };
+      },
+      () => this.onPeerAuthenticationChange()
+    );
+  };
+
   addWorkloadLabels = (value: string, _) => {
     if (value.length === 0) {
-      this.setState({
-        workloadSelectorValid: false,
-        workloadSelectorLabels: ''
-      });
+      this.setState(
+        {
+          workloadSelectorValid: false,
+          workloadSelector: ''
+        },
+        () => this.onPeerAuthenticationChange()
+      );
       return;
     }
     value = value.trim();
@@ -116,19 +156,14 @@ class PeerAuthenticationForm extends React.Component<Props, State> {
     this.setState(
       {
         workloadSelectorValid: isValid,
-        workloadSelectorLabels: value
+        workloadSelector: value
       },
       () => this.onPeerAuthenticationChange()
     );
   };
 
   onPeerAuthenticationChange = () => {
-    const peerAuthentication: PeerAuthenticationState = {
-      workloadSelector: this.state.workloadSelectorLabels,
-      mtls: this.state.mtls,
-      portLevelMtls: this.state.portLevelMtls
-    };
-    this.props.onChange(peerAuthentication);
+    this.props.onChange(this.state);
   };
 
   onMutualTlsChange = (value, _) => {
@@ -141,21 +176,31 @@ class PeerAuthenticationForm extends React.Component<Props, State> {
   };
 
   onAddPortNumber = (value: string, _) => {
-    this.setState(prevState => ({
-      addNewPortMtls: {
-        port: value.trim(),
-        mtls: prevState.addNewPortMtls.mtls
-      }
-    }));
+    this.setState(
+      prevState => {
+        return {
+          addNewPortMtls: {
+            port: value.trim(),
+            mtls: prevState.addNewPortMtls.mtls
+          }
+        };
+      },
+      () => this.onPeerAuthenticationChange()
+    );
   };
 
   onAddPortMtlsMode = (value: string, _) => {
-    this.setState(prevState => ({
-      addNewPortMtls: {
-        port: prevState.addNewPortMtls.port,
-        mtls: value
-      }
-    }));
+    this.setState(
+      prevState => {
+        return {
+          addNewPortMtls: {
+            port: prevState.addNewPortMtls.port,
+            mtls: value
+          }
+        };
+      },
+      () => this.onPeerAuthenticationChange()
+    );
   };
 
   onAddPortMtls = () => {
@@ -255,11 +300,7 @@ class PeerAuthenticationForm extends React.Component<Props, State> {
             label={' '}
             labelOff={' '}
             isChecked={this.state.addWorkloadSelector}
-            onChange={() => {
-              this.setState(prevState => ({
-                addWorkloadSelector: !prevState.addWorkloadSelector
-              }));
-            }}
+            onChange={this.onChangeWorkloadSelector}
           />
         </FormGroup>
         {this.state.addWorkloadSelector && (
@@ -274,7 +315,7 @@ class PeerAuthenticationForm extends React.Component<Props, State> {
               id="gwHosts"
               name="gwHosts"
               isDisabled={!this.state.addWorkloadSelector}
-              value={this.state.workloadSelectorLabels}
+              value={this.state.workloadSelector}
               onChange={this.addWorkloadLabels}
               isValid={this.state.workloadSelectorValid}
             />
@@ -293,11 +334,7 @@ class PeerAuthenticationForm extends React.Component<Props, State> {
             label={' '}
             labelOff={' '}
             isChecked={this.state.addPortMtls}
-            onChange={() => {
-              this.setState(prevState => ({
-                addPortMtls: !prevState.addPortMtls
-              }));
-            }}
+            onChange={this.onChangeAddPortMtls}
           />
         </FormGroup>
         {this.state.addPortMtls && (
