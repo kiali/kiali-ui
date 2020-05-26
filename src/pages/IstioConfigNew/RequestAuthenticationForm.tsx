@@ -119,8 +119,6 @@ class RequestAuthenticationForm extends React.Component<Props, RequestAuthentica
   };
 
   onAddJwtRule = (jwtRule: JWTRule) => {
-    console.log('TODELETE onAddJwtRule');
-    console.log(jwtRule);
     this.setState(
       (prevState) => {
         prevState.jwtRules.push(jwtRule);
