@@ -3,6 +3,9 @@ import { cellWidth, ICell, Table, TableBody, TableHeader } from '@patternfly/rea
 // Use TextInputBase like workaround while PF4 team work in https://github.com/patternfly/patternfly-react/issues/4072
 import { Button, FormSelect, FormSelectOption, TextInputBase as TextInput } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons';
+import { isValidIp } from '../../../../utils/IstioConfigUtils';
+import { style } from 'typestyle';
+import { PfColors } from '../../../../components/Pf/PfColors';
 
 type Props = {
   onAddFrom: (source: { [key: string]: string[] }) => void;
@@ -27,6 +30,10 @@ const INIT_SOURCE_FIELDS = [
   'ipBlocks',
   'notIpBlocks'
 ].sort();
+
+const noSourceStyle = style({
+  color: PfColors.Red100
+});
 
 const headerCells: ICell[] = [
   {
@@ -99,6 +106,21 @@ class SourceBuilder extends React.Component<Props, State> {
     );
   };
 
+  // Helper to identify when some values are valid
+  isValidSource = (): [boolean, string] => {
+    if (this.state.newSourceField === 'ipBlocks' || this.state.newSourceField === 'notIpBlocks') {
+      const validIp = this.state.newValues.split(',').every(ip => isValidIp(ip));
+      if (!validIp) {
+        return [false, 'Not valid IP'];
+      }
+    }
+    const emptyValues = this.state.newValues.split(',').every(v => v.length === 0);
+    if (emptyValues) {
+      return [false, 'Empty value'];
+    }
+    return [true, ''];
+  };
+
   // @ts-ignore
   actionResolver = (rowData, { rowIndex }) => {
     const removeAction = {
@@ -127,14 +149,16 @@ class SourceBuilder extends React.Component<Props, State> {
   };
 
   rows = () => {
-    return Object.keys(this.state.source)
-      .map((sourceField, i) => {
-        return {
-          key: 'sourceKey' + i,
-          cells: [<>{sourceField}</>, <>{this.state.source[sourceField].join(',')}</>, <></>]
-        };
-      })
-      .concat([
+    const [isValidSource, invalidText] = this.isValidSource();
+
+    const sourceRows = Object.keys(this.state.source).map((sourceField, i) => {
+      return {
+        key: 'sourceKey' + i,
+        cells: [<>{sourceField}</>, <>{this.state.source[sourceField].join(',')}</>, <></>]
+      };
+    });
+    if (this.state.sourceFields.length > 0) {
+      return sourceRows.concat([
         {
           key: 'sourceKeyNew',
           cells: [
@@ -159,16 +183,29 @@ class SourceBuilder extends React.Component<Props, State> {
                 aria-describedby="add new source values"
                 name="addNewValues"
                 onChange={this.onAddNewValues}
+                isValid={isValidSource}
               />
+              {!isValidSource && (
+                <div key="hostsHelperText" className={noSourceStyle}>
+                  {invalidText}
+                </div>
+              )}
             </>,
             <>
               {this.state.sourceFields.length > 0 && (
-                <Button variant="link" icon={<PlusCircleIcon />} onClick={this.onAddSource} />
+                <Button
+                  variant="link"
+                  icon={<PlusCircleIcon />}
+                  onClick={this.onAddSource}
+                  isDisabled={!isValidSource}
+                />
               )}
             </>
           ]
         }
       ]);
+    }
+    return sourceRows;
   };
 
   render() {

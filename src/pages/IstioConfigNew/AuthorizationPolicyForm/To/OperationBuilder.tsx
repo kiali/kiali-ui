@@ -127,14 +127,14 @@ class OperationBuilder extends React.Component<Props, State> {
   };
 
   rows = () => {
-    return Object.keys(this.state.operation)
-      .map((operationField, i) => {
-        return {
-          key: 'operationKey' + i,
-          cells: [<>{operationField}</>, <>{this.state.operation[operationField].join(',')}</>, <></>]
-        };
-      })
-      .concat([
+    const operatorRows = Object.keys(this.state.operation).map((operationField, i) => {
+      return {
+        key: 'operationKey' + i,
+        cells: [<>{operationField}</>, <>{this.state.operation[operationField].join(',')}</>, <></>]
+      };
+    });
+    if (this.state.operationFields.length > 0) {
+      return operatorRows.concat([
         {
           key: 'operationKeyNew',
           cells: [
@@ -169,6 +169,8 @@ class OperationBuilder extends React.Component<Props, State> {
           ]
         }
       ]);
+    }
+    return operatorRows;
   };
 
   render() {
