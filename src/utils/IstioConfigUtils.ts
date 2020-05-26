@@ -126,3 +126,12 @@ export const isServerHostValid = (serverHost: string, nsMandatory: boolean): boo
 export const isValidIp = (ip: string): boolean => {
   return ipRegexp.test(ip);
 };
+
+export const isValidUrl = (url: string): boolean => {
+  try {
+    new URL(url);
+  } catch (_) {
+    return false;
+  }
+  return true;
+};

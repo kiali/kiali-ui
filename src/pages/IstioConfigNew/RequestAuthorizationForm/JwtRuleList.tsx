@@ -46,6 +46,11 @@ class JwtRuleList extends React.Component<Props> {
                 <b>audiences</b>: [{formatJwtField('audiences', jwtRule)}]
               </div>
             ) : undefined}
+            {jwtRule.jwks ? (
+              <div>
+                <b>jwks</b>: [{formatJwtField('jwks', jwtRule)}]
+              </div>
+            ) : undefined}
             {jwtRule.jwksUri ? (
               <div>
                 <b>jwksUri</b>: [{formatJwtField('jwksUri', jwtRule)}]
@@ -66,7 +71,7 @@ class JwtRuleList extends React.Component<Props> {
                 <b>outputPayloadToHeader</b>: [{formatJwtField('outputPayloadToHeader', jwtRule)}]
               </div>
             ) : undefined}
-            {jwtRule.forwardOriginalToken ? (
+            {jwtRule.forwardOriginalToken !== undefined ? (
               <div>
                 <b>forwardOriginalToken</b>: [{formatJwtField('forwardOriginalToken', jwtRule)}]
               </div>

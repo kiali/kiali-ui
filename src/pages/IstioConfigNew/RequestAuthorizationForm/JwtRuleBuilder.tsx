@@ -6,6 +6,7 @@ import { PlusCircleIcon } from '@patternfly/react-icons';
 import { TextInputBase as TextInput } from '@patternfly/react-core/dist/js/components/TextInput/TextInput';
 import { style } from 'typestyle';
 import { PfColors } from '../../../components/Pf/PfColors';
+import { isValidUrl } from '../../../utils/IstioConfigUtils';
 
 type Props = {
   onAddJwtRule: (rule: JWTRule) => void;
@@ -83,7 +84,7 @@ export const formatJwtField = (jwtField: string, jwtRule: JWTRule): string => {
     case 'outputPayloadToHeader':
       return jwtRule.outputPayloadToHeader ? jwtRule.outputPayloadToHeader : '';
     case 'forwardOriginalToken':
-      return jwtRule.forwardOriginalToken ? '' + jwtRule.forwardOriginalToken : '';
+      return jwtRule.forwardOriginalToken ? '' + jwtRule.forwardOriginalToken : 'false';
     default:
   }
   return '';
@@ -215,6 +216,9 @@ class JwtRuleBuilder extends React.Component<Props, State> {
     const isEmptyValue = this.state.newValues.split(',').every((v) => v.length === 0);
     if (isEmptyValue) {
       return [false, 'Value cannot be empty'];
+    }
+    if (this.state.newJwtField === 'jwksUri' && !isValidUrl(this.state.newValues)) {
+      return [false, 'jwsUri is not a valid Uri'];
     }
     return [true, ''];
   };

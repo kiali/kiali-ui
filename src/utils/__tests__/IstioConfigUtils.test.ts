@@ -1,4 +1,4 @@
-import { isServerHostValid, mergeJsonPatch } from '../IstioConfigUtils';
+import { isServerHostValid, isValidUrl, mergeJsonPatch } from '../IstioConfigUtils';
 
 describe('Validate JSON Patchs', () => {
   const gateway: object = {
@@ -81,5 +81,17 @@ describe('Validate Gateway/Sidecar Server Host ', () => {
   it('Catch bad urls', () => {
     expect(isServerHostValid('bookinfo//reviews', true)).toBeFalsy();
     expect(isServerHostValid('bookinf*/reviews', true)).toBeFalsy();
+  });
+});
+
+describe('Validate bad urls', () => {
+  it('Good urls', () => {
+    expect(isValidUrl('http://www.googleapis.com/oauth2/v1/certs')).toBeTruthy();
+    expect(isValidUrl('https://www.googleapis.com/oauth2/v1/certs')).toBeTruthy();
+  });
+
+  it('Bad urls', () => {
+    expect(isValidUrl('ramdom')).toBeFalsy();
+    expect(isValidUrl('123test')).toBeFalsy();
   });
 });
