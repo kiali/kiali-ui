@@ -23,7 +23,7 @@ import {
   FilterType,
   FilterTypes,
   LabelFilter,
-  LabelOperation
+  LabelOperation,
 } from '../../types/Filters';
 import * as FilterHelper from '../FilterList/FilterHelper';
 import { PromisesRegistry } from '../../utils/CancelablePromises';
@@ -141,7 +141,6 @@ export class StatefulFilters extends React.Component<StatefulFiltersProps, State
       value: value,
     };
 
-
     const typeFilterPresent = activeFilters.filters.filter((filter) => filter.category === field.title).length > 0;
 
     if (field.action === FILTER_ACTION_UPDATE && typeFilterPresent) {
@@ -206,7 +205,6 @@ export class StatefulFilters extends React.Component<StatefulFiltersProps, State
   };
 
   duplicatesFilter = (filterType: FilterType, filterValue: string): boolean => {
-
     const filter = this.state.activeFilters.filters.find((activeFilter) => {
       return filterValue === activeFilter.value && filterType.title === activeFilter.category;
     });
@@ -359,14 +357,14 @@ export class StatefulFilters extends React.Component<StatefulFiltersProps, State
             </ToolbarItem>
           </ToolbarGroup>
           {this.renderChildren()}
-          {(this.state.activeFilters.filters.filter(f => f.category === LabelFilter.title).length > 0 ||
+          {(this.state.activeFilters.filters.filter((f) => f.category === LabelFilter.title).length > 0 ||
             this.state.currentFilterType.filterType === FilterTypes.label) && (
             <ToolbarGroup>
               <ToolbarItem className={classNames('pf-u-mr-md')}>
                 <span className={classNames(paddingStyle)}>Label Operation</span>
                 <FormSelect
                   value={activeFilters.op}
-                  onChange={value =>
+                  onChange={(value) =>
                     this.updateActiveFilters({ filters: this.state.activeFilters.filters, op: value as LabelOperation })
                   }
                   aria-label="filter_select_value"
