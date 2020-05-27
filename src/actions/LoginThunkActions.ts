@@ -3,9 +3,9 @@ import { KialiAppState, LoginSession, LoginState } from '../store/Store';
 import { LoginActions } from './LoginActions';
 import * as API from '../services/Api';
 import * as Login from '../services/Login';
-import { AuthResult, AuthStrategy } from '../types/Auth';
+import { AuthResult } from '../types/Auth';
 import { KialiDispatch } from '../types/Redux';
-import authenticationConfig from '../config/AuthenticationConfig';
+import { isAuthStrategyOAuth } from '../config/AuthenticationConfig';
 import * as AlertUtils from '../utils/AlertUtils';
 
 const Dispatcher = new Login.LoginDispatcher();
@@ -22,10 +22,7 @@ const loginSuccess = async (dispatch: KialiDispatch, session: LoginSession) => {
 // different kinds of data (such as e-mail/password, tokens).
 const performLogin = (dispatch: KialiDispatch, state: KialiAppState, data?: any) => {
   const bail = (loginResult: Login.LoginResult) => {
-    if (
-      authenticationConfig.strategy === AuthStrategy.openshift ||
-      authenticationConfig.strategy === AuthStrategy.openid
-    ) {
+    if (isAuthStrategyOAuth()) {
       dispatch(LoginActions.loginFailure(loginResult.error));
     } else {
       data ? dispatch(LoginActions.loginFailure(loginResult.error)) : dispatch(LoginActions.logoutSuccess());

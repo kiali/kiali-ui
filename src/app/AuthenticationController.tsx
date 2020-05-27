@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import authenticationConfig from '../config/AuthenticationConfig';
+import authenticationConfig, { isAuthStrategyOAuth } from '../config/AuthenticationConfig';
 import { KialiAppState, LoginStatus } from '../store/Store';
 import * as API from '../services/Api';
 import { HelpDropdownActions } from '../actions/HelpDropdownActions';
@@ -75,10 +75,7 @@ class AuthenticationController extends React.Component<AuthenticationControllerP
       // "access_token" or "id_token" hash parameter in the URL. If there is,
       // this means the IdP is calling back. Dispatch the login cycle to finish
       // the authentication.
-      if (
-        authenticationConfig.strategy === AuthStrategy.openshift ||
-        authenticationConfig.strategy === AuthStrategy.openid
-      ) {
+      if (isAuthStrategyOAuth()) {
         const pattern = /[#&](access_token|id_token)=/;
         dispatchLoginCycleOnLoad = pattern.test(window.location.hash);
       }
@@ -127,11 +124,7 @@ class AuthenticationController extends React.Component<AuthenticationControllerP
     } else if (this.state.stage === LoginStage.POST_LOGIN) {
       // For OAuth/OpenID auth strategies, show/keep the initializing screen unless there
       // is an error.
-      if (
-        !this.state.isPostLoginError &&
-        (authenticationConfig.strategy === AuthStrategy.openshift ||
-          authenticationConfig.strategy === AuthStrategy.openid)
-      ) {
+      if (!this.state.isPostLoginError && isAuthStrategyOAuth()) {
         return <InitializingScreen />;
       }
 
