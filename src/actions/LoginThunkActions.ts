@@ -35,8 +35,8 @@ const performLogin = (dispatch: KialiDispatch, state: KialiAppState, data?: any)
   Dispatcher.prepare().then((result: AuthResult) => {
     if (result === AuthResult.CONTINUE) {
       Dispatcher.perform({ dispatch, state, data }).then(
-        loginResult => loginSuccess(dispatch, loginResult.session!),
-        error => bail(error)
+        (loginResult) => loginSuccess(dispatch, loginResult.session!),
+        (error) => bail(error)
       );
     } else {
       bail({ status: AuthResult.FAILURE, error: 'Preparation for login failed, try again.' });
@@ -81,7 +81,7 @@ const LoginThunkActions = {
         AlertUtils.addError('Logout failed', err);
       }
     };
-  }
+  },
 };
 
 export default LoginThunkActions;

@@ -36,7 +36,7 @@ class UserDropdownConnected extends React.Component<UserProps, UserState> {
       showSessionTimeOut: false,
       timeCountDownSeconds: this.timeLeft() / MILLISECONDS,
       isSessionTimeoutDismissed: false,
-      isDropdownOpen: false
+      isDropdownOpen: false,
     };
   }
   componentDidMount() {
@@ -49,7 +49,7 @@ class UserDropdownConnected extends React.Component<UserProps, UserState> {
 
     this.setState({
       checkSessionTimerId: checkSessionTimerId,
-      timeLeftTimerId: timeLeftTimerId
+      timeLeftTimerId: timeLeftTimerId,
     });
   }
 
@@ -92,15 +92,15 @@ class UserDropdownConnected extends React.Component<UserProps, UserState> {
     this.setState({ showSessionTimeOut: false });
   };
 
-  onDropdownToggle = isDropdownOpen => {
+  onDropdownToggle = (isDropdownOpen) => {
     this.setState({
-      isDropdownOpen
+      isDropdownOpen,
     });
   };
 
-  onDropdownSelect = _event => {
+  onDropdownSelect = (_event) => {
     this.setState({
-      isDropdownOpen: !this.state.isDropdownOpen
+      isDropdownOpen: !this.state.isDropdownOpen,
     });
   };
 
@@ -151,12 +151,12 @@ class UserDropdownConnected extends React.Component<UserProps, UserState> {
 }
 
 const mapStateToProps = (state: KialiAppState) => ({
-  session: state.authentication.session
+  session: state.authentication.session,
 });
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<KialiAppState, void, KialiAppAction>) => ({
   logout: () => dispatch(LoginThunkActions.logout()),
-  extendSession: (session: LoginSession) => dispatch(LoginThunkActions.extendSession(session))
+  extendSession: (session: LoginSession) => dispatch(LoginThunkActions.extendSession(session)),
 });
 
 const UserDropdown = connect(mapStateToProps, mapDispatchToProps)(UserDropdownConnected);

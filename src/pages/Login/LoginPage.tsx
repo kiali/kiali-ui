@@ -12,7 +12,7 @@ import {
   LoginFooterItem,
   LoginForm,
   LoginPage as LoginNext,
-  TextInput
+  TextInput,
 } from '@patternfly/react-core';
 import { ExclamationCircleIcon, ExclamationTriangleIcon } from '@patternfly/react-icons';
 import { KialiAppState, LoginSession, LoginStatus } from '../../store/Store';
@@ -44,7 +44,7 @@ type LoginState = {
 
 export class LoginPage extends React.Component<LoginProps, LoginState> {
   static contextTypes = {
-    store: () => null
+    store: () => null,
   };
   constructor(props: LoginProps) {
     super(props);
@@ -57,7 +57,7 @@ export class LoginPage extends React.Component<LoginProps, LoginState> {
       isValidToken: true,
       filledInputs: false,
       showHelperText: false,
-      errorInput: ''
+      errorInput: '',
     };
   }
 
@@ -68,11 +68,11 @@ export class LoginPage extends React.Component<LoginProps, LoginState> {
     }
   }
 
-  handleUsernameChange = value => {
+  handleUsernameChange = (value) => {
     this.setState({ username: value });
   };
 
-  handlePasswordChange = passwordValue => {
+  handlePasswordChange = (passwordValue) => {
     this.setState({ password: passwordValue });
   };
 
@@ -92,7 +92,7 @@ export class LoginPage extends React.Component<LoginProps, LoginState> {
           showHelperText: false,
           errorInput: '',
           isValidToken: true,
-          filledInputs: true
+          filledInputs: true,
         });
       } else {
         const message = 'Please, provide a Service Account token.';
@@ -101,14 +101,14 @@ export class LoginPage extends React.Component<LoginProps, LoginState> {
           showHelperText: true,
           errorInput: message,
           isValidToken: false,
-          filledInputs: false
+          filledInputs: false,
         });
       }
     } else {
       this.setState({
         isValidUsername: !!this.state.username,
         isValidPassword: !!this.state.password,
-        filledInputs: !!this.state.username && !!this.state.password
+        filledInputs: !!this.state.username && !!this.state.password,
       });
 
       if (!!this.state.username && !!this.state.password && this.props.authenticate) {
@@ -127,7 +127,7 @@ export class LoginPage extends React.Component<LoginProps, LoginState> {
           showHelperText: true,
           errorInput: message,
           isValidUsername: false,
-          isValidPassword: false
+          isValidPassword: false,
         });
       }
     }
@@ -286,11 +286,11 @@ export class LoginPage extends React.Component<LoginProps, LoginState> {
 
 const mapStateToProps = (state: KialiAppState) => ({
   status: state.authentication.status,
-  message: state.authentication.message
+  message: state.authentication.message,
 });
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<KialiAppState, void, KialiAppAction>) => ({
-  authenticate: (username: string, password: string) => dispatch(LoginThunkActions.authenticate(username, password))
+  authenticate: (username: string, password: string) => dispatch(LoginThunkActions.authenticate(username, password)),
 });
 
 const LoginPageContainer = connect(mapStateToProps, mapDispatchToProps)(LoginPage);

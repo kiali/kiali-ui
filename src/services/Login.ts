@@ -60,7 +60,7 @@ class WebLogin implements LoginStrategy<WebLoginData> {
 
     return {
       status: AuthResult.SUCCESS,
-      session: session
+      session: session,
     };
   }
 }
@@ -75,7 +75,7 @@ class TokenLogin implements LoginStrategy<WebLoginData> {
 
     return {
       status: AuthResult.SUCCESS,
-      session: session
+      session: session,
     };
   }
 }
@@ -90,7 +90,7 @@ class LdapLogin implements LoginStrategy<WebLoginData> {
 
     return {
       status: AuthResult.SUCCESS,
-      session: session
+      session: session,
     };
   }
 }
@@ -118,7 +118,7 @@ class OAuthLogin implements LoginStrategy<unknown> {
 
     return {
       status: AuthResult.SUCCESS,
-      session: session
+      session: session,
     };
   }
 }
@@ -144,7 +144,7 @@ export class LoginDispatcher {
 
     try {
       const delay = async (ms: TimeInMilliseconds = 3000) => {
-        return new Promise(resolve => setTimeout(resolve, ms));
+        return new Promise((resolve) => setTimeout(resolve, ms));
       };
 
       const result = await strategy.prepare(info);
@@ -160,7 +160,7 @@ export class LoginDispatcher {
 
         return Promise.reject({
           status: AuthResult.FAILURE,
-          error: 'Failed to redirect user to authentication page.'
+          error: 'Failed to redirect user to authentication page.',
         });
       } else {
         return result;
