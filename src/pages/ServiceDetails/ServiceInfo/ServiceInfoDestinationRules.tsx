@@ -45,7 +45,12 @@ class ServiceInfoDestinationRules extends React.Component<ServiceInfoDestination
 
   yamlLink(destinationRule: DestinationRule) {
     return (
-      <IstioObjectLink name={destinationRule.metadata.name} namespace={destinationRule.metadata.namespace || ''} type={'destinationrule'} query={'list=yaml'}>
+      <IstioObjectLink
+        name={destinationRule.metadata.name}
+        namespace={destinationRule.metadata.namespace || ''}
+        type={'destinationrule'}
+        query={'list=yaml'}
+      >
         View YAML
       </IstioObjectLink>
     );
@@ -61,7 +66,11 @@ class ServiceInfoDestinationRules extends React.Component<ServiceInfoDestination
 
   overviewLink(destinationRule: DestinationRule) {
     return (
-      <IstioObjectLink name={destinationRule.metadata.name} namespace={destinationRule.metadata.namespace || ''} type={'destinationrule'}>
+      <IstioObjectLink
+        name={destinationRule.metadata.name}
+        namespace={destinationRule.metadata.namespace || ''}
+        type={'destinationrule'}
+      >
         {destinationRule.metadata.name}
       </IstioObjectLink>
     );

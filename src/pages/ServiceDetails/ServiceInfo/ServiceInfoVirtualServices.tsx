@@ -49,7 +49,11 @@ class ServiceInfoVirtualServices extends React.Component<ServiceInfoVirtualServi
 
   overviewLink(virtualService: VirtualService) {
     return (
-      <IstioObjectLink name={virtualService.metadata.name} namespace={virtualService.metadata.namespace || ''} type={'virtualservice'}>
+      <IstioObjectLink
+        name={virtualService.metadata.name}
+        namespace={virtualService.metadata.namespace || ''}
+        type={'virtualservice'}
+      >
         {virtualService.metadata.name}
       </IstioObjectLink>
     );
@@ -57,7 +61,12 @@ class ServiceInfoVirtualServices extends React.Component<ServiceInfoVirtualServi
 
   yamlLink(virtualService: VirtualService) {
     return (
-      <IstioObjectLink name={virtualService.metadata.name} namespace={virtualService.metadata.namespace || ''} type={'virtualservice'} query={'list=yaml'}>
+      <IstioObjectLink
+        name={virtualService.metadata.name}
+        namespace={virtualService.metadata.namespace || ''}
+        type={'virtualservice'}
+        query={'list=yaml'}
+      >
         View YAML
       </IstioObjectLink>
     );

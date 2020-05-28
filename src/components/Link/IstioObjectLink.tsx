@@ -12,7 +12,13 @@ interface Props {
   query?: string;
 }
 
-export const GetIstioObjectUrl = (name: string, namespace: string, type: string, subType?: string, query?: string): string => {
+export const GetIstioObjectUrl = (
+  name: string,
+  namespace: string,
+  type: string,
+  subType?: string,
+  query?: string
+): string => {
   const istioType = IstioTypes[type];
   let to = '/namespaces/' + namespace + '/' + Paths.ISTIO;
 
@@ -23,7 +29,7 @@ export const GetIstioObjectUrl = (name: string, namespace: string, type: string,
   }
 
   if (!!query) {
-    to = to  + '?' + query;
+    to = to + '?' + query;
   }
 
   return to;
@@ -47,16 +53,12 @@ export class ReferenceIstioObjectLink extends React.Component<Props> {
   }
 }
 
-class IstioObjectLink extends React.Component<Props>  {
- render() {
-   const { name, namespace, type, subType, query } = this.props;
+class IstioObjectLink extends React.Component<Props> {
+  render() {
+    const { name, namespace, type, subType, query } = this.props;
 
-  return (
-    <Link to={GetIstioObjectUrl(name, namespace, type, subType, query)}>
-      {this.props.children}
-    </Link>
-  )
- }
+    return <Link to={GetIstioObjectUrl(name, namespace, type, subType, query)}>{this.props.children}</Link>;
+  }
 }
 
 export default IstioObjectLink;
