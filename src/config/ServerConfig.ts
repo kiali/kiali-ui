@@ -62,7 +62,8 @@ let serverConfig: ComputedServerConfig = {
     storageTsdbRetention: 21600
   },
   durations: {},
-  canonicalMetrics: true
+  canonicalMetrics: true,
+  isMixerDisabled: true
 };
 computeValidDurations(serverConfig);
 export { serverConfig };

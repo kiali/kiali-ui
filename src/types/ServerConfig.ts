@@ -27,4 +27,5 @@ export interface ServerConfig {
     storageTsdbRetention?: DurationInSeconds;
   };
   canonicalMetrics: boolean;
+  isMixerDisabled: boolean;
 }
