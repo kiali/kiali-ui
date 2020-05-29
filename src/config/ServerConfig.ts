@@ -61,7 +61,8 @@ let serverConfig: ComputedServerConfig = {
     globalScrapeInterval: 15,
     storageTsdbRetention: 21600
   },
-  durations: {}
+  durations: {},
+  canonicalMetrics: true
 };
 computeValidDurations(serverConfig);
 export { serverConfig };
