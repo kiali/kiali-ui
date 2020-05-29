@@ -26,6 +26,5 @@ export interface ServerConfig {
     globalScrapeInterval?: DurationInSeconds;
     storageTsdbRetention?: DurationInSeconds;
   };
-  canonicalMetrics: boolean;
-  isMixerDisabled: boolean;
+  istioTelemetryV2: boolean;
 }
