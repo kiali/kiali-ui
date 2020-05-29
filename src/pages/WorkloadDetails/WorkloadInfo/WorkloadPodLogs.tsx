@@ -46,17 +46,19 @@ interface WorkloadPodLogsState {
   loadingProxyLogsError?: string;
   podValue?: number;
   appLogs?: PodLogs;
-  filteredAppLogs?: Logs;
   proxyLogs?: PodLogs;
+  hideFilteredAppLogs?: Logs;
+  hideFilteredProxyLogs?: Logs;
+  filteredAppLogs?: Logs;
   filteredProxyLogs?: Logs;
   tailLines: number;
   isLogWindowSelectExpanded: boolean;
   logWindowSelections: any[];
   sideBySideOrientation: boolean;
   hideLogValue: string;
-  findLogValue: string;
+  showLogValue: string;
   showClearHideLogButton: boolean;
-  showClearFindLogButton: boolean;
+  showClearShowLogButton: boolean;
   splitPercent: string;
 }
 
@@ -150,9 +152,9 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
         logWindowSelections: [],
         sideBySideOrientation: false,
         hideLogValue: '',
-        findLogValue: '',
+        showLogValue: '',
         showClearHideLogButton: false,
-        showClearFindLogButton: false,
+        showClearShowLogButton: false,
         splitPercent: '50%'
       };
       return;
@@ -179,9 +181,9 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
       logWindowSelections: [],
       sideBySideOrientation: false,
       hideLogValue: '',
-      findLogValue: '',
+      showLogValue: '',
       showClearHideLogButton: false,
-      showClearFindLogButton: false,
+      showClearShowLogButton: false,
       splitPercent: '50%'
     };
   }
@@ -293,25 +295,25 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
                         />
                       </ToolbarItem>
                     </ToolbarGroup>
-                    <ToolbarGroup>
+                    <ToolbarGroup className={toolbarRight}>
                       <ToolbarItem>
                         <TextInput
-                          id="log_find"
-                          name="log_find"
+                          id="log_show"
+                          name="log_show"
                           style={{ width: '10em' }}
                           autoComplete="on"
                           type="text"
-                          onKeyPress={this.checkSubmitFind}
-                          onChange={this.updateFind}
-                          defaultValue={this.state.findLogValue}
-                          aria-label="find log text"
-                          placeholder="Find..."
+                          onKeyPress={this.checkSubmitShow}
+                          onChange={this.updateShow}
+                          defaultValue={this.state.showLogValue}
+                          aria-label="show log text"
+                          placeholder="Show..."
                         />
                       </ToolbarItem>
                       <ToolbarItem>
-                        {this.state.showClearFindLogButton && (
-                          <Tooltip key="clear_find_log" position="top" content="Clear Find Log Entries...">
-                            <Button variant={ButtonVariant.control} onClick={this.clearFind}>
+                        {this.state.showClearShowLogButton && (
+                          <Tooltip key="clear_show_log" position="top" content="Clear Show Log Entries...">
+                            <Button variant={ButtonVariant.control} onClick={this.clearShow}>
                               <KialiIcon.Close />
                             </Button>
                           </Tooltip>
@@ -420,33 +422,59 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
     );
   };
 
-  private checkSubmitFind = event => {
+  private doShowAndHide = () => {
+    if (this.state.hideLogValue) {
+      this.hideLogLines(this.state.hideLogValue);
+    }
+    if (this.state.showLogValue) {
+      this.showLogLines(this.state.showLogValue);
+    }
+  };
+
+  private checkSubmitShow = event => {
     const keyCode = event.keyCode ? event.keyCode : event.which;
     if (keyCode === RETURN_KEY_CODE) {
       event.preventDefault();
-      this.findLogLines(this.state.findLogValue);
+      this.doShowAndHide();
     }
   };
 
-  private updateFind = val => {
+  private updateShow = val => {
     if ('' === val) {
-      this.clearFind();
+      this.clearShow();
     } else {
-      this.setState({ findLogValue: val });
+      this.setState({ showLogValue: val });
     }
   };
 
-  private findLogLines = (findValue: string) => {
-    if (findValue === '') {
-      this.setState({ showClearFindLogButton: false });
+  private showLogLines = (showValue: string) => {
+    if (showValue === '') {
+      this.setState({ showClearShowLogButton: false });
     }
-    if (findValue !== '' && this.state.appLogs?.logs && this.state.proxyLogs?.logs) {
-      const lines: string[] = this.state.appLogs.logs.split('\n');
-      const proxyLogLines: string[] = this.state.proxyLogs.logs.split('\n');
+    if (showValue !== '') {
+      let appLines: string[];
+      let proxyLogLines: string[];
 
-      const filteredAppLogLines = lines
+      // setup appropriate input and split into log entries
+      if (this.state.hideFilteredAppLogs) {
+        appLines = this.state.hideFilteredAppLogs.split('\n');
+      } else {
+        if (this.state.appLogs && this.state.appLogs.logs) {
+          appLines = this.state.appLogs.logs?.split('\n');
+        }
+      }
+      if (this.state.hideFilteredProxyLogs) {
+        proxyLogLines = this.state.hideFilteredProxyLogs.split('\n');
+      } else {
+        if (this.state.proxyLogs && this.state.proxyLogs.logs) {
+          proxyLogLines = this.state.proxyLogs.logs?.split('\n');
+        }
+      }
+
+      // @ts-ignore
+      const filteredAppLogLines = appLines
         .map((line: string) => {
-          return line.toLowerCase().includes(findValue.toLowerCase()) ? line : undefined;
+          return line.toLowerCase().includes(showValue.toLowerCase()) ? line : undefined;
         })
         .filter(line => {
           // return non-undefined lines
@@ -454,9 +482,10 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
         })
         .join('\n ');
 
+      // @ts-ignore
       const filteredProxyLogLines = proxyLogLines
         .map((line: string) => {
-          return line.toLowerCase().includes(findValue.toLowerCase()) ? line : undefined;
+          return line.toLowerCase().includes(showValue.toLowerCase()) ? line : undefined;
         })
         .filter(line => {
           // return non-undefined lines
@@ -465,26 +494,24 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
         .join('\n ');
 
       this.setState({
-        findLogValue: findValue,
-        hideLogValue: '',
-        showClearFindLogButton: true,
+        showClearShowLogButton: true,
         filteredAppLogs: filteredAppLogLines,
         filteredProxyLogs: filteredProxyLogLines
       });
     }
   };
 
-  private clearFind = () => {
+  private clearShow = () => {
     // TODO: when TextInput refs are fixed in PF4 then use the ref and remove the direct HTMLElement usage
     // this.showInputRef.value = '';
-    const htmlInputElement: HTMLInputElement = document.getElementById('log_find') as HTMLInputElement;
+    const htmlInputElement: HTMLInputElement = document.getElementById('log_show') as HTMLInputElement;
     if (htmlInputElement !== null) {
       htmlInputElement.value = '';
     }
 
     this.setState({
-      findLogValue: '',
-      showClearFindLogButton: false,
+      showLogValue: '',
+      showClearShowLogButton: false,
       filteredAppLogs: undefined,
       filteredProxyLogs: undefined
     });
@@ -494,7 +521,7 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
     const keyCode = event.keyCode ? event.keyCode : event.which;
     if (keyCode === RETURN_KEY_CODE) {
       event.preventDefault();
-      this.handleHideLogLines(this.state.hideLogValue);
+      this.doShowAndHide();
     }
   };
 
@@ -506,15 +533,15 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
     }
   };
 
-  private handleHideLogLines = (filterValue: string) => {
+  private hideLogLines = (filterValue: string) => {
     if (filterValue === '') {
-      this.setState({ showClearFindLogButton: false });
+      this.setState({ showClearShowLogButton: false });
     }
     if (filterValue !== '' && this.state.appLogs?.logs && this.state.proxyLogs?.logs) {
-      const lines: string[] = this.state.appLogs.logs.split('\n');
+      const appLines: string[] = this.state.appLogs.logs.split('\n');
       const proxyLogLines: string[] = this.state.proxyLogs.logs.split('\n');
 
-      const filteredAppLogLines = lines
+      const filteredAppLogLines = appLines
         .map((line: string) => {
           return !line.toLowerCase().includes(filterValue.toLowerCase()) ? line : undefined;
         })
@@ -534,13 +561,20 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
         })
         .join('\n ');
 
-      this.setState({
-        hideLogValue: filterValue,
-        findLogValue: '',
-        showClearHideLogButton: true,
-        filteredAppLogs: filteredAppLogLines,
-        filteredProxyLogs: filteredProxyLogLines
-      });
+      const onlyHideIsSet = filterValue !== '' && this.state.showLogValue === '';
+      if (onlyHideIsSet) {
+        this.setState({
+          showClearHideLogButton: true,
+          filteredAppLogs: filteredAppLogLines,
+          filteredProxyLogs: filteredProxyLogLines
+        });
+      } else {
+        this.setState({
+          showClearHideLogButton: true,
+          hideFilteredAppLogs: filteredAppLogLines,
+          hideFilteredProxyLogs: filteredProxyLogLines
+        });
+      }
     }
   };
 
