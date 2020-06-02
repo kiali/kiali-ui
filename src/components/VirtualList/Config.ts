@@ -186,7 +186,11 @@ export const IstioTypes = {
   servicerolebinding: { name: 'ServiceRoleBinding', url: 'servicerolebindings', icon: 'SRB' },
   peerauthentication: { name: 'PeerAuthentication', url: 'peerauthentications', icon: 'PA' },
   requestauthentication: { name: 'RequestAuthentication', url: 'requestauthentications', icon: 'RA' },
-  workloadentry: { name: 'WorkloadEntry', url: 'workloadentries', icon: 'WE' }
+  workloadentry: { name: 'WorkloadEntry', url: 'workloadentries', icon: 'WE' },
+  envoyFilter: { name: 'EnvoyFilter', url: 'envoyfilters', icon: 'EF' },
+  attributeManifest: { name: 'AttributeManifest', url: 'attributemanifests', icon: 'AM' },
+  httpApiSpec: { name: 'HTTPAPISpec', url: 'httpapispecs', icon: 'HA' },
+  httpApiSpecBinding: { name: 'HTTPAPISpecBinding', url: 'httpapispecbindings', icon: 'HAB' }
 };
 
 export type Resource = {
