@@ -570,7 +570,7 @@ class ExperimentCreatePage extends React.Component<Props, State> {
                     />
                     <datalist id="candidateName">
                       {this.state.workloads.map((wk, index) =>
-                        wk != this.state.experiment.baseline ? (
+                        wk !== this.state.experiment.baseline ? (
                           <option label={wk} key={'workloadCandidate' + index} value={wk}>
                             {wk}
                           </option>
