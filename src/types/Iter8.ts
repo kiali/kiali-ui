@@ -66,6 +66,7 @@ export interface SuccessCriteria {
   name: string;
   criteria: Criteria;
   metric: Metric;
+  status: SuccessCriteriaStatus;
 }
 
 export interface Metric {
@@ -73,6 +74,12 @@ export interface Metric {
   is_count: boolean;
   query_template: string;
   sample_size_template: string;
+}
+
+export interface SuccessCriteriaStatus {
+  conclusions: string[];
+  success_criterion_met: boolean;
+  abort_experiment: boolean;
 }
 
 export type NameValuePair = {

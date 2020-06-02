@@ -21,6 +21,7 @@ import { cellWidth, ICell, IRow, Table, TableBody, TableHeader } from '@patternf
 import { KialiIcon } from '../../../../config/KialiIcon';
 import { style } from 'typestyle';
 import { RenderComponentScroll } from '../../../../components/Nav/Page';
+import { serverConfig } from '../../../../config';
 
 interface ExperimentInfoDescriptionProps {
   criterias: SuccessCriteria[];
@@ -76,7 +77,9 @@ class CriteriaInfoDescription extends React.Component<ExperimentInfoDescriptionP
       </DataListCell>,
       <DataListCell key={'tolerance' + idx} width={2}>
         <ul>
-          <li>Threshold : {criteria.criteria.tolerance}</li>
+          <li>
+            Threshold : {criteria.criteria.tolerance} {serverConfig.istioTelemetryV2 ? ' ms' : ' s'}
+          </li>
           <li>Threshold Type: {criteria.criteria.toleranceType}</li>
           <li>Sample Size: {criteria.criteria.sampleSize}</li>
         </ul>

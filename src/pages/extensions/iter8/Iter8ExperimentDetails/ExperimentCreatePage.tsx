@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Iter8Info } from '../../../../types/Iter8';
 import { style } from 'typestyle';
 import * as API from '../../../../services/Api';
+import { serverConfig } from '../../../../config/ServerConfig';
 import * as AlertUtils from '../../../../utils/AlertUtils';
 import {
   ActionGroup,
@@ -208,10 +209,6 @@ class ExperimentCreatePage extends React.Component<Props, State> {
                     prevState.experiment.service = services[0];
                     if (workloads.length > 0) {
                       prevState.experiment.baseline = workloads[0];
-                      prevState.experiment.candidate = workloads[0];
-                    } else {
-                      prevState.experiment.baseline = '';
-                      prevState.experiment.candidate = '';
                     }
                     return {
                       services: services,
@@ -251,10 +248,6 @@ class ExperimentCreatePage extends React.Component<Props, State> {
         this.setState(prevState => {
           if (workloads.length > 0) {
             prevState.experiment.baseline = workloads[0];
-            prevState.experiment.candidate = workloads[0];
-          } else {
-            prevState.experiment.baseline = '';
-            prevState.experiment.candidate = '';
           }
           return {
             workloads: workloads,
@@ -570,17 +563,21 @@ class ExperimentCreatePage extends React.Component<Props, State> {
                     <TextInput
                       id="candidate"
                       value={this.state.experiment.candidate}
-                      placeholder="Candidate Deployment"
+                      placeholder="Select from list or enter a new one"
                       onChange={value => this.changeExperiment('candidate', value)}
                       list={'candidateName'}
                       autoComplete={'off'}
                     />
                     <datalist id="candidateName">
-                      {this.state.workloads.map((wk, index) => (
-                        <option label={wk} key={'workloadCandidate' + index} value={wk}>
-                          {wk}
-                        </option>
-                      ))}
+                      {this.state.workloads.map((wk, index) =>
+                        wk != this.state.experiment.baseline ? (
+                          <option label={wk} key={'workloadCandidate' + index} value={wk}>
+                            {wk}
+                          </option>
+                        ) : (
+                          ''
+                        )
+                      )}
                     </datalist>
                   </FormGroup>
                 </GridItem>
@@ -592,6 +589,7 @@ class ExperimentCreatePage extends React.Component<Props, State> {
                 metricNames={this.state.metricNames}
                 onAdd={newCriteria => {
                   this.setState(prevState => {
+                    newCriteria.tolerance = newCriteria.tolerance * (serverConfig.istioTelemetryV2 ? 1000 : 1);
                     prevState.experiment.criterias.push(newCriteria);
                     return {
                       iter8Info: prevState.iter8Info,
@@ -760,6 +758,9 @@ const mapStateToProps = (state: KialiAppState) => ({
   activeNamespaces: activeNamespacesSelector(state)
 });
 
-const ExperimentCreatePageContainer = connect(mapStateToProps, null)(ExperimentCreatePage);
+const ExperimentCreatePageContainer = connect(
+  mapStateToProps,
+  null
+)(ExperimentCreatePage);
 
 export default ExperimentCreatePageContainer;

@@ -390,6 +390,9 @@ const mapStateToProps = (state: KialiAppState) => ({
   duration: durationSelector(state)
 });
 
-const ExperimentDetailsPageContainer = connect(mapStateToProps, null)(ExperimentDetailsPage);
+const ExperimentDetailsPageContainer = connect(
+  mapStateToProps,
+  null
+)(ExperimentDetailsPage);
 
 export default ExperimentDetailsPageContainer;
