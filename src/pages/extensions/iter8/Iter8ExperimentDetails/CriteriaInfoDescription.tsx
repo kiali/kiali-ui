@@ -1,27 +1,22 @@
 import * as React from 'react';
-import {
-  Card,
-  CardBody,
-  DataList,
-  DataListCell,
-  DataListContent,
-  DataListItem,
-  DataListItemCells,
-  DataListItemRow,
-  DataListToggle,
-  Grid,
-  GridItem,
-  List,
-  ListItem,
-  Text,
-  Tooltip
-} from '@patternfly/react-core';
+import { Grid, GridItem, List, ListItem, Tooltip } from '@patternfly/react-core';
+import { serverConfig } from '../../../../config/ServerConfig';
 import { SuccessCriteria } from '../../../../types/Iter8';
-import { cellWidth, ICell, IRow, Table, TableBody, TableHeader } from '@patternfly/react-table';
+import {
+  Table,
+  TableBody,
+  TableHeader,
+  IRow,
+  ICell,
+  cellWidth,
+  expandable,
+  RowWrapperProps
+} from '@patternfly/react-table';
 import { KialiIcon } from '../../../../config/KialiIcon';
 import { style } from 'typestyle';
+import { css } from '@patternfly/react-styles';
 import { RenderComponentScroll } from '../../../../components/Nav/Page';
-import { serverConfig } from '../../../../config';
+import styles from '@patternfly/react-styles/css/components/Table/table';
 
 interface ExperimentInfoDescriptionProps {
   criterias: SuccessCriteria[];
@@ -29,6 +24,8 @@ interface ExperimentInfoDescriptionProps {
 
 type State = {
   criteriaExpanded: string[];
+  columns: any;
+  rows: any;
 };
 
 const statusIconStyle = style({
@@ -39,66 +36,74 @@ class CriteriaInfoDescription extends React.Component<ExperimentInfoDescriptionP
   constructor(props: ExperimentInfoDescriptionProps) {
     super(props);
     this.state = {
-      criteriaExpanded: []
+      criteriaExpanded: [],
+      columns: [
+        {
+          title: 'Metric Name',
+          cellFormatters: [expandable]
+        },
+        'Definitions',
+        'Success Criteria Conclusions',
+        'Status'
+      ],
+      rows: this.getRows()
     };
   }
 
-  criteriaHeader() {
-    return [
-      <DataListCell width={2}>
-        <Text style={{ fontWeight: 'bold' }}> Metric Name</Text>
-      </DataListCell>,
-      <DataListCell width={2}>
-        <Text style={{ fontWeight: 'bold' }}>Definitions</Text>
-      </DataListCell>,
-      <DataListCell width={5}>
-        <Text style={{ fontWeight: 'bold' }}>Success Criteria Conclusions</Text>
-      </DataListCell>,
-      <DataListCell width={1}>
-        <Text style={{ fontWeight: 'bold' }}>Status</Text>
-      </DataListCell>
-    ];
-  }
-
-  onCriteriaToggle = id => {
-    const criteriaExpanded = this.state.criteriaExpanded;
-    const index = criteriaExpanded.indexOf(id);
-    const newCriteriaExpanded =
-      index >= 0
-        ? [...criteriaExpanded.slice(0, index), ...criteriaExpanded.slice(index + 1, criteriaExpanded.length)]
-        : [...criteriaExpanded, id];
-    this.setState(() => ({ criteriaExpanded: newCriteriaExpanded }));
+  getRows = (): IRow[] => {
+    let rows: IRow[] = [];
+    this.props.criterias.map(criteria => {
+      const crows: IRow[] = [
+        { cells: [{ title: 'Query Template' }, { title: criteria.metric.query_template }] },
+        { cells: [{ title: 'Sample Size Template' }, { title: criteria.metric.sample_size_template }] }
+      ];
+      let number = rows.push({
+        isOpen: false,
+        cells: [
+          { title: <>{criteria.name}</> },
+          {
+            title: (
+              <ul>
+                <li>
+                  Threshold : {criteria.criteria.tolerance}
+                  {serverConfig.istioTelemetryV2 ? ' ms' : ' s'}
+                </li>
+                <li>Threshold Type: {criteria.criteria.toleranceType}</li>
+                <li>Sample Size: {criteria.criteria.sampleSize}</li>
+              </ul>
+            )
+          },
+          {
+            title: (
+              <List>
+                {criteria.status.conclusions &&
+                  criteria.status.conclusions.map((c, _) => {
+                    return <ListItem> {c} </ListItem>;
+                  })}
+              </List>
+            )
+          },
+          {
+            title: <>{this.getIcon(String(criteria.status.success_criterion_met))}</>
+          }
+        ]
+      });
+      rows.push({
+        parent: number - 1,
+        fullWidth: true,
+        cells: [
+          <>
+            <Table aria-label="Simple Table" cells={this.columns()} rows={crows}>
+              <TableHeader />
+              <TableBody />
+            </Table>
+          </>
+        ]
+      });
+      return rows;
+    });
+    return rows;
   };
-
-  criteriaList(criteria, idx) {
-    return [
-      <DataListCell key={'name_' + idx} width={2}>
-        {criteria.name}
-      </DataListCell>,
-      <DataListCell key={'tolerance' + idx} width={2}>
-        <ul>
-          <li>
-            Threshold : {criteria.criteria.tolerance} {serverConfig.istioTelemetryV2 ? ' ms' : ' s'}
-          </li>
-          <li>Threshold Type: {criteria.criteria.toleranceType}</li>
-          <li>Sample Size: {criteria.criteria.sampleSize}</li>
-        </ul>
-      </DataListCell>,
-
-      <DataListCell key={'tolerance' + idx} width={5}>
-        <List>
-          {criteria.status.conclusions &&
-            criteria.status.conclusions.map((c, _) => {
-              return <ListItem> {c} </ListItem>;
-            })}
-        </List>
-      </DataListCell>,
-
-      <DataListCell key={'success' + idx} width={1}>
-        {this.getIcon(String(criteria.status.success_criterion_met))}
-      </DataListCell>
-    ];
-  }
 
   columns = (): ICell[] => {
     return [{ title: 'Name', transforms: [cellWidth(15) as any] }, { title: 'Template' }];
@@ -127,60 +132,65 @@ class CriteriaInfoDescription extends React.Component<ExperimentInfoDescriptionP
     }
   };
 
+  customRowWrapper = ({ trRef, className, rowProps, row: { isExpanded, isHeightAuto }, ...props }) => {
+    const dangerErrorStyle = {
+      borderLeft: '3px solid var(--pf-global--primary-color--100)'
+    };
+
+    return (
+      <tr
+        {...props}
+        ref={trRef}
+        className={css(
+          className,
+          'custom-static-class',
+          isExpanded !== undefined && styles.tableExpandableRow,
+          isExpanded && styles.modifiers.expanded,
+          isHeightAuto && styles.modifiers.heightAuto
+        )}
+        hidden={isExpanded !== undefined && !isExpanded}
+        style={dangerErrorStyle}
+      />
+    );
+  };
+
+  onCollapse = (_, rowKey, isOpen) => {
+    const { rows } = this.state;
+    /**
+     * Please do not use rowKey as row index for more complex tables.
+     * Rather use some kind of identifier like ID passed with each row.
+     */
+    rows[rowKey].isOpen = isOpen;
+    this.setState({
+      rows
+    });
+  };
+
   render() {
+    const { columns, rows } = this.state;
     return (
       <RenderComponentScroll>
         <Grid gutter="md" style={{ margin: '10px' }}>
           <GridItem span={12}>
-            <Card>
-              <CardBody>
-                <DataList aria-label="simple-item1">
-                  <DataListItemRow>
-                    <DataListToggle
-                      id={'none'}
-                      className={'pf-c-button.pf-m-plain'}
-                      style={{ display: 'block', visibility: 'hidden' }}
-                    />
-                    {this.criteriaHeader()}
-                  </DataListItemRow>
-                </DataList>
-
-                {this.props.criterias.map((criteria, idx) => {
-                  const rows: IRow[] = [
-                    { cells: [{ title: 'Query Template' }, { title: criteria.metric.query_template }] },
-                    { cells: [{ title: 'Sample Size Template' }, { title: criteria.metric.sample_size_template }] }
-                  ];
-                  return (
-                    <DataList aria-label="simple-item2">
-                      <DataListItem
-                        aria-labelledby={'criteria' + idx}
-                        isExpanded={this.state.criteriaExpanded.includes('criteria' + idx)}
-                      >
-                        <DataListItemRow>
-                          <DataListToggle
-                            onClick={() => this.onCriteriaToggle('criteria' + idx)}
-                            isExpanded={this.state.criteriaExpanded.includes('criteria' + idx)}
-                            id={'criteria' + idx}
-                            aria-controls={'criteria' + idx}
-                          />
-                          <DataListItemCells dataListCells={this.criteriaList(criteria, idx)} />
-                        </DataListItemRow>
-                        <DataListContent
-                          aria-label={'criteria' + idx}
-                          id={'criteria' + idx + 'content'}
-                          isHidden={!this.state.criteriaExpanded.includes('criteria' + idx)}
-                        >
-                          <Table aria-label="Simple Table" cells={this.columns()} rows={rows}>
-                            <TableHeader />
-                            <TableBody />
-                          </Table>
-                        </DataListContent>
-                      </DataListItem>
-                    </DataList>
-                  );
-                })}
-              </CardBody>
-            </Card>
+            <Table
+              aria-label="SpanTable"
+              className={'spanTracingTagsTable'}
+              onCollapse={this.onCollapse}
+              rows={rows}
+              cells={columns}
+              rowWrapper={(props: RowWrapperProps) =>
+                this.customRowWrapper({
+                  trRef: props.trRef,
+                  className: props.className,
+                  rowProps: props.rowProps,
+                  row: props.row as any,
+                  ...props
+                })
+              }
+            >
+              <TableHeader />
+              <TableBody />
+            </Table>
           </GridItem>
         </Grid>
       </RenderComponentScroll>
