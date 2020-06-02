@@ -16,7 +16,7 @@ export enum AuthStrategy {
   openshift = 'openshift',
   ldap = 'ldap',
   token = 'token',
-  openid = 'openid',
+  openid = 'openid'
 }
 
 // Stores the result of a computation:
@@ -28,7 +28,7 @@ export enum AuthResult {
   HOLD = 'hold',
   CONTINUE = 'continue',
   SUCCESS = 'success',
-  FAILURE = 'failure',
+  FAILURE = 'failure'
 }
 
 export interface SessionInfo {

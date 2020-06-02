@@ -38,7 +38,7 @@ enum LoginStage {
   LOGIN,
   POST_LOGIN,
   LOGGED_IN,
-  LOGGED_IN_AT_LOAD,
+  LOGGED_IN_AT_LOAD
 }
 
 interface AuthenticationControllerState {
@@ -55,7 +55,7 @@ class AuthenticationController extends React.Component<AuthenticationControllerP
     super(props);
     this.state = {
       stage: this.props.authenticated ? LoginStage.LOGGED_IN_AT_LOAD : LoginStage.LOGIN,
-      isPostLoginError: false,
+      isPostLoginError: false
     };
   }
 
@@ -86,7 +86,7 @@ class AuthenticationController extends React.Component<AuthenticationControllerP
         // This state shows the initializing screen while doing the login cycle. This
         // prevents from briefly showing the login form while the trip to the back-end completes.
         this.setState({
-          stage: LoginStage.LOGGED_IN_AT_LOAD,
+          stage: LoginStage.LOGGED_IN_AT_LOAD
         });
       }
     }
@@ -139,13 +139,13 @@ class AuthenticationController extends React.Component<AuthenticationControllerP
   private doPostLoginActions = async () => {
     try {
       const getStatusPromise = API.getStatus()
-        .then((response) => this.props.setServerStatus(response.data))
-        .catch((error) => {
+        .then(response => this.props.setServerStatus(response.data))
+        .catch(error => {
           AlertUtils.addError('Error fetching server status.', error, 'default', MessageType.WARNING);
         });
       const getJaegerInfoPromise = API.getJaegerInfo()
-        .then((response) => this.props.setJaegerInfo(response.data))
-        .catch((error) => {
+        .then(response => this.props.setJaegerInfo(response.data))
+        .catch(error => {
           this.props.setJaegerInfo(null);
           AlertUtils.addError(
             'Could not fetch Jaeger info. Turning off Jaeger integration.',
@@ -177,21 +177,21 @@ const processServerStatus = (dispatch: KialiDispatch, serverStatus: ServerStatus
     HelpDropdownActions.statusRefresh(serverStatus.status, serverStatus.externalServices, serverStatus.warningMessages)
   );
 
-  serverStatus.warningMessages.forEach((wMsg) => {
+  serverStatus.warningMessages.forEach(wMsg => {
     dispatch(MessageCenterActions.addMessage(wMsg, '', 'systemErrors', MessageType.WARNING));
   });
 };
 
 const mapStateToProps = (state: KialiAppState) => ({
   authenticated: state.authentication.status === LoginStatus.loggedIn,
-  isLoginError: state.authentication.status === LoginStatus.error,
+  isLoginError: state.authentication.status === LoginStatus.error
 });
 
 const mapDispatchToProps = (dispatch: KialiDispatch) => ({
   setJaegerInfo: bindActionCreators(JaegerActions.setInfo, dispatch),
   setServerStatus: (serverStatus: ServerStatus) => processServerStatus(dispatch, serverStatus),
   setMeshTlsStatus: bindActionCreators(MeshTlsActions.setinfo, dispatch),
-  checkCredentials: () => dispatch(LoginThunkActions.checkCredentials()),
+  checkCredentials: () => dispatch(LoginThunkActions.checkCredentials())
 });
 
 const AuthenticationControllerContainer = connect(mapStateToProps, mapDispatchToProps)(AuthenticationController);
