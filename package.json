@@ -131,7 +131,8 @@
     "typescript": "3.5.3"
   },
   "resolutions": {
-    "hoist-non-react-statics": "3.3.0"
+    "hoist-non-react-statics": "3.3.0",
+    "jquery": "3.5.0"
   },
   "engines": {
     "node": ">=10.0.0 && <13",
