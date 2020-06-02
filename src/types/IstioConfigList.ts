@@ -150,7 +150,7 @@ export const dicIstioType = {
   envoyfilters: 'EnvoyFilter',
   attributemanifests: 'AttributeManifest',
   httpapispecs: 'HTTPAPISpec',
-  httpapispecbindings: 'HTTPAPISpecBindings'
+  httpapispecbindings: 'HTTPAPISpecBinding'
 };
 
 const includeName = (name: string, names: string[]) => {
