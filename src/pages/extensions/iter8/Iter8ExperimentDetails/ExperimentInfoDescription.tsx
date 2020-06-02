@@ -328,21 +328,15 @@ class ExperimentInfoDescription extends React.Component<ExperimentInfoDescriptio
 
   private showFullGraph = () => {
     let graphType: GraphType = GraphType.WORKLOAD;
-    const graphUrl = `/graph/namespaces?graphType=${graphType}&injectServiceNodes=true&namespaces=${
-      this.props.namespace
-    }&unusedNodes=false&edges=requestsPercentage&`;
+    const graphUrl = `/graph/namespaces?graphType=${graphType}&injectServiceNodes=true&namespaces=${this.props.namespace}&unusedNodes=false&edges=requestsPercentage&`;
     history.push(graphUrl);
   };
 
   private showFullMetric = () => {
-    const graphUrl = `/namespaces/${this.props.namespace}/services/${
-      this.props.target
-    }?tab=metrics&bylbl=destination_version`;
+    const graphUrl = `/namespaces/${this.props.namespace}/services/${this.props.target}?tab=metrics&bylbl=destination_version`;
 
     if (this.props.experimentDetails !== undefined) {
-      const params = `=${this.props.experimentDetails.experimentItem.baselineVersion},${
-        this.props.experimentDetails.experimentItem.candidateVersion
-      }`;
+      const params = `=${this.props.experimentDetails.experimentItem.baselineVersion},${this.props.experimentDetails.experimentItem.candidateVersion}`;
       history.push(graphUrl + encodeURIComponent(params));
     } else {
       history.push(graphUrl);
