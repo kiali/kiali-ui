@@ -174,6 +174,15 @@ export class LoginPage extends React.Component<LoginProps, LoginState> {
     if (this.props.postLoginErrorMsg) {
       messages.push(this.renderMessage(this.props.postLoginErrorMsg));
     }
+    if (authenticationConfig.strategy == AuthStrategy.ldap) {
+      messages.push(
+        this.renderMessage(
+          `Authentication with LDAP strategy is deprecated and will be removed in a following release.
+        As an alternative, use "openid" strategy using an OpenId provider with an LDAP connector.`,
+          'warning'
+        )
+      );
+    }
     return messages;
   };
 
