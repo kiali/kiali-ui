@@ -178,7 +178,16 @@ export class LoginPage extends React.Component<LoginProps, LoginState> {
       messages.push(
         this.renderMessage(
           `Authentication with LDAP strategy is deprecated and will be removed in a following release.
-        As an alternative, use "openid" strategy using an OpenId provider with an LDAP connector.`,
+        As an alternative, use the "openid" strategy using an OpenId provider with an LDAP connector.`,
+          'warning'
+        )
+      );
+    }
+    if (authenticationConfig.strategy == AuthStrategy.login) {
+      messages.push(
+        this.renderMessage(
+          `Authentication with "login" strategy is deprecated and will be removed in a following release.
+          As an alternative, use the "token" strategy.`,
           'warning'
         )
       );
