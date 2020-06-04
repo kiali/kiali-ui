@@ -27,7 +27,29 @@ exports[`#LoginPage render correctly should render LoginPage 1`] = `
   textContent="Service Mesh Observability."
 >
   <LoginForm
-    helperText={<React.Fragment />}
+    helperText={
+      <React.Fragment>
+        <span
+          style={
+            Object {
+              "color": "#f0ab00",
+              "fontSize": 16,
+              "fontWeight": "bold",
+            }
+          }
+        >
+          <ExclamationTriangleIcon
+            color="currentColor"
+            noVerticalAlign={false}
+            size="sm"
+            title={null}
+          />
+            
+          Authentication with "login" strategy is deprecated and will be removed in a following release.
+          As an alternative, use the "token" strategy.
+        </span>
+      </React.Fragment>
+    }
     isLoginButtonDisabled={false}
     isValidPassword={true}
     isValidUsername={true}

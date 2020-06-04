@@ -174,7 +174,7 @@ export class LoginPage extends React.Component<LoginProps, LoginState> {
     if (this.props.postLoginErrorMsg) {
       messages.push(this.renderMessage(this.props.postLoginErrorMsg));
     }
-    if (authenticationConfig.strategy == AuthStrategy.ldap) {
+    if (authenticationConfig.strategy === AuthStrategy.ldap) {
       messages.push(
         this.renderMessage(
           `Authentication with LDAP strategy is deprecated and will be removed in a following release.
@@ -183,7 +183,7 @@ export class LoginPage extends React.Component<LoginProps, LoginState> {
         )
       );
     }
-    if (authenticationConfig.strategy == AuthStrategy.login) {
+    if (authenticationConfig.strategy === AuthStrategy.login) {
       messages.push(
         this.renderMessage(
           `Authentication with "login" strategy is deprecated and will be removed in a following release.
