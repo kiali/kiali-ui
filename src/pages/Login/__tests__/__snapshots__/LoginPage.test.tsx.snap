@@ -45,8 +45,17 @@ exports[`#LoginPage render correctly should render LoginPage 1`] = `
             title={null}
           />
             
-          Authentication with "login" strategy is deprecated and will be removed in a following release.
-          As an alternative, use the "token" strategy.
+          <React.Fragment>
+            Authentication with "login" strategy is deprecated and will be removed in a following release. As an alternative, use the "token" strategy. See
+             
+            <a
+              href="https://kiali.io/news/release-notes/#_1_19_0"
+              rel="noreferrer noopener"
+              target="_blank"
+            >
+              release notes for version 1.19.
+            </a>
+          </React.Fragment>
         </span>
       </React.Fragment>
     }
