@@ -60,6 +60,7 @@ interface WorkloadPodLogsState {
   showClearHideLogButton: boolean;
   showClearShowLogButton: boolean;
   splitPercent: string;
+  useRegex: boolean;
 }
 
 const RETURN_KEY_CODE = 13;
@@ -93,6 +94,11 @@ const proxyLogsDiv = style({
 
 const logsTitle = style({
   margin: '15px 0 0 10px'
+});
+
+const infoIcons = style({
+  marginLeft: '0.5em',
+  width: '24px'
 });
 
 const logTextAreaBackground = (enabled = true) => ({ backgroundColor: enabled ? '#003145' : 'gray' });
@@ -155,7 +161,8 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
         showLogValue: '',
         showClearHideLogButton: false,
         showClearShowLogButton: false,
-        splitPercent: '50%'
+        splitPercent: '50%',
+        useRegex: false
       };
       return;
     }
@@ -184,7 +191,8 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
       showLogValue: '',
       showClearHideLogButton: false,
       showClearShowLogButton: false,
-      splitPercent: '50%'
+      splitPercent: '50%',
+      useRegex: false
     };
   }
 
@@ -288,7 +296,7 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
                     <ToolbarGroup>
                       <ToolbarItem>
                         <Switch
-                          id="simple-switch"
+                          id="orientation-switch"
                           label="Side by Side"
                           isChecked={sideBySideOrientation}
                           onChange={this.handleOrientationChange}
@@ -342,6 +350,22 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
                             </Button>
                           </Tooltip>
                         )}
+                      </ToolbarItem>
+                      <ToolbarItem>
+                        <Tooltip key="show_hide_log_help" position="top" content="Show/Hide Help...">
+                          <KialiIcon.Info className={infoIcons} />
+                        </Tooltip>
+                      </ToolbarItem>
+                      <ToolbarItem style={{ marginLeft: '1em' }}>
+                        <Switch
+                          id="regex-switch"
+                          label="Activate Regex"
+                          isChecked={this.state.useRegex}
+                          onChange={this.handleRegexChange}
+                        />
+                        <Tooltip key="show_log_regex_help" position="top" content="Regex Help...">
+                          <KialiIcon.Info className={infoIcons} />
+                        </Tooltip>
                       </ToolbarItem>
                     </ToolbarGroup>
                   </Toolbar>
@@ -411,6 +435,10 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
     this.setState({ sideBySideOrientation: isChecked, splitPercent: '50%' });
   };
 
+  private handleRegexChange = (isChecked: boolean) => {
+    this.setState({ useRegex: isChecked });
+  };
+
   private handleRefresh = () => {
     const pod = this.props.pods[this.state.podValue!];
     this.fetchLogs(
@@ -449,6 +477,7 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
 
   private showLogLines = (showValue: string) => {
     if (showValue === '') {
+      this.clearHide();
       this.setState({ showClearShowLogButton: false });
     }
     if (showValue !== '') {
@@ -535,6 +564,7 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
 
   private hideLogLines = (filterValue: string) => {
     if (filterValue === '') {
+      this.clearHide();
       this.setState({ showClearShowLogButton: false });
     }
     if (filterValue !== '' && this.state.appLogs?.logs && this.state.proxyLogs?.logs) {
