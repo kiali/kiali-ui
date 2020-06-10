@@ -15,7 +15,7 @@ import {
   Tooltip
 } from '@patternfly/react-core';
 import { style } from 'typestyle';
-import { Logs, Pod, PodLogs } from '../../../types/IstioObjects';
+import { Pod, PodLogs } from '../../../types/IstioObjects';
 import { getPodLogs, Response } from '../../../services/Api';
 import { CancelablePromise, makeCancelablePromise } from '../../../utils/CancelablePromises';
 import { ToolbarDropdown } from '../../../components/ToolbarDropdown/ToolbarDropdown';
@@ -37,6 +37,8 @@ interface ContainerInfo {
   containerOptions: string[];
 }
 
+type LogLines = string[];
+
 interface WorkloadPodLogsState {
   containerInfo?: ContainerInfo;
   duration: DurationInSeconds;
@@ -45,12 +47,10 @@ interface WorkloadPodLogsState {
   loadingAppLogsError?: string;
   loadingProxyLogsError?: string;
   podValue?: number;
-  appLogs?: PodLogs;
-  proxyLogs?: PodLogs;
-  hideFilteredAppLogs?: Logs;
-  hideFilteredProxyLogs?: Logs;
-  filteredAppLogs?: Logs;
-  filteredProxyLogs?: Logs;
+  rawAppLogs?: LogLines;
+  rawProxyLogs?: LogLines;
+  filteredAppLogs?: LogLines;
+  filteredProxyLogs?: LogLines;
   tailLines: number;
   isLogWindowSelectExpanded: boolean;
   logWindowSelections: any[];
@@ -135,8 +135,8 @@ const tailToolbarMargin = style({
 });
 
 export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodLogsState> {
-  private loadPodLogsPromise?: CancelablePromise<Response<PodLogs>[]>;
-  private loadContainerLogsPromise?: CancelablePromise<Response<PodLogs>[]>;
+  private loadProxyLogsPromise?: CancelablePromise<Response<PodLogs>[]>;
+  private loadAppLogsPromise?: CancelablePromise<Response<PodLogs>[]>;
   private readonly appLogsRef: any;
   private readonly proxyLogsRef: any;
   private podOptions: string[] = [];
@@ -230,6 +230,10 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
 
   render() {
     const { sideBySideOrientation } = this.state;
+    const appLogsEnabled = !!this.state.filteredAppLogs;
+    const proxyLogsEnabled = !!this.state.filteredProxyLogs;
+    const appLogs = appLogsEnabled ? this.linesToString(this.state.filteredAppLogs) : NoAppLogsFoundMessage;
+    const proxyLogs = proxyLogsEnabled ? this.linesToString(this.state.filteredProxyLogs) : NoProxyLogsFoundMessage;
     return (
       <RenderComponentScroll>
         {this.state.containerInfo && (
@@ -286,7 +290,7 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
                         <RefreshContainer
                           id="workload_logging_refresh"
                           hideLabel={true}
-                          disabled={!this.state.appLogs}
+                          disabled={!this.state.rawAppLogs}
                           handleRefresh={this.handleRefresh}
                         />
                       </ToolbarItem>
@@ -379,12 +383,10 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
                   >
                     <div className={sideBySideOrientation ? appLogsDivHorizontal : appLogsDivVertical}>
                       <textarea
-                        className={logsTextarea(
-                          !this.state.loadingAppLogs && this.state.appLogs?.logs !== NoAppLogsFoundMessage
-                        )}
+                        className={logsTextarea(appLogsEnabled)}
                         ref={this.appLogsRef}
                         readOnly={true}
-                        value={this.state.filteredAppLogs ? this.state.filteredAppLogs : this.state.appLogs?.logs}
+                        value={appLogs}
                         aria-label="Pod logs text"
                       />
                     </div>
@@ -393,11 +395,11 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
                         Istio proxy (sidecar)
                       </Title>
                       <textarea
-                        className={logsTextarea(this.state.proxyLogs?.logs !== NoProxyLogsFoundMessage)}
+                        className={logsTextarea(proxyLogsEnabled)}
                         ref={this.proxyLogsRef}
                         readOnly={true}
                         aria-label="Proxy logs text"
-                        value={this.state.filteredProxyLogs ? this.state.filteredProxyLogs : this.state.proxyLogs?.logs}
+                        value={proxyLogs}
                       />
                     </div>
                   </Splitter>
@@ -451,12 +453,16 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
   };
 
   private doShowAndHide = () => {
-    if (this.state.hideLogValue) {
-      this.hideLogLines(this.state.hideLogValue);
-    }
-    if (this.state.showLogValue) {
-      this.showLogLines(this.state.showLogValue);
-    }
+    const rawAppLogs = !!this.state.rawAppLogs ? this.state.rawAppLogs : ([] as LogLines);
+    const rawProxyLogs = !!this.state.rawProxyLogs ? this.state.rawProxyLogs : ([] as LogLines);
+    const filteredAppLogs = this.filterLogs(rawAppLogs, this.state.showLogValue, this.state.hideLogValue);
+    const filteredProxyLogs = this.filterLogs(rawProxyLogs, this.state.showLogValue, this.state.hideLogValue);
+    this.setState({
+      filteredAppLogs: filteredAppLogs,
+      filteredProxyLogs: filteredProxyLogs,
+      showClearShowLogButton: !!this.state.showLogValue,
+      showClearHideLogButton: !!this.state.hideLogValue
+    });
   };
 
   private checkSubmitShow = event => {
@@ -475,59 +481,17 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
     }
   };
 
-  private showLogLines = (showValue: string) => {
-    if (showValue === '') {
-      this.clearHide();
-      this.setState({ showClearShowLogButton: false });
+  private filterLogs = (rawLogs: LogLines, showValue: string, hideValue: string): LogLines => {
+    let filteredLogs = rawLogs;
+
+    if (!!showValue) {
+      filteredLogs = filteredLogs.filter(l => l.includes(showValue));
     }
-    if (showValue !== '') {
-      let appLines: string[];
-      let proxyLogLines: string[];
-
-      // setup appropriate input and split into log entries
-      if (this.state.hideFilteredAppLogs) {
-        appLines = this.state.hideFilteredAppLogs.split('\n');
-      } else {
-        if (this.state.appLogs && this.state.appLogs.logs) {
-          appLines = this.state.appLogs.logs?.split('\n');
-        }
-      }
-      if (this.state.hideFilteredProxyLogs) {
-        proxyLogLines = this.state.hideFilteredProxyLogs.split('\n');
-      } else {
-        if (this.state.proxyLogs && this.state.proxyLogs.logs) {
-          proxyLogLines = this.state.proxyLogs.logs?.split('\n');
-        }
-      }
-
-      // @ts-ignore
-      const filteredAppLogLines = appLines
-        .map((line: string) => {
-          return line.toLowerCase().includes(showValue.toLowerCase()) ? line : undefined;
-        })
-        .filter(line => {
-          // return non-undefined lines
-          return line;
-        })
-        .join('\n ');
-
-      // @ts-ignore
-      const filteredProxyLogLines = proxyLogLines
-        .map((line: string) => {
-          return line.toLowerCase().includes(showValue.toLowerCase()) ? line : undefined;
-        })
-        .filter(line => {
-          // return non-undefined lines
-          return line;
-        })
-        .join('\n ');
-
-      this.setState({
-        showClearShowLogButton: true,
-        filteredAppLogs: filteredAppLogLines,
-        filteredProxyLogs: filteredProxyLogLines
-      });
+    if (!!hideValue) {
+      filteredLogs = filteredLogs.filter(l => !l.includes(hideValue));
     }
+
+    return filteredLogs;
   };
 
   private clearShow = () => {
@@ -538,11 +502,13 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
       htmlInputElement.value = '';
     }
 
+    const rawAppLogs = this.state.rawAppLogs ? this.state.rawAppLogs : ([] as LogLines);
+    const rawProxyLogs = this.state.rawProxyLogs ? this.state.rawProxyLogs : ([] as LogLines);
     this.setState({
       showLogValue: '',
       showClearShowLogButton: false,
-      filteredAppLogs: undefined,
-      filteredProxyLogs: undefined
+      filteredAppLogs: this.filterLogs(rawAppLogs, '', this.state.hideLogValue),
+      filteredProxyLogs: this.filterLogs(rawProxyLogs, '', this.state.hideLogValue)
     });
   };
 
@@ -562,52 +528,6 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
     }
   };
 
-  private hideLogLines = (filterValue: string) => {
-    if (filterValue === '') {
-      this.clearHide();
-      this.setState({ showClearShowLogButton: false });
-    }
-    if (filterValue !== '' && this.state.appLogs?.logs && this.state.proxyLogs?.logs) {
-      const appLines: string[] = this.state.appLogs.logs.split('\n');
-      const proxyLogLines: string[] = this.state.proxyLogs.logs.split('\n');
-
-      const filteredAppLogLines = appLines
-        .map((line: string) => {
-          return !line.toLowerCase().includes(filterValue.toLowerCase()) ? line : undefined;
-        })
-        .filter(line => {
-          // return non-undefined lines
-          return line;
-        })
-        .join('\n ');
-
-      const filteredProxyLogLines = proxyLogLines
-        .map((line: string) => {
-          return !line.toLowerCase().includes(filterValue.toLowerCase()) ? line : undefined;
-        })
-        .filter(line => {
-          // return non-undefined lines
-          return line;
-        })
-        .join('\n ');
-
-      const onlyHideIsSet = filterValue !== '' && this.state.showLogValue === '';
-      if (onlyHideIsSet) {
-        this.setState({
-          showClearHideLogButton: true,
-          filteredAppLogs: filteredAppLogLines,
-          filteredProxyLogs: filteredProxyLogLines
-        });
-      } else {
-        this.setState({
-          showClearHideLogButton: true,
-          hideFilteredAppLogs: filteredAppLogLines,
-          hideFilteredProxyLogs: filteredProxyLogLines
-        });
-      }
-    }
-  };
-
   private clearHide = () => {
     // TODO: when TextInput refs are fixed in PF4 then use the ref and remove the direct HTMLElement usage
     // this.hideInputRef.value = '';
@@ -616,11 +536,13 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
       htmlInputElement.value = '';
     }
 
+    const rawAppLogs = this.state.rawAppLogs ? this.state.rawAppLogs : ([] as LogLines);
+    const rawProxyLogs = this.state.rawProxyLogs ? this.state.rawProxyLogs : ([] as LogLines);
     this.setState({
       hideLogValue: '',
       showClearHideLogButton: false,
-      filteredAppLogs: undefined,
-      filteredProxyLogs: undefined
+      filteredAppLogs: this.filterLogs(rawAppLogs, this.state.showLogValue, ''),
+      filteredProxyLogs: this.filterLogs(rawProxyLogs, this.state.showLogValue, '')
     });
   };
 
@@ -651,68 +573,85 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
     duration: DurationInSeconds
   ) => {
     const sinceTime = Math.floor(Date.now() / 1000) - duration;
-    const promise: Promise<Response<PodLogs>> = getPodLogs(namespace, podName, container, tailLines, sinceTime);
-    const containerPromise: Promise<Response<PodLogs>> = getPodLogs(
+    const appPromise: Promise<Response<PodLogs>> = getPodLogs(namespace, podName, container, tailLines, sinceTime);
+    const proxyPromise: Promise<Response<PodLogs>> = getPodLogs(
       namespace,
       podName,
       'istio-proxy',
       tailLines,
       sinceTime
     );
-    this.loadContainerLogsPromise = makeCancelablePromise(Promise.all([containerPromise]));
-    this.loadPodLogsPromise = makeCancelablePromise(Promise.all([promise]));
+    this.loadAppLogsPromise = makeCancelablePromise(Promise.all([appPromise]));
+    this.loadProxyLogsPromise = makeCancelablePromise(Promise.all([proxyPromise]));
 
-    this.loadPodLogsPromise.promise
+    this.loadAppLogsPromise.promise
       .then(response => {
-        const podLogs = response[0].data;
+        const rawAppLogs = this.stringToLines(response[0].data.logs as string, tailLines);
+        const filteredAppLogs = this.filterLogs(rawAppLogs, this.state.showLogValue, this.state.hideLogValue);
+
         this.setState({
           loadingAppLogs: false,
-          appLogs: podLogs.logs ? podLogs : { logs: NoAppLogsFoundMessage }
+          rawAppLogs: rawAppLogs,
+          filteredAppLogs: filteredAppLogs
         });
         this.appLogsRef.current.scrollTop = this.appLogsRef.current.scrollHeight;
         return;
       })
       .catch(error => {
         if (error.isCanceled) {
-          console.debug('PodLogs: Ignore fetch error (canceled).');
+          console.debug('AppLogs: Ignore fetch error (canceled).');
           this.setState({ loadingAppLogs: false });
           return;
         }
         const errorMsg = error.response && error.response.data.error ? error.response.data.error : error.message;
         this.setState({
           loadingAppLogs: false,
-          appLogs: { logs: `Failed to fetch pod logs: ${errorMsg}` }
+          rawAppLogs: [`Failed to fetch app logs: ${errorMsg}`]
         });
       });
 
-    this.loadContainerLogsPromise.promise
+    this.loadProxyLogsPromise.promise
       .then(response => {
-        const containerLogs = response[0].data;
+        const rawProxyLogs = this.stringToLines(response[0].data.logs as string, tailLines);
+        const filteredProxyLogs = this.filterLogs(rawProxyLogs, this.state.showLogValue, this.state.hideLogValue);
+
         this.setState({
           loadingProxyLogs: false,
-          proxyLogs: containerLogs.logs ? containerLogs : { logs: NoProxyLogsFoundMessage }
+          rawProxyLogs: rawProxyLogs,
+          filteredProxyLogs: filteredProxyLogs
         });
-        this.appLogsRef.current.scrollTop = this.appLogsRef.current.scrollHeight;
+        this.proxyLogsRef.current.scrollTop = this.proxyLogsRef.current.scrollHeight;
         return;
       })
       .catch(error => {
         if (error.isCanceled) {
-          console.debug('ContainerLogs: Ignore fetch error (canceled).');
+          console.debug('ProxyLogs: Ignore fetch error (canceled).');
           this.setState({ loadingProxyLogs: false });
           return;
         }
         const errorMsg = error.response && error.response.data.error ? error.response.data.error : error.message;
         this.setState({
           loadingProxyLogs: false,
-          proxyLogs: { logs: `Failed to fetch container logs: ${errorMsg}` }
+          rawProxyLogs: [`Failed to fetch proxy logs: ${errorMsg}`]
         });
       });
 
     this.setState({
       loadingAppLogs: true,
       loadingProxyLogs: true,
-      appLogs: undefined,
-      proxyLogs: undefined
+      rawAppLogs: undefined,
+      rawProxyLogs: undefined
     });
+  };
+
+  private stringToLines = (logs: string, maxLines: number): LogLines => {
+    let logLines = logs.split('\n');
+    const rawLines = logLines.length;
+    logLines = logLines.filter((_l, i) => rawLines - i <= maxLines);
+    return logLines;
+  };
+
+  private linesToString = (logLines?: LogLines): string => {
+    return !logLines || !logLines.length ? '' : logLines.join('\n');
   };
 }
