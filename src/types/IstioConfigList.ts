@@ -260,8 +260,6 @@ export const toIstioItems = (istioConfigList: IstioConfigList): IstioConfigItem[
       return;
     }
 
-    console.log('TODELETE field: ' + field);
-
     const typeNameProto = dicIstioType[field.toLowerCase()]; // ex. serviceEntries -> ServiceEntry
     const typeName = typeNameProto.toLowerCase(); // ex. ServiceEntry -> serviceentry
     const entryName = typeNameProto.charAt(0).toLowerCase() + typeNameProto.slice(1);
