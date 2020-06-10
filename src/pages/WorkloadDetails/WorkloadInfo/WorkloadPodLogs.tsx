@@ -60,7 +60,6 @@ interface WorkloadPodLogsState {
   showClearHideLogButton: boolean;
   showClearShowLogButton: boolean;
   splitPercent: string;
-  useRegex: boolean;
 }
 
 const RETURN_KEY_CODE = 13;
@@ -161,8 +160,7 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
         showLogValue: '',
         showClearHideLogButton: false,
         showClearShowLogButton: false,
-        splitPercent: '50%',
-        useRegex: false
+        splitPercent: '50%'
       };
       return;
     }
@@ -191,8 +189,7 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
       showLogValue: '',
       showClearHideLogButton: false,
       showClearShowLogButton: false,
-      splitPercent: '50%',
-      useRegex: false
+      splitPercent: '50%'
     };
   }
 
@@ -360,17 +357,6 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
                           <KialiIcon.Info className={infoIcons} />
                         </Tooltip>
                       </ToolbarItem>
-                      <ToolbarItem style={{ marginLeft: '1em' }}>
-                        <Switch
-                          id="regex-switch"
-                          label="Activate Regex"
-                          isChecked={this.state.useRegex}
-                          onChange={this.handleRegexChange}
-                        />
-                        <Tooltip key="show_log_regex_help" position="top" content="Regex Help...">
-                          <KialiIcon.Info className={infoIcons} />
-                        </Tooltip>
-                      </ToolbarItem>
                     </ToolbarGroup>
                   </Toolbar>
                   <Splitter
@@ -435,10 +421,6 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
 
   private handleOrientationChange = (isChecked: boolean) => {
     this.setState({ sideBySideOrientation: isChecked, splitPercent: '50%' });
-  };
-
-  private handleRegexChange = (isChecked: boolean) => {
-    this.setState({ useRegex: isChecked });
   };
 
   private handleRefresh = () => {
