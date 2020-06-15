@@ -1,7 +1,6 @@
 import * as Cy from 'cytoscape';
 import * as React from 'react';
 import ReactResizeDetector from 'react-resize-detector';
-import history from '../../app/History';
 import Namespace from '../../types/Namespace';
 import { GraphHighlighter } from './graphs/GraphHighlighter';
 import TrafficRender from './TrafficAnimation/TrafficRenderer';
@@ -24,11 +23,8 @@ import {
   UNKNOWN
 } from '../../types/Graph';
 import * as H from '../../types/Health';
-import { MessageType } from '../../types/MessageCenter';
 import { NamespaceAppHealth, NamespaceServiceHealth, NamespaceWorkloadHealth } from '../../types/Health';
-import { GraphUrlParams, makeNodeGraphUrlFromParams } from '../Nav/NavUtils';
 import { IntervalInMilliseconds, TimeInMilliseconds } from '../../types/Common';
-import * as AlertUtils from '../../utils/AlertUtils';
 import FocusAnimation from './FocusAnimation';
 import { CytoscapeContextMenuWrapper, NodeContextMenuType, EdgeContextMenuType } from './CytoscapeContextMenu';
 import { angleBetweenVectors, squaredDistance, normalize } from '../../utils/MathUtils';
@@ -51,6 +47,7 @@ type CytoscapeGraphProps = {
   isMTLSEnabled: boolean;
   layout: Layout;
   onEmptyGraphAction?: () => void;
+  onNodeDoubleTap?: (e: GraphNodeDoubleTapEvent) => void;
   onReady?: (cytoscapeRef: any) => void;
   refreshInterval: IntervalInMilliseconds;
   setActiveNamespaces?: (namespace: Namespace[]) => void;
@@ -76,6 +73,20 @@ type InitialValues = {
   position?: Position;
   zoom?: number;
 };
+
+export interface GraphNodeDoubleTapEvent {
+  app: string;
+  hasMissingSC: boolean;
+  isInaccessible: boolean;
+  isOutside: boolean;
+  isServiceEntry: boolean;
+  isUnused: boolean;
+  namespace: string;
+  nodeType: NodeType;
+  service: string;
+  version?: string;
+  workload: string;
+}
 
 // exporting this class for testing
 export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps> {
@@ -588,124 +599,35 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
     this.graphHighlighter!.onClick(event);
   };
 
-  // This allows us to navigate to the service details page when zoomed in on nodes
-  private handleDoubleTapSameNode = (targetNode: NodeParamsType) => {
-    const makeAppDetailsPageUrl = (namespace: string, nodeType: string, name?: string): string => {
-      return `/namespaces/${namespace}/${nodeType}/${name}`;
-    };
-    const nodeType = targetNode.nodeType;
-    let urlNodeType = targetNode.nodeType + 's';
-    let name = targetNode.app;
-    if (nodeType === 'service') {
-      name = targetNode.service;
-    } else if (nodeType === 'workload') {
-      name = targetNode.workload;
-    } else {
-      urlNodeType = 'applications';
-    }
-    const detailsPageUrl = makeAppDetailsPageUrl(targetNode.namespace.name, urlNodeType, name);
-    history.push(detailsPageUrl);
-    return;
-  };
-
   private handleDoubleTap = (event: CytoscapeClickEvent) => {
+    if (!this.props.onNodeDoubleTap) {
+      // No event listener for node tap.
+      return;
+    }
+
     const target = event.summaryTarget;
     const targetType = event.summaryType;
     if (targetType !== 'node' && targetType !== 'group') {
-      return;
-    }
-    if (this.props.isMiniGraph) {
-      // When in mini-graph mode, we don't do anything. In case you remove this conditional,
-      // make sure that this method won't manipulate the URL when in mini-graph mode.
-      // At the time of writing, URL manipulation is done at the end of this method. Look for
-      // a "history.push(makeNodeGraphUrlFromParams(urlParams));" statement.
+      // Don't invoke callback if tap was is not done over a node or a group.
       return;
     }
 
     const targetOrGroupChildren = targetType === 'group' ? target.descendants() : target;
 
-    if (target.data(CyNode.isInaccessible) || target.data(CyNode.isServiceEntry)) {
-      return;
-    }
-
-    if (targetOrGroupChildren.every(t => t.data(CyNode.hasMissingSC))) {
-      AlertUtils.add(
-        `A node with a missing sidecar provides no node-specific telemetry and can not provide a node detail graph.`,
-        undefined,
-        MessageType.WARNING
-      );
-      return;
-    }
-    if (targetOrGroupChildren.every(t => t.data(CyNode.isUnused))) {
-      AlertUtils.add(
-        `An unused node has no node-specific traffic and can not provide a node detail graph.`,
-        undefined,
-        MessageType.WARNING
-      );
-      return;
-    }
-    if (target.data(CyNode.isOutside) && this.props.setActiveNamespaces) {
-      this.props.setActiveNamespaces([{ name: target.data(CyNode.namespace) }]);
-      return;
-    }
-
-    const namespace = target.data(CyNode.namespace);
-    const nodeType = target.data(CyNode.nodeType);
-    const workload = target.data(CyNode.workload);
-    const app = target.data(CyNode.app);
-    const version = targetType === 'group' ? undefined : event.summaryTarget.data(CyNode.version);
-    const service = target.data(CyNode.service);
-    const targetNode: NodeParamsType = {
-      namespace: { name: namespace },
-      nodeType: nodeType,
-      workload: workload,
-      app: app,
-      version: version,
-      service: service
-    };
-
-    let sameNode = false;
-    const node = this.props.graphData.fetchParams.node;
-    if (node) {
-      sameNode = node && node.nodeType === nodeType;
-      switch (nodeType) {
-        case NodeType.APP:
-          sameNode = sameNode && node.app === app;
-          sameNode = sameNode && node.version === version;
-          break;
-        case NodeType.SERVICE:
-          sameNode = sameNode && node.service === service;
-          break;
-        case NodeType.WORKLOAD:
-          sameNode = sameNode && node.workload === workload;
-          break;
-        default:
-          sameNode = true; // don't navigate to unsupported node type
-      }
-    }
-
-    if (sameNode) {
-      this.handleDoubleTapSameNode(targetNode);
-      return;
-    }
-
-    const urlParams: GraphUrlParams = {
-      activeNamespaces: this.props.graphData.fetchParams.namespaces,
-      duration: this.props.graphData.fetchParams.duration,
-      edgeLabelMode: this.props.edgeLabelMode,
-      graphLayout: this.props.layout,
-      graphType: this.props.graphData.fetchParams.graphType,
-      node: targetNode,
-      refreshInterval: this.props.refreshInterval,
-      showServiceNodes: this.props.showServiceNodes,
-      showUnusedNodes: this.props.showUnusedNodes
-    };
-
-    // To ensure updated components get the updated URL, update the URL first and then the state
-    history.push(makeNodeGraphUrlFromParams(urlParams));
-    if (this.props.setNode) {
-      this.props.setNode(targetNode);
-    }
+    // Invoke callback
+    this.props.onNodeDoubleTap({
+      app: target.data(CyNode.app),
+      hasMissingSC: targetOrGroupChildren.every(t => t.data(CyNode.hasMissingSC)),
+      isInaccessible: target.data(CyNode.isInaccessible),
+      isOutside: target.data(CyNode.isOutside),
+      isServiceEntry: target.data(CyNode.isServiceEntry),
+      isUnused: targetOrGroupChildren.every(t => t.data(CyNode.isUnused)),
+      namespace: target.data(CyNode.namespace),
+      nodeType: target.data(CyNode.nodeType),
+      service: target.data(CyNode.service),
+      version: targetType === 'group' ? undefined : target.data(CyNode.version),
+      workload: target.data(CyNode.workload)
+    });
   };
 
   private handleTap = (event: CytoscapeClickEvent) => {
