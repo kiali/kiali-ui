@@ -112,7 +112,7 @@ class ExperimentInfoDescription extends React.Component<ExperimentInfoDescriptio
       ? this.props.experimentDetails.experimentItem.targetService
       : this.props.target;
     let statusString = this.props.experimentDetails ? this.props.experimentDetails.experimentItem.status : '';
-    if (this.props.actionTaken != '') {
+    if (this.props.actionTaken !== '') {
       statusString = 'Waiting for result of action "' + this.props.actionTaken + '" ';
     }
     return (
