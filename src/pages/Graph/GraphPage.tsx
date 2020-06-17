@@ -94,6 +94,7 @@ type ReduxProps = {
   showLegend: boolean;
   showMissingSidecars: boolean;
   showNodeLabels: boolean;
+  showOperationNodes: boolean;
   showSecurity: boolean;
   showServiceNodes: boolean;
   showTrafficAnimation: boolean;
@@ -272,6 +273,7 @@ export class GraphPage extends React.Component<GraphPageProps, GraphPageState> {
           graphType: props.graphType,
           injectServiceNodes: props.showServiceNodes,
           edgeLabelMode: props.edgeLabelMode,
+          showOperationNodes: props.showOperationNodes,
           showSecurity: props.showSecurity,
           showUnusedNodes: props.showUnusedNodes,
           node: props.node,
@@ -322,6 +324,7 @@ export class GraphPage extends React.Component<GraphPageProps, GraphPageState> {
       prev.graphType !== curr.graphType ||
       (prev.lastRefreshAt !== curr.lastRefreshAt && curr.replayQueryTime === 0) ||
       prev.replayQueryTime !== curr.replayQueryTime ||
+      prev.showOperationNodes !== curr.showOperationNodes ||
       prev.showServiceNodes !== curr.showServiceNodes ||
       prev.showSecurity !== curr.showSecurity ||
       prev.showUnusedNodes !== curr.showUnusedNodes ||
@@ -625,6 +628,7 @@ export class GraphPage extends React.Component<GraphPageProps, GraphPageState> {
       graphType: this.props.graphType,
       injectServiceNodes: this.props.showServiceNodes,
       edgeLabelMode: this.props.edgeLabelMode,
+      showOperationNodes: this.props.showOperationNodes,
       showSecurity: this.props.showSecurity,
       showUnusedNodes: this.props.showUnusedNodes,
       node: this.props.node,
@@ -662,6 +666,7 @@ const mapStateToProps = (state: KialiAppState) => ({
   showLegend: state.graph.toolbarState.showLegend,
   showMissingSidecars: state.graph.toolbarState.showMissingSidecars,
   showNodeLabels: state.graph.toolbarState.showNodeLabels,
+  showOperationNodes: state.graph.toolbarState.showOperationNodes,
   showSecurity: state.graph.toolbarState.showSecurity,
   showServiceNodes: state.graph.toolbarState.showServiceNodes,
   showTrafficAnimation: state.graph.toolbarState.showTrafficAnimation,

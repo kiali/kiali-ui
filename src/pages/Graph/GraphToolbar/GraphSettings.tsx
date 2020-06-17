@@ -25,6 +25,7 @@ type ReduxProps = Omit<GraphToolbarState, 'findValue' | 'hideValue' | 'showLegen
   toggleGraphNodeLabels(): void;
   toggleGraphSecurity(): void;
   toggleGraphVirtualServices(): void;
+  toggleOperationNodes(): void;
   toggleServiceNodes(): void;
   toggleTrafficAnimation(): void;
   toggleUnusedNodes(): void;
@@ -76,6 +77,14 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
     };
 
     // Let URL override current redux state at construction time. Update URL with unset params.
+    const urlShowOperationNodes = HistoryManager.getBooleanParam(URLParam.OPERATION_NODES);
+    if (urlShowOperationNodes !== undefined) {
+      if (urlShowOperationNodes !== props.showOperationNodes) {
+        props.toggleOperationNodes();
+      }
+    } else {
+      HistoryManager.setParam(URLParam.OPERATION_NODES, String(this.props.showOperationNodes));
+    }
     const urlInjectServiceNodes = HistoryManager.getBooleanParam(URLParam.GRAPH_SERVICE_NODES);
     if (urlInjectServiceNodes !== undefined) {
       if (urlInjectServiceNodes !== props.showServiceNodes) {
@@ -94,6 +103,7 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
 
   componentDidUpdate(_prevProps: GraphSettingsProps) {
     // ensure redux state and URL are aligned
+    HistoryManager.setParam(URLParam.OPERATION_NODES, String(this.props.showOperationNodes));
     HistoryManager.setParam(URLParam.GRAPH_SERVICE_NODES, String(this.props.showServiceNodes));
   }
 
@@ -121,6 +131,7 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
       showCircuitBreakers,
       showMissingSidecars,
       showNodeLabels,
+      showOperationNodes,
       showSecurity,
       showServiceNodes,
       showTrafficAnimation,
@@ -136,6 +147,7 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
       toggleGraphNodeLabels,
       toggleGraphSecurity,
       toggleGraphVirtualServices,
+      toggleOperationNodes,
       toggleServiceNodes,
       toggleTrafficAnimation,
       toggleUnusedNodes
@@ -176,6 +188,13 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
         labelText: 'Node Names',
         isChecked: showNodeLabels,
         onChange: toggleGraphNodeLabels
+      },
+      {
+        id: 'filterOperationNodes',
+        disabled: false,
+        labelText: 'Operation Nodes',
+        isChecked: showOperationNodes,
+        onChange: toggleOperationNodes
       },
       {
         id: 'filterServiceNodes',
@@ -276,6 +295,7 @@ const mapStateToProps = (state: KialiAppState) => ({
   showCircuitBreakers: state.graph.toolbarState.showCircuitBreakers,
   showMissingSidecars: state.graph.toolbarState.showMissingSidecars,
   showNodeLabels: state.graph.toolbarState.showNodeLabels,
+  showOperationNodes: state.graph.toolbarState.showOperationNodes,
   showSecurity: state.graph.toolbarState.showSecurity,
   showServiceNodes: state.graph.toolbarState.showServiceNodes,
   showTrafficAnimation: state.graph.toolbarState.showTrafficAnimation,
@@ -293,6 +313,7 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<KialiAppState, void, KialiAp
     toggleGraphNodeLabels: bindActionCreators(GraphToolbarActions.toggleGraphNodeLabel, dispatch),
     toggleGraphSecurity: bindActionCreators(GraphToolbarActions.toggleGraphSecurity, dispatch),
     toggleGraphVirtualServices: bindActionCreators(GraphToolbarActions.toggleGraphVirtualServices, dispatch),
+    toggleOperationNodes: bindActionCreators(GraphToolbarActions.toggleOperationNodes, dispatch),
     toggleServiceNodes: bindActionCreators(GraphToolbarActions.toggleServiceNodes, dispatch),
     toggleTrafficAnimation: bindActionCreators(GraphToolbarActions.toggleTrafficAnimation, dispatch),
     toggleUnusedNodes: bindActionCreators(GraphToolbarActions.toggleUnusedNodes, dispatch)

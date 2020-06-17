@@ -12,6 +12,7 @@ export type GraphUrlParams = {
   graphType: GraphType;
   node?: NodeParamsType;
   refreshInterval: IntervalInMilliseconds;
+  showOperationNodes: boolean;
   showServiceNodes: boolean;
   showUnusedNodes: boolean;
 };
@@ -22,6 +23,7 @@ const buildCommonQueryParams = (params: GraphUrlParams): string => {
   q += `&${URLParam.GRAPH_SERVICE_NODES}=${params.showServiceNodes}`;
   q += `&${URLParam.GRAPH_TYPE}=${params.graphType}`;
   q += `&${URLParam.DURATION}=${params.duration}`;
+  q += `&${URLParam.OPERATION_NODES}=${params.showOperationNodes}`;
   q += `&${URLParam.REFRESH_INTERVAL}=${params.refreshInterval}`;
   q += `&${URLParam.UNUSED_NODES}=${params.showUnusedNodes}`;
   return q;

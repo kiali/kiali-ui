@@ -176,6 +176,7 @@ export class GraphStyles {
       const app = data.app || '';
       const isGroupMember = data.parent;
       const isMultiNamespace = cyGlobal.activeNamespaces.length > 1;
+      const isOperation = data.isOperation;
       const isOutside = data.isOutside;
       const isServiceEntry = data.isServiceEntry !== undefined;
       const namespace = data.namespace;
@@ -211,6 +212,10 @@ export class GraphStyles {
           case NodeType.WORKLOAD:
             content = workload;
             break;
+          case NodeType.AGGREGATE:
+            // currently the only aggrgation is operation
+            content = isOperation!;
+            break;
           default:
             content = '';
         }
@@ -236,6 +241,10 @@ export class GraphStyles {
             break;
           case NodeType.WORKLOAD:
             contentArray.unshift(workload);
+            break;
+          case NodeType.AGGREGATE:
+            // currently the only aggrgation is operation
+            contentArray.unshift(isOperation!);
             break;
           default:
             contentArray.unshift('error');
@@ -446,9 +455,11 @@ export class GraphStyles {
         case NodeType.SERVICE:
           return nodeData.isServiceEntry ? 'round-tag' : 'round-triangle';
         case NodeType.UNKNOWN:
-          return 'round-diamond';
+          return 'ellipse';
         case NodeType.WORKLOAD:
           return 'ellipse';
+        case NodeType.AGGREGATE:
+          return 'star';
         default:
           return 'ellipse';
       }

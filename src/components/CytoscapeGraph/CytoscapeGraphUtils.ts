@@ -53,6 +53,7 @@ export const CyNode = {
   isInaccessible: 'isInaccessible',
   isIstio: 'isIstio',
   isMisconfigured: 'isMisconfigured',
+  isOperation: 'isOperation',
   isOutside: 'isOutside',
   isRoot: 'isRoot',
   isServiceEntry: 'isServiceEntry',

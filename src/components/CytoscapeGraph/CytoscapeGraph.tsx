@@ -57,6 +57,7 @@ type CytoscapeGraphProps = {
   showCircuitBreakers: boolean;
   showMissingSidecars: boolean;
   showNodeLabels: boolean;
+  showOperationNodes: boolean;
   showSecurity: boolean;
   showServiceNodes: boolean;
   showTrafficAnimation: boolean;

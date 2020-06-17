@@ -50,6 +50,7 @@ export enum GroupByType {
 }
 
 export enum NodeType {
+  AGGREGATE = 'aggregate',
   APP = 'app',
   SERVICE = 'service',
   UNKNOWN = 'unknown',
@@ -172,6 +173,7 @@ export interface GraphNodeData {
   isGroup?: string;
   isInaccessible?: boolean;
   isMisconfigured?: string;
+  isOperation?: string;
   isOutside?: boolean;
   isRoot?: boolean;
   isServiceEntry?: string;
