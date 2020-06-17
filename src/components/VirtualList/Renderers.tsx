@@ -191,9 +191,9 @@ export const namespace: Renderer<TResource> = (item: TResource) => {
   );
 };
 
-const labelActivate = (filters: ActiveFilter[], key: string, value: string, title: string) => {
+const labelActivate = (filters: ActiveFilter[], key: string, value: string, id: string) => {
   return filters.some(filter => {
-    if (filter.id === title) {
+    if (filter.id === id) {
       if (filter.value.includes(':')) {
         const [k, v] = filter.value.split(':');
         if (k === key) {
@@ -231,7 +231,7 @@ export const labels: Renderer<SortResource | NamespaceInfo> = (
       {item.labels &&
         Object.entries(item.labels).map(([key, value]) => {
           const label = `${key}:${value}`;
-          const labelAct = labelActivate(filters.filters, key, value, labelFilt.title);
+          const labelAct = labelActivate(filters.filters, key, value, labelFilt.id);
           const isExactlyLabelFilter = FilterHelper.getFiltersFromURL([labelFilt]).filters.some(f =>
             f.value.includes(label)
           );
