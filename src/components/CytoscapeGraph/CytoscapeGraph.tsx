@@ -48,6 +48,7 @@ type CytoscapeGraphProps = {
   layout: Layout;
   onEmptyGraphAction?: () => void;
   onNodeDoubleTap?: (e: GraphNodeDoubleTapEvent) => void;
+  onNodeTap?: (e: GraphNodeTapEvent) => void;
   onReady?: (cytoscapeRef: any) => void;
   refreshInterval: IntervalInMilliseconds;
   setActiveNamespaces?: (namespace: Namespace[]) => void;
@@ -74,7 +75,7 @@ type InitialValues = {
   zoom?: number;
 };
 
-export interface GraphNodeDoubleTapEvent {
+export interface GraphNodeTapEvent {
   app: string;
   hasMissingSC: boolean;
   isInaccessible: boolean;
@@ -87,6 +88,8 @@ export interface GraphNodeDoubleTapEvent {
   version?: string;
   workload: string;
 }
+
+export interface GraphNodeDoubleTapEvent extends GraphNodeTapEvent {}
 
 // exporting this class for testing
 export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps> {
@@ -230,6 +233,27 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
 
   getCy() {
     return this.cytoscapeReactWrapperRef.current ? this.cytoscapeReactWrapperRef.current.getCy() : null;
+  }
+
+  static buildTapEventArgs(event: CytoscapeClickEvent): GraphNodeTapEvent {
+    const target = event.summaryTarget;
+    const targetType = event.summaryType;
+    const targetOrGroupChildren = targetType === 'group' ? target.descendants() : target;
+
+    // Invoke callback
+    return {
+      app: target.data(CyNode.app),
+      hasMissingSC: targetOrGroupChildren.every(t => t.data(CyNode.hasMissingSC)),
+      isInaccessible: target.data(CyNode.isInaccessible),
+      isOutside: target.data(CyNode.isOutside),
+      isServiceEntry: target.data(CyNode.isServiceEntry),
+      isUnused: targetOrGroupChildren.every(t => t.data(CyNode.isUnused)),
+      namespace: target.data(CyNode.namespace),
+      nodeType: target.data(CyNode.nodeType),
+      service: target.data(CyNode.service),
+      version: targetType === 'group' ? undefined : target.data(CyNode.version),
+      workload: target.data(CyNode.workload)
+    };
   }
 
   private setCytoscapeReactWrapperRef(cyRef: any) {
@@ -600,39 +624,18 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
   };
 
   private handleDoubleTap = (event: CytoscapeClickEvent) => {
-    if (!this.props.onNodeDoubleTap) {
-      // No event listener for node tap.
-      return;
+    if (this.props.onNodeDoubleTap && CytoscapeGraph.isCyNodeClickEvent(event)) {
+      this.props.onNodeDoubleTap(CytoscapeGraph.buildTapEventArgs(event));
     }
-
-    const target = event.summaryTarget;
-    const targetType = event.summaryType;
-    if (targetType !== 'node' && targetType !== 'group') {
-      // Don't invoke callback if tap was is not done over a node or a group.
-      return;
-    }
-
-    const targetOrGroupChildren = targetType === 'group' ? target.descendants() : target;
-
-    // Invoke callback
-    this.props.onNodeDoubleTap({
-      app: target.data(CyNode.app),
-      hasMissingSC: targetOrGroupChildren.every(t => t.data(CyNode.hasMissingSC)),
-      isInaccessible: target.data(CyNode.isInaccessible),
-      isOutside: target.data(CyNode.isOutside),
-      isServiceEntry: target.data(CyNode.isServiceEntry),
-      isUnused: targetOrGroupChildren.every(t => t.data(CyNode.isUnused)),
-      namespace: target.data(CyNode.namespace),
-      nodeType: target.data(CyNode.nodeType),
-      service: target.data(CyNode.service),
-      version: targetType === 'group' ? undefined : target.data(CyNode.version),
-      workload: target.data(CyNode.workload)
-    });
   };
 
   private handleTap = (event: CytoscapeClickEvent) => {
     if (this.props.updateSummary) {
       this.props.updateSummary(event);
+    }
+
+    if (this.props.onNodeTap && CytoscapeGraph.isCyNodeClickEvent(event)) {
+      this.props.onNodeTap(CytoscapeGraph.buildTapEventArgs(event));
     }
 
     if (!this.props.isMiniGraph) {
@@ -667,6 +670,15 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
   // Tests if the element is still in the current graph
   private isElementValid(ele: Cy.NodeSingular | Cy.EdgeSingular) {
     return ele.cy() === this.cy;
+  }
+
+  static isCyNodeClickEvent(event: CytoscapeClickEvent): boolean {
+    const targetType = event.summaryType;
+    if (targetType !== 'node' && targetType !== 'group') {
+      return false;
+    }
+
+    return true;
   }
 
   // To know if we should re-layout, we need to know if any element changed

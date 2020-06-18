@@ -92,7 +92,7 @@ export default class MiniGraphCard extends React.Component<MiniGraphCardProps, M
               isMTLSEnabled={false}
               isMiniGraph={true}
               layout={DagreGraph.getLayout()}
-              onNodeDoubleTap={this.handleDoubleTap}
+              onNodeTap={this.handleNodeTap}
               refreshInterval={0}
               showCircuitBreakers={false}
               showMissingSidecars={true}
@@ -109,7 +109,7 @@ export default class MiniGraphCard extends React.Component<MiniGraphCardProps, M
     );
   }
 
-  private handleDoubleTap = (e: GraphNodeDoubleTapEvent) => {
+  private handleNodeTap = (e: GraphNodeDoubleTapEvent) => {
     // Do nothing on inaccessible nodes or service entry nodes
     if (e.isInaccessible || e.isServiceEntry) {
       return;
