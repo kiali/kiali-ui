@@ -3,6 +3,7 @@ import { Resource, IstioTypes, hasHealth, RenderResource } from './Config';
 import { PromisesRegistry } from '../../utils/CancelablePromises';
 import { Health } from '../../types/Health';
 import { StatefulFilters } from '../Filters/StatefulFilters';
+import { actionRenderer } from './Renderers';
 
 type VirtualItemProps = {
   item: RenderResource;
@@ -11,6 +12,7 @@ type VirtualItemProps = {
   index: number;
   config: Resource;
   statefulFilterProps?: React.RefObject<StatefulFilters>;
+  action?: any;
 };
 
 type VirtualItemState = {
@@ -72,14 +74,11 @@ export default class VirtualItem extends React.Component<VirtualItemProps, Virtu
 
   render() {
     const { style, className, item } = this.props;
+    const key = 'VirtualItem_' + ('namespace' in item ? 'Ns' + item.namespace : item.name) + '_' + item.name;
     return (
-      <tr
-        style={style}
-        className={className}
-        role="row"
-        key={'VirtualItem_' + ('namespace' in item ? 'Ns' + item.namespace : item.name) + '_' + item.name}
-      >
+      <tr style={style} className={className} role="row" key={key}>
         {this.renderDetails(item, this.state.health)}
+        {this.props.action ? actionRenderer(key, this.props.action) : undefined}
       </tr>
     );
   }

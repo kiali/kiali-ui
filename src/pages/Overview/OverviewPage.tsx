@@ -1,7 +1,9 @@
 import * as React from 'react';
 import {
   Card,
+  CardActions,
   CardBody,
+  CardHead,
   CardHeader,
   EmptyState,
   EmptyStateBody,
@@ -53,6 +55,7 @@ import { Paths } from '../../config';
 import { PfColors } from '../../components/Pf/PfColors';
 import VirtualList from '../../components/VirtualList/VirtualList';
 import { StatefulFilters } from '../../components/Filters/StatefulFilters';
+import { OverviewNamespaceActions } from './OverviewNamespaceActions';
 
 const gridStyleCompact = style({
   backgroundColor: '#f5f5f5',
@@ -79,7 +82,7 @@ const emptyStateStyle = style({
 
 const cardNamespaceNameStyle = style({
   display: 'inline-block',
-  maxWidth: 'calc(100% - 45px)',
+  maxWidth: 'calc(100% - 5px)',
   overflow: 'hidden',
   textOverflow: 'ellipsis',
   verticalAlign: 'middle',
@@ -391,6 +394,17 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
     const sm = this.state.displayMode === OverviewDisplayMode.COMPACT ? 3 : 6;
     const md = this.state.displayMode === OverviewDisplayMode.COMPACT ? 3 : 4;
     const filteredNamespaces = Filters.filterBy(this.state.namespaces, FilterSelected.getSelected());
+    const namespaceActions = filteredNamespaces.map((ns, i) => {
+      return (
+        <OverviewNamespaceActions
+          key={'namespaceAction_' + i}
+          namespace={ns.name}
+          onAction={(ns: string) => {
+            console.log('TODELETE NamespaceAction for ' + ns);
+          }}
+        />
+      );
+    });
     return (
       <>
         <div className={overviewHeader}>
@@ -408,19 +422,27 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
             className={this.state.displayMode === OverviewDisplayMode.LIST ? gridStyleList : gridStyleCompact}
           >
             {this.state.displayMode === OverviewDisplayMode.LIST ? (
-              <VirtualList rows={filteredNamespaces} sort={this.sort} statefulProps={this.sFOverviewToolbar} />
+              <VirtualList
+                rows={filteredNamespaces}
+                sort={this.sort}
+                statefulProps={this.sFOverviewToolbar}
+                actions={namespaceActions}
+              />
             ) : (
               <Grid>
-                {filteredNamespaces.map(ns => (
+                {filteredNamespaces.map((ns, i) => (
                   <GridItem sm={sm} md={md} key={'CardItem_' + ns.name} style={{ margin: '0px 10px 0 10px' }}>
                     <Card isCompact={true} className={cardGridStyle}>
-                      <CardHeader>
-                        {ns.tlsStatus ? <NamespaceMTLSStatusContainer status={ns.tlsStatus.status} /> : undefined}
-                        <span className={cardNamespaceNameStyle} title={ns.name}>
-                          {ns.name}
-                        </span>
-                        {this.renderIstioConfigStatus(ns)}
-                      </CardHeader>
+                      <CardHead>
+                        <CardActions>{namespaceActions[i]}</CardActions>
+                        <CardHeader>
+                          {ns.tlsStatus ? <NamespaceMTLSStatusContainer status={ns.tlsStatus.status} /> : undefined}
+                          <span className={cardNamespaceNameStyle} title={ns.name}>
+                            {ns.name}
+                          </span>
+                          {this.renderIstioConfigStatus(ns)}
+                        </CardHeader>
+                      </CardHead>
                       <CardBody>
                         {this.renderLabels(ns)}
                         {this.renderStatuses(ns)}

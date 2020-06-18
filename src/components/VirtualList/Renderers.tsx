@@ -42,6 +42,15 @@ const getIstioLink = (item: TResource) => {
 };
 
 // Cells
+
+export const actionRenderer = (key: string, action: any) => {
+  return (
+    <td role="gridcell" key={'VirtuaItem_Action_' + key} style={{ verticalAlign: 'middle' }}>
+      {action}
+    </td>
+  );
+};
+
 export const details: Renderer<AppListItem | WorkloadListItem | ServiceListItem> = (
   item: AppListItem | WorkloadListItem | ServiceListItem
 ) => {
