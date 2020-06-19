@@ -486,16 +486,6 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
       // Actions can be personalized by namespace
       // i.e. Add or Remove depending of presence of a flag/label
       const actions = this.showActions();
-      actions.push({
-        isSeparator: true
-      });
-      actions.push({
-        isSeparator: false,
-        title: 'Enable Sidecar Injection',
-        action: (ns: string) => {
-          console.log('TODELETE Enable Sidecar Injection on ' + ns);
-        }
-      });
       return <OverviewNamespaceActions key={'namespaceAction_' + i} namespace={ns.name} actions={actions} />;
     });
     return (
