@@ -40,7 +40,6 @@ import OverviewCardContentCompact from './OverviewCardContentCompact';
 import OverviewCardContentExpanded from './OverviewCardContentExpanded';
 import { IstioMetricsOptions } from '../../types/MetricsOptions';
 import { computePrometheusRateParams } from '../../services/Prometheus';
-import OverviewCardLinks from './OverviewCardLinks';
 import { KialiAppState } from '../../store/Store';
 import { connect } from 'react-redux';
 import { durationSelector, meshWideMTLSStatusSelector, refreshIntervalSelector } from '../../store/Selectors';
@@ -56,6 +55,7 @@ import { PfColors } from '../../components/Pf/PfColors';
 import VirtualList from '../../components/VirtualList/VirtualList';
 import { StatefulFilters } from '../../components/Filters/StatefulFilters';
 import { OverviewNamespaceActions } from './OverviewNamespaceActions';
+import history from '../../app/History';
 
 const gridStyleCompact = style({
   backgroundColor: '#f5f5f5',
@@ -71,7 +71,7 @@ const gridStyleList = style({
   marginTop: '20px'
 });
 
-const cardGridStyle = style({ borderTop: '2px solid #39a5dc', textAlign: 'center', marginTop: '20px' });
+const cardGridStyle = style({ borderTop: '2px solid #39a5dc', textAlign: 'center', marginTop: '10px' });
 
 const emptyStateStyle = style({
   height: '300px',
@@ -80,9 +80,24 @@ const emptyStateStyle = style({
   marginTop: 10
 });
 
-const cardNamespaceNameStyle = style({
+const cardHeaderStyle = style({
+  width: '75%',
+  textAlign: 'left'
+});
+
+const cardNamespaceNameNormalStyle = style({
   display: 'inline-block',
-  maxWidth: 'calc(100% - 5px)',
+  verticalAlign: 'middle'
+});
+
+// CSS trick to apply ellipsis only on certain cases
+// With actions on Card, there are some CSS calculation in the Cards, so the
+// maxWidth calc() used doesn't work well for all cases
+const NS_LONG = 20;
+
+const cardNamespaceNameLongStyle = style({
+  display: 'inline-block',
+  maxWidth: 'calc(100% - 75px)',
   overflow: 'hidden',
   textOverflow: 'ellipsis',
   verticalAlign: 'middle',
@@ -95,6 +110,14 @@ const overviewHeader = style({
   backgroundColor: PfColors.White,
   padding: '10px 20px 10px 10px'
 });
+
+enum Show {
+  GRAPH,
+  APPLICATIONS,
+  WORKLOADS,
+  SERVICES,
+  ISTIO_CONFIG
+}
 
 type State = {
   namespaces: NamespaceInfo[];
@@ -390,20 +413,90 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
     );
   };
 
+  show = (showType: Show, namespace: string, graphType: string) => {
+    let destination = '';
+    switch (showType) {
+      case Show.GRAPH:
+        destination = `/graph/namespaces?namespaces=${namespace}&graphType=${graphType}`;
+        break;
+      case Show.APPLICATIONS:
+        destination = `/${Paths.APPLICATIONS}?namespaces=` + namespace;
+        break;
+      case Show.WORKLOADS:
+        destination = `/${Paths.WORKLOADS}?namespaces=` + namespace;
+        break;
+      case Show.SERVICES:
+        destination = `/${Paths.SERVICES}?namespaces=` + namespace;
+        break;
+      case Show.ISTIO_CONFIG:
+        destination = `/${Paths.ISTIO}?namespaces=` + namespace;
+        break;
+      default:
+      // Nothing to do on default case
+    }
+    history.push(destination);
+  };
+
+  showActions = (): any[] => {
+    const namespaceActions: any[] = [
+      {
+        isSeparator: false,
+        title: 'Show Graph',
+        action: (ns: string) => this.show(Show.GRAPH, ns, this.state.type)
+      }
+    ];
+
+    if (this.state.type !== 'app') {
+      namespaceActions.push({
+        isSeparator: false,
+        title: 'Show Applications',
+        action: (ns: string) => this.show(Show.APPLICATIONS, ns, this.state.type)
+      });
+    }
+
+    if (this.state.type !== 'workload') {
+      namespaceActions.push({
+        isSeparator: false,
+        title: 'Show Workloads',
+        action: (ns: string) => this.show(Show.WORKLOADS, ns, this.state.type)
+      });
+    }
+
+    if (this.state.type !== 'service') {
+      namespaceActions.push({
+        isSeparator: false,
+        title: 'Show Services',
+        action: (ns: string) => this.show(Show.SERVICES, ns, this.state.type)
+      });
+    }
+
+    namespaceActions.push({
+      isSeparator: false,
+      title: 'Show Istio Config',
+      action: (ns: string) => this.show(Show.ISTIO_CONFIG, ns, this.state.type)
+    });
+    return namespaceActions;
+  };
+
   render() {
     const sm = this.state.displayMode === OverviewDisplayMode.COMPACT ? 3 : 6;
     const md = this.state.displayMode === OverviewDisplayMode.COMPACT ? 3 : 4;
     const filteredNamespaces = Filters.filterBy(this.state.namespaces, FilterSelected.getSelected());
     const namespaceActions = filteredNamespaces.map((ns, i) => {
-      return (
-        <OverviewNamespaceActions
-          key={'namespaceAction_' + i}
-          namespace={ns.name}
-          onAction={(ns: string) => {
-            console.log('TODELETE NamespaceAction for ' + ns);
-          }}
-        />
-      );
+      // Actions can be personalized by namespace
+      // i.e. Add or Remove depending of presence of a flag/label
+      const actions = this.showActions();
+      actions.push({
+        isSeparator: true
+      });
+      actions.push({
+        isSeparator: false,
+        title: 'Enable Sidecar Injection',
+        action: (ns: string) => {
+          console.log('TODELETE Enable Sidecar Injection on ' + ns);
+        }
+      });
+      return <OverviewNamespaceActions key={'namespaceAction_' + i} namespace={ns.name} actions={actions} />;
     });
     return (
       <>
@@ -430,27 +523,38 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
               />
             ) : (
               <Grid>
-                {filteredNamespaces.map((ns, i) => (
-                  <GridItem sm={sm} md={md} key={'CardItem_' + ns.name} style={{ margin: '0px 10px 0 10px' }}>
-                    <Card isCompact={true} className={cardGridStyle}>
-                      <CardHead>
-                        <CardActions>{namespaceActions[i]}</CardActions>
-                        <CardHeader>
-                          {ns.tlsStatus ? <NamespaceMTLSStatusContainer status={ns.tlsStatus.status} /> : undefined}
-                          <span className={cardNamespaceNameStyle} title={ns.name}>
-                            {ns.name}
-                          </span>
-                          {this.renderIstioConfigStatus(ns)}
-                        </CardHeader>
-                      </CardHead>
-                      <CardBody>
-                        {this.renderLabels(ns)}
-                        {this.renderStatuses(ns)}
-                        <OverviewCardLinks name={ns.name} overviewType={OverviewToolbar.currentOverviewType()} />
-                      </CardBody>
-                    </Card>
-                  </GridItem>
-                ))}
+                {filteredNamespaces.map((ns, i) => {
+                  const isLongNs = ns.name.length > NS_LONG;
+                  return (
+                    <GridItem sm={sm} md={md} key={'CardItem_' + ns.name} style={{ margin: '0px 10px 0 10px' }}>
+                      <Card isCompact={true} className={cardGridStyle}>
+                        <CardHead>
+                          <CardActions>{namespaceActions[i]}</CardActions>
+                          <CardHeader className={cardHeaderStyle}>
+                            <Title headingLevel="h5" size="lg">
+                              <span
+                                className={isLongNs ? cardNamespaceNameLongStyle : cardNamespaceNameNormalStyle}
+                                title={ns.name}
+                              >
+                                {ns.name}
+                              </span>
+                              {ns.tlsStatus ? (
+                                <span style={{ marginLeft: '10px' }}>
+                                  <NamespaceMTLSStatusContainer status={ns.tlsStatus.status} />
+                                </span>
+                              ) : undefined}
+                              {this.renderIstioConfigStatus(ns)}
+                            </Title>
+                          </CardHeader>
+                        </CardHead>
+                        <CardBody>
+                          {this.renderLabels(ns)}
+                          {this.renderStatuses(ns)}
+                        </CardBody>
+                      </Card>
+                    </GridItem>
+                  );
+                })}
               </Grid>
             )}
           </RenderComponentScroll>
@@ -474,38 +578,33 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
     const labelsLength = ns.labels ? `${Object.entries(ns.labels).length}` : 'No';
     const labelContent = ns.labels ? (
       <div
-        id="labels_info"
-        style={{ color: PfColors.Blue400 }}
+        style={{ color: PfColors.Blue400, textAlign: 'left' }}
         onClick={() => this.setDisplayMode(OverviewDisplayMode.LIST)}
       >
-        {labelsLength} label{labelsLength !== '1' ? 's' : ''}
+        <Tooltip
+          aria-label={'Labels list'}
+          position={TooltipPosition.right}
+          enableFlip={true}
+          distance={5}
+          content={
+            <ul>
+              {Object.entries(ns.labels || []).map(([key, value]) => (
+                <li key={key}>
+                  {key}: {value}
+                </li>
+              ))}
+            </ul>
+          }
+        >
+          <div id="labels_info" style={{ display: 'inline' }}>
+            {labelsLength} label{labelsLength !== '1' ? 's' : ''}
+          </div>
+        </Tooltip>
       </div>
     ) : (
-      <div id="labels_info">
-        {labelsLength} label{labelsLength !== '1' ? 's' : ''}
-      </div>
+      <div style={{ textAlign: 'left' }}>No labels</div>
     );
-    return ns.labels ? (
-      <Tooltip
-        aria-label={'Labels list'}
-        position={TooltipPosition.bottom}
-        enableFlip={true}
-        distance={5}
-        content={
-          <ul>
-            {Object.entries(ns.labels || []).map(([key, value]) => (
-              <li key={key}>
-                {key}: {value}
-              </li>
-            ))}
-          </ul>
-        }
-      >
-        {labelContent}
-      </Tooltip>
-    ) : (
-      labelContent
-    );
+    return labelContent;
   }
 
   renderStatuses(ns: NamespaceInfo): JSX.Element {

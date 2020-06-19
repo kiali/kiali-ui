@@ -1,9 +1,15 @@
 import * as React from 'react';
-import { Dropdown, DropdownItem, KebabToggle } from '@patternfly/react-core';
+import { Dropdown, DropdownItem, DropdownSeparator, KebabToggle } from '@patternfly/react-core';
+
+export type OverviewNamespaceAction = {
+  isSeparator: boolean;
+  title?: string;
+  action?: (namespace: string) => void;
+};
 
 type Props = {
   namespace: string;
-  onAction: (namespace: string) => void;
+  actions: OverviewNamespaceAction[];
 };
 
 type State = {
@@ -25,12 +31,21 @@ export class OverviewNamespaceActions extends React.Component<Props, State> {
   };
 
   render() {
-    const namespaceActions = [
-      <DropdownItem key="addNamespace" onClick={() => this.props.onAction(this.props.namespace)}>
-        Add namespace to Mesh
-      </DropdownItem>
-    ];
-
+    const namespaceActions = this.props.actions.map((action, i) => {
+      if (action.isSeparator) {
+        return <DropdownSeparator key={'separator_' + i} />;
+      } else if (action.title && action.action) {
+        return (
+          <DropdownItem
+            key={'action_' + i}
+            onClick={() => (action.action ? action.action(this.props.namespace) : undefined)}
+          >
+            {action.title}
+          </DropdownItem>
+        );
+      }
+      return undefined;
+    });
     return (
       <Dropdown
         toggle={<KebabToggle onToggle={this.onKebabToggle} />}
