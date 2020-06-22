@@ -34,6 +34,7 @@ export const CyEdgeResponses = {
 };
 
 export const CyNode = {
+  aggregate: 'aggregate',
   app: 'app',
   destServices: 'destServices',
   grpcIn: 'grpcIn',
@@ -53,7 +54,6 @@ export const CyNode = {
   isInaccessible: 'isInaccessible',
   isIstio: 'isIstio',
   isMisconfigured: 'isMisconfigured',
-  isOperation: 'isOperation',
   isOutside: 'isOutside',
   isRoot: 'isRoot',
   isServiceEntry: 'isServiceEntry',

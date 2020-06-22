@@ -164,6 +164,7 @@ export interface GraphNodeData {
   app?: string;
   version?: string;
   service?: string;
+  aggregate?: string;
   destServices?: any;
   traffic?: ProtocolTraffic[];
   hasCB?: boolean;
@@ -173,7 +174,6 @@ export interface GraphNodeData {
   isGroup?: string;
   isInaccessible?: boolean;
   isMisconfigured?: string;
-  isOperation?: string;
   isOutside?: boolean;
   isRoot?: boolean;
   isServiceEntry?: string;

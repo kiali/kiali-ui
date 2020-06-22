@@ -153,7 +153,7 @@ export default class GraphDataSource {
     let appenders: AppenderString = 'deadNode,sidecarsCheck,serviceEntry,istio';
 
     if (fetchParams.showOperationNodes) {
-      appenders += ',operationNode';
+      appenders += ',aggregateNode';
     }
 
     if (!fetchParams.node && fetchParams.showUnusedNodes) {

@@ -38,6 +38,7 @@ export const decorateGraphData = (graphData: GraphElements): DecoratedGraphEleme
       tcp: NaN
     },
     nodes: {
+      aggregate: undefined,
       app: undefined,
       destServices: undefined,
       grpcIn: NaN,
@@ -56,7 +57,6 @@ export const decorateGraphData = (graphData: GraphElements): DecoratedGraphEleme
       isInaccessible: undefined,
       isIstio: undefined,
       isMisconfigured: undefined,
-      isOperation: undefined,
       isOutside: undefined,
       isRoot: undefined,
       isServiceEntry: undefined,

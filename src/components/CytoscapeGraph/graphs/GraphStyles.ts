@@ -176,7 +176,6 @@ export class GraphStyles {
       const app = data.app || '';
       const isGroupMember = data.parent;
       const isMultiNamespace = cyGlobal.activeNamespaces.length > 1;
-      const isOperation = data.isOperation;
       const isOutside = data.isOutside;
       const isServiceEntry = data.isServiceEntry !== undefined;
       const namespace = data.namespace;
@@ -213,8 +212,8 @@ export class GraphStyles {
             content = workload;
             break;
           case NodeType.AGGREGATE:
-            // currently the only aggrgation is operation
-            content = isOperation!;
+            const aggregate = data.aggregate!.split('=')[1];
+            content = aggregate;
             break;
           default:
             content = '';
@@ -243,8 +242,8 @@ export class GraphStyles {
             contentArray.unshift(workload);
             break;
           case NodeType.AGGREGATE:
-            // currently the only aggrgation is operation
-            contentArray.unshift(isOperation!);
+            const aggregate = data.aggregate!.split('=')[1];
+            contentArray.unshift(aggregate);
             break;
           default:
             contentArray.unshift('error');
