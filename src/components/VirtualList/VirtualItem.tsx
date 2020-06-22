@@ -4,15 +4,16 @@ import { PromisesRegistry } from '../../utils/CancelablePromises';
 import { Health } from '../../types/Health';
 import { StatefulFilters } from '../Filters/StatefulFilters';
 import { actionRenderer } from './Renderers';
+import { CSSProperties } from 'react';
 
 type VirtualItemProps = {
   item: RenderResource;
-  style?: any;
+  style?: CSSProperties;
   className?: string;
   index: number;
   config: Resource;
   statefulFilterProps?: React.RefObject<StatefulFilters>;
-  action?: any;
+  action?: JSX.Element;
 };
 
 type VirtualItemState = {

@@ -22,7 +22,7 @@ type VirtualListProps<R> = {
   rows: R[];
   sort?: (sortField: SortField<NamespaceInfo>, isAscending: boolean) => void;
   statefulProps?: React.RefObject<StatefulFilters>;
-  actions?: any[];
+  actions?: JSX.Element[];
 };
 
 type VirtualListState = {
