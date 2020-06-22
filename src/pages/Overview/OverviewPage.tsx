@@ -54,7 +54,7 @@ import { Paths } from '../../config';
 import { PfColors } from '../../components/Pf/PfColors';
 import VirtualList from '../../components/VirtualList/VirtualList';
 import { StatefulFilters } from '../../components/Filters/StatefulFilters';
-import { OverviewNamespaceActions } from './OverviewNamespaceActions';
+import { OverviewNamespaceAction, OverviewNamespaceActions } from './OverviewNamespaceActions';
 import history from '../../app/History';
 
 const gridStyleCompact = style({
@@ -437,44 +437,36 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
     history.push(destination);
   };
 
-  showActions = (): any[] => {
-    const namespaceActions: any[] = [
+  showActions = (): OverviewNamespaceAction[] => {
+    // Today actions are fixed, but soon actions may depend of the state of a namespace
+    // So we keep this wrapped in a showActions function.
+    const namespaceActions: OverviewNamespaceAction[] = [
       {
         isSeparator: false,
         title: 'Show Graph',
         action: (ns: string) => this.show(Show.GRAPH, ns, this.state.type)
-      }
-    ];
-
-    if (this.state.type !== 'app') {
-      namespaceActions.push({
+      },
+      {
         isSeparator: false,
         title: 'Show Applications',
         action: (ns: string) => this.show(Show.APPLICATIONS, ns, this.state.type)
-      });
-    }
-
-    if (this.state.type !== 'workload') {
-      namespaceActions.push({
+      },
+      {
         isSeparator: false,
         title: 'Show Workloads',
         action: (ns: string) => this.show(Show.WORKLOADS, ns, this.state.type)
-      });
-    }
-
-    if (this.state.type !== 'service') {
-      namespaceActions.push({
+      },
+      {
         isSeparator: false,
         title: 'Show Services',
         action: (ns: string) => this.show(Show.SERVICES, ns, this.state.type)
-      });
-    }
-
-    namespaceActions.push({
-      isSeparator: false,
-      title: 'Show Istio Config',
-      action: (ns: string) => this.show(Show.ISTIO_CONFIG, ns, this.state.type)
-    });
+      },
+      {
+        isSeparator: false,
+        title: 'Show Istio Config',
+        action: (ns: string) => this.show(Show.ISTIO_CONFIG, ns, this.state.type)
+      }
+    ];
     return namespaceActions;
   };
 
