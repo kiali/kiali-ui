@@ -520,17 +520,20 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
                               >
                                 {ns.name}
                               </span>
-                              {ns.tlsStatus ? (
-                                <span style={{ marginLeft: '10px' }}>
-                                  <NamespaceMTLSStatusContainer status={ns.tlsStatus.status} />
-                                </span>
-                              ) : undefined}
-                              {this.renderIstioConfigStatus(ns)}
                             </Title>
                           </CardHeader>
                         </CardHead>
                         <CardBody>
                           {this.renderLabels(ns)}
+                          <div style={{ textAlign: 'left' }}>
+                            <div style={{ display: 'inline-block', width: '125px' }}>Istio Config</div>
+                            {ns.tlsStatus && (
+                              <span>
+                                <NamespaceMTLSStatusContainer status={ns.tlsStatus.status} />
+                              </span>
+                            )}
+                            {this.renderIstioConfigStatus(ns)}
+                          </div>
                           {this.renderStatuses(ns)}
                         </CardBody>
                       </Card>
@@ -560,7 +563,7 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
     const labelsLength = ns.labels ? `${Object.entries(ns.labels).length}` : 'No';
     const labelContent = ns.labels ? (
       <div
-        style={{ color: PfColors.Blue400, textAlign: 'left' }}
+        style={{ color: PfColors.Blue400, textAlign: 'left', cursor: 'pointer' }}
         onClick={() => this.setDisplayMode(OverviewDisplayMode.LIST)}
       >
         <Tooltip
@@ -579,7 +582,7 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
           }
         >
           <div id="labels_info" style={{ display: 'inline' }}>
-            {labelsLength} label{labelsLength !== '1' ? 's' : ''}
+            {labelsLength} Label{labelsLength !== '1' ? 's' : ''}
           </div>
         </Tooltip>
       </div>
@@ -609,19 +612,22 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
   }
 
   renderIstioConfigStatus(ns: NamespaceInfo): JSX.Element {
-    let status: any = <small style={{ fontSize: '65%', marginLeft: '5px' }}>N/A</small>;
+    let status: any = <div style={{ marginLeft: '5px' }}>N/A</div>;
     if (ns.validations) {
-      status = (
-        <Link to={`/${Paths.ISTIO}?namespaces=${ns.name}`}>
-          <ValidationSummary
-            id={'ns-val-' + ns.name}
-            errors={ns.validations.errors}
-            warnings={ns.validations.warnings}
-            objectCount={ns.validations.objectCount}
-            style={{ marginLeft: '5px' }}
-          />
-        </Link>
+      const summary = (
+        <ValidationSummary
+          id={'ns-val-' + ns.name}
+          errors={ns.validations.errors}
+          warnings={ns.validations.warnings}
+          objectCount={ns.validations.objectCount}
+        />
       );
+      status =
+        ns.validations.objectCount && ns.validations.objectCount > 0 ? (
+          <Link to={`/${Paths.ISTIO}?namespaces=${ns.name}`}>{summary}</Link>
+        ) : (
+          summary
+        );
     }
     return status;
   }

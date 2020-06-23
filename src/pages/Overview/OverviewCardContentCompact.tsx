@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Link } from 'react-router-dom';
 import { Text, TextVariants } from '@patternfly/react-core';
 
 import { DEGRADED, FAILURE, HEALTHY, IDLE } from '../../types/Health';
@@ -36,8 +35,8 @@ class OverviewCardContentCompact extends React.Component<Props> {
       <>
         <div style={{ textAlign: 'left' }}>
           <span>
-            <Link to={`/${targetPage}?namespaces=${name}`}>{text}</Link>
-            <div style={{ position: 'relative', display: 'inline-block', marginLeft: '10px' }}>
+            <div style={{ display: 'inline-block', width: '125px' }}>{text}</div>
+            <div style={{ display: 'inline-block' }}>
               <Text component={TextVariants.h3} style={{ marginTop: 5 }}>
                 {status.inIdle.length > 0 && (
                   <OverviewStatus
@@ -75,7 +74,11 @@ class OverviewCardContentCompact extends React.Component<Props> {
                     targetPage={targetPage}
                   />
                 )}
-                {nbItems === status.notAvailable.length && 'N/A'}
+                {nbItems === status.notAvailable.length && (
+                  <div style={{ display: 'inline-block', marginLeft: '5px' }}>
+                    <Text>N/A</Text>
+                  </div>
+                )}
               </Text>
             </div>
           </span>

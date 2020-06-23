@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Link } from 'react-router-dom';
 import { Text, TextVariants } from '@patternfly/react-core';
 
 import { DEGRADED, FAILURE, HEALTHY, IDLE } from '../../types/Health';
@@ -54,13 +53,13 @@ class OverviewCardContentExpanded extends React.Component<Props> {
     } else {
       text = nbItems + switchType(this.props.type, ' Applications', ' Services', ' Workloads');
     }
-    const mainLink = <Link to={`/${targetPage}?namespaces=${name}`}>{text}</Link>;
+    const mainLink = <div style={{ display: 'inline-block', width: '125px', whiteSpace: 'nowrap' }}>{text}</div>;
     if (nbItems === status.notAvailable.length) {
       return (
         <div style={{ textAlign: 'left' }}>
           <span>
             {mainLink}
-            <div style={{ position: 'relative', display: 'inline-block', marginLeft: '10px' }}>
+            <div style={{ display: 'inline-block', marginLeft: '5px' }}>
               <Text>N/A</Text>
             </div>
           </span>
@@ -72,7 +71,7 @@ class OverviewCardContentExpanded extends React.Component<Props> {
         <div style={{ textAlign: 'left' }}>
           <span>
             {mainLink}
-            <div style={{ position: 'relative', display: 'inline-block', marginLeft: '10px' }}>
+            <div style={{ display: 'inline-block' }}>
               <Text component={TextVariants.h2} style={{ marginTop: 0 }}>
                 {status.inIdle.length > 0 && (
                   <OverviewStatus
