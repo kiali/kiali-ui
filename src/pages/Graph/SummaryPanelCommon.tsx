@@ -14,7 +14,8 @@ import { KialiIcon } from 'config/KialiIcon';
 export enum NodeMetricType {
   APP = 1,
   WORKLOAD = 2,
-  SERVICE = 3
+  SERVICE = 3,
+  AGGREGATE = 4
 }
 
 export const summaryBodyTabs = style({
@@ -72,6 +73,8 @@ export const updateHealth = (summaryTarget: any, stateSetter: (hs: HealthState) 
 
 export const getNodeMetricType = (nodeData: DecoratedGraphNodeData): NodeMetricType => {
   switch (nodeData.nodeType) {
+    case NodeType.AGGREGATE:
+      return NodeMetricType.AGGREGATE;
     case NodeType.APP:
       // treat versioned app like a workload to narrow to the specific version
       return nodeData.workload ? NodeMetricType.WORKLOAD : NodeMetricType.APP;
@@ -109,6 +112,9 @@ export const getNodeMetrics = (
   };
 
   switch (nodeMetricType) {
+    case NodeMetricType.AGGREGATE:
+      const aggr = nodeData.aggregate!.split('=');
+      return API.getAggregateMetrics(nodeData.namespace, aggr[0], aggr[1], options);
     case NodeMetricType.APP:
       return API.getAppMetrics(nodeData.namespace, nodeData.app!, options);
     case NodeMetricType.SERVICE:

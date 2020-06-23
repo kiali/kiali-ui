@@ -184,6 +184,15 @@ export const getServiceDashboard = (namespace: string, service: string, params: 
   return newRequest<DashboardModel>(HTTP_VERBS.GET, urls.serviceDashboard(namespace, service), params, {});
 };
 
+export const getAggregateMetrics = (
+  namespace: string,
+  aggregate: string,
+  aggregateValue: string,
+  params: IstioMetricsOptions
+) => {
+  return newRequest<Metrics>(HTTP_VERBS.GET, urls.aggregateMetrics(namespace, aggregate, aggregateValue), params, {});
+};
+
 export const getApp = (namespace: string, app: string) => {
   return newRequest<App>(HTTP_VERBS.GET, urls.app(namespace, app), {}, {});
 };

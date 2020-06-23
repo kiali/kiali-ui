@@ -87,6 +87,8 @@ const conf = {
   /** API configuration */
   api: {
     urls: {
+      aggregateMetrics: (namespace: string, aggregate: string, aggregateValue: string) =>
+        `api/namespaces/${namespace}/aggregates/${aggregate}/${aggregateValue}/metrics`,
       authenticate: 'api/authenticate',
       authInfo: 'api/auth/info',
       apps: (namespace: string) => `api/namespaces/${namespace}/apps`,

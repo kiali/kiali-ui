@@ -9,6 +9,13 @@ import { HealthIndicator, DisplayMode } from 'components/Health/HealthIndicator'
 
 const getBadge = (nodeData: GraphNodeData, nodeType?: NodeType) => {
   switch (nodeType || nodeData.nodeType) {
+    case NodeType.AGGREGATE:
+      const aggr = nodeData.aggregate!.split('=');
+      return (
+        <Tooltip position={TooltipPosition.auto} content={<>Aggregate: {aggr[0]}</>}>
+          <Badge className="virtualitem_badge_definition">A</Badge>
+        </Tooltip>
+      );
     case NodeType.APP:
       return (
         <Tooltip position={TooltipPosition.auto} content={<>Application</>}>
@@ -56,6 +63,10 @@ const getLink = (nodeData: GraphNodeData, nodeType?: NodeType) => {
   let key: string | undefined;
 
   switch (nodeType) {
+    case NodeType.AGGREGATE:
+      const aggr = nodeData.aggregate!.split('=');
+      displayName = aggr[1];
+      break;
     case NodeType.APP:
       link = `/namespaces/${encodeURIComponent(namespace)}/applications/${encodeURIComponent(app!)}`;
       key = `${namespace}.app.${app}`;

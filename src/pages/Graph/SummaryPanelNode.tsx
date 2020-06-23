@@ -73,7 +73,7 @@ export class SummaryPanelNode extends React.Component<SummaryPanelNodeProps, Sum
 
     const shouldRenderDestsList = destsList && destsList.length > 0;
     const shouldRenderSvcList = servicesList && servicesList.length > 0;
-    const shouldRenderWorkload = nodeType !== NodeType.WORKLOAD && nodeType !== NodeType.UNKNOWN && workload;
+    const shouldRenderWorkload = workload && ![NodeType.WORKLOAD, NodeType.UNKNOWN].includes(nodeType);
     const shouldRenderTraces =
       nodeType === NodeType.SERVICE &&
       !nodeData.isInaccessible &&
@@ -95,7 +95,7 @@ export class SummaryPanelNode extends React.Component<SummaryPanelNodeProps, Sum
         <div className="panel-heading" style={summaryHeader}>
           <div>
             {renderBadgedLink(nodeData)}
-            {!nodeData.isInaccessible && (
+            {!(nodeData.isInaccessible || nodeType === NodeType.AGGREGATE) && (
               <Dropdown
                 id="summary-node-actions"
                 style={{ float: 'right' }}

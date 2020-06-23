@@ -570,6 +570,7 @@ export class GraphPage extends React.Component<GraphPageProps, GraphPageState> {
       graphType: this.state.graphData.fetchParams.graphType,
       node: targetNode,
       refreshInterval: this.props.refreshInterval,
+      showOperationNodes: this.props.showOperationNodes,
       showServiceNodes: this.props.showServiceNodes,
       showUnusedNodes: this.props.showUnusedNodes
     };
