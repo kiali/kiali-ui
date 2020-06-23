@@ -37,7 +37,7 @@ class OverviewCardContentCompact extends React.Component<Props> {
           <span>
             <div style={{ display: 'inline-block', width: '125px' }}>{text}</div>
             <div style={{ display: 'inline-block' }}>
-              <Text component={TextVariants.h3} style={{ marginTop: 5 }}>
+              <Text component={TextVariants.h3}>
                 {status.inIdle.length > 0 && (
                   <OverviewStatus
                     id={name + '-iddle'}

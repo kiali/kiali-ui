@@ -72,7 +72,7 @@ class OverviewCardContentExpanded extends React.Component<Props> {
           <span>
             {mainLink}
             <div style={{ display: 'inline-block' }}>
-              <Text component={TextVariants.h2} style={{ marginTop: 0 }}>
+              <Text component={TextVariants.h2}>
                 {status.inIdle.length > 0 && (
                   <OverviewStatus
                     id={name + '-iddle'}
