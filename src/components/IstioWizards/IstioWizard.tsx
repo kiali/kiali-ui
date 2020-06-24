@@ -26,7 +26,6 @@ import {
   hasGateway,
   WIZARD_MATCHING_ROUTING,
   WIZARD_SUSPEND_TRAFFIC,
-  WIZARD_THREESCALE_INTEGRATION,
   WIZARD_TITLES,
   WIZARD_UPDATE_TITLES,
   WIZARD_WEIGHTED_ROUTING,
@@ -34,8 +33,6 @@ import {
   WizardState
 } from './IstioWizardActions';
 import { MessageType } from '../../types/MessageCenter';
-import ThreeScaleIntegration from './ThreeScaleIntegration';
-import { ThreeScaleServiceRule } from '../../types/ThreeScale';
 import GatewaySelector, { GatewaySelectorState } from './GatewaySelector';
 import VirtualServiceHosts from './VirtualServiceHosts';
 
@@ -203,23 +200,6 @@ class IstioWizard extends React.Component<WizardProps, WizardState> {
           promises.push(API.createIstioConfigDetail(this.props.namespace, 'virtualservices', JSON.stringify(vs)));
         }
         break;
-      case WIZARD_THREESCALE_INTEGRATION:
-        if (this.state.threeScaleServiceRule) {
-          if (this.props.update) {
-            promises.push(
-              API.updateThreeScaleServiceRule(
-                this.props.namespace,
-                this.props.serviceName,
-                JSON.stringify(this.state.threeScaleServiceRule)
-              )
-            );
-          } else {
-            promises.push(
-              API.createThreeScaleServiceRule(this.props.namespace, JSON.stringify(this.state.threeScaleServiceRule))
-            );
-          }
-        }
-        break;
       default:
     }
     // Disable button before promise is completed. Then Wizard is closed.
@@ -313,16 +293,6 @@ class IstioWizard extends React.Component<WizardProps, WizardState> {
     });
   };
 
-  onThreeScaleChange = (valid: boolean, threeScaleServiceRule: ThreeScaleServiceRule) => {
-    this.setState(prevState => {
-      prevState.valid.mainWizard = valid;
-      return {
-        valid: prevState.valid,
-        threeScaleServiceRule: threeScaleServiceRule
-      };
-    });
-  };
-
   isValid = (state: WizardState): boolean => {
     return state.valid.mainWizard && state.valid.vsHosts && state.valid.tls && state.valid.lb && state.valid.gateway;
   };
@@ -377,20 +347,6 @@ class IstioWizard extends React.Component<WizardProps, WizardState> {
             workloads={this.props.workloads}
             initSuspendedRoutes={getInitSuspendedRoutes(this.props.workloads, this.props.virtualServices)}
             onChange={this.onSuspendedChange}
-          />
-        )}
-        {this.props.type === WIZARD_THREESCALE_INTEGRATION && (
-          <ThreeScaleIntegration
-            serviceName={this.props.serviceName}
-            serviceNamespace={this.props.namespace}
-            threeScaleServiceRule={
-              this.props.threeScaleServiceRule || {
-                serviceName: this.props.serviceName,
-                serviceNamespace: this.props.namespace,
-                threeScaleHandlerName: ''
-              }
-            }
-            onChange={this.onThreeScaleChange}
           />
         )}
         {(this.props.type === WIZARD_WEIGHTED_ROUTING ||

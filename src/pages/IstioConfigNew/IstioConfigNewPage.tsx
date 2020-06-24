@@ -218,7 +218,7 @@ class IstioConfigNewPage extends React.Component<Props, State> {
   backToList = () => {
     this.setState(initState(), () => {
       // Back to list page
-      history.push(`/${Paths.ISTIO}?namespaces=${this.props.activeNamespaces.join(',')}`);
+      history.push(`/${Paths.ISTIO}?namespaces=${this.props.activeNamespaces.map(n => n.name).join(',')}`);
     });
   };
 

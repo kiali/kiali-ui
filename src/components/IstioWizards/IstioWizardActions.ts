@@ -14,6 +14,7 @@ import {
   HTTPMatchRequest,
   HTTPRoute,
   HTTPRouteDestination,
+  IstioHandler,
   LoadBalancerSettings,
   Operation,
   PeerAuthentication,
@@ -28,7 +29,6 @@ import {
   WorkloadEntrySelector
 } from '../../types/IstioObjects';
 import { serverConfig } from '../../config';
-import { ThreeScaleServiceRule } from '../../types/ThreeScale';
 import { GatewaySelectorState } from './GatewaySelector';
 import { ConsistentHashType, MUTUAL, TrafficPolicyState } from './TrafficPolicy';
 import { GatewayState } from '../../pages/IstioConfigNew/GatewayForm';
@@ -36,26 +36,24 @@ import { SidecarState } from '../../pages/IstioConfigNew/SidecarForm';
 import { AuthorizationPolicyState } from '../../pages/IstioConfigNew/AuthorizationPolicyForm';
 import { PeerAuthenticationState } from '../../pages/IstioConfigNew/PeerAuthenticationForm';
 import { RequestAuthenticationState } from '../../pages/IstioConfigNew/RequestAuthenticationForm';
+import { ThreeScaleState } from '../../pages/extensions/threescale/ThreeScaleNew/ThreeScaleNewPage';
 
 export const WIZARD_WEIGHTED_ROUTING = 'weighted_routing';
 export const WIZARD_MATCHING_ROUTING = 'matching_routing';
 export const WIZARD_SUSPEND_TRAFFIC = 'suspend_traffic';
-export const WIZARD_THREESCALE_INTEGRATION = 'threescale';
 
 export const WIZARD_ACTIONS = [WIZARD_WEIGHTED_ROUTING, WIZARD_MATCHING_ROUTING, WIZARD_SUSPEND_TRAFFIC];
 
 export const WIZARD_TITLES = {
   [WIZARD_WEIGHTED_ROUTING]: 'Create Weighted Routing',
   [WIZARD_MATCHING_ROUTING]: 'Create Matching Routing',
-  [WIZARD_SUSPEND_TRAFFIC]: 'Suspend Traffic',
-  [WIZARD_THREESCALE_INTEGRATION]: 'Add 3scale API Management Rule'
+  [WIZARD_SUSPEND_TRAFFIC]: 'Suspend Traffic'
 };
 
 export const WIZARD_UPDATE_TITLES = {
   [WIZARD_WEIGHTED_ROUTING]: 'Update Weighted Routing',
   [WIZARD_MATCHING_ROUTING]: 'Update Matching Routing',
-  [WIZARD_SUSPEND_TRAFFIC]: 'Update Suspended Traffic',
-  [WIZARD_THREESCALE_INTEGRATION]: 'Update 3scale API Management Rule'
+  [WIZARD_SUSPEND_TRAFFIC]: 'Update Suspended Traffic'
 };
 
 export type WizardProps = {
@@ -69,7 +67,6 @@ export type WizardProps = {
   virtualServices: VirtualServices;
   destinationRules: DestinationRules;
   gateways: string[];
-  threeScaleServiceRule?: ThreeScaleServiceRule;
   onClose: (changed: boolean) => void;
 };
 
@@ -92,7 +89,6 @@ export type WizardState = {
   vsHosts: string[];
   trafficPolicy: TrafficPolicyState;
   gateway?: GatewaySelectorState;
-  threeScaleServiceRule?: ThreeScaleServiceRule;
 };
 
 const SERVICE_UNAVAILABLE = 503;
@@ -892,4 +888,31 @@ export const buildSidecar = (name: string, namespace: string, state: SidecarStat
       });
   }
   return sc;
+};
+
+export const buildThreeScaleHandler = (name: string, namespace: string, state: ThreeScaleState): IstioHandler => {
+  const threeScaleHandler: IstioHandler = {
+    metadata: {
+      name: name,
+      namespace: namespace,
+      labels: {
+        [KIALI_WIZARD_LABEL]: 'threescale'
+      }
+    },
+    spec: {
+      adapter: serverConfig.extensions?.threescale.adapterName,
+      connection: {
+        address:
+          'dns:///' +
+          serverConfig.extensions?.threescale.adapterService +
+          ':' +
+          serverConfig.extensions?.threescale.adapterPort
+      },
+      params: {
+        access_token: state.token,
+        system_url: state.url
+      }
+    }
+  };
+  return threeScaleHandler;
 };
