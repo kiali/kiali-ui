@@ -14,7 +14,11 @@ import * as AlertUtils from '../../../../utils/AlertUtils';
 import history from '../../../../app/History';
 import { Paths } from '../../../../config';
 import { isValidUrl } from '../../../../utils/IstioConfigUtils';
-import { buildThreeScaleHandler } from '../../../../components/IstioWizards/IstioWizardActions';
+import {
+  buildThreeScaleHandler,
+  buildThreeScaleInstance,
+  buildThreeScaleRule
+} from '../../../../components/IstioWizards/IstioWizardActions';
 import { MessageType } from '../../../../types/MessageCenter';
 
 interface Props {
@@ -28,6 +32,7 @@ export interface ThreeScaleState {
   url: string;
   token: string;
   handlers: string[];
+  handler: string;
 }
 
 // Style constants
@@ -51,7 +56,8 @@ const initState = (): ThreeScaleState => ({
   threeScaleConfig: threeScaleConfigOptions[0].value,
   url: 'https://replaceme-admin.3scale.net:443',
   token: 'replaceme',
-  handlers: []
+  handlers: [],
+  handler: ''
 });
 
 class ThreeScaleNewPage extends React.Component<Props, ThreeScaleState> {
@@ -122,7 +128,8 @@ class ThreeScaleNewPage extends React.Component<Props, ThreeScaleState> {
           const handlers: string[] = [];
           responses.forEach(response => response.data!.handlers.forEach(h => handlers.push(h.metadata.name)));
           this.setState({
-            handlers: handlers
+            handlers: handlers,
+            handler: handlers.length > 0 ? handlers[0] : ''
           });
         })
         .catch(error => {
@@ -143,6 +150,8 @@ class ThreeScaleNewPage extends React.Component<Props, ThreeScaleState> {
 
   onThreeScaleConfigCreate = () => {
     const jsonHandlers: { namespace: string; json: string }[] = [];
+    const jsonInstances: { namespace: string; json: string }[] = [];
+    const jsonRules: { namespace: string; json: string }[] = [];
     this.props.activeNamespaces.forEach(ns => {
       switch (this.state.threeScaleConfig) {
         case THREESCALE_ACCOUNT:
@@ -152,6 +161,14 @@ class ThreeScaleNewPage extends React.Component<Props, ThreeScaleState> {
           });
           break;
         case THREESCALE_AUTHORIZATION:
+          jsonInstances.push({
+            namespace: ns.name,
+            json: JSON.stringify(buildThreeScaleInstance(this.state.name, ns.name))
+          });
+          jsonRules.push({
+            namespace: ns.name,
+            json: JSON.stringify(buildThreeScaleRule(this.state.name, ns.name, this.state))
+          });
           break;
       }
     });
@@ -169,6 +186,24 @@ class ThreeScaleNewPage extends React.Component<Props, ThreeScaleState> {
         })
         .catch(error => {
           AlertUtils.addError('Could not create Istio Handler objects.', error);
+        });
+    }
+    if (this.state.threeScaleConfig === THREESCALE_AUTHORIZATION) {
+      this.promises
+        .registerAll(
+          'Create 3scale Instances+Rules',
+          jsonInstances
+            .map(o => API.createIstioConfigDetail(o.namespace, 'instances', o.json))
+            .concat(jsonRules.map(o => API.createIstioConfigDetail(o.namespace, 'rules', o.json)))
+        )
+        .then(results => {
+          if (results.length > 0) {
+            AlertUtils.add('Istio Instances+Rules created', 'default', MessageType.SUCCESS);
+          }
+          this.backToList();
+        })
+        .catch(error => {
+          AlertUtils.addError('Could not create Istio Instances+Rules objects.', error);
         });
     }
   };
@@ -198,6 +233,12 @@ class ThreeScaleNewPage extends React.Component<Props, ThreeScaleState> {
     });
   };
 
+  onHandlerChange = (value, _) => {
+    this.setState({
+      handler: value
+    });
+  };
+
   render() {
     const canCreate = this.props.activeNamespaces.every(ns => this.canCreate(ns.name));
     const isNameValid = isValidK8SName(this.state.name);
@@ -206,7 +247,8 @@ class ThreeScaleNewPage extends React.Component<Props, ThreeScaleState> {
     const isTokenValid = this.state.token.length > 0;
     const isThreeScaleAccountValid =
       this.state.threeScaleConfig === THREESCALE_ACCOUNT ? isUrlValid && isTokenValid : true;
-    const isThreeScaleAuthorizationValid = this.state.threeScaleConfig === THREESCALE_AUTHORIZATION ? true : true;
+    const isThreeScaleAuthorizationValid =
+      this.state.threeScaleConfig === THREESCALE_AUTHORIZATION ? this.state.handler.length > 0 : true;
     const isFormValid =
       canCreate && isNameValid && isNamespacesValid && isThreeScaleAccountValid && isThreeScaleAuthorizationValid;
     const nameText = this.state.threeScaleConfig === THREESCALE_ACCOUNT ? 'Istio Handler ' : 'Istio Instance+Rule ';
@@ -303,7 +345,31 @@ class ThreeScaleNewPage extends React.Component<Props, ThreeScaleState> {
               </FormGroup>
             </>
           )}
-          {this.state.threeScaleConfig === THREESCALE_AUTHORIZATION && <>3scale Authorization -> Istio Instance+Rule</>}
+          {this.state.threeScaleConfig === THREESCALE_AUTHORIZATION && (
+            <>
+              <FormGroup
+                label="3scale Account"
+                fieldId="theescale-handler"
+                isRequired={true}
+                helperText={'Select a 3scale Account represented by an Istio Handler'}
+                helperTextInvalid={'A 3scale Account represented by an Istio Handler is required'}
+                isValid={this.state.handlers.length > 0}
+              >
+                <FormSelect
+                  value={this.state.handler}
+                  isRequired={true}
+                  onChange={this.onHandlerChange}
+                  id="theescale-handler"
+                  name="theescale-handler"
+                  isValid={this.state.handlers.length > 0}
+                >
+                  {this.state.handlers.map((value, index) => (
+                    <FormSelectOption isDisabled={false} key={index} value={value} label={value} />
+                  ))}
+                </FormSelect>
+              </FormGroup>
+            </>
+          )}
           <ActionGroup>
             <Button variant="primary" isDisabled={!isFormValid} onClick={() => this.onThreeScaleConfigCreate()}>
               Create

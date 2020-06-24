@@ -15,6 +15,8 @@ import {
   HTTPRoute,
   HTTPRouteDestination,
   IstioHandler,
+  IstioInstance,
+  IstioRule,
   LoadBalancerSettings,
   Operation,
   PeerAuthentication,
@@ -915,4 +917,60 @@ export const buildThreeScaleHandler = (name: string, namespace: string, state: T
     }
   };
   return threeScaleHandler;
+};
+
+export const buildThreeScaleInstance = (name: string, namespace: string): IstioInstance => {
+  const threeScaleInstance: IstioInstance = {
+    metadata: {
+      name: name,
+      namespace: namespace,
+      labels: {
+        [KIALI_WIZARD_LABEL]: 'threescale'
+      }
+    },
+    spec: {
+      params: {
+        action: {
+          method: 'request.method | "get"',
+          path: 'request.url_path',
+          service: 'destination.labels["service-mesh.3scale.net/service-id"] | ""'
+        },
+        subject: {
+          properties: {
+            app_id: 'request.query_params["app_id"] | request.headers["app-id"] | ""',
+            app_key: 'request.query_params["app_key"] | request.headers["app-key"] | ""',
+            client_id: 'request.auth.claims["azp"] | ""'
+          },
+          user: 'request.query_params["user_key"] | request.headers["x-user-key"] | ""'
+        }
+      },
+      template: serverConfig.extensions?.threescale.templateName
+    }
+  };
+  return threeScaleInstance;
+};
+
+export const buildThreeScaleRule = (name: string, namespace: string, state: ThreeScaleState): IstioRule => {
+  const threeScaleRule: IstioRule = {
+    metadata: {
+      name: name,
+      namespace: namespace,
+      labels: {
+        [KIALI_WIZARD_LABEL]: 'threescale'
+      }
+    },
+    spec: {
+      actions: [
+        {
+          handler: state.handler + '.handler.' + namespace,
+          instances: [name + '.instance.' + namespace]
+        }
+      ],
+      match:
+        'context.reporter.kind == "inbound" && destination.labels["service-mesh.3scale.net/credentials"] == "' +
+        name +
+        '" && destination.labels["service-mesh.3scale.net/authentication-method"] == ""'
+    }
+  };
+  return threeScaleRule;
 };
