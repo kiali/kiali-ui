@@ -242,7 +242,7 @@ class ThreeScaleNewPage extends React.Component<Props, ThreeScaleState> {
   render() {
     const canCreate = this.props.activeNamespaces.every(ns => this.canCreate(ns.name));
     const isNameValid = isValidK8SName(this.state.name);
-    const isNamespacesValid = this.props.activeNamespaces.length > 0;
+    const isNamespacesValid = this.props.activeNamespaces.length === 1;
     const isUrlValid = isValidUrl(this.state.url);
     const isTokenValid = this.state.token.length > 0;
     const isThreeScaleAccountValid =
@@ -259,7 +259,7 @@ class ThreeScaleNewPage extends React.Component<Props, ThreeScaleState> {
             label="Namespaces"
             isRequired={true}
             fieldId="namespaces"
-            helperText={'Select namespace(s) where this configuration will be applied'}
+            helperText={'Istio control plane namespace where this configuration will be applied'}
             helperTextInvalid={'At least one namespace should be selected'}
             isValid={isNamespacesValid}
           >
