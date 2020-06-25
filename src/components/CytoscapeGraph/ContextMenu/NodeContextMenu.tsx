@@ -48,7 +48,7 @@ export class NodeContextMenu extends React.PureComponent<Props> {
     let type = '';
     switch (node.nodeType) {
       case 'aggregate':
-        name = node.aggregate!.split('=')[1];
+        name = node.aggregateValue!;
         break;
       case 'app':
         // Prefer workload type for nodes backed by a workload

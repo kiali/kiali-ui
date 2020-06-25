@@ -165,6 +165,7 @@ export interface GraphNodeData {
   version?: string;
   service?: string;
   aggregate?: string;
+  aggregateValue?: string;
   destServices?: any;
   traffic?: ProtocolTraffic[];
   hasCB?: boolean;

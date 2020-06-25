@@ -35,6 +35,7 @@ export const CyEdgeResponses = {
 
 export const CyNode = {
   aggregate: 'aggregate',
+  aggregateValue: 'aggregateValue',
   app: 'app',
   destServices: 'destServices',
   grpcIn: 'grpcIn',

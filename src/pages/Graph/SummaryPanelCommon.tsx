@@ -113,8 +113,7 @@ export const getNodeMetrics = (
 
   switch (nodeMetricType) {
     case NodeMetricType.AGGREGATE:
-      const aggr = nodeData.aggregate!.split('=');
-      return API.getAggregateMetrics(nodeData.namespace, aggr[0], aggr[1], options);
+      return API.getAggregateMetrics(nodeData.namespace, nodeData.aggregate!, nodeData.aggregateValue!, options);
     case NodeMetricType.APP:
       return API.getAppMetrics(nodeData.namespace, nodeData.app!, options);
     case NodeMetricType.SERVICE:

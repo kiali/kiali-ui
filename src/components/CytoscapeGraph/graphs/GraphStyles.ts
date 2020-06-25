@@ -212,8 +212,7 @@ export class GraphStyles {
             content = workload;
             break;
           case NodeType.AGGREGATE:
-            const aggregate = data.aggregate!.split('=')[1];
-            content = aggregate;
+            content = data.aggregateValue!;
             break;
           default:
             content = '';
@@ -242,8 +241,7 @@ export class GraphStyles {
             contentArray.unshift(workload);
             break;
           case NodeType.AGGREGATE:
-            const aggregate = data.aggregate!.split('=')[1];
-            contentArray.unshift(aggregate);
+            contentArray.unshift(data.aggregateValue!);
             break;
           default:
             contentArray.unshift('error');
