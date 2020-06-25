@@ -532,6 +532,10 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
       case 'node':
         let nodeType = val.toLowerCase();
         switch (nodeType) {
+          case 'op':
+          case 'operation':
+            nodeType = NodeType.AGGREGATE;
+            break;
           case 'svc':
             nodeType = NodeType.SERVICE;
             break;
@@ -542,6 +546,7 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
             break; // no-op
         }
         switch (nodeType) {
+          case NodeType.AGGREGATE:
           case NodeType.APP:
           case NodeType.SERVICE:
           case NodeType.WORKLOAD:

@@ -186,7 +186,7 @@ export default class GraphHelpFind extends React.Component<GraphHelpFindProps> {
       ['httpout <op> <number>', 'unit: requests per second'],
       ['name <op> <string>', 'tests against app label, service name and workload name'],
       ['namespace <op> <namespaceName>'],
-      ['node <op> <nodeType>', 'nodeType: app | service | workload | unknown'],
+      ['node <op> <nodeType>', 'nodeType: app | operation | service | workload | unknown'],
       ['service <op> <serviceName>'],
       ['version <op> <string>'],
       ['tcpin <op> <number>', 'unit: bytes per second'],
@@ -213,7 +213,7 @@ export default class GraphHelpFind extends React.Component<GraphHelpFindProps> {
       ['Expressions can not combine node and edge criteria.'],
       ['Use "<operand> = NaN" to test for no activity. Use "!= NaN" for any activity. (e.g. httpout = NaN)'],
       [`Unary operands may optionally be prefixed with "is" or "has". (i.e. "has mtls")`],
-      ['Abbrevations: namespace|ns, service|svc, workload|wl (e.g. is wlnode)'],
+      ['Abbrevations: namespace|ns, service|svc, workload|wl operation|op'],
       ['Abbrevations: circuitbreaker|cb, responsetime|rt, serviceentry->se, sidecar|sc, virtualservice|vs'],
       ['Hiding nodes will automatically hide connected edges.'],
       ['Hiding edges will automatically hide nodes left with no visible edges.']
