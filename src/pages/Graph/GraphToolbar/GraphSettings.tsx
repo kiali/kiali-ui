@@ -17,7 +17,7 @@ import {
 import { style } from 'typestyle';
 import { PfColors } from 'components/Pf/PfColors';
 
-type ReduxProps = Omit<GraphToolbarState, 'findValue' | 'hideValue' | 'showLegend' | 'showFindHelp'> & {
+type ReduxProps = {
   setEdgeLabelMode: (edgeLabelMode: EdgeLabelMode) => void;
   toggleCompressOnHide(): void;
   toggleGraphCircuitBreakers(): void;
@@ -31,7 +31,8 @@ type ReduxProps = Omit<GraphToolbarState, 'findValue' | 'hideValue' | 'showLegen
   toggleUnusedNodes(): void;
 };
 
-type GraphSettingsProps = ReduxProps;
+type GraphSettingsProps = ReduxProps &
+  Omit<GraphToolbarState, 'findValue' | 'hideValue' | 'showLegend' | 'showFindHelp'>;
 
 type GraphSettingsState = { isOpen: boolean };
 
@@ -191,7 +192,7 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
       },
       {
         id: 'filterOperationNodes',
-        disabled: false,
+        disabled: this.props.graphType === GraphType.SERVICE,
         labelText: 'Operation Nodes',
         isChecked: showOperationNodes,
         onChange: toggleOperationNodes
@@ -266,7 +267,13 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
           <div className={titleStyle}>Show</div>
           {visibilityOptions.map((item: DisplayOptionType) => (
             <label key={item.id} className={itemStyle}>
-              <Checkbox id={item.id} isChecked={item.isChecked} label={item.labelText} onChange={item.onChange} />
+              <Checkbox
+                id={item.id}
+                isChecked={item.isChecked}
+                label={item.labelText}
+                onChange={item.onChange}
+                isDisabled={item.disabled}
+              />
             </label>
           ))}
           <div className={titleStyle}>Show Badges</div>
