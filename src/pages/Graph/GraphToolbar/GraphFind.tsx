@@ -553,12 +553,17 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
           case NodeType.UNKNOWN:
             return { target: 'node', selector: `[${CyNode.nodeType} ${op} "${nodeType}"]` };
           default:
-            this.setErrorMsg(`Invalid node type [${nodeType}]. Expected app | service | unknown | workload`);
+            this.setErrorMsg(
+              `Invalid node type [${nodeType}]. Expected app | operation | service | unknown | workload`
+            );
         }
         return undefined;
       case 'ns':
       case 'namespace':
         return { target: 'node', selector: `[${CyNode.namespace} ${op} "${val}"]` };
+      case 'op':
+      case 'operation':
+        return { target: 'node', selector: `[${CyNode.aggregate} ${op} "${val}"]` };
       case 'svc':
       case 'service':
         return { target: 'node', selector: `[${CyNode.service} ${op} "${val}"]` };
