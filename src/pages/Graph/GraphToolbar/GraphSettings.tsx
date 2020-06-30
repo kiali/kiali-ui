@@ -1,4 +1,4 @@
-import { Radio, Dropdown, DropdownToggle, Checkbox } from '@patternfly/react-core';
+import { Radio, Dropdown, DropdownToggle, Checkbox, Tooltip, TooltipPosition } from '@patternfly/react-core';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
@@ -16,6 +16,7 @@ import {
 } from 'components/BoundingClientAwareComponent/BoundingClientAwareComponent';
 import { style } from 'typestyle';
 import { PfColors } from 'components/Pf/PfColors';
+import { KialiIcon } from 'config/KialiIcon';
 
 type ReduxProps = {
   setEdgeLabelMode: (edgeLabelMode: EdgeLabelMode) => void;
@@ -42,6 +43,7 @@ interface DisplayOptionType {
   labelText: string;
   isChecked: boolean;
   onChange?: () => void;
+  tooltip?: React.ReactNode;
 }
 
 const marginBottom = 20;
@@ -63,11 +65,16 @@ const titleStyle = style({
 });
 
 // this emulates Select component .pf-c-select__menu-item but with less vertical padding to conserve space
-const itemStyle = style({
-  alignItems: 'center',
-  whiteSpace: 'nowrap',
-  margin: 0,
-  padding: '6px 16px'
+const itemStyle = (hasInfo: boolean) =>
+  style({
+    alignItems: 'center',
+    whiteSpace: 'nowrap',
+    margin: 0,
+    padding: hasInfo ? '6px 0px 6px 16px' : '6px 16px'
+  });
+
+const infoStyle = style({
+  margin: '0px 16px 2px 4px'
 });
 
 class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSettingsState> {
@@ -173,7 +180,18 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
       {
         id: EdgeLabelMode.RESPONSE_TIME_95TH_PERCENTILE,
         labelText: _.startCase(EdgeLabelMode.RESPONSE_TIME_95TH_PERCENTILE),
-        isChecked: edgeLabelMode === EdgeLabelMode.RESPONSE_TIME_95TH_PERCENTILE
+        isChecked: edgeLabelMode === EdgeLabelMode.RESPONSE_TIME_95TH_PERCENTILE,
+        tooltip: (
+          <div style={{ textAlign: 'left' }}>
+            <div>Displays the 95th Percentile.</div>
+            <div>
+              To see other response time percentiles select the desired edge and see the side panel. The following edges
+              do not offer a response time label but the information is availabe in the side panel:
+            </div>
+            <div>- edges into service nodes</div>
+            <div>- edges into or out of operation nodes.</div>
+          </div>
+        )
       }
     ];
 
@@ -182,7 +200,13 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
         id: 'filterHide',
         labelText: 'Compress Hidden',
         isChecked: compressOnHide,
-        onChange: toggleCompressOnHide
+        onChange: toggleCompressOnHide,
+        tooltip: (
+          <div style={{ textAlign: 'left' }}>
+            When enabled the graph is compressed after graph-hide removes matching elements. Otherwise the graph
+            maintains the space consumed by the hidden elements.
+          </div>
+        )
       },
       {
         id: 'filterNodes',
@@ -195,7 +219,23 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
         disabled: this.props.graphType === GraphType.SERVICE,
         labelText: 'Operation Nodes',
         isChecked: showOperationNodes,
-        onChange: toggleOperationNodes
+        onChange: toggleOperationNodes,
+        tooltip: (
+          <div style={{ textAlign: 'left' }}>
+            <div>
+              Show operation aggregate nodes in the graph. When enabled with Service Nodes the operation is displayed
+              specific to each service to whose workloads it applies (and therefore an operation may be duplicated for
+              different services). Without Service Nodes each operation will have a single node representing the total
+              traffic for that operation.
+            </div>
+            <div>- Operations with no traffic are ignored.</div>
+            <div>- This is not applicable to Service graphs.</div>
+            <div>
+              - This is useful only when Istio request classsification has been configured for workloads in the selected
+              namespaces.
+            </div>
+          </div>
+        )
       },
       {
         id: 'filterServiceNodes',
@@ -253,34 +293,55 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
         <div id="graph-display-menu" className={menuStyle}>
           <div className={titleStyle}>Show Edge Labels</div>
           {edgeLabelOptions.map((item: DisplayOptionType) => (
-            <label key={item.id} className={itemStyle}>
-              <Radio
-                id={item.id}
-                name="edgeLabels"
-                isChecked={item.isChecked}
-                label={item.labelText}
-                onChange={this.setEdgeLabelMode}
-                value={item.id}
-              />
-            </label>
+            <div style={{ display: 'inline-block', cursor: 'not-allowed' }}>
+              <label key={item.id} className={itemStyle(!!item.tooltip)}>
+                <Radio
+                  id={item.id}
+                  name="edgeLabels"
+                  isChecked={item.isChecked}
+                  label={item.labelText}
+                  onChange={this.setEdgeLabelMode}
+                  value={item.id}
+                />
+              </label>
+              {!!item.tooltip && (
+                <Tooltip key={`tooltip_${item.id}`} position={TooltipPosition.top} content={item.tooltip}>
+                  <KialiIcon.Info className={infoStyle} />
+                </Tooltip>
+              )}
+            </div>
           ))}
           <div className={titleStyle}>Show</div>
           {visibilityOptions.map((item: DisplayOptionType) => (
-            <label key={item.id} className={itemStyle}>
-              <Checkbox
-                id={item.id}
-                isChecked={item.isChecked}
-                label={item.labelText}
-                onChange={item.onChange}
-                isDisabled={item.disabled}
-              />
-            </label>
+            <div style={{ display: 'inline-block', cursor: 'not-allowed' }}>
+              <label key={item.id} className={itemStyle(!!item.tooltip)}>
+                <Checkbox
+                  id={item.id}
+                  isChecked={item.isChecked}
+                  label={item.labelText}
+                  onChange={item.onChange}
+                  isDisabled={item.disabled}
+                />
+              </label>
+              {!!item.tooltip && (
+                <Tooltip key={`tooltip_${item.id}`} position={TooltipPosition.top} content={item.tooltip}>
+                  <KialiIcon.Info className={infoStyle} />
+                </Tooltip>
+              )}
+            </div>
           ))}
           <div className={titleStyle}>Show Badges</div>
           {badgeOptions.map((item: DisplayOptionType) => (
-            <label key={item.id} className={itemStyle}>
-              <Checkbox id={item.id} isChecked={item.isChecked} label={item.labelText} onChange={item.onChange} />
-            </label>
+            <div style={{ display: 'inline-block', cursor: 'not-allowed' }}>
+              <label key={item.id} className={itemStyle(!!item.tooltip)}>
+                <Checkbox id={item.id} isChecked={item.isChecked} label={item.labelText} onChange={item.onChange} />
+              </label>
+              {!!item.tooltip && (
+                <Tooltip key={`tooltip_${item.id}`} position={TooltipPosition.top} content={item.tooltip}>
+                  <KialiIcon.Info className={infoStyle} />
+                </Tooltip>
+              )}
+            </div>
           ))}
         </div>
       </BoundingClientAwareComponent>
