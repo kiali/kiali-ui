@@ -11,8 +11,8 @@ const getBadge = (nodeData: GraphNodeData, nodeType?: NodeType) => {
   switch (nodeType || nodeData.nodeType) {
     case NodeType.AGGREGATE:
       return (
-        <Tooltip position={TooltipPosition.auto} content={<>Aggregate: {nodeData.aggregate!}</>}>
-          <Badge className="virtualitem_badge_definition">A</Badge>
+        <Tooltip position={TooltipPosition.auto} content={<>Operation: {nodeData.aggregate!}</>}>
+          <Badge className="virtualitem_badge_definition">O</Badge>
         </Tooltip>
       );
     case NodeType.APP:
