@@ -17,7 +17,7 @@ import { Dropdown, DropdownItem, DropdownPosition, KebabToggle, Tab } from '@pat
 import { KialiAppState } from 'store/Store';
 import { connect } from 'react-redux';
 import { JaegerInfo } from 'types/JaegerInfo';
-import { SummaryPanelNodeMetrics } from './SummaryPanelNodeMetrics';
+import { SummaryPanelNodeTraffic } from './SummaryPanelNodeTraffic';
 import { SummaryPanelNodeTraces } from './SummaryPanelNodeTraces';
 import SimpleTabs from 'components/Tab/SimpleTabs';
 
@@ -112,30 +112,35 @@ export class SummaryPanelNode extends React.Component<SummaryPanelNodeProps, Sum
             {shouldRenderWorkload && <div>{renderBadgedLink(nodeData, NodeType.WORKLOAD)}</div>}
           </div>
         </div>
-        {shouldRenderTraces ? this.renderWithTabs() : this.renderMetricsOnly()}
+        {shouldRenderTraces ? this.renderWithTabs(nodeData) : this.renderTrafficOnly()}
       </div>
     );
   }
 
-  private renderMetricsOnly() {
+  private renderTrafficOnly() {
     return (
       <div className="panel-body">
-        <SummaryPanelNodeMetrics {...this.props} />
+        <SummaryPanelNodeTraffic {...this.props} />
       </div>
     );
   }
 
-  private renderWithTabs() {
+  private renderWithTabs(nodeData: DecoratedGraphNodeData) {
     return (
       <div className={summaryBodyTabs}>
         <SimpleTabs id="graph_summary_tabs" defaultTab={0} style={{ paddingBottom: '10px' }}>
-          <Tab style={summaryFont} title="Metrics" eventKey={0}>
+          <Tab style={summaryFont} title="Traffic" eventKey={0}>
             <div style={summaryFont}>
-              <SummaryPanelNodeMetrics {...this.props} />
+              <SummaryPanelNodeTraffic {...this.props} />
             </div>
           </Tab>
           <Tab style={summaryFont} title="Traces" eventKey={1}>
-            <SummaryPanelNodeTraces {...this.props} />
+            <SummaryPanelNodeTraces
+              namespace={nodeData.namespace}
+              service={nodeData.service!}
+              jaegerInfo={this.props.jaegerInfo}
+              timeRange={this.props.duration}
+            />
           </Tab>
         </SimpleTabs>
       </div>

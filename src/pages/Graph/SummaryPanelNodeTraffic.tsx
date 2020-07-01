@@ -77,7 +77,7 @@ const defaultState: SummaryPanelNodeState = {
 
 type SummaryPanelNodeProps = SummaryPanelPropType;
 
-export class SummaryPanelNodeMetrics extends React.Component<SummaryPanelNodeProps, SummaryPanelNodeState> {
+export class SummaryPanelNodeTraffic extends React.Component<SummaryPanelNodeProps, SummaryPanelNodeState> {
   private metricsPromise?: CancelablePromise<Response<Metrics>[]>;
 
   constructor(props: SummaryPanelNodeProps) {
