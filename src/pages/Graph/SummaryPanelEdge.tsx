@@ -211,7 +211,6 @@ export default class SummaryPanelEdge extends React.Component<SummaryPanelPropTy
   }
 
   private getByLabels = (sourceMetricType: NodeMetricType, destMetricType: NodeMetricType) => {
-    console.log(`sourceMetricType=${sourceMetricType}, destMetricType=${destMetricType}`);
     let label: string;
     switch (sourceMetricType) {
       case NodeMetricType.AGGREGATE:
@@ -335,7 +334,6 @@ export default class SummaryPanelEdge extends React.Component<SummaryPanelPropTy
     const isSourceAggregate = sourceData.nodeType === NodeType.AGGREGATE;
     const isDestServiceEntry = !!destData.isServiceEntry;
     const useDestMetrics = isDestServiceEntry || isSourceAggregate ? false : true;
-    console.log('useDestMetrics=' + useDestMetrics);
     const metricsNode = useDestMetrics ? edge.target() : edge.source();
     const metricsNodeData = useDestMetrics ? destData : sourceData;
     const direction: Direction = useDestMetrics ? 'inbound' : 'outbound';
@@ -343,7 +341,6 @@ export default class SummaryPanelEdge extends React.Component<SummaryPanelPropTy
     const byLabels = isDestServiceEntry
       ? ['destination_service_name']
       : this.getByLabels(sourceMetricType, destMetricType);
-    console.log('byLabels=' + byLabels);
     const otherEndData = useDestMetrics ? sourceData : destData;
     const quantiles = ['0.5', '0.95', '0.99'];
 
@@ -391,7 +388,6 @@ export default class SummaryPanelEdge extends React.Component<SummaryPanelPropTy
     this.metricsPromise = makeCancelablePromise(promiseRps ? promiseRps : promiseTcp);
     this.metricsPromise.promise
       .then(response => {
-        console.log(`otherEndData=${JSON.stringify(otherEndData)}`);
         const metrics = response.data.metrics;
         const histograms = response.data.histograms;
         let { reqRates, errRates, rtAvg, rtMed, rt95, rt99, tcpSent, tcpReceived, unit } = defaultMetricsState;
