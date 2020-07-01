@@ -77,6 +77,8 @@ type InitialValues = {
 };
 
 export interface GraphNodeTapEvent {
+  aggregate?: string;
+  aggregateValue?: string;
   app: string;
   hasMissingSC: boolean;
   isInaccessible: boolean;
@@ -183,6 +185,10 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
     if (node && cy && cy.$(':selected').length === 0) {
       let selector = "[nodeType = '" + node.nodeType + "']";
       switch (node.nodeType) {
+        case NodeType.AGGREGATE:
+          selector =
+            selector + "[aggregate = '" + node.aggregate! + "'][aggregateValue = '" + node.aggregateValue! + "']";
+          break;
         case NodeType.APP:
           selector = selector + "[app = '" + node.app + "']";
           if (node.version && node.version !== UNKNOWN) {
@@ -243,6 +249,8 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
 
     // Invoke callback
     return {
+      aggregate: target.data(CyNode.aggregate),
+      aggregateValue: target.data(CyNode.aggregateValue),
       app: target.data(CyNode.app),
       hasMissingSC: targetOrGroupChildren.every(t => t.data(CyNode.hasMissingSC)),
       isInaccessible: target.data(CyNode.isInaccessible),

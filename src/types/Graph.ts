@@ -60,6 +60,8 @@ export enum NodeType {
 export const UNKNOWN = 'unknown';
 
 export interface NodeParamsType {
+  aggregate?: string;
+  aggregateValue?: string;
   app: string;
   namespace: Namespace;
   nodeType: NodeType;

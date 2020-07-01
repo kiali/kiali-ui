@@ -338,6 +338,13 @@ export const getGraphElements = (params: any) => {
 
 export const getNodeGraphElements = (node: NodeParamsType, params: any) => {
   switch (node.nodeType) {
+    case NodeType.AGGREGATE:
+      return newRequest<GraphDefinition>(
+        HTTP_VERBS.GET,
+        urls.aggregateGraphElements(node.namespace.name, node.aggregate!, node.aggregateValue!),
+        params,
+        {}
+      );
     case NodeType.APP:
       return newRequest<GraphDefinition>(
         HTTP_VERBS.GET,

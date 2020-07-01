@@ -45,6 +45,11 @@ export const makeNodeGraphUrlFromParams = (params: GraphUrlParams): string => {
   const node = params.node;
   if (node) {
     switch (node.nodeType) {
+      case NodeType.AGGREGATE:
+        return (
+          `/graph/node/namespaces/${node.namespace.name}/aggregates/${node.aggregate}/${node.aggregateValue}?` +
+          buildCommonQueryParams(params)
+        );
       case NodeType.APP:
         if (node.version && node.version !== 'unknown') {
           return (
@@ -55,13 +60,13 @@ export const makeNodeGraphUrlFromParams = (params: GraphUrlParams): string => {
         return (
           `/graph/node/namespaces/${node.namespace.name}/applications/${node.app}?` + buildCommonQueryParams(params)
         );
-      case NodeType.WORKLOAD:
-        return (
-          `/graph/node/namespaces/${node.namespace.name}/workloads/${node.workload}?` + buildCommonQueryParams(params)
-        );
       case NodeType.SERVICE:
         return (
           `/graph/node/namespaces/${node.namespace.name}/services/${node.service}?` + buildCommonQueryParams(params)
+        );
+      case NodeType.WORKLOAD:
+        return (
+          `/graph/node/namespaces/${node.namespace.name}/workloads/${node.workload}?` + buildCommonQueryParams(params)
         );
       default:
         console.debug('makeNodeUrl defaulting to makeNamespaceUrl');

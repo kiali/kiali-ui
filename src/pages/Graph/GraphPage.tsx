@@ -534,6 +534,10 @@ export class GraphPage extends React.Component<GraphPageProps, GraphPageState> {
     if (node) {
       sameNode = node && node.nodeType === event.nodeType;
       switch (event.nodeType) {
+        case NodeType.AGGREGATE:
+          sameNode = sameNode && node.aggregate === event.aggregate;
+          sameNode = sameNode && node.aggregateValue === event.aggregateValue;
+          break;
         case NodeType.APP:
           sameNode = sameNode && node.app === event.app;
           sameNode = sameNode && node.version === event.version;

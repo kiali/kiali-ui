@@ -196,6 +196,9 @@ export class GraphStyles {
 
       if (isGroupMember) {
         switch (nodeType) {
+          case NodeType.AGGREGATE:
+            content = data.aggregateValue!;
+            break;
           case NodeType.APP:
             if (cyGlobal.graphType === GraphType.APP) {
               content = app;
@@ -211,9 +214,6 @@ export class GraphStyles {
           case NodeType.WORKLOAD:
             content = workload;
             break;
-          case NodeType.AGGREGATE:
-            content = data.aggregateValue!;
-            break;
           default:
             content = '';
         }
@@ -223,6 +223,9 @@ export class GraphStyles {
           contentArray.push('(' + namespace + ')');
         }
         switch (nodeType) {
+          case NodeType.AGGREGATE:
+            contentArray.unshift(data.aggregateValue!);
+            break;
           case NodeType.APP:
             if (cyGlobal.graphType === GraphType.APP || isGroup || version === UNKNOWN) {
               contentArray.unshift(app);
@@ -239,9 +242,6 @@ export class GraphStyles {
             break;
           case NodeType.WORKLOAD:
             contentArray.unshift(workload);
-            break;
-          case NodeType.AGGREGATE:
-            contentArray.unshift(data.aggregateValue!);
             break;
           default:
             contentArray.unshift('error');
@@ -447,6 +447,8 @@ export class GraphStyles {
       const nodeData = decoratedNodeData(ele);
       const nodeType = nodeData.nodeType;
       switch (nodeType) {
+        case NodeType.AGGREGATE:
+          return 'star';
         case NodeType.APP:
           return 'round-rectangle';
         case NodeType.SERVICE:
@@ -455,8 +457,6 @@ export class GraphStyles {
           return 'ellipse';
         case NodeType.WORKLOAD:
           return 'ellipse';
-        case NodeType.AGGREGATE:
-          return 'star';
         default:
           return 'ellipse';
       }
