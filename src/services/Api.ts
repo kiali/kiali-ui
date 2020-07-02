@@ -424,6 +424,10 @@ export const getWorkload = (namespace: string, name: string) => {
   return newRequest<Workload>(HTTP_VERBS.GET, urls.workload(namespace, name), {}, {});
 };
 
+export const updateWorkload = (namespace: string, name: string, jsonPatch: string): Promise<Response<string>> => {
+  return newRequest(HTTP_VERBS.PATCH, urls.workload(namespace, name), {}, jsonPatch);
+};
+
 export const getPod = (namespace: string, name: string) => {
   return newRequest<Pod>(HTTP_VERBS.GET, urls.pod(namespace, name), {}, {});
 };

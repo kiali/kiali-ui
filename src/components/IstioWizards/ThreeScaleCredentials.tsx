@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Button, Form, FormGroup, FormSelect, FormSelectOption, TextInput } from '@patternfly/react-core';
 import { IstioRule } from '../../types/IstioObjects';
 import history from '../../app/History';
+import { serverConfig } from '../../config';
 
 export type ThreeScaleCredentialsState = {
   serviceId: string;
@@ -19,12 +20,17 @@ class ThreeScaleCredentials extends React.Component<Props, ThreeScaleCredentials
     super(props);
     this.state = {
       serviceId: this.props.threeScaleCredentials.serviceId,
-      credentials: this.props.threeScaleCredentials.credentials
+      credentials:
+        this.props.threeScaleCredentials.credentials.length > 0
+          ? this.props.threeScaleCredentials.credentials
+          : this.props.threeScaleRules.length > 0
+          ? this.props.threeScaleRules[0].metadata.name
+          : ''
     };
   }
 
   createNewConfig = () => {
-    history.push('/extensions/threescale/new');
+    history.push('/extensions/threescale/new?namespaces=' + serverConfig.istioNamespace);
   };
 
   render() {
@@ -34,6 +40,8 @@ class ThreeScaleCredentials extends React.Component<Props, ThreeScaleCredentials
           label="3scale Service Id"
           fieldId="threescale-service-id"
           helperText="The 3scale Service Id to link with this workload"
+          helperTextInvalid="A workload needs a 3scale Service Id"
+          isValid={this.props.threeScaleCredentials.serviceId.length > 0}
         >
           <TextInput
             value={this.state.serviceId}
@@ -50,9 +58,16 @@ class ThreeScaleCredentials extends React.Component<Props, ThreeScaleCredentials
                 () => this.props.onChange(this.state)
               );
             }}
+            isValid={this.props.threeScaleCredentials.serviceId.length > 0}
           />
         </FormGroup>
-        <FormGroup label="3scale Credentials" fieldId="theescale-credentials">
+        <FormGroup
+          label="3scale Credentials"
+          fieldId="theescale-credentials"
+          helperText={'The 3scale Authorization (Istio Instance+Rule) to link with this Workload'}
+          helperTextInvalid={'Create a new 3scale Authorization (Istio Instance+Rule) to link with this Workload'}
+          isValid={this.props.threeScaleRules.length > 0}
+        >
           <FormSelect
             value={this.state.credentials}
             onChange={value => {

@@ -78,6 +78,16 @@ class ThreeScaleNewPage extends React.Component<Props, ThreeScaleState> {
     this.fetchHandlers();
   }
 
+  componentDidUpdate(prevProps: Props) {
+    if (
+      prevProps.activeNamespaces.length > this.props.activeNamespaces.length ||
+      !prevProps.activeNamespaces.every(v => this.props.activeNamespaces.includes(v))
+    ) {
+      this.fetchPermissions();
+      this.fetchHandlers();
+    }
+  }
+
   canCreate = (namespace: string): boolean => {
     // 3scale extension needs permissions on old Mixer objects
     return (

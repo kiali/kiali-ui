@@ -8,7 +8,8 @@ import WorkloadWizard from './WorkloadWizard';
 import { IstioRule } from '../../types/IstioObjects';
 
 interface Props {
-  workload?: Workload;
+  namespace: string;
+  workload: Workload;
   rules: IstioRule[];
   onChange: () => void;
 }
@@ -115,6 +116,8 @@ class WorkloadWizardDropdown extends React.Component<Props, State> {
         <WorkloadWizard
           show={this.state.showWizard}
           type={this.state.type}
+          namespace={this.props.namespace}
+          workload={this.props.workload}
           rules={this.props.rules}
           onClose={this.onClose}
         />

@@ -1,7 +1,16 @@
 import * as React from 'react';
-import { WIZARD_THREESCALE_LINK, WIZARD_TITLES, WorkloadWizardProps, WorkloadWizardState } from './WizardActions';
+import {
+  buildWorkloadThreeScalePatch,
+  WIZARD_THREESCALE_LINK,
+  WIZARD_TITLES,
+  WorkloadWizardProps,
+  WorkloadWizardState
+} from './WizardActions';
 import { Button, Modal } from '@patternfly/react-core';
 import ThreeScaleCredentials, { ThreeScaleCredentialsState } from './ThreeScaleCredentials';
+import * as API from '../../services/Api';
+import * as AlertUtils from '../../utils/AlertUtils';
+import { MessageType } from '../../types/MessageCenter';
 
 class WorkloadWizard extends React.Component<WorkloadWizardProps, WorkloadWizardState> {
   constructor(props: WorkloadWizardProps) {
@@ -31,7 +40,25 @@ class WorkloadWizard extends React.Component<WorkloadWizardProps, WorkloadWizard
   };
 
   onCreateUpdate = () => {
-    console.log('TODELETE Now we need to create the 3scale config');
+    switch (this.props.type) {
+      case WIZARD_THREESCALE_LINK:
+        const jsonPatch = buildWorkloadThreeScalePatch(
+          true,
+          this.props.workload.type,
+          this.state.threeScale.serviceId,
+          this.state.threeScale.credentials
+        );
+        API.updateWorkload(this.props.namespace, this.props.workload.name, jsonPatch)
+          .then(_ => {
+            AlertUtils.add('Workload ' + this.props.workload.name + ' updated', 'default', MessageType.SUCCESS);
+            this.onClose(true);
+          })
+          .catch(error => {
+            AlertUtils.addError('Could not update workload ' + this.props.workload.name, error);
+            this.onClose(true);
+          });
+        break;
+    }
   };
 
   onThreeScaleChange = (state: ThreeScaleCredentialsState) => {

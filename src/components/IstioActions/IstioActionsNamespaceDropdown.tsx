@@ -34,7 +34,7 @@ class IstioActionsNamespaceDropdown extends React.Component<Props, State> {
   };
 
   onClickThreeScale = () => {
-    history.push('/extensions/threescale/new');
+    history.push('/extensions/threescale/new?namespaces=' + serverConfig.istioNamespace);
   };
 
   render() {

@@ -168,7 +168,14 @@ class WorkloadInfo extends React.Component<WorkloadInfoProps, WorkloadInfoState>
         <RightActionBar>
           <DurationDropdownContainer id="workload-info-duration-dropdown" prefix="Last" />
           <RefreshButtonContainer handleRefresh={this.fetchBackend} />
-          <WorkloadWizardDropdown workload={workload} rules={this.state.threescaleRules} onChange={this.fetchBackend} />
+          {workload && (
+            <WorkloadWizardDropdown
+              namespace={this.props.namespace}
+              workload={workload}
+              rules={this.state.threescaleRules}
+              onChange={this.fetchBackend}
+            />
+          )}
         </RightActionBar>
         <RenderComponentScroll>
           <Grid style={{ margin: '10px' }} gutter={'md'}>

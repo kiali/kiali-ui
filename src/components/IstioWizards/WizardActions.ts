@@ -106,6 +106,8 @@ export type WorkloadWizardValid = {
 export type WorkloadWizardProps = {
   show: boolean;
   type: string;
+  namespace: string;
+  workload: Workload;
   rules: IstioRule[];
   onClose: (changed: boolean) => void;
 };
@@ -1013,7 +1015,7 @@ export const isThreeScaleLinked = (workload: Workload): boolean => {
   );
 };
 
-export const buildThreeScalePath = (
+export const buildWorkloadThreeScalePatch = (
   enable: boolean,
   workloadType: string,
   serviceId: string,
