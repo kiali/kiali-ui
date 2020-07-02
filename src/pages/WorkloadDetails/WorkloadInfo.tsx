@@ -173,7 +173,7 @@ class WorkloadInfo extends React.Component<WorkloadInfoProps, WorkloadInfoState>
               namespace={this.props.namespace}
               workload={workload}
               rules={this.state.threescaleRules}
-              onChange={this.fetchBackend}
+              onChange={this.props.onRefresh}
             />
           )}
         </RightActionBar>

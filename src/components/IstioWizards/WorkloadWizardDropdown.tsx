@@ -3,9 +3,17 @@ import { Dropdown, DropdownItem, DropdownPosition, DropdownToggle } from '@patte
 import { CaretDownIcon } from '@patternfly/react-icons';
 import { serverConfig } from '../../config';
 import { Workload } from '../../types/Workload';
-import { isThreeScaleLinked, WIZARD_THREESCALE_LINK, WIZARD_THREESCALE_UNLINK } from './WizardActions';
+import {
+  buildWorkloadThreeScalePatch,
+  isThreeScaleLinked,
+  WIZARD_THREESCALE_LINK,
+  WIZARD_THREESCALE_UNLINK
+} from './WizardActions';
 import WorkloadWizard from './WorkloadWizard';
 import { IstioRule } from '../../types/IstioObjects';
+import * as API from '../../services/Api';
+import * as AlertUtils from '../../utils/AlertUtils';
+import { MessageType } from '../../types/MessageCenter';
 
 interface Props {
   namespace: string;
@@ -51,10 +59,29 @@ class WorkloadWizardDropdown extends React.Component<Props, State> {
         });
         break;
       case WIZARD_THREESCALE_UNLINK:
-        console.log('TODELETE Unlink existing 3scale');
+        const jsonPatch = buildWorkloadThreeScalePatch(false, this.props.workload.type, '', '');
+        API.updateWorkload(this.props.namespace, this.props.workload.name, jsonPatch)
+          .then(_ => {
+            AlertUtils.add('Workload ' + this.props.workload.name + ' updated', 'default', MessageType.SUCCESS);
+            this.setState(
+              {
+                showWizard: false
+              },
+              () => this.props.onChange()
+            );
+          })
+          .catch(error => {
+            AlertUtils.addError('Could not update workload ' + this.props.workload.name, error);
+            this.setState(
+              {
+                showWizard: false
+              },
+              () => this.props.onChange()
+            );
+          });
         break;
       default:
-      // Nothing to add
+        console.log('key ' + key + ' not supported');
     }
   };
 
