@@ -12,13 +12,13 @@ import { PromisesRegistry } from '../../../../utils/CancelablePromises';
 import * as API from '../../../../services/Api';
 import * as AlertUtils from '../../../../utils/AlertUtils';
 import history from '../../../../app/History';
-import { Paths } from '../../../../config';
+import { Paths, serverConfig } from '../../../../config';
 import { isValidUrl } from '../../../../utils/IstioConfigUtils';
 import {
   buildThreeScaleHandler,
   buildThreeScaleInstance,
   buildThreeScaleRule
-} from '../../../../components/IstioWizards/IstioWizardActions';
+} from '../../../../components/IstioWizards/WizardActions';
 import { MessageType } from '../../../../types/MessageCenter';
 
 interface Props {
@@ -242,7 +242,9 @@ class ThreeScaleNewPage extends React.Component<Props, ThreeScaleState> {
   render() {
     const canCreate = this.props.activeNamespaces.every(ns => this.canCreate(ns.name));
     const isNameValid = isValidK8SName(this.state.name);
-    const isNamespacesValid = this.props.activeNamespaces.length === 1;
+    // It should be a single namespace where Istio Control Plane is located
+    const isNamespacesValid =
+      this.props.activeNamespaces.length === 1 && serverConfig.istioNamespace === this.props.activeNamespaces[0].name;
     const isUrlValid = isValidUrl(this.state.url);
     const isTokenValid = this.state.token.length > 0;
     const isThreeScaleAccountValid =
@@ -260,7 +262,7 @@ class ThreeScaleNewPage extends React.Component<Props, ThreeScaleState> {
             isRequired={true}
             fieldId="namespaces"
             helperText={'Istio control plane namespace where this configuration will be applied'}
-            helperTextInvalid={'At least one namespace should be selected'}
+            helperTextInvalid={'Select the Istio control plane namespace where this configuration will be applied'}
             isValid={isNamespacesValid}
           >
             <TextInput

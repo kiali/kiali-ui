@@ -2,7 +2,7 @@ import * as React from 'react';
 import { style } from 'typestyle';
 import * as API from '../../services/Api';
 import * as AlertUtils from '../../utils/AlertUtils';
-import { Validations, ValidationTypes } from '../../types/IstioObjects';
+import { IstioRule, Validations, ValidationTypes } from '../../types/IstioObjects';
 import WorkloadDescription from './WorkloadInfo/WorkloadDescription';
 import WorkloadPods from './WorkloadInfo/WorkloadPods';
 import WorkloadServices from './WorkloadInfo/WorkloadServices';
@@ -19,6 +19,8 @@ import { DurationInSeconds } from 'types/Common';
 import { RightActionBar } from 'components/RightActionBar/RightActionBar';
 import { DurationDropdownContainer } from 'components/DurationDropdown/DurationDropdown';
 import RefreshButtonContainer from 'components/Refresh/RefreshButton';
+import WorkloadWizardDropdown from '../../components/IstioWizards/WorkloadWizardDropdown';
+import { serverConfig } from '../../config';
 
 type WorkloadInfoProps = {
   workload?: Workload;
@@ -35,6 +37,7 @@ interface ValidationChecks {
 type WorkloadInfoState = {
   currentTab: string;
   health?: WorkloadHealth;
+  threescaleRules: IstioRule[];
 };
 
 const tabIconStyle = style({
@@ -54,7 +57,8 @@ class WorkloadInfo extends React.Component<WorkloadInfoProps, WorkloadInfoState>
   constructor(props: WorkloadInfoProps) {
     super(props);
     this.state = {
-      currentTab: activeTab(tabName, defaultTab)
+      currentTab: activeTab(tabName, defaultTab),
+      threescaleRules: []
     };
   }
 
@@ -88,6 +92,18 @@ class WorkloadInfo extends React.Component<WorkloadInfoProps, WorkloadInfoState>
     )
       .then(health => this.setState({ health: health }))
       .catch(error => AlertUtils.addError('Could not fetch Health.', error));
+    if (serverConfig.extensions?.threescale.enabled) {
+      // 3scale info should be placed under control plane namespace
+      API.getIstioConfig(serverConfig.istioNamespace, ['rules'], false, 'kiali_wizard=threescale')
+        .then(response => {
+          this.setState({
+            threescaleRules: response.data.rules
+          });
+        })
+        .catch(error => {
+          AlertUtils.addError('Could not fetch 3scale Rules.', error);
+        });
+    }
   };
 
   private validationChecks(): ValidationChecks {
@@ -152,6 +168,7 @@ class WorkloadInfo extends React.Component<WorkloadInfoProps, WorkloadInfoState>
         <RightActionBar>
           <DurationDropdownContainer id="workload-info-duration-dropdown" prefix="Last" />
           <RefreshButtonContainer handleRefresh={this.fetchBackend} />
+          <WorkloadWizardDropdown workload={workload} rules={this.state.threescaleRules} onChange={this.fetchBackend} />
         </RightActionBar>
         <RenderComponentScroll>
           <Grid style={{ margin: '10px' }} gutter={'md'}>

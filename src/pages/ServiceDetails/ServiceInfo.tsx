@@ -20,7 +20,7 @@ import DestinationRuleValidator from './ServiceInfo/types/DestinationRuleValidat
 import { DurationInSeconds } from 'types/Common';
 import { DurationDropdownContainer } from 'components/DurationDropdown/DurationDropdown';
 import RefreshButtonContainer from 'components/Refresh/RefreshButton';
-import IstioWizardDropdown from 'components/IstioWizards/IstioWizardDropdown';
+import ServiceWizardDropdown from 'components/IstioWizards/ServiceWizardDropdown';
 import GraphDataSource from 'services/GraphDataSource';
 import { RightActionBar } from 'components/RightActionBar/RightActionBar';
 
@@ -309,7 +309,7 @@ class ServiceInfo extends React.Component<Props, ServiceInfoState> {
         <DurationDropdownContainer id="service-info-duration-dropdown" prefix="Last" />
         <RefreshButtonContainer handleRefresh={this.fetchBackend} />
         {details && (
-          <IstioWizardDropdown
+          <ServiceWizardDropdown
             namespace={this.props.namespace}
             serviceName={details.service.name}
             show={false}

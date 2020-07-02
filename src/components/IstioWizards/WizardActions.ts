@@ -39,17 +39,23 @@ import { AuthorizationPolicyState } from '../../pages/IstioConfigNew/Authorizati
 import { PeerAuthenticationState } from '../../pages/IstioConfigNew/PeerAuthenticationForm';
 import { RequestAuthenticationState } from '../../pages/IstioConfigNew/RequestAuthenticationForm';
 import { ThreeScaleState } from '../../pages/extensions/threescale/ThreeScaleNew/ThreeScaleNewPage';
+import { Workload } from '../../types/Workload';
+import { ThreeScaleCredentialsState } from './ThreeScaleCredentials';
 
 export const WIZARD_WEIGHTED_ROUTING = 'weighted_routing';
 export const WIZARD_MATCHING_ROUTING = 'matching_routing';
 export const WIZARD_SUSPEND_TRAFFIC = 'suspend_traffic';
 
-export const WIZARD_ACTIONS = [WIZARD_WEIGHTED_ROUTING, WIZARD_MATCHING_ROUTING, WIZARD_SUSPEND_TRAFFIC];
+export const WIZARD_THREESCALE_LINK = '3scale_link';
+export const WIZARD_THREESCALE_UNLINK = '3scale_unlink';
+
+export const SERVICE_WIZARD_ACTIONS = [WIZARD_WEIGHTED_ROUTING, WIZARD_MATCHING_ROUTING, WIZARD_SUSPEND_TRAFFIC];
 
 export const WIZARD_TITLES = {
   [WIZARD_WEIGHTED_ROUTING]: 'Create Weighted Routing',
   [WIZARD_MATCHING_ROUTING]: 'Create Matching Routing',
-  [WIZARD_SUSPEND_TRAFFIC]: 'Suspend Traffic'
+  [WIZARD_SUSPEND_TRAFFIC]: 'Suspend Traffic',
+  [WIZARD_THREESCALE_LINK]: 'Link a 3scale Account'
 };
 
 export const WIZARD_UPDATE_TITLES = {
@@ -58,7 +64,7 @@ export const WIZARD_UPDATE_TITLES = {
   [WIZARD_SUSPEND_TRAFFIC]: 'Update Suspended Traffic'
 };
 
-export type WizardProps = {
+export type ServiceWizardProps = {
   show: boolean;
   type: string;
   update: boolean;
@@ -72,7 +78,7 @@ export type WizardProps = {
   onClose: (changed: boolean) => void;
 };
 
-export type WizardValid = {
+export type ServiceWizardValid = {
   mainWizard: boolean;
   vsHosts: boolean;
   tls: boolean;
@@ -80,17 +86,34 @@ export type WizardValid = {
   gateway: boolean;
 };
 
-export type WizardState = {
+export type ServiceWizardState = {
   showWizard: boolean;
   showAdvanced: boolean;
   workloads: WorkloadWeight[];
   rules: Rule[];
   suspendedRoutes: SuspendedRoute[];
-  valid: WizardValid;
+  valid: ServiceWizardValid;
   advancedOptionsValid: boolean;
   vsHosts: string[];
   trafficPolicy: TrafficPolicyState;
   gateway?: GatewaySelectorState;
+};
+
+export type WorkloadWizardValid = {
+  threescale: boolean;
+};
+
+export type WorkloadWizardProps = {
+  show: boolean;
+  type: string;
+  rules: IstioRule[];
+  onClose: (changed: boolean) => void;
+};
+
+export type WorkloadWizardState = {
+  showWizard: boolean;
+  valid: WorkloadWizardValid;
+  threeScale: ThreeScaleCredentialsState;
 };
 
 const SERVICE_UNAVAILABLE = 503;
@@ -201,8 +224,8 @@ export const getGatewayName = (namespace: string, serviceName: string, gatewayNa
 };
 
 export const buildIstioConfig = (
-  wProps: WizardProps,
-  wState: WizardState
+  wProps: ServiceWizardProps,
+  wState: ServiceWizardState
 ): [DestinationRule, VirtualService, Gateway?] => {
   const wkdNameVersion: { [key: string]: string } = {};
 
@@ -973,4 +996,45 @@ export const buildThreeScaleRule = (name: string, namespace: string, state: Thre
     }
   };
   return threeScaleRule;
+};
+
+// Not reading these constants from serverConfig as they are part of the 3scale templates that are coded on WizardActions.ts
+// Probably any change on these labels will require modifications both in backend/frontend
+export const THREESCALE_LABEL_SERVICE_ID = 'service-mesh.3scale.net/service-id';
+export const THREESCALE_LABEL_CREDENTIALS = 'service-mesh.3scale.net/credentials';
+export const THREESCALE_LABEL_AUTHENTICATION = 'service-mesh.3scale.net/authentication-method';
+
+export const isThreeScaleLinked = (workload: Workload): boolean => {
+  return (
+    THREESCALE_LABEL_SERVICE_ID in workload.labels &&
+    workload.labels[THREESCALE_LABEL_SERVICE_ID] !== '' &&
+    THREESCALE_LABEL_CREDENTIALS in workload.labels &&
+    workload.labels[THREESCALE_LABEL_CREDENTIALS] !== ''
+  );
+};
+
+export const buildThreeScalePath = (
+  enable: boolean,
+  workloadType: string,
+  serviceId: string,
+  credentials: string
+): string => {
+  // Raw Pods as workloads are rare but we need to support them
+  const patch = {};
+  const labels = {};
+  labels[THREESCALE_LABEL_SERVICE_ID] = enable ? serviceId : null;
+  labels[THREESCALE_LABEL_CREDENTIALS] = enable ? credentials : null;
+  labels[THREESCALE_LABEL_AUTHENTICATION] = enable ? '' : null;
+  if (workloadType === 'Pod') {
+    patch['labels'] = labels;
+  } else {
+    patch['spec'] = {
+      template: {
+        metadata: {
+          labels: labels
+        }
+      }
+    };
+  }
+  return JSON.stringify(patch);
 };

@@ -29,14 +29,14 @@ import {
   WIZARD_TITLES,
   WIZARD_UPDATE_TITLES,
   WIZARD_WEIGHTED_ROUTING,
-  WizardProps,
-  WizardState
-} from './IstioWizardActions';
+  ServiceWizardProps,
+  ServiceWizardState
+} from './WizardActions';
 import { MessageType } from '../../types/MessageCenter';
 import GatewaySelector, { GatewaySelectorState } from './GatewaySelector';
 import VirtualServiceHosts from './VirtualServiceHosts';
 
-const emptyWizardState = (fqdnServiceName: string): WizardState => {
+const emptyServiceWizardState = (fqdnServiceName: string): ServiceWizardState => {
   return {
     showWizard: false,
     showAdvanced: false,
@@ -69,13 +69,13 @@ const emptyWizardState = (fqdnServiceName: string): WizardState => {
   };
 };
 
-class IstioWizard extends React.Component<WizardProps, WizardState> {
-  constructor(props: WizardProps) {
+class ServiceWizard extends React.Component<ServiceWizardProps, ServiceWizardState> {
+  constructor(props: ServiceWizardProps) {
     super(props);
-    this.state = emptyWizardState(fqdnServiceName(props.serviceName, props.namespace));
+    this.state = emptyServiceWizardState(fqdnServiceName(props.serviceName, props.namespace));
   }
 
-  componentDidUpdate(prevProps: WizardProps) {
+  componentDidUpdate(prevProps: ServiceWizardProps) {
     if (prevProps.show !== this.props.show || !this.compareWorkloads(prevProps.workloads, this.props.workloads)) {
       let isMainWizardValid: boolean;
       switch (this.props.type) {
@@ -172,7 +172,7 @@ class IstioWizard extends React.Component<WizardProps, WizardState> {
   };
 
   onClose = (changed: boolean) => {
-    this.setState(emptyWizardState(fqdnServiceName(this.props.serviceName, this.props.namespace)));
+    this.setState(emptyServiceWizardState(fqdnServiceName(this.props.serviceName, this.props.namespace)));
     this.props.onClose(changed);
   };
 
@@ -293,7 +293,7 @@ class IstioWizard extends React.Component<WizardProps, WizardState> {
     });
   };
 
-  isValid = (state: WizardState): boolean => {
+  isValid = (state: ServiceWizardState): boolean => {
     return state.valid.mainWizard && state.valid.vsHosts && state.valid.tls && state.valid.lb && state.valid.gateway;
   };
 
@@ -389,4 +389,4 @@ class IstioWizard extends React.Component<WizardProps, WizardState> {
   }
 }
 
-export default IstioWizard;
+export default ServiceWizard;

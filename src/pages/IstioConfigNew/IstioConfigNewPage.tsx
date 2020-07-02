@@ -20,7 +20,7 @@ import {
   buildPeerAuthentication,
   buildRequestAuthentication,
   buildSidecar
-} from '../../components/IstioWizards/IstioWizardActions';
+} from '../../components/IstioWizards/WizardActions';
 import { MessageType } from '../../types/MessageCenter';
 import AuthorizationPolicyForm, {
   AUTHORIZACION_POLICY,

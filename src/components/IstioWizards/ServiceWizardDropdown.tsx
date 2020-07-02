@@ -19,14 +19,14 @@ import { serverConfig } from '../../config/ServerConfig';
 import { TLSStatus } from '../../types/TLSStatus';
 import {
   KIALI_WIZARD_LABEL,
-  WIZARD_ACTIONS,
+  SERVICE_WIZARD_ACTIONS,
   WIZARD_MATCHING_ROUTING,
   WIZARD_SUSPEND_TRAFFIC,
   WIZARD_TITLES,
   WIZARD_UPDATE_TITLES,
   WIZARD_WEIGHTED_ROUTING
-} from './IstioWizardActions';
-import IstioWizard from './IstioWizard';
+} from './WizardActions';
+import ServiceWizard from './ServiceWizard';
 
 type Props = {
   namespace: string;
@@ -51,9 +51,8 @@ type State = {
 };
 
 const DELETE_TRAFFIC_ROUTING = 'delete_traffic_routing';
-const DELETE_THREESCALE_INTEGRATION = 'delete_threescale_integration';
 
-class IstioWizardDropdown extends React.Component<Props, State> {
+class ServiceWizardDropdown extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -122,9 +121,6 @@ class IstioWizardDropdown extends React.Component<Props, State> {
               }: '${this.props.destinationRules.items.map(dr => dr.metadata.name)}'`
             : '';
         break;
-      case DELETE_THREESCALE_INTEGRATION:
-        deleteMessage += ' 3scale API Management Integration Rule ';
-        break;
       default:
     }
     deleteMessage += ' ?  ';
@@ -155,10 +151,6 @@ class IstioWizardDropdown extends React.Component<Props, State> {
         break;
       }
       case DELETE_TRAFFIC_ROUTING: {
-        this.setState({ showConfirmDelete: true, deleteAction: key });
-        break;
-      }
-      case DELETE_THREESCALE_INTEGRATION: {
         this.setState({ showConfirmDelete: true, deleteAction: key });
         break;
       }
@@ -286,7 +278,7 @@ class IstioWizardDropdown extends React.Component<Props, State> {
     var items: any[] = [];
     const updateLabel = this.getVSWizardLabel();
     if (this.canCreate() || this.canUpdate()) {
-      items = items.concat(WIZARD_ACTIONS.map(action => this.renderDropdownItem(action, updateLabel)));
+      items = items.concat(SERVICE_WIZARD_ACTIONS.map(action => this.renderDropdownItem(action, updateLabel)));
     }
     items.push(<DropdownSeparator key="actions_separator" />);
     if (this.canDelete()) {
@@ -326,7 +318,7 @@ class IstioWizardDropdown extends React.Component<Props, State> {
         {!hasActionRights || !hasSidecarWorkloads
           ? this.renderTooltip('tooltip_wizard_actions', TooltipPosition.top, toolTipMsgActions, dropdown)
           : dropdown}
-        <IstioWizard
+        <ServiceWizard
           show={this.state.showWizard}
           type={this.state.wizardType}
           update={this.state.updateWizard}
@@ -360,4 +352,4 @@ class IstioWizardDropdown extends React.Component<Props, State> {
   }
 }
 
-export default IstioWizardDropdown;
+export default ServiceWizardDropdown;
