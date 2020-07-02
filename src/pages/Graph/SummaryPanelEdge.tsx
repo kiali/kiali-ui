@@ -336,7 +336,7 @@ export default class SummaryPanelEdge extends React.Component<SummaryPanelPropTy
     const useDestMetrics = isDestServiceEntry || isSourceAggregate ? false : true;
     const metricsNode = useDestMetrics ? edge.target() : edge.source();
     const metricsNodeData = useDestMetrics ? destData : sourceData;
-    const direction: Direction = useDestMetrics ? 'inbound' : 'outbound';
+    const direction: Direction = useDestMetrics || isSourceAggregate ? 'inbound' : 'outbound';
     const metricType = useDestMetrics ? destMetricType : sourceMetricType;
     const byLabels = isDestServiceEntry
       ? ['destination_service_name']
