@@ -31,7 +31,7 @@ const flexBoxColumnStyle = style({
   flexDirection: 'column'
 });
 
-class Navigation extends React.Component<PropsType, NavigationState> {
+export class Navigation extends React.Component<PropsType, NavigationState> {
   static contextTypes = {
     router: () => null
   };
