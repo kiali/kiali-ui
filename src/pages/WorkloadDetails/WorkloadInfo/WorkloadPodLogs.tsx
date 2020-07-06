@@ -22,10 +22,17 @@ import { ToolbarDropdown } from '../../../components/ToolbarDropdown/ToolbarDrop
 import { DurationInSeconds, TimeRange } from '../../../types/Common';
 import { RenderComponentScroll } from '../../../components/Nav/Page';
 import { retrieveDuration } from 'components/Time/TimeRangeHelper';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 import TimeRangeComponent from 'components/Time/TimeRangeComponent';
 import Splitter from 'm-react-splitters';
 import RefreshContainer from '../../../components/Refresh/Refresh';
 import { KialiIcon } from '../../../config/KialiIcon';
+
+// enum CopyStatus {
+//   NOT_COPIED, // We haven't copied the current output
+//   COPIED, // Current output is in the clipboard
+//   OLD_COPY // We copied the prev output, but there are changes in the KialiAppState
+// }
 
 export interface WorkloadPodLogsProps {
   namespace: string;
@@ -42,6 +49,7 @@ type LogLines = string[];
 interface WorkloadPodLogsState {
   containerInfo?: ContainerInfo;
   duration: DurationInSeconds;
+  errorMessage: string;
   filteredAppLogs?: LogLines;
   filteredProxyLogs?: LogLines;
   hideLogValue: string;
@@ -59,6 +67,8 @@ interface WorkloadPodLogsState {
   showLogValue: string;
   sideBySideOrientation: boolean;
   tailLines: number;
+  useRegex: boolean;
+  validRegex: boolean;
 }
 
 const RETURN_KEY_CODE = 13;
@@ -97,6 +107,10 @@ const infoIcons = style({
 
 const logsTitle = style({
   margin: '5px 0 0 10px'
+});
+
+const proxyLogsTitle = style({
+  fontWeight: 'bold'
 });
 
 const proxyLogsDiv = style({
@@ -150,6 +164,7 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
     if (this.props.pods.length < 1) {
       this.state = {
         duration: retrieveDuration() || 600,
+        errorMessage: '',
         hideLogValue: '',
         isLogWindowSelectExpanded: false,
         loadingAppLogs: false,
@@ -161,7 +176,9 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
         showClearHideLogButton: false,
         showClearShowLogButton: false,
         showLogValue: '',
-        tailLines: TailLinesDefault
+        tailLines: TailLinesDefault,
+        useRegex: false,
+        validRegex: true
       };
       return;
     }
@@ -179,6 +196,7 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
     this.state = {
       containerInfo: containerInfo,
       duration: retrieveDuration() || 600,
+      errorMessage: '',
       hideLogValue: '',
       isLogWindowSelectExpanded: false,
       loadingAppLogs: false,
@@ -189,7 +207,9 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
       showClearShowLogButton: false,
       showLogValue: '',
       sideBySideOrientation: false,
-      tailLines: TailLinesDefault
+      tailLines: TailLinesDefault,
+      useRegex: false,
+      validRegex: true
     };
   }
 
@@ -354,6 +374,42 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
                           <KialiIcon.Info className={infoIcons} />
                         </Tooltip>
                       </ToolbarItem>
+                      <ToolbarItem style={{ marginLeft: '1em' }}>
+                        <Switch
+                          id="regex-switch"
+                          label="Activate Regex"
+                          isChecked={this.state.useRegex}
+                          onChange={this.handleRegexChange}
+                        />
+                        <Tooltip
+                          key="show_log_regex_help"
+                          position="top"
+                          content="Use Regex instead of substring for more advanced use"
+                        >
+                          <KialiIcon.Info className={infoIcons} />
+                        </Tooltip>
+                      </ToolbarItem>
+                    </ToolbarGroup>
+                  </Toolbar>
+                  <Toolbar className={toolbar}>
+                    <ToolbarGroup className={toolbarRight}>
+                      {this.state.errorMessage && (
+                        <div>
+                          <span style={{ color: 'red' }}>{this.state.errorMessage}</span>
+                        </div>
+                      )}
+                      <ToolbarItem>
+                        <Tooltip key="copy_app_logs" position="top" content="Copy app logs to clipboard">
+                          <CopyToClipboard
+                            onCopy={this.copyAppLogCallback}
+                            text={WorkloadPodLogs.linesToString(this.state.filteredAppLogs)}
+                          >
+                            <Button variant={ButtonVariant.plain}>
+                              <KialiIcon.Copy className={infoIcons} />
+                            </Button>
+                          </CopyToClipboard>
+                        </Tooltip>
+                      </ToolbarItem>
                     </ToolbarGroup>
                   </Toolbar>
                   <div className={splitter}>{this.getSplitter()}</div>
@@ -397,7 +453,7 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
 
   private getAppDiv = () => {
     const appLogsEnabled = !!this.state.filteredAppLogs;
-    const appLogs = appLogsEnabled ? this.linesToString(this.state.filteredAppLogs) : NoAppLogsFoundMessage;
+    const appLogs = appLogsEnabled ? WorkloadPodLogs.linesToString(this.state.filteredAppLogs) : NoAppLogsFoundMessage;
     return (
       <div className={this.state.sideBySideOrientation ? appLogsDivHorizontal : appLogsDivVertical}>
         {this.state.sideBySideOrientation && (
@@ -417,12 +473,28 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
 
   private getProxyDiv = () => {
     const proxyLogsEnabled = !!this.state.filteredProxyLogs;
-    const proxyLogs = proxyLogsEnabled ? this.linesToString(this.state.filteredProxyLogs) : NoProxyLogsFoundMessage;
+    const proxyLogs = proxyLogsEnabled
+      ? WorkloadPodLogs.linesToString(this.state.filteredProxyLogs)
+      : NoProxyLogsFoundMessage;
     return (
       <div className={proxyLogsDiv}>
-        <Title size="sm" headingLevel="h5" className={logsTitle}>
-          Istio proxy (sidecar)
-        </Title>
+        <Toolbar className={toolbar}>
+          <ToolbarItem className={proxyLogsTitle}>Istio proxy (sidecar)</ToolbarItem>
+          <ToolbarGroup className={toolbarRight}>
+            <ToolbarItem>
+              <Tooltip key="copy_proxy_logs" position="top" content="Copy Istio proxy logs to clipboard">
+                <CopyToClipboard
+                  onCopy={this.copyProxyLogCallback}
+                  text={WorkloadPodLogs.linesToString(this.state.filteredProxyLogs)}
+                >
+                  <Button variant={ButtonVariant.plain}>
+                    <KialiIcon.Copy className={infoIcons} />
+                  </Button>
+                </CopyToClipboard>
+              </Tooltip>
+            </ToolbarItem>
+          </ToolbarGroup>
+        </Toolbar>
         <textarea
           className={logsTextarea(proxyLogsEnabled, false, true)}
           ref={this.proxyLogsRef}
@@ -455,6 +527,15 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
 
   private handleOrientationChange = (isChecked: boolean) => {
     this.setState({ sideBySideOrientation: isChecked });
+  };
+
+  private handleRegexChange = (isChecked: boolean) => {
+    this.setState({
+      useRegex: isChecked,
+      validRegex: true,
+      showLogValue: '',
+      hideLogValue: ''
+    });
   };
 
   private handleRefresh = () => {
@@ -501,12 +582,19 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
     let filteredLogs = rawLogs;
 
     if (!!showValue) {
-      filteredLogs = filteredLogs.filter(l => l.includes(showValue));
+      if (this.state.useRegex) {
+        filteredLogs = filteredLogs.filter(line => line.match(showValue));
+      } else {
+        filteredLogs = filteredLogs.filter(l => l.includes(showValue));
+      }
     }
     if (!!hideValue) {
-      filteredLogs = filteredLogs.filter(l => !l.includes(hideValue));
+      if (this.state.useRegex) {
+        filteredLogs = filteredLogs.filter(line => !line.match(hideValue));
+      } else {
+        filteredLogs = filteredLogs.filter(l => !l.includes(hideValue));
+      }
     }
-
     return filteredLogs;
   };
 
@@ -522,6 +610,7 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
     const rawProxyLogs = this.state.rawProxyLogs ? this.state.rawProxyLogs : ([] as LogLines);
     this.setState({
       showLogValue: '',
+      errorMessage: '',
       showClearShowLogButton: false,
       filteredAppLogs: this.filterLogs(rawAppLogs, '', this.state.hideLogValue),
       filteredProxyLogs: this.filterLogs(rawProxyLogs, '', this.state.hideLogValue)
@@ -556,10 +645,19 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
     const rawProxyLogs = this.state.rawProxyLogs ? this.state.rawProxyLogs : ([] as LogLines);
     this.setState({
       hideLogValue: '',
+      errorMessage: '',
       showClearHideLogButton: false,
       filteredAppLogs: this.filterLogs(rawAppLogs, this.state.showLogValue, ''),
       filteredProxyLogs: this.filterLogs(rawProxyLogs, this.state.showLogValue, '')
     });
+  };
+
+  private copyAppLogCallback = (_text: string, _result: boolean) => {
+    this.appLogsRef.current.select();
+  };
+
+  private copyProxyLogCallback = (_text: string, _result: boolean) => {
+    this.proxyLogsRef.current.select();
   };
 
   private getContainerInfo = (pod: Pod): ContainerInfo => {
@@ -602,7 +700,7 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
 
     this.loadAppLogsPromise.promise
       .then(response => {
-        const rawAppLogs = this.stringToLines(response[0].data.logs as string, tailLines);
+        const rawAppLogs = WorkloadPodLogs.stringToLines(response[0].data.logs as string, tailLines);
         const filteredAppLogs = this.filterLogs(rawAppLogs, this.state.showLogValue, this.state.hideLogValue);
 
         this.setState({
@@ -622,13 +720,14 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
         const errorMsg = error.response && error.response.data.error ? error.response.data.error : error.message;
         this.setState({
           loadingAppLogs: false,
+          errorMessage: errorMsg,
           rawAppLogs: [`Failed to fetch app logs: ${errorMsg}`]
         });
       });
 
     this.loadProxyLogsPromise.promise
       .then(response => {
-        const rawProxyLogs = this.stringToLines(response[0].data.logs as string, tailLines);
+        const rawProxyLogs = WorkloadPodLogs.stringToLines(response[0].data.logs as string, tailLines);
         const filteredProxyLogs = this.filterLogs(rawProxyLogs, this.state.showLogValue, this.state.hideLogValue);
 
         this.setState({
@@ -648,6 +747,7 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
         const errorMsg = error.response && error.response.data.error ? error.response.data.error : error.message;
         this.setState({
           loadingProxyLogs: false,
+          errorMessage: errorMsg,
           rawProxyLogs: [`Failed to fetch proxy logs: ${errorMsg}`]
         });
       });
@@ -655,19 +755,20 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
     this.setState({
       loadingAppLogs: true,
       loadingProxyLogs: true,
+      errorMessage: 'Regex is invalid!',
       rawAppLogs: undefined,
       rawProxyLogs: undefined
     });
   };
 
-  private stringToLines = (logs: string, maxLines: number): LogLines => {
+  private static stringToLines = (logs: string, maxLines: number): LogLines => {
     let logLines = logs.split('\n');
     const rawLines = logLines.length;
     logLines = logLines.filter((_l, i) => rawLines - i <= maxLines);
     return logLines;
   };
 
-  private linesToString = (logLines?: LogLines): string => {
-    return !logLines || !logLines.length ? '' : logLines.join('\n');
+  private static linesToString = (logLines?: LogLines): string => {
+    return !logLines?.length ? '' : logLines.join('\n');
   };
 }
