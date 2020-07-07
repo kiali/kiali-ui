@@ -89,6 +89,12 @@ const conf = {
     urls: {
       aggregateGraphElements: (namespace: string, aggregate: string, aggregateValue: string) =>
         `api/namespaces/${namespace}/aggregates/${aggregate}/${aggregateValue}/graph`,
+      aggregateByServiceGraphElements: (
+        namespace: string,
+        aggregate: string,
+        aggregateValue: string,
+        service: string
+      ) => `api/namespaces/${namespace}/aggregates/${aggregate}/${aggregateValue}/${service}/graph`,
       aggregateMetrics: (namespace: string, aggregate: string, aggregateValue: string) =>
         `api/namespaces/${namespace}/aggregates/${aggregate}/${aggregateValue}/metrics`,
       authenticate: 'api/authenticate',

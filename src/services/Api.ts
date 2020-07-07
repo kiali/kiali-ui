@@ -339,12 +339,24 @@ export const getGraphElements = (params: any) => {
 export const getNodeGraphElements = (node: NodeParamsType, params: any) => {
   switch (node.nodeType) {
     case NodeType.AGGREGATE:
-      return newRequest<GraphDefinition>(
-        HTTP_VERBS.GET,
-        urls.aggregateGraphElements(node.namespace.name, node.aggregate!, node.aggregateValue!),
-        params,
-        {}
-      );
+      return !node.service
+        ? newRequest<GraphDefinition>(
+            HTTP_VERBS.GET,
+            urls.aggregateGraphElements(node.namespace.name, node.aggregate!, node.aggregateValue!),
+            params,
+            {}
+          )
+        : newRequest<GraphDefinition>(
+            HTTP_VERBS.GET,
+            urls.aggregateByServiceGraphElements(
+              node.namespace.name,
+              node.aggregate!,
+              node.aggregateValue!,
+              node.service
+            ),
+            params,
+            {}
+          );
     case NodeType.APP:
       return newRequest<GraphDefinition>(
         HTTP_VERBS.GET,
