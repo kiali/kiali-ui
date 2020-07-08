@@ -26,6 +26,7 @@ import TimeRangeComponent from 'components/Time/TimeRangeComponent';
 import Splitter from 'm-react-splitters';
 import RefreshContainer from '../../../components/Refresh/Refresh';
 import { KialiIcon } from '../../../config/KialiIcon';
+import * as AlertUtils from '../../../utils/AlertUtils';
 
 export interface WorkloadPodLogsProps {
   namespace: string;
@@ -38,6 +39,8 @@ interface ContainerInfo {
 }
 
 type LogLines = string[];
+
+type TextAreaPosition = 'left' | 'right' | 'top' | 'bottom';
 
 interface WorkloadPodLogsState {
   containerInfo?: ContainerInfo;
@@ -109,7 +112,7 @@ const splitter = style({
 });
 
 const toolbar = style({
-  margin: '0 10px 10px 10px'
+  margin: '0 0 10px 0'
 });
 
 const toolbarRight = style({
@@ -120,20 +123,25 @@ const toolbarTail = style({
   marginTop: '2px'
 });
 
+const toolbarTitle = (position: TextAreaPosition = 'top') =>
+  style({
+    margin: `${position === 'right' ? '0 0 0 10px' : 0}`
+  });
+
 const logTextAreaBackground = (enabled = true) => ({ backgroundColor: enabled ? '#003145' : 'gray' });
 
-const logsTextarea = (enabled = true, hasSplitter = false, hasTitle = false) =>
+const logsTextarea = (enabled = true, position: TextAreaPosition = 'top', hasTitle = true) =>
   style(logTextAreaBackground(enabled), {
-    width: 'calc(100% - 15px)',
-    height: `calc(100% - ${hasSplitter ? '40px' : '0px'} - ${hasTitle ? '30px' : '0px'})`,
+    width: `${['top', 'bottom'].includes(position) ? '100%' : 'calc(100% - 10px)'}`,
+    height: `calc(100% - ${position === 'top' ? '20px' : '0px'} - ${hasTitle ? '36px' : '0px'})`,
     overflow: 'auto',
     resize: 'none',
     color: '#fff',
     fontFamily: 'monospace',
     fontSize: '11pt',
+    margin: `${position === 'right' ? '0 0 0 10px' : 0}`,
     padding: '10px',
-    whiteSpace: 'pre',
-    margin: '0 10px 0 10px'
+    whiteSpace: 'pre'
   });
 
 export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodLogsState> {
@@ -222,6 +230,10 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
     }
     this.proxyLogsRef.current.scrollTop = this.proxyLogsRef.current.scrollHeight;
     this.appLogsRef.current.scrollTop = this.appLogsRef.current.scrollHeight;
+
+    if (prevState.useRegex !== this.state.useRegex) {
+      this.doShowAndHide();
+    }
   }
 
   renderItem = object => {
@@ -418,7 +430,7 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
     const appLogs = appLogsEnabled ? WorkloadPodLogs.linesToString(this.state.filteredAppLogs) : NoAppLogsFoundMessage;
     return (
       <div className={this.state.sideBySideOrientation ? appLogsDivHorizontal : appLogsDivVertical}>
-        <Toolbar className={toolbar}>
+        <Toolbar className={toolbarTitle()}>
           <ToolbarItem className={logsTitle}>
             {this.state.containerInfo!.containerOptions[this.state.containerInfo!.container]}
           </ToolbarItem>
@@ -430,7 +442,7 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
                   text={WorkloadPodLogs.linesToString(this.state.filteredAppLogs)}
                 >
                   <Button variant={ButtonVariant.plain}>
-                    <KialiIcon.Copy className={infoIcons} />
+                    <KialiIcon.Copy />
                   </Button>
                 </CopyToClipboard>
               </Tooltip>
@@ -439,7 +451,7 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
         </Toolbar>
 
         <textarea
-          className={logsTextarea(appLogsEnabled, !this.state.sideBySideOrientation, this.state.sideBySideOrientation)}
+          className={logsTextarea(appLogsEnabled, this.state.sideBySideOrientation ? 'left' : 'top')}
           ref={this.appLogsRef}
           readOnly={true}
           value={appLogs}
@@ -455,7 +467,7 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
       : NoProxyLogsFoundMessage;
     return (
       <div className={proxyLogsDiv}>
-        <Toolbar className={toolbar}>
+        <Toolbar className={toolbarTitle(this.state.sideBySideOrientation ? 'right' : 'bottom')}>
           <ToolbarItem className={logsTitle}>Istio proxy (sidecar)</ToolbarItem>
           <ToolbarGroup className={toolbarRight}>
             <ToolbarItem>
@@ -465,7 +477,7 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
                   text={WorkloadPodLogs.linesToString(this.state.filteredProxyLogs)}
                 >
                   <Button variant={ButtonVariant.plain}>
-                    <KialiIcon.Copy className={infoIcons} />
+                    <KialiIcon.Copy />
                   </Button>
                 </CopyToClipboard>
               </Tooltip>
@@ -473,7 +485,7 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
           </ToolbarGroup>
         </Toolbar>
         <textarea
-          className={logsTextarea(proxyLogsEnabled, false, true)}
+          className={logsTextarea(proxyLogsEnabled, this.state.sideBySideOrientation ? 'right' : 'bottom')}
           ref={this.proxyLogsRef}
           readOnly={true}
           value={proxyLogs}
@@ -506,11 +518,9 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
     this.setState({ sideBySideOrientation: isChecked });
   };
 
-  private handleRegexChange = (isChecked: boolean) => {
+  private handleRegexChange = () => {
     this.setState({
-      useRegex: isChecked,
-      showLogValue: '',
-      hideLogValue: ''
+      useRegex: !this.state.useRegex
     });
   };
 
@@ -559,14 +569,24 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
 
     if (!!showValue) {
       if (this.state.useRegex) {
-        filteredLogs = filteredLogs.filter(line => line.match(showValue));
+        try {
+          const regexp = new RegExp(showValue);
+          filteredLogs = filteredLogs.filter(l => regexp.test(l));
+        } catch (e) {
+          AlertUtils.addError(`Failed log Show: ${e.message}`);
+        }
       } else {
         filteredLogs = filteredLogs.filter(l => l.includes(showValue));
       }
     }
     if (!!hideValue) {
       if (this.state.useRegex) {
-        filteredLogs = filteredLogs.filter(line => !line.match(hideValue));
+        try {
+          const regexp = new RegExp(hideValue);
+          filteredLogs = filteredLogs.filter(l => !regexp.test(l));
+        } catch (e) {
+          AlertUtils.addError(`Failed log Hide: ${e.message}`);
+        }
       } else {
         filteredLogs = filteredLogs.filter(l => !l.includes(hideValue));
       }
