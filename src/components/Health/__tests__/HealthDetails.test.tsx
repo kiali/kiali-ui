@@ -8,7 +8,9 @@ import { ServiceHealth } from '../../../types/Health';
 describe('HealthDetails', () => {
   it('renders healthy', () => {
     const health = new ServiceHealth(
-      { errorRatio: -1, inboundErrorRatio: -1, outboundErrorRatio: -1 },
+      'bookinfo',
+      'reviews',
+      { inbound: {}, outbound: {} },
       { rateInterval: 60, hasSidecar: true }
     );
 
@@ -18,7 +20,9 @@ describe('HealthDetails', () => {
 
   it('renders deployments failure', () => {
     const health = new ServiceHealth(
-      { errorRatio: -1, inboundErrorRatio: -1, outboundErrorRatio: -1 },
+      'bookinfo',
+      'reviews',
+      { inbound: {}, outbound: {} },
       { rateInterval: 60, hasSidecar: true }
     );
 

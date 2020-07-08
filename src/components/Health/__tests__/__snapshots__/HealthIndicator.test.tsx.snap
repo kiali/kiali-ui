@@ -90,9 +90,8 @@ exports[`HealthIndicator renders healthy 1`] = `
               },
             ],
             "requests": Object {
-              "errorRatio": -1,
-              "inboundErrorRatio": -1,
-              "outboundErrorRatio": -1,
+              "inbound": Object {},
+              "outbound": Object {},
             },
           }
         }

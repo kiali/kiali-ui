@@ -8,6 +8,8 @@ import {
 import { IconType } from '@patternfly/react-icons/dist/js/createIcon';
 import { getName } from '../utils/RateIntervals';
 import { PFAlertColor, PfColors } from 'components/Pf/PfColors';
+import { calculateErrorRate } from './ErrorRate';
+import { ToleranceConfig } from './ServerConfig';
 
 interface HealthItem {
   status: Status;
@@ -28,10 +30,12 @@ export interface WorkloadStatus {
   availableReplicas: number;
 }
 
+export interface RequestType {
+  [key: string]: { [key: string]: number };
+}
 export interface RequestHealth {
-  errorRatio: number;
-  inboundErrorRatio: number;
-  outboundErrorRatio: number;
+  inbound: RequestType;
+  outbound: RequestType;
 }
 
 export interface Status {
@@ -91,14 +95,14 @@ export const REQUESTS_THRESHOLDS: Thresholds = {
   unit: '%'
 };
 
-interface ThresholdStatus {
+export interface ThresholdStatus {
   value: number;
   status: Status;
   violation?: string;
 }
 
 // Use -1 rather than NaN to allow straigthforward comparison
-const RATIO_NA = -1;
+export const RATIO_NA = -1;
 
 export const ratioCheck = (availableReplicas: number, currentReplicas: number, desiredReplicas: number): Status => {
   /*
@@ -154,7 +158,7 @@ export const mergeStatus = (s1: Status, s2: Status): Status => {
   return s1.priority > s2.priority ? s1 : s2;
 };
 
-const ascendingThresholdCheck = (value: number, thresholds: Thresholds): ThresholdStatus => {
+export const ascendingThresholdCheck = (value: number, thresholds: Thresholds): ThresholdStatus => {
   if (value >= thresholds.failure) {
     return {
       value: value,
@@ -171,14 +175,22 @@ const ascendingThresholdCheck = (value: number, thresholds: Thresholds): Thresho
   return { value: value, status: HEALTHY };
 };
 
-export const getRequestErrorsStatus = (ratio: number): ThresholdStatus => {
+export const getRequestErrorsStatus = (ratio: number, tolerance?: ToleranceConfig): ThresholdStatus => {
   if (ratio < 0) {
     return {
       value: RATIO_NA,
       status: NA
     };
   }
-  return ascendingThresholdCheck(100 * ratio, REQUESTS_THRESHOLDS);
+  let thresholds = REQUESTS_THRESHOLDS;
+  if (tolerance) {
+    thresholds = {
+      degraded: tolerance.degraded,
+      failure: tolerance.failure,
+      unit: '%'
+    };
+  }
+  return ascendingThresholdCheck(100 * ratio, thresholds);
 };
 
 export const getRequestErrorsSubItem = (thresholdStatus: ThresholdStatus, prefix: string): HealthSubItem => {
@@ -202,21 +214,25 @@ interface HealthContext {
 }
 
 export class ServiceHealth extends Health {
-  public static fromJson = (json: any, ctx: HealthContext) => new ServiceHealth(json.requests, ctx);
+  public static fromJson = (ns: string, srv: string, json: any, ctx: HealthContext) =>
+    new ServiceHealth(ns, srv, json.requests, ctx);
 
-  private static computeItems(requests: RequestHealth, ctx: HealthContext): HealthItem[] {
+  private static computeItems(ns: string, srv: string, requests: RequestHealth, ctx: HealthContext): HealthItem[] {
     const items: HealthItem[] = [];
     if (ctx.hasSidecar) {
       // Request errors
-      const reqErrorsRatio = getRequestErrorsStatus(requests.errorRatio);
-      const reqErrorsText = reqErrorsRatio.status === NA ? 'No requests' : reqErrorsRatio.value.toFixed(2) + '%';
+      const reqError = calculateErrorRate(ns, srv, 'service', requests);
+      const reqErrorsText =
+        reqError.errorRatio.global.status.status === NA
+          ? 'No requests'
+          : reqError.errorRatio.global.status.value.toFixed(2) + '%';
       const item: HealthItem = {
         title: 'Error Rate over ' + getName(ctx.rateInterval).toLowerCase(),
-        status: reqErrorsRatio.status,
+        status: reqError.errorRatio.global.status.status,
         children: [
           {
             text: 'Inbound: ' + reqErrorsText,
-            status: reqErrorsRatio.status
+            status: reqError.errorRatio.global.status.status
           }
         ]
       };
@@ -231,15 +247,18 @@ export class ServiceHealth extends Health {
     return items;
   }
 
-  constructor(public requests: RequestHealth, ctx: HealthContext) {
-    super(ServiceHealth.computeItems(requests, ctx));
+  constructor(ns: string, srv: string, public requests: RequestHealth, ctx: HealthContext) {
+    super(ServiceHealth.computeItems(ns, srv, requests, ctx));
   }
 }
 
 export class AppHealth extends Health {
-  public static fromJson = (json: any, ctx: HealthContext) => new AppHealth(json.workloadStatuses, json.requests, ctx);
+  public static fromJson = (ns: string, app: string, json: any, ctx: HealthContext) =>
+    new AppHealth(ns, app, json.workloadStatuses, json.requests, ctx);
 
   private static computeItems(
+    ns: string,
+    app: string,
     workloadStatuses: WorkloadStatus[],
     requests: RequestHealth,
     ctx: HealthContext
@@ -264,8 +283,9 @@ export class AppHealth extends Health {
     }
     // Request errors
     if (ctx.hasSidecar) {
-      const reqIn = getRequestErrorsStatus(requests.inboundErrorRatio);
-      const reqOut = getRequestErrorsStatus(requests.outboundErrorRatio);
+      const reqError = calculateErrorRate(ns, app, 'app', requests);
+      const reqIn = reqError.errorRatio.inbound.status;
+      const reqOut = reqError.errorRatio.outbound.status;
       const both = mergeStatus(reqIn.status, reqOut.status);
       const item: HealthItem = {
         title: 'Error Rate over ' + getName(ctx.rateInterval).toLowerCase(),
@@ -277,16 +297,24 @@ export class AppHealth extends Health {
     return items;
   }
 
-  constructor(workloadStatuses: WorkloadStatus[], public requests: RequestHealth, ctx: HealthContext) {
-    super(AppHealth.computeItems(workloadStatuses, requests, ctx));
+  constructor(
+    ns: string,
+    app: string,
+    workloadStatuses: WorkloadStatus[],
+    public requests: RequestHealth,
+    ctx: HealthContext
+  ) {
+    super(AppHealth.computeItems(ns, app, workloadStatuses, requests, ctx));
   }
 }
 
 export class WorkloadHealth extends Health {
-  public static fromJson = (json: any, ctx: HealthContext) =>
-    new WorkloadHealth(json.workloadStatus, json.requests, ctx);
+  public static fromJson = (ns: string, workload: string, json: any, ctx: HealthContext) =>
+    new WorkloadHealth(ns, workload, json.workloadStatus, json.requests, ctx);
 
   private static computeItems(
+    ns: string,
+    workload: string,
     workloadStatus: WorkloadStatus,
     requests: RequestHealth,
     ctx: HealthContext
@@ -336,8 +364,9 @@ export class WorkloadHealth extends Health {
     }
     // Request errors
     if (ctx.hasSidecar) {
-      const reqIn = getRequestErrorsStatus(requests.inboundErrorRatio);
-      const reqOut = getRequestErrorsStatus(requests.outboundErrorRatio);
+      const reqError = calculateErrorRate(ns, workload, 'workload', requests);
+      const reqIn = reqError.errorRatio.inbound.status;
+      const reqOut = reqError.errorRatio.outbound.status;
       const both = mergeStatus(reqIn.status, reqOut.status);
       const item: HealthItem = {
         title: 'Error Rate over ' + getName(ctx.rateInterval).toLowerCase(),
@@ -349,17 +378,19 @@ export class WorkloadHealth extends Health {
     return items;
   }
 
-  constructor(workloadStatus: WorkloadStatus, public requests: RequestHealth, ctx: HealthContext) {
-    super(WorkloadHealth.computeItems(workloadStatus, requests, ctx));
+  constructor(
+    ns: string,
+    workload: string,
+    workloadStatus: WorkloadStatus,
+    public requests: RequestHealth,
+    ctx: HealthContext
+  ) {
+    super(WorkloadHealth.computeItems(ns, workload, workloadStatus, requests, ctx));
   }
 }
 
 export const healthNotAvailable = (): AppHealth => {
-  return new AppHealth(
-    [],
-    { errorRatio: -1, inboundErrorRatio: -1, outboundErrorRatio: -1 },
-    { rateInterval: 60, hasSidecar: true }
-  );
+  return new AppHealth('', '', [], { inbound: {}, outbound: {} }, { rateInterval: 60, hasSidecar: true });
 };
 
 export type NamespaceAppHealth = { [app: string]: AppHealth };
