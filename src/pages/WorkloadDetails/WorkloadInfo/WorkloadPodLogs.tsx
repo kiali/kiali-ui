@@ -8,7 +8,6 @@ import {
   GridItem,
   Switch,
   TextInput,
-  Title,
   Toolbar,
   ToolbarGroup,
   ToolbarItem,
@@ -61,8 +60,6 @@ interface WorkloadPodLogsState {
   sideBySideOrientation: boolean;
   tailLines: number;
   useRegex: boolean;
-  showValueErrorMessage: string | undefined;
-  hideValueErrorMessage: string | undefined;
 }
 
 const RETURN_KEY_CODE = 13;
@@ -87,7 +84,7 @@ const appLogsDivHorizontal = style({
 });
 
 const appLogsDivVertical = style({
-  height: 'calc(100% + 30px)'
+  height: 'calc(100% + 3px)'
 });
 
 const displayFlex = style({
@@ -100,10 +97,6 @@ const infoIcons = style({
 });
 
 const logsTitle = style({
-  margin: '5px 0 0 10px'
-});
-
-const proxyLogsTitle = style({
   fontWeight: 'bold'
 });
 
@@ -170,9 +163,7 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
         showClearShowLogButton: false,
         showLogValue: '',
         tailLines: TailLinesDefault,
-        useRegex: false,
-        showValueErrorMessage: undefined,
-        hideValueErrorMessage: undefined
+        useRegex: false
       };
       return;
     }
@@ -201,9 +192,7 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
       showLogValue: '',
       sideBySideOrientation: false,
       tailLines: TailLinesDefault,
-      useRegex: false,
-      showValueErrorMessage: undefined,
-      hideValueErrorMessage: undefined
+      useRegex: false
     };
   }
 
@@ -385,32 +374,6 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
                       </ToolbarItem>
                     </ToolbarGroup>
                   </Toolbar>
-                  <Toolbar className={toolbar}>
-                    <ToolbarGroup className={toolbarRight}>
-                      {this.state.showValueErrorMessage && (
-                        <div>
-                          <span style={{ color: 'red' }}>{this.state.showValueErrorMessage}</span>
-                        </div>
-                      )}
-                      {this.state.hideValueErrorMessage && (
-                        <div>
-                          <span style={{ color: 'red' }}>{this.state.hideValueErrorMessage}</span>
-                        </div>
-                      )}
-                      <ToolbarItem>
-                        <Tooltip key="copy_app_logs" position="top" content="Copy app logs to clipboard">
-                          <CopyToClipboard
-                            onCopy={this.copyAppLogCallback}
-                            text={WorkloadPodLogs.linesToString(this.state.filteredAppLogs)}
-                          >
-                            <Button variant={ButtonVariant.plain}>
-                              <KialiIcon.Copy className={infoIcons} />
-                            </Button>
-                          </CopyToClipboard>
-                        </Tooltip>
-                      </ToolbarItem>
-                    </ToolbarGroup>
-                  </Toolbar>
                   <div className={splitter}>{this.getSplitter()}</div>
                 </CardBody>
               </Card>
@@ -455,11 +418,26 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
     const appLogs = appLogsEnabled ? WorkloadPodLogs.linesToString(this.state.filteredAppLogs) : NoAppLogsFoundMessage;
     return (
       <div className={this.state.sideBySideOrientation ? appLogsDivHorizontal : appLogsDivVertical}>
-        {this.state.sideBySideOrientation && (
-          <Title size="sm" headingLevel="h5" className={logsTitle}>
+        <Toolbar className={toolbar}>
+          <ToolbarItem className={logsTitle}>
             {this.state.containerInfo!.containerOptions[this.state.containerInfo!.container]}
-          </Title>
-        )}
+          </ToolbarItem>
+          <ToolbarGroup className={toolbarRight}>
+            <ToolbarItem>
+              <Tooltip key="copy_app_logs" position="top" content="Copy app logs to clipboard">
+                <CopyToClipboard
+                  onCopy={this.copyAppLogCallback}
+                  text={WorkloadPodLogs.linesToString(this.state.filteredAppLogs)}
+                >
+                  <Button variant={ButtonVariant.plain}>
+                    <KialiIcon.Copy className={infoIcons} />
+                  </Button>
+                </CopyToClipboard>
+              </Tooltip>
+            </ToolbarItem>
+          </ToolbarGroup>
+        </Toolbar>
+
         <textarea
           className={logsTextarea(appLogsEnabled, !this.state.sideBySideOrientation, this.state.sideBySideOrientation)}
           ref={this.appLogsRef}
@@ -478,7 +456,7 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
     return (
       <div className={proxyLogsDiv}>
         <Toolbar className={toolbar}>
-          <ToolbarItem className={proxyLogsTitle}>Istio proxy (sidecar)</ToolbarItem>
+          <ToolbarItem className={logsTitle}>Istio proxy (sidecar)</ToolbarItem>
           <ToolbarGroup className={toolbarRight}>
             <ToolbarItem>
               <Tooltip key="copy_proxy_logs" position="top" content="Copy Istio proxy logs to clipboard">
@@ -531,8 +509,6 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
   private handleRegexChange = (isChecked: boolean) => {
     this.setState({
       useRegex: isChecked,
-      showValueErrorMessage: undefined,
-      hideValueErrorMessage: undefined,
       showLogValue: '',
       hideLogValue: ''
     });
@@ -549,34 +525,7 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
     );
   };
 
-  private testForValidRegExp(regex: string): boolean {
-    try {
-      const _myRegex = new RegExp(regex);
-      _myRegex.test(''); // dummy test not used
-    } catch (e) {
-      console.warn(e);
-      return false;
-    }
-    return true;
-  }
-
   private doShowAndHide = () => {
-    let showValueErrorMessage: string | undefined = undefined;
-    let hideValueErrorMessage: string | undefined = undefined;
-
-    if (this.state.useRegex) {
-      if (this.state.showLogValue) {
-        if (!this.testForValidRegExp(this.state.showLogValue)) {
-          showValueErrorMessage = 'Show value has invalid regular expression!';
-        }
-      }
-      if (this.state.hideLogValue) {
-        if (!this.testForValidRegExp(this.state.hideLogValue)) {
-          hideValueErrorMessage = 'Hide value has invalid regular expression!';
-        }
-      }
-    }
-
     const rawAppLogs = !!this.state.rawAppLogs ? this.state.rawAppLogs : ([] as LogLines);
     const rawProxyLogs = !!this.state.rawProxyLogs ? this.state.rawProxyLogs : ([] as LogLines);
     const filteredAppLogs = this.filterLogs(rawAppLogs, this.state.showLogValue, this.state.hideLogValue);
@@ -585,9 +534,7 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
       filteredAppLogs: filteredAppLogs,
       filteredProxyLogs: filteredProxyLogs,
       showClearShowLogButton: !!this.state.showLogValue,
-      showClearHideLogButton: !!this.state.hideLogValue,
-      showValueErrorMessage: showValueErrorMessage,
-      hideValueErrorMessage: hideValueErrorMessage
+      showClearHideLogButton: !!this.state.hideLogValue
     });
   };
 
@@ -639,8 +586,6 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
     const rawProxyLogs = this.state.rawProxyLogs ? this.state.rawProxyLogs : ([] as LogLines);
     this.setState({
       showLogValue: '',
-      showValueErrorMessage: undefined,
-      hideValueErrorMessage: undefined,
       showClearShowLogButton: false,
       filteredAppLogs: this.filterLogs(rawAppLogs, '', this.state.hideLogValue),
       filteredProxyLogs: this.filterLogs(rawProxyLogs, '', this.state.hideLogValue)
@@ -675,8 +620,6 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
     const rawProxyLogs = this.state.rawProxyLogs ? this.state.rawProxyLogs : ([] as LogLines);
     this.setState({
       hideLogValue: '',
-      showValueErrorMessage: undefined,
-      hideValueErrorMessage: undefined,
       showClearHideLogButton: false,
       filteredAppLogs: this.filterLogs(rawAppLogs, this.state.showLogValue, ''),
       filteredProxyLogs: this.filterLogs(rawProxyLogs, this.state.showLogValue, '')
@@ -751,7 +694,6 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
         const errorMsg = error.response && error.response.data.error ? error.response.data.error : error.message;
         this.setState({
           loadingAppLogs: false,
-          showValueErrorMessage: errorMsg,
           rawAppLogs: [`Failed to fetch app logs: ${errorMsg}`]
         });
       });
@@ -778,7 +720,6 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
         const errorMsg = error.response && error.response.data.error ? error.response.data.error : error.message;
         this.setState({
           loadingProxyLogs: false,
-          showValueErrorMessage: errorMsg,
           rawProxyLogs: [`Failed to fetch proxy logs: ${errorMsg}`]
         });
       });
