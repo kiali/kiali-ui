@@ -28,12 +28,6 @@ import Splitter from 'm-react-splitters';
 import RefreshContainer from '../../../components/Refresh/Refresh';
 import { KialiIcon } from '../../../config/KialiIcon';
 
-// enum CopyStatus {
-//   NOT_COPIED, // We haven't copied the current output
-//   COPIED, // Current output is in the clipboard
-//   OLD_COPY // We copied the prev output, but there are changes in the KialiAppState
-// }
-
 export interface WorkloadPodLogsProps {
   namespace: string;
   pods: Pod[];
@@ -49,7 +43,6 @@ type LogLines = string[];
 interface WorkloadPodLogsState {
   containerInfo?: ContainerInfo;
   duration: DurationInSeconds;
-  errorMessage: string;
   filteredAppLogs?: LogLines;
   filteredProxyLogs?: LogLines;
   hideLogValue: string;
@@ -68,7 +61,8 @@ interface WorkloadPodLogsState {
   sideBySideOrientation: boolean;
   tailLines: number;
   useRegex: boolean;
-  validRegex: boolean;
+  showValueErrorMessage: string | undefined;
+  hideValueErrorMessage: string | undefined;
 }
 
 const RETURN_KEY_CODE = 13;
@@ -164,7 +158,6 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
     if (this.props.pods.length < 1) {
       this.state = {
         duration: retrieveDuration() || 600,
-        errorMessage: '',
         hideLogValue: '',
         isLogWindowSelectExpanded: false,
         loadingAppLogs: false,
@@ -178,7 +171,8 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
         showLogValue: '',
         tailLines: TailLinesDefault,
         useRegex: false,
-        validRegex: true
+        showValueErrorMessage: undefined,
+        hideValueErrorMessage: undefined
       };
       return;
     }
@@ -196,7 +190,6 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
     this.state = {
       containerInfo: containerInfo,
       duration: retrieveDuration() || 600,
-      errorMessage: '',
       hideLogValue: '',
       isLogWindowSelectExpanded: false,
       loadingAppLogs: false,
@@ -209,7 +202,8 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
       sideBySideOrientation: false,
       tailLines: TailLinesDefault,
       useRegex: false,
-      validRegex: true
+      showValueErrorMessage: undefined,
+      hideValueErrorMessage: undefined
     };
   }
 
@@ -393,9 +387,14 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
                   </Toolbar>
                   <Toolbar className={toolbar}>
                     <ToolbarGroup className={toolbarRight}>
-                      {this.state.errorMessage && (
+                      {this.state.showValueErrorMessage && (
                         <div>
-                          <span style={{ color: 'red' }}>{this.state.errorMessage}</span>
+                          <span style={{ color: 'red' }}>{this.state.showValueErrorMessage}</span>
+                        </div>
+                      )}
+                      {this.state.hideValueErrorMessage && (
+                        <div>
+                          <span style={{ color: 'red' }}>{this.state.hideValueErrorMessage}</span>
                         </div>
                       )}
                       <ToolbarItem>
@@ -532,7 +531,8 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
   private handleRegexChange = (isChecked: boolean) => {
     this.setState({
       useRegex: isChecked,
-      validRegex: true,
+      showValueErrorMessage: undefined,
+      hideValueErrorMessage: undefined,
       showLogValue: '',
       hideLogValue: ''
     });
@@ -549,7 +549,34 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
     );
   };
 
+  private testForValidRegExp(regex: string): boolean {
+    try {
+      const _myRegex = new RegExp(regex);
+      _myRegex.test(''); // dummy test not used
+    } catch (e) {
+      console.warn(e);
+      return false;
+    }
+    return true;
+  }
+
   private doShowAndHide = () => {
+    let showValueErrorMessage: string | undefined = undefined;
+    let hideValueErrorMessage: string | undefined = undefined;
+
+    if (this.state.useRegex) {
+      if (this.state.showLogValue) {
+        if (!this.testForValidRegExp(this.state.showLogValue)) {
+          showValueErrorMessage = 'Show value has invalid regular expression!';
+        }
+      }
+      if (this.state.hideLogValue) {
+        if (!this.testForValidRegExp(this.state.hideLogValue)) {
+          hideValueErrorMessage = 'Hide value has invalid regular expression!';
+        }
+      }
+    }
+
     const rawAppLogs = !!this.state.rawAppLogs ? this.state.rawAppLogs : ([] as LogLines);
     const rawProxyLogs = !!this.state.rawProxyLogs ? this.state.rawProxyLogs : ([] as LogLines);
     const filteredAppLogs = this.filterLogs(rawAppLogs, this.state.showLogValue, this.state.hideLogValue);
@@ -558,7 +585,9 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
       filteredAppLogs: filteredAppLogs,
       filteredProxyLogs: filteredProxyLogs,
       showClearShowLogButton: !!this.state.showLogValue,
-      showClearHideLogButton: !!this.state.hideLogValue
+      showClearHideLogButton: !!this.state.hideLogValue,
+      showValueErrorMessage: showValueErrorMessage,
+      hideValueErrorMessage: hideValueErrorMessage
     });
   };
 
@@ -610,7 +639,8 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
     const rawProxyLogs = this.state.rawProxyLogs ? this.state.rawProxyLogs : ([] as LogLines);
     this.setState({
       showLogValue: '',
-      errorMessage: '',
+      showValueErrorMessage: undefined,
+      hideValueErrorMessage: undefined,
       showClearShowLogButton: false,
       filteredAppLogs: this.filterLogs(rawAppLogs, '', this.state.hideLogValue),
       filteredProxyLogs: this.filterLogs(rawProxyLogs, '', this.state.hideLogValue)
@@ -645,7 +675,8 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
     const rawProxyLogs = this.state.rawProxyLogs ? this.state.rawProxyLogs : ([] as LogLines);
     this.setState({
       hideLogValue: '',
-      errorMessage: '',
+      showValueErrorMessage: undefined,
+      hideValueErrorMessage: undefined,
       showClearHideLogButton: false,
       filteredAppLogs: this.filterLogs(rawAppLogs, this.state.showLogValue, ''),
       filteredProxyLogs: this.filterLogs(rawProxyLogs, this.state.showLogValue, '')
@@ -720,7 +751,7 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
         const errorMsg = error.response && error.response.data.error ? error.response.data.error : error.message;
         this.setState({
           loadingAppLogs: false,
-          errorMessage: errorMsg,
+          showValueErrorMessage: errorMsg,
           rawAppLogs: [`Failed to fetch app logs: ${errorMsg}`]
         });
       });
@@ -747,7 +778,7 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
         const errorMsg = error.response && error.response.data.error ? error.response.data.error : error.message;
         this.setState({
           loadingProxyLogs: false,
-          errorMessage: errorMsg,
+          showValueErrorMessage: errorMsg,
           rawProxyLogs: [`Failed to fetch proxy logs: ${errorMsg}`]
         });
       });
@@ -755,7 +786,6 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
     this.setState({
       loadingAppLogs: true,
       loadingProxyLogs: true,
-      errorMessage: 'Regex is invalid!',
       rawAppLogs: undefined,
       rawProxyLogs: undefined
     });
