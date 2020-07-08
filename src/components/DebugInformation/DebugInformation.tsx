@@ -80,6 +80,27 @@ export class DebugInformation extends React.PureComponent<DebugInformationProps,
     }
   }
 
+  renderHealthConfig = (config: Array<any> | Object | RegExp | string) => {
+    if (Array.isArray(config)) {
+      let arr = [];
+      for (let v of config) {
+        arr.push(this.renderHealthConfig(v) as never);
+      }
+      return arr;
+    }
+    let result = {};
+    for (let [key, value] of Object.entries(config)) {
+      if ((value as Object).constructor.toString().includes('RegExp')) {
+        result[key] = (value as RegExp).toString();
+      } else if (typeof value !== 'object') {
+        result[key] = value;
+      } else {
+        result[key] = this.renderHealthConfig(value);
+      }
+    }
+    return result;
+  };
+
   render() {
     const renderDebugInformation = _.memoize(() => {
       const debugInformation: DebugInformationData = {
@@ -96,6 +117,9 @@ export class DebugInformation extends React.PureComponent<DebugInformationProps,
           // We have to patch some runtime properties  we don't want to serialize
           if (['cyRef', 'summaryTarget', 'token', 'username'].includes(key)) {
             return null;
+          }
+          if ('healthConfig' === key) {
+            return this.renderHealthConfig(value);
           }
           return value;
         },
