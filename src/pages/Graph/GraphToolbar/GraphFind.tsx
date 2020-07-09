@@ -528,7 +528,7 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
         const app = `[${CyNode.app} ${op} "${val}"]`;
         const svc = `[${CyNode.service} ${op} "${val}"]`;
         const wl = `[${CyNode.workload} ${op} "${val}"]`;
-        return { target: 'node', selector: isNegation ? `${wl}${app}${svc}` : `${agg},${app},${svc},${wl}` };
+        return { target: 'node', selector: isNegation ? `${agg}${app}${svc}${wl}` : `${agg},${app},${svc},${wl}` };
       }
       case 'node':
         let nodeType = val.toLowerCase();

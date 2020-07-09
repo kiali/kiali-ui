@@ -97,7 +97,7 @@ export default class MiniGraphCard extends React.Component<MiniGraphCardProps, M
               showCircuitBreakers={false}
               showMissingSidecars={true}
               showNodeLabels={true}
-              showOperationNodes={true}
+              showOperationNodes={false}
               showSecurity={false}
               showServiceNodes={true}
               showTrafficAnimation={false}
@@ -152,8 +152,7 @@ export default class MiniGraphCard extends React.Component<MiniGraphCardProps, M
             this.props.dataSource.fetchParameters.node!.aggregate!,
             this.props.dataSource.fetchParameters.node!.aggregateValue!
           )
-          .nodeType(NodeType.AGGREGATE)
-          .isGroup(null);
+          .nodeType(NodeType.AGGREGATE);
         break;
       case NodeType.APP:
         cytoscapeGraph = cytoscapeGraph
