@@ -524,10 +524,11 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
         } else if (conjunctive) {
           return this.setErrorMsg(`Can not use 'AND' with 'name' operand`);
         }
-        const wl = `[${CyNode.workload} ${op} "${val}"]`;
+        const agg = `[${CyNode.aggregateValue} ${op} "${val}"]`;
         const app = `[${CyNode.app} ${op} "${val}"]`;
         const svc = `[${CyNode.service} ${op} "${val}"]`;
-        return { target: 'node', selector: isNegation ? `${wl}${app}${svc}` : `${wl},${app},${svc}` };
+        const wl = `[${CyNode.workload} ${op} "${val}"]`;
+        return { target: 'node', selector: isNegation ? `${wl}${app}${svc}` : `${agg},${app},${svc},${wl}` };
       }
       case 'node':
         let nodeType = val.toLowerCase();
@@ -563,7 +564,7 @@ export class GraphFind extends React.PureComponent<GraphFindProps, GraphFindStat
         return { target: 'node', selector: `[${CyNode.namespace} ${op} "${val}"]` };
       case 'op':
       case 'operation':
-        return { target: 'node', selector: `[${CyNode.aggregate} ${op} "${val}"]` };
+        return { target: 'node', selector: `[${CyNode.aggregateValue} ${op} "${val}"]` };
       case 'svc':
       case 'service':
         return { target: 'node', selector: `[${CyNode.service} ${op} "${val}"]` };
