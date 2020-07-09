@@ -223,16 +223,15 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
         tooltip: (
           <div style={{ textAlign: 'left' }}>
             <div>
-              Show operation aggregate nodes in the graph. When enabled with Service Nodes the operation is displayed
-              specific to each service to whose workloads it applies (and therefore an operation may be duplicated for
-              different services). Without Service Nodes each operation will have a single node representing the total
-              traffic for that operation.
+              When both operation and service nodes are enabled then the operation is displayed specific to each service
+              to which it applies, and therefore may be duplicated for different services. When enabled independently
+              each operation will have a single node representing the total traffic for that operation.
             </div>
             <div>- Operations with no traffic are ignored.</div>
             <div>- This is not applicable to Service graphs.</div>
             <div>
-              - This is useful only when Istio request classsification has been configured for workloads in the selected
-              namespaces.
+              - Operation nodes require additional "Request Classification" Istio configuration for workloads in the
+              selected namespaces.
             </div>
           </div>
         )
