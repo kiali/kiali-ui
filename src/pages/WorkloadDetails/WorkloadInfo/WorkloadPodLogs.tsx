@@ -63,6 +63,8 @@ interface WorkloadPodLogsState {
   sideBySideOrientation: boolean;
   tailLines: number;
   useRegex: boolean;
+  showValueErrorMessage: string | undefined;
+  hideValueErrorMessage: string | undefined;
 }
 
 const RETURN_KEY_CODE = 13;
@@ -171,7 +173,9 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
         showClearShowLogButton: false,
         showLogValue: '',
         tailLines: TailLinesDefault,
-        useRegex: false
+        useRegex: false,
+        showValueErrorMessage: undefined,
+        hideValueErrorMessage: undefined
       };
       return;
     }
@@ -200,7 +204,9 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
       showLogValue: '',
       sideBySideOrientation: false,
       tailLines: TailLinesDefault,
-      useRegex: false
+      useRegex: false,
+      showValueErrorMessage: undefined,
+      hideValueErrorMessage: undefined
     };
   }
 
@@ -435,6 +441,16 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
             {this.state.containerInfo!.containerOptions[this.state.containerInfo!.container]}
           </ToolbarItem>
           <ToolbarGroup className={toolbarRight}>
+            {this.state.showValueErrorMessage && (
+              <div>
+                <span style={{ color: 'red' }}>{this.state.showValueErrorMessage}</span>
+              </div>
+            )}
+            {this.state.hideValueErrorMessage && (
+              <div>
+                <span style={{ color: 'red' }}>{this.state.hideValueErrorMessage}</span>
+              </div>
+            )}
             <ToolbarItem>
               <Tooltip key="copy_app_logs" position="top" content="Copy app logs to clipboard">
                 <CopyToClipboard
@@ -520,7 +536,9 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
 
   private handleRegexChange = () => {
     this.setState({
-      useRegex: !this.state.useRegex
+      useRegex: !this.state.useRegex,
+      showValueErrorMessage: undefined,
+      hideValueErrorMessage: undefined
     });
   };
 
@@ -566,14 +584,17 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
 
   private filterLogs = (rawLogs: LogLines, showValue: string, hideValue: string): LogLines => {
     let filteredLogs = rawLogs;
-
     if (!!showValue) {
       if (this.state.useRegex) {
         try {
           const regexp = new RegExp(showValue);
           filteredLogs = filteredLogs.filter(l => regexp.test(l));
         } catch (e) {
-          AlertUtils.addError(`Failed log Show: ${e.message}`);
+          const errorMessage = `Invalid Show Log Expression: ${e.message}`;
+          this.setState({
+            showValueErrorMessage: errorMessage
+          });
+          AlertUtils.addError(errorMessage);
         }
       } else {
         filteredLogs = filteredLogs.filter(l => l.includes(showValue));
@@ -585,7 +606,11 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
           const regexp = new RegExp(hideValue);
           filteredLogs = filteredLogs.filter(l => !regexp.test(l));
         } catch (e) {
-          AlertUtils.addError(`Failed log Hide: ${e.message}`);
+          const errorMessage = `Invalid Hide Log Expression: ${e.message}`;
+          this.setState({
+            hideValueErrorMessage: errorMessage
+          });
+          AlertUtils.addError(errorMessage);
         }
       } else {
         filteredLogs = filteredLogs.filter(l => !l.includes(hideValue));
