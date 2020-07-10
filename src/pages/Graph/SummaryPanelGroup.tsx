@@ -378,7 +378,7 @@ export default class SummaryPanelGroup extends React.Component<SummaryPanelPropT
           const aggregateNodeData = decoratedNodeData(aggregateNode);
           aggregateList.push(renderBadgedLink(aggregateNodeData, NodeType.AGGREGATE));
         });
-        serviceList.push(<div style={{ paddingLeft: '5px' }}>{aggregateList}</div>);
+        serviceList.push(<div>{aggregateList}</div>);
       }
     });
 
