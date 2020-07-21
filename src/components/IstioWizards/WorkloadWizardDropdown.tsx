@@ -60,7 +60,7 @@ class WorkloadWizardDropdown extends React.Component<Props, State> {
         break;
       case WIZARD_THREESCALE_UNLINK:
         const jsonPatch = buildWorkloadThreeScalePatch(false, this.props.workload.type, '', '');
-        API.updateWorkload(this.props.namespace, this.props.workload.name, jsonPatch)
+        API.updateWorkload(this.props.namespace, this.props.workload.name, this.props.workload.type, jsonPatch)
           .then(_ => {
             AlertUtils.add('Workload ' + this.props.workload.name + ' updated', 'default', MessageType.SUCCESS);
             this.setState(

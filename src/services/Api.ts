@@ -250,10 +250,12 @@ export const getAppHealth = (
 export const getWorkloadHealth = (
   namespace: string,
   workload: string,
+  workloadType: string,
   durationSec: number,
   hasSidecar: boolean
 ): Promise<WorkloadHealth> => {
   const params = durationSec ? { rateInterval: String(durationSec) + 's' } : {};
+  params['type'] = workloadType;
   return newRequest(HTTP_VERBS.GET, urls.workloadHealth(namespace, workload), params, {}).then(response =>
     WorkloadHealth.fromJson(response.data, { rateInterval: durationSec, hasSidecar: hasSidecar })
   );
@@ -424,8 +426,13 @@ export const getWorkload = (namespace: string, name: string) => {
   return newRequest<Workload>(HTTP_VERBS.GET, urls.workload(namespace, name), {}, {});
 };
 
-export const updateWorkload = (namespace: string, name: string, jsonPatch: string): Promise<Response<string>> => {
-  return newRequest(HTTP_VERBS.PATCH, urls.workload(namespace, name), {}, jsonPatch);
+export const updateWorkload = (
+  namespace: string,
+  name: string,
+  type: string,
+  jsonPatch: string
+): Promise<Response<string>> => {
+  return newRequest(HTTP_VERBS.PATCH, urls.workload(namespace, name), { type: type }, jsonPatch);
 };
 
 export const getPod = (namespace: string, name: string) => {

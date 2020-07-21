@@ -94,6 +94,7 @@ class WorkloadInfo extends React.Component<WorkloadInfoProps, WorkloadInfoState>
     API.getWorkloadHealth(
       this.props.namespace,
       this.props.workloadName,
+      this.state.workload ? this.state.workload.type : '',
       this.props.duration,
       this.state.workload ? this.state.workload.istioSidecar : false
     )

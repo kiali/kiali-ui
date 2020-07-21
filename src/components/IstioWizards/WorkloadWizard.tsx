@@ -48,7 +48,7 @@ class WorkloadWizard extends React.Component<WorkloadWizardProps, WorkloadWizard
           this.state.threeScale.serviceId,
           this.state.threeScale.credentials
         );
-        API.updateWorkload(this.props.namespace, this.props.workload.name, jsonPatch)
+        API.updateWorkload(this.props.namespace, this.props.workload.name, this.props.workload.type, jsonPatch)
           .then(_ => {
             AlertUtils.add('Workload ' + this.props.workload.name + ' updated', 'default', MessageType.SUCCESS);
             this.onClose(true);
