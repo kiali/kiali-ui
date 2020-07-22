@@ -80,7 +80,7 @@ class ThreeScaleNewPage extends React.Component<Props, ThreeScaleState> {
 
   componentDidUpdate(prevProps: Props) {
     if (
-      prevProps.activeNamespaces.length > this.props.activeNamespaces.length ||
+      prevProps.activeNamespaces.length !== this.props.activeNamespaces.length ||
       !prevProps.activeNamespaces.every(v => this.props.activeNamespaces.includes(v))
     ) {
       this.fetchPermissions();

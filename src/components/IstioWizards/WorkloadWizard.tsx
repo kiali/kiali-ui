@@ -36,7 +36,19 @@ class WorkloadWizard extends React.Component<WorkloadWizardProps, WorkloadWizard
   }
 
   onClose = (changed: boolean) => {
-    this.props.onClose(changed);
+    this.setState(
+      {
+        showWizard: false,
+        valid: {
+          threescale: false
+        },
+        threeScale: {
+          serviceId: '',
+          credentials: ''
+        }
+      },
+      () => this.props.onClose(changed)
+    );
   };
 
   onCreateUpdate = () => {

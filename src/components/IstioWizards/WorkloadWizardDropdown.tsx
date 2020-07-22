@@ -121,7 +121,8 @@ class WorkloadWizardDropdown extends React.Component<Props, State> {
   };
 
   render() {
-    const validActions = true;
+    const renderDropdownItems = this.renderDropdownItems();
+    const validActions = renderDropdownItems.length > 0;
     const dropdown = (
       <Dropdown
         position={DropdownPosition.right}
