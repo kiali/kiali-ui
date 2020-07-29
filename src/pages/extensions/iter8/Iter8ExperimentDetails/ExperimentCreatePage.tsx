@@ -406,7 +406,7 @@ class ExperimentCreatePage extends React.Component<Props, State> {
 
   onExperimentKindChange = (value, _) => {
     let service = this.state.experiment.service;
-    if (value == 'Service') {
+    if (value === 'Service') {
       service = '';
     }
     this.setState(prevState => {
