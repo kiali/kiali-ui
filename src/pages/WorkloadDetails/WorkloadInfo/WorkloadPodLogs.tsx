@@ -25,7 +25,7 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 import TimeRangeComponent from 'components/Time/TimeRangeComponent';
 import Splitter from 'm-react-splitters';
 import RefreshContainer from '../../../components/Refresh/Refresh';
-import { KialiIcon } from '../../../config/KialiIcon';
+import { KialiIcon, defaultIconStyle } from '../../../config/KialiIcon';
 import * as AlertUtils from '../../../utils/AlertUtils';
 import { FullScreenLogModal } from './FullScreenLogModal';
 
@@ -114,6 +114,10 @@ const toolbar = style({
   margin: '0 0 10px 0'
 });
 
+const toolbarSpace = style({
+  marginLeft: '1em'
+});
+
 const toolbarRight = style({
   marginLeft: 'auto'
 });
@@ -124,7 +128,8 @@ const toolbarTail = style({
 
 const toolbarTitle = (position: TextAreaPosition = 'top') =>
   style({
-    margin: `${position === 'right' ? '0 0 0 10px' : 0}`
+    height: '36px',
+    margin: `${position === 'right' ? '0 0 0 10px' : '0 10px 0 0'}`
   });
 
 const logTextAreaBackground = (enabled = true) => ({ backgroundColor: enabled ? '#003145' : 'gray' });
@@ -275,7 +280,7 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
                           options={this.podOptions!}
                         />
                       </ToolbarItem>
-                      <ToolbarItem className={displayFlex} style={{ marginLeft: '1em' }}>
+                      <ToolbarItem className={`${displayFlex} ${toolbarSpace}`}>
                         <ToolbarDropdown
                           id={'wpl_containers'}
                           nameDropdown="Container"
@@ -383,7 +388,7 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
                           <KialiIcon.Info className={infoIcons} />
                         </Tooltip>
                       </ToolbarItem>
-                      <ToolbarItem style={{ marginLeft: '1em' }}>
+                      <ToolbarItem className={toolbarSpace}>
                         <Switch
                           id="regex-switch"
                           label="Activate Regex"
@@ -450,22 +455,22 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
           </ToolbarItem>
           <ToolbarGroup className={toolbarRight}>
             <ToolbarItem>
-              <Tooltip key="expand_app_logs" position="top" content="Expand App logs full screen">
-                <Button variant={ButtonVariant.plain} onClick={this.openAppFullScreenLog}>
-                  <KialiIcon.Expand />
-                </Button>
-              </Tooltip>
-            </ToolbarItem>
-            <ToolbarItem>
               <Tooltip key="copy_app_logs" position="top" content="Copy app logs to clipboard">
                 <CopyToClipboard
                   onCopy={this.copyAppLogCallback}
                   text={WorkloadPodLogs.linesToString(this.state.filteredAppLogs)}
                 >
-                  <Button variant={ButtonVariant.plain}>
-                    <KialiIcon.Copy />
+                  <Button variant={ButtonVariant.link} isInline>
+                    <KialiIcon.Copy className={defaultIconStyle} />
                   </Button>
                 </CopyToClipboard>
+              </Tooltip>
+            </ToolbarItem>
+            <ToolbarItem className={toolbarSpace}>
+              <Tooltip key="expand_app_logs" position="top" content="Expand App logs full screen">
+                <Button variant={ButtonVariant.link} onClick={this.openAppFullScreenLog} isInline>
+                  <KialiIcon.Expand className={defaultIconStyle} />
+                </Button>
               </Tooltip>
             </ToolbarItem>
           </ToolbarGroup>
@@ -491,22 +496,22 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
           <ToolbarItem className={logsTitle}>Istio proxy (sidecar)</ToolbarItem>
           <ToolbarGroup className={toolbarRight}>
             <ToolbarItem>
-              <Tooltip key="expand_proxy_logs" position="top" content="Expand Istio proxy logs full screen">
-                <Button variant={ButtonVariant.plain} onClick={this.openProxyFullScreenLog}>
-                  <KialiIcon.Expand />
-                </Button>
-              </Tooltip>
-            </ToolbarItem>
-            <ToolbarItem>
               <Tooltip key="copy_proxy_logs" position="top" content="Copy Istio proxy logs to clipboard">
                 <CopyToClipboard
                   onCopy={this.copyProxyLogCallback}
                   text={WorkloadPodLogs.linesToString(this.state.filteredProxyLogs)}
                 >
-                  <Button variant={ButtonVariant.plain}>
-                    <KialiIcon.Copy />
+                  <Button variant={ButtonVariant.link} isInline>
+                    <KialiIcon.Copy className={defaultIconStyle} />
                   </Button>
                 </CopyToClipboard>
+              </Tooltip>
+            </ToolbarItem>
+            <ToolbarItem className={toolbarSpace}>
+              <Tooltip key="expand_proxy_logs" position="top" content="Expand Istio proxy logs full screen">
+                <Button variant={ButtonVariant.link} onClick={this.openProxyFullScreenLog} isInline>
+                  <KialiIcon.Expand className={defaultIconStyle} />
+                </Button>
               </Tooltip>
             </ToolbarItem>
           </ToolbarGroup>

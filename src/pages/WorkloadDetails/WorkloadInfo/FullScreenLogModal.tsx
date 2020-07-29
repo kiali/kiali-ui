@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { style } from 'typestyle';
-import { Modal } from '@patternfly/react-core';
+import { Modal, Toolbar, ToolbarGroup, ToolbarItem, Button, ButtonVariant, Tooltip } from '@patternfly/react-core';
+import { KialiIcon, defaultIconStyle } from 'config/KialiIcon';
 
 type FullScreenLogProps = {
   logText?: string;
@@ -13,15 +14,13 @@ type FullScreenLogState = {
 };
 
 const modalStyle = style({
-  width: '100%',
-  height: '100%',
-  minHeight: '100%'
+  width: '100',
+  height: '100%'
 });
 
 const textAreaStyle = style({
   width: '100%',
-  height: '100%',
-  minHeight: '100%',
+  height: '93%',
   marginTop: '10px',
   overflow: 'auto',
   resize: 'none',
@@ -56,14 +55,23 @@ export class FullScreenLogModal extends React.PureComponent<FullScreenLogProps, 
     }
 
     return (
-      <Modal
-        isSmall={false}
-        isOpen={this.state.show}
-        onClose={this.close}
-        title="Fullscreen Logs"
-        className={modalStyle}
-      >
-        <h2>{this.props.title}</h2>
+      <Modal isSmall={false} isOpen={this.state.show} title="" className={modalStyle} showClose={false}>
+        <Toolbar>
+          <ToolbarGroup>
+            <ToolbarItem>
+              <h2>{this.props.title}</h2>
+            </ToolbarItem>
+          </ToolbarGroup>
+          <ToolbarGroup style={{ marginLeft: 'auto' }}>
+            <ToolbarItem>
+              <Tooltip key="collapse_fs" position="top" content="Collapse full screen">
+                <Button variant={ButtonVariant.link} onClick={this.close} isInline>
+                  <KialiIcon.Compress className={defaultIconStyle} />
+                </Button>
+              </Tooltip>
+            </ToolbarItem>
+          </ToolbarGroup>
+        </Toolbar>
         <textarea ref={this.textareaRef} value={this.props.logText} className={textAreaStyle} readOnly={true} />
       </Modal>
     );
