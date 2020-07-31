@@ -604,7 +604,7 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
     if (!!showValue) {
       if (this.state.useRegex) {
         try {
-          const regexp = new RegExp(showValue);
+          const regexp = RegExp(showValue);
           filteredLogs = filteredLogs.filter(l => regexp.test(l));
           if (!!this.state.showError) {
             this.setState({ showError: undefined });
@@ -619,7 +619,7 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
     if (!!hideValue) {
       if (this.state.useRegex) {
         try {
-          const regexp = new RegExp(hideValue);
+          const regexp = RegExp(hideValue);
           filteredLogs = filteredLogs.filter(l => !regexp.test(l));
           if (!!this.state.hideError) {
             this.setState({ hideError: undefined });
