@@ -175,12 +175,7 @@ class ExperimentCreatePage extends React.Component<Props, State> {
         const newExperiment = prevState.experiment;
         newExperiment.baseline = '';
         newExperiment.candidate = '';
-        // if (this.props.activeNamespaces.length === 1 && prevState.experiment.namespace === '') {
-        //   newExperiment.namespace = this.props.activeNamespaces[0].name;
-        //  } else {
         newExperiment.namespace = allNamespaces[0];
-        //  }
-
         return {
           experiment: newExperiment,
           namespaces: allNamespaces,
@@ -239,12 +234,9 @@ class ExperimentCreatePage extends React.Component<Props, State> {
       _namespace = selectedNS;
     } else if (this.state.experiment.namespace !== '') {
       _namespace = this.state.experiment.namespace;
-    } //else if (this.props.activeNamespaces.length > 0) {
-    //_namespace = this.props.activeNamespaces[0].name;
-    //}
+    }
 
     if (_namespace.length > 0) {
-      // const ns = this.props.activeNamespaces[0];
       if (!this.promises.has('servicesByNamespace')) {
         this.promises
           .register('servicesByNamespace', API.getServices(_namespace))
@@ -356,11 +348,7 @@ class ExperimentCreatePage extends React.Component<Props, State> {
           });
           this.setState(prevState => {
             const newExperiment = prevState.experiment;
-            // if (this.props.activeNamespaces.length === 1) {
-            //  newExperiment.namespace = this.props.activeNamespaces[0].name;
-            // } else {
             newExperiment.namespace = allNamespaces[0];
-            //}
             return {
               experiment: newExperiment,
               namespaces: allNamespaces,
@@ -426,7 +414,6 @@ class ExperimentCreatePage extends React.Component<Props, State> {
 
   // It invokes backend to create  a new experiment
   createExperiment = () => {
-    // if (this.props.activeNamespaces.length === 1) {
     const nsName = this.state.experiment.namespace;
     this.promises
       .register('Create Iter8 Experiment', API.createExperiment(nsName, JSON.stringify(this.state.experiment)))
@@ -702,7 +689,7 @@ class ExperimentCreatePage extends React.Component<Props, State> {
   }
 
   renderFullGeneral() {
-    const isNamespacesValid = false; //this.props.activeNamespaces.length === 1;
+    const isNamespacesValid = false;
 
     return (
       <>
@@ -1104,7 +1091,6 @@ class ExperimentCreatePage extends React.Component<Props, State> {
 
   render() {
     const isFormValid = this.isMainFormValid() && this.isSCFormValid();
-    // @ts-ignore
     return (
       <>
         <RenderContent>
