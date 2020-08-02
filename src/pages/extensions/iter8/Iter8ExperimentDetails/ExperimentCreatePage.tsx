@@ -393,14 +393,9 @@ class ExperimentCreatePage extends React.Component<Props, State> {
   };
 
   onExperimentKindChange = (value, _) => {
-    let service = this.state.experiment.service;
-    if (value === 'Service') {
-      service = '';
-    }
     this.setState(prevState => {
       const newExperiment = prevState.experiment;
       newExperiment.experimentKind = value;
-      newExperiment.service = service;
       return {
         experiment: newExperiment
       };
@@ -529,7 +524,7 @@ class ExperimentCreatePage extends React.Component<Props, State> {
       this.state.experiment.name !== '' &&
       this.state.experiment.name.search(regex) === 0 &&
       ((this.state.experiment.experimentKind === 'Deployment' && this.state.experiment.service !== '') ||
-        (this.state.experiment.experimentKind === 'Service' && this.state.experiment.service === '')) &&
+        this.state.experiment.experimentKind === 'Service') &&
       this.state.experiment.namespace !== '' &&
       this.state.experiment.baseline !== '' &&
       this.state.experiment.candidate !== ''
