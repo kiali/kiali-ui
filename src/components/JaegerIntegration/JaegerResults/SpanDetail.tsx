@@ -56,7 +56,7 @@ export class SpanDetailC extends React.Component<SpanDetailProps, SpanDetailStat
                     </GridItem>
                     <GridItem span={4} />
                     <GridItem span={2}>
-                      <Tooltip content={<>View traces of app {this.props.spans[0].process.serviceName}</>}>
+                      <Tooltip content={<>View traces of application {this.props.spans[0].process.serviceName}</>}>
                         <Link
                           to={this.goApp() + '?tab=traces'}
                           onClick={() => history.push(this.goApp() + '?tab=traces')}
