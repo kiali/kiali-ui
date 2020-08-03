@@ -26,7 +26,6 @@ import { KialiAppState } from '../../../../store/Store';
 import { activeNamespacesSelector } from '../../../../store/Selectors';
 import { connect } from 'react-redux';
 import { PfColors } from '../../../../components/Pf/PfColors';
-import './ExperimentCreatePage.scss';
 
 interface Props {
   serviceName: string;
