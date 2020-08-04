@@ -10,7 +10,6 @@ type NotificationListProps = {
 
 export default class NotificationList extends React.PureComponent<NotificationListProps> {
   render() {
-    console.log(this.props.messages);
     return (
       <>
         {this.props.messages.map((message, i) => {
