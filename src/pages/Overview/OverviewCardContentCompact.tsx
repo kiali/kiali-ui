@@ -1,6 +1,4 @@
 import * as React from 'react';
-import { Text } from '@patternfly/react-core';
-
 import { DEGRADED, FAILURE, HEALTHY, IDLE } from '../../types/Health';
 import OverviewStatus from './OverviewStatus';
 import { OverviewType } from './OverviewToolbar';
@@ -74,9 +72,7 @@ class OverviewCardContentCompact extends React.Component<Props> {
                 />
               )}
               {nbItems === status.notAvailable.length && (
-                <div style={{ display: 'inline-block', marginLeft: '5px' }}>
-                  <Text>N/A</Text>
-                </div>
+                <div style={{ display: 'inline-block', marginLeft: '5px' }}>N/A</div>
               )}
             </div>
           </span>
