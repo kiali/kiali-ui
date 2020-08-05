@@ -1,6 +1,6 @@
 import { DurationInSeconds } from './Common';
 
-export type IstioLabelKey = 'appLabelName' | 'versionLabelName';
+export type IstioLabelKey = 'appLabelName' | 'versionLabelName' | 'injectionLabelName';
 
 // 3scale public config, typically to check if addon/extension is enabled
 interface ThreeScaleConfig {
@@ -25,6 +25,7 @@ export interface ServerConfig {
   istioIdentityDomain: string;
   istioNamespace: string;
   istioComponentNamespaces?: Map<string, string>;
+  istioInjectionAction: boolean;
   istioLabels: { [key in IstioLabelKey]: string };
   prometheus: {
     globalScrapeInterval?: DurationInSeconds;

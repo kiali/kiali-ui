@@ -50,12 +50,14 @@ import * as Filters from './Filters';
 import ValidationSummary from '../../components/Validations/ValidationSummary';
 import { DurationInSeconds, IntervalInMilliseconds } from 'types/Common';
 import { Link } from 'react-router-dom';
-import { Paths } from '../../config';
+import { Paths, serverConfig } from '../../config';
 import { PfColors } from '../../components/Pf/PfColors';
 import VirtualList from '../../components/VirtualList/VirtualList';
 import { StatefulFilters } from '../../components/Filters/StatefulFilters';
 import { OverviewNamespaceAction, OverviewNamespaceActions } from './OverviewNamespaceActions';
 import history from '../../app/History';
+import { buildNamespaceInjectionPatch } from '../../components/IstioWizards/WizardActions';
+import * as AlertUtils from '../../utils/AlertUtils';
 
 const gridStyleCompact = style({
   backgroundColor: '#f5f5f5',
@@ -470,6 +472,17 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
     return namespaceActions;
   };
 
+  onAddRemoveAutoInjection = (ns: string, enable: boolean): void => {
+    const jsonPatch = buildNamespaceInjectionPatch(enable);
+    API.updateNamespace(ns, jsonPatch)
+      .then(_ => {
+        this.load();
+      })
+      .catch(error => {
+        AlertUtils.addError('Could not update namespace ' + ns, error);
+      });
+  };
+
   render() {
     const sm = this.state.displayMode === OverviewDisplayMode.COMPACT ? 3 : 6;
     const md = this.state.displayMode === OverviewDisplayMode.COMPACT ? 3 : 4;
@@ -478,6 +491,24 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
       // Actions can be personalized by namespace
       // i.e. Add or Remove depending of presence of a flag/label
       const actions = this.showActions();
+      if (serverConfig.istioInjectionAction) {
+        actions.push({
+          isSeparator: true
+        });
+        if (ns.labels && ns.labels[serverConfig.istioLabels.injectionLabelName]) {
+          actions.push({
+            isSeparator: false,
+            title: 'Remove Auto Injection',
+            action: (ns: string) => this.onAddRemoveAutoInjection(ns, false)
+          });
+        } else {
+          actions.push({
+            isSeparator: false,
+            title: 'Add Auto Injection',
+            action: (ns: string) => this.onAddRemoveAutoInjection(ns, true)
+          });
+        }
+      }
       return <OverviewNamespaceActions key={'namespaceAction_' + i} namespace={ns.name} actions={actions} />;
     });
     return (
