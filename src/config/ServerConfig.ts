@@ -53,11 +53,13 @@ let serverConfig: ComputedServerConfig = {
   istioIdentityDomain: 'svc.cluster.local',
   istioNamespace: 'istio-system',
   istioComponentNamespaces: new Map<string, string>(),
-  istioInjectionAction: true,
   istioLabels: {
     appLabelName: 'app',
     injectionLabelName: 'istio-injection',
     versionLabelName: 'version'
+  },
+  kialiFeatureFlags: {
+    istioInjectionAction: true
   },
   prometheus: {
     globalScrapeInterval: 15,

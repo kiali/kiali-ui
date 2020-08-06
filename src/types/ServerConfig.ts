@@ -19,14 +19,18 @@ interface Extensions {
   iter8: iter8Config;
 }
 
+interface KialiFeatureFlags {
+  istioInjectionAction: boolean;
+}
+
 export interface ServerConfig {
   extensions?: Extensions;
   installationTag?: string;
   istioIdentityDomain: string;
   istioNamespace: string;
   istioComponentNamespaces?: Map<string, string>;
-  istioInjectionAction: boolean;
   istioLabels: { [key in IstioLabelKey]: string };
+  kialiFeatureFlags: KialiFeatureFlags;
   prometheus: {
     globalScrapeInterval?: DurationInSeconds;
     storageTsdbRetention?: DurationInSeconds;

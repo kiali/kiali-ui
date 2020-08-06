@@ -469,7 +469,7 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
         action: (ns: string) => this.show(Show.ISTIO_CONFIG, ns, this.state.type)
       }
     ];
-    if (serverConfig.istioInjectionAction) {
+    if (serverConfig.kialiFeatureFlags.istioInjectionAction) {
       namespaceActions.push({
         isSeparator: true
       });
