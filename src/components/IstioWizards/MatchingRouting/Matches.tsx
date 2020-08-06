@@ -16,7 +16,9 @@ class Matches extends React.Component<Props> {
   render() {
     const matches: any[] = this.props.matches.map((match, index) => (
       <span key={match + '-' + index}>
-        <Chip onClick={() => this.props.onRemoveMatch(match)}>{match}</Chip>{' '}
+        <Chip onClick={() => this.props.onRemoveMatch(match)} isOverflowChip={true}>
+          {match}
+        </Chip>{' '}
       </span>
     ));
     return (
