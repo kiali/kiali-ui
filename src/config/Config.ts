@@ -110,6 +110,7 @@ const conf = {
       appHealth: (namespace: string, app: string) => `api/namespaces/${namespace}/apps/${app}/health`,
       appMetrics: (namespace: string, app: string) => `api/namespaces/${namespace}/apps/${app}/metrics`,
       appDashboard: (namespace: string, app: string) => `api/namespaces/${namespace}/apps/${app}/dashboard`,
+      appSpans: (namespace: string, app: string) => `api/namespaces/${namespace}/apps/${app}/spans`,
       customDashboard: (namespace: string, template: string) =>
         `api/namespaces/${namespace}/customdashboard/${template}`,
       grafana: 'api/grafana',
@@ -126,12 +127,12 @@ const conf = {
         `api/iter8/namespaces/${namespace}/experiments/${name}`,
       istioPermissions: 'api/istio/permissions',
       jaeger: 'api/jaeger',
-      jaegerTraces: (namespace: string, service: string) => `api/namespaces/${namespace}/services/${service}/traces`,
-      jaegerErrorTraces: (namespace: string, service: string) =>
-        `api/namespaces/${namespace}/services/${service}/errortraces`,
+      jaegerTraces: (namespace: string, app: string) => `api/namespaces/${namespace}/apps/${app}/traces`,
+      jaegerErrorTraces: (namespace: string, app: string) => `api/namespaces/${namespace}/apps/${app}/errortraces`,
       jaegerTrace: (idTrace: string) => `api/traces/${idTrace}`,
       logout: 'api/logout',
       namespaces: 'api/namespaces',
+      namespace: (namespace: string) => `api/namespaces/${namespace}`,
       namespacesGraphElements: `api/namespaces/graph`,
       namespaceHealth: (namespace: string) => `api/namespaces/${namespace}/health`,
       namespaceMetrics: (namespace: string) => `api/namespaces/${namespace}/metrics`,
@@ -150,7 +151,6 @@ const conf = {
       serviceMetrics: (namespace: string, service: string) => `api/namespaces/${namespace}/services/${service}/metrics`,
       serviceDashboard: (namespace: string, service: string) =>
         `api/namespaces/${namespace}/services/${service}/dashboard`,
-      serviceSpans: (namespace: string, service: string) => `api/namespaces/${namespace}/services/${service}/spans`,
       status: 'api/status',
       threeScale: 'api/threescale',
       threeScaleHandler: (handlerName: string) => `api/threescale/handlers/${handlerName}`,

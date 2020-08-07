@@ -133,6 +133,10 @@ export const getNamespaceValidations = (namespace: string) => {
   return newRequest<ValidationStatus>(HTTP_VERBS.GET, urls.namespaceValidations(namespace), {}, {});
 };
 
+export const updateNamespace = (namespace: string, jsonPatch: string): Promise<Response<string>> => {
+  return newRequest(HTTP_VERBS.PATCH, urls.namespace(namespace), {}, jsonPatch);
+};
+
 export const getIstioConfig = (namespace: string, objects: string[], validate: boolean, labelSelector: string) => {
   const params: any = objects && objects.length > 0 ? { objects: objects.join(',') } : {};
   if (validate) {
@@ -324,8 +328,8 @@ export const getJaegerInfo = () => {
   return newRequest<JaegerInfo>(HTTP_VERBS.GET, urls.jaeger, {}, {});
 };
 
-export const getJaegerTraces = (namespace: string, service: string, params: TracingQuery) => {
-  return newRequest<JaegerResponse>(HTTP_VERBS.GET, urls.jaegerTraces(namespace, service), params, {});
+export const getJaegerTraces = (namespace: string, app: string, params: TracingQuery) => {
+  return newRequest<JaegerResponse>(HTTP_VERBS.GET, urls.jaegerTraces(namespace, app), params, {});
 };
 
 export const getJaegerErrorTraces = (namespace: string, service: string, duration: DurationInSeconds) => {
@@ -484,8 +488,8 @@ export const getErrorDetail = (error: AxiosError): string => {
   return '';
 };
 
-export const getServiceSpans = (namespace: string, service: string, params: TracingQuery) => {
-  return newRequest<Span[]>(HTTP_VERBS.GET, urls.serviceSpans(namespace, service), params, {});
+export const getAppSpans = (namespace: string, app: string, params: TracingQuery) => {
+  return newRequest<Span[]>(HTTP_VERBS.GET, urls.appSpans(namespace, app), params, {});
 };
 
 export const getIstioPermissions = (namespaces: string[]) => {

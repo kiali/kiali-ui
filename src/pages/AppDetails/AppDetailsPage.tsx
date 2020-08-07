@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { RouteComponentProps } from 'react-router-dom';
+import { ExclamationCircleIcon, ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { Tab } from '@patternfly/react-core';
 
 import * as API from '../../services/Api';
@@ -16,37 +17,46 @@ import { DurationInSeconds } from '../../types/Common';
 import { KialiAppState } from '../../store/Store';
 import { durationSelector } from '../../store/Selectors';
 import ParameterizedTabs, { activeTab } from '../../components/Tab/Tabs';
+import { JaegerInfo } from '../../types/JaegerInfo';
+import { PfColors } from '../../components/Pf/PfColors';
+import AppTraces from '../../components/JaegerIntegration/AppTraces';
 
 type AppDetailsState = {
   app?: App;
   // currentTab is needed to (un)mount tab components
   // when the tab is not rendered.
   currentTab: string;
+  nbErrorTraces: number;
 };
 
 type ReduxProps = {
   duration: DurationInSeconds;
+  jaegerInfo?: JaegerInfo;
 };
 
 type AppDetailsProps = RouteComponentProps<AppId> & ReduxProps;
 
 const tabName = 'tab';
 const defaultTab = 'info';
+const tracesTabName = 'traces';
 const paramToTab: { [key: string]: number } = {
   info: 0,
   traffic: 1,
   in_metrics: 2,
-  out_metrics: 3
+  out_metrics: 3,
+  traces: 4
 };
+const nextTabIndex = 5;
 
 class AppDetails extends React.Component<AppDetailsProps, AppDetailsState> {
   constructor(props: AppDetailsProps) {
     super(props);
-    this.state = { currentTab: activeTab(tabName, defaultTab) };
+    this.state = { currentTab: activeTab(tabName, defaultTab), nbErrorTraces: 0 };
   }
 
   componentDidMount(): void {
     this.fetchApp();
+    this.fetchJaegerErrors();
   }
 
   componentDidUpdate(prevProps: AppDetailsProps) {
@@ -56,10 +66,22 @@ class AppDetails extends React.Component<AppDetailsProps, AppDetailsState> {
       this.state.currentTab !== activeTab(tabName, defaultTab) ||
       this.props.duration !== prevProps.duration
     ) {
-      this.setState({ currentTab: activeTab(tabName, defaultTab) });
+      this.setState({ currentTab: activeTab(tabName, defaultTab) }, () => this.fetchJaegerErrors());
       this.fetchApp();
     }
   }
+
+  private fetchJaegerErrors = () => {
+    if (this.props.jaegerInfo && this.props.jaegerInfo.integration) {
+      API.getJaegerErrorTraces(this.props.match.params.namespace, this.props.match.params.app, this.props.duration)
+        .then(inError => {
+          this.setState({ nbErrorTraces: inError.data });
+        })
+        .catch(error => {
+          AlertUtils.addError('Could not fetch Jaeger errors.', error);
+        });
+    }
+  };
 
   private fetchApp = () => {
     API.getApp(this.props.match.params.namespace, this.props.match.params.app)
@@ -68,18 +90,17 @@ class AppDetails extends React.Component<AppDetailsProps, AppDetailsState> {
   };
 
   private runtimeTabs() {
-    const staticTabsCount = 4;
     let dynamicTabsCount: number = 0;
 
     const tabs: JSX.Element[] = [];
     if (this.state.app) {
       this.state.app.runtimes.forEach(runtime => {
         runtime.dashboardRefs.forEach(dashboard => {
-          const tabKey = dynamicTabsCount + staticTabsCount;
-          paramToTab[dashboard.template] = tabKey;
+          const tabKey = dynamicTabsCount + nextTabIndex;
+          paramToTab['cd-' + dashboard.template] = tabKey;
 
           const tab = (
-            <Tab title={dashboard.title} key={dashboard.template} eventKey={tabKey}>
+            <Tab title={dashboard.title} key={'cd-' + dashboard.template} eventKey={tabKey}>
               <CustomMetricsContainer
                 namespace={this.props.match.params.namespace}
                 app={this.props.match.params.app}
@@ -136,7 +157,52 @@ class AppDetails extends React.Component<AppDetailsProps, AppDetailsState> {
       </Tab>
     );
 
-    return [overTab, trafficTab, inTab, outTab];
+    // Default tabs
+    const tabsArray: any[] = [overTab, trafficTab, inTab, outTab];
+
+    // Conditional Traces tab
+    if (this.props.jaegerInfo && this.props.jaegerInfo.enabled) {
+      let jaegerTag: any = undefined;
+      if (this.props.jaegerInfo.integration) {
+        const jaegerTitle =
+          this.state.nbErrorTraces > 0 ? (
+            <>
+              Traces <ExclamationCircleIcon color={PfColors.Red200} />{' '}
+            </>
+          ) : (
+            'Traces'
+          );
+        jaegerTag = (
+          <Tab eventKey={4} style={{ textAlign: 'center' }} title={jaegerTitle} key={tracesTabName}>
+            <AppTraces
+              namespace={this.props.match.params.namespace}
+              app={this.props.match.params.app}
+              showErrors={this.state.nbErrorTraces > 0}
+              duration={this.props.duration}
+            />
+          </Tab>
+        );
+      } else {
+        const service = this.props.jaegerInfo.namespaceSelector
+          ? this.props.match.params.app + '.' + this.props.match.params.namespace
+          : this.props.match.params.app;
+        jaegerTag = (
+          <Tab
+            eventKey={4}
+            href={this.props.jaegerInfo.url + `/search?service=${service}`}
+            target="_blank"
+            title={
+              <>
+                Traces <ExternalLinkAltIcon />
+              </>
+            }
+          />
+        );
+      }
+      tabsArray.push(jaegerTag);
+    }
+
+    return tabsArray;
   }
 
   private renderTabs() {
@@ -175,7 +241,8 @@ class AppDetails extends React.Component<AppDetailsProps, AppDetailsState> {
 }
 
 const mapStateToProps = (state: KialiAppState) => ({
-  duration: durationSelector(state)
+  duration: durationSelector(state),
+  jaegerInfo: state.jaegerState.info
 });
 
 const AppDetailsContainer = connect(mapStateToProps)(AppDetails);
