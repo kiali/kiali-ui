@@ -11,6 +11,7 @@ import { PFAlertColor, PfColors } from 'components/Pf/PfColors';
 import { calculateErrorRate } from './ErrorRate';
 import { ToleranceConfig } from './ServerConfig';
 import { serverConfig } from '../config';
+import { createProxyStatusList } from '../components/Health/Helper';
 
 interface HealthConfig {
   items: HealthItem[];
@@ -34,7 +35,7 @@ export interface HealthItemConfig {
 
 interface HealthSubItem {
   status: Status;
-  text: string;
+  text: any;
   value?: number;
 }
 
@@ -43,6 +44,7 @@ export interface WorkloadStatus {
   desiredReplicas: number;
   currentReplicas: number;
   availableReplicas: number;
+  proxyStatus: ProxyStatus[];
 }
 
 export const TRAFFICSTATUS = 'Traffic Status';
@@ -71,6 +73,11 @@ export interface Status {
   priority: number;
   icon: IconType;
   class: string;
+}
+
+export interface ProxyStatus {
+  component: string;
+  status: string;
 }
 
 export const IDLE: Status = {
@@ -175,6 +182,10 @@ export const ratioCheck = (availableReplicas: number, currentReplicas: number, d
 
   // Other combination could mean a degraded situation
   return DEGRADED;
+};
+
+export const proxyCheck = (proxyStatus: ProxyStatus[]): Status => {
+  return !!proxyStatus && proxyStatus.length > 0 ? DEGRADED : HEALTHY;
 };
 
 export const mergeStatus = (s1: Status, s2: Status): Status => {
@@ -329,6 +340,37 @@ export class AppHealth extends Health {
       };
       items.push(item);
     }
+
+    // Append Proxy errors
+    if (ctx.hasSidecar) {
+      const proxyItem: HealthItem = {
+        title: 'Proxy Status',
+        status: HEALTHY,
+        children: []
+      };
+
+      // For each Workload, aggregate its proxy errors
+      workloadStatuses.forEach(ws => {
+        const proxyStatus: Status = proxyCheck(ws.proxyStatus);
+        if (proxyStatus !== HEALTHY) {
+          proxyItem.status = mergeStatus(proxyStatus, proxyItem.status);
+          proxyItem.children?.push({
+            status: proxyStatus,
+            text: createProxyStatusList(ws.name, ws.proxyStatus)
+          });
+        }
+      });
+
+      if (proxyItem.status === HEALTHY) {
+        proxyItem.children?.push({
+          text: workloadStatuses.length > 1 ? 'Sidecar proxies are synced' : 'Sidecar proxy is synced',
+          status: HEALTHY
+        });
+      }
+
+      items.push(proxyItem);
+    }
+
     // Request errors
     if (ctx.hasSidecar) {
       const reqError = calculateErrorRate(ns, app, 'app', requests);
@@ -416,6 +458,36 @@ export class WorkloadHealth extends Health {
         ];
       }
       items.push(item);
+    }
+    {
+      // Append Proxy Status errors
+      const proxyStatus: Status = proxyCheck(workloadStatus.proxyStatus);
+      const proxyItem: HealthItem = {
+        title: 'Proxy Status',
+        status: proxyStatus,
+        children: [
+          {
+            text: 'Sidecar proxy is synced',
+            status: proxyStatus
+          }
+        ]
+      };
+
+      if (proxyStatus !== HEALTHY) {
+        proxyItem.status = mergeStatus(proxyItem.status, proxyCheck(workloadStatus.proxyStatus));
+        const children = workloadStatus.proxyStatus.map(
+          (proxy: ProxyStatus): HealthSubItem => {
+            return {
+              status: proxyStatus,
+              text: String(proxy.component + ': ' + proxy.status)
+            };
+          }
+        );
+
+        proxyItem.children = children;
+      }
+
+      items.push(proxyItem);
     }
     // Request errors
     if (ctx.hasSidecar) {

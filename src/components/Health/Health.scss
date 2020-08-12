@@ -25,4 +25,20 @@ svg:not(:root).icon-na {
   margin-bottom: var(--pf-c-content--ul--MarginTop);
   margin-top: 0;
   color: #fff;
+  --pf-global--Color--100: var(--pf-global--Color--light-100);
+}
+
+.health_indicator .pf-c-content small {
+  font-size: 70%;
+  color: var(--pf-global--Color--light-100);
+}
+
+.health_indicator .pf-m-gutter {
+  --pf-l-split--m-gutter--MarginRight: 0.25rem;
+  --pf-l-split--m-gutter--md--MarginRight: 0.25rem;
+}
+
+#health .pf-m-gutter {
+  --pf-l-split--m-gutter--MarginRight: 0.25rem;
+  --pf-l-split--m-gutter--md--MarginRight: 0.25rem;
 }
