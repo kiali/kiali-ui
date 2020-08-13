@@ -119,6 +119,8 @@ class IstioConfigSubList extends React.Component<Props, State> {
                 aria-label={'list_istio_config'}
                 cells={this.columns()}
                 rows={this.rows()}
+                // This style is declared on _overrides.scss
+                className="table"
               >
                 <TableHeader />
                 <TableBody />
