@@ -21,13 +21,8 @@ interface Props {
   name: string;
   items: IstioConfigItem[];
 }
-interface State {}
 
-class IstioConfigSubList extends React.Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-  }
-
+class IstioConfigSubList extends React.Component<Props> {
   columns(): ICell[] {
     // TODO: Casting 'as any' because @patternfly/react-table@2.22.19 has a typing bug. Remove the casting when PF fixes it.
     // https://github.com/patternfly/patternfly-next/issues/2373
