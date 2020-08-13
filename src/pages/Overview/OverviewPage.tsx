@@ -473,25 +473,44 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
       namespaceActions.push({
         isSeparator: true
       });
-      if (nsInfo.labels && nsInfo.labels[serverConfig.istioLabels.injectionLabelName]) {
-        namespaceActions.push({
-          isSeparator: false,
-          title: 'Disable Auto Injection',
-          action: (ns: string) => this.onAddRemoveAutoInjection(ns, false)
-        });
+      const enableAction = {
+        isSeparator: false,
+        title: 'Enable Auto Injection',
+        action: (ns: string) => this.onAddRemoveAutoInjection(ns, true, false)
+      };
+      const disableAction = {
+        isSeparator: false,
+        title: 'Disable Auto Injection',
+        action: (ns: string) => this.onAddRemoveAutoInjection(ns, false, false)
+      };
+      const removeAction = {
+        isSeparator: false,
+        title: 'Remove Auto Injection',
+        action: (ns: string) => this.onAddRemoveAutoInjection(ns, false, true)
+      };
+      if (
+        nsInfo.labels &&
+        nsInfo.labels[serverConfig.istioLabels.injectionLabelName] &&
+        nsInfo.labels[serverConfig.istioLabels.injectionLabelName] === 'enabled'
+      ) {
+        namespaceActions.push(disableAction);
+        namespaceActions.push(removeAction);
+      } else if (
+        nsInfo.labels &&
+        nsInfo.labels[serverConfig.istioLabels.injectionLabelName] &&
+        nsInfo.labels[serverConfig.istioLabels.injectionLabelName] === 'disabled'
+      ) {
+        namespaceActions.push(enableAction);
+        namespaceActions.push(removeAction);
       } else {
-        namespaceActions.push({
-          isSeparator: false,
-          title: 'Enable Auto Injection',
-          action: (ns: string) => this.onAddRemoveAutoInjection(ns, true)
-        });
+        namespaceActions.push(enableAction);
       }
     }
     return namespaceActions;
   };
 
-  onAddRemoveAutoInjection = (ns: string, enable: boolean): void => {
-    const jsonPatch = buildNamespaceInjectionPatch(enable);
+  onAddRemoveAutoInjection = (ns: string, enable: boolean, remove: boolean): void => {
+    const jsonPatch = buildNamespaceInjectionPatch(enable, remove);
     API.updateNamespace(ns, jsonPatch)
       .then(_ => {
         this.load();

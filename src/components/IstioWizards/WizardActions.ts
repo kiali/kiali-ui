@@ -1108,9 +1108,9 @@ export const buildWorkloadThreeScalePatch = (
   return JSON.stringify(patch);
 };
 
-export const buildNamespaceInjectionPatch = (enable: boolean): string => {
+export const buildNamespaceInjectionPatch = (enable: boolean, remove: boolean): string => {
   const labels = {};
-  labels[serverConfig.istioLabels.injectionLabelName] = enable ? 'enabled' : null;
+  labels[serverConfig.istioLabels.injectionLabelName] = remove ? null : enable ? 'enabled' : 'disabled';
   const patch = {
     metadata: {
       labels: labels
