@@ -205,9 +205,11 @@ class ServiceInfo extends React.Component<Props, ServiceInfoState> {
       let severity = ValidationTypes.Warning;
       keys.forEach(key => {
         types.forEach(type => {
-          const validationsForIcon = (this.state.validations || {})![type][key];
-          if (validationToSeverity(validationsForIcon) === ValidationTypes.Error) {
-            severity = ValidationTypes.Error;
+          if (this.state.validations && this.state.validations[type]) {
+            const validationsForIcon = (this.state.validations || {})![type][key];
+            if (validationToSeverity(validationsForIcon) === ValidationTypes.Error) {
+              severity = ValidationTypes.Error;
+            }
           }
         });
       });
