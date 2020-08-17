@@ -58,6 +58,7 @@ import { OverviewNamespaceAction, OverviewNamespaceActions } from './OverviewNam
 import history from '../../app/History';
 import { buildNamespaceInjectionPatch } from '../../components/IstioWizards/WizardActions';
 import * as AlertUtils from '../../utils/AlertUtils';
+import { MessageType } from '../../types/MessageCenter';
 
 const gridStyleCompact = style({
   backgroundColor: '#f5f5f5',
@@ -513,6 +514,7 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
     const jsonPatch = buildNamespaceInjectionPatch(enable, remove);
     API.updateNamespace(ns, jsonPatch)
       .then(_ => {
+        AlertUtils.add('Namespace ' + ns + ' updated', 'default', MessageType.SUCCESS);
         this.load();
       })
       .catch(error => {
