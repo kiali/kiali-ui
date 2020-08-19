@@ -166,7 +166,7 @@ class SummaryPanelTraceDetails extends React.Component<Props, State> {
             <>
               <br />
               <a href={jaegerTraceURL} target="_blank" rel="noopener noreferrer">
-                View Trace in Tracing <ExternalLinkAltIcon size="sm" />
+                Show in Tracing <ExternalLinkAltIcon size="sm" />
               </a>
             </>
           )}
