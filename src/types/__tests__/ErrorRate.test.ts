@@ -134,30 +134,46 @@ describe('getConfig', () => {
       });
 
       // With healthConfigs check priority
-      requests.tolerance = {
-        code: new RegExp('4dd'),
-        degraded: 80,
-        failure: 70,
-        protocol: new RegExp('http'),
-        direction: new RegExp('inbound')
+      const requestsPriority1 = {
+        requests: {
+          http: {
+            requestRate: 2,
+            errorRate: 1,
+            errorRatio: 0.5
+          }
+        },
+        tolerance: {
+          code: new RegExp('4dd'),
+          degraded: 40,
+          failure: 100,
+          protocol: new RegExp('http'),
+          direction: new RegExp('inbound')
+        }
       };
-      const requests2 = requests;
-      const toleranceGRPC = {
-        code: new RegExp('4dd'),
-        degraded: 1,
-        failure: 3,
-        protocol: new RegExp('grpc'),
-        direction: new RegExp('inbound')
+      const requestsPriority0 = {
+        requests: {
+          grpc: {
+            requestRate: 3,
+            errorRate: 2,
+            errorRatio: 0.667
+          }
+        },
+        tolerance: {
+          code: new RegExp('3'),
+          degraded: 1,
+          failure: 3,
+          protocol: new RegExp('grpc'),
+          direction: new RegExp('inbound')
+        }
       };
-      requests2.tolerance = toleranceGRPC;
-      expect(E.calculateStatusTEST([requests, requests2])).toStrictEqual({
+      expect(E.calculateStatusTEST([requestsPriority1, requestsPriority0])).toStrictEqual({
         protocol: 'grpc',
         status: {
           value: 66.7,
           status: H.FAILURE,
           violation: '66.70%>=3%'
         },
-        toleranceConfig: toleranceGRPC
+        toleranceConfig: requestsPriority0.tolerance
       });
     });
   });

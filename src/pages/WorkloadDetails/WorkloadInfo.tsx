@@ -224,9 +224,9 @@ class WorkloadInfo extends React.Component<WorkloadInfoProps, WorkloadInfoState>
         Pods ({pods.length}){' '}
         {validationChecks.hasPodsChecks
           ? getValidationIcon(
-            pods.map(a => a.name),
-            'pod'
-          )
+              pods.map(a => a.name),
+              'pod'
+            )
           : undefined}
       </>
     );

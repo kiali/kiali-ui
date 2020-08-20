@@ -106,15 +106,16 @@ const calculateStatus = (requestsTolerances: RequestTolerance[]): { status: Thre
     protocol: '',
     toleranceConfig: undefined
   };
+
   for (let reqTol of Object.values(requestsTolerances)) {
     for (let [protocol, rate] of Object.entries(reqTol.requests)) {
-      if (reqTol.tolerance && checkExpr(reqTol!.tolerance!.protocol, protocol)) {
-        const auxStatus = getRequestErrorsStatus(rate.errorRatio, reqTol.tolerance);
-        if (auxStatus.status.priority > result.status.status.priority) {
-          result.status = auxStatus;
-          result.protocol = protocol;
-          result.toleranceConfig = reqTol.tolerance;
-        }
+      const tolerance =
+        reqTol.tolerance && checkExpr(reqTol!.tolerance!.protocol, protocol) ? reqTol.tolerance : undefined;
+      const auxStatus = getRequestErrorsStatus(rate.errorRatio, tolerance);
+      if (auxStatus.status.priority > result.status.status.priority) {
+        result.status = auxStatus;
+        result.protocol = protocol;
+        result.toleranceConfig = reqTol.tolerance;
       }
     }
   }
@@ -222,6 +223,7 @@ const transformEdgeResponses = (requests: Responses, protocol: string): RequestT
     );
     result[protocol][code] = Number(percentRate);
   }
+
   return result;
 };
 
@@ -286,26 +288,20 @@ const calculateStatusGraph = (
   };
   for (let reqTol of Object.values(requestsTolerances)) {
     for (let [protocol, rate] of Object.entries(reqTol.requests)) {
-      if (reqTol.tolerance && checkExpr(reqTol!.tolerance!.protocol, protocol)) {
-        let auxStatus: ThresholdStatus = {
-          value: RATIO_NA,
-          status: NA
-        };
-        let thresholds = REQUESTS_THRESHOLDS;
-        if (reqTol.tolerance) {
-          thresholds = {
-            degraded: reqTol.tolerance.degraded,
-            failure: reqTol.tolerance.failure,
+      const tolerance =
+        reqTol.tolerance && checkExpr(reqTol!.tolerance!.protocol, protocol) ? reqTol.tolerance : undefined;
+      let thresholds = tolerance
+        ? {
+            degraded: tolerance.degraded,
+            failure: tolerance.failure,
             unit: '%'
-          };
-        }
-        auxStatus = ascendingThresholdCheck(rate, thresholds);
-
-        if (auxStatus.status.priority > result.status.status.priority) {
-          result.status = auxStatus;
-          result.protocol = protocol;
-          result.toleranceConfig = reqTol.tolerance;
-        }
+          }
+        : REQUESTS_THRESHOLDS;
+      const auxStatus = ascendingThresholdCheck(rate, thresholds);
+      if (auxStatus.status.priority > result.status.status.priority) {
+        result.status = auxStatus;
+        result.protocol = protocol;
+        result.toleranceConfig = reqTol.tolerance;
       }
     }
   }
