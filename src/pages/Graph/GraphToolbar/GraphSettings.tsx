@@ -284,7 +284,8 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
         tooltip: (
           <div style={{ textAlign: 'left' }}>
             <div>
-              Show closed or open lock icons on edges that differ from the global mTLS policy. Note that the global
+              Show closed or open lock icons on edges with traffic that differs from the global mTLS policy. The
+              percentage of mTLS traffic can be seen in the side-panel when selecting the edge. Note that the global
               masthead will show a lock icon when global mTLS is enabled.
             </div>
           </div>
