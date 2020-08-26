@@ -1,32 +1,18 @@
 import { getExpr } from '../../config/HealthConfig';
 
-export const serverRateConfig = {
+export const healthConfig = {
   kialiFeatureFlags: {
     istioInjectionAction: true
   },
   healthConfig: {
     rate: [
       {
-        namespace: new RegExp('bookinfo'),
-        kind: new RegExp('app'),
-        name: new RegExp('reviews'),
-        tolerance: [
-          {
-            code: new RegExp('4dd'),
-            degraded: 20,
-            failure: 30,
-            protocol: new RegExp('http'),
-            direction: new RegExp('inbound')
-          }
-        ]
-      },
-      {
         namespace: getExpr(''),
         kind: getExpr(''),
         name: getExpr(''),
         tolerance: [
           {
-            code: new RegExp(/^5\d\d$/),
+            code: new RegExp(/^[4-5]\d\d$/),
             protocol: new RegExp('http'),
             direction: new RegExp('.*'),
             degraded: 0.1,

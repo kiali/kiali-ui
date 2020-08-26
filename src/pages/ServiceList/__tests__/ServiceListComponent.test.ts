@@ -2,6 +2,8 @@ import { ServiceHealth, WithServiceHealth } from '../../../types/Health';
 import { RequestHealth } from '../../../types/Health';
 import { ServiceListItem } from '../../../types/ServiceList';
 import * as ServiceListFilters from '../FiltersAndSorts';
+import { setServerConfig } from '../../../config/ServerConfig';
+import { healthConfig } from '../../../types/__testData__/HealthConfig';
 
 const makeService = (
   name,
@@ -19,6 +21,9 @@ const makeService = (
 
 describe('SortField#compare', () => {
   describe('sortField = health, is ascending', () => {
+    beforeAll(() => {
+      setServerConfig(healthConfig);
+    });
     const sortField = ServiceListFilters.sortFields.find(s => s.title === 'Health')!;
     it('should return >0 when A service health is better than B (priority)', () => {
       const serviceA = makeService('A', { http: { '200': 1.6 } }, {});

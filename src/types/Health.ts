@@ -89,12 +89,6 @@ interface Thresholds {
   unit: string;
 }
 
-export const REQUESTS_THRESHOLDS: Thresholds = {
-  degraded: 0.1,
-  failure: 20,
-  unit: '%'
-};
-
 export interface ThresholdStatus {
   value: number;
   status: Status;
@@ -159,38 +153,38 @@ export const mergeStatus = (s1: Status, s2: Status): Status => {
 };
 
 export const ascendingThresholdCheck = (value: number, thresholds: Thresholds): ThresholdStatus => {
-  if (value >= thresholds.failure) {
-    return {
-      value: value,
-      status: FAILURE,
-      violation: value.toFixed(2) + thresholds.unit + '>=' + thresholds.failure + thresholds.unit
-    };
-  } else if (value >= thresholds.degraded) {
-    return {
-      value: value,
-      status: DEGRADED,
-      violation: value.toFixed(2) + thresholds.unit + '>=' + thresholds.degraded + thresholds.unit
-    };
+  if (value > 0) {
+    if (value >= thresholds.failure) {
+      return {
+        value: value,
+        status: FAILURE,
+        violation: value.toFixed(2) + thresholds.unit + '>=' + thresholds.failure + thresholds.unit
+      };
+    } else if (value >= thresholds.degraded) {
+      return {
+        value: value,
+        status: DEGRADED,
+        violation: value.toFixed(2) + thresholds.unit + '>=' + thresholds.degraded + thresholds.unit
+      };
+    }
   }
   return { value: value, status: HEALTHY };
 };
 
 export const getRequestErrorsStatus = (ratio: number, tolerance?: ToleranceConfig): ThresholdStatus => {
-  if (ratio < 0) {
-    return {
-      value: RATIO_NA,
-      status: NA
-    };
-  }
-  let thresholds = REQUESTS_THRESHOLDS;
-  if (tolerance) {
-    thresholds = {
+  if (tolerance && ratio >= 0) {
+    let thresholds = {
       degraded: tolerance.degraded,
       failure: tolerance.failure,
       unit: '%'
     };
+    return ascendingThresholdCheck(100 * ratio, thresholds);
   }
-  return ascendingThresholdCheck(100 * ratio, thresholds);
+
+  return {
+    value: RATIO_NA,
+    status: NA
+  };
 };
 
 export const getRequestErrorsSubItem = (thresholdStatus: ThresholdStatus, prefix: string): HealthSubItem => {

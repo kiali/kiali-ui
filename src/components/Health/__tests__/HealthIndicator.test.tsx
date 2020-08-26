@@ -5,8 +5,13 @@ import { shallowToJson } from 'enzyme-to-json';
 import { HealthIndicator, DisplayMode } from '../HealthIndicator';
 import { AppHealth } from '../../../types/Health';
 import { PFAlertColor } from 'components/Pf/PfColors';
+import { setServerConfig } from '../../../config/ServerConfig';
+import { healthConfig } from '../../../types/__testData__/HealthConfig';
 
 describe('HealthIndicator', () => {
+  beforeAll(() => {
+    setServerConfig(healthConfig);
+  });
   it('renders when empty', () => {
     // SMALL
     let wrapper = shallow(<HealthIndicator id="svc" mode={DisplayMode.SMALL} />);
