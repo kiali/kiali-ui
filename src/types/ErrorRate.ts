@@ -273,7 +273,6 @@ const calculateStatusGraph = (
     for (let [protocol, rate] of Object.entries(reqTol.requests)) {
       const tolerance =
         reqTol.tolerance && checkExpr(reqTol!.tolerance!.protocol, protocol) ? reqTol.tolerance : undefined;
-
       if (tolerance) {
         let thresholds = {
           degraded: tolerance.degraded,

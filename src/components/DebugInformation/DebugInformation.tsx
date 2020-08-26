@@ -102,6 +102,23 @@ export class DebugInformation extends React.PureComponent<DebugInformationProps,
   };
 
   render() {
+    const parseConfig = (key: string, value: any) => {
+      // We have to patch some runtime properties  we don't want to serialize
+      if (['cyRef', 'summaryTarget', 'token', 'username'].includes(key)) {
+        return null;
+      }
+      if ('healthConfig' === key) {
+        return this.renderHealthConfig(value);
+      }
+      return value;
+    };
+    const renderHealthConfig = beautify(
+      {
+        healthConfig: serverConfig.healthConfig
+      },
+      parseConfig,
+      2
+    );
     const renderDebugInformation = _.memoize(() => {
       const debugInformation: DebugInformationData = {
         backendConfigs: {
@@ -111,21 +128,9 @@ export class DebugInformation extends React.PureComponent<DebugInformationProps,
         currentURL: window.location.href,
         reduxState: this.props.appState
       };
-      return beautify(
-        debugInformation,
-        (key: string, value: any) => {
-          // We have to patch some runtime properties  we don't want to serialize
-          if (['cyRef', 'summaryTarget', 'token', 'username'].includes(key)) {
-            return null;
-          }
-          if ('healthConfig' === key) {
-            return this.renderHealthConfig(value);
-          }
-          return value;
-        },
-        2
-      );
+      return beautify(debugInformation, parseConfig, 2);
     });
+
     if (!this.state.show) {
       return null;
     }
@@ -161,6 +166,8 @@ export class DebugInformation extends React.PureComponent<DebugInformationProps,
             action={<AlertActionCloseButton onClose={this.hideAlert} />}
           />
         )}
+        <span>Health Config</span>
+        <textarea className={textAreaStyle} readOnly={true} value={renderHealthConfig} />
         <span>Please include this information when opening a bug.</span>
         <CopyToClipboard onCopy={this.copyCallback} text={renderDebugInformation()} options={copyToClipboardOptions}>
           <textarea ref={this.textareaRef} className={textAreaStyle} readOnly={true} value={renderDebugInformation()} />
