@@ -19,7 +19,7 @@ export const parseHealthConfig = (healthConfig: HealthConfig | undefined) => {
   return undefined;
 };
 
-const getExpr = (value: RegexConfig | undefined): RegExp => {
+export const getExpr = (value: RegexConfig | undefined): RegExp => {
   if (value) {
     if (typeof value === 'string' && value !== '') {
       return new RegExp(value.replace('\\\\', '\\'));

@@ -1,6 +1,18 @@
 import * as H from '../Health';
+import { ToleranceConfig } from '../ServerConfig';
+import { setServerConfig } from '../../config/ServerConfig';
+import { healthConfig } from '../__testData__/HealthConfig';
+
+const toleranceDefault: ToleranceConfig = {
+  code: '',
+  failure: 20,
+  degraded: 0.1
+};
 
 describe('Health', () => {
+  beforeAll(() => {
+    setServerConfig(healthConfig);
+  });
   it('should check ratio with 0 valid', () => {
     expect(H.ratioCheck(0, 3, 3)).toEqual(H.FAILURE);
   });
@@ -37,26 +49,26 @@ describe('Health', () => {
     expect(result.violation).toBeUndefined();
   });
   it('should get healthy requests error ratio', () => {
-    const result = H.getRequestErrorsStatus(0);
+    const result = H.getRequestErrorsStatus(0, toleranceDefault);
     expect(result.status).toEqual(H.HEALTHY);
     expect(result.value).toEqual(0);
     expect(result.violation).toBeUndefined();
   });
   it('should get degraded requests error ratio', () => {
-    const result = H.getRequestErrorsStatus(0.1);
+    const result = H.getRequestErrorsStatus(0.1, toleranceDefault);
     expect(result.status).toEqual(H.DEGRADED);
     expect(result.value).toEqual(10);
     expect(result.violation).toEqual('10.00%>=0.1%');
   });
   it('should get failing requests error ratio', () => {
-    const result = H.getRequestErrorsStatus(0.5);
+    const result = H.getRequestErrorsStatus(0.5, toleranceDefault);
     expect(result.status).toEqual(H.FAILURE);
     expect(result.value).toEqual(50);
     expect(result.violation).toEqual('50.00%>=20%');
   });
   it('should get comparable error ratio with NA', () => {
-    const r1 = H.getRequestErrorsStatus(-1);
-    const r2 = H.getRequestErrorsStatus(0);
+    const r1 = H.getRequestErrorsStatus(-1, toleranceDefault);
+    const r2 = H.getRequestErrorsStatus(0, toleranceDefault);
     expect(r2.value).toBeGreaterThan(r1.value);
     expect(r1.value).toBeLessThan(r2.value);
   });

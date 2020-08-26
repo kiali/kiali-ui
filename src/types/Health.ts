@@ -89,12 +89,6 @@ interface Thresholds {
   unit: string;
 }
 
-export const REQUESTS_THRESHOLDS: Thresholds = {
-  degraded: 0.1,
-  failure: 20,
-  unit: '%'
-};
-
 export interface ThresholdStatus {
   value: number;
   status: Status;
@@ -176,21 +170,19 @@ export const ascendingThresholdCheck = (value: number, thresholds: Thresholds): 
 };
 
 export const getRequestErrorsStatus = (ratio: number, tolerance?: ToleranceConfig): ThresholdStatus => {
-  if (ratio < 0) {
-    return {
-      value: RATIO_NA,
-      status: NA
-    };
-  }
-  let thresholds = REQUESTS_THRESHOLDS;
-  if (tolerance) {
-    thresholds = {
+  if (tolerance && ratio >= 0) {
+    let thresholds = {
       degraded: tolerance.degraded,
       failure: tolerance.failure,
       unit: '%'
     };
+    return ascendingThresholdCheck(100 * ratio, thresholds);
   }
-  return ascendingThresholdCheck(100 * ratio, thresholds);
+
+  return {
+    value: RATIO_NA,
+    status: NA
+  };
 };
 
 export const getRequestErrorsSubItem = (thresholdStatus: ThresholdStatus, prefix: string): HealthSubItem => {

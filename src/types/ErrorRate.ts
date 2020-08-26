@@ -1,8 +1,16 @@
-import { NA, RequestHealth, REQUESTS_THRESHOLDS } from './Health';
+import { NA, RequestHealth } from './Health';
 import { RateHealthConfig, RegexConfig, ToleranceConfig } from './ServerConfig';
 import { serverConfig } from '../config/ServerConfig';
 import { ascendingThresholdCheck, ThresholdStatus, getRequestErrorsStatus, RATIO_NA, RequestType } from './Health';
-import { DecoratedGraphEdgeData, DecoratedGraphNodeData, ResponseDetail, Responses } from './Graph';
+import {
+  DecoratedGraphEdgeData,
+  DecoratedGraphNodeData,
+  ProtocolWithTraffic,
+  ResponseDetail,
+  Responses
+} from './Graph';
+import { TrafficItem } from '../components/Details/DetailedTrafficList';
+import { Direction } from '../types/MetricsOptions';
 
 export interface ErrorRatio {
   global: { status: ThresholdStatus; protocol?: string };
@@ -15,12 +23,6 @@ export interface Rate {
   errorRate: number;
   errorRatio: number;
 }
-
-export const regexProtocol = {
-  grpc: new RegExp(/^[1-9]$|^1[0-6]$/),
-  /* eslint-disable-next-line */
-  http: new RegExp(/^[4-5]\d\d$/)
-};
 
 const checkExpr = (value: RegexConfig | undefined, testV: string): boolean => {
   let reg = value;
@@ -134,16 +136,6 @@ const generateRateForTolerance = (tol: RequestTolerance, requests: { [key: strin
           if (checkExpr(tol!.tolerance!.code, code)) {
             tol.requests[protocol].errorRate += Number(value);
           }
-        }
-      }
-    } else {
-      for (let [code, value] of Object.entries(req)) {
-        if (!Object.keys(tol.requests).includes(protocol)) {
-          tol.requests[protocol] = emptyRate();
-        }
-        tol.requests[protocol].requestRate += Number(value);
-        if (Object.keys(regexProtocol).includes(protocol) && regexProtocol[protocol].test(code)) {
-          tol.requests[protocol].errorRate += Number(value);
         }
       }
     }
@@ -262,15 +254,6 @@ const generateRateForGraphTolerance = (tol: RequestToleranceGraph, requests: Req
           }
         }
       }
-    } else {
-      for (let [code, value] of Object.entries(req)) {
-        if (!Object.keys(tol.requests).includes(protocol)) {
-          tol.requests[protocol] = 0;
-        }
-        if (Object.keys(regexProtocol).includes(protocol) && regexProtocol[protocol].test(code)) {
-          tol.requests[protocol] += value;
-        }
-      }
     }
   }
 };
@@ -290,23 +273,37 @@ const calculateStatusGraph = (
     for (let [protocol, rate] of Object.entries(reqTol.requests)) {
       const tolerance =
         reqTol.tolerance && checkExpr(reqTol!.tolerance!.protocol, protocol) ? reqTol.tolerance : undefined;
-      let thresholds = tolerance
-        ? {
-            degraded: tolerance.degraded,
-            failure: tolerance.failure,
-            unit: '%'
-          }
-        : REQUESTS_THRESHOLDS;
-      const auxStatus = ascendingThresholdCheck(rate, thresholds);
-      if (auxStatus.status.priority > result.status.status.priority) {
-        result.status = auxStatus;
-        result.protocol = protocol;
-        result.toleranceConfig = reqTol.tolerance;
+
+      if (tolerance) {
+        let thresholds = {
+          degraded: tolerance.degraded,
+          failure: tolerance.failure,
+          unit: '%'
+        };
+        const auxStatus = ascendingThresholdCheck(rate, thresholds);
+        if (auxStatus.status.priority > result.status.status.priority) {
+          result.status = auxStatus;
+          result.protocol = protocol;
+          result.toleranceConfig = reqTol.tolerance;
+        }
       }
     }
   }
   return result;
 };
+
+/*
+Get Status for Detailed Traffic
+ */
+
+export const getTrafficHealth = (item: TrafficItem, direction: Direction): ThresholdStatus => {
+  const config = getConfig(item.node.namespace, item.node.name, item.node.type);
+  const tolerances = config?.tolerance.filter(tol => checkExpr(tol.direction, direction));
+  const traffic = item.traffic as ProtocolWithTraffic;
+  const aggregate = aggregateGraph(transformEdgeResponses(traffic.responses, traffic.protocol), tolerances);
+  return calculateStatusGraph(aggregate).status;
+};
+
 /*
  Export for tests
 */

@@ -51,29 +51,7 @@ const computeValidDurations = (cfg: ComputedServerConfig) => {
 // these will be overwritten on user login.
 let serverConfig: ComputedServerConfig = {
   healthConfig: {
-    rate: [
-      {
-        namespace: new RegExp('.*'),
-        kind: new RegExp('.*'),
-        name: new RegExp('.*'),
-        tolerance: [
-          {
-            code: new RegExp(/^[4-5]\d\d$/),
-            protocol: new RegExp('http'),
-            direction: new RegExp('.*'),
-            degraded: 0.1,
-            failure: 20
-          },
-          {
-            code: new RegExp(/^[1-9]$|^1[0-6]$/),
-            protocol: new RegExp('grpc'),
-            direction: new RegExp('.*'),
-            degraded: 0.1,
-            failure: 20
-          }
-        ]
-      }
-    ]
+    rate: []
   },
   installationTag: 'Kiali Console',
   istioAnnotations: {
