@@ -1,4 +1,5 @@
 import * as E from '../ErrorRate';
+import { Rate } from '../ErrorRate/types';
 import { serverConfig, setServerConfig } from '../../config/ServerConfig';
 import { serverRateConfig } from '../__testData__/ErrorRateConfig';
 import * as H from '../../types/Health';
@@ -152,11 +153,11 @@ describe('getConfig', () => {
 
       let result = E.aggregateTEST(requests, serverRateConfig.healthConfig.rate[1].tolerance);
       let requestsResult = result[0].requests;
-      expect(requestsResult['http'].requestRate).toBe(10);
-      expect(requestsResult['http'].errorRate).toBe(3);
+      expect((requestsResult['http'] as Rate).requestRate).toBe(10);
+      expect((requestsResult['http'] as Rate).errorRate).toBe(3);
       requestsResult = result[1].requests;
-      expect(requestsResult['grpc'].requestRate).toBe(5);
-      expect(requestsResult['grpc'].errorRate).toBe(5);
+      expect((requestsResult['grpc'] as Rate).requestRate).toBe(5);
+      expect((requestsResult['grpc'] as Rate).errorRate).toBe(5);
 
       result = E.aggregateTEST(requests, [
         {
@@ -177,8 +178,8 @@ describe('getConfig', () => {
 
       const requestsTolerance1 = result[0].requests;
 
-      expect(requestsTolerance1['http'].requestRate).toBe(10);
-      expect(requestsTolerance1['http'].errorRate).toBe(4);
+      expect((requestsTolerance1['http'] as Rate).requestRate).toBe(10);
+      expect((requestsTolerance1['http'] as Rate).errorRate).toBe(4);
 
       expect(requestsTolerance1['grpc']).toBeUndefined();
 
@@ -186,8 +187,8 @@ describe('getConfig', () => {
 
       expect(requestsTolerance2['http']).toBeUndefined();
 
-      expect(requestsTolerance2['grpc'].requestRate).toBe(5);
-      expect(requestsTolerance2['grpc'].errorRate).toBe(2);
+      expect((requestsTolerance2['grpc'] as Rate).requestRate).toBe(5);
+      expect((requestsTolerance2['grpc'] as Rate).errorRate).toBe(2);
     });
   });
 });
