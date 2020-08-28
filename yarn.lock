@@ -1922,19 +1922,23 @@
   resolved "https://registry.yarnpkg.com/@patternfly/patternfly/-/patternfly-2.71.3.tgz#22deedc5e2610d7b2710a1efe827c25fac7726b2"
   integrity sha512-uTb9zAtPjTKB8aHmWdavEOrSMs+NL9XovMvWYL9R74zXbGnEMHEpibn7cNSu469u2JrxY6VsH7x44aOfdZpqpg==
 
-"@patternfly/react-charts@5.3.18":
-  version "5.3.18"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-charts/-/react-charts-5.3.18.tgz#16533bea0c29d24a58f4f0ddcd692ac68707f6d1"
-  integrity sha512-Cy2OtpIS2qHbaSjF0JFIlBxfuySyT09LovsNLC3Ut5S+Mmpa9c3CPv21EvnPReIPm/VHkyUng+y81XtnMud/og==
+"@patternfly/patternfly@4.0.4":
+  version "4.0.4"
+  resolved "https://registry.yarnpkg.com/@patternfly/patternfly/-/patternfly-4.0.4.tgz#b4ba2db3d958c15a610e694a96d975e57e5a1db6"
+  integrity sha512-ABfuvG0y0Z12Jtd8bxsfjWc9yt9jtQyWonuC0AKRktvn9bFULr7vWJ3Lg+PIXP5WUefPD7D+vGTz8SxdbWgLDA==
+
+"@patternfly/react-charts@6.1.0":
+  version "6.1.0"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-charts/-/react-charts-6.1.0.tgz#cd3ef7a0eb987ec655f63be5565364d2a3ba39e6"
+  integrity sha512-4CNm1U4sj87EivIvfmP4my7qiDtM/TmtJAz9RcKzRioUtwB3yMzXectcM4DFWHLUMixmt5Io36Sg7Unv/nwrVA==
   dependencies:
-    "@patternfly/patternfly" "2.71.3"
-    "@patternfly/react-styles" "^3.7.12"
-    "@patternfly/react-tokens" "^2.8.12"
+    "@patternfly/patternfly" "4.0.4"
+    "@patternfly/react-styles" "^4.0.4"
+    "@patternfly/react-tokens" "^4.0.2"
     hoist-non-react-statics "^3.3.0"
     lodash "^4.17.15"
-    victory "^33.0.5"
-    victory-core "^33.0.1"
-    victory-legend "^33.0.1"
+    victory "^34.1.3"
+    victory-core "^34.1.3"
 
 "@patternfly/react-core@3.153.3", "@patternfly/react-core@^3.153.3":
   version "3.153.3"
@@ -1966,6 +1970,11 @@
     emotion "^9.2.9"
     emotion-server "^9.2.9"
 
+"@patternfly/react-styles@^4.0.4":
+  version "4.7.3"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-styles/-/react-styles-4.7.3.tgz#b512d44e1654d952e1f8200ed94d14b91cbad3d0"
+  integrity sha512-p59J4ceql/nUeS6CqwiceBDhFZ1UzBC0BlqxmaBpjSdcxZhRlYoOeCfFZJpJzFDmNTKCxFrvWihXBHgx82h2Hg==
+
 "@patternfly/react-table@2.28.29":
   version "2.28.29"
   resolved "https://registry.yarnpkg.com/@patternfly/react-table/-/react-table-2.28.29.tgz#c1896e79afe8e00c5f4d40a462cdccfe4977f470"
@@ -1983,6 +1992,11 @@
   version "2.8.12"
   resolved "https://registry.yarnpkg.com/@patternfly/react-tokens/-/react-tokens-2.8.12.tgz#c3a0cf787a9a1c356829522fd5f8c013aa3085f0"
   integrity sha512-QyuMaTizuSn9eESl6bcopGKKgFydocc/N8T7OGB6jARBt6gdIoQWcztdBabSIVz/YGoEDw6lKeoNfed8p6GynA==
+
+"@patternfly/react-tokens@^4.0.2":
+  version "4.9.6"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-tokens/-/react-tokens-4.9.6.tgz#4df2c49173184a0c16c754329311d87c8c2a6778"
+  integrity sha512-HxJ49yDar5+PEVQGvXd3WKuDTXhm5opYg7wU9lNlh72+8TPXw1gIxTO8WIfPhjWxwEwwukVb2Cd/yTSYK81rdg==
 
 "@snyk/cli-interface@1.5.0":
   version "1.5.0"
@@ -14565,7 +14579,7 @@ victory-chart@^34.0.0:
     victory-polar-axis "^34.1.1"
     victory-shared-events "^34.1.1"
 
-victory-core@^33.0.1, victory-core@^33.1.2, victory-core@^34.0.0, victory-core@^34.1.1, victory-core@~34.0.0:
+victory-core@^34.0.0, victory-core@^34.1.1, victory-core@^34.1.3, victory-core@~34.0.0:
   version "34.0.0"
   resolved "https://registry.yarnpkg.com/victory-core/-/victory-core-34.0.0.tgz#f9b6d3c3e329ca98c9f29cb9db02cd1bc33056fb"
   integrity sha512-74vQvOVJaebF6CFN/c9WkRzD57xDQnD/9ixPf7rMhGM8ZWnji2M4N2N1OS0MROOdHh2HBzKDsptQQ++g1m+X7Q==
@@ -14619,15 +14633,6 @@ victory-group@^34.0.0:
     prop-types "^15.5.8"
     react-fast-compare "^2.0.0"
     victory-core "^34.1.1"
-
-victory-legend@^33.0.1:
-  version "33.1.2"
-  resolved "https://registry.yarnpkg.com/victory-legend/-/victory-legend-33.1.2.tgz#6e7141cd938fde20985a475f6878f19757d91ff2"
-  integrity sha512-au9IYRQOuRJqeHOTUelg8IoxdL4Uogy6PvlR5ecKj9t5NvgculI+deqKxvJhpfqlb78q8TYYYcADGZAfn0pAug==
-  dependencies:
-    lodash "^4.17.15"
-    prop-types "^15.5.8"
-    victory-core "^33.1.2"
 
 victory-legend@^34.0.0:
   version "34.1.1"
@@ -14744,7 +14749,7 @@ victory-zoom-container@^34.0.0, victory-zoom-container@^34.1.1:
     prop-types "^15.5.8"
     victory-core "^34.1.1"
 
-victory@^33.0.5, victory@~34.0.1:
+victory@^34.1.3, victory@~34.0.1:
   version "34.0.1"
   resolved "https://registry.yarnpkg.com/victory/-/victory-34.0.1.tgz#71f2128f62db4361045982659b04b9737a7acb80"
   integrity sha512-+WLEP4U2A+8iF24BgrI//FhwLRtxTUpflOcPDDKWR8f4gyuuw6mp9mhinpy9W0Gg4/lNjgKHixP94Qr0vTi17Q==
