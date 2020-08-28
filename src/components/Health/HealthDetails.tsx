@@ -11,7 +11,7 @@ interface Props {
 export class HealthDetails extends React.PureComponent<Props, {}> {
   render() {
     const health = this.props.health;
-    return health.items.map((item, idx) => {
+    return health.health.items.map((item, idx) => {
       return (
         <div key={idx}>
           <strong>{' ' + item.title + (item.text && item.text.length > 0 ? ': ' : '')}</strong>

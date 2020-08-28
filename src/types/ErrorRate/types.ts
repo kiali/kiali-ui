@@ -8,9 +8,9 @@ Error Ratio for:
   - Outbound Requests
  */
 export interface ErrorRatio {
-  global: { status: ThresholdStatus; protocol?: string };
-  inbound: { status: ThresholdStatus; protocol?: string };
-  outbound: { status: ThresholdStatus; protocol?: string };
+  global: { status: ThresholdStatus; protocol?: string; toleranceConfig?: ToleranceConfig };
+  inbound: { status: ThresholdStatus; protocol?: string; toleranceConfig?: ToleranceConfig };
+  outbound: { status: ThresholdStatus; protocol?: string; toleranceConfig?: ToleranceConfig };
 }
 
 /*

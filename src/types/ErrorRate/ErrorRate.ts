@@ -1,6 +1,6 @@
 import { getRequestErrorsStatus, NA, RATIO_NA, RequestHealth, RequestType, ThresholdStatus } from '../Health';
 import { RateHealthConfig, ToleranceConfig } from '../ServerConfig';
-import { checkExpr, emptyRate, getConfig } from './utils';
+import { checkExpr, emptyRate, getConfig, getDefaultConfig } from './utils';
 import { ErrorRatio, Rate, RequestTolerance } from './types';
 
 // Sum the inbound and outbound request for calculate the global status
@@ -24,10 +24,11 @@ export const calculateErrorRate = (
   ns: string,
   name: string,
   kind: string,
-  requests: RequestHealth
+  requests: RequestHealth,
+  confDefault: boolean = false
 ): { errorRatio: ErrorRatio; config: RateHealthConfig | undefined } => {
   // Get the first configuration that match with the case
-  const conf = getConfig(ns, name, kind);
+  const conf = confDefault ? getDefaultConfig() : getConfig(ns, name, kind);
   // Get all tolerances where direction is inbound
   const inboundTolerances = conf?.tolerance.filter(tol => checkExpr(tol.direction, 'inbound'));
   const inbound = aggregate(requests.inbound, inboundTolerances);
@@ -49,7 +50,7 @@ export const calculateErrorRate = (
 
 export const calculateStatus = (
   requestsTolerances: RequestTolerance[]
-): { status: ThresholdStatus; protocol: string } => {
+): { status: ThresholdStatus; protocol: string; toleranceConfig?: ToleranceConfig } => {
   let result: { status: ThresholdStatus; protocol: string; toleranceConfig?: ToleranceConfig } = {
     status: {
       value: RATIO_NA,

@@ -32,6 +32,12 @@ export const getConfig = (ns: string, name: string, kind: string): RateHealthCon
   return undefined;
 };
 
+export const getDefaultConfig = (): RateHealthConfig | undefined => {
+  return serverConfig.healthConfig && serverConfig.healthConfig.rate
+    ? serverConfig.healthConfig.rate[serverConfig.healthConfig.rate.length - 1]
+    : undefined;
+};
+
 /*
 For Responses object like { "200": { flags: { "-": 1.2, "XXX": 3.1}, hosts: ...} } Transform to RequestType
 

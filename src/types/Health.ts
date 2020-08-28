@@ -11,11 +11,24 @@ import { PFAlertColor, PfColors } from 'components/Pf/PfColors';
 import { calculateErrorRate } from './ErrorRate';
 import { ToleranceConfig } from './ServerConfig';
 
+interface HealthConfig {
+  items: HealthItem[];
+  statusConfig?: HealthItemConfig;
+}
+
 interface HealthItem {
   status: Status;
   title: string;
   text?: string;
   children?: HealthSubItem[];
+}
+
+interface HealthItemConfig {
+  status: Status;
+  title: string;
+  text?: string;
+  value: number;
+  threshold?: ToleranceConfig;
 }
 
 interface HealthSubItem {
@@ -195,10 +208,17 @@ export const getRequestErrorsSubItem = (thresholdStatus: ThresholdStatus, prefix
 };
 
 export abstract class Health {
-  constructor(public items: HealthItem[]) {}
+  constructor(public health: HealthConfig) {}
 
   getGlobalStatus(): Status {
-    return this.items.map(i => i.status).reduce((prev, cur) => mergeStatus(prev, cur), NA);
+    if (this.health.statusConfig) {
+      return this.health.statusConfig.status;
+    }
+    return this.health.items.map(i => i.status).reduce((prev, cur) => mergeStatus(prev, cur), NA);
+  }
+
+  getStatusConfig(): HealthItemConfig | undefined {
+    return this.health.statusConfig;
   }
 }
 
@@ -211,11 +231,12 @@ export class ServiceHealth extends Health {
   public static fromJson = (ns: string, srv: string, json: any, ctx: HealthContext) =>
     new ServiceHealth(ns, srv, json.requests, ctx);
 
-  private static computeItems(ns: string, srv: string, requests: RequestHealth, ctx: HealthContext): HealthItem[] {
+  private static computeItems(ns: string, srv: string, requests: RequestHealth, ctx: HealthContext): HealthConfig {
     const items: HealthItem[] = [];
+    let statusConfig: HealthItemConfig | undefined = undefined;
     if (ctx.hasSidecar) {
       // Request errors
-      const reqError = calculateErrorRate(ns, srv, 'service', requests);
+      const reqError = calculateErrorRate(ns, srv, 'service', requests, true);
       const reqErrorsText =
         reqError.errorRatio.global.status.status === NA
           ? 'No requests'
@@ -231,6 +252,14 @@ export class ServiceHealth extends Health {
         ]
       };
       items.push(item);
+      // Calculate if config
+      const reqErrorConf = calculateErrorRate(ns, srv, 'service', requests);
+      statusConfig = {
+        title: 'Error Rate over ' + getName(ctx.rateInterval).toLowerCase(),
+        status: reqError.errorRatio.global.status.status,
+        threshold: reqErrorConf.errorRatio.global.toleranceConfig,
+        value: reqErrorConf.errorRatio.global.status.value
+      };
     } else {
       items.push({
         title: 'Error Rate',
@@ -238,7 +267,7 @@ export class ServiceHealth extends Health {
         text: 'No Istio sidecar'
       });
     }
-    return items;
+    return { items, statusConfig };
   }
 
   constructor(ns: string, srv: string, public requests: RequestHealth, ctx: HealthContext) {
@@ -256,8 +285,9 @@ export class AppHealth extends Health {
     workloadStatuses: WorkloadStatus[],
     requests: RequestHealth,
     ctx: HealthContext
-  ): HealthItem[] {
+  ): HealthConfig {
     const items: HealthItem[] = [];
+    let statusConfig: HealthItemConfig | undefined = undefined;
     {
       // Pods
       const children: HealthSubItem[] = workloadStatuses.map(d => {
@@ -277,7 +307,7 @@ export class AppHealth extends Health {
     }
     // Request errors
     if (ctx.hasSidecar) {
-      const reqError = calculateErrorRate(ns, app, 'app', requests);
+      const reqError = calculateErrorRate(ns, app, 'app', requests, true);
       const reqIn = reqError.errorRatio.inbound.status;
       const reqOut = reqError.errorRatio.outbound.status;
       const both = mergeStatus(reqIn.status, reqOut.status);
@@ -286,9 +316,17 @@ export class AppHealth extends Health {
         status: both,
         children: [getRequestErrorsSubItem(reqIn, 'Inbound'), getRequestErrorsSubItem(reqOut, 'Outbound')]
       };
+      // Check config
+      const reqErrorConf = calculateErrorRate(ns, app, 'app', requests);
+      statusConfig = {
+        title: 'Error Rate over ' + getName(ctx.rateInterval).toLowerCase(),
+        status: reqError.errorRatio.global.status.status,
+        threshold: reqErrorConf.errorRatio.global.toleranceConfig,
+        value: reqErrorConf.errorRatio.global.status.value
+      };
       items.push(item);
     }
-    return items;
+    return { items, statusConfig };
   }
 
   constructor(
@@ -312,8 +350,9 @@ export class WorkloadHealth extends Health {
     workloadStatus: WorkloadStatus,
     requests: RequestHealth,
     ctx: HealthContext
-  ): HealthItem[] {
+  ): HealthConfig {
     const items: HealthItem[] = [];
+    let statusConfig: HealthItemConfig | undefined = undefined;
     {
       // Pods
       const podsStatus = ratioCheck(
@@ -358,7 +397,7 @@ export class WorkloadHealth extends Health {
     }
     // Request errors
     if (ctx.hasSidecar) {
-      const reqError = calculateErrorRate(ns, workload, 'workload', requests);
+      const reqError = calculateErrorRate(ns, workload, 'workload', requests, true);
       const reqIn = reqError.errorRatio.inbound.status;
       const reqOut = reqError.errorRatio.outbound.status;
       const both = mergeStatus(reqIn.status, reqOut.status);
@@ -368,8 +407,17 @@ export class WorkloadHealth extends Health {
         children: [getRequestErrorsSubItem(reqIn, 'Inbound'), getRequestErrorsSubItem(reqOut, 'Outbound')]
       };
       items.push(item);
+
+      // Check config
+      const reqErrorConf = calculateErrorRate(ns, workload, 'workload', requests);
+      statusConfig = {
+        title: 'Error Rate over ' + getName(ctx.rateInterval).toLowerCase(),
+        status: reqError.errorRatio.global.status.status,
+        threshold: reqErrorConf.errorRatio.global.toleranceConfig,
+        value: reqErrorConf.errorRatio.global.status.value
+      };
     }
-    return items;
+    return { items, statusConfig };
   }
 
   constructor(

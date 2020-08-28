@@ -142,7 +142,7 @@ describe('Health', () => {
       { inbound: {}, outbound: {} },
       { rateInterval: 60, hasSidecar: true }
     );
-    expect(health.items).toHaveLength(2);
+    expect(health.health.items).toHaveLength(2);
   });
   it('should ignore error rates when no sidecar', () => {
     const health = new H.AppHealth(
@@ -152,6 +152,6 @@ describe('Health', () => {
       { inbound: {}, outbound: {} },
       { rateInterval: 60, hasSidecar: false }
     );
-    expect(health.items).toHaveLength(1);
+    expect(health.health.items).toHaveLength(1);
   });
 });
