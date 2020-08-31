@@ -144,5 +144,6 @@ exports[`HealthIndicator renders healthy 1`] = `
     size="sm"
     title={null}
   />
+   
 </Tooltip>
 `;
