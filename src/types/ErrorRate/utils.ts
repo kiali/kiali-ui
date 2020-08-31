@@ -10,6 +10,28 @@ export const emptyRate = (): Rate => {
   return { requestRate: 0, errorRate: 0, errorRatio: 0 };
 };
 
+export const DEFAULTCONF: RateHealthConfig = {
+  namespace: new RegExp('.*'),
+  kind: new RegExp('.*'),
+  name: new RegExp('.*'),
+  tolerance: [
+    {
+      code: new RegExp('^[4|5]\\d\\d$'),
+      protocol: new RegExp('http'),
+      direction: new RegExp('.*'),
+      degraded: 0.1,
+      failure: 20
+    },
+    {
+      code: new RegExp('^[1-9]$|^1[0-6]$'),
+      protocol: new RegExp('grpc'),
+      direction: new RegExp('.*'),
+      degraded: 0.1,
+      failure: 20
+    }
+  ]
+};
+
 export const checkExpr = (value: RegexConfig | undefined, testV: string): boolean => {
   let reg = value;
   if (!reg) {
@@ -32,10 +54,8 @@ export const getConfig = (ns: string, name: string, kind: string): RateHealthCon
   return undefined;
 };
 
-export const getDefaultConfig = (): RateHealthConfig | undefined => {
-  return serverConfig.healthConfig && serverConfig.healthConfig.rate
-    ? serverConfig.healthConfig.rate[serverConfig.healthConfig.rate.length - 1]
-    : undefined;
+export const getDefaultConfig = (): RateHealthConfig => {
+  return DEFAULTCONF;
 };
 
 /*

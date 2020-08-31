@@ -1,9 +1,9 @@
 import { getTrafficHealth } from './TrafficHealth';
 import { getEdgeHealth } from './GraphEdgeStatus';
 import { aggregate, calculateErrorRate, calculateStatus, sumRequests } from './ErrorRate';
-import { getConfig } from './utils';
+import { DEFAULTCONF, getConfig } from './utils';
 
-export { calculateErrorRate, getEdgeHealth, getTrafficHealth };
+export { calculateErrorRate, DEFAULTCONF, getEdgeHealth, getTrafficHealth };
 
 /*
 
