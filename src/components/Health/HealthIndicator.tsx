@@ -1,5 +1,7 @@
 import * as React from 'react';
 import { PopoverPosition, Text, TextContent, TextVariants, Tooltip } from '@patternfly/react-core';
+import { ToleranceConfig } from '../../types/ServerConfig';
+import { HammerIcon } from '@patternfly/react-icons';
 import { HealthDetails } from './HealthDetails';
 import * as H from '../../types/Health';
 import { createIcon } from './Helper';
@@ -20,12 +22,14 @@ interface Props {
 
 interface HealthState {
   globalStatus: H.Status;
+  confStatus: ToleranceConfig | undefined;
 }
 
 export class HealthIndicator extends React.PureComponent<Props, HealthState> {
   static getDerivedStateFromProps(props: Props) {
     return {
-      globalStatus: props.health ? props.health.getGlobalStatus() : H.NA
+      globalStatus: props.health ? props.health.getGlobalStatus() : H.NA,
+      confStatus: props.health ? props.health.getStatusConfig() : undefined
     };
   }
 
@@ -49,6 +53,37 @@ export class HealthIndicator extends React.PureComponent<Props, HealthState> {
     return this.renderPopover(health, createIcon(this.state.globalStatus, 'sm'));
   }
 
+  renderConfigurationTooltip(conf: ToleranceConfig) {
+    return (
+      <TextContent style={{ color: PfColors.White }}>
+        <Text component={TextVariants.h2}>Health configuration applied:</Text>
+        <>
+          <ul>
+            <li>Degraded: {conf.degraded}</li>
+            <li>Failure: {conf.failure}</li>
+          </ul>
+        </>
+      </TextContent>
+    );
+  }
+
+  renderConfiguration() {
+    return (
+      this.state.confStatus && (
+        <span style={{ marginLeft: '5px' }}>
+          <Tooltip
+            aria-label={'Health indicator'}
+            content={this.renderConfigurationTooltip(this.state.confStatus)}
+            position={PopoverPosition.auto}
+            className={'health_indicator'}
+          >
+            <HammerIcon color={PfColors.Gray} />
+          </Tooltip>
+        </span>
+      )
+    );
+  }
+
   renderLarge(health: H.Health) {
     const spanStyle: React.CSSProperties = {
       color: this.state.globalStatus.color,
@@ -60,7 +95,10 @@ export class HealthIndicator extends React.PureComponent<Props, HealthState> {
     return (
       <>
         {createIcon(this.state.globalStatus, 'lg')}
-        <span style={spanStyle}>{this.state.globalStatus.name}</span>
+        <span style={spanStyle}>
+          {this.state.globalStatus.name}
+          {this.renderConfiguration()}
+        </span>
         <br />
         <br />
         <HealthDetails health={health} />

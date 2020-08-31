@@ -10,6 +10,7 @@ import { getName } from '../utils/RateIntervals';
 import { PFAlertColor, PfColors } from 'components/Pf/PfColors';
 import { calculateErrorRate } from './ErrorRate';
 import { ToleranceConfig } from './ServerConfig';
+import { serverConfig } from '../config';
 
 interface HealthConfig {
   items: HealthItem[];
@@ -23,7 +24,7 @@ interface HealthItem {
   children?: HealthSubItem[];
 }
 
-interface HealthItemConfig {
+export interface HealthItemConfig {
   status: Status;
   title: string;
   text?: string;
@@ -217,8 +218,16 @@ export abstract class Health {
     return this.health.items.map(i => i.status).reduce((prev, cur) => mergeStatus(prev, cur), NA);
   }
 
-  getStatusConfig(): HealthItemConfig | undefined {
-    return this.health.statusConfig;
+  getStatusConfig(): ToleranceConfig | undefined {
+    const tolConfDefault = serverConfig?.healthConfig?.rate[serverConfig.healthConfig.rate.length - 1].tolerance;
+    if (tolConfDefault) {
+      for (let tol of tolConfDefault) {
+        if (this.health.statusConfig && tol === this.health.statusConfig.threshold) {
+          return undefined;
+        }
+      }
+    }
+    return this.health.statusConfig?.threshold;
   }
 }
 
