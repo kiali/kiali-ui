@@ -77,7 +77,7 @@ describe('Health', () => {
       'bookinfo',
       'reviews',
       [{ availableReplicas: 0, currentReplicas: 1, desiredReplicas: 1, name: 'a' }],
-      { inbound: { http: { '400': 1 } }, outbound: { http: { '400': 1 } } },
+      { inbound: { http: { '500': 1 } }, outbound: { http: { '500': 1 } } },
       { rateInterval: 60, hasSidecar: true }
     );
     expect(health.getGlobalStatus()).toEqual(H.FAILURE);
@@ -116,7 +116,7 @@ describe('Health', () => {
         { availableReplicas: 1, currentReplicas: 1, desiredReplicas: 1, name: 'a' },
         { availableReplicas: 2, currentReplicas: 2, desiredReplicas: 2, name: 'b' }
       ],
-      { inbound: { http: { '200': 1.6, '400': 0.3 } }, outbound: { http: { '400': 0.1 } } },
+      { inbound: { http: { '200': 1.6, '500': 0.3 } }, outbound: { http: { '500': 0.1 } } },
       { rateInterval: 60, hasSidecar: true }
     );
     expect(health.getGlobalStatus()).toEqual(H.FAILURE);
@@ -129,7 +129,7 @@ describe('Health', () => {
         { availableReplicas: 0, currentReplicas: 0, desiredReplicas: 0, name: 'a' },
         { availableReplicas: 0, currentReplicas: 0, desiredReplicas: 0, name: 'b' }
       ],
-      { inbound: { http: { '200': 1.6, '400': 0.3 } }, outbound: { http: { '400': 0.1 } } },
+      { inbound: { http: { '200': 1.6, '500': 0.3 } }, outbound: { http: { '500': 0.1 } } },
       { rateInterval: 60, hasSidecar: true }
     );
     expect(health.getGlobalStatus()).toEqual(H.FAILURE);

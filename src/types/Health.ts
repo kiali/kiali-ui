@@ -212,10 +212,11 @@ export abstract class Health {
   constructor(public health: HealthConfig) {}
 
   getGlobalStatus(): Status {
+    const status = this.health.items.map(i => i.status).reduce((prev, cur) => mergeStatus(prev, cur), NA);
     if (this.health.statusConfig) {
-      return this.health.statusConfig.status;
+      return this.health.statusConfig.status.priority > status.priority ? this.health.statusConfig.status : status;
     }
-    return this.health.items.map(i => i.status).reduce((prev, cur) => mergeStatus(prev, cur), NA);
+    return status;
   }
 
   getStatusConfig(): ToleranceConfig | undefined {
