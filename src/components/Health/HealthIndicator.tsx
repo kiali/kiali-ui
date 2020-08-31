@@ -117,7 +117,15 @@ export class HealthIndicator extends React.PureComponent<Props, HealthState> {
         position={PopoverPosition.auto}
         className={'health_indicator'}
       >
-        <>{icon} {this.state.confStatus && <span style={{ marginLeft: '5px' }}> <InfoAltIcon color={PfColors.Gray}/></span> }</>
+        <>
+          {icon}{' '}
+          {this.state.confStatus && (
+            <span style={{ marginLeft: '5px' }}>
+              {' '}
+              <InfoAltIcon color={PfColors.Gray} />
+            </span>
+          )}
+        </>
       </Tooltip>
     );
   }
