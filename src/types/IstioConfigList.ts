@@ -37,7 +37,7 @@ export interface IstioConfigItem {
   namespace: string;
   type: string;
   name: string;
-  creationTimeStamp?: string;
+  creationTimestamp?: string;
   resourceVersion?: string;
   gateway?: Gateway;
   virtualService?: VirtualService;
@@ -305,7 +305,7 @@ export const toIstioItems = (istioConfigList: IstioConfigList): IstioConfigItem[
         namespace: istioConfigList.namespace.name,
         type: typeName,
         name: entry.metadata.name,
-        creationTimeStamp: entry.metadata.creationTimeStamp,
+        creationTimestamp: entry.metadata.creationTimestamp,
         resourceVersion: entry.metadata.resourceVersion,
         validation: hasValidations(typeName, entry.metadata.name)
           ? istioConfigList.validations[typeName][entry.metadata.name]

@@ -92,7 +92,7 @@ class IstioConfigSubList extends React.Component<Props> {
           },
           { title: this.overviewLink(item) },
           { title: dicIstioType[item.type] },
-          { title: <LocalTime time={item.creationTimeStamp || ''} /> },
+          { title: <LocalTime time={item.creationTimestamp || ''} /> },
           { title: item.resourceVersion },
           { title: this.yamlLink(item) }
         ]

@@ -232,7 +232,28 @@ class WorkloadInfo extends React.Component<WorkloadInfoProps, WorkloadInfoState>
       </span>
     );
 
-    const getValidationIcon = (keys: string[], type: string) => {
+    const getIstioValidationIcon = () => {
+      let severity = ValidationTypes.Correct;
+      if (this.state.workloadIstioConfig && this.state.workloadIstioConfig.validations) {
+        const istioValidations = this.state.workloadIstioConfig.validations;
+        Object.keys(istioValidations).forEach(type => {
+          const typeValidations = istioValidations[type];
+          Object.keys(typeValidations).forEach(name => {
+            const nameValidation = typeValidations[name];
+            const itemSeverity = validationToSeverity(nameValidation);
+            if (
+              (itemSeverity === ValidationTypes.Warning && severity !== ValidationTypes.Error) ||
+              itemSeverity === ValidationTypes.Error
+            ) {
+              severity = itemSeverity;
+            }
+          });
+        });
+      }
+      return severity !== ValidationTypes.Correct ? getSeverityIcon(severity) : undefined;
+    };
+
+    const getWorkloadValidationIcon = (keys: string[], type: string) => {
       let severity = ValidationTypes.Warning;
       keys.forEach(key => {
         const validations = this.state.validations![type][key];
@@ -247,7 +268,7 @@ class WorkloadInfo extends React.Component<WorkloadInfoProps, WorkloadInfoState>
       <>
         Pods ({pods.length}){' '}
         {validationChecks.hasPodsChecks
-          ? getValidationIcon(
+          ? getWorkloadValidationIcon(
               pods.map(a => a.name),
               'pod'
             )
@@ -257,7 +278,41 @@ class WorkloadInfo extends React.Component<WorkloadInfoProps, WorkloadInfoState>
 
     const istioConfigItems = this.state.workloadIstioConfig ? toIstioItems(this.state.workloadIstioConfig) : [];
     let istioTabTitle: JSX.Element | undefined;
-    istioTabTitle = <>Istio Config ({istioConfigItems.length})</>;
+    let istioConfigIcon = undefined;
+    if (this.state.workloadIstioConfig?.validations) {
+      const names: string[] = [];
+      const types: string[] = [];
+      if (this.state.workloadIstioConfig.validations['gateway']) {
+        this.state.workloadIstioConfig.gateways?.forEach(gw => names.push(gw.metadata.name));
+        types.push('gateway');
+      }
+      if (this.state.workloadIstioConfig.validations['sidecar']) {
+        this.state.workloadIstioConfig.sidecars?.forEach(sc => names.push(sc.metadata.name));
+        types.push('sidecar');
+      }
+      if (this.state.workloadIstioConfig.validations['envoyfilter']) {
+        this.state.workloadIstioConfig.envoyFilters?.forEach(ef => names.push(ef.metadata.name));
+        types.push('envoyfilter');
+      }
+      if (this.state.workloadIstioConfig.validations['requestauthentication']) {
+        this.state.workloadIstioConfig.requestAuthentications?.forEach(ra => names.push(ra.metadata.name));
+        types.push('requestauthentication');
+      }
+      if (this.state.workloadIstioConfig.validations['authorizationpolicy']) {
+        this.state.workloadIstioConfig.authorizationPolicies?.forEach(ap => names.push(ap.metadata.name));
+        types.push('authorizationpolicy');
+      }
+      if (this.state.workloadIstioConfig.validations['peerauthentication']) {
+        this.state.workloadIstioConfig.peerAuthentications?.forEach(pa => names.push(pa.metadata.name));
+        types.push('perrauthentication');
+      }
+      istioConfigIcon = getIstioValidationIcon();
+    }
+    istioTabTitle = (
+      <>
+        Istio Config ({istioConfigItems.length}){istioConfigIcon}
+      </>
+    );
     return (
       <>
         <RightActionBar>
