@@ -211,11 +211,10 @@ export abstract class Health {
   constructor(public health: HealthConfig) {}
 
   getGlobalStatus(): Status {
-    const status = this.health.items.map(i => i.status).reduce((prev, cur) => mergeStatus(prev, cur), NA);
-    if (this.health.statusConfig) {
-      return this.health.statusConfig.status.priority > status.priority ? this.health.statusConfig.status : status;
+    if (this.health.statusConfig && this.health.statusConfig.status !== NA) {
+      return this.health.statusConfig.status;
     }
-    return status;
+    return this.health.items.map(i => i.status).reduce((prev, cur) => mergeStatus(prev, cur), NA);
   }
 
   getStatusConfig(): ToleranceConfig | undefined {
@@ -264,7 +263,7 @@ export class ServiceHealth extends Health {
       const reqErrorConf = calculateErrorRate(ns, srv, 'service', requests);
       statusConfig = {
         title: 'Error Rate over ' + getName(ctx.rateInterval).toLowerCase(),
-        status: reqError.errorRatio.global.status.status,
+        status: reqErrorConf.errorRatio.global.status.status,
         threshold: reqErrorConf.errorRatio.global.toleranceConfig,
         value: reqErrorConf.errorRatio.global.status.value
       };

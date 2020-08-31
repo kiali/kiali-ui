@@ -66,6 +66,7 @@ export const calculateStatus = (
         reqTol.tolerance && checkExpr(reqTol!.tolerance!.protocol, protocol) ? reqTol.tolerance : undefined;
       // Calculate the status for the tolerance provided
       const auxStatus = getRequestErrorsStatus((rate as Rate).errorRatio, tolerance);
+
       // Check the priority of the status
       if (auxStatus.status.priority > result.status.status.priority) {
         result.status = auxStatus;

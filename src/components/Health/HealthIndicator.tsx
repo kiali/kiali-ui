@@ -53,10 +53,12 @@ export class HealthIndicator extends React.PureComponent<Props, HealthState> {
     return this.renderPopover(health, createIcon(this.state.globalStatus, 'sm'));
   }
 
-  renderConfigurationTooltip() {
+  renderConfigurationTooltip(conf: ToleranceConfig) {
     return (
       <TextContent style={{ color: PfColors.White }}>
-        <Text component={TextVariants.h4}>Health Rate configuration applied.</Text>
+        <strong>Error rate Tolerance:</strong>
+        <br />
+        Degraded: >={conf.degraded}% Failure: >{conf.failure}%
       </TextContent>
     );
   }
@@ -67,7 +69,7 @@ export class HealthIndicator extends React.PureComponent<Props, HealthState> {
         <span style={{ marginLeft: '5px' }}>
           <Tooltip
             aria-label={'Health indicator'}
-            content={this.renderConfigurationTooltip()}
+            content={this.renderConfigurationTooltip(this.state.confStatus)}
             position={PopoverPosition.auto}
             className={'health_indicator'}
           >
@@ -103,7 +105,7 @@ export class HealthIndicator extends React.PureComponent<Props, HealthState> {
     return (
       <TextContent style={{ color: PfColors.White }}>
         <Text component={TextVariants.h2}>{this.state.globalStatus.name}</Text>
-        {this.state.confStatus && this.renderConfigurationTooltip()}
+        {this.state.confStatus && this.renderConfigurationTooltip(this.state.confStatus)}
         <HealthDetails health={health} />
       </TextContent>
     );
@@ -122,7 +124,7 @@ export class HealthIndicator extends React.PureComponent<Props, HealthState> {
           {this.state.confStatus && (
             <span style={{ marginLeft: '5px' }}>
               {' '}
-              <InfoAltIcon color={PfColors.Gray} />
+              {this.state.globalStatus.name} <InfoAltIcon color={PfColors.Gray} />
             </span>
           )}
         </>
