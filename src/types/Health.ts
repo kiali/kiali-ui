@@ -8,8 +8,9 @@ import {
 import { IconType } from '@patternfly/react-icons/dist/js/createIcon';
 import { getName } from '../utils/RateIntervals';
 import { PFAlertColor, PfColors } from 'components/Pf/PfColors';
-import { calculateErrorRate, DEFAULTCONF } from './ErrorRate';
+import { calculateErrorRate } from './ErrorRate';
 import { ToleranceConfig } from './ServerConfig';
+import { serverConfig } from '../config';
 
 interface HealthConfig {
   items: HealthItem[];
@@ -225,13 +226,12 @@ export abstract class Health {
   }
 
   getStatusConfig(): ToleranceConfig | undefined {
-    const tolConfDefault = DEFAULTCONF.tolerance;
+    const tolConfDefault = serverConfig.healthConfig.rate[serverConfig.healthConfig.rate.length - 1].tolerance;
     for (let tol of tolConfDefault) {
       if (this.health.statusConfig && tol === this.health.statusConfig.threshold) {
         return undefined;
       }
     }
-
     return this.health.statusConfig?.threshold;
   }
 }

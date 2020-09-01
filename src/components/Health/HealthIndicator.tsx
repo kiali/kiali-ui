@@ -58,7 +58,7 @@ export class HealthIndicator extends React.PureComponent<Props, HealthState> {
       <TextContent style={{ color: PfColors.White }}>
         <strong>Error rate Tolerance:</strong>
         <br />
-        Degraded: >={conf.degraded}% Failure: >{conf.failure}%
+        Degraded: >{conf.degraded}% Failure: >{conf.failure}%
       </TextContent>
     );
   }
