@@ -169,17 +169,17 @@ export const mergeStatus = (s1: Status, s2: Status): Status => {
 
 export const ascendingThresholdCheck = (value: number, thresholds: Thresholds): ThresholdStatus => {
   if (value > 0) {
-    if (value >= thresholds.failure) {
+    if (value > thresholds.failure) {
       return {
         value: value,
         status: FAILURE,
-        violation: value.toFixed(2) + thresholds.unit + '>=' + thresholds.failure + thresholds.unit
+        violation: value.toFixed(2) + thresholds.unit + '>' + thresholds.failure + thresholds.unit
       };
-    } else if (value >= thresholds.degraded) {
+    } else if (value > thresholds.degraded) {
       return {
         value: value,
         status: DEGRADED,
-        violation: value.toFixed(2) + thresholds.unit + '>=' + thresholds.degraded + thresholds.unit
+        violation: value.toFixed(2) + thresholds.unit + '>' + thresholds.degraded + thresholds.unit
       };
     }
   }

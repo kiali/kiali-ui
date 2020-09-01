@@ -57,12 +57,7 @@ export const calculateErrorRate = (
       config: conf
     };
   }
-
-  // The status is healthy go to check the code errors and calculate them
-  const confDefault = getDefaultConfig();
-  status = getAggregate(requests, confDefault);
-
-  return {
+  const result = {
     errorRatio: {
       global: globalStatus,
       inbound: calculateStatus(status.inbound),
@@ -70,6 +65,16 @@ export const calculateErrorRate = (
     },
     config: conf
   };
+  // The status is healthy go to check the code errors and calculate them
+  const confDefault = getDefaultConfig();
+  status = getAggregate(requests, confDefault);
+  const inboundDefault = calculateStatus(status.inbound);
+  const outboundDefault = calculateStatus(status.outbound);
+  result.errorRatio.inbound.status.value = inboundDefault.status.value;
+  result.errorRatio.outbound.status.value = outboundDefault.status.value;
+
+  // In that case we want to keep values
+  return result;
 };
 
 export const calculateStatus = (
