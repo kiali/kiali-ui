@@ -108,6 +108,8 @@ export interface ThresholdStatus {
   violation?: string;
 }
 
+const POD_STATUS = 'Pod Status';
+
 // Use -1 rather than NaN to allow straigthforward comparison
 export const RATIO_NA = -1;
 
@@ -212,7 +214,12 @@ export abstract class Health {
 
   getGlobalStatus(): Status {
     if (this.health.statusConfig && this.health.statusConfig.status !== NA) {
-      return this.health.statusConfig.status;
+      // Check if there is a POD STATUS
+      const pod_status_item = this.health.items.filter(item => item.title === POD_STATUS)[0];
+      // If the priority of podStatus is greater thatn healthConfig return it.
+      return pod_status_item && pod_status_item.status.priority > this.health.statusConfig.status.priority
+        ? pod_status_item.status
+        : this.health.statusConfig.status;
     }
     return this.health.items.map(i => i.status).reduce((prev, cur) => mergeStatus(prev, cur), NA);
   }
@@ -243,7 +250,7 @@ export class ServiceHealth extends Health {
     let statusConfig: HealthItemConfig | undefined = undefined;
     if (ctx.hasSidecar) {
       // Request errors
-      const reqError = calculateErrorRate(ns, srv, 'service', requests, true);
+      const reqError = calculateErrorRate(ns, srv, 'service', requests);
       const reqErrorsText =
         reqError.errorRatio.global.status.status === NA
           ? 'No requests'
@@ -259,13 +266,11 @@ export class ServiceHealth extends Health {
         ]
       };
       items.push(item);
-      // Calculate if config
-      const reqErrorConf = calculateErrorRate(ns, srv, 'service', requests);
       statusConfig = {
         title: 'Error Rate over ' + getName(ctx.rateInterval).toLowerCase(),
-        status: reqErrorConf.errorRatio.global.status.status,
-        threshold: reqErrorConf.errorRatio.global.toleranceConfig,
-        value: reqErrorConf.errorRatio.global.status.value
+        status: reqError.errorRatio.global.status.status,
+        threshold: reqError.errorRatio.global.toleranceConfig,
+        value: reqError.errorRatio.global.status.value
       };
     } else {
       items.push({
@@ -306,7 +311,7 @@ export class AppHealth extends Health {
       });
       const podsStatus = children.map(i => i.status).reduce((prev, cur) => mergeStatus(prev, cur), NA);
       const item: HealthItem = {
-        title: 'Pod Status',
+        title: POD_STATUS,
         status: podsStatus,
         children: children
       };
@@ -314,7 +319,7 @@ export class AppHealth extends Health {
     }
     // Request errors
     if (ctx.hasSidecar) {
-      const reqError = calculateErrorRate(ns, app, 'app', requests, true);
+      const reqError = calculateErrorRate(ns, app, 'app', requests);
       const reqIn = reqError.errorRatio.inbound.status;
       const reqOut = reqError.errorRatio.outbound.status;
       const both = mergeStatus(reqIn.status, reqOut.status);
@@ -323,13 +328,11 @@ export class AppHealth extends Health {
         status: both,
         children: [getRequestErrorsSubItem(reqIn, 'Inbound'), getRequestErrorsSubItem(reqOut, 'Outbound')]
       };
-      // Check config
-      const reqErrorConf = calculateErrorRate(ns, app, 'app', requests);
       statusConfig = {
         title: 'Error Rate over ' + getName(ctx.rateInterval).toLowerCase(),
         status: reqError.errorRatio.global.status.status,
-        threshold: reqErrorConf.errorRatio.global.toleranceConfig,
-        value: reqErrorConf.errorRatio.global.status.value
+        threshold: reqError.errorRatio.global.toleranceConfig,
+        value: reqError.errorRatio.global.status.value
       };
       items.push(item);
     }
@@ -368,7 +371,7 @@ export class WorkloadHealth extends Health {
         workloadStatus.desiredReplicas
       );
       const item: HealthItem = {
-        title: 'Pod Status',
+        title: POD_STATUS,
         status: podsStatus,
         children: [
           {
@@ -404,7 +407,7 @@ export class WorkloadHealth extends Health {
     }
     // Request errors
     if (ctx.hasSidecar) {
-      const reqError = calculateErrorRate(ns, workload, 'workload', requests, true);
+      const reqError = calculateErrorRate(ns, workload, 'workload', requests);
       const reqIn = reqError.errorRatio.inbound.status;
       const reqOut = reqError.errorRatio.outbound.status;
       const both = mergeStatus(reqIn.status, reqOut.status);
@@ -415,13 +418,11 @@ export class WorkloadHealth extends Health {
       };
       items.push(item);
 
-      // Check config
-      const reqErrorConf = calculateErrorRate(ns, workload, 'workload', requests);
       statusConfig = {
         title: 'Error Rate over ' + getName(ctx.rateInterval).toLowerCase(),
         status: reqError.errorRatio.global.status.status,
-        threshold: reqErrorConf.errorRatio.global.toleranceConfig,
-        value: reqErrorConf.errorRatio.global.status.value
+        threshold: reqError.errorRatio.global.toleranceConfig,
+        value: reqError.errorRatio.global.status.value
       };
     }
     return { items, statusConfig };

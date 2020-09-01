@@ -64,16 +64,22 @@ describe('SortField#compare', () => {
 });
 
 describe('ServiceListContainer#sortServices', () => {
-  const sortField = ServiceListFilters.sortFields.find(s => s.title === 'Service Name')!;
-  const services = [makeService('A', {}, {}), makeService('B', {}, {})];
+  beforeAll(() => {
+    setServerConfig(healthConfig);
+  });
   it('should sort ascending', done => {
+    const sortField = ServiceListFilters.sortFields.find(s => s.title === 'Service Name')!;
+    const services = [makeService('A', {}, {}), makeService('B', {}, {})];
     ServiceListFilters.sortServices(services, sortField, true).then(sorted => {
       expect(sorted[0].name).toBe('A');
       expect(sorted[1].name).toBe('B');
       done();
     });
   });
+
   it('should sort descending', done => {
+    const sortField = ServiceListFilters.sortFields.find(s => s.title === 'Service Name')!;
+    const services = [makeService('A', {}, {}), makeService('B', {}, {})];
     ServiceListFilters.sortServices(services, sortField, false).then(sorted => {
       expect(sorted[0].name).toBe('B');
       expect(sorted[1].name).toBe('A');

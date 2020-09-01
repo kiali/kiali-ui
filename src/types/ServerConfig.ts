@@ -58,7 +58,7 @@ export interface ToleranceConfig {
 
 export interface ServerConfig {
   extensions?: Extensions;
-  healthConfig?: HealthConfig;
+  healthConfig: HealthConfig;
   installationTag?: string;
   istioAnnotations: IstioAnnotations;
   istioIdentityDomain: string;

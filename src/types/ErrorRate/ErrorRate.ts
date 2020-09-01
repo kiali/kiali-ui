@@ -1,4 +1,4 @@
-import { getRequestErrorsStatus, NA, RATIO_NA, RequestHealth, RequestType, ThresholdStatus } from '../Health';
+import { getRequestErrorsStatus, HEALTHY, NA, RATIO_NA, RequestHealth, RequestType, ThresholdStatus } from '../Health';
 import { RateHealthConfig, ToleranceConfig } from '../ServerConfig';
 import { checkExpr, emptyRate, getConfig, getDefaultConfig } from './utils';
 import { ErrorRatio, Rate, RequestTolerance } from './types';
@@ -20,29 +20,53 @@ export const sumRequests = (inbound: RequestType, outbound: RequestType): Reques
   return result;
 };
 
+const getAggregate = (
+  requests: RequestHealth,
+  conf: RateHealthConfig
+): { global: RequestTolerance[]; inbound: RequestTolerance[]; outbound: RequestTolerance[] } => {
+  // Get all tolerances where direction is inbound
+  const inboundTolerances = conf?.tolerance.filter(tol => checkExpr(tol.direction, 'inbound'));
+  // Get all tolerances where direction is outbound
+  const outboundTolerances = conf?.tolerance.filter(tol => checkExpr(tol.direction, 'outbound'));
+
+  return {
+    global: aggregate(sumRequests(requests.inbound, requests.outbound), conf.tolerance),
+    inbound: aggregate(requests.inbound, inboundTolerances),
+    outbound: aggregate(requests.outbound, outboundTolerances)
+  };
+};
+
 export const calculateErrorRate = (
   ns: string,
   name: string,
   kind: string,
-  requests: RequestHealth,
-  confDefault: boolean = false
+  requests: RequestHealth
 ): { errorRatio: ErrorRatio; config: RateHealthConfig | undefined } => {
   // Get the first configuration that match with the case
-  const conf = confDefault ? getDefaultConfig() : getConfig(ns, name, kind);
-  // Get all tolerances where direction is inbound
-  const inboundTolerances = conf?.tolerance.filter(tol => checkExpr(tol.direction, 'inbound'));
-  const inbound = aggregate(requests.inbound, inboundTolerances);
-  // Get all tolerances where direction is outbound
-  const outboundTolerances = conf?.tolerance.filter(tol => checkExpr(tol.direction, 'outbound'));
-  const outbound = aggregate(requests.outbound, outboundTolerances);
-  // Calculate global
-  const global = aggregate(sumRequests(requests.inbound, requests.outbound), conf?.tolerance);
+  const conf = getConfig(ns, name, kind);
+  // Get aggregate
+  let status = getAggregate(requests, conf);
+  const globalStatus = calculateStatus(status.global);
+  if (globalStatus.status.status !== HEALTHY) {
+    return {
+      errorRatio: {
+        global: globalStatus,
+        inbound: calculateStatus(status.inbound),
+        outbound: calculateStatus(status.outbound)
+      },
+      config: conf
+    };
+  }
+
+  // The status is healthy go to check the code errors and calculate them
+  const confDefault = getDefaultConfig();
+  status = getAggregate(requests, confDefault);
 
   return {
     errorRatio: {
-      global: calculateStatus(global),
-      inbound: calculateStatus(inbound),
-      outbound: calculateStatus(outbound)
+      global: globalStatus,
+      inbound: calculateStatus(status.inbound),
+      outbound: calculateStatus(status.outbound)
     },
     config: conf
   };

@@ -2,21 +2,18 @@ import { HealthConfig, RegexConfig } from '../types/ServerConfig';
 
 const allMatch = new RegExp('.*');
 
-export const parseHealthConfig = (healthConfig: HealthConfig | undefined) => {
-  if (healthConfig) {
-    for (let [key, r] of Object.entries(healthConfig.rate)) {
-      healthConfig.rate[key].namespace = getExpr(healthConfig.rate[key].namespace);
-      healthConfig.rate[key].name = getExpr(healthConfig.rate[key].name);
-      healthConfig.rate[key].kind = getExpr(healthConfig.rate[key].kind);
-      for (let t of Object.values(r.tolerance)) {
-        t.code = getExpr(t.code);
-        t.direction = getExpr(t.direction);
-        t.protocol = getExpr(t.protocol);
-      }
+export const parseHealthConfig = (healthConfig: HealthConfig) => {
+  for (let [key, r] of Object.entries(healthConfig.rate)) {
+    healthConfig.rate[key].namespace = getExpr(healthConfig.rate[key].namespace);
+    healthConfig.rate[key].name = getExpr(healthConfig.rate[key].name);
+    healthConfig.rate[key].kind = getExpr(healthConfig.rate[key].kind);
+    for (let t of Object.values(r.tolerance)) {
+      t.code = getExpr(t.code);
+      t.direction = getExpr(t.direction);
+      t.protocol = getExpr(t.protocol);
     }
-    return healthConfig;
   }
-  return undefined;
+  return healthConfig;
 };
 
 export const getExpr = (value: RegexConfig | undefined): RegExp => {
