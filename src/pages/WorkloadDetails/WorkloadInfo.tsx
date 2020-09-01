@@ -232,7 +232,7 @@ class WorkloadInfo extends React.Component<WorkloadInfoProps, WorkloadInfoState>
       </span>
     );
 
-    const getIstioValidationIcon = () => {
+    const getIstioValidationIcon = (typeNames: { [key: string]: string[] }) => {
       let severity = ValidationTypes.Correct;
       if (this.state.workloadIstioConfig && this.state.workloadIstioConfig.validations) {
         const istioValidations = this.state.workloadIstioConfig.validations;
@@ -240,12 +240,14 @@ class WorkloadInfo extends React.Component<WorkloadInfoProps, WorkloadInfoState>
           const typeValidations = istioValidations[type];
           Object.keys(typeValidations).forEach(name => {
             const nameValidation = typeValidations[name];
-            const itemSeverity = validationToSeverity(nameValidation);
-            if (
-              (itemSeverity === ValidationTypes.Warning && severity !== ValidationTypes.Error) ||
-              itemSeverity === ValidationTypes.Error
-            ) {
-              severity = itemSeverity;
+            if (typeNames[type] && typeNames[type].includes(name)) {
+              const itemSeverity = validationToSeverity(nameValidation);
+              if (
+                (itemSeverity === ValidationTypes.Warning && severity !== ValidationTypes.Error) ||
+                itemSeverity === ValidationTypes.Error
+              ) {
+                severity = itemSeverity;
+              }
             }
           });
         });
@@ -280,33 +282,37 @@ class WorkloadInfo extends React.Component<WorkloadInfoProps, WorkloadInfoState>
     let istioTabTitle: JSX.Element | undefined;
     let istioConfigIcon = undefined;
     if (this.state.workloadIstioConfig?.validations) {
-      const names: string[] = [];
-      const types: string[] = [];
+      const typeNames: { [key: string]: string[] } = {};
       if (this.state.workloadIstioConfig.validations['gateway']) {
-        this.state.workloadIstioConfig.gateways?.forEach(gw => names.push(gw.metadata.name));
-        types.push('gateway');
+        this.state.workloadIstioConfig.gateways?.forEach(gw => typeNames['gateway'].push(gw.metadata.name));
       }
       if (this.state.workloadIstioConfig.validations['sidecar']) {
-        this.state.workloadIstioConfig.sidecars?.forEach(sc => names.push(sc.metadata.name));
-        types.push('sidecar');
+        typeNames['sidecar'] = [];
+        this.state.workloadIstioConfig.sidecars?.forEach(sc => typeNames['sidecar'].push(sc.metadata.name));
       }
       if (this.state.workloadIstioConfig.validations['envoyfilter']) {
-        this.state.workloadIstioConfig.envoyFilters?.forEach(ef => names.push(ef.metadata.name));
-        types.push('envoyfilter');
+        typeNames['envoyfilter'] = [];
+        this.state.workloadIstioConfig.envoyFilters?.forEach(ef => typeNames['envoyfilter'].push(ef.metadata.name));
       }
       if (this.state.workloadIstioConfig.validations['requestauthentication']) {
-        this.state.workloadIstioConfig.requestAuthentications?.forEach(ra => names.push(ra.metadata.name));
-        types.push('requestauthentication');
+        typeNames['requestauthentication'] = [];
+        this.state.workloadIstioConfig.requestAuthentications?.forEach(ra =>
+          typeNames['requestauthentication'].push(ra.metadata.name)
+        );
       }
       if (this.state.workloadIstioConfig.validations['authorizationpolicy']) {
-        this.state.workloadIstioConfig.authorizationPolicies?.forEach(ap => names.push(ap.metadata.name));
-        types.push('authorizationpolicy');
+        typeNames['authorizationpolicy'] = [];
+        this.state.workloadIstioConfig.authorizationPolicies?.forEach(ap =>
+          typeNames['authorizationpolicy'].push(ap.metadata.name)
+        );
       }
       if (this.state.workloadIstioConfig.validations['peerauthentication']) {
-        this.state.workloadIstioConfig.peerAuthentications?.forEach(pa => names.push(pa.metadata.name));
-        types.push('perrauthentication');
+        typeNames['peerauthentication'] = [];
+        this.state.workloadIstioConfig.peerAuthentications?.forEach(pa =>
+          typeNames['peerauthentication'].push(pa.metadata.name)
+        );
       }
-      istioConfigIcon = getIstioValidationIcon();
+      istioConfigIcon = getIstioValidationIcon(typeNames);
     }
     istioTabTitle = (
       <>
