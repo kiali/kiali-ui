@@ -25,7 +25,7 @@ const requestsErrorRateCode = (requests: RequestType): number => {
       }
     }
   }
-  return rate.requestRate === 0 ? -1 : rate.errorRate / rate.requestRate * 100;
+  return rate.requestRate === 0 ? -1 : (rate.errorRate / rate.requestRate) * 100;
 };
 
 export const getErrorCodeRate = (requests: RequestHealth): { inbound: number; outbound: number } => {

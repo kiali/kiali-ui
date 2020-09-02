@@ -28,19 +28,14 @@ export class HealthDetails extends React.PureComponent<Props, {}> {
                 </li>
               );
             })}
-          </ul>
-        )}
-        {config && (
-          <>
-            <strong>Error rate Tolerance:</strong>
-            <ul style={{ listStyleType: 'none', paddingLeft: 12 }}>
+            {config && (
               <li key={'degraded_failure_config'}>
-                Degraded: {config.degraded === 0 ? '>' : '>='}
-                {config.degraded}% Failure: {config.degraded === 0 ? '>' : '>='}
+                {createIcon(H.DEGRADED)}: {config.degraded === 0 ? '>' : '>='}
+                {config.degraded}% {createIcon(H.FAILURE)}: {config.degraded === 0 ? '>' : '>='}
                 {config.failure}%
               </li>
-            </ul>
-          </>
+            )}
+          </ul>
         )}
       </div>
     );
