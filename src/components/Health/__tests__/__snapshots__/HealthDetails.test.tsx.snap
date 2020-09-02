@@ -6,6 +6,7 @@ exports[`HealthDetails renders deployments failure 1`] = `
 >
   <strong>
      Error Rate over 1m
+     
   </strong>
   <ul
     style={
@@ -38,6 +39,7 @@ exports[`HealthDetails renders healthy 1`] = `
 >
   <strong>
      Error Rate over 1m
+     
   </strong>
   <ul
     style={

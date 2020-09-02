@@ -1,6 +1,6 @@
 import { getRequestErrorsStatus, HEALTHY, NA, RATIO_NA, RequestHealth, RequestType, ThresholdStatus } from '../Health';
 import { RateHealthConfig, ToleranceConfig } from '../ServerConfig';
-import { checkExpr, emptyRate, getConfig, getDefaultConfig } from './utils';
+import { checkExpr, emptyRate, getConfig, getErrorCodeRate } from './utils';
 import { ErrorRatio, Rate, RequestTolerance } from './types';
 
 // Sum the inbound and outbound request for calculate the global status
@@ -65,13 +65,19 @@ export const calculateErrorRate = (
     },
     config: conf
   };
-  // The status is healthy go to check the code errors and calculate them
-  const confDefault = getDefaultConfig();
-  status = getAggregate(requests, confDefault);
-  const inboundDefault = calculateStatus(status.inbound);
-  const outboundDefault = calculateStatus(status.outbound);
-  result.errorRatio.inbound.status.value = inboundDefault.status.value;
-  result.errorRatio.outbound.status.value = outboundDefault.status.value;
+
+  // IF status is HEALTHY return errorCodes
+  if (result.errorRatio.inbound.status.status === HEALTHY || result.errorRatio.outbound.status.status === HEALTHY) {
+    const valuesErrorCodes = getErrorCodeRate(requests);
+    result.errorRatio.inbound.status.value =
+      result.errorRatio.inbound.status.status === HEALTHY
+        ? valuesErrorCodes.inbound
+        : result.errorRatio.inbound.status.value;
+    result.errorRatio.outbound.status.value =
+      result.errorRatio.outbound.status.status === HEALTHY
+        ? valuesErrorCodes.outbound
+        : result.errorRatio.outbound.status.value;
+  }
 
   // In that case we want to keep values
   return result;

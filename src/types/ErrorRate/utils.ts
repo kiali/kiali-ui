@@ -1,7 +1,7 @@
 import { RateHealthConfig, RegexConfig, ToleranceConfig } from '../ServerConfig';
 import { serverConfig } from '../../config';
 import { ResponseDetail, Responses } from '../Graph';
-import { RequestType } from '../Health';
+import { RequestHealth, RequestType } from '../Health';
 import { Rate, RequestTolerance } from './types';
 import { generateRateForTolerance } from './ErrorRate';
 import { generateRateForGraphTolerance } from './GraphEdgeStatus';
@@ -10,26 +10,26 @@ export const emptyRate = (): Rate => {
   return { requestRate: 0, errorRate: 0, errorRatio: 0 };
 };
 
-export const DEFAULTCONF: RateHealthConfig = {
-  namespace: new RegExp('.*'),
-  kind: new RegExp('.*'),
-  name: new RegExp('.*'),
-  tolerance: [
-    {
-      code: new RegExp('^[4|5]\\d\\d$'),
-      protocol: new RegExp('http'),
-      direction: new RegExp('.*'),
-      degraded: 0.1,
-      failure: 20
-    },
-    {
-      code: new RegExp('^[1-9]$|^1[0-6]$'),
-      protocol: new RegExp('grpc'),
-      direction: new RegExp('.*'),
-      degraded: 0.1,
-      failure: 20
+export const DEFAULTCONF = {
+  http: new RegExp('^[4|5]\\d\\d$'),
+  grpc: new RegExp('^[1-9]$|^1[0-6]$')
+};
+
+const requestsErrorRateCode = (requests: RequestType): number => {
+  const rate: Rate = emptyRate();
+  for (let [protocol, req] of Object.entries(requests)) {
+    for (let [code, value] of Object.entries(req)) {
+      rate.requestRate += value;
+      if (Object.keys(DEFAULTCONF).includes(protocol) && DEFAULTCONF[protocol].test(code)) {
+        rate.errorRate += value;
+      }
     }
-  ]
+  }
+  return rate.requestRate === 0 ? -1 : rate.errorRate / rate.requestRate;
+};
+
+export const getErrorCodeRate = (requests: RequestHealth): { inbound: number; outbound: number } => {
+  return { inbound: requestsErrorRateCode(requests.inbound), outbound: requestsErrorRateCode(requests.outbound) };
 };
 
 export const checkExpr = (value: RegexConfig | undefined, testV: string): boolean => {
@@ -52,10 +52,6 @@ export const getConfig = (ns: string, name: string, kind: string): RateHealthCon
     }
   }
   return serverConfig.healthConfig.rate[serverConfig.healthConfig.rate.length - 1];
-};
-
-export const getDefaultConfig = (): RateHealthConfig => {
-  return DEFAULTCONF;
 };
 
 /*

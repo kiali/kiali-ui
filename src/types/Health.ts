@@ -17,7 +17,7 @@ interface HealthConfig {
   statusConfig?: HealthItemConfig;
 }
 
-interface HealthItem {
+export interface HealthItem {
   status: Status;
   title: string;
   text?: string;
@@ -170,20 +170,21 @@ export const mergeStatus = (s1: Status, s2: Status): Status => {
 
 export const ascendingThresholdCheck = (value: number, thresholds: Thresholds): ThresholdStatus => {
   if (value > 0) {
-    if (value > thresholds.failure) {
+    if (value >= thresholds.failure) {
       return {
         value: value,
         status: FAILURE,
-        violation: value.toFixed(2) + thresholds.unit + '>' + thresholds.failure + thresholds.unit
+        violation: value.toFixed(2) + thresholds.unit + '>=' + thresholds.failure + thresholds.unit
       };
-    } else if (value > thresholds.degraded) {
+    } else if (value >= thresholds.degraded) {
       return {
         value: value,
         status: DEGRADED,
-        violation: value.toFixed(2) + thresholds.unit + '>' + thresholds.degraded + thresholds.unit
+        violation: value.toFixed(2) + thresholds.unit + '>=' + thresholds.degraded + thresholds.unit
       };
     }
   }
+
   return { value: value, status: HEALTHY };
 };
 
@@ -214,14 +215,6 @@ export abstract class Health {
   constructor(public health: HealthConfig) {}
 
   getGlobalStatus(): Status {
-    if (this.health.statusConfig && this.health.statusConfig.status !== NA) {
-      // Check if there is a POD STATUS
-      const pod_status_item = this.health.items.filter(item => item.title === POD_STATUS)[0];
-      // If the priority of podStatus is greater thatn healthConfig return it.
-      return pod_status_item && pod_status_item.status.priority > this.health.statusConfig.status.priority
-        ? pod_status_item.status
-        : this.health.statusConfig.status;
-    }
     return this.health.items.map(i => i.status).reduce((prev, cur) => mergeStatus(prev, cur), NA);
   }
 
