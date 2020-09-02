@@ -3,7 +3,7 @@ export class AutoComplete {
   private start: string;
 
   constructor(private options: string[]) {
-    this.endings = options;
+    this.endings = [...options];
     this.start = '';
   }
 
@@ -17,11 +17,14 @@ export class AutoComplete {
 
     this.start = lastDelim < 0 ? '' : input.slice(0, lastDelim + 1);
     const end = lastDelim < 0 ? input : input.slice(lastDelim + 1);
-    this.endings = !end ? this.options : this.options.filter(o => o.startsWith(end) && o !== end);
+
+    this.endings = !end ? [...this.options] : this.options.filter(o => o.startsWith(end) && o !== end);
 
     if (!this.endings.length) {
       this.start = input;
     }
+
+    console.log(`input=[${input}] start=[${this.start}] end=[${end}] endings=[${this.endings.length}]`);
   }
 
   next(): string {

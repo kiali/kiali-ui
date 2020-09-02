@@ -282,6 +282,7 @@ export class GraphFind extends React.Component<GraphFindProps, GraphFindState> {
         const next = this.findAutoComplete.next();
         if (!!next) {
           this.findInputRef.value = next;
+          this.findInputRef.scrollLeft = this.findInputRef.scrollWidth;
           this.setState({ findInputValue: next, findError: undefined });
         }
         break;
@@ -302,6 +303,7 @@ export class GraphFind extends React.Component<GraphFindProps, GraphFindState> {
         const next = this.hideAutoComplete.next();
         if (!!next) {
           this.hideInputRef.value = next;
+          this.hideInputRef.scrollLeft = this.hideInputRef.scrollWidth;
           this.setState({ hideInputValue: next, hideError: undefined });
         }
         break;
