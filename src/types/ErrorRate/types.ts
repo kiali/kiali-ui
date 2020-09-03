@@ -29,8 +29,7 @@ export interface Rate {
 /*
 RequestTolerance interface
 - Tolerance configuration applied
-- Requests error rate calculation for the tolerance Configuration
-
+- Requests error rate calculation for the tolerance Configuration where key is the protocol
 */
 export interface RequestTolerance {
   tolerance: ToleranceConfig;

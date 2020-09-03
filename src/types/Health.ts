@@ -44,6 +44,12 @@ export interface WorkloadStatus {
   availableReplicas: number;
 }
 
+/*
+RequestType interface
+- where the structure is type {<protocol>: {<code>:value ...} ...}
+
+Example: { "http": {"200": 2, "404": 1 ...} ... }
+*/
 export interface RequestType {
   [key: string]: { [key: string]: number };
 }
