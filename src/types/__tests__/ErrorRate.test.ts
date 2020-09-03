@@ -4,19 +4,19 @@ import { serverConfig, setServerConfig } from '../../config/ServerConfig';
 import { serverRateConfig } from '../__testData__/ErrorRateConfig';
 import * as H from '../../types/Health';
 
-describe('getConfig', () => {
+describe('getRateHealthConfig', () => {
   beforeAll(() => {
     setServerConfig(serverRateConfig);
   });
-  describe('getConfig', () => {
+  describe('getRateHealthConfig', () => {
     it('should return rate object or undefined', () => {
-      expect(E.getConfigTEST('bookinfo', 'reviews', 'app')).toBeDefined();
-      expect(typeof E.getConfigTEST('bookinfo', 'reviews', 'app')).toBe('object');
-      expect(E.getConfigTEST('bookinfo', 'reviews', 'app')).toBe(serverConfig.healthConfig!.rate[0]);
+      expect(E.getRateHealthConfigTEST('bookinfo', 'reviews', 'app')).toBeDefined();
+      expect(typeof E.getRateHealthConfigTEST('bookinfo', 'reviews', 'app')).toBe('object');
+      expect(E.getRateHealthConfigTEST('bookinfo', 'reviews', 'app')).toBe(serverConfig.healthConfig!.rate[0]);
 
-      expect(E.getConfigTEST('bookinfo', 'error-rev-iews', 'app')).toBe(serverConfig.healthConfig!.rate[1]);
-      expect(E.getConfigTEST('bookinfo', 'reviews', 'workloadss')).toBe(serverConfig.healthConfig!.rate[1]);
-      expect(E.getConfigTEST('istio-system', 'reviews', 'workload')).toBe(serverConfig.healthConfig!.rate[1]);
+      expect(E.getRateHealthConfigTEST('bookinfo', 'error-rev-iews', 'app')).toBe(serverConfig.healthConfig!.rate[1]);
+      expect(E.getRateHealthConfigTEST('bookinfo', 'reviews', 'workloadss')).toBe(serverConfig.healthConfig!.rate[1]);
+      expect(E.getRateHealthConfigTEST('istio-system', 'reviews', 'workload')).toBe(serverConfig.healthConfig!.rate[1]);
     });
   });
   describe('sumRequests', () => {

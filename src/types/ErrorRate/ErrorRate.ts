@@ -1,6 +1,6 @@
 import { getRequestErrorsStatus, HEALTHY, NA, RATIO_NA, RequestHealth, RequestType, ThresholdStatus } from '../Health';
 import { RateHealthConfig, ToleranceConfig } from '../ServerConfig';
-import { checkExpr, emptyRate, getConfig, getErrorCodeRate } from './utils';
+import { checkExpr, emptyRate, getRateHealthConfig, getErrorCodeRate } from './utils';
 import { ErrorRatio, Rate, RequestTolerance } from './types';
 
 // Sum the inbound and outbound request for calculate the global status
@@ -43,7 +43,7 @@ export const calculateErrorRate = (
   requests: RequestHealth
 ): { errorRatio: ErrorRatio; config: RateHealthConfig | undefined } => {
   // Get the first configuration that match with the case
-  const conf = getConfig(ns, name, kind);
+  const conf = getRateHealthConfig(ns, name, kind);
   // Get aggregate
   let status = getAggregate(requests, conf);
   const globalStatus = calculateStatus(status.global);

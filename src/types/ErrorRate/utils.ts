@@ -43,7 +43,7 @@ export const checkExpr = (value: RegexConfig | undefined, testV: string): boolea
   return (reg as RegExp).test(testV);
 };
 
-export const getConfig = (ns: string, name: string, kind: string): RateHealthConfig => {
+export const getRateHealthConfig = (ns: string, name: string, kind: string): RateHealthConfig => {
   if (serverConfig.healthConfig && serverConfig.healthConfig.rate) {
     for (let rate of serverConfig.healthConfig.rate) {
       if (checkExpr(rate.namespace, ns) && checkExpr(rate.name, name) && checkExpr(rate.kind, kind)) {

@@ -5,6 +5,14 @@ import * as ServiceListFilters from '../FiltersAndSorts';
 import { setServerConfig } from '../../../config/ServerConfig';
 import { healthConfig } from '../../../types/__testData__/HealthConfig';
 
+/*
+- name of service
+- inbound requests
+- outbound requests
+
+inbound and outbound requests are objects type { protocol: { code: rate,...}, ...}
+example { "http": { "200": 2.3, "404": 1.6}, ...}
+ */
 const makeService = (
   name,
   inbound: { [key: string]: { [key: string]: number } },

@@ -1,7 +1,7 @@
 import { ToleranceConfig } from '../ServerConfig';
 import { ascendingThresholdCheck, ThresholdStatus, RATIO_NA, HEALTHY, NA, RequestType } from '../Health';
 import { DecoratedGraphEdgeData, DecoratedGraphNodeData, Responses } from '../Graph';
-import { aggregate, checkExpr, getConfig, transformEdgeResponses } from './utils';
+import { aggregate, checkExpr, getRateHealthConfig, transformEdgeResponses } from './utils';
 import { RequestTolerance } from './types';
 
 // Graph Edge
@@ -14,8 +14,8 @@ export const getEdgeHealth = (
   target: DecoratedGraphNodeData
 ): ThresholdStatus => {
   // We need to check the configuration for item A outbound requests and configuration of B for inbound requests
-  const configSource = getConfig(source.namespace, source[source.nodeType], source.nodeType);
-  const configTarget = getConfig(target.namespace, target[target.nodeType], target.nodeType);
+  const configSource = getRateHealthConfig(source.namespace, source[source.nodeType], source.nodeType);
+  const configTarget = getRateHealthConfig(target.namespace, target[target.nodeType], target.nodeType);
 
   // If there is not tolerances with this configuration we'll use defaults
   const tolerancesSource = configSource?.tolerance.filter(tol => checkExpr(tol.direction, 'outbound'));
