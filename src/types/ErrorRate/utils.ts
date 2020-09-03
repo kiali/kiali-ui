@@ -32,6 +32,9 @@ export const getErrorCodeRate = (requests: RequestHealth): { inbound: number; ou
   return { inbound: requestsErrorRateCode(requests.inbound), outbound: requestsErrorRateCode(requests.outbound) };
 };
 
+/*
+Cached this method to avoid use regexp in next calculations to improve performance
+ */
 export const checkExpr = (value: RegexConfig | undefined, testV: string): boolean => {
   let reg = value;
   if (!reg) {
