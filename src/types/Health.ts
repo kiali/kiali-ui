@@ -44,6 +44,12 @@ export interface WorkloadStatus {
   availableReplicas: number;
 }
 
+export const TRAFFICSTATUS = 'Traffic Status';
+
+const createTrafficTitle = (time: string) => {
+  return TRAFFICSTATUS + ' (Last ' + time + ') .';
+};
+
 /*
 RequestType interface
 - where the structure is type {<protocol>: {<code>:value ...} ...}
@@ -259,7 +265,7 @@ export class ServiceHealth extends Health {
           ? 'No requests'
           : reqError.errorRatio.global.status.value.toFixed(2) + '%';
       const item: HealthItem = {
-        title: 'Error Rate over ' + getName(ctx.rateInterval).toLowerCase(),
+        title: createTrafficTitle(getName(ctx.rateInterval).toLowerCase()),
         status: reqError.errorRatio.global.status.status,
         children: [
           {
@@ -270,14 +276,14 @@ export class ServiceHealth extends Health {
       };
       items.push(item);
       statusConfig = {
-        title: 'Error Rate over ' + getName(ctx.rateInterval).toLowerCase(),
+        title: createTrafficTitle(getName(ctx.rateInterval).toLowerCase()),
         status: reqError.errorRatio.global.status.status,
         threshold: reqError.errorRatio.global.toleranceConfig,
         value: reqError.errorRatio.global.status.value
       };
     } else {
       items.push({
-        title: 'Error Rate',
+        title: TRAFFICSTATUS,
         status: NA,
         text: 'No Istio sidecar'
       });
@@ -327,12 +333,12 @@ export class AppHealth extends Health {
       const reqOut = reqError.errorRatio.outbound.status;
       const both = mergeStatus(reqIn.status, reqOut.status);
       const item: HealthItem = {
-        title: 'Error Rate over ' + getName(ctx.rateInterval).toLowerCase(),
+        title: createTrafficTitle(getName(ctx.rateInterval).toLowerCase()),
         status: both,
         children: [getRequestErrorsSubItem(reqIn, 'Inbound'), getRequestErrorsSubItem(reqOut, 'Outbound')]
       };
       statusConfig = {
-        title: 'Error Rate over ' + getName(ctx.rateInterval).toLowerCase(),
+        title: createTrafficTitle(getName(ctx.rateInterval).toLowerCase()),
         status: reqError.errorRatio.global.status.status,
         threshold: reqError.errorRatio.global.toleranceConfig,
         value: reqError.errorRatio.global.status.value
@@ -415,14 +421,14 @@ export class WorkloadHealth extends Health {
       const reqOut = reqError.errorRatio.outbound.status;
       const both = mergeStatus(reqIn.status, reqOut.status);
       const item: HealthItem = {
-        title: 'Error Rate over ' + getName(ctx.rateInterval).toLowerCase(),
+        title: createTrafficTitle(getName(ctx.rateInterval).toLowerCase()),
         status: both,
         children: [getRequestErrorsSubItem(reqIn, 'Inbound'), getRequestErrorsSubItem(reqOut, 'Outbound')]
       };
       items.push(item);
 
       statusConfig = {
-        title: 'Error Rate over ' + getName(ctx.rateInterval).toLowerCase(),
+        title: createTrafficTitle(getName(ctx.rateInterval).toLowerCase()),
         status: reqError.errorRatio.global.status.status,
         threshold: reqError.errorRatio.global.toleranceConfig,
         value: reqError.errorRatio.global.status.value

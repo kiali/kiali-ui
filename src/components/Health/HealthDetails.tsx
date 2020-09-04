@@ -42,7 +42,7 @@ export class HealthDetails extends React.PureComponent<Props, {}> {
   };
 
   renderChildren = (item: H.HealthItem, idx: number) => {
-    return item.title.startsWith('Error Rate') ? (
+    return item.title.startsWith(H.TRAFFICSTATUS) ? (
       this.renderErrorRate(item, idx)
     ) : (
       <div key={idx}>

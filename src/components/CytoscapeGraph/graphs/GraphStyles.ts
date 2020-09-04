@@ -6,7 +6,7 @@ import {
   PFColorVal,
   PFAlertColorVals
 } from '../../../components/Pf/PfColors';
-import { FAILURE, DEGRADED, NA } from '../../../types/Health';
+import { FAILURE, DEGRADED } from '../../../types/Health';
 import {
   EdgeLabelMode,
   GraphType,
@@ -280,26 +280,21 @@ export class GraphStyles {
     const getEdgeColor = (ele: Cy.EdgeSingular): string => {
       const edgeData = decoratedEdgeData(ele);
 
-      if (!(edgeData && edgeData.responses)) {
+      if (!edgeData.hasTraffic) {
         return EdgeColorDead;
+      }
+      if (edgeData.protocol === 'tcp') {
+        return EdgeColorTCPWithTraffic;
       } else {
-        const edgeData = decoratedEdgeData(ele);
         const sourceNodeData = decoratedNodeData(ele.source());
         const destNodeData = decoratedNodeData(ele.target());
-
         const statusEdge = getEdgeHealth(edgeData, sourceNodeData, destNodeData);
-
-        if (statusEdge.status !== NA && edgeData.protocol === 'tcp') {
-          return EdgeColorTCPWithTraffic;
-        }
 
         switch (statusEdge.status) {
           case FAILURE:
             return EdgeColorFailure;
           case DEGRADED:
             return EdgeColorDegraded;
-          case NA:
-            return EdgeColorDead;
           default:
             return EdgeColor;
         }

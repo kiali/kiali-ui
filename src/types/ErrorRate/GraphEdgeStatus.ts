@@ -13,6 +13,9 @@ export const getEdgeHealth = (
   source: DecoratedGraphNodeData,
   target: DecoratedGraphNodeData
 ): ThresholdStatus => {
+  /*
+   Improve this caching results
+  */
   // We need to check the configuration for item A outbound requests and configuration of B for inbound requests
   const configSource = getRateHealthConfig(source.namespace, source[source.nodeType], source.nodeType);
   const configTarget = getRateHealthConfig(target.namespace, target[target.nodeType], target.nodeType);

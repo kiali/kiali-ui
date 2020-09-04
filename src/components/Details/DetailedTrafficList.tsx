@@ -200,7 +200,7 @@ class DetailedTrafficList extends React.Component<DetailedTrafficProps> {
 
   private renderStatusColumn = (item: TrafficItem) => {
     const traffic = item.traffic;
-    if (hasProtocolTraffic(traffic) && traffic.protocol !== 'tcp') {
+    if (traffic.protocol !== 'tcp' && hasProtocolTraffic(traffic)) {
       const status = getTrafficHealth(item, this.props.direction);
       return createIcon(status.status, 'md');
     } else {
