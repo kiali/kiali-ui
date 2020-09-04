@@ -46,10 +46,19 @@ export const checkExpr = (value: RegexConfig | undefined, testV: string): boolea
   return (reg as RegExp).test(testV);
 };
 
+// Cache the configuration to avoid multiple calls to regExp
+export let configCache: { [key: string]: RateHealthConfig } = {};
+
 export const getRateHealthConfig = (ns: string, name: string, kind: string): RateHealthConfig => {
+  const key = ns + '_' + kind + '_' + name;
+  // If we have the configuration cached then return it
+  if (configCache[key]) {
+    return configCache[key];
+  }
   if (serverConfig.healthConfig && serverConfig.healthConfig.rate) {
     for (let rate of serverConfig.healthConfig.rate) {
       if (checkExpr(rate.namespace, ns) && checkExpr(rate.name, name) && checkExpr(rate.kind, kind)) {
+        configCache[key] = rate;
         return rate;
       }
     }
