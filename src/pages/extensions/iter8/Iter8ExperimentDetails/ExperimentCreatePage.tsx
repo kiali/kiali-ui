@@ -913,7 +913,11 @@ class ExperimentCreatePage extends React.Component<Props, State> {
                           service during and after the experiment.
                         </p>{' '}
                         <b>Traffic Control Strategies:</b> (reference{' '}
-                        <a href="https://iter8.tools/reference/algorithms/#traffic-control-strategies" target="_blank">
+                        <a
+                          href="https://iter8.tools/reference/algorithms/#traffic-control-strategies"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
                           here
                         </a>{' '}
                         for detail )

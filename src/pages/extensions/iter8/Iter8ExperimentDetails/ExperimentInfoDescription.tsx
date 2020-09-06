@@ -310,7 +310,7 @@ class ExperimentInfoDescription extends React.Component<ExperimentInfoDescriptio
                           <StackItem>
                             <Text component={TextVariants.h3}>
                               {' '}
-                              {this.props.experimentDetails.experimentItem.endTime == ''
+                              {this.props.experimentDetails.experimentItem.endTime === ''
                                 ? 'Current Best Version'
                                 : 'Winner Version'}{' '}
                             </Text>
