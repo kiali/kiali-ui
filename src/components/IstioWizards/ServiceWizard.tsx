@@ -12,7 +12,7 @@ import TrafficPolicyContainer, {
   UNSET
 } from '../../components/IstioWizards/TrafficPolicy';
 import { ROUND_ROBIN } from './TrafficPolicy';
-import SuspendTraffic, { SuspendedRoute } from './SuspendTraffic';
+import FaultInjection, { FaultInjectionRoute } from './FaultInjection';
 import { Rule } from './RequestRouting/Rules';
 import {
   buildIstioConfig,
@@ -22,17 +22,17 @@ import {
   getInitLoadBalancer,
   getInitPeerAuthentication,
   getInitRules,
-  getInitSuspendedRoutes,
   getInitTlsMode,
   getInitWeights,
   hasGateway,
   WIZARD_REQUEST_ROUTING,
-  WIZARD_SUSPEND_TRAFFIC,
+  WIZARD_FAULT_INJECTION,
   WIZARD_TITLES,
   WIZARD_UPDATE_TITLES,
   WIZARD_TRAFFIC_SHIFTING,
   ServiceWizardProps,
-  ServiceWizardState
+  ServiceWizardState,
+  getInitFaultInjectionRoute
 } from './WizardActions';
 import { MessageType } from '../../types/MessageCenter';
 import GatewaySelector, { GatewaySelectorState } from './GatewaySelector';
@@ -45,7 +45,25 @@ const emptyServiceWizardState = (fqdnServiceName: string): ServiceWizardState =>
     showAdvanced: false,
     workloads: [],
     rules: [],
-    suspendedRoutes: [],
+    faultInjectionRoute: {
+      workloads: [],
+      delayed: false,
+      delay: {
+        percentage: {
+          value: 100
+        },
+        fixedDelay: '5s'
+      },
+      isValidDelay: true,
+      aborted: false,
+      abort: {
+        percentage: {
+          value: 100
+        },
+        httpStatus: 503
+      },
+      isValidAbort: true
+    },
     valid: {
       mainWizard: true,
       vsHosts: true,
@@ -95,7 +113,7 @@ class ServiceWizard extends React.Component<ServiceWizardProps, ServiceWizardSta
         case WIZARD_REQUEST_ROUTING:
           isMainWizardValid = false;
           break;
-        case WIZARD_SUSPEND_TRAFFIC:
+        case WIZARD_FAULT_INJECTION:
         default:
           isMainWizardValid = true;
           break;
@@ -199,7 +217,7 @@ class ServiceWizard extends React.Component<ServiceWizardProps, ServiceWizardSta
     switch (this.props.type) {
       case WIZARD_TRAFFIC_SHIFTING:
       case WIZARD_REQUEST_ROUTING:
-      case WIZARD_SUSPEND_TRAFFIC:
+      case WIZARD_FAULT_INJECTION:
         const [dr, vs, gw, pa] = buildIstioConfig(this.props, this.state);
         // Gateway is only created when user has explicit selected this option
         if (gw) {
@@ -326,12 +344,14 @@ class ServiceWizard extends React.Component<ServiceWizardProps, ServiceWizardSta
     });
   };
 
-  onSuspendedChange = (valid: boolean, suspendedRoutes: SuspendedRoute[]) => {
+  onFaultInjectionRouteChange = (valid: boolean, faultInjectionRoute: FaultInjectionRoute) => {
+    console.log('TODELETE onFaultInjectionRouteChange');
+    console.log(faultInjectionRoute);
     this.setState(prevState => {
       prevState.valid.mainWizard = valid;
       return {
         valid: prevState.valid,
-        suspendedRoutes: suspendedRoutes
+        faultInjectionRoute: faultInjectionRoute
       };
     });
   };
@@ -383,17 +403,15 @@ class ServiceWizard extends React.Component<ServiceWizardProps, ServiceWizardSta
             onChange={this.onRulesChange}
           />
         )}
-        {this.props.type === WIZARD_SUSPEND_TRAFFIC && (
-          <SuspendTraffic
-            serviceName={this.props.serviceName}
-            workloads={this.props.workloads}
-            initSuspendedRoutes={getInitSuspendedRoutes(this.props.workloads, this.props.virtualServices)}
-            onChange={this.onSuspendedChange}
+        {this.props.type === WIZARD_FAULT_INJECTION && (
+          <FaultInjection
+            initFaultInjectionRoute={getInitFaultInjectionRoute(this.props.workloads, this.props.virtualServices)}
+            onChange={this.onFaultInjectionRouteChange}
           />
         )}
         {(this.props.type === WIZARD_TRAFFIC_SHIFTING ||
           this.props.type === WIZARD_REQUEST_ROUTING ||
-          this.props.type === WIZARD_SUSPEND_TRAFFIC) && (
+          this.props.type === WIZARD_FAULT_INJECTION) && (
           <Expandable
             isExpanded={this.state.showAdvanced}
             toggleText={(this.state.showAdvanced ? 'Hide' : 'Show') + ' Advanced Options'}
