@@ -12,7 +12,7 @@ import * as API from '../../services/Api';
 import AceEditor, { Annotation } from 'react-ace';
 import 'brace/mode/yaml';
 import 'brace/theme/eclipse';
-import { ObjectReference, ObjectValidation } from '../../types/IstioObjects';
+import { ObjectReference, ObjectValidation, ValidationMessage } from '../../types/IstioObjects';
 import { AceValidations, jsYaml, parseKialiValidations, parseYamlValidations } from '../../types/AceValidations';
 import IstioActionDropdown from '../../components/IstioActions/IstioActionsDropdown';
 import { RenderComponentScroll, RenderHeader } from '../../components/Nav/Page';
@@ -44,6 +44,7 @@ import { ReferenceIstioObjectLink } from '../../components/Link/IstioObjectLink'
 import VirtualServiceCard from './IstioObjectDetails/VirtualServiceCard';
 import DestinationRuleCard from './IstioObjectDetails/DestinationRuleCard';
 import { AxiosError } from 'axios';
+import IstioStatusMessageList from './IstioObjectDetails/IstioStatusMessageList';
 
 const rightToolbarStyle = style({
   position: 'absolute',
@@ -324,6 +325,11 @@ class IstioConfigDetailsPage extends React.Component<RouteComponentProps<IstioCo
     return istioObject ? jsYaml.safeDump(istioObject, safeDumpOptions) : '';
   };
 
+  getStatusMessages = (): ValidationMessage[] => {
+    const istioObject = getIstioObject(this.state.istioObjectDetails);
+    return istioObject && istioObject.status ? istioObject.status.validationMessages : [];
+  };
+
   // Not all Istio types have an overview card
   hasOverview = (): boolean => {
     return (
@@ -339,9 +345,10 @@ class IstioConfigDetailsPage extends React.Component<RouteComponentProps<IstioCo
 
   renderEditor = () => {
     const yamlSource = this.fetchYaml();
+    const istioStatusMsgs = this.getStatusMessages();
     const objectReferences = this.objectReferences();
     const refPresent = objectReferences.length > 0;
-    const showCards = refPresent || this.hasOverview();
+    const showCards = refPresent || this.hasOverview() || !!istioStatusMsgs;
     const editorSpan = showCards ? 9 : 12;
     let editorValidations: AceValidations = {
       markers: [],
@@ -394,6 +401,7 @@ class IstioConfigDetailsPage extends React.Component<RouteComponentProps<IstioCo
                   namespace={this.state.istioObjectDetails.namespace.name}
                 />
               )}
+              {istioStatusMsgs && <IstioStatusMessageList messages={istioStatusMsgs} />}
               {refPresent && (
                 <Card>
                   <CardHeader>
