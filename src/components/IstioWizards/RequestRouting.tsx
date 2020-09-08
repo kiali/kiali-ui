@@ -6,6 +6,7 @@ import { ANYTHING, EXACT, HEADERS, PRESENCE, REGEX } from './RequestRouting/Matc
 import { WorkloadWeight } from './TrafficShifting';
 import { getDefaultWeights } from './WizardActions';
 import { FaultInjectionRoute } from './FaultInjection';
+import { TimeoutRetryRoute } from './RequestTimeouts';
 
 type Props = {
   serviceName: string;
@@ -22,6 +23,7 @@ type State = {
   headerName: string;
   matchValue: string;
   faultInjectionRoute: FaultInjectionRoute;
+  timeoutRetryRoute: TimeoutRetryRoute;
   rules: Rule[];
   validationMsg: string;
 };
@@ -55,6 +57,19 @@ class RequestRouting extends React.Component<Props, State> {
           httpStatus: 503
         },
         isValidAbort: true
+      },
+      timeoutRetryRoute: {
+        workloads: [],
+        isTimeout: false,
+        timeout: '2s',
+        isValidTimeout: true,
+        isRetry: false,
+        retries: {
+          attempts: 3,
+          perTryTimeout: '2s',
+          retryOn: 'gateway-error,connect-failure,refused-stream'
+        },
+        isValidRetry: true
       },
       matches: [],
       headerName: '',
@@ -157,6 +172,12 @@ class RequestRouting extends React.Component<Props, State> {
         if (prevState.faultInjectionRoute.aborted && prevState.faultInjectionRoute.isValidAbort) {
           newRule.abort = prevState.faultInjectionRoute.abort;
         }
+        if (prevState.timeoutRetryRoute.isTimeout && prevState.timeoutRetryRoute.isValidTimeout) {
+          newRule.timeout = prevState.timeoutRetryRoute.timeout;
+        }
+        if (prevState.timeoutRetryRoute.isRetry && prevState.timeoutRetryRoute.isValidRetry) {
+          newRule.retries = prevState.timeoutRetryRoute.retries;
+        }
         if (!this.isMatchesIncluded(prevState.rules, newRule)) {
           prevState.rules.push(newRule);
           prevState.faultInjectionRoute.delayed = false;
@@ -167,7 +188,8 @@ class RequestRouting extends React.Component<Props, State> {
             matchValue: '',
             rules: prevState.rules,
             validationMsg: '',
-            faultInjectionRoute: prevState.faultInjectionRoute
+            faultInjectionRoute: prevState.faultInjectionRoute,
+            timeoutRetryRoute: prevState.timeoutRetryRoute
           };
         } else {
           return {
@@ -176,7 +198,8 @@ class RequestRouting extends React.Component<Props, State> {
             matchValue: prevState.matchValue,
             rules: prevState.rules,
             validationMsg: MSG_SAME_MATCHING,
-            faultInjectionRoute: prevState.faultInjectionRoute
+            faultInjectionRoute: prevState.faultInjectionRoute,
+            timeoutRetryRoute: prevState.timeoutRetryRoute
           };
         }
       },
@@ -316,6 +339,15 @@ class RequestRouting extends React.Component<Props, State> {
               return {
                 faultInjectionRoute: faultInjectionRoute,
                 validationMsg: !valid ? 'Fault Injection not valid' : ''
+              };
+            });
+          }}
+          timeoutRetryRoute={this.state.timeoutRetryRoute}
+          onSelectTimeoutRetry={(valid, timeoutRetryRoute) => {
+            this.setState(_prevState => {
+              return {
+                timeoutRetryRoute: timeoutRetryRoute,
+                validationMsg: !valid ? 'Request Timeout not valid' : ''
               };
             });
           }}

@@ -12,7 +12,7 @@ import {
   TooltipPosition
 } from '@patternfly/react-core';
 import { WorkloadWeight } from '../TrafficShifting';
-import { Abort, Delay } from '../../../types/IstioObjects';
+import { Abort, Delay, HTTPRetry } from '../../../types/IstioObjects';
 
 export enum MOVE_TYPE {
   UP,
@@ -24,6 +24,8 @@ export type Rule = {
   workloadWeights: WorkloadWeight[];
   delay?: Delay;
   abort?: Abort;
+  timeout?: string;
+  retries?: HTTPRetry;
 };
 
 type Props = {
@@ -151,6 +153,22 @@ class Rules extends React.Component<Props> {
                         <Badge className={'faultinjection_badge_definition'}>FI</Badge>
                       </Tooltip>
                       {rule.abort.percentage?.value}% requests aborted (HTTP Status {rule.abort.httpStatus})
+                    </div>
+                  )}
+                  {rule.timeout && (
+                    <div key={'timeout'}>
+                      <Tooltip position={TooltipPosition.top} content={<>Request Timeout</>}>
+                        <Badge className={'faultinjection_badge_definition'}>RT</Badge>
+                      </Tooltip>
+                      timeout ({rule.timeout})
+                    </div>
+                  )}
+                  {rule.retries && (
+                    <div key={'retries'}>
+                      <Tooltip position={TooltipPosition.top} content={<>Request Retry</>}>
+                        <Badge className={'faultinjection_badge_definition'}>RR</Badge>
+                      </Tooltip>
+                      {rule.retries.attempts} attempts with timeout ({rule.timeout})
                     </div>
                   )}
                 </>
