@@ -86,7 +86,7 @@ export const getIstioObject = (istioObjectDetails?: IstioConfigDetails) => {
 const nsRegexp = /^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[-a-z0-9]([-a-z0-9]*[a-z0-9])?)*$/;
 const hostRegexp = /(?=^.{4,253}$)(^((?!-)(([a-zA-Z0-9-]{0,62}[a-zA-Z0-9])|\*)\.)+[a-zA-Z]{2,63}$)/;
 const ipRegexp = /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/([0-9]|[1-2][0-9]|3[0-2]))?$/;
-const fixedDelayRegexp = /^[\d]+(h|m|s|ms)$/;
+const fixedDelayRegexp = /^[\d]+\.?[\d]*(h|m|s|ms)$/;
 
 // Gateway hosts have namespace/dnsName with namespace optional
 export const isGatewayHostValid = (gatewayHost: string): boolean => {
