@@ -38,6 +38,7 @@ import { MessageType } from '../../types/MessageCenter';
 import GatewaySelector, { GatewaySelectorState } from './GatewaySelector';
 import VirtualServiceHosts from './VirtualServiceHosts';
 import { DestinationRule, PeerAuthentication, PeerAuthenticationMutualTLSMode } from '../../types/IstioObjects';
+import { style } from 'typestyle';
 
 const emptyServiceWizardState = (fqdnServiceName: string): ServiceWizardState => {
   return {
@@ -94,6 +95,10 @@ const emptyServiceWizardState = (fqdnServiceName: string): ServiceWizardState =>
     gateway: undefined
   };
 };
+
+const advancedOptionsStyle = style({
+  marginTop: 10
+});
 
 class ServiceWizard extends React.Component<ServiceWizardProps, ServiceWizardState> {
   constructor(props: ServiceWizardProps) {
@@ -413,6 +418,7 @@ class ServiceWizard extends React.Component<ServiceWizardProps, ServiceWizardSta
           this.props.type === WIZARD_REQUEST_ROUTING ||
           this.props.type === WIZARD_FAULT_INJECTION) && (
           <Expandable
+            className={advancedOptionsStyle}
             isExpanded={this.state.showAdvanced}
             toggleText={(this.state.showAdvanced ? 'Hide' : 'Show') + ' Advanced Options'}
             onToggle={() => {

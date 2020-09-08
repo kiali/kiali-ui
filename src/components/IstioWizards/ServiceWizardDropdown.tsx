@@ -105,37 +105,44 @@ class ServiceWizardDropdown extends React.Component<Props, State> {
   };
 
   getDeleteMessage = () => {
-    let deleteMessage = 'Are you sure you want to delete ';
+    const deleteMessage = 'Are you sure you want to delete ?';
+    const deleteItems: JSX.Element[] = [];
     switch (this.state.deleteAction) {
       case DELETE_TRAFFIC_ROUTING:
-        deleteMessage +=
+        let vsMessage =
           this.props.virtualServices.items.length > 0
             ? `VirtualService${
                 this.props.virtualServices.items.length > 1 ? 's' : ''
               }: '${this.props.virtualServices.items.map(vs => vs.metadata.name)}'`
             : '';
-        deleteMessage +=
-          this.props.virtualServices.items.length > 0 && this.props.destinationRules.items.length > 0 ? ', ' : '';
-        deleteMessage +=
+        deleteItems.push(<div>{vsMessage}</div>);
+
+        let drMessage =
           this.props.destinationRules.items.length > 0
             ? `DestinationRule${
                 this.props.destinationRules.items.length > 1 ? 's' : ''
               }: '${this.props.destinationRules.items.map(dr => dr.metadata.name)}'`
             : '';
-        deleteMessage +=
-          this.props.destinationRules.items.length > 0 && !this.hasAnyPeerAuthn(this.props.destinationRules)
-            ? ' and '
-            : '';
-        deleteMessage +=
-          this.props.destinationRules.items.length > 0
+        deleteItems.push(<div>{drMessage}</div>);
+
+        let paMessage =
+          this.props.destinationRules.items.length > 0 && this.hasAnyPeerAuthn(this.props.destinationRules)
             ? `PeerAuthentication${
                 this.props.destinationRules.items.length > 1 ? 's' : ''
               }: '${this.props.destinationRules.items.map(dr => dr.metadata.name)}'`
             : '';
+        deleteItems.push(<div>{paMessage}</div>);
+
         break;
       default:
     }
-    deleteMessage += ' ?  ';
+    return (
+      <>
+        <div style={{ marginBottom: 5 }}>{deleteMessage}</div>
+        {deleteItems}
+      </>
+    );
+
     return deleteMessage;
   };
 

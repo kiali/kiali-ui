@@ -92,10 +92,12 @@ class RuleBuilder extends React.Component<Props, State> {
             />
           </Tab>
           <Tab eventKey={2} title={'Fault Injection'}>
-            <FaultInjection
-              initFaultInjectionRoute={this.props.faultInjectionRoute}
-              onChange={this.props.onSelectFaultInjection}
-            />
+            <div style={{ marginTop: '10px' }}>
+              <FaultInjection
+                initFaultInjectionRoute={this.props.faultInjectionRoute}
+                onChange={this.props.onSelectFaultInjection}
+              />
+            </div>
           </Tab>
         </Tabs>
         <div className={addRuleStyle}>
