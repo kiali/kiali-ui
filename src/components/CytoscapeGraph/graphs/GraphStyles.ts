@@ -285,19 +285,19 @@ export class GraphStyles {
       }
       if (edgeData.protocol === 'tcp') {
         return EdgeColorTCPWithTraffic;
-      } else {
-        const sourceNodeData = decoratedNodeData(ele.source());
-        const destNodeData = decoratedNodeData(ele.target());
-        const statusEdge = getEdgeHealth(edgeData, sourceNodeData, destNodeData);
+      }
 
-        switch (statusEdge.status) {
-          case FAILURE:
-            return EdgeColorFailure;
-          case DEGRADED:
-            return EdgeColorDegraded;
-          default:
-            return EdgeColor;
-        }
+      const sourceNodeData = decoratedNodeData(ele.source());
+      const destNodeData = decoratedNodeData(ele.target());
+      const statusEdge = getEdgeHealth(edgeData, sourceNodeData, destNodeData);
+
+      switch (statusEdge.status) {
+        case FAILURE:
+          return EdgeColorFailure;
+        case DEGRADED:
+          return EdgeColorDegraded;
+        default:
+          return EdgeColor;
       }
     };
 
