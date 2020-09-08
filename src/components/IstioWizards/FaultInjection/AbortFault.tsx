@@ -32,15 +32,15 @@ class AbortFault extends React.Component<Props> {
           >
             <TextInput
               value={this.props.abort.percentage?.value}
-              type="number"
               id="abort-percentage"
               name="abort-percentage"
               onChange={value => {
-                let maxValue: number = +value;
-                maxValue = maxValue < 0 ? 0 : maxValue > 100 ? 100 : maxValue;
+                let newValue = Number(value || 0);
+                newValue = Number.isNaN(newValue) ? 0 : newValue;
+                newValue = newValue < 0 ? 0 : newValue > 100 ? 100 : newValue;
                 this.props.onAbort(this.props.aborted, {
                   percentage: {
-                    value: maxValue
+                    value: newValue
                   },
                   httpStatus: this.props.abort.httpStatus
                 });
@@ -58,14 +58,15 @@ class AbortFault extends React.Component<Props> {
           >
             <TextInput
               value={this.props.abort.httpStatus}
-              type="number"
               id="abort-status-code"
               name="abort-status-code"
               isValid={this.props.isValid}
               onChange={value => {
+                let newValue = Number(value || 0);
+                newValue = Number.isNaN(newValue) ? 0 : newValue;
                 this.props.onAbort(this.props.aborted, {
                   percentage: this.props.abort.percentage,
-                  httpStatus: +value
+                  httpStatus: newValue
                 });
               }}
             />

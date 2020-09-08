@@ -312,10 +312,10 @@ class RequestRouting extends React.Component<Props, State> {
           onSelectWeights={this.onSelectWeights}
           faultInjectionRoute={this.state.faultInjectionRoute}
           onSelectFaultInjection={(valid, faultInjectionRoute) => {
-            this.setState(prevState => {
+            this.setState(_prevState => {
               return {
                 faultInjectionRoute: faultInjectionRoute,
-                validationMsg: !valid ? 'Fault Injection not valid' : prevState.validationMsg
+                validationMsg: !valid ? 'Fault Injection not valid' : ''
               };
             });
           }}

@@ -32,15 +32,16 @@ class DelayFault extends React.Component<DelayFaultProps> {
           >
             <TextInput
               value={this.props.delay.percentage?.value}
-              type="number"
+              type="text"
               id="delay-percentage"
               name="delay-percentage"
               onChange={value => {
-                let maxValue: number = +value;
-                maxValue = maxValue < 0 ? 0 : maxValue > 100 ? 100 : maxValue;
+                let newValue = Number(value || 0);
+                newValue = Number.isNaN(newValue) ? 0 : newValue;
+                newValue = newValue < 0 ? 0 : newValue > 100 ? 100 : newValue;
                 this.props.onDelay(this.props.delayed, {
                   percentage: {
-                    value: maxValue
+                    value: newValue
                   },
                   fixedDelay: this.props.delay.fixedDelay
                 });

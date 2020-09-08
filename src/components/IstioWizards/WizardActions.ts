@@ -388,8 +388,6 @@ export const buildIstioConfig = (
           }
         }
       }
-      console.log('TODELETE FaultInjection');
-      console.log(wizardVS);
       break;
     }
     default:

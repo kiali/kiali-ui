@@ -350,8 +350,6 @@ class ServiceWizard extends React.Component<ServiceWizardProps, ServiceWizardSta
   };
 
   onFaultInjectionRouteChange = (valid: boolean, faultInjectionRoute: FaultInjectionRoute) => {
-    console.log('TODELETE onFaultInjectionRouteChange');
-    console.log(faultInjectionRoute);
     this.setState(prevState => {
       prevState.valid.mainWizard = valid;
       return {
