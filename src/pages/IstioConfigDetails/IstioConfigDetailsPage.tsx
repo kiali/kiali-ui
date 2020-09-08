@@ -193,8 +193,16 @@ class IstioConfigDetailsPage extends React.Component<RouteComponentProps<IstioCo
     // Hack to force redisplay of annotations after update
     // See https://github.com/securingsincity/react-ace/issues/300
     if (this.aceEditorRef.current) {
+      const editor = this.aceEditorRef.current!['editor'];
+
       // tslint:disable-next-line
-      this.aceEditorRef.current!['editor'].onChangeAnnotation();
+      editor.onChangeAnnotation();
+
+      // Fold Status field
+      const { startRow, endRow } = this.getStatusRange(this.fetchYaml());
+      if (!this.state.isModified) {
+        editor.session.foldAll(startRow, endRow, 0);
+      }
     }
 
     const active = activeTab(tabName, this.defaultTab());
@@ -341,6 +349,27 @@ class IstioConfigDetailsPage extends React.Component<RouteComponentProps<IstioCo
   objectReferences = (): ObjectReference[] => {
     const istioValidations: ObjectValidation = this.state.istioValidations || ({} as ObjectValidation);
     return istioValidations.references || ([] as ObjectReference[]);
+  };
+
+  getStatusRange = (yaml: string | undefined): any => {
+    let range = {
+      startRow: 0,
+      endRow: 0
+    };
+
+    if (!!yaml) {
+      const ylines = yaml.split('\n');
+      ylines.forEach((line: string, i: number) => {
+        if (line.startsWith('status:')) {
+          range.startRow = i;
+        }
+        if (line.startsWith('spec:') && range.startRow !== 0) {
+          range.endRow = i;
+        }
+      });
+    }
+
+    return range;
   };
 
   renderEditor = () => {
