@@ -142,8 +142,6 @@ class ServiceWizardDropdown extends React.Component<Props, State> {
         {deleteItems}
       </>
     );
-
-    return deleteMessage;
   };
 
   hasAnyPeerAuthn = (drs: DestinationRules): boolean => {
