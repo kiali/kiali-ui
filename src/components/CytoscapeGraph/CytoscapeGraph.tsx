@@ -391,7 +391,6 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
       const cytoscapeEvent = getCytoscapeBaseEvent(evt);
       if (cytoscapeEvent) {
         this.customViewport = true;
-        console.log('viewport event');
       }
     });
 
@@ -400,7 +399,6 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
       const cytoscapeEvent = getCytoscapeBaseEvent(evt);
       if (cytoscapeEvent) {
         this.customViewport = false;
-        console.log('fit event');
       }
     });
 
@@ -540,11 +538,9 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
   }
 
   private safeFit(cy: Cy.Core, force?: boolean) {
-    console.log(`2.0 customViewport=${this.customViewport}`);
     if (!force && this.customViewport) {
       return;
     }
-    console.log('SafeFit!');
     this.focus(cy);
     CytoscapeGraphUtils.safeFit(cy);
   }
