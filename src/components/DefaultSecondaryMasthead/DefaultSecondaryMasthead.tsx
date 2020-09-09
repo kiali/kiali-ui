@@ -11,7 +11,8 @@ const titles = [
   'istio/new',
   'extensions/threescale/new',
   'extensions/iter8',
-  'extensions/iter8/new'
+  'extensions/iter8/new',
+  'extensions/iter8/newfromfile'
 ];
 export default class DefaultSecondaryMasthead extends React.Component {
   showTitle() {
@@ -30,6 +31,9 @@ export default class DefaultSecondaryMasthead extends React.Component {
         title = 'Iter8 Experiments';
       } else if (path === 'extensions/iter8/new') {
         title = 'Create New Iter8 Experiment';
+        disabled = true;
+      } else if (path === 'extensions/iter8/newfromfile') {
+        title = 'Create New Iter8 Experiment from File';
         disabled = true;
       }
       return {

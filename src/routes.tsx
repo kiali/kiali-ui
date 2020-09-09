@@ -175,6 +175,10 @@ const secondaryMastheadRoutes: Path[] = [
     component: DefaultSecondaryMasthead
   },
   {
+    path: '/extensions/threescale/newfromfile',
+    component: DefaultSecondaryMasthead
+  },
+  {
     path: '/extensions/iter8',
     component: DefaultSecondaryMasthead
   }
