@@ -87,6 +87,9 @@ class RequestRouting extends React.Component<Props, State> {
         continue;
       }
       found = item.matches.every(value => rule.matches.includes(value));
+      if (found) {
+        break;
+      }
     }
     return found;
   };
@@ -108,51 +111,54 @@ class RequestRouting extends React.Component<Props, State> {
   };
 
   onAddMatch = () => {
-    // Change only state when there is a match
-    if (this.state.matchValue !== '') {
-      this.setState(prevState => {
-        const newMatch: string =
+    this.setState(prevState => {
+      let newMatch: string;
+      if (this.state.matchValue !== '') {
+        newMatch =
           prevState.category +
           (prevState.category === HEADERS ? ' [' + prevState.headerName + '] ' : ' ') +
           prevState.operator +
           ' ' +
           prevState.matchValue;
-        prevState.matches.push(newMatch);
-        return {
-          matches: prevState.matches,
-          headerName: '',
-          matchValue: ''
-        };
-      });
+      } else {
+        newMatch = prevState.category + ' [' + prevState.headerName + '] ' + REGEX + ' ' + ANYTHING;
+      }
+      this.addNewMatch(prevState.matches, newMatch);
+      return {
+        matches: prevState.matches,
+        headerName: '',
+        matchValue: ''
+      };
+    });
+  };
+
+  addNewMatch = (matches: string[], newMatch: string) => {
+    // Non HEADERS matches can only appear once, so, newMatch will update the old one
+    let foundMatch: string | undefined = undefined;
+    let newMatchType = '';
+    if (newMatch.startsWith(HEADERS)) {
+      // We check the headers [<headerName>]
+      newMatchType = newMatch.substring(0, newMatch.indexOf(']') + 1);
+    } else {
+      newMatchType = newMatch.split(' ')[0];
     }
-    if (this.state.operator === PRESENCE && this.state.category === HEADERS && this.state.headerName !== '') {
-      this.setState(prevState => {
-        const newMatch: string = prevState.category + ' [' + prevState.headerName + '] ' + REGEX + ' ' + ANYTHING;
-        prevState.matches.push(newMatch);
-        return {
-          matches: prevState.matches,
-          headerName: '',
-          matchValue: ''
-        };
-      });
+    for (let i = 0; i < matches.length; i++) {
+      const match = matches[i];
+      if (match.startsWith(newMatchType)) {
+        foundMatch = match;
+        break;
+      }
     }
+    if (foundMatch) {
+      const index = matches.indexOf(foundMatch, 0);
+      matches.splice(index, 1);
+    }
+    matches.push(newMatch);
   };
 
   onAddRule = () => {
     this.setState(
       prevState => {
-        // Just if there is a missing match
-        if (this.state.matchValue !== '') {
-          const newMatch: string =
-            prevState.category +
-            (prevState.category === HEADERS ? ' [' + prevState.headerName + '] ' : ' ') +
-            prevState.operator +
-            ' ' +
-            prevState.matchValue;
-          if (!prevState.matches.includes(newMatch)) {
-            prevState.matches.push(newMatch);
-          }
-        }
         const newWorkloadWeights: WorkloadWeight[] = [];
         prevState.workloadWeights.forEach(ww =>
           newWorkloadWeights.push({
@@ -163,7 +169,7 @@ class RequestRouting extends React.Component<Props, State> {
           })
         );
         const newRule: Rule = {
-          matches: prevState.matches,
+          matches: Object.assign([], prevState.matches),
           workloadWeights: newWorkloadWeights
         };
         if (prevState.faultInjectionRoute.delayed && prevState.faultInjectionRoute.isValidDelay) {

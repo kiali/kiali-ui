@@ -140,7 +140,7 @@ class Rules extends React.Component<Props> {
                     </div>
                   ))}
                   {rule.delay && (
-                    <div key={'delay'}>
+                    <div key={'delay_' + order}>
                       <Tooltip position={TooltipPosition.top} content={<>Fault Injection: Delay</>}>
                         <Badge className={'faultinjection_badge_definition'}>FI</Badge>
                       </Tooltip>
@@ -148,7 +148,7 @@ class Rules extends React.Component<Props> {
                     </div>
                   )}
                   {rule.abort && (
-                    <div key={'abort'}>
+                    <div key={'abort_' + order}>
                       <Tooltip position={TooltipPosition.top} content={<>Fault Injection: Abort</>}>
                         <Badge className={'faultinjection_badge_definition'}>FI</Badge>
                       </Tooltip>
@@ -156,7 +156,7 @@ class Rules extends React.Component<Props> {
                     </div>
                   )}
                   {rule.timeout && (
-                    <div key={'timeout'}>
+                    <div key={'timeout_' + order}>
                       <Tooltip position={TooltipPosition.top} content={<>Request Timeout</>}>
                         <Badge className={'faultinjection_badge_definition'}>RT</Badge>
                       </Tooltip>
@@ -164,7 +164,7 @@ class Rules extends React.Component<Props> {
                     </div>
                   )}
                   {rule.retries && (
-                    <div key={'retries'}>
+                    <div key={'retries_' + order}>
                       <Tooltip position={TooltipPosition.top} content={<>Request Retry</>}>
                         <Badge className={'faultinjection_badge_definition'}>RR</Badge>
                       </Tooltip>
