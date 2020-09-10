@@ -180,12 +180,10 @@ class RequestRouting extends React.Component<Props, State> {
         }
         if (!this.isMatchesIncluded(prevState.rules, newRule)) {
           prevState.rules.push(newRule);
-          prevState.faultInjectionRoute.delayed = false;
-          prevState.faultInjectionRoute.aborted = false;
           return {
-            matches: [],
-            headerName: '',
-            matchValue: '',
+            matches: prevState.matches,
+            headerName: prevState.headerName,
+            matchValue: prevState.matchValue,
             rules: prevState.rules,
             validationMsg: '',
             faultInjectionRoute: prevState.faultInjectionRoute,
@@ -210,7 +208,8 @@ class RequestRouting extends React.Component<Props, State> {
   onRemoveMatch = (matchToRemove: string) => {
     this.setState(prevState => {
       return {
-        matches: prevState.matches.filter(m => matchToRemove !== m)
+        matches: prevState.matches.filter(m => matchToRemove !== m),
+        validationMsg: prevState.validationMsg === MSG_SAME_MATCHING ? '' : prevState.validationMsg
       };
     });
   };
