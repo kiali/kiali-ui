@@ -353,8 +353,8 @@ class IstioConfigDetailsPage extends React.Component<RouteComponentProps<IstioCo
 
   getStatusRange = (yaml: string | undefined): any => {
     let range = {
-      startRow: 0,
-      endRow: 0
+      startRow: -1,
+      endRow: -1
     };
 
     if (!!yaml) {
@@ -363,7 +363,7 @@ class IstioConfigDetailsPage extends React.Component<RouteComponentProps<IstioCo
         if (line.startsWith('status:')) {
           range.startRow = i;
         }
-        if (line.startsWith('spec:') && range.startRow !== 0) {
+        if (line.startsWith('spec:') && range.startRow !== -1) {
           range.endRow = i;
         }
       });
@@ -430,7 +430,7 @@ class IstioConfigDetailsPage extends React.Component<RouteComponentProps<IstioCo
                   namespace={this.state.istioObjectDetails.namespace.name}
                 />
               )}
-              {istioStatusMsgs && <IstioStatusMessageList messages={istioStatusMsgs} />}
+              {istioStatusMsgs && istioStatusMsgs.length > 0 && <IstioStatusMessageList messages={istioStatusMsgs} />}
               {refPresent && (
                 <Card>
                   <CardHeader>
