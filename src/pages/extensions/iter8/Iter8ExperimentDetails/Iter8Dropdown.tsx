@@ -233,7 +233,7 @@ class Iter8Dropdown extends React.Component<Props, State> {
   };
 
   renderDropdownItems = (): any => {
-    var items: any[] = [];
+    let items: any[] = [];
     if (this.props.canDelete) {
       items = items.concat(
         <DropdownItem

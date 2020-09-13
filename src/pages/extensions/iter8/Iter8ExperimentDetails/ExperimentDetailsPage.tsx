@@ -277,7 +277,7 @@ class ExperimentDetailsPage extends React.Component<Props, State> {
         />
       </Tab>
     );
-    var metricProgressInfo: Map<string, MetricProgressInfo> = new Map<string, MetricProgressInfo>(); //= new Array(this.state.experiment.criterias.length);
+    const metricProgressInfo: Map<string, MetricProgressInfo> = new Map<string, MetricProgressInfo>(); //= new Array(this.state.experiment.criterias.length);
     for (const c of this.state.experiment.criterias) {
       metricProgressInfo.set(c.name, {
         name: c.name,

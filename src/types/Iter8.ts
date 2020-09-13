@@ -98,7 +98,10 @@ export interface Iter8ExpDetailsInfo {
   criterias: CriteriaInfoDetail[];
   trafficControl: TrafficControl;
   duration: Duration;
-  hosts: Host[];
+  networking: {
+    id: string;
+    hosts: Host[];
+  };
   permissions: ResourcePermissions;
   experimentType: string;
 }
@@ -145,7 +148,10 @@ export const emptyExperimentDetailsInfo: Iter8ExpDetailsInfo = {
     intervalInSecond: 30,
     maxIterations: 100
   },
-  hosts: [],
+  networking: {
+    id: '',
+    hosts: []
+  },
   permissions: {
     create: true,
     update: true,
@@ -225,6 +231,7 @@ export interface ExperimentSpec {
   criterias: Iter8Criteria[];
   duration: Duration;
   hosts: Host[];
+  routerID: string;
   experimentKind: string;
 }
 

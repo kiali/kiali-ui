@@ -106,7 +106,8 @@ class ExperimentCreatePage extends React.Component<Props, State> {
           maxIterations: 10
         },
         criterias: [],
-        hosts: []
+        hosts: [],
+        routerID: ''
       },
       namespaces: [],
       services: [],
@@ -435,7 +436,9 @@ class ExperimentCreatePage extends React.Component<Props, State> {
           case 'toleranceType':
             newExperiment.criterias[0].toleranceType = value.trim();
             break;
-
+          case 'routerID':
+            newExperiment.routerID = value.trim();
+            break;
           default:
         }
         return {
@@ -697,7 +700,8 @@ class ExperimentCreatePage extends React.Component<Props, State> {
           criterias: prevState.experiment.criterias,
           hosts: prevState.experiment.hosts,
           duration: prevState.experiment.duration,
-          experimentKind: prevState.experiment.experimentKind
+          experimentKind: prevState.experiment.experimentKind,
+          routerID: prevState.experiment.routerID
         }
       };
     });
@@ -802,7 +806,7 @@ class ExperimentCreatePage extends React.Component<Props, State> {
                 id="maxIncrement"
                 value={this.state.experiment.trafficControl.maxIncrement}
                 placeholder="Max Increment"
-                onChange={value => this.changeExperimentNumber('maxIncrement', parseFloat(value))}
+                onChange={value => this.changeExperimentNumber('maxIncrement', Number(value))}
               />
             </FormGroup>
           </GridItem>
@@ -832,7 +836,8 @@ class ExperimentCreatePage extends React.Component<Props, State> {
           criterias: prevState.experiment.criterias,
           hosts: prevState.experiment.hosts,
           duration: prevState.experiment.duration,
-          experimentKind: prevState.experiment.experimentKind
+          experimentKind: prevState.experiment.experimentKind,
+          routerID: prevState.experiment.routerID
         }
       };
     });
@@ -856,13 +861,32 @@ class ExperimentCreatePage extends React.Component<Props, State> {
   renderHost() {
     return (
       <>
-        <ExperimentHostForm
-          hosts={this.state.experiment.hosts}
-          hostsOfGateway={this.state.hostsOfGateway}
-          gateways={this.state.gateways}
-          onAdd={this.onAddToList}
-          onRemove={this.onRemoveFromList}
-        />
+        <Grid gutter="md">
+          <GridItem span={12}>
+            <FormGroup
+              fieldId="routerID"
+              label="Router ID"
+              isValid={this.state.experiment.routerID !== ''}
+              helperText="Refers to the id of router used to handle traffic for the experiment. Default value: first entry of effective host."
+            >
+              <TextInput
+                id="routerID"
+                value={this.state.experiment.routerID}
+                placeholder="ID of router"
+                onChange={value => this.changeExperiment('routerID', value)}
+              />
+            </FormGroup>
+          </GridItem>
+          <GridItem span={12}>
+            <ExperimentHostForm
+              hosts={this.state.experiment.hosts}
+              hostsOfGateway={this.state.hostsOfGateway}
+              gateways={this.state.gateways}
+              onAdd={this.onAddToList}
+              onRemove={this.onRemoveFromList}
+            />
+          </GridItem>
+        </Grid>
       </>
     );
   }
@@ -969,7 +993,7 @@ class ExperimentCreatePage extends React.Component<Props, State> {
               </FormGroup>
             </>
           )}
-          <FormGroup label="Add Host/Gateway" fieldId="addHostGateway">
+          <FormGroup label="Show Networking Control" fieldId="addHostGateway">
             <Switch
               id="addHostGateway"
               label={' '}
@@ -979,7 +1003,7 @@ class ExperimentCreatePage extends React.Component<Props, State> {
             />
           </FormGroup>
           {this.state.addHostGateway && (
-            <FormGroup label="Hosts" fieldId="hostsGateways">
+            <FormGroup label="Networking" fieldId="hostsGateways">
               {this.renderHost()}
             </FormGroup>
           )}

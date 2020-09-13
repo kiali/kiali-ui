@@ -6,10 +6,6 @@ import {
   EmptyStateVariant,
   Grid,
   GridItem,
-  // Progress,
-  // ProgressMeasureLocation,
-  // ProgressVariant,
-  // ProgressSize,
   Title,
   Tooltip
 } from '@patternfly/react-core';
@@ -40,7 +36,8 @@ import { KialiAppState } from '../../../../store/Store';
 import { durationSelector, lastRefreshAtSelector } from '../../../../store/Selectors';
 import { connect } from 'react-redux';
 import * as API from '../../../../services/Api';
-var classNames = require('classnames');
+
+const classNames = require('classnames');
 const paddingStyle = style({ padding: '0px 0px 0px 0px' });
 
 interface AssesmentInfoDescriptionProps {

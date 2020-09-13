@@ -26,11 +26,14 @@ import {
 } from '@patternfly/react-core';
 
 import LocalTime from '../../../../components/Time/LocalTime';
+import * as API from '../../../../services/Api';
 import { Link } from 'react-router-dom';
 import { Iter8ExpDetailsInfo } from '../../../../types/Iter8';
 import { RenderComponentScroll } from '../../../../components/Nav/Page';
 import { GraphType } from '../../../../types/Graph';
 import history from '../../../../app/History';
+import jsyaml from 'js-yaml';
+import YAML from 'yaml';
 
 interface ExperimentInfoDescriptionProps {
   target: string;
@@ -146,6 +149,23 @@ class ExperimentInfoDescription extends React.Component<ExperimentInfoDescriptio
     );
   }
 
+  onDownloadClick = () => {
+    API.getExperimentYAML(this.props.namespace, this.props.experimentDetails.experimentItem.name)
+      .then(response => response.data)
+      .then(data => {
+        const url = window.URL.createObjectURL(
+          new Blob([YAML.stringify(jsyaml.safeLoad(JSON.stringify(data, null, 2)))], { type: 'application/json' })
+        );
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', this.props.experimentDetails.experimentItem.name + `.yaml`);
+        // 3. Append to html page
+        document.body.appendChild(link); // 4. Force download
+        link.click(); // 5. Clean up and remove the link
+        link.parentNode?.removeChild(link);
+      });
+  };
+
   renderCardHead() {
     const graphCardActions = [
       <DropdownItem key="viewGraph" onClick={this.showFullMetric}>
@@ -153,6 +173,9 @@ class ExperimentInfoDescription extends React.Component<ExperimentInfoDescriptio
       </DropdownItem>,
       <DropdownItem key="viewGraph" onClick={this.showFullGraph}>
         Show traffic graph
+      </DropdownItem>,
+      <DropdownItem key="viewGraph" onClick={this.onDownloadClick}>
+        Download Experiment YAML
       </DropdownItem>
     ];
 
@@ -192,8 +215,8 @@ class ExperimentInfoDescription extends React.Component<ExperimentInfoDescriptio
     }
 
     let hasHosts = this.props.experimentDetails
-      ? this.props.experimentDetails.hosts.length > 0
-        ? true
+      ? this.props.experimentDetails.networking && this.props.experimentDetails.networking.hosts
+        ? this.props.experimentDetails.networking.hosts.length > 0
         : false
       : false;
 
@@ -254,7 +277,9 @@ class ExperimentInfoDescription extends React.Component<ExperimentInfoDescriptio
                             'H',
 
                             this.props.namespace,
-                            this.props.experimentDetails ? this.props.experimentDetails.hosts[0].gateway : ''
+                            this.props.experimentDetails.networking
+                              ? this.props.experimentDetails.networking.hosts[0].gateway
+                              : ''
                           )}
                         />
                         <DataListItemCells
@@ -262,7 +287,9 @@ class ExperimentInfoDescription extends React.Component<ExperimentInfoDescriptio
                             <DataListCell key="gateway">
                               <Text>Name</Text>
                               <Text component={TextVariants.h3}>
-                                {this.props.experimentDetails ? this.props.experimentDetails.hosts[0].name : ''}
+                                {this.props.experimentDetails.networking
+                                  ? this.props.experimentDetails.networking.hosts[0].name
+                                  : ''}
                               </Text>
                             </DataListCell>
                           }
@@ -389,7 +416,7 @@ class ExperimentInfoDescription extends React.Component<ExperimentInfoDescriptio
 
   private showFullMetric = () => {
     const graphUrl = `/namespaces/${this.props.namespace}/services/${this.props.target}?tab=metrics&bylbl=destination_version`;
-    var candidateVersions: string[];
+    let candidateVersions: string[];
     candidateVersions = [];
     this.props.experimentDetails?.experimentItem.candidates.map(can => {
       candidateVersions.push(can.version);

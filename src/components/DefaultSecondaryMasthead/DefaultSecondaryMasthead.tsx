@@ -34,7 +34,6 @@ export default class DefaultSecondaryMasthead extends React.Component {
         disabled = true;
       } else if (path === 'extensions/iter8/newfromfile') {
         title = 'Create New Iter8 Experiment from File';
-        disabled = true;
       }
       return {
         title: (

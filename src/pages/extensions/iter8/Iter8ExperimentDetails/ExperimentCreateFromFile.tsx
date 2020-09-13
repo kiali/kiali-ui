@@ -9,10 +9,12 @@ import {
   Form,
   FormGroup,
   Grid,
-  GridItem
+  GridItem,
+  InputGroup,
+  Text
 } from '@patternfly/react-core';
 import history from '../../../../app/History';
-import { RenderComponentScroll, RenderContent } from '../../../../components/Nav/Page';
+import { RenderContent } from '../../../../components/Nav/Page';
 import Namespace, { namespacesToString } from '../../../../types/Namespace';
 import { PromisesRegistry } from '../../../../utils/CancelablePromises';
 import { KialiAppState } from '../../../../store/Store';
@@ -24,6 +26,7 @@ import AceEditor from 'react-ace';
 import { aceOptions } from '../../../../types/IstioConfigDetails';
 import { TextInputBase as TextInput } from '@patternfly/react-core/dist/js/components/TextInput/TextInput';
 import { jsYaml } from '../../../../types/AceValidations';
+import { PfColors } from '../../../../components/Pf/PfColors';
 
 interface Props {
   activeNamespaces: Namespace[];
@@ -109,7 +112,7 @@ class ExperimentCreateFromFile extends React.Component<Props, State> {
               theme="eclipse"
               onChange={this.onEditorChange}
               width={'100%'}
-              height={'var(--kiali-yaml-editor-height)'}
+              height={'calc(var(--kiali-details-pages-tab-content-height) - 240px'}
               className={'istio-ace-editor'}
               wrapEnabled={true}
               readOnly={false}
@@ -132,10 +135,13 @@ class ExperimentCreateFromFile extends React.Component<Props, State> {
     this.setState({ isLoading: true });
     const controller = new AbortController();
     setTimeout(() => controller.abort(), 5000);
-    const promise = fetch(this.state.yamlFilename, { signal: controller.signal })
+
+    const promise = fetch(this.state.yamlFilename, {
+      signal: controller.signal
+    })
       .then(resp => {
         if (!resp.ok) {
-          AlertUtils.addError(resp.statusText);
+          AlertUtils.addError('Response :' + resp.status);
           this.setState({ isLoading: false });
           throw resp;
         }
@@ -161,8 +167,16 @@ class ExperimentCreateFromFile extends React.Component<Props, State> {
     });
   };
 
+  clearURL = () => {
+    this.setState({ yamlFilename: '', experimentYaml: '' });
+  };
+
   isFormValid = (): boolean => {
-    return this.props.activeNamespaces.length === 1 && this.state.experimentYaml !== undefined;
+    return this.props.activeNamespaces.length === 1 && this.state.experimentYaml !== '';
+  };
+
+  isURL = (): boolean => {
+    return this.state.yamlFilename !== '';
   };
 
   render() {
@@ -170,36 +184,37 @@ class ExperimentCreateFromFile extends React.Component<Props, State> {
     return (
       <>
         <RenderContent>
-          <Form isHorizontal={true}>
-            <div className={containerPadding}>
-              <FormGroup
-                fieldId="title"
-                label="Load from Local"
-                isRequired={true}
-                helperTextInvalid="Name cannot be empty and must be a DNS subdomain name as defined in RFC 1123."
-              >
-                <FileUpload
-                  id="text-file-with-edits-allowed"
-                  type="text"
-                  value={experimentYaml}
-                  filename={filename}
-                  onChange={this.handleFileChange}
-                  onReadStarted={this.handleFileReadStarted}
-                  onReadFinished={this.handleFileReadFinished}
-                  isLoading={isLoading}
-                  hideDefaultPreview
-                  isReadOnly={false}
-                />
-              </FormGroup>
-              <FormGroup
-                fieldId="title"
-                label="Load from URL"
-                isRequired={true}
-                helperTextInvalid="Name cannot be empty and must be a DNS subdomain name as defined in RFC 1123."
-              >
+          <Form isHorizontal={true} className={containerPadding}>
+            <FormGroup
+              fieldId="title"
+              label="Load from Local"
+              isRequired={true}
+              helperTextInvalid="Name cannot be empty and must be a DNS subdomain name as defined in RFC 1123."
+            >
+              <FileUpload
+                id="text-file-with-edits-allowed"
+                type="text"
+                value={experimentYaml}
+                filename={filename}
+                onChange={this.handleFileChange}
+                onReadStarted={this.handleFileReadStarted}
+                onReadFinished={this.handleFileReadFinished}
+                isLoading={isLoading}
+                hideDefaultPreview
+                isReadOnly={false}
+              />
+            </FormGroup>
+
+            <FormGroup
+              fieldId="title"
+              label="Load from Github"
+              isRequired={true}
+              helperText="example: https://raw.githubusercontent.com/iter8-tools/iter8/master/test/data/bookinfo/canary/canary_reviews-v2_to_reviews-v3.yaml"
+              helperTextInvalid="Name cannot be empty and must be a DNS subdomain name as defined in RFC 1123."
+            >
+              <InputGroup>
                 <TextInput
                   id="url"
-                  placeholder="https://raw.githubusercontent.com/iter8-tools/iter8-controller/v0.2.1/doc/tutorials/istio/bookinfo/canary_reviews-v2_to_reviews-v3.yaml"
                   value={this.state.yamlFilename}
                   onChange={value => this.updateValue(value)}
                   onKeyPress={e => {
@@ -208,24 +223,41 @@ class ExperimentCreateFromFile extends React.Component<Props, State> {
                     }
                   }}
                 />
-              </FormGroup>
-              <ActionGroup>
-                <span
-                  style={{
-                    float: 'left',
-                    paddingTop: '0px',
-                    paddingBottom: '10px',
-                    width: '100%'
+                <Button
+                  style={{ paddingLeft: '29px', paddingRight: '29px' }}
+                  variant={ButtonVariant.primary}
+                  isDisabled={this.state.yamlFilename === ''}
+                  onClick={() => {
+                    this.loadFromURL();
                   }}
                 >
-                  {this.props.activeNamespaces.length === 1 ? (
-                    <span style={{ float: 'left' }}>
-                      Experiment will be created at namespace: {namespacesToString(this.props.activeNamespaces)}
-                    </span>
-                  ) : (
-                    <span style={{ float: 'left', color: 'red' }}>namespace missing</span>
-                  )}
-                  <span style={{ float: 'right', paddingRight: '5px' }}>
+                  Load
+                </Button>
+                <Button
+                  variant={ButtonVariant.primary}
+                  isDisabled={this.state.yamlFilename === ''}
+                  onClick={() => {
+                    this.clearURL();
+                  }}
+                >
+                  Clear
+                </Button>
+              </InputGroup>
+            </FormGroup>
+
+            <Grid gutter="sm" style={{ padding: '10px 10px 0 10px', height: '100%' }}>
+              <GridItem span={8}>
+                {this.props.activeNamespaces.length === 1 ? (
+                  <Text>
+                    Experiment will be created at namespace: {namespacesToString(this.props.activeNamespaces)}
+                  </Text>
+                ) : (
+                  <Text style={{ color: PfColors.Red }}>namespace missing</Text>
+                )}
+              </GridItem>
+              <GridItem span={4}>
+                <div className="pf-u-float-right">
+                  <ActionGroup>
                     <Button
                       variant={ButtonVariant.primary}
                       isDisabled={!this.isFormValid()}
@@ -233,21 +265,22 @@ class ExperimentCreateFromFile extends React.Component<Props, State> {
                     >
                       Create
                     </Button>
-                  </span>
-                  <span style={{ float: 'right', paddingRight: '5px' }}>
-                    <Button
-                      variant={ButtonVariant.secondary}
-                      onClick={() => {
-                        this.goExperimentsPage();
-                      }}
-                    >
-                      Cancel
-                    </Button>
-                  </span>
-                </span>
-              </ActionGroup>
-              <RenderComponentScroll>{this.renderEditor()}</RenderComponentScroll>
-            </div>
+                    <span style={{ float: 'right', paddingRight: '5px' }}>
+                      <Button
+                        variant={ButtonVariant.secondary}
+                        onClick={() => {
+                          this.goExperimentsPage();
+                        }}
+                      >
+                        Cancel
+                      </Button>
+                    </span>
+                  </ActionGroup>
+                </div>
+              </GridItem>
+            </Grid>
+
+            {this.renderEditor()}
           </Form>
         </RenderContent>
       </>

@@ -91,8 +91,7 @@ class ExperimentCriteriaForm extends React.Component<Props, State> {
   actionResolver = (rowData, { rowIndex }) => {
     const removeAction = {
       title: 'Remove Criteria',
-      // @ts-ignore
-      onClick: (event, rowIndex, rowData, extraData) => {
+      onClick: (_, rowIndex) => {
         this.props.onRemove('Criteria', rowIndex);
       }
     };
