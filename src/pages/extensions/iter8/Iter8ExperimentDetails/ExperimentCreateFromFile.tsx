@@ -14,18 +14,16 @@ import {
   Text
 } from '@patternfly/react-core';
 import history from '../../../../app/History';
-import { RenderContent } from '../../../../components/Nav/Page';
 import Namespace, { namespacesToString } from '../../../../types/Namespace';
 import { PromisesRegistry } from '../../../../utils/CancelablePromises';
 import { KialiAppState } from '../../../../store/Store';
 import { activeNamespacesSelector } from '../../../../store/Selectors';
 import { connect } from 'react-redux';
 import { style } from 'typestyle';
-import { parseYamlValidations } from '../../../../types/AceValidations';
+import { jsYaml, parseYamlValidations } from '../../../../types/AceValidations';
 import AceEditor from 'react-ace';
 import { aceOptions } from '../../../../types/IstioConfigDetails';
 import { TextInputBase as TextInput } from '@patternfly/react-core/dist/js/components/TextInput/TextInput';
-import { jsYaml } from '../../../../types/AceValidations';
 import { PfColors } from '../../../../components/Pf/PfColors';
 
 interface Props {
@@ -112,7 +110,7 @@ class ExperimentCreateFromFile extends React.Component<Props, State> {
               theme="eclipse"
               onChange={this.onEditorChange}
               width={'100%'}
-              height={'calc(var(--kiali-details-pages-tab-content-height) - 240px'}
+              height={'calc(var(--kiali-details-pages-tab-content-height) - 340px)'}
               className={'istio-ace-editor'}
               wrapEnabled={true}
               readOnly={false}
@@ -183,106 +181,108 @@ class ExperimentCreateFromFile extends React.Component<Props, State> {
     const { filename, isLoading, experimentYaml } = this.state;
     return (
       <>
-        <RenderContent>
-          <Form isHorizontal={true} className={containerPadding}>
-            <FormGroup
-              fieldId="title"
-              label="Load from Local"
-              isRequired={true}
-              helperTextInvalid="Name cannot be empty and must be a DNS subdomain name as defined in RFC 1123."
-            >
-              <FileUpload
-                id="text-file-with-edits-allowed"
-                type="text"
-                value={experimentYaml}
-                filename={filename}
-                onChange={this.handleFileChange}
-                onReadStarted={this.handleFileReadStarted}
-                onReadFinished={this.handleFileReadFinished}
-                isLoading={isLoading}
-                hideDefaultPreview
-                isReadOnly={false}
-              />
-            </FormGroup>
-
-            <FormGroup
-              fieldId="title"
-              label="Load from Github"
-              isRequired={true}
-              helperText="example: https://raw.githubusercontent.com/iter8-tools/iter8/master/test/data/bookinfo/canary/canary_reviews-v2_to_reviews-v3.yaml"
-              helperTextInvalid="Name cannot be empty and must be a DNS subdomain name as defined in RFC 1123."
-            >
-              <InputGroup>
-                <TextInput
-                  id="url"
-                  value={this.state.yamlFilename}
-                  onChange={value => this.updateValue(value)}
-                  onKeyPress={e => {
-                    if (e.key === 'Enter') {
-                      this.loadFromURL();
-                    }
-                  }}
+        <Grid style={{ margin: '10px' }} gutter={'md'}>
+          <GridItem span={12}>
+            <Form isHorizontal={true} className={containerPadding}>
+              <FormGroup fieldId="title" label="Load from Local" isRequired={true}>
+                <FileUpload
+                  id="text-file-with-edits-allowed"
+                  type="text"
+                  value={experimentYaml}
+                  filename={filename}
+                  onChange={this.handleFileChange}
+                  onReadStarted={this.handleFileReadStarted}
+                  onReadFinished={this.handleFileReadFinished}
+                  isLoading={isLoading}
+                  hideDefaultPreview
+                  isReadOnly={false}
                 />
-                <Button
-                  style={{ paddingLeft: '29px', paddingRight: '29px' }}
-                  variant={ButtonVariant.primary}
-                  isDisabled={this.state.yamlFilename === ''}
-                  onClick={() => {
-                    this.loadFromURL();
-                  }}
-                >
-                  Load
-                </Button>
-                <Button
-                  variant={ButtonVariant.primary}
-                  isDisabled={this.state.yamlFilename === ''}
-                  onClick={() => {
-                    this.clearURL();
-                  }}
-                >
-                  Clear
-                </Button>
-              </InputGroup>
-            </FormGroup>
+              </FormGroup>
 
-            <Grid gutter="sm" style={{ padding: '10px 10px 0 10px', height: '100%' }}>
-              <GridItem span={8}>
-                {this.props.activeNamespaces.length === 1 ? (
-                  <Text>
-                    Experiment will be created at namespace: {namespacesToString(this.props.activeNamespaces)}
-                  </Text>
-                ) : (
-                  <Text style={{ color: PfColors.Red }}>namespace missing</Text>
-                )}
-              </GridItem>
-              <GridItem span={4}>
-                <div className="pf-u-float-right">
-                  <ActionGroup>
-                    <Button
-                      variant={ButtonVariant.primary}
-                      isDisabled={!this.isFormValid()}
-                      onClick={() => this.createExperiment()}
-                    >
-                      Create
-                    </Button>
-                    <span style={{ float: 'right', paddingRight: '5px' }}>
-                      <Button
-                        variant={ButtonVariant.secondary}
-                        onClick={() => {
-                          this.goExperimentsPage();
-                        }}
-                      >
-                        Cancel
-                      </Button>
-                    </span>
-                  </ActionGroup>
-                </div>
-              </GridItem>
-            </Grid>
+              <FormGroup
+                fieldId="title"
+                label="Load from Github"
+                isRequired={true}
+                helperText="example: https://raw.githubusercontent.com/iter8-tools/iter8/master/test/data/bookinfo/canary/canary_reviews-v2_to_reviews-v3.yaml"
+                helperTextInvalid="Name cannot be empty and must be a DNS subdomain name as defined in RFC 1123."
+              >
+                <InputGroup>
+                  <TextInput
+                    id="url"
+                    value={this.state.yamlFilename}
+                    onChange={value => this.updateValue(value)}
+                    onKeyPress={e => {
+                      if (e.key === 'Enter') {
+                        this.loadFromURL();
+                      }
+                    }}
+                  />
+                  <Button
+                    style={{ paddingLeft: '29px', paddingRight: '29px' }}
+                    variant={ButtonVariant.primary}
+                    isDisabled={this.state.yamlFilename === ''}
+                    onClick={() => {
+                      this.loadFromURL();
+                    }}
+                  >
+                    Load
+                  </Button>
+                  <Button
+                    variant={ButtonVariant.primary}
+                    isDisabled={this.state.yamlFilename === ''}
+                    onClick={() => {
+                      this.clearURL();
+                    }}
+                  >
+                    Clear
+                  </Button>
+                </InputGroup>
+              </FormGroup>
+            </Form>
+          </GridItem>
+          <GridItem span={2}></GridItem>
+          <GridItem span={7}>
+            {this.props.activeNamespaces.length === 1 ? (
+              <Text>Experiment will be created at namespace: {namespacesToString(this.props.activeNamespaces)}</Text>
+            ) : (
+              <Text style={{ color: PfColors.Red }}>namespace missing</Text>
+            )}
+          </GridItem>
+          <GridItem span={3}>
+            <ActionGroup>
+              <span
+                style={{
+                  float: 'left',
+                  paddingTop: '10px',
+                  paddingBottom: '10px',
+                  width: '100%'
+                }}
+              >
+                <span style={{ float: 'right', paddingRight: '20px' }}>
+                  <Button
+                    variant={ButtonVariant.primary}
+                    isDisabled={!this.isFormValid()}
+                    onClick={() => this.createExperiment()}
+                  >
+                    Create
+                  </Button>
+                </span>
+                <span style={{ float: 'right', paddingRight: '5px' }}>
+                  <Button
+                    variant={ButtonVariant.secondary}
+                    onClick={() => {
+                      this.goExperimentsPage();
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                </span>
+              </span>
+            </ActionGroup>
+          </GridItem>
 
-            {this.renderEditor()}
-          </Form>
-        </RenderContent>
+          <GridItem> {this.renderEditor()}</GridItem>
+        </Grid>
       </>
     );
   }
