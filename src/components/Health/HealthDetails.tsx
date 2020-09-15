@@ -15,7 +15,14 @@ export class HealthDetails extends React.PureComponent<Props, {}> {
     const config = this.props.health.getStatusConfig();
     const isValueInConfig =
       config && this.props.health.health.statusConfig ? this.props.health.health.statusConfig.value > 0 : false;
-    return (
+
+    const showTraffic = item.children
+      ? item.children.filter(sub => {
+          const showItem = sub.value && sub.value > 0;
+          return (sub.status !== H.HEALTHY && showItem) || !this.props.tooltip;
+        }).length > 0
+      : false;
+    return showTraffic ? (
       <div key={idx}>
         <strong>
           {' ' + item.title + (item.text && item.text.length > 0 ? ': ' : '')}{' '}
@@ -44,6 +51,8 @@ export class HealthDetails extends React.PureComponent<Props, {}> {
           </ul>
         )}
       </div>
+    ) : (
+      <></>
     );
   };
 
