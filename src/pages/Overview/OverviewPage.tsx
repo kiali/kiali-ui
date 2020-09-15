@@ -56,9 +56,14 @@ import VirtualList from '../../components/VirtualList/VirtualList';
 import { StatefulFilters } from '../../components/Filters/StatefulFilters';
 import { OverviewNamespaceAction, OverviewNamespaceActions } from './OverviewNamespaceActions';
 import history from '../../app/History';
-import { buildNamespaceInjectionPatch } from '../../components/IstioWizards/WizardActions';
+import {
+  buildGraphAuthorizationPolicy,
+  buildNamespaceInjectionPatch
+} from '../../components/IstioWizards/WizardActions';
 import * as AlertUtils from '../../utils/AlertUtils';
 import { MessageType } from '../../types/MessageCenter';
+import GraphDataSource from '../../services/GraphDataSource';
+import { AuthorizationPolicy } from '../../types/IstioObjects';
 
 const gridStyleCompact = style({
   backgroundColor: '#f5f5f5',
@@ -376,12 +381,18 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
   fetchValidationChunk(chunk: NamespaceInfo[]) {
     return Promise.all(
       chunk.map(nsInfo => {
-        return API.getNamespaceValidations(nsInfo.name).then(rs => ({ validations: rs.data, nsInfo: nsInfo }));
+        return Promise.all([
+          API.getNamespaceValidations(nsInfo.name),
+          API.getIstioConfig(nsInfo.name, ['authorizationpolicies'], false, '', '')
+        ]).then(results => {
+          return { validations: results[0].data, istioConfig: results[1].data, nsInfo: nsInfo };
+        });
       })
     )
       .then(results => {
         results.forEach(result => {
           result.nsInfo.validations = result.validations;
+          result.nsInfo.istioConfig = result.istioConfig;
         });
       })
       .catch(err => this.handleAxiosError('Could not fetch validations status', err));
@@ -507,6 +518,24 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
         namespaceActions.push(enableAction);
       }
     }
+    namespaceActions.push({
+      isSeparator: true
+    });
+    const aps = nsInfo.istioConfig?.authorizationPolicies || [];
+    const addAuthorizationAction = {
+      isSeparator: false,
+      title: (aps.length === 0 ? 'Create ' : 'Update') + ' Traffic Policies',
+      action: (ns: string) => this.onAddRemoveAuthorizationPolicy(ns, aps, false)
+    };
+    const removeAuthorizationAction = {
+      isSeparator: false,
+      title: 'Delete Traffic Policies',
+      action: (ns: string) => this.onAddRemoveAuthorizationPolicy(ns, aps, true)
+    };
+    namespaceActions.push(addAuthorizationAction);
+    if (aps.length > 0) {
+      namespaceActions.push(removeAuthorizationAction);
+    }
     return namespaceActions;
   };
 
@@ -520,6 +549,70 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
       .catch(error => {
         AlertUtils.addError('Could not update namespace ' + ns, error);
       });
+  };
+
+  onAddRemoveAuthorizationPolicy = (
+    ns: string,
+    authorizationPolicies: AuthorizationPolicy[],
+    remove: boolean
+  ): void => {
+    if (authorizationPolicies.length > 0) {
+      this.promises
+        .registerAll(
+          'authorizationPoliciesDelete',
+          authorizationPolicies.map(ap => API.deleteIstioConfigDetail(ns, 'authorizationpolicies', ap.metadata.name))
+        )
+        .then(_ => {
+          if (!remove) {
+            this.createAuthorizationPolicies(ns, this.load);
+          } else {
+            this.load();
+          }
+        })
+        .catch(errorDelete => {
+          if (!errorDelete.isCanceled) {
+            AlertUtils.addError('Could not delete AuthorizationPolicies.', errorDelete);
+          }
+        });
+    } else {
+      if (!remove) {
+        this.createAuthorizationPolicies(ns, this.load);
+      } else {
+        AlertUtils.addInfo('Namespace ' + ns + " doesn't have AuthorizationPolicy config.");
+      }
+    }
+  };
+
+  createAuthorizationPolicies = (ns: string, callback: () => void) => {
+    const graphDataSource = new GraphDataSource();
+    graphDataSource.on('fetchSuccess', () => {
+      const aps = buildGraphAuthorizationPolicy(ns, graphDataSource.graphDefinition);
+      this.promises
+        .registerAll(
+          'authorizationPoliciesCreate',
+          aps.map(ap => API.createIstioConfigDetail(ns, 'authorizationpolicies', JSON.stringify(ap)))
+        )
+        .then(results => {
+          if (results.length > 0) {
+            AlertUtils.add('AuthorizationPolicies created for ' + ns + ' namespace.', 'default', MessageType.SUCCESS);
+          }
+          callback();
+        })
+        .catch(errorCreate => {
+          if (!errorCreate.isCanceled) {
+            AlertUtils.addError('Could not create AuthorizationPolicies.', errorCreate);
+          }
+        });
+    });
+    graphDataSource.on('fetchError', (errorMessage: string | null) => {
+      if (errorMessage !== '') {
+        errorMessage = 'Could not fetch traffic data: ' + errorMessage;
+      } else {
+        errorMessage = 'Could not fetch traffic data.';
+      }
+      AlertUtils.addError(errorMessage);
+    });
+    graphDataSource.fetchForNamespace(this.props.duration, ns);
   };
 
   render() {
