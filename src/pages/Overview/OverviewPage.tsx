@@ -215,13 +215,15 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
           : OverviewDisplayMode.EXPAND;
         // Set state before actually fetching health
         this.setState(
-          {
-            type: type,
-            namespaces: Sorts.sortFunc(allNamespaces, sortField, isAscending),
-            displayMode: displayMode,
-            showConfirmModal: false,
-            nsTarget: '',
-            opTarget: ''
+          prevState => {
+            return {
+              type: type,
+              namespaces: Sorts.sortFunc(allNamespaces, sortField, isAscending),
+              displayMode: displayMode,
+              showConfirmModal: prevState.showConfirmModal,
+              nsTarget: prevState.nsTarget,
+              opTarget: prevState.opTarget
+            };
           },
           () => {
             this.fetchHealth(isAscending, sortField, type);
@@ -654,7 +656,9 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
 
   hideConfirmModal = () => {
     this.setState({
-      showConfirmModal: false
+      showConfirmModal: false,
+      nsTarget: '',
+      opTarget: ''
     });
   };
 
@@ -667,11 +671,15 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
         break;
       }
     }
+    const nsTarget = this.state.nsTarget;
+    const remove = this.state.opTarget === 'delete';
     this.setState(
       {
-        showConfirmModal: false
+        showConfirmModal: false,
+        nsTarget: '',
+        opTarget: ''
       },
-      () => this.onAddRemoveAuthorizationPolicy(this.state.nsTarget, aps, this.state.opTarget === 'delete')
+      () => this.onAddRemoveAuthorizationPolicy(nsTarget, aps, remove)
     );
   };
 
