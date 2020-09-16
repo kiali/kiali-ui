@@ -224,7 +224,7 @@ export const renderInOutRateChartHttp = (
         { x: 'In', y: percentNRIn },
         { x: 'Out', y: percentNROut }
       ],
-      color: colorVals.ChartDanger
+      color: colorVals.ChartOther
     } // No Response error, just use black
   ].map(line => {
     return {
