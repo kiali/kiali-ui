@@ -1,5 +1,6 @@
 import * as React from 'react';
 import {
+  Button,
   Card,
   CardActions,
   CardBody,
@@ -10,6 +11,7 @@ import {
   EmptyStateVariant,
   Grid,
   GridItem,
+  Modal,
   Title,
   Tooltip,
   TooltipPosition
@@ -131,6 +133,9 @@ type State = {
   namespaces: NamespaceInfo[];
   type: OverviewType;
   displayMode: OverviewDisplayMode;
+  showConfirmModal: boolean;
+  nsTarget: string;
+  opTarget: string;
 };
 
 type ReduxProps = {
@@ -152,7 +157,10 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
     this.state = {
       namespaces: [],
       type: OverviewToolbar.currentOverviewType(),
-      displayMode: OverviewDisplayMode.EXPAND
+      displayMode: OverviewDisplayMode.EXPAND,
+      showConfirmModal: false,
+      nsTarget: '',
+      opTarget: ''
     };
   }
 
@@ -210,7 +218,10 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
           {
             type: type,
             namespaces: Sorts.sortFunc(allNamespaces, sortField, isAscending),
-            displayMode: displayMode
+            displayMode: displayMode,
+            showConfirmModal: false,
+            nsTarget: '',
+            opTarget: ''
           },
           () => {
             this.fetchHealth(isAscending, sortField, type);
@@ -525,12 +536,18 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
     const addAuthorizationAction = {
       isSeparator: false,
       title: (aps.length === 0 ? 'Create ' : 'Update') + ' Traffic Policies',
-      action: (ns: string) => this.onAddRemoveAuthorizationPolicy(ns, aps, false)
+      action: (ns: string) => {
+        if (aps.length === 0) {
+          this.onCreateTrafficPolicies(ns);
+        } else {
+          this.onUpdateTrafficPolicies(ns);
+        }
+      }
     };
     const removeAuthorizationAction = {
       isSeparator: false,
       title: 'Delete Traffic Policies',
-      action: (ns: string) => this.onAddRemoveAuthorizationPolicy(ns, aps, true)
+      action: (ns: string) => this.onDeleteTrafficPolicies(ns)
     };
     namespaceActions.push(addAuthorizationAction);
     if (aps.length > 0) {
@@ -549,6 +566,26 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
       .catch(error => {
         AlertUtils.addError('Could not update namespace ' + ns, error);
       });
+  };
+
+  onCreateTrafficPolicies = (ns: string) => {
+    this.onAddRemoveAuthorizationPolicy(ns, [], false);
+  };
+
+  onUpdateTrafficPolicies = (ns: string) => {
+    this.setState({
+      showConfirmModal: true,
+      nsTarget: ns,
+      opTarget: 'update'
+    });
+  };
+
+  onDeleteTrafficPolicies = (ns: string) => {
+    this.setState({
+      showConfirmModal: true,
+      nsTarget: ns,
+      opTarget: 'delete'
+    });
   };
 
   onAddRemoveAuthorizationPolicy = (
@@ -615,6 +652,29 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
     graphDataSource.fetchForNamespace(this.props.duration, ns);
   };
 
+  hideConfirmModal = () => {
+    this.setState({
+      showConfirmModal: false
+    });
+  };
+
+  onConfirmModal = () => {
+    let aps: AuthorizationPolicy[] = [];
+    for (let i = 0; i < this.state.namespaces.length; i++) {
+      const nsInfo = this.state.namespaces[i];
+      if (this.state.namespaces[i].name === this.state.nsTarget) {
+        aps = nsInfo.istioConfig?.authorizationPolicies || [];
+        break;
+      }
+    }
+    this.setState(
+      {
+        showConfirmModal: false
+      },
+      () => this.onAddRemoveAuthorizationPolicy(this.state.nsTarget, aps, this.state.opTarget === 'delete')
+    );
+  };
+
   render() {
     const sm = this.state.displayMode === OverviewDisplayMode.COMPACT ? 3 : 6;
     const md = this.state.displayMode === OverviewDisplayMode.COMPACT ? 3 : 4;
@@ -623,6 +683,10 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
       const actions = this.getNamespaceActions(ns);
       return <OverviewNamespaceActions key={'namespaceAction_' + i} namespace={ns.name} actions={actions} />;
     });
+    const modalAction =
+      this.state.opTarget.length > 0
+        ? this.state.opTarget.charAt(0).toLocaleUpperCase() + this.state.opTarget.slice(1)
+        : '';
     return (
       <>
         <div className={overviewHeader}>
@@ -698,6 +762,26 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
             </EmptyState>
           </div>
         )}
+        <Modal
+          isSmall={true}
+          title={'Confirm ' + modalAction + ' Traffic Policies ?'}
+          isOpen={this.state.showConfirmModal}
+          onClose={this.hideConfirmModal}
+          actions={[
+            <Button key="cancel" variant="secondary" onClick={this.hideConfirmModal}>
+              Cancel
+            </Button>,
+            <Button key="confirm" variant="danger" onClick={this.onConfirmModal}>
+              {modalAction}
+            </Button>
+          ]}
+        >
+          {'Namespace ' +
+            this.state.nsTarget +
+            ' has existing AuthorizationPolicy objects. Do you want to ' +
+            this.state.opTarget +
+            ' them ?'}
+        </Modal>
       </>
     );
   }
