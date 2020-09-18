@@ -1,8 +1,7 @@
 import * as React from 'react';
-import { Card, CardBody, Grid, GridItem } from '@patternfly/react-core';
+import { Card, CardBody, Grid, GridItem, Tab } from '@patternfly/react-core';
 import * as AlertUtils from '../../utils/AlertUtils';
 import { GraphDefinition, GraphEdgeWrapper, GraphNodeData, NodeType } from '../../types/Graph';
-import DetailedTrafficList, { TrafficItem, TrafficNode } from '../Details/DetailedTrafficList';
 import { RenderComponentScroll } from '../../components/Nav/Page';
 import { MetricsObjectTypes } from '../../types/Metrics';
 import GraphDataSource from 'services/GraphDataSource';
@@ -30,15 +29,14 @@ type WorkloadProps = {
 
 type TrafficDetailsProps = {
   duration: DurationInSeconds;
-} & (AppProps | WorkloadProps | ServiceProps);
+  itemName: string;
+  itemType: MetricsObjectTypes;
+  namespace: string;
+};
 
 type TrafficDetailsState = {
   inboundTraffic: TrafficItem[];
   outboundTraffic: TrafficItem[];
-};
-
-type ServiceTraffic = {
-  [key: string]: TrafficItem;
 };
 
 class TrafficDetails extends React.Component<TrafficDetailsProps, TrafficDetailsState> {
@@ -64,34 +62,65 @@ class TrafficDetails extends React.Component<TrafficDetailsProps, TrafficDetails
   }
 
   componentDidUpdate(prevProps: TrafficDetailsProps) {
-    const isWorkloadSet =
-      prevProps.itemType === MetricsObjectTypes.WORKLOAD &&
-      this.props.itemType === prevProps.itemType &&
-      (prevProps.namespace !== this.props.namespace || prevProps.workloadName !== this.props.workloadName);
-    const isAppSet =
-      prevProps.itemType === MetricsObjectTypes.APP &&
-      this.props.itemType === prevProps.itemType &&
-      (prevProps.namespace !== this.props.namespace || prevProps.appName !== this.props.appName);
-    const isServiceSet =
-      prevProps.itemType === MetricsObjectTypes.SERVICE &&
-      this.props.itemType === prevProps.itemType &&
-      (prevProps.namespace !== this.props.namespace || prevProps.serviceName !== this.props.serviceName);
+    const durationChanged = prevProps.duration !== this.props.duration;
+    const itemNameChanged = prevProps.itemName !== this.props.itemName;
+    const itemTypeChanged = prevProps.itemType !== this.props.itemType;
+    const namespaceChanged = prevProps.namespace !== this.props.namespace;
 
-    if (isWorkloadSet || isAppSet || isServiceSet || prevProps.duration !== this.props.duration) {
+    if (durationChanged || itemNameChanged || itemTypeChanged || namespaceChanged) {
       this.fetchDataSource();
     }
+  }
+
+  render() {
+    return (
+      <>
+        <RightActionBar>
+          <DurationDropdownContainer id="service-traffic-duration-dropdown" prefix="Last" />
+          <RefreshButtonContainer handleRefresh={this.fetchDataSource} />
+        </RightActionBar>
+        <RenderComponentScroll>
+          <Grid style={{ padding: '10px' }}>
+            <GridItem span={12}>
+              <Card>
+                <CardBody>
+                  <SimpleTabs id="traffic_tabs" defaultTab={0} style={{ paddingBottom: '10px' }}>
+                    <Tab title="Inbound" eventKey={0}>
+                      <TrafficListComponent
+                        currentSortField={FilterHelper.currentSortField(TrafficListFilters.sortFields)}
+                        isSortAscending={FilterHelper.isCurrentSortAscending()}
+                        direction="inbound"
+                        trafficItems={this.state.inboundTraffic}
+                      />
+                    </Tab>
+                    <Tab title="Outbound" eventKey={1}>
+                      <TrafficListComponent
+                        direction="outbound"
+                        currentSortField={FilterHelper.currentSortField(TrafficListFilters.sortFields)}
+                        isSortAscending={FilterHelper.isCurrentSortAscending()}
+                        trafficItems={this.state.outboundTraffic}
+                      />
+                    </Tab>
+                  </SimpleTabs>
+                </CardBody>
+              </Card>
+            </GridItem>
+          </Grid>
+        </RenderComponentScroll>
+      </>
+    );
   }
 
   private fetchDataSource = () => {
     switch (this.props.itemType) {
       case MetricsObjectTypes.SERVICE:
-        this.graphDataSource.fetchForService(this.props.duration, this.props.namespace, this.props.serviceName);
+        this.graphDataSource.fetchForService(this.props.duration, this.props.namespace, this.props.itemName, false);
         break;
       case MetricsObjectTypes.WORKLOAD:
-        this.graphDataSource.fetchForWorkload(this.props.duration, this.props.namespace, this.props.workloadName);
+        this.graphDataSource.fetchForWorkload(this.props.duration, this.props.namespace, this.props.itemName, false);
         break;
       case MetricsObjectTypes.APP:
-        this.graphDataSource.fetchForApp(this.props.duration, this.props.namespace, this.props.appName);
+        this.graphDataSource.fetchForApp(this.props.duration, this.props.namespace, this.props.itemName, false);
         break;
     }
   };
@@ -139,16 +168,8 @@ class TrafficDetails extends React.Component<TrafficDetailsProps, TrafficDetails
   }
 
   private buildTrafficNode = (prefix: 'in' | 'out', node: GraphNodeData): TrafficNode => {
+    // given restrictions on fetch options the node type should be either App, Workload or [outbound] service
     switch (node.nodeType) {
-      case NodeType.AGGREGATE:
-        return {
-          id: `${prefix}-${node.id}`,
-          type: node.nodeType,
-          namespace: node.namespace,
-          name: node.aggregateValue || 'unknown',
-          version: node.version || '',
-          isInaccessible: node.isInaccessible || false
-        };
       case NodeType.APP:
         return {
           id: `${prefix}-${node.id}`,
@@ -186,6 +207,7 @@ class TrafficDetails extends React.Component<TrafficDetailsProps, TrafficDetails
     }
   };
 
+  /*
   private processSecondLevelTraffic = (
     edges: any,
     serviceTraffic: ServiceTraffic,
@@ -226,13 +248,13 @@ class TrafficDetails extends React.Component<TrafficDetailsProps, TrafficDetails
 
     return { inboundTraffic, outboundTraffic };
   };
+  */
 
-  private processFirstLevelTraffic = (
+  private processTraffic = (
     edges: GraphEdgeWrapper[],
     nodes: { [key: string]: GraphNodeData },
     myNode: GraphNodeData
   ) => {
-    const serviceTraffic: ServiceTraffic = {};
     const inboundTraffic: TrafficItem[] = [];
     const outboundTraffic: TrafficItem[] = [];
 
@@ -245,30 +267,16 @@ class TrafficDetails extends React.Component<TrafficDetailsProps, TrafficDetails
           node: this.buildTrafficNode('out', targetNode)
         };
         outboundTraffic.push(trafficItem);
-
-        if (trafficItem.node.type === NodeType.SERVICE) {
-          const svcId = `out-${trafficItem.node.namespace}-${trafficItem.node.name}`;
-          if (!serviceTraffic[svcId]) {
-            serviceTraffic[svcId] = trafficItem;
-          }
-        }
       } else if (myNode.id === edge.data.target) {
         const trafficItem: TrafficItem = {
           traffic: edge.data.traffic!,
           node: this.buildTrafficNode('in', sourceNode)
         };
         inboundTraffic.push(trafficItem);
-
-        if (trafficItem.node.type === NodeType.SERVICE) {
-          const svcId = `in-${trafficItem.node.namespace}-${trafficItem.node.name}`;
-          if (!serviceTraffic[svcId]) {
-            serviceTraffic[svcId] = trafficItem;
-          }
-        }
       }
     });
 
-    return { serviceTraffic, inboundTraffic, outboundTraffic };
+    return { inboundTraffic, outboundTraffic };
   };
 
   private processTrafficData = (traffic: GraphDefinition | null) => {
@@ -290,21 +298,21 @@ class TrafficDetails extends React.Component<TrafficDetailsProps, TrafficDetails
     traffic.elements.nodes.forEach(element => {
       // Ignore group nodes. They are not relevant for the traffic list because we
       // are interested in the actual apps.
-      if (!element.data.isGroup) {
+      if (element.data.isGroup) {
         nodes['id-' + element.data.id] = element.data;
         if (element.data.namespace) {
           const isMyWorkload =
             this.props.itemType === MetricsObjectTypes.WORKLOAD &&
             element.data.nodeType === NodeType.WORKLOAD &&
-            this.props.workloadName === element.data.workload;
+            this.props.itemName === element.data.workload;
           const isMyApp =
             this.props.itemType === MetricsObjectTypes.APP &&
             element.data.nodeType === NodeType.APP &&
-            this.props.appName === element.data.app;
+            this.props.itemName === element.data.app;
           const isMyService =
             this.props.itemType === MetricsObjectTypes.SERVICE &&
             element.data.nodeType === NodeType.SERVICE &&
-            this.props.serviceName === element.data.service;
+            this.props.itemName === element.data.service;
 
           if (isMyWorkload || isMyApp || isMyService) {
             myNode = element.data;
@@ -319,28 +327,8 @@ class TrafficDetails extends React.Component<TrafficDetailsProps, TrafficDetails
       return;
     }
 
-    // Process direct traffic to/from the item of interest.
-    // This finds services and direct traffic (like workload-to-workload traffic)
-    const {
-      serviceTraffic,
-      inboundTraffic: firstLevelInbound,
-      outboundTraffic: firstLevelOutbound
-    } = this.processFirstLevelTraffic(traffic.elements.edges!, nodes, myNode);
-
-    // Then, process second level traffic.
-    // Second level are nodes whose traffic go through services and reaches
-    // the entity of interest.
-    const { inboundTraffic: secondLevelInbound, outboundTraffic: secondLevelOutbound } = this.processSecondLevelTraffic(
-      traffic.elements.edges,
-      serviceTraffic,
-      nodes,
-      myNode
-    );
-
-    // Merge and set resolved traffic
-    const inboundTraffic = firstLevelInbound.concat(secondLevelInbound);
-    const outboundTraffic = firstLevelOutbound.concat(secondLevelOutbound);
-    this.setState({ inboundTraffic, outboundTraffic });
+    // Process the direct inbound/outbound traffic to/from the item of interest.
+    this.setState(this.processTraffic(traffic.elements.edges!, nodes, myNode));
   };
 }
 
