@@ -10,21 +10,22 @@ import { createIcon } from 'components/Health/Helper';
 import VirtualList from 'components/VirtualList/VirtualList';
 import { SortField } from 'types/SortFilters';
 
-type TrafficListComponentState = FilterComponent.State<TrafficListItem>;
-
-type TrafficListComponentProps = FilterComponent.Props<TrafficListItem> & {
-  direction: 'inbound' | 'outbound';
-  trafficItems: TrafficItem[];
-};
-
 export interface TrafficListItem {
   name: string;
+  namespace: string;
   nodeType: NodeType;
   protocol: string;
   health: any;
   trafficRate: string;
   trafficPercent: string;
 }
+
+type TrafficListComponentState = FilterComponent.State<TrafficListItem>;
+
+type TrafficListComponentProps = FilterComponent.Props<TrafficListItem> & {
+  direction: 'inbound' | 'outbound';
+  trafficItems: TrafficItem[];
+};
 
 class TrafficListComponent extends FilterComponent.Component<
   TrafficListComponentProps,
@@ -67,15 +68,16 @@ class TrafficListComponent extends FilterComponent.Component<
   }
 
   render() {
-    return <VirtualList rows={this.state.listItems}></VirtualList>;
+    return <VirtualList type="traffic" rows={this.state.listItems}></VirtualList>;
   }
 
-  updateListItems = () => {
+  updateListItems() {
     this.promises.cancelAll();
 
     const listItems = this.props.trafficItems.map(ti => {
       const item: TrafficListItem = {
         name: ti.node.name,
+        namespace: ti.node.namespace,
         nodeType: ti.node.type,
         protocol: this.renderProtocolColumn(ti.traffic),
         health: this.renderHealthColumn(ti),
@@ -95,7 +97,7 @@ class TrafficListComponent extends FilterComponent.Component<
           console.debug(err);
         }
       });
-  };
+  }
 
   sortItemList(
     listItems: TrafficListItem[],

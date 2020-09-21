@@ -11,9 +11,10 @@ import { isIstioNamespace } from 'config/ServerConfig';
 import NamespaceInfo from '../../pages/Overview/NamespaceInfo';
 import * as React from 'react';
 import { StatefulFilters } from '../Filters/StatefulFilters';
+import { TrafficListItem } from 'pages/TrafficList/TrafficListComponent';
 
 export type SortResource = AppListItem | WorkloadListItem | ServiceListItem;
-export type TResource = SortResource | IstioConfigItem;
+export type TResource = SortResource | IstioConfigItem | TrafficListItem;
 export type RenderResource = TResource | NamespaceInfo;
 export type Renderer<R extends RenderResource> = (
   item: R,
@@ -156,6 +157,30 @@ const istioType: ResourceType<IstioConfigItem> = {
   renderer: Renderers.istioType
 };
 
+const protocol: ResourceType<TrafficListItem> = {
+  name: 'Protocol',
+  param: 'pr',
+  column: 'Protocol',
+  transforms: [sortable],
+  renderer: Renderers.protocol
+};
+
+const rate: ResourceType<TrafficListItem> = {
+  name: 'Rate',
+  param: 'ra',
+  column: 'Rate',
+  transforms: [sortable],
+  renderer: Renderers.rate
+};
+
+const percent: ResourceType<TrafficListItem> = {
+  name: 'Percent',
+  param: 'pe',
+  column: 'Percent',
+  transforms: [sortable],
+  renderer: Renderers.percent
+};
+
 export const IstioTypes = {
   gateway: { name: 'Gateway', url: 'gateways', icon: 'G' },
   virtualservice: { name: 'VirtualService', url: 'virtualservices', icon: 'VS' },
@@ -223,13 +248,20 @@ const istio: Resource = {
   columns: [istioItem, namespace, istioType, configuration]
 };
 
+const traffic: Resource = {
+  name: 'traffic',
+  columns: [item, protocol, rate, percent, health],
+  icon: 't'
+};
+
 const conf = {
   headerTable: true,
   applications: applications,
   workloads: workloads,
   overview: namespaces,
   services: services,
-  istio: istio
+  istio: istio,
+  traffic: traffic
 };
 
 export const config = deepFreeze(conf) as typeof conf;

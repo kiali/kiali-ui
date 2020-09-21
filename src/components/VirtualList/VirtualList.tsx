@@ -23,6 +23,7 @@ type VirtualListProps<R> = {
   sort?: (sortField: SortField<NamespaceInfo>, isAscending: boolean) => void;
   statefulProps?: React.RefObject<StatefulFilters>;
   actions?: JSX.Element[];
+  type?: string;
 };
 
 type VirtualListState = {
@@ -44,7 +45,7 @@ class VirtualListC<R extends RenderResource> extends React.Component<VirtualList
   constructor(props: VirtualListProps<R>) {
     super(props);
     const match = history.location.pathname.match(listRegex) || [];
-    const type = match[1] || '';
+    const type = this.props.type || match[1] || '';
     const conf = config[type] as Resource;
     const columns =
       conf.columns && config.headerTable

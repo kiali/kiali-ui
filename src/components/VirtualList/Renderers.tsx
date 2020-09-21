@@ -26,6 +26,7 @@ import { StatefulFilters } from '../Filters/StatefulFilters';
 import { GetIstioObjectUrl } from '../Link/IstioObjectLink';
 import { labelFilter } from 'components/Filters/CommonFilters';
 import { labelFilter as NsLabelFilter } from '../../pages/Overview/Filters';
+import { TrafficListItem } from 'pages/TrafficList/TrafficListComponent';
 
 // Links
 
@@ -187,6 +188,42 @@ export const namespace: Renderer<TResource> = (item: TResource) => {
         <Badge className={'virtualitem_badge_definition'}>NS</Badge>
       </Tooltip>
       {item.namespace}
+    </td>
+  );
+};
+
+export const protocol: Renderer<TrafficListItem> = (item: TrafficListItem) => {
+  return (
+    <td
+      role="gridcell"
+      key={'VirtuaItem_Protocol_' + item.protocol + '_' + item.name}
+      style={{ verticalAlign: 'middle' }}
+    >
+      {item.namespace}
+    </td>
+  );
+};
+
+export const percent: Renderer<TrafficListItem> = (item: TrafficListItem) => {
+  return (
+    <td
+      role="gridcell"
+      key={'VirtuaItem_Rate_' + item.trafficPercent + '_' + item.name}
+      style={{ verticalAlign: 'middle' }}
+    >
+      {item.trafficPercent}
+    </td>
+  );
+};
+
+export const rate: Renderer<TrafficListItem> = (item: TrafficListItem) => {
+  return (
+    <td
+      role="gridcell"
+      key={'VirtuaItem_Rate_' + item.trafficRate + '_' + item.name}
+      style={{ verticalAlign: 'middle' }}
+    >
+      {item.trafficRate}
     </td>
   );
 };
