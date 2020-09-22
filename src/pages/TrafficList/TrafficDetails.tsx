@@ -1,7 +1,14 @@
 import * as React from 'react';
 import { Card, CardBody, Grid, GridItem, Tab } from '@patternfly/react-core';
 import * as AlertUtils from '../../utils/AlertUtils';
-import { GraphDefinition, GraphEdgeWrapper, GraphNodeData, NodeType } from '../../types/Graph';
+import {
+  GraphDefinition,
+  GraphEdgeWrapper,
+  GraphNodeData,
+  NodeType,
+  DestService,
+  ProtocolTraffic
+} from '../../types/Graph';
 import { RenderComponentScroll } from '../../components/Nav/Page';
 import { MetricsObjectTypes } from '../../types/Metrics';
 import GraphDataSource from 'services/GraphDataSource';
@@ -114,7 +121,7 @@ class TrafficDetails extends React.Component<TrafficDetailsProps, TrafficDetails
   private fetchDataSource = () => {
     switch (this.props.itemType) {
       case MetricsObjectTypes.SERVICE:
-        this.graphDataSource.fetchForService(this.props.duration, this.props.namespace, this.props.itemName, false);
+        this.graphDataSource.fetchForService(this.props.duration, this.props.namespace, this.props.itemName, true);
         break;
       case MetricsObjectTypes.WORKLOAD:
         this.graphDataSource.fetchForWorkload(this.props.duration, this.props.namespace, this.props.itemName, false);
@@ -189,66 +196,16 @@ class TrafficDetails extends React.Component<TrafficDetailsProps, TrafficDetails
           isInaccessible: node.isInaccessible || false,
           destServices: node.destServices
         };
-      case NodeType.WORKLOAD:
+      default:
         return {
           id: `${prefix}-${node.id}`,
-          type: node.nodeType,
+          type: NodeType.WORKLOAD,
           namespace: node.namespace,
           name: node.workload || 'unknown',
           isInaccessible: node.isInaccessible || false
         };
-      default:
-        return {
-          id: `${prefix}-${node.id}`,
-          type: NodeType.UNKNOWN,
-          namespace: node.namespace,
-          name: 'unknown'
-        };
     }
   };
-
-  /*
-  private processSecondLevelTraffic = (
-    edges: any,
-    serviceTraffic: ServiceTraffic,
-    nodes: { [key: string]: GraphNodeData },
-    myNode: GraphNodeData
-  ) => {
-    const inboundTraffic: TrafficItem[] = [];
-    const outboundTraffic: TrafficItem[] = [];
-
-    edges.forEach(edge => {
-      const sourceNode = nodes['id-' + edge.data.source];
-      const targetNode = nodes['id-' + edge.data.target];
-
-      if (myNode.id === edge.data.source || myNode.id === edge.data.target) {
-        return;
-      }
-
-      if (targetNode.nodeType === NodeType.SERVICE) {
-        const svcId = `in-${targetNode.namespace}-${targetNode.service}`;
-        if (serviceTraffic[svcId]) {
-          inboundTraffic.push({
-            traffic: edge.data.traffic,
-            proxy: serviceTraffic[svcId],
-            node: this.buildTrafficNode('in', sourceNode)
-          });
-        }
-      } else if (sourceNode.nodeType === NodeType.SERVICE) {
-        const svcId = `out-${sourceNode.namespace}-${sourceNode.service}`;
-        if (serviceTraffic[svcId]) {
-          outboundTraffic.push({
-            traffic: edge.data.traffic,
-            proxy: serviceTraffic[svcId],
-            node: this.buildTrafficNode('out', targetNode)
-          });
-        }
-      }
-    });
-
-    return { inboundTraffic, outboundTraffic };
-  };
-  */
 
   private processTraffic = (
     edges: GraphEdgeWrapper[],
@@ -298,7 +255,7 @@ class TrafficDetails extends React.Component<TrafficDetailsProps, TrafficDetails
     traffic.elements.nodes.forEach(element => {
       // Ignore group nodes. They are not relevant for the traffic list because we
       // are interested in the actual apps.
-      if (element.data.isGroup) {
+      if (!element.data.isGroup) {
         nodes['id-' + element.data.id] = element.data;
         if (element.data.namespace) {
           const isMyWorkload =

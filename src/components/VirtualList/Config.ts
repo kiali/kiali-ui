@@ -13,6 +13,11 @@ import * as React from 'react';
 import { StatefulFilters } from '../Filters/StatefulFilters';
 import { TrafficListItem } from 'pages/TrafficList/TrafficListComponent';
 
+export type BaseItem = {
+  icon: string;
+  name: string;
+  namespace: string;
+};
 export type SortResource = AppListItem | WorkloadListItem | ServiceListItem;
 export type TResource = SortResource | IstioConfigItem | TrafficListItem;
 export type RenderResource = TResource | NamespaceInfo;
@@ -157,6 +162,14 @@ const istioType: ResourceType<IstioConfigItem> = {
   renderer: Renderers.istioType
 };
 
+const healthStatus: ResourceType<TrafficListItem> = {
+  name: 'HealthStatus',
+  param: 'hs',
+  column: 'Health',
+  transforms: [sortable],
+  renderer: Renderers.healthStatus
+};
+
 const protocol: ResourceType<TrafficListItem> = {
   name: 'Protocol',
   param: 'pr',
@@ -176,7 +189,7 @@ const rate: ResourceType<TrafficListItem> = {
 const percent: ResourceType<TrafficListItem> = {
   name: 'Percent',
   param: 'pe',
-  column: 'Percent',
+  column: 'Percent Success',
   transforms: [sortable],
   renderer: Renderers.percent
 };
@@ -216,31 +229,26 @@ export type Resource = {
   name: string;
   columns: ResourceType<any>[];
   caption?: string;
-  icon?: string;
 };
 
 const namespaces: Resource = {
   name: 'namespaces',
-  columns: [tlsStatus, nsItem, istioConfiguration, labels, status],
-  icon: 'NS'
+  columns: [tlsStatus, nsItem, istioConfiguration, labels, status]
 };
 
 const workloads: Resource = {
   name: 'workloads',
-  columns: [item, namespace, workloadType, labels, health, details],
-  icon: 'W'
+  columns: [item, namespace, workloadType, labels, health, details]
 };
 
 const applications: Resource = {
   name: 'applications',
-  columns: [item, namespace, labels, health, details],
-  icon: 'A'
+  columns: [item, namespace, labels, health, details]
 };
 
 const services: Resource = {
   name: 'services',
-  columns: [serviceItem, namespace, labels, health, configuration, details],
-  icon: 'S'
+  columns: [serviceItem, namespace, labels, health, configuration, details]
 };
 
 const istio: Resource = {
@@ -250,8 +258,7 @@ const istio: Resource = {
 
 const traffic: Resource = {
   name: 'traffic',
-  columns: [item, protocol, rate, percent, health],
-  icon: 't'
+  columns: [item, protocol, rate, percent, healthStatus]
 };
 
 const conf = {

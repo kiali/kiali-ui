@@ -27,18 +27,53 @@ import { GetIstioObjectUrl } from '../Link/IstioObjectLink';
 import { labelFilter } from 'components/Filters/CommonFilters';
 import { labelFilter as NsLabelFilter } from '../../pages/Overview/Filters';
 import { TrafficListItem } from 'pages/TrafficList/TrafficListComponent';
+import { createIcon } from 'components/Health/Helper';
 
 // Links
 
 const getLink = (item: TResource, config: Resource, query?: string) => {
-  let url = config.name === 'istio' ? getIstioLink(item) : `/namespaces/${item.namespace}/${config.name}/${item.name}`;
-  return query ? url + '?' + query : url;
+  let url: string;
+  switch (config.name) {
+    case 'istio':
+      url = getIstioLink(item);
+      break;
+    case 'traffic':
+      url = getTrafficLink(item as TrafficListItem);
+      break;
+    default:
+      url = `/namespaces/${item.namespace}/${config.name}/${item.name}`;
+  }
+  if (!url) {
+    return '';
+  }
+
+  return query ? `${url}?${query}` : url;
 };
 
 const getIstioLink = (item: TResource) => {
   const type = item['type'];
 
   return GetIstioObjectUrl(item.name, item.namespace, type);
+};
+
+const getTrafficLink = (item: TrafficListItem) => {
+  if (item.isInaccessible) {
+    return '';
+  }
+
+  let type: string;
+  switch (item.icon) {
+    case 'A':
+      type = 'applications';
+      break;
+    case 'S':
+      type = 'services';
+      break;
+    default:
+      type = 'workloads';
+  }
+
+  return `/namespaces/${item.namespace}/${type}/${item.name}`;
 };
 
 // Cells
@@ -150,29 +185,46 @@ export const status: Renderer<NamespaceInfo> = (ns: NamespaceInfo) => {
   return <td role="gridcell" key={'VirtuaItem_Status_' + ns.name} />;
 };
 
-export const nsItem: Renderer<NamespaceInfo> = (ns: NamespaceInfo, _config: Resource, icon: string) => {
+export const nsItem: Renderer<NamespaceInfo> = (ns: NamespaceInfo, _config: Resource) => {
   return (
     <td role="gridcell" key={'VirtuaItem_NamespaceItem_' + ns.name} style={{ verticalAlign: 'middle' }}>
-      <Badge className={'virtualitem_badge_definition'}>{icon}</Badge>
+      <Badge className={'virtualitem_badge_definition'}>{ns.icon}</Badge>
       {ns.name}
     </td>
   );
 };
 
-export const item: Renderer<TResource> = (item: TResource, config: Resource, icon: string) => {
+export const item: Renderer<TResource> = (item: TResource, config: Resource) => {
   const key = 'link_definition_' + config.name + '_' + item.namespace + '_' + item.name;
   let itemName = config.name.charAt(0).toUpperCase() + config.name.slice(1);
   if (config.name === 'istio') {
     itemName = IstioTypes[item['type']].name;
+  } else if (config.name === 'traffic') {
+    switch (item.icon) {
+      case 'A':
+        itemName = 'Applications';
+        break;
+      case 'S':
+        itemName = 'Services';
+        break;
+      default:
+        itemName = 'Workloads';
+        break;
+    }
   }
+  const link = getLink(item, config);
   return (
     <td role="gridcell" key={'VirtuaItem_Item_' + item.namespace + '_' + item.name} style={{ verticalAlign: 'middle' }}>
       <Tooltip position={TooltipPosition.top} content={<>{itemName}</>}>
-        <Badge className={'virtualitem_badge_definition'}>{icon}</Badge>
+        <Badge className={'virtualitem_badge_definition'}>{item.icon}</Badge>
       </Tooltip>
-      <Link key={key} to={getLink(item, config)} className={'virtualitem_definition_link'}>
-        {item.name}
-      </Link>
+      {!!link ? (
+        <Link key={key} to={link} className={'virtualitem_definition_link'}>
+          {item.name}
+        </Link>
+      ) : (
+        item.name
+      )}
     </td>
   );
 };
@@ -192,14 +244,14 @@ export const namespace: Renderer<TResource> = (item: TResource) => {
   );
 };
 
-export const protocol: Renderer<TrafficListItem> = (item: TrafficListItem) => {
+export const healthStatus: Renderer<TrafficListItem> = (item: TrafficListItem) => {
   return (
     <td
       role="gridcell"
-      key={'VirtuaItem_Protocol_' + item.protocol + '_' + item.name}
+      key={'VirtuaItem_Protocol_' + item.healthStatus.status.priority + '_' + item.name}
       style={{ verticalAlign: 'middle' }}
     >
-      {item.namespace}
+      {createIcon(item.healthStatus.status, 'sm')}
     </td>
   );
 };
@@ -212,6 +264,18 @@ export const percent: Renderer<TrafficListItem> = (item: TrafficListItem) => {
       style={{ verticalAlign: 'middle' }}
     >
       {item.trafficPercent}
+    </td>
+  );
+};
+
+export const protocol: Renderer<TrafficListItem> = (item: TrafficListItem) => {
+  return (
+    <td
+      role="gridcell"
+      key={'VirtuaItem_Protocol_' + item.protocol + '_' + item.name}
+      style={{ verticalAlign: 'middle' }}
+    >
+      {item.protocol}
     </td>
   );
 };
@@ -315,6 +379,7 @@ export const labels: Renderer<SortResource | NamespaceInfo> = (
     </td>
   );
 };
+
 export const health: Renderer<TResource> = (item: TResource, __: Resource, _: string, health?: Health) => {
   return (
     <td

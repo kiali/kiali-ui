@@ -2,22 +2,20 @@ import * as React from 'react';
 import * as TrafficListFilters from './FiltersAndSorts';
 import { PromisesRegistry } from '../../utils/CancelablePromises';
 import * as FilterComponent from '../../components/FilterList/FilterComponent';
-import { TrafficItem } from 'components/Details/DetailedTrafficList';
-import { NA } from 'types/Health';
-import { NodeType, ProtocolTraffic, hasProtocolTraffic } from '../../types/Graph';
+import { NA, ThresholdStatus } from 'types/Health';
+import { ProtocolTraffic, hasProtocolTraffic, NodeType } from '../../types/Graph';
 import { getTrafficHealth } from 'types/ErrorRate';
-import { createIcon } from 'components/Health/Helper';
 import VirtualList from 'components/VirtualList/VirtualList';
 import { SortField } from 'types/SortFilters';
+import { BaseItem } from 'components/VirtualList/Config';
+import { TrafficItem } from './TrafficDetails';
 
-export interface TrafficListItem {
-  name: string;
-  namespace: string;
-  nodeType: NodeType;
+export interface TrafficListItem extends BaseItem {
+  isInaccessible: boolean;
   protocol: string;
-  health: any;
+  healthStatus: ThresholdStatus;
   trafficRate: string;
-  trafficPercent: string;
+  trafficPercent: string; // percent success
 }
 
 type TrafficListComponentState = FilterComponent.State<TrafficListItem>;
@@ -75,13 +73,25 @@ class TrafficListComponent extends FilterComponent.Component<
     this.promises.cancelAll();
 
     const listItems = this.props.trafficItems.map(ti => {
+      let icon: string;
+      switch (ti.node.type) {
+        case NodeType.APP:
+          icon = 'A';
+          break;
+        case NodeType.SERVICE:
+          icon = 'S';
+          break;
+        default:
+          icon = 'WL';
+      }
       const item: TrafficListItem = {
+        icon: icon,
+        isInaccessible: ti.node.isInaccessible,
         name: ti.node.name,
         namespace: ti.node.namespace,
-        nodeType: ti.node.type,
-        protocol: this.renderProtocolColumn(ti.traffic),
-        health: this.renderHealthColumn(ti),
-        ...this.renderTrafficColumns(ti.traffic)
+        protocol: this.getProtocol(ti.traffic),
+        healthStatus: this.getHealthStatus(ti),
+        ...this.getTraffic(ti.traffic)
       };
       return item;
     });
@@ -108,38 +118,43 @@ class TrafficListComponent extends FilterComponent.Component<
     return Promise.resolve(sorted);
   }
 
-  private renderHealthColumn = (item: TrafficItem) => {
+  private getHealthStatus = (item: TrafficItem): ThresholdStatus => {
     const traffic = item.traffic;
-    if (traffic.protocol !== 'tcp' && hasProtocolTraffic(traffic)) {
-      const status = getTrafficHealth(item, this.props.direction);
-      return createIcon(status.status, 'sm');
+
+    if (item.node.isInaccessible || traffic.protocol === 'tcp' || !hasProtocolTraffic(traffic)) {
+      return { value: 0, status: NA };
     }
-    return createIcon(NA, 'sm');
+
+    return getTrafficHealth(item, this.props.direction);
   };
 
-  private renderTrafficColumns = (traffic: ProtocolTraffic): { trafficRate; trafficPercent } => {
+  private getTraffic = (traffic: ProtocolTraffic): { trafficRate; trafficPercent } => {
+    let rps = '0';
+    let percentError = '0';
+    let unit = 'rps';
     if (hasProtocolTraffic(traffic)) {
-      if (traffic.protocol === 'tcp') {
-        return { trafficRate: Number(traffic.rates.tcp).toFixed(2), trafficPercent: '100%' };
-      } else {
-        let rps: number;
-        let percentError: number;
-
-        if (traffic.protocol === 'http') {
-          rps = Number(traffic.rates.http);
-          percentError = traffic.rates.httpPercentErr ? Number(traffic.rates.httpPercentErr) : 0;
-        } else {
-          rps = Number(traffic.rates.grpc);
-          percentError = traffic.rates.grpcPercentErr ? Number(traffic.rates.grpcPercentErr) : 0;
-        }
-        return { trafficRate: `${rps.toFixed(2)}rps`, trafficPercent: `${(100 - percentError).toFixed(1)}% success` };
+      switch (traffic.protocol) {
+        case 'http':
+          rps = traffic.rates.http;
+          percentError = traffic.rates.httpPercentErr || '0';
+          break;
+        case 'grpc':
+          rps = traffic.rates.grpc;
+          percentError = traffic.rates.grpcPercentErr || '0';
+          break;
+        case 'tcp':
+          rps = traffic.rates.tcp;
+          break;
       }
-    } else {
-      return { trafficRate: 'N/A', trafficPercent: 'N/A' };
     }
+
+    return {
+      trafficRate: `${Number(rps).toFixed(2)}${unit}`,
+      trafficPercent: `${(100 - Number(percentError)).toFixed(1)}%`
+    };
   };
 
-  private renderProtocolColumn = (traffic: ProtocolTraffic) => {
+  private getProtocol = (traffic: ProtocolTraffic) => {
     if (!traffic.protocol) {
       return 'N/A';
     }

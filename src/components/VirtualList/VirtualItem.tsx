@@ -59,15 +59,15 @@ export default class VirtualItem extends React.Component<VirtualItemProps, Virtu
   };
 
   renderDetails = (item: RenderResource, health?: Health) => {
-    const icon = this.getIcon();
+    const icon = this.getIcon(item);
     return this.props.config.columns.map(object =>
       object.renderer(item, this.props.config, icon, health, this.props.statefulFilterProps)
     );
   };
 
-  getIcon = () => {
+  getIcon = (item: RenderResource) => {
     if (this.props.config.name !== 'istio') {
-      return this.props.config.icon;
+      return item.icon;
     } else {
       return IstioTypes[this.props.item['type']].icon;
     }
