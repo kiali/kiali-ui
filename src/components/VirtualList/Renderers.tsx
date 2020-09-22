@@ -61,19 +61,18 @@ const getTrafficLink = (item: TrafficListItem) => {
     return '';
   }
 
-  let type: string;
-  switch (item.icon) {
-    case 'A':
-      type = 'applications';
-      break;
-    case 'S':
-      type = 'services';
-      break;
-    default:
-      type = 'workloads';
-  }
+  return `/namespaces/${item.namespace}/${iconToType(item.icon)}/${item.name}`;
+};
 
-  return `/namespaces/${item.namespace}/${type}/${item.name}`;
+const iconToType = (icon: string): string => {
+  switch (icon) {
+    case 'A':
+      return 'applications';
+    case 'S':
+      return 'services';
+    default:
+      return 'workloads';
+  }
 };
 
 // Cells
@@ -200,17 +199,7 @@ export const item: Renderer<TResource> = (item: TResource, config: Resource) => 
   if (config.name === 'istio') {
     itemName = IstioTypes[item['type']].name;
   } else if (config.name === 'traffic') {
-    switch (item.icon) {
-      case 'A':
-        itemName = 'Applications';
-        break;
-      case 'S':
-        itemName = 'Services';
-        break;
-      default:
-        itemName = 'Workloads';
-        break;
-    }
+    itemName = iconToType(item.icon);
   }
   const link = getLink(item, config);
   return (
