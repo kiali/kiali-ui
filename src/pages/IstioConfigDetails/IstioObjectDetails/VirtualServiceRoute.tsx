@@ -59,7 +59,7 @@ class VirtualServiceRoute extends React.Component<VirtualServiceRouteProps> {
 
   render() {
     return (this.props.routes || []).map((route, i) => {
-      const marginTop = i == 0 ? -30 : 0;
+      const marginTop = i === 0 ? -30 : 0;
       return (
         <div key={'bulletchart-wrapper-' + i} style={{ marginTop: marginTop }}>
           {this.renderWeights(route, i)}
