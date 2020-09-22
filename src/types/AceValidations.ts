@@ -209,10 +209,10 @@ const parseCheck = (yaml: string, check: ObjectCheck): AceCheck => {
 
   marker.startRow = aceMarker.startRow;
   marker.startCol = aceMarker.startCol;
-  marker.endRow = aceMarker.endRow;
+  // React Ace editor has a flip in the marker indexes
+  marker.endRow = aceMarker.endRow > 0 ? aceMarker.endRow - 1 : 0;
   marker.endCol = aceMarker.endCol;
   annotation.row = marker.startRow;
-
   return { marker: marker, annotation: annotation };
 };
 

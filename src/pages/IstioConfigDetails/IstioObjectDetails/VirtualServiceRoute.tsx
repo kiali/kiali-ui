@@ -50,7 +50,7 @@ class VirtualServiceRoute extends React.Component<VirtualServiceRouteProps> {
             qualitativeRangeData={[{ name: 'Range', y: 100 }]}
             primarySegmentedMeasureData={this.bulletChartValues(route)}
             labels={this.bulletChartLabels}
-            padding={'0 0 0 0'}
+            padding={'80 0 0 0'}
           />
         )}
       </>

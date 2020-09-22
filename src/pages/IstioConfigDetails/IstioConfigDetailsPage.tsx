@@ -499,7 +499,7 @@ class IstioConfigDetailsPage extends React.Component<RouteComponentProps<IstioCo
     return (
       <div className={editorDrawer}>
         {showCards ? (
-          <Drawer className="editor-drawer" isExpanded={this.state.isExpanded} isInline={true}>
+          <Drawer isExpanded={this.state.isExpanded} isInline={true}>
             <DrawerContent panelContent={showCards ? panelContent : undefined}>
               <DrawerContentBody>{editor}</DrawerContentBody>
             </DrawerContent>
