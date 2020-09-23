@@ -12,7 +12,7 @@ import { KialiAppState } from 'store/Store';
 import { KialiAppAction } from 'actions/KialiAppAction';
 import { JaegerThunkActions } from 'actions/JaegerThunkActions';
 import { getFormattedTraceInfo } from 'components/JaegerIntegration/JaegerResults/FormattedTraceInfo';
-import { PFAlertColor, PfColors } from 'components/Pf/PfColors';
+import { PFAlertColor } from 'components/Pf/PfColors';
 import {
   extractEnvoySpanInfo,
   extractOpenTracingHTTPInfo,
@@ -59,10 +59,6 @@ const errorStyle = style({
 
 const pStyle = style({
   paddingTop: 9
-});
-
-const secondaryStyle = style({
-  color: PfColors.Black600
 });
 
 const navButtonStyle = style({
@@ -137,13 +133,24 @@ class SummaryPanelTraceDetails extends React.Component<Props, State> {
               <span className={nameStyleToUse}>{traceName}</span>
             )}
           </Tooltip>
-          <div className={pStyle}>
-            <div className={secondaryStyle}>{'From: ' + info.fromNow}</div>
-            {!!info.duration && <div className={secondaryStyle}>{'Full duration: ' + info.duration}</div>}
+          <div>
+            <div>
+              <strong>Started: </strong>
+              {info.fromNow}
+            </div>
+            {info.duration && (
+              <div>
+                <strong>Full duration: </strong>
+                {info.duration}
+              </div>
+            )}
           </div>
           {spans && (
             <div className={pStyle}>
-              <div className={secondaryStyle}>{'Spans for node: ' + nodeName}</div>
+              <div>
+                <strong>Spans for node: </strong>
+                {nodeName}
+              </div>
               <div>
                 <Button
                   className={navButtonStyle}
@@ -203,9 +210,18 @@ class SummaryPanelTraceDetails extends React.Component<Props, State> {
   private renderCommonSpan(span: Span) {
     return (
       <>
-        <div className={secondaryStyle}>{`Operation: ${span.operationName}`}</div>
-        <div className={secondaryStyle}>{`Duration: ${formatDuration(span.duration)}`}</div>
-        <div className={secondaryStyle}>{`Started after ${formatDuration(span.relativeStartTime)}`}</div>
+        <div>
+          <strong>Operation: </strong>
+          {span.operationName}
+        </div>
+        <div>
+          <strong>Started after: </strong>
+          {formatDuration(span.relativeStartTime)}
+        </div>
+        <div>
+          <strong>Duration: </strong>
+          {formatDuration(span.duration)}
+        </div>
       </>
     );
   }
@@ -241,7 +257,9 @@ class SummaryPanelTraceDetails extends React.Component<Props, State> {
       <>
         {info.direction && info.peer && info.peerNamespace && (
           <>
-            <span className={secondaryStyle}>{info.direction === 'inbound' ? 'From: ' : 'To: '}</span>
+            <span>
+              <strong>{info.direction === 'inbound' ? 'From: ' : 'To: '}</strong>
+            </span>
             <Button
               variant={ButtonVariant.link}
               onClick={
@@ -255,10 +273,22 @@ class SummaryPanelTraceDetails extends React.Component<Props, State> {
             </Button>
           </>
         )}
-        <div className={secondaryStyle}>{`Operation: ${span.operationName}`}</div>
-        <div className={secondaryStyle}>{`Request: ${info.method} ${info.url}`}</div>
-        <div className={secondaryStyle}>{`Response: [${rsDetails.join(', ')}]`}</div>
-        <div className={secondaryStyle}>{`Started after ${formatDuration(span.relativeStartTime)}`}</div>
+        <div>
+          <strong>Operation: </strong>
+          {span.operationName}
+        </div>
+        <div>
+          <strong>Started after: </strong>
+          {formatDuration(span.relativeStartTime)}
+        </div>
+        <div>
+          <strong>Request: </strong>
+          {info.method} {info.url}
+        </div>
+        <div>
+          <strong>Response: </strong>
+          {rsDetails.join(', ')}
+        </div>
       </>
     );
   }
@@ -276,26 +306,48 @@ class SummaryPanelTraceDetails extends React.Component<Props, State> {
       info.direction === 'inbound' ? 'Inbound request' : info.direction === 'outbound' ? 'Outbound request' : 'Request';
     return (
       <>
-        <div className={secondaryStyle}>{`Operation: ${span.operationName}`}</div>
-        <div className={secondaryStyle}>{`${rqLabel}: ${info.method} ${info.url}`}</div>
-        <div className={secondaryStyle}>{`Response: [${rsDetails.join(', ')}]`}</div>
-        <div className={secondaryStyle}>{`Started after ${formatDuration(span.relativeStartTime)}`}</div>
+        <div>
+          <strong>Operation: </strong>
+          {span.operationName}
+        </div>
+        <div>
+          <strong>Started after: </strong>
+          {formatDuration(span.relativeStartTime)}
+        </div>
+        <div>
+          <strong>{rqLabel}: </strong>
+          {info.method} {info.url}
+        </div>
+        <div>
+          <strong>Response: </strong>
+          {rsDetails.join(', ')}
+        </div>
       </>
     );
   }
 
   private renderTCPSpan(span: Span) {
     const info = extractOpenTracingTCPInfo(span);
-    let actionLabel = info.direction === 'inbound' ? 'Received data' : info.direction === 'outbound' ? 'Sent data' : '';
-    if (info.topic) {
-      actionLabel += ' on topic ' + info.topic;
-    }
     return (
       <>
-        <div className={secondaryStyle}>{`Operation: ${span.operationName}`}</div>
-        <div className={secondaryStyle}>{actionLabel}</div>
-        <div className={secondaryStyle}>{`Duration: ${formatDuration(span.duration)}`}</div>
-        <div className={secondaryStyle}>{`Started after ${formatDuration(span.relativeStartTime)}`}</div>
+        <div>
+          <strong>Operation: </strong>
+          {span.operationName}
+        </div>
+        <div>
+          <strong>Started after: </strong>
+          {formatDuration(span.relativeStartTime)}
+        </div>
+        {info.topic && (
+          <div>
+            <strong>Topic: </strong>
+            {info.topic}
+          </div>
+        )}
+        <div>
+          <strong>Duration: </strong>
+          {formatDuration(span.duration)}
+        </div>
       </>
     );
   }
