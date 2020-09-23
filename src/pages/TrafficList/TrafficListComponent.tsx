@@ -121,11 +121,11 @@ class TrafficListComponent extends FilterComponent.Component<
   private getHealthStatus = (item: TrafficItem): ThresholdStatus => {
     const traffic = item.traffic;
 
-    if (item.node.isInaccessible || traffic.protocol === 'tcp' || !hasProtocolTraffic(traffic)) {
-      return { value: 0, status: NA };
+    if (traffic.protocol !== 'tcp' && hasProtocolTraffic(traffic)) {
+      return getTrafficHealth(item, this.props.direction);
     }
 
-    return getTrafficHealth(item, this.props.direction);
+    return { value: 0, status: NA };
   };
 
   private getTraffic = (traffic: ProtocolTraffic): { trafficRate; trafficPercent } => {
