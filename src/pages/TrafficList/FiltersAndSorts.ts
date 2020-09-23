@@ -32,10 +32,10 @@ export const sortFields: SortField<TrafficListItem>[] = [
     compare: (a: TrafficListItem, b: TrafficListItem) => a.trafficPercent.localeCompare(b.trafficPercent)
   },
   {
-    id: 'status',
-    title: 'Health',
+    id: 'trafficstatus',
+    title: 'Traffic Status',
     isNumeric: false,
-    param: 'st',
+    param: 'ts',
     compare: (a, b) => a.healthStatus.status.priority - b.healthStatus.status.priority
   }
 ];

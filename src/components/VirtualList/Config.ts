@@ -162,14 +162,6 @@ const istioType: ResourceType<IstioConfigItem> = {
   renderer: Renderers.istioType
 };
 
-const healthStatus: ResourceType<TrafficListItem> = {
-  name: 'HealthStatus',
-  param: 'hs',
-  column: 'Health',
-  transforms: [sortable],
-  renderer: Renderers.healthStatus
-};
-
 const protocol: ResourceType<TrafficListItem> = {
   name: 'Protocol',
   param: 'pr',
@@ -192,6 +184,14 @@ const percent: ResourceType<TrafficListItem> = {
   column: 'Percent Success',
   transforms: [sortable],
   renderer: Renderers.percent
+};
+
+const trafficStatus: ResourceType<TrafficListItem> = {
+  name: 'TrafficStatus',
+  param: 'ts',
+  column: 'Traffic Status',
+  transforms: [sortable],
+  renderer: Renderers.trafficStatus
 };
 
 export const IstioTypes = {
@@ -258,7 +258,7 @@ const istio: Resource = {
 
 const traffic: Resource = {
   name: 'traffic',
-  columns: [item, protocol, rate, percent, healthStatus]
+  columns: [item, protocol, rate, percent, trafficStatus]
 };
 
 const conf = {

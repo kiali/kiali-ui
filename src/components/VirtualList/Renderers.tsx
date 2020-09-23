@@ -233,7 +233,7 @@ export const namespace: Renderer<TResource> = (item: TResource) => {
   );
 };
 
-export const healthStatus: Renderer<TrafficListItem> = (item: TrafficListItem) => {
+export const trafficStatus: Renderer<TrafficListItem> = (item: TrafficListItem) => {
   return (
     <td
       role="gridcell"
