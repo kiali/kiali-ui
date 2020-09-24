@@ -26,53 +26,18 @@ import { StatefulFilters } from '../Filters/StatefulFilters';
 import { GetIstioObjectUrl } from '../Link/IstioObjectLink';
 import { labelFilter } from 'components/Filters/CommonFilters';
 import { labelFilter as NsLabelFilter } from '../../pages/Overview/Filters';
-import { TrafficListItem } from 'pages/TrafficList/TrafficListComponent';
-import { createIcon } from 'components/Health/Helper';
 
 // Links
 
 const getLink = (item: TResource, config: Resource, query?: string) => {
-  let url: string;
-  switch (config.name) {
-    case 'istio':
-      url = getIstioLink(item);
-      break;
-    case 'traffic':
-      url = getTrafficLink(item as TrafficListItem);
-      break;
-    default:
-      url = `/namespaces/${item.namespace}/${config.name}/${item.name}`;
-  }
-  if (!url) {
-    return '';
-  }
-
-  return query ? `${url}?${query}` : url;
+  let url = config.name === 'istio' ? getIstioLink(item) : `/namespaces/${item.namespace}/${config.name}/${item.name}`;
+  return query ? url + '?' + query : url;
 };
 
 const getIstioLink = (item: TResource) => {
   const type = item['type'];
 
   return GetIstioObjectUrl(item.name, item.namespace, type);
-};
-
-const getTrafficLink = (item: TrafficListItem) => {
-  if (item.isInaccessible) {
-    return '';
-  }
-
-  return `/namespaces/${item.namespace}/${iconToType(item.icon)}/${item.name}`;
-};
-
-const iconToType = (icon: string): string => {
-  switch (icon) {
-    case 'A':
-      return 'applications';
-    case 'S':
-      return 'services';
-    default:
-      return 'workloads';
-  }
 };
 
 // Cells
@@ -184,36 +149,29 @@ export const status: Renderer<NamespaceInfo> = (ns: NamespaceInfo) => {
   return <td role="gridcell" key={'VirtuaItem_Status_' + ns.name} />;
 };
 
-export const nsItem: Renderer<NamespaceInfo> = (ns: NamespaceInfo, _config: Resource) => {
+export const nsItem: Renderer<NamespaceInfo> = (ns: NamespaceInfo, _config: Resource, icon: string) => {
   return (
     <td role="gridcell" key={'VirtuaItem_NamespaceItem_' + ns.name} style={{ verticalAlign: 'middle' }}>
-      <Badge className={'virtualitem_badge_definition'}>{ns.icon}</Badge>
+      <Badge className={'virtualitem_badge_definition'}>{icon}</Badge>
       {ns.name}
     </td>
   );
 };
 
-export const item: Renderer<TResource> = (item: TResource, config: Resource) => {
+export const item: Renderer<TResource> = (item: TResource, config: Resource, icon: string) => {
   const key = 'link_definition_' + config.name + '_' + item.namespace + '_' + item.name;
   let itemName = config.name.charAt(0).toUpperCase() + config.name.slice(1);
   if (config.name === 'istio') {
     itemName = IstioTypes[item['type']].name;
-  } else if (config.name === 'traffic') {
-    itemName = iconToType(item.icon);
   }
-  const link = getLink(item, config);
   return (
     <td role="gridcell" key={'VirtuaItem_Item_' + item.namespace + '_' + item.name} style={{ verticalAlign: 'middle' }}>
       <Tooltip position={TooltipPosition.top} content={<>{itemName}</>}>
-        <Badge className={'virtualitem_badge_definition'}>{item.icon}</Badge>
+        <Badge className={'virtualitem_badge_definition'}>{icon}</Badge>
       </Tooltip>
-      {!!link ? (
-        <Link key={key} to={link} className={'virtualitem_definition_link'}>
-          {item.name}
-        </Link>
-      ) : (
-        item.name
-      )}
+      <Link key={key} to={getLink(item, config)} className={'virtualitem_definition_link'}>
+        {item.name}
+      </Link>
     </td>
   );
 };
@@ -229,54 +187,6 @@ export const namespace: Renderer<TResource> = (item: TResource) => {
         <Badge className={'virtualitem_badge_definition'}>NS</Badge>
       </Tooltip>
       {item.namespace}
-    </td>
-  );
-};
-
-export const trafficStatus: Renderer<TrafficListItem> = (item: TrafficListItem) => {
-  return (
-    <td
-      role="gridcell"
-      key={'VirtuaItem_Protocol_' + item.healthStatus.status.priority + '_' + item.name}
-      style={{ verticalAlign: 'middle' }}
-    >
-      {createIcon(item.healthStatus.status, 'sm')}
-    </td>
-  );
-};
-
-export const percent: Renderer<TrafficListItem> = (item: TrafficListItem) => {
-  return (
-    <td
-      role="gridcell"
-      key={'VirtuaItem_Rate_' + item.trafficPercent + '_' + item.name}
-      style={{ verticalAlign: 'middle' }}
-    >
-      {item.trafficPercent}
-    </td>
-  );
-};
-
-export const protocol: Renderer<TrafficListItem> = (item: TrafficListItem) => {
-  return (
-    <td
-      role="gridcell"
-      key={'VirtuaItem_Protocol_' + item.protocol + '_' + item.name}
-      style={{ verticalAlign: 'middle' }}
-    >
-      {item.protocol}
-    </td>
-  );
-};
-
-export const rate: Renderer<TrafficListItem> = (item: TrafficListItem) => {
-  return (
-    <td
-      role="gridcell"
-      key={'VirtuaItem_Rate_' + item.trafficRate + '_' + item.name}
-      style={{ verticalAlign: 'middle' }}
-    >
-      {item.trafficRate}
     </td>
   );
 };
@@ -368,7 +278,6 @@ export const labels: Renderer<SortResource | NamespaceInfo> = (
     </td>
   );
 };
-
 export const health: Renderer<TResource> = (item: TResource, __: Resource, _: string, health?: Health) => {
   return (
     <td

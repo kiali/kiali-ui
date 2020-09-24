@@ -4,7 +4,6 @@ import { ValidationStatus } from '../../types/IstioObjects';
 import { IstioConfigList } from '../../types/IstioConfigList';
 
 export type NamespaceInfo = {
-  icon: string;
   name: string;
   status?: NamespaceStatus;
   tlsStatus?: TLSStatus;

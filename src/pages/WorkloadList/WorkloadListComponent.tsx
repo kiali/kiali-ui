@@ -108,7 +108,6 @@ class WorkloadListComponent extends FilterComponent.Component<
   getDeploymentItems = (data: WorkloadNamespaceResponse): WorkloadListItem[] => {
     if (data.workloads) {
       return data.workloads.map(deployment => ({
-        icon: 'WL',
         namespace: data.namespace.name,
         name: deployment.name,
         type: deployment.type,

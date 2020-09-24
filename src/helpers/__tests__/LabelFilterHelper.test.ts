@@ -5,7 +5,6 @@ import { ServiceListItem } from '../../types/ServiceList';
 
 const appList: AppListItem[] = [
   {
-    icon: 'A',
     namespace: 'bookinfo',
     healthPromise: new Promise(() => {}),
     name: 'ratings',
@@ -13,7 +12,6 @@ const appList: AppListItem[] = [
     labels: { app: 'ratings', service: 'ratings', version: 'v1' }
   },
   {
-    icon: 'A',
     namespace: 'bookinfo',
     healthPromise: new Promise(() => {}),
     name: 'productpage',
@@ -21,7 +19,6 @@ const appList: AppListItem[] = [
     labels: { app: 'productpage', service: 'productpage', version: 'v1' }
   },
   {
-    icon: 'A',
     namespace: 'bookinfo',
     healthPromise: new Promise(() => {}),
     name: 'details',
@@ -29,7 +26,6 @@ const appList: AppListItem[] = [
     labels: { app: 'details', service: 'details', version: 'v1' }
   },
   {
-    icon: 'A',
     namespace: 'bookinfo',
     healthPromise: new Promise(() => {}),
     name: 'reviews',
@@ -40,7 +36,6 @@ const appList: AppListItem[] = [
 
 const workloadList: WorkloadListItem[] = [
   {
-    icon: 'WL',
     namespace: 'bookinfo',
     healthPromise: new Promise(() => {}),
     name: 'details-v1',
@@ -51,7 +46,6 @@ const workloadList: WorkloadListItem[] = [
     versionLabel: true
   },
   {
-    icon: 'WL',
     namespace: 'bookinfo',
     healthPromise: new Promise(() => {}),
     name: 'productpage-v1',
@@ -62,7 +56,6 @@ const workloadList: WorkloadListItem[] = [
     versionLabel: true
   },
   {
-    icon: 'WL',
     namespace: 'bookinfo',
     healthPromise: new Promise(() => {}),
     name: 'ratings-v1',
@@ -73,7 +66,6 @@ const workloadList: WorkloadListItem[] = [
     versionLabel: true
   },
   {
-    icon: 'WL',
     namespace: 'bookinfo',
     healthPromise: new Promise(() => {}),
     name: 'reviews-v1',
@@ -84,7 +76,6 @@ const workloadList: WorkloadListItem[] = [
     versionLabel: true
   },
   {
-    icon: 'WL',
     namespace: 'bookinfo',
     healthPromise: new Promise(() => {}),
     name: 'reviews-v2',
@@ -95,7 +86,6 @@ const workloadList: WorkloadListItem[] = [
     versionLabel: true
   },
   {
-    icon: 'WL',
     namespace: 'bookinfo',
     healthPromise: new Promise(() => {}),
     name: 'reviews-v3',
@@ -109,7 +99,6 @@ const workloadList: WorkloadListItem[] = [
 
 const serviceList: ServiceListItem[] = [
   {
-    icon: 'S',
     namespace: 'bookinfo',
     healthPromise: new Promise(() => {}),
     name: 'details',
@@ -118,7 +107,6 @@ const serviceList: ServiceListItem[] = [
     validation: { name: 'details', objectType: 'service', valid: true, checks: [] }
   },
   {
-    icon: 'S',
     namespace: 'bookinfo',
     healthPromise: new Promise(() => {}),
     name: 'reviews',
@@ -127,7 +115,6 @@ const serviceList: ServiceListItem[] = [
     validation: { name: 'reviews', objectType: 'service', valid: true, checks: [] }
   },
   {
-    icon: 'S',
     namespace: 'bookinfo',
     healthPromise: new Promise(() => {}),
     name: 'ratings',
@@ -136,7 +123,6 @@ const serviceList: ServiceListItem[] = [
     validation: { name: 'ratings', objectType: 'service', valid: true, checks: [] }
   },
   {
-    icon: 'S',
     namespace: 'bookinfo',
     healthPromise: new Promise(() => {}),
     name: 'productpage',
@@ -156,7 +142,6 @@ describe('LabelFilter', () => {
     const result = filterByLabel(appList, ['app', 'service:details'], 'and');
     expect(result).toEqual([
       {
-        icon: 'A',
         namespace: 'bookinfo',
         healthPromise: new Promise(() => {}),
         name: 'details',
@@ -170,7 +155,6 @@ describe('LabelFilter', () => {
     const result = filterByLabel(appList, ['app', 'version:v2'], 'and');
     expect(result).toEqual([
       {
-        icon: 'A',
         namespace: 'bookinfo',
         healthPromise: new Promise(() => {}),
         name: 'reviews',
@@ -189,7 +173,6 @@ describe('LabelFilter', () => {
     const result = filterByLabel(workloadList, ['app:reviews', 'version'], 'and');
     expect(result).toEqual([
       {
-        icon: 'WL',
         namespace: 'bookinfo',
         healthPromise: new Promise(() => {}),
         name: 'reviews-v1',
@@ -200,7 +183,6 @@ describe('LabelFilter', () => {
         versionLabel: true
       },
       {
-        icon: 'WL',
         namespace: 'bookinfo',
         healthPromise: new Promise(() => {}),
         name: 'reviews-v2',
@@ -211,7 +193,6 @@ describe('LabelFilter', () => {
         versionLabel: true
       },
       {
-        icon: 'WL',
         namespace: 'bookinfo',
         healthPromise: new Promise(() => {}),
         name: 'reviews-v3',
@@ -233,7 +214,6 @@ describe('LabelFilter', () => {
     const result = filterByLabel(serviceList, ['app', 'service:de'], 'and');
     expect(result).toEqual([
       {
-        icon: 'S',
         namespace: 'bookinfo',
         healthPromise: new Promise(() => {}),
         name: 'details',

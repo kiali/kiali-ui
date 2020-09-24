@@ -1,7 +1,6 @@
 import Namespace from './Namespace';
 import { WorkloadHealth } from './Health';
 import { Pod, Service } from './IstioObjects';
-import { BaseItem } from 'components/VirtualList/Config';
 
 export interface WorkloadId {
   namespace: string;
@@ -55,7 +54,8 @@ export const WorkloadType = {
   StatefulSet: 'StatefulSet'
 };
 
-export interface WorkloadOverview extends BaseItem {
+export interface WorkloadOverview {
+  name: string;
   type: string;
   istioSidecar: boolean;
   additionalDetailSample?: AdditionalItem;
@@ -65,6 +65,7 @@ export interface WorkloadOverview extends BaseItem {
 }
 
 export interface WorkloadListItem extends WorkloadOverview {
+  namespace: string;
   healthPromise: Promise<WorkloadHealth>;
 }
 

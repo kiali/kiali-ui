@@ -11,15 +11,9 @@ import { isIstioNamespace } from 'config/ServerConfig';
 import NamespaceInfo from '../../pages/Overview/NamespaceInfo';
 import * as React from 'react';
 import { StatefulFilters } from '../Filters/StatefulFilters';
-import { TrafficListItem } from 'pages/TrafficList/TrafficListComponent';
 
-export type BaseItem = {
-  icon: string;
-  name: string;
-  namespace: string;
-};
 export type SortResource = AppListItem | WorkloadListItem | ServiceListItem;
-export type TResource = SortResource | IstioConfigItem | TrafficListItem;
+export type TResource = SortResource | IstioConfigItem;
 export type RenderResource = TResource | NamespaceInfo;
 export type Renderer<R extends RenderResource> = (
   item: R,
@@ -162,38 +156,6 @@ const istioType: ResourceType<IstioConfigItem> = {
   renderer: Renderers.istioType
 };
 
-const protocol: ResourceType<TrafficListItem> = {
-  name: 'Protocol',
-  param: 'pr',
-  column: 'Protocol',
-  transforms: [sortable],
-  renderer: Renderers.protocol
-};
-
-const rate: ResourceType<TrafficListItem> = {
-  name: 'Rate',
-  param: 'ra',
-  column: 'Rate',
-  transforms: [sortable],
-  renderer: Renderers.rate
-};
-
-const percent: ResourceType<TrafficListItem> = {
-  name: 'Percent',
-  param: 'pe',
-  column: 'Percent Success',
-  transforms: [sortable],
-  renderer: Renderers.percent
-};
-
-const trafficStatus: ResourceType<TrafficListItem> = {
-  name: 'TrafficStatus',
-  param: 'ts',
-  column: 'Traffic Status',
-  transforms: [sortable],
-  renderer: Renderers.trafficStatus
-};
-
 export const IstioTypes = {
   gateway: { name: 'Gateway', url: 'gateways', icon: 'G' },
   virtualservice: { name: 'VirtualService', url: 'virtualservices', icon: 'VS' },
@@ -229,36 +191,36 @@ export type Resource = {
   name: string;
   columns: ResourceType<any>[];
   caption?: string;
+  icon?: string;
 };
 
 const namespaces: Resource = {
   name: 'namespaces',
-  columns: [tlsStatus, nsItem, istioConfiguration, labels, status]
+  columns: [tlsStatus, nsItem, istioConfiguration, labels, status],
+  icon: 'NS'
 };
 
 const workloads: Resource = {
   name: 'workloads',
-  columns: [item, namespace, workloadType, labels, health, details]
+  columns: [item, namespace, workloadType, labels, health, details],
+  icon: 'W'
 };
 
 const applications: Resource = {
   name: 'applications',
-  columns: [item, namespace, labels, health, details]
+  columns: [item, namespace, labels, health, details],
+  icon: 'A'
 };
 
 const services: Resource = {
   name: 'services',
-  columns: [serviceItem, namespace, labels, health, configuration, details]
+  columns: [serviceItem, namespace, labels, health, configuration, details],
+  icon: 'S'
 };
 
 const istio: Resource = {
   name: 'istio',
   columns: [istioItem, namespace, istioType, configuration]
-};
-
-const traffic: Resource = {
-  name: 'traffic',
-  columns: [item, protocol, rate, percent, trafficStatus]
 };
 
 const conf = {
@@ -267,8 +229,7 @@ const conf = {
   workloads: workloads,
   overview: namespaces,
   services: services,
-  istio: istio,
-  traffic: traffic
+  istio: istio
 };
 
 export const config = deepFreeze(conf) as typeof conf;

@@ -14,6 +14,12 @@ import * as FilterHelper from '../FilterList/FilterHelper';
 import * as Sorts from '../../pages/Overview/Sorts';
 import { StatefulFilters } from '../Filters/StatefulFilters';
 
+// ******************************
+// VirtualList and its associated classes are deprecated and not to be used for new
+// list views unless cleared by lponce, who has plans to refactor this code. For secondary
+// lists/tables consider emulating ExperimentListContainer or TrafficListComponent.
+// ******************************
+
 type Direction = 'asc' | 'desc' | undefined;
 
 type VirtualListProps<R> = {
@@ -23,7 +29,6 @@ type VirtualListProps<R> = {
   sort?: (sortField: SortField<NamespaceInfo>, isAscending: boolean) => void;
   statefulProps?: React.RefObject<StatefulFilters>;
   actions?: JSX.Element[];
-  type?: string;
 };
 
 type VirtualListState = {
@@ -45,7 +50,7 @@ class VirtualListC<R extends RenderResource> extends React.Component<VirtualList
   constructor(props: VirtualListProps<R>) {
     super(props);
     const match = history.location.pathname.match(listRegex) || [];
-    const type = this.props.type || match[1] || '';
+    const type = match[1] || '';
     const conf = config[type] as Resource;
     const columns =
       conf.columns && config.headerTable

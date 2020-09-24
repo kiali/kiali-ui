@@ -95,15 +95,15 @@ class TrafficDetails extends React.Component<TrafficDetailsProps, TrafficDetails
                     <Tab title="Inbound" eventKey={0}>
                       <TrafficListComponent
                         currentSortField={FilterHelper.currentSortField(TrafficListFilters.sortFields)}
-                        isSortAscending={FilterHelper.isCurrentSortAscending()}
                         direction="inbound"
+                        isSortAscending={FilterHelper.isCurrentSortAscending()}
                         trafficItems={this.state.inboundTraffic}
                       />
                     </Tab>
                     <Tab title="Outbound" eventKey={1}>
                       <TrafficListComponent
-                        direction="outbound"
                         currentSortField={FilterHelper.currentSortField(TrafficListFilters.sortFields)}
+                        direction="outbound"
                         isSortAscending={FilterHelper.isCurrentSortAscending()}
                         trafficItems={this.state.outboundTraffic}
                       />

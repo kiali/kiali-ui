@@ -112,7 +112,6 @@ class ServiceListComponent extends FilterComponent.Component<
   getServiceItem(data: ServiceList, rateInterval: number): ServiceListItem[] {
     if (data.services) {
       return data.services.map(service => ({
-        icon: 'S',
         name: service.name,
         istioSidecar: service.istioSidecar,
         namespace: data.namespace.name,

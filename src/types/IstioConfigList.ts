@@ -32,9 +32,8 @@ import {
   WorkloadEntry
 } from './IstioObjects';
 import { ResourcePermissions } from './Permissions';
-import { BaseItem } from 'components/VirtualList/Config';
 
-export interface IstioConfigItem extends BaseItem {
+export interface IstioConfigItem {
   namespace: string;
   type: string;
   name: string;
@@ -303,7 +302,6 @@ export const toIstioItems = (istioConfigList: IstioConfigList): IstioConfigItem[
 
     entries.forEach(entry => {
       const item = {
-        icon: 'NS',
         namespace: istioConfigList.namespace.name,
         type: typeName,
         name: entry.metadata.name,
@@ -332,7 +330,6 @@ export const vsToIstioItems = (vss: VirtualService[], validations: Validations):
 
   vss.forEach(vs => {
     const item = {
-      icon: 'NS',
       namespace: vs.metadata.namespace || '',
       type: typeName,
       name: vs.metadata.name,
@@ -356,7 +353,6 @@ export const drToIstioItems = (drs: DestinationRule[], validations: Validations)
 
   drs.forEach(dr => {
     const item = {
-      icon: 'NS',
       namespace: dr.metadata.namespace || '',
       type: typeName,
       name: dr.metadata.name,

@@ -8,7 +8,7 @@ export const sortFields: SortField<TrafficListItem>[] = [
     title: 'Name',
     isNumeric: false,
     param: 'na',
-    compare: (a: TrafficListItem, b: TrafficListItem) => a.name.localeCompare(b.name)
+    compare: (a: TrafficListItem, b: TrafficListItem) => a.node.name.localeCompare(b.node.name)
   },
   {
     id: 'protocol',

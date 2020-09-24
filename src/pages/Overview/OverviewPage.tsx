@@ -197,7 +197,6 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
           .map(ns => {
             const previous = this.state.namespaces.find(prev => prev.name === ns.name);
             return {
-              icon: 'NS',
               name: ns.name,
               status: previous ? previous.status : undefined,
               tlsStatus: previous ? previous.tlsStatus : undefined,
