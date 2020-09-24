@@ -15,14 +15,12 @@ import {
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { connect } from 'react-redux';
 
-import * as API from '../../services/Api';
-import * as AlertUtils from '../../utils/AlertUtils';
 import ToolbarDropdown from '../ToolbarDropdown/ToolbarDropdown';
 import { RenderComponentScroll, RenderHeader } from '../Nav/Page';
 import { KialiAppState } from '../../store/Store';
 import { JaegerError, JaegerTrace } from '../../types/JaegerInfo';
-import { TraceDetails } from './JaegerResults/TraceDetails';
-import { JaegerScatter } from './JaegerScatter';
+import TraceDetails from './JaegerResults/TraceDetails';
+import JaegerScatter from './JaegerScatter';
 import { HistoryManager, URLParam } from '../../app/History';
 import { config } from '../../config';
 import TimeRangeComponent from 'components/Time/TimeRangeComponent';
@@ -30,7 +28,7 @@ import RefreshContainer from 'components/Refresh/Refresh';
 import { RightActionBar } from 'components/RightActionBar/RightActionBar';
 import { TracesFetcher } from './TracesFetcher';
 import { getTimeRangeMicros, buildTags } from './JaegerHelper';
-import transformTraceData from './JaegerResults/transform';
+import SpanDetails from './JaegerResults/SpanDetails';
 
 interface TracesProps {
   namespace: string;
@@ -40,6 +38,7 @@ interface TracesProps {
   namespaceSelector: boolean;
   showErrors: boolean;
   duration: number;
+  selectedTrace?: JaegerTrace;
 }
 
 interface TracesState {
@@ -52,8 +51,6 @@ interface TracesState {
   selectedStatusCode: string;
   selectedLimitSpans: string;
   traces: JaegerTrace[];
-  traceId?: string;
-  selectedTrace?: JaegerTrace;
   jaegerErrors: JaegerError[];
   targetApp?: string;
 }
@@ -83,7 +80,6 @@ class TracesComponent extends React.Component<TracesProps, TracesState> {
       sessionStorage.getItem(URLParam.JAEGER_TRACE_INTERVAL_SELECTED) ||
       'none';
 
-    const traceId = HistoryManager.getParam(URLParam.JAEGER_TRACE_ID) || undefined;
     let targetApp: string | undefined = undefined;
     if (this.props.targetKind === 'app') {
       targetApp = this.props.namespaceSelector ? this.props.target + '.' + this.props.namespace : this.props.target;
@@ -98,7 +94,6 @@ class TracesComponent extends React.Component<TracesProps, TracesState> {
       selectedStatusCode: statusCode,
       selectedLimitSpans: limit,
       traces: [],
-      traceId: traceId,
       jaegerErrors: [],
       targetApp: targetApp
     };
@@ -107,39 +102,40 @@ class TracesComponent extends React.Component<TracesProps, TracesState> {
 
   componentDidMount() {
     this.refresh();
-    if (this.state.traceId) {
-      this.fetchSingle(this.state.traceId);
+  }
+
+  componentDidUpdate(prevProps: TracesProps) {
+    // Selected trace (coming from redux) might have been reloaded and needs to be updated within the traces list
+    // Check reference of selected trace
+    if (this.props.selectedTrace && prevProps.selectedTrace !== this.props.selectedTrace) {
+      const traces = this.state.traces;
+      const trace = this.props.selectedTrace;
+      const index = traces.findIndex(t => t.traceID === trace.traceID);
+      if (index >= 0) {
+        traces[index] = this.props.selectedTrace;
+        this.setState({ traces: filterDuration(traces, this.state.selectedTraceIntervalDuration) });
+      }
     }
   }
 
   private refresh = () => {
-    this.fetcher.fetch({
-      namespace: this.props.namespace,
-      target: this.props.target,
-      targetKind: this.props.targetKind,
-      spanLimit: Number(this.state.selectedLimitSpans),
-      intervalDuration: this.state.selectedTraceIntervalDuration,
-      tags: buildTags(this.state.showErrors, this.state.selectedStatusCode)
-    });
-  };
-
-  private fetchSingle = (traceId: string) => {
-    return API.getJaegerTrace(traceId)
-      .then(response => {
-        if (response.data.data) {
-          const trace = transformTraceData(response.data.data);
-          if (trace) {
-            this.setState({ selectedTrace: trace });
-          }
-        }
-      })
-      .catch(error => AlertUtils.addError('Could not fetch trace.', error));
+    this.fetcher.fetch(
+      {
+        namespace: this.props.namespace,
+        target: this.props.target,
+        targetKind: this.props.targetKind,
+        spanLimit: Number(this.state.selectedLimitSpans),
+        tags: buildTags(this.state.showErrors, this.state.selectedStatusCode)
+      },
+      this.state.traces
+    );
   };
 
   private onTracesUpdated = (traces: JaegerTrace[], jaegerServiceName: string) => {
-    const durations = this.getIntervalTraceDurations(traces);
+    const filtered = filterDuration(traces, this.state.selectedTraceIntervalDuration);
+    const durations = this.getIntervalTraceDurations(filtered);
     const newState: Partial<TracesState> = {
-      traces: traces,
+      traces: filtered,
       traceIntervalDurations: durations
     };
     if (this.state.targetApp === undefined && jaegerServiceName) {
@@ -192,7 +188,7 @@ class TracesComponent extends React.Component<TracesProps, TracesState> {
     } else {
       this.saveValue(URLParam.JAEGER_TRACE_INTERVAL_SELECTED, key);
     }
-    const refiltered = this.fetcher.filterTraces(key);
+    const refiltered = filterDuration(this.state.traces, key);
     this.setState({ selectedTraceIntervalDuration: key, traces: refiltered });
   };
 
@@ -233,18 +229,13 @@ class TracesComponent extends React.Component<TracesProps, TracesState> {
     return intervals;
   };
 
-  private onClickScatter = (traceId: string) => {
-    HistoryManager.setParam(URLParam.JAEGER_TRACE_ID, traceId);
-    this.fetchSingle(traceId);
-  };
-
   render() {
     const jaegerURL = this.getJaegerUrl();
     return (
       <>
         {this.renderActions()}
         <RenderComponentScroll>
-          <Grid style={{ padding: '10px' }}>
+          <Grid style={{ padding: '10px' }} gutter="md">
             <GridItem span={12}>
               <Card>
                 <CardBody>
@@ -342,31 +333,26 @@ class TracesComponent extends React.Component<TracesProps, TracesState> {
                       )}
                     </Toolbar>
                   </RenderHeader>
-                  <Grid style={{ margin: '20px' }}>
-                    <GridItem span={12}>
-                      <JaegerScatter
-                        fixedTime={this.state.fixedTime}
-                        traces={this.state.traces}
-                        errorFetchTraces={this.state.jaegerErrors}
-                        onClick={traceId => this.onClickScatter(traceId)}
-                        errorTraces={true}
-                        selectedTrace={this.state.selectedTrace}
-                      />
-                    </GridItem>
-                    <GridItem span={12}>
-                      {this.state.selectedTrace && (
-                        <TraceDetails
-                          trace={this.state.selectedTrace}
-                          namespace={this.props.namespace}
-                          target={this.props.target}
-                          targetKind={this.props.targetKind}
-                          jaegerURL={this.props.urlJaeger}
-                        />
-                      )}
-                    </GridItem>
-                  </Grid>
+                  <JaegerScatter
+                    fixedTime={this.state.fixedTime}
+                    traces={this.state.traces}
+                    errorFetchTraces={this.state.jaegerErrors}
+                    errorTraces={true}
+                  />
                 </CardBody>
               </Card>
+            </GridItem>
+            <GridItem span={12}>
+              <TraceDetails
+                namespace={this.props.namespace}
+                target={this.props.target}
+                targetKind={this.props.targetKind}
+                jaegerURL={this.props.urlJaeger}
+                otherTraces={this.state.traces}
+              />
+            </GridItem>
+            <GridItem span={12}>
+              <SpanDetails namespace={this.props.namespace} target={this.props.target} />
             </GridItem>
           </Grid>
         </RenderComponentScroll>
@@ -384,10 +370,22 @@ class TracesComponent extends React.Component<TracesProps, TracesState> {
   };
 }
 
+const filterDuration = (traces: JaegerTrace[], intervalDuration: string): JaegerTrace[] => {
+  if (intervalDuration === 'none') {
+    return traces;
+  }
+  const duration = intervalDuration.split('-');
+  const index = Object.keys(traceDurationUnits).findIndex(el => el === duration[2]);
+  const min = Number(duration[0]) * Math.pow(1000, index);
+  const max = Number(duration[1]) * Math.pow(1000, index);
+  return traces.filter(trace => trace.duration >= min && trace.duration <= max);
+};
+
 const mapStateToProps = (state: KialiAppState) => {
   return {
     urlJaeger: state.jaegerState.info ? state.jaegerState.info.url : '',
-    namespaceSelector: state.jaegerState.info ? state.jaegerState.info.namespaceSelector : true
+    namespaceSelector: state.jaegerState.info ? state.jaegerState.info.namespaceSelector : true,
+    selectedTrace: state.jaegerState.selectedTrace
   };
 };
 
