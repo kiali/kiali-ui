@@ -2,20 +2,22 @@ import { FilterType } from '../../types/Filters';
 import { SortField } from '../../types/SortFilters';
 import { TrafficListItem } from './TrafficListComponent';
 
+// Don't alter the index order without also updating TrafficListComponent.onSort
 export const sortFields: SortField<TrafficListItem>[] = [
+  {
+    // index 0 is default sort
+    id: 'trafficstatus',
+    title: 'Traffic Status',
+    isNumeric: false,
+    param: 'ts',
+    compare: (a: TrafficListItem, b: TrafficListItem) => a.healthStatus.status.priority - b.healthStatus.status.priority
+  },
   {
     id: 'name',
     title: 'Name',
     isNumeric: false,
     param: 'na',
     compare: (a: TrafficListItem, b: TrafficListItem) => a.node.name.localeCompare(b.node.name)
-  },
-  {
-    id: 'protocol',
-    title: 'Protocol',
-    isNumeric: false,
-    param: 'pr',
-    compare: (a: TrafficListItem, b: TrafficListItem) => a.protocol.localeCompare(b.protocol)
   },
   {
     id: 'rate',
@@ -26,28 +28,18 @@ export const sortFields: SortField<TrafficListItem>[] = [
   },
   {
     id: 'percent',
-    title: '%Success',
+    title: 'Percent Success',
     isNumeric: false,
     param: 'pe',
     compare: (a: TrafficListItem, b: TrafficListItem) => a.trafficPercent.localeCompare(b.trafficPercent)
   },
   {
-    id: 'trafficstatus',
-    title: 'Traffic Status',
+    id: 'protocol',
+    title: 'Protocol',
     isNumeric: false,
-    param: 'ts',
-    compare: (a, b) => a.healthStatus.status.priority - b.healthStatus.status.priority
+    param: 'pr',
+    compare: (a: TrafficListItem, b: TrafficListItem) => a.protocol.localeCompare(b.protocol)
   }
 ];
 
 export const availableFilters: FilterType[] = [];
-
-/** Sort Method */
-
-export const sortTrafficListItems = (
-  unsorted: TrafficListItem[],
-  sortField: SortField<TrafficListItem>,
-  isAscending: boolean
-): TrafficListItem[] => {
-  return unsorted.sort(isAscending ? sortField.compare : (a, b) => sortField.compare(b, a));
-};

@@ -19,7 +19,7 @@ import ParameterizedTabs, { activeTab } from '../../components/Tab/Tabs';
 import { JaegerInfo } from '../../types/JaegerInfo';
 import { PfColors } from '../../components/Pf/PfColors';
 import TracesComponent from '../../components/JaegerIntegration/TracesComponent';
-import TrafficDetails from 'pages/TrafficList/TrafficDetails';
+import TrafficDetails from 'components/TrafficList/TrafficDetails';
 
 type AppDetailsState = {
   app?: App;

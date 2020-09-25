@@ -19,7 +19,7 @@ import { durationSelector } from '../../store/Selectors';
 import ParameterizedTabs, { activeTab } from '../../components/Tab/Tabs';
 import TracesComponent from 'components/JaegerIntegration/TracesComponent';
 import { JaegerInfo } from 'types/JaegerInfo';
-import TrafficDetails from 'pages/TrafficList/TrafficDetails';
+import TrafficDetails from 'components/TrafficList/TrafficDetails';
 
 type WorkloadDetailsState = {
   workload?: Workload;

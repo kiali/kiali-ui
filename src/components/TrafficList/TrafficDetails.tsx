@@ -9,12 +9,16 @@ import {
   DestService,
   ProtocolTraffic
 } from '../../types/Graph';
-import { RenderComponentScroll } from '../../components/Nav/Page';
+import { RenderComponentScroll } from '../Nav/Page';
 import { MetricsObjectTypes } from '../../types/Metrics';
 import GraphDataSource from 'services/GraphDataSource';
 import { DurationInSeconds } from 'types/Common';
 import { RightActionBar } from 'components/RightActionBar/RightActionBar';
 import TimeControlsContainer from '../Time/TimeControls';
+import SimpleTabs from 'components/Tab/SimpleTabs';
+import TrafficListComponent from 'components/TrafficList/TrafficListComponent';
+import * as FilterHelper from '../FilterList/FilterHelper';
+import * as TrafficListFilters from './FiltersAndSorts';
 
 type AppProps = {
   itemType: MetricsObjectTypes.APP;

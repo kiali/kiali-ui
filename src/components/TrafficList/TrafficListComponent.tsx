@@ -10,23 +10,25 @@ import {
 } from '@patternfly/react-core';
 import { style } from 'typestyle';
 import {
-  cellWidth,
   IRow,
   ISortBy,
   sortable,
   SortByDirection,
   Table,
   TableBody,
-  TableHeader
+  TableHeader,
+  cellWidth
 } from '@patternfly/react-table';
 import { Link } from 'react-router-dom';
 import { TrafficItem, TrafficNode } from './TrafficDetails';
-import * as FilterComponent from '../../components/FilterList/FilterComponent';
+import * as FilterComponent from '../FilterList/FilterComponent';
 import { ThresholdStatus, NA } from 'types/Health';
 import { NodeType, hasProtocolTraffic, ProtocolTraffic } from 'types/Graph';
 import { getTrafficHealth } from 'types/ErrorRate';
 import history, { URLParam } from 'app/History';
 import { createIcon } from 'components/Health/Helper';
+import { sortFields } from './FiltersAndSorts';
+import { SortField } from 'types/SortFilters';
 
 export interface TrafficListItem {
   healthStatus: ThresholdStatus;
@@ -48,24 +50,24 @@ type TrafficListComponentState = FilterComponent.State<TrafficListItem> & {
 
 const columns = [
   {
-    title: 'Name',
-    transforms: [sortable]
+    title: 'Status',
+    transforms: [sortable, cellWidth(10)]
   },
   {
-    title: 'Protocol',
-    transforms: [sortable]
+    title: 'Name',
+    transforms: [sortable, cellWidth(30)]
   },
   {
     title: 'Rate',
-    transforms: [sortable]
+    transforms: [sortable, cellWidth(12)]
   },
   {
     title: 'Percent',
-    transforms: [sortable, cellWidth(5) as any]
+    transforms: [sortable, cellWidth(12)]
   },
   {
-    title: 'TrafficStatus',
-    transforms: [sortable]
+    title: 'Protocol',
+    transforms: [sortable, cellWidth(12)]
   },
   {
     title: 'Actions'
@@ -73,37 +75,37 @@ const columns = [
 ];
 
 // Style constants
-const containerPadding = style({ padding: '20px 20px 20px 20px' });
+const containerPadding = style({ padding: '20px' });
 
-class TrafficListComponent extends React.Component<TrafficListComponentProps, TrafficListComponentState> {
+class TrafficListComponent extends FilterComponent.Component<
+  TrafficListComponentProps,
+  TrafficListComponentState,
+  TrafficListItem
+> {
   constructor(props: TrafficListComponentProps) {
     super(props);
+    const sortIndex = sortFields.findIndex(sf => sf.id === props.currentSortField.id);
+    const sortDirection = props.isSortAscending ? SortByDirection.asc : SortByDirection.desc;
     this.state = {
-      currentSortField: this.props.currentSortField,
-      isSortAscending: this.props.isSortAscending,
-      listItems: [],
-      sortBy: {}
+      currentSortField: props.currentSortField,
+      isSortAscending: props.isSortAscending,
+      listItems: this.trafficToListItems(props.trafficItems),
+      sortBy: { index: sortIndex, direction: sortDirection }
     };
   }
 
-  // It invokes backend when component is mounted
   componentDidMount() {
-    this.updateListItems();
+    // ensure the initial sort field is relfected in the URL
+    this.updateSortField(this.state.currentSortField);
   }
 
   componentDidUpdate(prevProps: TrafficListComponentProps, _prevState: TrafficListComponentState, _snapshot: any) {
-    const paramChange =
-      prevProps.trafficItems !== this.props.trafficItems ||
-      prevProps.isSortAscending !== this.props.isSortAscending ||
-      prevProps.currentSortField.title !== this.props.currentSortField.title;
-
-    if (paramChange) {
-      this.setState({
-        currentSortField: this.props.currentSortField,
-        isSortAscending: this.props.isSortAscending
+    // we only care about new TrafficItems, sorting is managed locally after initial render
+    if (prevProps.trafficItems !== this.props.trafficItems) {
+      const listItems = this.trafficToListItems(this.props.trafficItems);
+      this.sortItemList(listItems, this.state.currentSortField, this.state.isSortAscending).then(sorted => {
+        this.setState({ listItems: sorted });
       });
-
-      this.updateListItems();
     }
   }
 
@@ -125,9 +127,9 @@ class TrafficListComponent extends React.Component<TrafficListComponentProps, Tr
               <td colSpan={columns.length}>
                 <EmptyState variant={EmptyStateVariant.full}>
                   <Title headingLevel="h5" size="lg">
-                    `No {this.props.direction} Traffic`
+                    No {this.props.direction} Traffic
                   </Title>
-                  <EmptyStateBody>`No {this.props.direction} Traffic`</EmptyStateBody>
+                  <EmptyStateBody>No {this.props.direction} Traffic</EmptyStateBody>
                 </EmptyState>
               </td>
             </tr>
@@ -137,34 +139,38 @@ class TrafficListComponent extends React.Component<TrafficListComponentProps, Tr
     );
   }
 
+  // abstract FilterComponent.updateListItems
+  updateListItems() {
+    // we don't react to filter changes in this class, so this is a no-op
+  }
+
+  // abstract FilterComponent.sortItemList
+  sortItemList(
+    listItems: TrafficListItem[],
+    sortField: SortField<TrafficListItem>,
+    isAscending: boolean
+  ): Promise<TrafficListItem[]> {
+    const sorted = listItems.sort(isAscending ? sortField.compare : (a, b) => sortField.compare(b, a));
+    return Promise.resolve(sorted);
+  }
+
   // Helper used for Table to sort handlers based on index column == field
   onSort = (_event, index, sortDirection) => {
-    const experimentList = this.state.listItems.sort((a, b) => {
-      switch (index) {
-        case 0:
-          return a.node.name.localeCompare(b.node.name);
-        case 1:
-          return a.protocol.localeCompare(b.protocol);
-        case 2:
-          return a.trafficRate.localeCompare(b.trafficRate);
-        case 3:
-          return a.trafficPercent.localeCompare(b.trafficPercent);
-        case 4:
-          return a.healthStatus.status.priority - b.healthStatus.status.priority;
-      }
-      return 0;
-    });
-    this.setState({
-      listItems: sortDirection === SortByDirection.asc ? experimentList : experimentList.reverse(),
-      sortBy: {
-        index,
-        direction: sortDirection
-      }
-    });
+    // Map the column index to the correct sortField index (currently ordered with the same indexes)
+    let sortField = sortFields[index];
+
+    const isSortAscending = sortDirection === SortByDirection.asc;
+    if (sortField.id !== this.state.currentSortField.id) {
+      this.updateSortField(sortField);
+    } else if (isSortAscending !== this.state.isSortAscending) {
+      this.updateSortDirection();
+    }
+
+    this.setState({ sortBy: { index: index, direction: sortDirection } });
   };
 
-  updateListItems() {
-    const listItems = this.props.trafficItems.map(ti => {
+  trafficToListItems(trafficItems: TrafficItem[]) {
+    const listItems = trafficItems.map(ti => {
       let icon: string;
       switch (ti.node.type) {
         case NodeType.APP:
@@ -174,7 +180,7 @@ class TrafficListComponent extends React.Component<TrafficListComponentProps, Tr
           icon = 'S';
           break;
         default:
-          icon = 'WL';
+          icon = 'W';
       }
       const item: TrafficListItem = {
         icon: icon,
@@ -186,7 +192,7 @@ class TrafficListComponent extends React.Component<TrafficListComponentProps, Tr
       return item;
     });
 
-    this.setState({ listItems: listItems });
+    return listItems;
   }
 
   private getHealthStatus = (item: TrafficItem): ThresholdStatus => {
@@ -235,13 +241,26 @@ class TrafficListComponent extends React.Component<TrafficListComponentProps, Tr
 
   // Helper used to build the table content.
   rows = (): IRow[] => {
-    return this.state.listItems.map(item => {
+    return this.state.listItems.map((item, i) => {
       const name = item.node.name;
       const links = this.getLinks(item);
       return {
         cells: [
           <>
-            <Tooltip key={`tl_tt_name_ ${name}`} position={TooltipPosition.top} content={<>{name}</>}>
+            <Tooltip
+              key={`tt_status_${i}`}
+              position={TooltipPosition.top}
+              content={<>Traffic Status: {item.healthStatus.status.name}</>}
+            >
+              {createIcon(item.healthStatus.status, 'sm')}
+            </Tooltip>
+          </>,
+          <>
+            <Tooltip
+              key={`tt_badge_${i}`}
+              position={TooltipPosition.top}
+              content={<>{this.nodeTypeToType(item.node.type)}</>}
+            >
               <Badge className={'virtualitem_badge_definition'}>{item.icon}</Badge>
             </Tooltip>
             {!!links.detail ? (
@@ -252,10 +271,9 @@ class TrafficListComponent extends React.Component<TrafficListComponentProps, Tr
               name
             )}
           </>,
-          <>{item.protocol}</>,
           <>{item.trafficRate}</>,
           <>{item.trafficPercent}</>,
-          <>{createIcon(item.healthStatus.status, 'sm')}</>,
+          <>{item.protocol}</>,
           <>
             {!!links.metrics && (
               <Link key={`link_m_${item.icon}_${name}`} to={links.metrics} className={'virtualitem_definition_link'}>
@@ -273,7 +291,7 @@ class TrafficListComponent extends React.Component<TrafficListComponentProps, Tr
       return { detail: '', metrics: '' };
     }
 
-    const detail = `/namespaces/${item.node.namespace}/${this.nodeTypeToType(item.node.type)}/${item.node.name}`;
+    const detail = `/namespaces/${item.node.namespace}/${this.nodeTypeToType(item.node.type, true)}/${item.node.name}`;
 
     const metricsDirection = this.props.direction === 'inbound' ? 'in_metrics' : 'out_metrics';
     let metrics = `${history.location.pathname}?tab=${metricsDirection}`;
@@ -320,14 +338,14 @@ class TrafficListComponent extends React.Component<TrafficListComponentProps, Tr
     return { detail: detail, metrics: metrics };
   };
 
-  private nodeTypeToType = (type: NodeType): string => {
+  private nodeTypeToType = (type: NodeType, isURL?: boolean): string => {
     switch (type) {
       case NodeType.APP:
-        return 'applications';
+        return isURL ? 'applications' : 'Application';
       case NodeType.SERVICE:
-        return 'services';
+        return isURL ? 'services' : 'Service';
       default:
-        return 'workloads';
+        return isURL ? 'workloads' : 'Workload';
     }
   };
 }
