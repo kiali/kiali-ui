@@ -10,7 +10,7 @@ export const sortFields: SortField<TrafficListItem>[] = [
     title: 'Traffic Status',
     isNumeric: false,
     param: 'ts',
-    compare: (a: TrafficListItem, b: TrafficListItem) => a.healthStatus.status.priority - b.healthStatus.status.priority
+    compare: (a: TrafficListItem, b: TrafficListItem) => b.healthStatus.status.priority - a.healthStatus.status.priority // worst health first asc
   },
   {
     id: 'name',

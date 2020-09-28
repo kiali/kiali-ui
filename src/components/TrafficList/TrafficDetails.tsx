@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Card, CardBody, Grid, GridItem, Tab } from '@patternfly/react-core';
+import { Card, CardBody, Grid, GridItem } from '@patternfly/react-core';
 import * as AlertUtils from '../../utils/AlertUtils';
 import {
   GraphDefinition,
@@ -37,6 +37,22 @@ type WorkloadProps = {
   namespace: string;
   workloadName: string;
 };
+  name: string;
+  isServiceEntry?: string;
+  isInaccessible: boolean;
+  destServices?: DestService[];
+}
+
+export type TrafficNode = AppNode | ServiceNode | WorkloadNode;
+
+export type TrafficDirection = 'inbound' | 'outbound';
+
+export interface TrafficItem {
+  direction: TrafficDirection;
+  node: TrafficNode;
+  proxy?: TrafficItem;
+  traffic: ProtocolTraffic;
+}
 
 type TrafficDetailsProps = {
   duration: DurationInSeconds;
@@ -46,8 +62,7 @@ type TrafficDetailsProps = {
 };
 
 type TrafficDetailsState = {
-  inboundTraffic: TrafficItem[];
-  outboundTraffic: TrafficItem[];
+  traffic: TrafficItem[];
 };
 
 class TrafficDetails extends React.Component<TrafficDetailsProps, TrafficDetailsState> {
@@ -56,8 +71,7 @@ class TrafficDetails extends React.Component<TrafficDetailsProps, TrafficDetails
   constructor(props: TrafficDetailsProps) {
     super(props);
     this.state = {
-      inboundTraffic: [],
-      outboundTraffic: []
+      traffic: []
     };
   }
 
@@ -95,24 +109,11 @@ class TrafficDetails extends React.Component<TrafficDetailsProps, TrafficDetails
             <GridItem span={12}>
               <Card>
                 <CardBody>
-                  <SimpleTabs id="traffic_tabs" defaultTab={0} style={{ paddingBottom: '10px' }}>
-                    <Tab title="Inbound" eventKey={0}>
-                      <TrafficListComponent
-                        currentSortField={FilterHelper.currentSortField(TrafficListFilters.sortFields)}
-                        direction="inbound"
-                        isSortAscending={FilterHelper.isCurrentSortAscending()}
-                        trafficItems={this.state.inboundTraffic}
-                      />
-                    </Tab>
-                    <Tab title="Outbound" eventKey={1}>
-                      <TrafficListComponent
-                        currentSortField={FilterHelper.currentSortField(TrafficListFilters.sortFields)}
-                        direction="outbound"
-                        isSortAscending={FilterHelper.isCurrentSortAscending()}
-                        trafficItems={this.state.outboundTraffic}
-                      />
-                    </Tab>
-                  </SimpleTabs>
+                  <TrafficListComponent
+                    currentSortField={FilterHelper.currentSortField(TrafficListFilters.sortFields)}
+                    isSortAscending={FilterHelper.isCurrentSortAscending()}
+                    trafficItems={this.state.traffic}
+                  />
                 </CardBody>
               </Card>
             </GridItem>
@@ -216,28 +217,29 @@ class TrafficDetails extends React.Component<TrafficDetailsProps, TrafficDetails
     nodes: { [key: string]: GraphNodeData },
     myNode: GraphNodeData
   ) => {
-    const inboundTraffic: TrafficItem[] = [];
-    const outboundTraffic: TrafficItem[] = [];
+    const traffic: TrafficItem[] = [];
 
     edges.forEach(edge => {
       const sourceNode = nodes['id-' + edge.data.source];
       const targetNode = nodes['id-' + edge.data.target];
       if (myNode.id === edge.data.source) {
         const trafficItem: TrafficItem = {
-          traffic: edge.data.traffic!,
-          node: this.buildTrafficNode('out', targetNode)
+          direction: 'outbound',
+          node: this.buildTrafficNode('out', targetNode),
+          traffic: edge.data.traffic!
         };
-        outboundTraffic.push(trafficItem);
+        traffic.push(trafficItem);
       } else if (myNode.id === edge.data.target) {
         const trafficItem: TrafficItem = {
-          traffic: edge.data.traffic!,
-          node: this.buildTrafficNode('in', sourceNode)
+          direction: 'inbound',
+          node: this.buildTrafficNode('in', sourceNode),
+          traffic: edge.data.traffic!
         };
-        inboundTraffic.push(trafficItem);
+        traffic.push(trafficItem);
       }
     });
 
-    return { inboundTraffic, outboundTraffic };
+    return { traffic: traffic };
   };
 
   private processTrafficData = (traffic: GraphDefinition | null) => {
@@ -248,7 +250,7 @@ class TrafficDetails extends React.Component<TrafficDetailsProps, TrafficDetails
       traffic.elements.nodes.length === 0 ||
       traffic.elements.edges.length === 0
     ) {
-      this.setState({ inboundTraffic: [], outboundTraffic: [] });
+      this.setState({ traffic: [] });
       return;
     }
 
@@ -284,7 +286,7 @@ class TrafficDetails extends React.Component<TrafficDetailsProps, TrafficDetails
 
     if (myNode.id === '') {
       // Graph endpoint didn't return a graph for the current node.
-      this.setState({ inboundTraffic: [], outboundTraffic: [] });
+      this.setState({ traffic: [] });
       return;
     }
 

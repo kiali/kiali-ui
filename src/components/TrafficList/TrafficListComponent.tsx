@@ -1,13 +1,5 @@
 import * as React from 'react';
-import {
-  Badge,
-  EmptyState,
-  EmptyStateBody,
-  EmptyStateVariant,
-  Title,
-  Tooltip,
-  TooltipPosition
-} from '@patternfly/react-core';
+import { Badge, Title, Tooltip, TooltipPosition } from '@patternfly/react-core';
 import { style } from 'typestyle';
 import {
   IRow,
@@ -20,7 +12,7 @@ import {
   cellWidth
 } from '@patternfly/react-table';
 import { Link } from 'react-router-dom';
-import { TrafficItem, TrafficNode } from './TrafficDetails';
+import { TrafficItem, TrafficNode, TrafficDirection } from './TrafficDetails';
 import * as FilterComponent from '../FilterList/FilterComponent';
 import { ThresholdStatus, NA } from 'types/Health';
 import { NodeType, hasProtocolTraffic, ProtocolTraffic } from 'types/Graph';
@@ -31,6 +23,7 @@ import { sortFields } from './FiltersAndSorts';
 import { SortField } from 'types/SortFilters';
 
 export interface TrafficListItem {
+  direction: TrafficDirection;
   healthStatus: ThresholdStatus;
   icon: string;
   node: TrafficNode;
@@ -40,7 +33,6 @@ export interface TrafficListItem {
 }
 
 type TrafficListComponentProps = FilterComponent.Props<TrafficListItem> & {
-  direction: 'inbound' | 'outbound';
   trafficItems: TrafficItem[];
 };
 
@@ -95,8 +87,8 @@ class TrafficListComponent extends FilterComponent.Component<
   }
 
   componentDidMount() {
-    // ensure the initial sort field is relfected in the URL
-    this.updateSortField(this.state.currentSortField);
+    // ensure the initial sort is applied
+    this.sortItemList(this.state.listItems, this.state.currentSortField, this.state.isSortAscending);
   }
 
   componentDidUpdate(prevProps: TrafficListComponentProps, _prevState: TrafficListComponentState, _snapshot: any) {
@@ -110,32 +102,47 @@ class TrafficListComponent extends FilterComponent.Component<
   }
 
   render() {
+    const inboundRows = this.rows('inbound');
+    const outboundRows = this.rows('outbound');
+    const hasInbound = inboundRows.length > 0;
+    const hasOutbound = outboundRows.length > 0;
     return (
-      <div className={containerPadding}>
-        <Table
-          aria-label="Sortable Table"
-          sortBy={this.state.sortBy}
-          cells={columns}
-          rows={this.rows()}
-          onSort={this.onSort}
-        >
-          <TableHeader />
-          {this.state.listItems.length > 0 ? (
-            <TableBody />
-          ) : (
-            <tr>
-              <td colSpan={columns.length}>
-                <EmptyState variant={EmptyStateVariant.full}>
-                  <Title headingLevel="h5" size="lg">
-                    No {this.props.direction} Traffic
-                  </Title>
-                  <EmptyStateBody>No {this.props.direction} Traffic</EmptyStateBody>
-                </EmptyState>
-              </td>
-            </tr>
+      <>
+        <div className={containerPadding}>
+          <Title headingLevel="h5" size="lg">
+            {hasInbound ? '' : 'No '} Inbound Traffic
+          </Title>
+          {hasInbound && (
+            <Table
+              aria-label="Sortable Table"
+              cells={columns}
+              onSort={this.onSort}
+              rows={inboundRows}
+              sortBy={this.state.sortBy}
+            >
+              <TableHeader />
+              <TableBody />
+            </Table>
           )}
-        </Table>
-      </div>
+        </div>
+        <div className={containerPadding}>
+          <Title headingLevel="h5" size="lg">
+            {hasOutbound ? '' : 'No '} Outbound Traffic
+          </Title>
+          {hasOutbound && (
+            <Table
+              aria-label="Sortable Table"
+              cells={columns}
+              onSort={this.onSort}
+              rows={outboundRows}
+              sortBy={this.state.sortBy}
+            >
+              <TableHeader />
+              <TableBody />
+            </Table>
+          )}
+        </div>
+      </>
     );
   }
 
@@ -160,10 +167,8 @@ class TrafficListComponent extends FilterComponent.Component<
     let sortField = sortFields[index];
 
     const isSortAscending = sortDirection === SortByDirection.asc;
-    if (sortField.id !== this.state.currentSortField.id) {
-      this.updateSortField(sortField);
-    } else if (isSortAscending !== this.state.isSortAscending) {
-      this.updateSortDirection();
+    if (sortField.id !== this.state.currentSortField.id || isSortAscending !== this.state.isSortAscending) {
+      this.updateSort(sortField, isSortAscending);
     }
 
     this.setState({ sortBy: { index: index, direction: sortDirection } });
@@ -183,6 +188,7 @@ class TrafficListComponent extends FilterComponent.Component<
           icon = 'W';
       }
       const item: TrafficListItem = {
+        direction: ti.direction,
         icon: icon,
         node: ti.node,
         protocol: this.getProtocol(ti.traffic),
@@ -199,7 +205,7 @@ class TrafficListComponent extends FilterComponent.Component<
     const traffic = item.traffic;
 
     if (traffic.protocol !== 'tcp' && hasProtocolTraffic(traffic)) {
-      return getTrafficHealth(item, this.props.direction);
+      return getTrafficHealth(item, item.direction);
     }
 
     return { value: 0, status: NA };
@@ -240,50 +246,52 @@ class TrafficListComponent extends FilterComponent.Component<
   };
 
   // Helper used to build the table content.
-  rows = (): IRow[] => {
-    return this.state.listItems.map((item, i) => {
-      const name = item.node.name;
-      const links = this.getLinks(item);
-      return {
-        cells: [
-          <>
-            <Tooltip
-              key={`tt_status_${i}`}
-              position={TooltipPosition.top}
-              content={<>Traffic Status: {item.healthStatus.status.name}</>}
-            >
-              {createIcon(item.healthStatus.status, 'sm')}
-            </Tooltip>
-          </>,
-          <>
-            <Tooltip
-              key={`tt_badge_${i}`}
-              position={TooltipPosition.top}
-              content={<>{this.nodeTypeToType(item.node.type)}</>}
-            >
-              <Badge className={'virtualitem_badge_definition'}>{item.icon}</Badge>
-            </Tooltip>
-            {!!links.detail ? (
-              <Link key={`link_d_${item.icon}_${name}`} to={links.detail} className={'virtualitem_definition_link'}>
-                {name}
-              </Link>
-            ) : (
-              name
-            )}
-          </>,
-          <>{item.trafficRate}</>,
-          <>{item.trafficPercent}</>,
-          <>{item.protocol}</>,
-          <>
-            {!!links.metrics && (
-              <Link key={`link_m_${item.icon}_${name}`} to={links.metrics} className={'virtualitem_definition_link'}>
-                View metrics
-              </Link>
-            )}
-          </>
-        ]
-      };
-    });
+  rows = (direction: TrafficDirection): IRow[] => {
+    return this.state.listItems
+      .filter(i => i.direction === direction)
+      .map((item, i) => {
+        const name = item.node.name;
+        const links = this.getLinks(item);
+        return {
+          cells: [
+            <>
+              <Tooltip
+                key={`tt_status_${i}`}
+                position={TooltipPosition.top}
+                content={<>Traffic Status: {item.healthStatus.status.name}</>}
+              >
+                {createIcon(item.healthStatus.status, 'sm')}
+              </Tooltip>
+            </>,
+            <>
+              <Tooltip
+                key={`tt_badge_${i}`}
+                position={TooltipPosition.top}
+                content={<>{this.nodeTypeToType(item.node.type)}</>}
+              >
+                <Badge className={'virtualitem_badge_definition'}>{item.icon}</Badge>
+              </Tooltip>
+              {!!links.detail ? (
+                <Link key={`link_d_${item.icon}_${name}`} to={links.detail} className={'virtualitem_definition_link'}>
+                  {name}
+                </Link>
+              ) : (
+                name
+              )}
+            </>,
+            <>{item.trafficRate}</>,
+            <>{item.trafficPercent}</>,
+            <>{item.protocol}</>,
+            <>
+              {!!links.metrics && (
+                <Link key={`link_m_${item.icon}_${name}`} to={links.metrics} className={'virtualitem_definition_link'}>
+                  View metrics
+                </Link>
+              )}
+            </>
+          ]
+        };
+      });
   };
 
   private getLinks = (item: TrafficListItem) => {
@@ -293,19 +301,19 @@ class TrafficListComponent extends FilterComponent.Component<
 
     const detail = `/namespaces/${item.node.namespace}/${this.nodeTypeToType(item.node.type, true)}/${item.node.name}`;
 
-    const metricsDirection = this.props.direction === 'inbound' ? 'in_metrics' : 'out_metrics';
+    const metricsDirection = item.direction === 'inbound' ? 'in_metrics' : 'out_metrics';
     let metrics = `${history.location.pathname}?tab=${metricsDirection}`;
 
     switch (item.node.type) {
       case NodeType.APP:
         // All metrics tabs can filter by remote app. No need to switch context.
-        const side = this.props.direction === 'inbound' ? 'source' : 'destination';
+        const side = item.direction === 'inbound' ? 'source' : 'destination';
         metrics += `& ${URLParam.BY_LABELS}= ${encodeURIComponent(side + '_app=' + item.node.name)}`;
         break;
       case NodeType.SERVICE:
         if (item.node.isServiceEntry) {
           // Service Entries should be only destination nodes. So, don't build a link if direction is inbound.
-          if (this.props.direction !== 'inbound' && item.node.destServices && item.node.destServices.length > 0) {
+          if (item.direction !== 'inbound' && item.node.destServices && item.node.destServices.length > 0) {
             const svcHosts = item.node.destServices.map(item => item.name).join(',');
             metrics += `&${URLParam.BY_LABELS}=${encodeURIComponent('destination_service_name=' + svcHosts)}`;
           } else {
@@ -314,7 +322,7 @@ class TrafficListComponent extends FilterComponent.Component<
         } else {
           // Filter by remote service only available in the Outbound Metrics tab. For inbound traffic,
           // switch context to the service details page.
-          if (this.props.direction === 'outbound') {
+          if (item.direction === 'outbound') {
             metrics += `&${URLParam.BY_LABELS}=${encodeURIComponent('destination_service_name=' + item.node.name)}`;
           } else {
             // Services have only one metrics tab.
@@ -328,7 +336,7 @@ class TrafficListComponent extends FilterComponent.Component<
         // Since this will switch context (i.e. will redirect the user to the workload details page),
         // user is redirected to the "opposite" metrics. When looking at certain item, if traffic is *incoming*
         // from a certain workload, that traffic is reflected in the *outbound* metrics of the workload (and vice-versa).
-        const inverseMetricsDirection = this.props.direction === 'inbound' ? 'out_metrics' : 'in_metrics';
+        const inverseMetricsDirection = item.direction === 'inbound' ? 'out_metrics' : 'in_metrics';
         metrics = `${detail}?tab=${inverseMetricsDirection}`;
         break;
       default:
