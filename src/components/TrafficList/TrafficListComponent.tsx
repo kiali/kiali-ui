@@ -191,7 +191,7 @@ class TrafficListComponent extends FilterComponent.Component<
         direction: ti.direction,
         icon: icon,
         node: ti.node,
-        protocol: this.getProtocol(ti.traffic),
+        protocol: (ti.traffic.protocol || 'N/A').toUpperCase(),
         healthStatus: this.getHealthStatus(ti),
         ...this.getTraffic(ti.traffic)
       };
@@ -235,14 +235,6 @@ class TrafficListComponent extends FilterComponent.Component<
       trafficRate: `${Number(rps).toFixed(2)}${unit}`,
       trafficPercent: `${(100 - Number(percentError)).toFixed(1)}%`
     };
-  };
-
-  private getProtocol = (traffic: ProtocolTraffic) => {
-    if (!traffic.protocol) {
-      return 'N/A';
-    }
-
-    return traffic.protocol.toUpperCase();
   };
 
   // Helper used to build the table content.
