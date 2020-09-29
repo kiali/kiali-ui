@@ -14,29 +14,32 @@ import { MetricsObjectTypes } from '../../types/Metrics';
 import GraphDataSource from 'services/GraphDataSource';
 import { DurationInSeconds } from 'types/Common';
 import { RightActionBar } from 'components/RightActionBar/RightActionBar';
-import TimeControlsContainer from '../Time/TimeControls';
-import SimpleTabs from 'components/Tab/SimpleTabs';
 import TrafficListComponent from 'components/TrafficList/TrafficListComponent';
 import * as FilterHelper from '../FilterList/FilterHelper';
 import * as TrafficListFilters from './FiltersAndSorts';
+import TimeControlsContainer from '../Time/TimeControls';
 
-type AppProps = {
-  itemType: MetricsObjectTypes.APP;
+export interface AppNode {
+  id: string;
+  type: NodeType.APP;
   namespace: string;
-  appName: string;
-};
+  name: string;
+  version: string;
+  isInaccessible: boolean;
+}
 
-type ServiceProps = {
-  itemType: MetricsObjectTypes.SERVICE;
+export interface WorkloadNode {
+  id: string;
+  type: NodeType.WORKLOAD;
   namespace: string;
-  serviceName: string;
-};
+  name: string;
+  isInaccessible: boolean;
+}
 
-type WorkloadProps = {
-  itemType: MetricsObjectTypes.WORKLOAD;
+export interface ServiceNode {
+  id: string;
+  type: NodeType.SERVICE;
   namespace: string;
-  workloadName: string;
-};
   name: string;
   isServiceEntry?: string;
   isInaccessible: boolean;
@@ -101,8 +104,12 @@ class TrafficDetails extends React.Component<TrafficDetailsProps, TrafficDetails
     return (
       <>
         <RightActionBar>
-          <DurationDropdownContainer id="service-traffic-duration-dropdown" prefix="Last" />
-          <RefreshButtonContainer handleRefresh={this.fetchDataSource} />
+          <TimeControlsContainer
+            key={'DurationDropdown'}
+            id="app-info-duration-dropdown"
+            handleRefresh={this.fetchDataSource}
+            disabled={false}
+          />
         </RightActionBar>
         <RenderComponentScroll>
           <Grid style={{ padding: '10px' }}>
@@ -150,34 +157,6 @@ class TrafficDetails extends React.Component<TrafficDetailsProps, TrafficDetails
 
     AlertUtils.addError(errorMessage);
   };
-
-  render() {
-    return (
-      <>
-        <RightActionBar>
-          <TimeControlsContainer
-            key={'DurationDropdown'}
-            id="app-info-duration-dropdown"
-            handleRefresh={this.fetchDataSource}
-            disabled={false}
-          />
-        </RightActionBar>
-        <RenderComponentScroll>
-          <Grid style={{ padding: '10px' }}>
-            <GridItem span={12}>
-              <Card>
-                <CardBody>
-                  <DetailedTrafficList header="Inbound" direction="inbound" traffic={this.state.inboundTraffic} />
-                  <div style={{ marginTop: '2em' }} />
-                  <DetailedTrafficList header="Outbound" direction="outbound" traffic={this.state.outboundTraffic} />
-                </CardBody>
-              </Card>
-            </GridItem>
-          </Grid>
-        </RenderComponentScroll>
-      </>
-    );
-  }
 
   private buildTrafficNode = (prefix: 'in' | 'out', node: GraphNodeData): TrafficNode => {
     // given restrictions on fetch options the node type should be either App, Workload or [outbound] service
