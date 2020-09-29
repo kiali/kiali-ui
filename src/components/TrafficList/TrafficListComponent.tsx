@@ -1,16 +1,7 @@
 import * as React from 'react';
 import { Badge, Title, Tooltip, TooltipPosition } from '@patternfly/react-core';
 import { style } from 'typestyle';
-import {
-  IRow,
-  ISortBy,
-  sortable,
-  SortByDirection,
-  Table,
-  TableBody,
-  TableHeader,
-  cellWidth
-} from '@patternfly/react-table';
+import { IRow, sortable, SortByDirection, Table, TableBody, TableHeader, cellWidth } from '@patternfly/react-table';
 import { Link } from 'react-router-dom';
 import { TrafficItem, TrafficNode, TrafficDirection } from './TrafficDetails';
 import * as FilterComponent from '../FilterList/FilterComponent';
@@ -29,16 +20,14 @@ export interface TrafficListItem {
   node: TrafficNode;
   protocol: string;
   trafficRate: string;
-  trafficPercent: string; // percent success
+  trafficPercentSuccess: string;
 }
 
 type TrafficListComponentProps = FilterComponent.Props<TrafficListItem> & {
   trafficItems: TrafficItem[];
 };
 
-type TrafficListComponentState = FilterComponent.State<TrafficListItem> & {
-  sortBy: ISortBy;
-};
+type TrafficListComponentState = FilterComponent.State<TrafficListItem>;
 
 const columns = [
   {
@@ -54,7 +43,7 @@ const columns = [
     transforms: [sortable, cellWidth(12)]
   },
   {
-    title: 'Percent',
+    title: 'Percent Success',
     transforms: [sortable, cellWidth(12)]
   },
   {
@@ -76,13 +65,10 @@ class TrafficListComponent extends FilterComponent.Component<
 > {
   constructor(props: TrafficListComponentProps) {
     super(props);
-    const sortIndex = sortFields.findIndex(sf => sf.id === props.currentSortField.id);
-    const sortDirection = props.isSortAscending ? SortByDirection.asc : SortByDirection.desc;
     this.state = {
       currentSortField: props.currentSortField,
       isSortAscending: props.isSortAscending,
-      listItems: this.trafficToListItems(props.trafficItems),
-      sortBy: { index: sortIndex, direction: sortDirection }
+      listItems: this.trafficToListItems(props.trafficItems)
     };
   }
 
@@ -106,6 +92,9 @@ class TrafficListComponent extends FilterComponent.Component<
     const outboundRows = this.rows('outbound');
     const hasInbound = inboundRows.length > 0;
     const hasOutbound = outboundRows.length > 0;
+    const sortIndex = sortFields.findIndex(sf => sf.id === this.props.currentSortField.id);
+    const sortDirection = this.props.isSortAscending ? SortByDirection.asc : SortByDirection.desc;
+    const sortBy = { index: sortIndex, direction: sortDirection };
     return (
       <>
         <div className={containerPadding}>
@@ -113,13 +102,7 @@ class TrafficListComponent extends FilterComponent.Component<
             {hasInbound ? '' : 'No '} Inbound Traffic
           </Title>
           {hasInbound && (
-            <Table
-              aria-label="Sortable Table"
-              cells={columns}
-              onSort={this.onSort}
-              rows={inboundRows}
-              sortBy={this.state.sortBy}
-            >
+            <Table aria-label="Sortable Table" cells={columns} onSort={this.onSort} rows={inboundRows} sortBy={sortBy}>
               <TableHeader />
               <TableBody />
             </Table>
@@ -130,13 +113,7 @@ class TrafficListComponent extends FilterComponent.Component<
             {hasOutbound ? '' : 'No '} Outbound Traffic
           </Title>
           {hasOutbound && (
-            <Table
-              aria-label="Sortable Table"
-              cells={columns}
-              onSort={this.onSort}
-              rows={outboundRows}
-              sortBy={this.state.sortBy}
-            >
+            <Table aria-label="Sortable Table" cells={columns} onSort={this.onSort} rows={outboundRows} sortBy={sortBy}>
               <TableHeader />
               <TableBody />
             </Table>
@@ -170,8 +147,6 @@ class TrafficListComponent extends FilterComponent.Component<
     if (sortField.id !== this.state.currentSortField.id || isSortAscending !== this.state.isSortAscending) {
       this.updateSort(sortField, isSortAscending);
     }
-
-    this.setState({ sortBy: { index: index, direction: sortDirection } });
   };
 
   trafficToListItems(trafficItems: TrafficItem[]) {
@@ -211,7 +186,7 @@ class TrafficListComponent extends FilterComponent.Component<
     return { value: 0, status: NA };
   };
 
-  private getTraffic = (traffic: ProtocolTraffic): { trafficRate; trafficPercent } => {
+  private getTraffic = (traffic: ProtocolTraffic): { trafficRate; trafficPercentSuccess } => {
     let rps = '0';
     let percentError = '0';
     let unit = 'rps';
@@ -233,7 +208,7 @@ class TrafficListComponent extends FilterComponent.Component<
 
     return {
       trafficRate: `${Number(rps).toFixed(2)}${unit}`,
-      trafficPercent: `${(100 - Number(percentError)).toFixed(1)}%`
+      trafficPercentSuccess: `${(100 - Number(percentError)).toFixed(1)}%`
     };
   };
 
@@ -272,7 +247,7 @@ class TrafficListComponent extends FilterComponent.Component<
               )}
             </>,
             <>{item.trafficRate}</>,
-            <>{item.trafficPercent}</>,
+            <>{item.trafficPercentSuccess}</>,
             <>{item.protocol}</>,
             <>
               {!!links.metrics && (
@@ -300,7 +275,7 @@ class TrafficListComponent extends FilterComponent.Component<
       case NodeType.APP:
         // All metrics tabs can filter by remote app. No need to switch context.
         const side = item.direction === 'inbound' ? 'source' : 'destination';
-        metrics += `& ${URLParam.BY_LABELS}= ${encodeURIComponent(side + '_app=' + item.node.name)}`;
+        metrics += `&${URLParam.BY_LABELS}=${encodeURIComponent(side + '_canonical_service=' + item.node.name)}`;
         break;
       case NodeType.SERVICE:
         if (item.node.isServiceEntry) {

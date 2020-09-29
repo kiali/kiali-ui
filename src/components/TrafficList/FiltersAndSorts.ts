@@ -31,7 +31,7 @@ export const sortFields: SortField<TrafficListItem>[] = [
     title: 'Percent Success',
     isNumeric: false,
     param: 'pe',
-    compare: (a: TrafficListItem, b: TrafficListItem) => a.trafficPercent.localeCompare(b.trafficPercent)
+    compare: (a: TrafficListItem, b: TrafficListItem) => a.trafficPercentSuccess.localeCompare(b.trafficPercentSuccess)
   },
   {
     id: 'protocol',
