@@ -22,6 +22,7 @@ import { RenderContent } from '../../../../components/Nav/Page';
 import Namespace from '../../../../types/Namespace';
 import ExperimentCriteriaForm from './ExperimentCriteriaForm';
 import ExperimentHostForm, { HostState, initHost } from './ExperimentHostForm';
+import ExperimentTrafficForm from './ExperimentTrafficForm';
 import { PromisesRegistry } from '../../../../utils/CancelablePromises';
 import { KialiAppState } from '../../../../store/Store';
 import { activeNamespacesSelector } from '../../../../store/Selectors';
@@ -98,7 +99,10 @@ class ExperimentCreatePage extends React.Component<Props, State> {
         trafficControl: {
           algorithm: 'progressive',
           maxIncrement: 10,
-          onTermination: 'to_winner'
+          onTermination: 'to_winner',
+          match: {
+            http: []
+          }
         },
         duration: {
           interval: '30s',
@@ -680,12 +684,14 @@ class ExperimentCreatePage extends React.Component<Props, State> {
     );
   }
 
-  onAddToList = (newCriteria: Criteria, newHost: Host) => {
+  onAddToList = (newCriteria: Criteria, newHost: Host, newMatch: any) => {
     this.setState(prevState => {
       if (newHost != null && newHost.name !== '') {
         prevState.experiment.hosts.push(newHost);
-      } else if (newCriteria != null) {
+      } else if (newCriteria != null && newCriteria.metric !== '') {
         prevState.experiment.criterias.push(newCriteria);
+      } else if (newMatch != null) {
+        prevState.experiment.trafficControl.match.http.push(newMatch);
       }
       return {
         iter8Info: prevState.iter8Info,
@@ -810,6 +816,13 @@ class ExperimentCreatePage extends React.Component<Props, State> {
               />
             </FormGroup>
           </GridItem>
+          <GridItem span={12}>
+            <ExperimentTrafficForm
+              matches={this.state.experiment.trafficControl.match.http}
+              onRemove={this.onRemoveFromList}
+              onAdd={this.onAddToList}
+            />
+          </GridItem>
         </Grid>
       </>
     );
@@ -821,6 +834,8 @@ class ExperimentCreatePage extends React.Component<Props, State> {
         prevState.experiment.criterias.splice(index, 1);
       } else if (type === 'Host') {
         prevState.experiment.hosts.splice(index, 1);
+      } else if (type === 'Match') {
+        prevState.experiment.trafficControl.match.http.splice(index, 1);
       }
 
       return {
