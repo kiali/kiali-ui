@@ -416,11 +416,11 @@ class IstioConfigDetailsPage extends React.Component<RouteComponentProps<IstioCo
   };
 
   isExpanded = (istioConfigDetails?: IstioConfigDetails) => {
-    let isExpaned = false;
+    let isExpanded = false;
     if (istioConfigDetails) {
-      isExpaned = this.showCards(this.objectReferences().length > 0, this.getStatusMessages());
+      isExpanded = this.showCards(this.objectReferences().length > 0, this.getStatusMessages());
     }
-    return isExpaned;
+    return isExpanded;
   };
 
   showCards = (refPresent: boolean, istioStatusMsgs: ValidationMessage[]): boolean => {
