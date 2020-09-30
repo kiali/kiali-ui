@@ -4,7 +4,6 @@ import { createIcon } from './Helper';
 import { InfoAltIcon } from '@patternfly/react-icons';
 import './Health.css';
 import { PfColors } from '../Pf/PfColors';
-import { Split, SplitItem } from '@patternfly/react-core';
 
 interface Props {
   health: H.Health;
@@ -31,7 +30,7 @@ export class HealthDetails extends React.PureComponent<Props, {}> {
         </strong>
         {item.text}
         {item.children && (
-          <ul style={{ listStyleType: 'none', paddingLeft: 8, marginLeft: 0 }}>
+          <ul style={{ listStyleType: 'none', paddingLeft: 12 }}>
             {item.children.map((sub, subIdx) => {
               const showItem = sub.value && sub.value > 0;
               return (sub.status !== H.HEALTHY && showItem) || !this.props.tooltip ? (
@@ -65,14 +64,11 @@ export class HealthDetails extends React.PureComponent<Props, {}> {
             <strong>{' ' + item.title + (item.text && item.text.length > 0 ? ': ' : '')}</strong>
             {item.text}
             {item.children && (
-              <ul style={{ listStyleType: 'none', paddingLeft: 8, marginLeft: 0 }}>
+              <ul style={{ listStyleType: 'none', paddingLeft: 12 }}>
                 {item.children.map((sub, subIdx) => {
                   return (
                     <li key={subIdx}>
-                      <Split gutter={'sm'}>
-                        <SplitItem>{createIcon(sub.status)}</SplitItem>
-                        <SplitItem>{sub.text}</SplitItem>
-                      </Split>
+                      {createIcon(sub.status)} {sub.text}
                     </li>
                   );
                 })}

@@ -11,7 +11,6 @@ import { PFAlertColor, PfColors } from 'components/Pf/PfColors';
 import { calculateErrorRate } from './ErrorRate';
 import { ToleranceConfig } from './ServerConfig';
 import { serverConfig } from '../config';
-import { createProxyStatusList } from '../components/Health/Helper';
 
 interface HealthConfig {
   items: HealthItem[];
@@ -35,7 +34,7 @@ export interface HealthItemConfig {
 
 interface HealthSubItem {
   status: Status;
-  text: any;
+  text: string;
   value?: number;
 }
 
@@ -44,7 +43,7 @@ export interface WorkloadStatus {
   desiredReplicas: number;
   currentReplicas: number;
   availableReplicas: number;
-  proxyStatus: ProxyStatus[];
+  syncedProxies: number;
 }
 
 export const TRAFFICSTATUS = 'Traffic Status';
@@ -184,8 +183,8 @@ export const ratioCheck = (availableReplicas: number, currentReplicas: number, d
   return DEGRADED;
 };
 
-export const proxyCheck = (proxyStatus: ProxyStatus[]): Status => {
-  return !!proxyStatus && proxyStatus.length > 0 ? DEGRADED : HEALTHY;
+export const proxyCheck = (syncedProxies: number, desiredReplicas: number): Status => {
+  return syncedProxies !== desiredReplicas ? DEGRADED : HEALTHY;
 };
 
 export const mergeStatus = (s1: Status, s2: Status): Status => {
@@ -351,22 +350,13 @@ export class AppHealth extends Health {
 
       // For each Workload, aggregate its proxy errors
       workloadStatuses.forEach(ws => {
-        const proxyStatus: Status = proxyCheck(ws.proxyStatus);
-        if (proxyStatus !== HEALTHY) {
-          proxyItem.status = mergeStatus(proxyStatus, proxyItem.status);
-          proxyItem.children?.push({
-            status: proxyStatus,
-            text: createProxyStatusList(ws.name, ws.proxyStatus)
-          });
-        }
-      });
-
-      if (proxyItem.status === HEALTHY) {
+        const proxyStatus: Status = proxyCheck(ws.syncedProxies, ws.desiredReplicas);
+        proxyItem.status = mergeStatus(proxyStatus, proxyItem.status);
         proxyItem.children?.push({
-          text: workloadStatuses.length > 1 ? 'Sidecar proxies are synced' : 'Sidecar proxy is synced',
-          status: HEALTHY
+          status: proxyStatus,
+          text: ws.name + ': ' + ws.syncedProxies + ' / ' + ws.desiredReplicas
         });
-      }
+      });
 
       items.push(proxyItem);
     }
@@ -461,31 +451,21 @@ export class WorkloadHealth extends Health {
     }
     {
       // Append Proxy Status errors
-      const proxyStatus: Status = proxyCheck(workloadStatus.proxyStatus);
+      const proxyStatus: Status = proxyCheck(workloadStatus.syncedProxies, workloadStatus.desiredReplicas);
       const proxyItem: HealthItem = {
         title: 'Proxy Status',
         status: proxyStatus,
-        children: [
-          {
-            text: 'Sidecar proxy is synced',
-            status: proxyStatus
-          }
-        ]
+        children: []
       };
 
-      if (proxyStatus !== HEALTHY) {
-        proxyItem.status = mergeStatus(proxyItem.status, proxyCheck(workloadStatus.proxyStatus));
-        const children = workloadStatus.proxyStatus.map(
-          (proxy: ProxyStatus): HealthSubItem => {
-            return {
-              status: proxyStatus,
-              text: String(proxy.component + ': ' + proxy.status)
-            };
-          }
-        );
-
-        proxyItem.children = children;
-      }
+      proxyItem.status = mergeStatus(
+        proxyItem.status,
+        proxyCheck(workloadStatus.syncedProxies, workloadStatus.desiredReplicas)
+      );
+      proxyItem.children!.push({
+        status: proxyStatus,
+        text: String(workloadStatus.name + ': ' + workloadStatus.syncedProxies + ' / ' + workloadStatus.desiredReplicas)
+      });
 
       items.push(proxyItem);
     }

@@ -57,21 +57,7 @@ exports[`HealthIndicator proxy status section renders the degraded workloads 1`]
                         "name": "Degraded",
                         "priority": 2,
                       },
-                      "text": <ProxyStatusList
-                        statuses={
-                          Array [
-                            Object {
-                              "component": "EDS",
-                              "status": "STALE",
-                            },
-                            Object {
-                              "component": "LDS",
-                              "status": "NOT_SENT",
-                            },
-                          ]
-                        }
-                        workloadName="A"
-                      />,
+                      "text": "A: 0 / 1",
                     },
                   ],
                   "status": Object {
@@ -237,21 +223,7 @@ exports[`HealthIndicator proxy status section renders the degraded workloads 2`]
                     "name": "Degraded",
                     "priority": 2,
                   },
-                  "text": <ProxyStatusList
-                    statuses={
-                      Array [
-                        Object {
-                          "component": "EDS",
-                          "status": "STALE",
-                        },
-                        Object {
-                          "component": "LDS",
-                          "status": "NOT_SENT",
-                        },
-                      ]
-                    }
-                    workloadName="A"
-                  />,
+                  "text": "A: 0 / 1",
                 },
               ],
               "status": Object {

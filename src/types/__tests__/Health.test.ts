@@ -77,7 +77,7 @@ describe('Health', () => {
     const health = new H.AppHealth(
       'bookinfo',
       'reviews',
-      [{ availableReplicas: 0, currentReplicas: 1, desiredReplicas: 1, name: 'a', proxyStatus: [] }],
+      [{ availableReplicas: 0, currentReplicas: 1, desiredReplicas: 1, name: 'a', syncedProxies: 1 }],
       { inbound: { http: { '500': 1 } }, outbound: { http: { '500': 1 } } },
       { rateInterval: 60, hasSidecar: true }
     );
@@ -88,8 +88,8 @@ describe('Health', () => {
       'bookinfo',
       'reviews',
       [
-        { availableReplicas: 1, currentReplicas: 1, desiredReplicas: 1, name: 'a', proxyStatus: [] },
-        { availableReplicas: 2, currentReplicas: 2, desiredReplicas: 2, name: 'b', proxyStatus: [] }
+        { availableReplicas: 1, currentReplicas: 1, desiredReplicas: 1, name: 'a', syncedProxies: 1 },
+        { availableReplicas: 2, currentReplicas: 2, desiredReplicas: 2, name: 'b', syncedProxies: 2 }
       ],
       { inbound: {}, outbound: {} },
       { rateInterval: 60, hasSidecar: true }
@@ -101,8 +101,8 @@ describe('Health', () => {
       'bookinfo',
       'reviews',
       [
-        { availableReplicas: 1, currentReplicas: 1, desiredReplicas: 1, name: 'a', proxyStatus: [] },
-        { availableReplicas: 1, currentReplicas: 1, desiredReplicas: 2, name: 'b', proxyStatus: [] }
+        { availableReplicas: 1, currentReplicas: 1, desiredReplicas: 1, name: 'a', syncedProxies: 1 },
+        { availableReplicas: 1, currentReplicas: 1, desiredReplicas: 2, name: 'b', syncedProxies: 2 }
       ],
       { inbound: {}, outbound: {} },
       { rateInterval: 60, hasSidecar: true }
@@ -114,8 +114,8 @@ describe('Health', () => {
       'bookinfo',
       'reviews',
       [
-        { availableReplicas: 1, currentReplicas: 1, desiredReplicas: 1, name: 'a', proxyStatus: [] },
-        { availableReplicas: 2, currentReplicas: 2, desiredReplicas: 2, name: 'b', proxyStatus: [] }
+        { availableReplicas: 1, currentReplicas: 1, desiredReplicas: 1, name: 'a', syncedProxies: 1 },
+        { availableReplicas: 2, currentReplicas: 2, desiredReplicas: 2, name: 'b', syncedProxies: 2 }
       ],
       { inbound: { http: { '200': 1.6, '500': 0.3 } }, outbound: { http: { '500': 0.1 } } },
       { rateInterval: 60, hasSidecar: true }
@@ -127,8 +127,8 @@ describe('Health', () => {
       'bookinfo',
       'reviews',
       [
-        { availableReplicas: 0, currentReplicas: 0, desiredReplicas: 0, name: 'a', proxyStatus: [] },
-        { availableReplicas: 0, currentReplicas: 0, desiredReplicas: 0, name: 'b', proxyStatus: [] }
+        { availableReplicas: 0, currentReplicas: 0, desiredReplicas: 0, name: 'a', syncedProxies: 1 },
+        { availableReplicas: 0, currentReplicas: 0, desiredReplicas: 0, name: 'b', syncedProxies: 2 }
       ],
       { inbound: { http: { '200': 1.6, '500': 0.3 } }, outbound: { http: { '500': 0.1 } } },
       { rateInterval: 60, hasSidecar: true }
@@ -139,7 +139,7 @@ describe('Health', () => {
     const health = new H.AppHealth(
       'bookinfo',
       'reviews',
-      [{ availableReplicas: 1, currentReplicas: 1, desiredReplicas: 1, name: 'a', proxyStatus: [] }],
+      [{ availableReplicas: 1, currentReplicas: 1, desiredReplicas: 1, name: 'a', syncedProxies: 1 }],
       { inbound: {}, outbound: {} },
       { rateInterval: 60, hasSidecar: true }
     );
@@ -149,7 +149,7 @@ describe('Health', () => {
     const health = new H.AppHealth(
       'bookinfo',
       'reviews',
-      [{ availableReplicas: 1, currentReplicas: 1, desiredReplicas: 1, name: 'a', proxyStatus: [] }],
+      [{ availableReplicas: 1, currentReplicas: 1, desiredReplicas: 1, name: 'a', syncedProxies: 1 }],
       { inbound: {}, outbound: {} },
       { rateInterval: 60, hasSidecar: false }
     );
@@ -167,7 +167,7 @@ describe('Health', () => {
             currentReplicas: 1,
             desiredReplicas: 1,
             name: 'a',
-            proxyStatus: []
+            syncedProxies: 1
           }
         ],
         { inbound: {}, outbound: {} },
@@ -182,7 +182,7 @@ describe('Health', () => {
       expect(proxyStatus.children).toHaveLength(1);
       if (proxyStatus.children) {
         expect(proxyStatus.children[0].status).toEqual(HEALTHY);
-        expect(proxyStatus.children[0].text).toEqual('Sidecar proxy is synced');
+        expect(proxyStatus.children[0].text).toEqual('a: 1 / 1');
       }
     });
 
@@ -196,20 +196,14 @@ describe('Health', () => {
             currentReplicas: 1,
             desiredReplicas: 1,
             name: 'a',
-            proxyStatus: [
-              { component: 'CDS', status: 'STALE' },
-              { component: 'RDS', status: 'NOT_SENT' }
-            ]
+            syncedProxies: 0
           },
           {
             availableReplicas: 1,
             currentReplicas: 1,
             desiredReplicas: 1,
             name: 'b',
-            proxyStatus: [
-              { component: 'EDS', status: 'STALE' },
-              { component: 'LDS', status: 'NOT_SENT' }
-            ]
+            syncedProxies: 0
           }
         ],
         { inbound: {}, outbound: {} },
