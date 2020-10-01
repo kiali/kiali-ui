@@ -226,6 +226,7 @@ export interface DecoratedGraphNodeData extends GraphNodeData {
   grpcInErr: number;
   grpcInNoResponse: number;
   grpcOut: number;
+  health: string; // Health Status name
   httpIn: number;
   httpIn3xx: number;
   httpIn4xx: number;
