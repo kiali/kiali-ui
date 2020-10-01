@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { connect } from 'react-redux';
+import { ThunkDispatch } from 'redux-thunk';
 import {
   Button,
   ButtonVariant,
@@ -10,6 +12,8 @@ import {
   pluralize,
   Tooltip
 } from '@patternfly/react-core';
+import { ExternalLinkAltIcon } from '@patternfly/react-icons';
+
 import { JaegerTrace } from '../../../types/JaegerInfo';
 import { JaegerTraceTitle } from './JaegerTraceTitle';
 import { CytoscapeGraphSelectorBuilder } from 'components/CytoscapeGraph/CytoscapeGraphSelector';
@@ -18,10 +22,8 @@ import { FormattedTraceInfo, shortIDStyle } from './FormattedTraceInfo';
 import { formatDuration } from './transform';
 import { PFAlertColor } from 'components/Pf/PfColors';
 import { KialiAppState } from 'store/Store';
-import { ThunkDispatch } from 'redux-thunk';
 import { KialiAppAction } from 'actions/KialiAppAction';
 import { JaegerThunkActions } from 'actions/JaegerThunkActions';
-import { connect } from 'react-redux';
 import { getTraceId } from 'utils/SearchParamUtils';
 import { average } from 'utils/MathUtils';
 import { averageSpanDuration, isSimilarTrace } from 'utils/TraceStats';
@@ -91,17 +93,26 @@ class TraceDetails extends React.Component<Props, State> {
       .map(t => averageSpanDuration(t))
       .filter(d => d !== undefined) as number[];
     const similarMeanAvgSpanDuration = average(similarSpanDurations, d => d);
+    const comparisonLink =
+      this.props.jaegerURL && similarTraces.length > 0
+        ? `${this.props.jaegerURL}/trace/${trace.traceID}...${similarTraces[0].traceID}?cohort=${
+            trace.traceID
+          }${similarTraces
+            .slice(0, 10)
+            .map(t => `&cohort=${t.traceID}`)
+            .join('')}`
+        : undefined;
 
     return (
       <Card isCompact style={{ border: '1px solid #e6e6e6' }}>
         <JaegerTraceTitle
           formattedTrace={formattedTrace}
-          onClickLink={jaegerURL !== '' ? `${jaegerURL}/trace/${trace.traceID}` : ''}
+          externalURL={jaegerURL ? `${jaegerURL}/trace/${trace.traceID}` : undefined}
           graphURL={this.getGraphURL(trace.traceID)}
         />
         <CardBody>
           <Grid style={{ marginTop: '20px' }}>
-            <GridItem span={4}>
+            <GridItem span={3}>
               <Label style={{ margin: 10 }}>{pluralize(trace.spans.length, 'Span')}</Label>
               <Label
                 style={{
@@ -112,9 +123,9 @@ class TraceDetails extends React.Component<Props, State> {
                 {pluralize(formattedTrace.numErrors, 'Span')} with error
               </Label>
               <br />
-              <Label style={{ margin: 10 }}>{pluralize(differentServices, 'Service')} involved</Label>
+              <Label style={{ margin: 10 }}>{pluralize(differentServices, 'App')} involved</Label>
             </GridItem>
-            <GridItem span={4}>
+            <GridItem span={3}>
               <Tooltip content={<>The full trace duration is (trace end time) - (trace start time).</>}>
                 <strong>Full duration: </strong>
               </Tooltip>
@@ -153,8 +164,16 @@ class TraceDetails extends React.Component<Props, State> {
               </small>
               <br />
             </GridItem>
-            <GridItem span={4}>
+            <GridItem span={6}>
               <strong>Similar traces</strong>
+              {comparisonLink && (
+                <>
+                  {' - '}
+                  <a href={comparisonLink} target={'_blank'} rel="noopener noreferrer">
+                    Compare in Tracing <ExternalLinkAltIcon />
+                  </a>
+                </>
+              )}
               <ul>
                 {similarTraces.length > 0
                   ? similarTraces.slice(0, 3).map(t => {
@@ -162,7 +181,7 @@ class TraceDetails extends React.Component<Props, State> {
                       return (
                         <li key={t.traceID}>
                           <Button
-                            style={{ paddingRight: 3 }}
+                            style={{ paddingLeft: 0, paddingRight: 3 }}
                             variant={ButtonVariant.link}
                             onClick={() => this.props.setTraceId(t.traceID)}
                           >

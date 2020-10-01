@@ -17,6 +17,7 @@ interface SpanDetailsProps {
   trace?: JaegerTrace;
   namespace: string;
   target: string;
+  externalURL?: string;
 }
 
 interface SpanDetailsState {
@@ -82,7 +83,7 @@ class SpanDetails extends React.Component<SpanDetailsProps, SpanDetailsState> {
               </Button>
             );
           })}
-          <SpanTable spans={spans} namespace={this.props.namespace} />
+          <SpanTable spans={spans} namespace={this.props.namespace} externalURL={this.props.externalURL} />
         </CardBody>
       </Card>
     );

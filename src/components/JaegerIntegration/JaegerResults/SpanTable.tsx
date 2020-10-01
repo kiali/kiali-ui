@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { Dropdown, DropdownGroup, DropdownItem, KebabToggle } from '@patternfly/react-core';
 import { Table, TableHeader, TableBody, TableVariant, RowWrapper } from '@patternfly/react-table';
-import { ExclamationCircleIcon } from '@patternfly/react-icons';
+import { ExternalLinkAltIcon, ExclamationCircleIcon } from '@patternfly/react-icons';
 
 import history from 'app/History';
 import { Span } from 'types/JaegerInfo';
@@ -26,6 +26,7 @@ const dangerErrorStyle = style({
 interface Props {
   spans: Span[];
   namespace: string;
+  externalURL?: string;
 }
 
 interface State {
@@ -54,6 +55,7 @@ export class SpanTable extends React.Component<Props, State> {
 
   private renderLinks = (
     key: string,
+    span: Span,
     linkToApp: string,
     linkToWorkload: string | undefined,
     app: string,
@@ -80,6 +82,16 @@ export class SpanTable extends React.Component<Props, State> {
           </DropdownItem>
           <DropdownItem className={linkStyle} onClick={() => history.push(linkToWorkload + '?tab=out_metrics')}>
             Outbound metrics
+          </DropdownItem>
+        </DropdownGroup>
+      );
+    }
+    if (this.props.externalURL) {
+      const spanLink = `${this.props.externalURL}/trace/${span.traceID}?uiFind=${span.spanID}`;
+      links.push(
+        <DropdownGroup label="Tracing" className={kebabDropwdownStyle}>
+          <DropdownItem className={linkStyle} onClick={() => window.open(spanLink, '_blank')}>
+            More span details <ExternalLinkAltIcon />
           </DropdownItem>
         </DropdownGroup>
       );
@@ -256,7 +268,7 @@ export class SpanTable extends React.Component<Props, State> {
           {
             title: <>{formatDuration(span.duration)}</>
           },
-          { title: this.renderLinks(String(idx), linkToApp, linkToWorkload, app, workloadNs?.workload) }
+          { title: this.renderLinks(String(idx), span, linkToApp, linkToWorkload, app, workloadNs?.workload) }
         ]
       };
     });
@@ -272,7 +284,7 @@ export class SpanTable extends React.Component<Props, State> {
           { title: 'App / Workload' },
           { title: 'Summary' },
           { title: 'Duration' },
-          { title: 'Links' }
+          { title: '' } // Links
         ]}
         rows={this.rows()}
         // This style is declared on _overrides.scss

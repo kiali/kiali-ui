@@ -352,7 +352,11 @@ class TracesComponent extends React.Component<TracesProps, TracesState> {
               />
             </GridItem>
             <GridItem span={12}>
-              <SpanDetails namespace={this.props.namespace} target={this.props.target} />
+              <SpanDetails
+                namespace={this.props.namespace}
+                target={this.props.target}
+                externalURL={this.props.urlJaeger}
+              />
             </GridItem>
           </Grid>
         </RenderComponentScroll>
