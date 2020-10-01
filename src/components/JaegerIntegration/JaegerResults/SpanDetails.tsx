@@ -1,11 +1,10 @@
 import * as React from 'react';
 import { groupBy } from 'lodash';
 import { style } from 'typestyle';
-import { Button, Card, CardBody, CardHeader } from '@patternfly/react-core';
+import { Button, Card, CardBody } from '@patternfly/react-core';
 
 import { JaegerTrace, Span } from 'types/JaegerInfo';
 import { SpanTable } from './SpanTable';
-import { PfColors } from 'components/Pf/PfColors';
 import { KialiAppState } from 'store/Store';
 import { connect } from 'react-redux';
 
@@ -67,7 +66,6 @@ class SpanDetails extends React.Component<SpanDetailsProps, SpanDetailsState> {
     const apps = Object.keys(spansPerApp).sort();
     return (
       <Card isCompact style={{ border: '1px solid #e6e6e6' }}>
-        <CardHeader style={{ backgroundColor: PfColors.Black200, height: '50px' }}>Spans details</CardHeader>
         <CardBody>
           Filter by app{' '}
           {apps.map(app => {

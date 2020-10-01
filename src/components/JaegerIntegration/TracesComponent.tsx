@@ -5,6 +5,8 @@ import {
   Checkbox,
   Grid,
   GridItem,
+  Tab,
+  Tabs,
   Text,
   TextVariants,
   Toolbar,
@@ -53,6 +55,7 @@ interface TracesState {
   traces: JaegerTrace[];
   jaegerErrors: JaegerError[];
   targetApp?: string;
+  activeTab: number;
 }
 
 export const traceDurationUnits: { [key: string]: string } = {
@@ -60,6 +63,9 @@ export const traceDurationUnits: { [key: string]: string } = {
   ms: 'ms',
   s: 's'
 };
+
+const traceDetailsTab = 0;
+const spansDetailsTab = 1;
 
 class TracesComponent extends React.Component<TracesProps, TracesState> {
   private fetcher: TracesFetcher;
@@ -95,7 +101,8 @@ class TracesComponent extends React.Component<TracesProps, TracesState> {
       selectedLimitSpans: limit,
       traces: [],
       jaegerErrors: [],
-      targetApp: targetApp
+      targetApp: targetApp,
+      activeTab: traceDetailsTab
     };
     this.fetcher = new TracesFetcher(this.onTracesUpdated, errors => this.setState({ jaegerErrors: errors }));
   }
@@ -343,20 +350,24 @@ class TracesComponent extends React.Component<TracesProps, TracesState> {
               </Card>
             </GridItem>
             <GridItem span={12}>
-              <TraceDetails
-                namespace={this.props.namespace}
-                target={this.props.target}
-                targetKind={this.props.targetKind}
-                jaegerURL={this.props.urlJaeger}
-                otherTraces={this.state.traces}
-              />
-            </GridItem>
-            <GridItem span={12}>
-              <SpanDetails
-                namespace={this.props.namespace}
-                target={this.props.target}
-                externalURL={this.props.urlJaeger}
-              />
+              <Tabs activeKey={this.state.activeTab} onSelect={(_, idx: any) => this.setState({ activeTab: idx })}>
+                <Tab eventKey={traceDetailsTab} title="Trace Details">
+                  <TraceDetails
+                    namespace={this.props.namespace}
+                    target={this.props.target}
+                    targetKind={this.props.targetKind}
+                    jaegerURL={this.props.urlJaeger}
+                    otherTraces={this.state.traces}
+                  />
+                </Tab>
+                <Tab eventKey={spansDetailsTab} title="Spans Details">
+                  <SpanDetails
+                    namespace={this.props.namespace}
+                    target={this.props.target}
+                    externalURL={this.props.urlJaeger}
+                  />
+                </Tab>
+              </Tabs>
             </GridItem>
           </Grid>
         </RenderComponentScroll>

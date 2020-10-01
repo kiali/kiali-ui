@@ -12,7 +12,6 @@ import {
   pluralize,
   Tooltip
 } from '@patternfly/react-core';
-import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 
 import { JaegerTrace } from '../../../types/JaegerInfo';
 import { JaegerTraceTitle } from './JaegerTraceTitle';
@@ -109,6 +108,7 @@ class TraceDetails extends React.Component<Props, State> {
           formattedTrace={formattedTrace}
           externalURL={jaegerURL ? `${jaegerURL}/trace/${trace.traceID}` : undefined}
           graphURL={this.getGraphURL(trace.traceID)}
+          comparisonURL={comparisonLink}
         />
         <CardBody>
           <Grid style={{ marginTop: '20px' }}>
@@ -133,12 +133,22 @@ class TraceDetails extends React.Component<Props, State> {
               <br />
               <small style={{ paddingLeft: 15 }}>
                 versus similar mean:{' '}
-                {comparedDurations(trace.duration, similarMeanDuration, formattedTrace.shortID(), 'similar')}
+                {comparedDurations(
+                  trace.duration,
+                  similarMeanDuration,
+                  formattedTrace.shortID(),
+                  'similar traces displayed'
+                )}
               </small>
               <br />
               <small style={{ paddingLeft: 15 }}>
                 versus all others mean:{' '}
-                {comparedDurations(trace.duration, otherMeanDuration, formattedTrace.shortID(), 'others')}
+                {comparedDurations(
+                  trace.duration,
+                  otherMeanDuration,
+                  formattedTrace.shortID(),
+                  'other traces displayed'
+                )}
               </small>
               <br />
               <Tooltip
@@ -155,25 +165,27 @@ class TraceDetails extends React.Component<Props, State> {
               <br />
               <small style={{ paddingLeft: 15 }}>
                 versus similar mean:{' '}
-                {comparedDurations(avgSpanDuration, similarMeanAvgSpanDuration, formattedTrace.shortID(), 'similar')}
+                {comparedDurations(
+                  avgSpanDuration,
+                  similarMeanAvgSpanDuration,
+                  formattedTrace.shortID(),
+                  'similar traces displayed'
+                )}
               </small>
               <br />
               <small style={{ paddingLeft: 15 }}>
                 versus all others mean:{' '}
-                {comparedDurations(avgSpanDuration, otherMeanAvgSpanDuration, formattedTrace.shortID(), 'others')}
+                {comparedDurations(
+                  avgSpanDuration,
+                  otherMeanAvgSpanDuration,
+                  formattedTrace.shortID(),
+                  'other traces displayed'
+                )}
               </small>
               <br />
             </GridItem>
             <GridItem span={6}>
               <strong>Similar traces</strong>
-              {comparisonLink && (
-                <>
-                  {' - '}
-                  <a href={comparisonLink} target={'_blank'} rel="noopener noreferrer">
-                    Compare in Tracing <ExternalLinkAltIcon />
-                  </a>
-                </>
-              )}
               <ul>
                 {similarTraces.length > 0
                   ? similarTraces.slice(0, 3).map(t => {
