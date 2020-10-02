@@ -75,8 +75,10 @@ export interface Status {
 }
 
 export interface ProxyStatus {
-  component: string;
-  status: string;
+  CDS: string;
+  EDS: string;
+  LDS: string;
+  RDS: string;
 }
 
 export const IDLE: Status = {

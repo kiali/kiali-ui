@@ -17,6 +17,7 @@ import {
 } from '@patternfly/react-core';
 import { CogsIcon } from '@patternfly/react-icons';
 import ValidationList from '../../../components/Validations/ValidationList';
+import ProxyStatusList from './ProxyStatusList';
 
 type WorkloadPodsProps = {
   namespace: string;
@@ -30,13 +31,14 @@ class WorkloadPods extends React.Component<WorkloadPodsProps> {
     // TODO: Casting 'as any' because @patternfly/react-table@2.22.19 has a typing bug. Remove the casting when PF fixes it.
     // https://github.com/patternfly/patternfly-next/issues/2373
     return [
-      { title: 'Status', transforms: [cellWidth(10) as any] },
+      { title: 'Status', transforms: [cellWidth(7) as any] },
       { title: 'Name' },
       { title: 'Created at' },
       { title: 'Created by' },
       { title: 'Labels' },
       { title: 'Istio Init Containers' },
       { title: 'Istio Containers' },
+      { title: 'Istio Proxy Status' },
       { title: 'Phase' }
     ];
   }
@@ -90,6 +92,7 @@ class WorkloadPods extends React.Component<WorkloadPodsProps> {
           { title: <Labels key={'labels' + podIdx} labels={pod.labels} /> },
           { title: pod.istioInitContainers ? pod.istioInitContainers.map(c => `${c.image}`).join(', ') : '' },
           { title: pod.istioContainers ? pod.istioContainers.map(c => `${c.image}`).join(', ') : '' },
+          { title: <ProxyStatusList status={pod.proxyStatus} /> },
           { title: <span style={{ whiteSpace: 'nowrap' }}>{pod.status}</span> }
         ]
       });
