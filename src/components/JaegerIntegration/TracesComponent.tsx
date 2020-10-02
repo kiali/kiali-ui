@@ -350,7 +350,11 @@ class TracesComponent extends React.Component<TracesProps, TracesState> {
               </Card>
             </GridItem>
             <GridItem span={12}>
-              <Tabs activeKey={this.state.activeTab} onSelect={(_, idx: any) => this.setState({ activeTab: idx })}>
+              <Tabs
+                id="trace-details"
+                activeKey={this.state.activeTab}
+                onSelect={(_, idx: any) => this.setState({ activeTab: idx })}
+              >
                 <Tab eventKey={traceDetailsTab} title="Trace Details">
                   <TraceDetails
                     namespace={this.props.namespace}

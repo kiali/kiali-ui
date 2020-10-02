@@ -114,6 +114,8 @@ class TraceDetails extends React.Component<Props, State> {
           <Grid style={{ marginTop: '20px' }}>
             <GridItem span={3}>
               <Label style={{ margin: 10 }}>{pluralize(trace.spans.length, 'Span')}</Label>
+              <Label style={{ margin: 10 }}>{pluralize(differentServices, 'App')} involved</Label>
+              <br />
               <Label
                 style={{
                   margin: 10,
@@ -122,8 +124,6 @@ class TraceDetails extends React.Component<Props, State> {
               >
                 {pluralize(formattedTrace.numErrors, 'Span')} with error
               </Label>
-              <br />
-              <Label style={{ margin: 10 }}>{pluralize(differentServices, 'App')} involved</Label>
             </GridItem>
             <GridItem span={3}>
               <Tooltip content={<>The full trace duration is (trace end time) - (trace start time).</>}>
