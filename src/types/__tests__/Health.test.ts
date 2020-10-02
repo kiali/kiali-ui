@@ -15,20 +15,24 @@ describe('Health', () => {
     setServerConfig(healthConfig);
   });
   it('should check ratio with 0 valid', () => {
-    expect(H.ratioCheck(0, 3, 3)).toEqual(H.FAILURE);
+    expect(H.ratioCheck(0, 3, 3, 3)).toEqual(H.FAILURE);
   });
   it('should check ratio with some valid', () => {
-    expect(H.ratioCheck(1, 3, 3)).toEqual(H.DEGRADED);
+    expect(H.ratioCheck(1, 3, 3, 3)).toEqual(H.DEGRADED);
   });
   it('should check ratio with all valid', () => {
-    expect(H.ratioCheck(3, 3, 3)).toEqual(H.HEALTHY);
+    expect(H.ratioCheck(3, 3, 3, 3)).toEqual(H.HEALTHY);
   });
   it('should check ratio with no item', () => {
-    expect(H.ratioCheck(0, 0, 0)).toEqual(H.IDLE);
+    expect(H.ratioCheck(0, 0, 0, 0)).toEqual(H.IDLE);
   });
   it('should check ratio pending Pods', () => {
     // 3 Pods with problems
-    expect(H.ratioCheck(3, 6, 3)).toEqual(H.FAILURE);
+    expect(H.ratioCheck(3, 6, 3, 3)).toEqual(H.FAILURE);
+  });
+  it('should check ratio unsynced proxies', () => {
+    // 3 Pods with problems
+    expect(H.ratioCheck(3, 3, 3, 2)).toEqual(H.DEGRADED);
   });
   it('should merge status with correct priority', () => {
     let status = H.mergeStatus(H.NA, H.HEALTHY);
@@ -143,7 +147,7 @@ describe('Health', () => {
       { inbound: {}, outbound: {} },
       { rateInterval: 60, hasSidecar: true }
     );
-    expect(health.health.items).toHaveLength(3);
+    expect(health.health.items).toHaveLength(2);
   });
   it('should ignore error rates when no sidecar', () => {
     const health = new H.AppHealth(
@@ -173,10 +177,10 @@ describe('Health', () => {
         { inbound: {}, outbound: {} },
         { rateInterval: 60, hasSidecar: true }
       );
-      expect(health.health.items).toHaveLength(3);
+      expect(health.health.items).toHaveLength(2);
 
-      const proxyStatus = health.health.items[1];
-      expect(proxyStatus.title).toEqual('Proxy Status');
+      const proxyStatus = health.health.items[0];
+      expect(proxyStatus.title).toEqual('Pod Status');
       expect(proxyStatus.status).toEqual(HEALTHY);
 
       expect(proxyStatus.children).toHaveLength(1);
@@ -209,18 +213,18 @@ describe('Health', () => {
         { inbound: {}, outbound: {} },
         { rateInterval: 60, hasSidecar: true }
       );
-      expect(health.health.items).toHaveLength(3);
+      expect(health.health.items).toHaveLength(2);
 
-      const proxyStatus = health.health.items[1];
-      expect(proxyStatus.title).toEqual('Proxy Status');
+      const proxyStatus = health.health.items[0];
+      expect(proxyStatus.title).toEqual('Pod Status');
       expect(proxyStatus.status).toEqual(DEGRADED);
 
       expect(proxyStatus.children).toHaveLength(2);
       if (proxyStatus.children) {
         expect(proxyStatus.children[0].status).toEqual(DEGRADED);
-        expect(proxyStatus.children[0].text).toBeDefined();
+        expect(proxyStatus.children[0].text).toEqual('a: 1 / 1 (1 proxy unsynced)');
         expect(proxyStatus.children[1].status).toEqual(DEGRADED);
-        expect(proxyStatus.children[1].text).toBeDefined();
+        expect(proxyStatus.children[1].text).toEqual('b: 1 / 1 (1 proxy unsynced)');
       }
     });
   });

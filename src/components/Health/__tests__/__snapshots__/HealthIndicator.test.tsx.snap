@@ -29,35 +29,13 @@ exports[`HealthIndicator proxy status section renders the degraded workloads 1`]
                   "children": Array [
                     Object {
                       "status": Object {
-                        "class": "icon-healthy",
-                        "color": "#3e8635",
-                        "icon": [Function],
-                        "name": "Healthy",
-                        "priority": 1,
-                      },
-                      "text": "A: 1 / 1",
-                    },
-                  ],
-                  "status": Object {
-                    "class": "icon-healthy",
-                    "color": "#3e8635",
-                    "icon": [Function],
-                    "name": "Healthy",
-                    "priority": 1,
-                  },
-                  "title": "Pod Status",
-                },
-                Object {
-                  "children": Array [
-                    Object {
-                      "status": Object {
                         "class": "icon-degraded",
                         "color": "var(--pf-global--warning-color--100)",
                         "icon": [Function],
                         "name": "Degraded",
                         "priority": 2,
                       },
-                      "text": "A: 0 / 1",
+                      "text": "A: 2 / 2 (1 proxy unsynced)",
                     },
                   ],
                   "status": Object {
@@ -67,7 +45,7 @@ exports[`HealthIndicator proxy status section renders the degraded workloads 1`]
                     "name": "Degraded",
                     "priority": 2,
                   },
-                  "title": "Proxy Status",
+                  "title": "Pod Status",
                 },
                 Object {
                   "children": Array [
@@ -195,35 +173,13 @@ exports[`HealthIndicator proxy status section renders the degraded workloads 2`]
               "children": Array [
                 Object {
                   "status": Object {
-                    "class": "icon-healthy",
-                    "color": "#3e8635",
-                    "icon": [Function],
-                    "name": "Healthy",
-                    "priority": 1,
-                  },
-                  "text": "A: 1 / 1",
-                },
-              ],
-              "status": Object {
-                "class": "icon-healthy",
-                "color": "#3e8635",
-                "icon": [Function],
-                "name": "Healthy",
-                "priority": 1,
-              },
-              "title": "Pod Status",
-            },
-            Object {
-              "children": Array [
-                Object {
-                  "status": Object {
                     "class": "icon-degraded",
                     "color": "var(--pf-global--warning-color--100)",
                     "icon": [Function],
                     "name": "Degraded",
                     "priority": 2,
                   },
-                  "text": "A: 0 / 1",
+                  "text": "A: 2 / 2 (1 proxy unsynced)",
                 },
               ],
               "status": Object {
@@ -233,7 +189,7 @@ exports[`HealthIndicator proxy status section renders the degraded workloads 2`]
                 "name": "Degraded",
                 "priority": 2,
               },
-              "title": "Proxy Status",
+              "title": "Pod Status",
             },
             Object {
               "children": Array [

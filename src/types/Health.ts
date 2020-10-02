@@ -133,7 +133,12 @@ const POD_STATUS = 'Pod Status';
 // Use -1 rather than NaN to allow straigthforward comparison
 export const RATIO_NA = -1;
 
-export const ratioCheck = (availableReplicas: number, currentReplicas: number, desiredReplicas: number): Status => {
+export const ratioCheck = (
+  availableReplicas: number,
+  currentReplicas: number,
+  desiredReplicas: number,
+  syncedProxies: number
+): Status => {
   /*
     IDLE STATE
  */
@@ -168,6 +173,11 @@ export const ratioCheck = (availableReplicas: number, currentReplicas: number, d
     return FAILURE;
   }
 
+  // When there are proxies that are not sync, degrade
+  if (syncedProxies < desiredReplicas) {
+    return DEGRADED;
+  }
+
   /*
      HEALTHY STATE
   */
@@ -183,8 +193,15 @@ export const ratioCheck = (availableReplicas: number, currentReplicas: number, d
   return DEGRADED;
 };
 
-export const proxyCheck = (syncedProxies: number, desiredReplicas: number): Status => {
-  return syncedProxies !== desiredReplicas ? DEGRADED : HEALTHY;
+export const proxyStatusMessage = (syncedProxies: number, desiredReplicas: number): string => {
+  let msg: string = '';
+  if (syncedProxies < desiredReplicas) {
+    const unsynced = desiredReplicas - syncedProxies;
+    msg = ' (' + unsynced;
+    msg += unsynced !== 1 ? ' proxies' : ' proxy';
+    msg += ' unsynced)';
+  }
+  return msg;
 };
 
 export const mergeStatus = (s1: Status, s2: Status): Status => {
@@ -325,9 +342,10 @@ export class AppHealth extends Health {
     {
       // Pods
       const children: HealthSubItem[] = workloadStatuses.map(d => {
-        const status = ratioCheck(d.availableReplicas, d.currentReplicas, d.desiredReplicas);
+        const status = ratioCheck(d.availableReplicas, d.currentReplicas, d.desiredReplicas, d.syncedProxies);
+        const proxyMessage = proxyStatusMessage(d.syncedProxies, d.desiredReplicas);
         return {
-          text: d.name + ': ' + d.availableReplicas + ' / ' + d.desiredReplicas,
+          text: d.name + ': ' + d.availableReplicas + ' / ' + d.desiredReplicas + proxyMessage,
           status: status
         };
       });
@@ -338,27 +356,6 @@ export class AppHealth extends Health {
         children: children
       };
       items.push(item);
-    }
-
-    // Append Proxy errors
-    if (ctx.hasSidecar) {
-      const proxyItem: HealthItem = {
-        title: 'Proxy Status',
-        status: HEALTHY,
-        children: []
-      };
-
-      // For each Workload, aggregate its proxy errors
-      workloadStatuses.forEach(ws => {
-        const proxyStatus: Status = proxyCheck(ws.syncedProxies, ws.desiredReplicas);
-        proxyItem.status = mergeStatus(proxyStatus, proxyItem.status);
-        proxyItem.children?.push({
-          status: proxyStatus,
-          text: ws.name + ': ' + ws.syncedProxies + ' / ' + ws.desiredReplicas
-        });
-      });
-
-      items.push(proxyItem);
     }
 
     // Request errors
@@ -412,7 +409,8 @@ export class WorkloadHealth extends Health {
       const podsStatus = ratioCheck(
         workloadStatus.availableReplicas,
         workloadStatus.currentReplicas,
-        workloadStatus.desiredReplicas
+        workloadStatus.desiredReplicas,
+        workloadStatus.syncedProxies
       );
       const item: HealthItem = {
         title: POD_STATUS,
@@ -444,30 +442,16 @@ export class WorkloadHealth extends Health {
             text: String(
               workloadStatus.availableReplicas + ' available pod' + (workloadStatus.availableReplicas !== 1 ? 's' : '')
             )
+          },
+          {
+            status: podsStatus,
+            text: String(
+              workloadStatus.syncedProxies + ' synced prox' + (workloadStatus.availableReplicas !== 1 ? 'ies' : 'y')
+            )
           }
         ];
       }
       items.push(item);
-    }
-    {
-      // Append Proxy Status errors
-      const proxyStatus: Status = proxyCheck(workloadStatus.syncedProxies, workloadStatus.desiredReplicas);
-      const proxyItem: HealthItem = {
-        title: 'Proxy Status',
-        status: proxyStatus,
-        children: []
-      };
-
-      proxyItem.status = mergeStatus(
-        proxyItem.status,
-        proxyCheck(workloadStatus.syncedProxies, workloadStatus.desiredReplicas)
-      );
-      proxyItem.children!.push({
-        status: proxyStatus,
-        text: String(workloadStatus.name + ': ' + workloadStatus.syncedProxies + ' / ' + workloadStatus.desiredReplicas)
-      });
-
-      items.push(proxyItem);
     }
     // Request errors
     if (ctx.hasSidecar) {

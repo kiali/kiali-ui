@@ -151,10 +151,10 @@ describe('HealthIndicator', () => {
         [
           {
             name: 'A',
-            availableReplicas: 1,
-            currentReplicas: 1,
-            desiredReplicas: 1,
-            syncedProxies: 0
+            availableReplicas: 2,
+            currentReplicas: 2,
+            desiredReplicas: 2,
+            syncedProxies: 1
           }
         ],
         { inbound: {}, outbound: {} },
@@ -170,8 +170,8 @@ describe('HealthIndicator', () => {
       // LARGE
       wrapper = shallow(<HealthIndicator id="svc" health={health} mode={DisplayMode.LARGE} />);
       html = wrapper.html();
-      expect(html).toContain(PFAlertColor.Warning);
-      expect(html).toContain('A: 0 / 1');
+      expect(html).toContain(shallow(createIcon(DEGRADED, 'sm')).html());
+      expect(html).toContain('A: 2 / 2 (1 proxy unsynced)');
       expect(shallowToJson(wrapper)).toMatchSnapshot();
     });
   });
