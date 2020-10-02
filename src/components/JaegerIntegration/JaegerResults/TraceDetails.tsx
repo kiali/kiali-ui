@@ -224,7 +224,7 @@ const comparedDurations = (
   d2Desc: string
 ): JSX.Element => {
   if (d2 === undefined || d1 === undefined) {
-    return <>'n/a'</>;
+    return <>n/a</>;
   }
   const diff = d2 - d1;
   const absValue = formatDuration(Math.abs(diff));
