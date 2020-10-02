@@ -726,7 +726,9 @@ export class GraphFind extends React.Component<GraphFindProps, GraphFindState> {
       case 'healthy':
         return {
           target: 'node',
-          selector: isNegation ? `[${CyNode.health} != "${HEALTHY.name}"]` : `[${CyNode.health} = "${HEALTHY.name}"]`
+          selector: isNegation
+            ? `[${CyNode.healthStatus} != "${HEALTHY.name}"]`
+            : `[${CyNode.healthStatus} = "${HEALTHY.name}"]`
         };
       case 'outside':
       case 'outsider':

@@ -430,7 +430,7 @@ export class GraphStyles {
     };
 
     const getNodeBorderColor = (ele: Cy.NodeSingular): string => {
-      switch (ele.data(CyNode.health)) {
+      switch (ele.data(CyNode.healthStatus)) {
         case DEGRADED.name:
           return NodeColorBorderDegraded;
         case FAILURE.name:
@@ -461,8 +461,7 @@ export class GraphStyles {
 
     const nodeSelectedStyle = {
       'border-color': (ele: Cy.NodeSingular) => {
-        console.log(`selected style=${ele.data(CyNode.health)}`);
-        switch (ele.data(CyNode.health)) {
+        switch (ele.data(CyNode.healthStatus)) {
           case DEGRADED.name:
             return NodeColorBorderDegraded;
           case FAILURE.name:
@@ -530,7 +529,7 @@ export class GraphStyles {
         selector: 'node.mousehighlight[^isGroup]',
         style: {
           'background-color': (ele: Cy.NodeSingular) => {
-            switch (ele.data(CyNode.health)) {
+            switch (ele.data(CyNode.healthStatus)) {
               case DEGRADED.name:
                 return NodeColorFillHoverDegraded;
               case FAILURE.name:
@@ -540,7 +539,7 @@ export class GraphStyles {
             }
           },
           'border-color': (ele: Cy.NodeSingular) => {
-            switch (ele.data(CyNode.health)) {
+            switch (ele.data(CyNode.healthStatus)) {
               case DEGRADED.name:
                 return NodeColorBorderDegraded;
               case FAILURE.name:
