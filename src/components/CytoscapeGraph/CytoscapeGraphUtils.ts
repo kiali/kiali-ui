@@ -50,6 +50,7 @@ export const CyNode = {
   hasMissingSC: 'hasMissingSC',
   hasVS: 'hasVS',
   health: 'health',
+  healthStatus: 'healthStatus',
   httpIn: 'httpIn',
   httpIn3xx: 'httpIn3xx',
   httpIn4xx: 'httpIn4xx',

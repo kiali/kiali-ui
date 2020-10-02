@@ -106,6 +106,10 @@ export default class GraphDataSource {
     graphData => decorateGraphData(graphData)
   );
 
+  private fetchStart: TimeInMilliseconds = 0;
+  private fetchEnd: TimeInMilliseconds = 0;
+  private fetchHealthStart: TimeInMilliseconds = 0;
+
   // Public methods
 
   constructor() {
@@ -132,6 +136,8 @@ export default class GraphDataSource {
   }
 
   public fetchGraphData = (fetchParams: FetchParams) => {
+    this.fetchStart = Date.now();
+
     const previousFetchParams = this.fetchParameters;
 
     // Copy fetch parameters to a local attribute
@@ -409,9 +415,12 @@ export default class GraphDataSource {
 
   // Limit health fetches to only the necessary namespaces for the necessary types
   private fetchHealth = (decoratedGraphElements: DecoratedGraphElements) => {
+    this.fetchHealthStart = Date.now();
     console.log('fetchHealth');
-    if (!decoratedGraphElements.nodes) {
-      console.log('no nodes');
+    if (!decoratedGraphElements.nodes || decoratedGraphElements.nodes.length === 0) {
+      this._isLoading = false;
+      this.emit('fetchSuccess', this.graphTimestamp, this.graphDuration, decoratedGraphElements, this.fetchParameters);
+
       return;
     }
 
@@ -419,11 +428,6 @@ export default class GraphDataSource {
     const appNamespacePromises = new Map<string, Promise<NamespaceAppHealth>>();
     const serviceNamespacePromises = new Map<string, Promise<NamespaceServiceHealth>>();
     const workloadNamespacePromises = new Map<string, Promise<NamespaceWorkloadHealth>>();
-    /*
-    const appNodePromises = new Map<DecoratedGraphNodeWrapper, Promise<NamespaceAppHealth>>();
-    const serviceNodePromises = new Map<DecoratedGraphNodeWrapper, Promise<NamespaceServiceHealth>>();
-    const workloadNodePromises = new Map<DecoratedGraphNodeWrapper, Promise<NamespaceWorkloadHealth>>();
-    */
 
     const promiseToNode = new Map<Promise<NamespaceHealth>, NodeHealth[]>();
 
@@ -487,17 +491,26 @@ export default class GraphDataSource {
           promiseToNode.get(healthPromises[i])!.forEach(nh => {
             const health = nsHealth[nh.key];
             if (health) {
-              nh.node.data.health = health.getGlobalStatus().name;
-              console.log(`health for [${nh.node.data.nodeType}] [${nh.key}] = ${nh.node.data.health}`);
+              nh.node.data.health = health;
+              nh.node.data.healthStatus = health.getGlobalStatus().name;
+              console.log(`health for [${nh.node.data.nodeType}] [${nh.key}] = ${nh.node.data.healthStatus}`);
             } else {
-              nh.node.data.health = NA.name;
-              // console.debug(`No health found for [${node.data.nodeType}] [${key}]`);
-              console.log(`No health found for [${nh.node.data.nodeType}] [${nh.key}]`);
+              nh.node.data.healthStatus = NA.name;
+              console.debug(`No health found for [${nh.node.data.nodeType}] [${nh.key}]`);
             }
           });
         });
 
         console.log('Emitting...');
+        this.fetchEnd = Date.now();
+        const total = this.fetchEnd - this.fetchStart;
+        const graphTotal = this.fetchHealthStart - this.fetchStart;
+        const graphPercent = Number((graphTotal / total) * 100).toFixed(2);
+        const healthTotal = this.fetchEnd - this.fetchHealthStart;
+        const healthPercent = Number((healthTotal / total) * 100).toFixed(2);
+        console.log(`Total  fetch time=${total}ms`);
+        console.log(`Graph  fetch time=${graphTotal}ms (${graphPercent})%`);
+        console.log(`Health fetch time=${healthTotal}ms (${healthPercent})%`);
         this._isLoading = false;
         this.emit(
           'fetchSuccess',

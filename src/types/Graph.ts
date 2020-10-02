@@ -1,5 +1,6 @@
 import Namespace from './Namespace';
 import { DurationInSeconds, TimeInSeconds } from './Common';
+import { Health } from './Health';
 
 export interface Layout {
   name: string;
@@ -226,7 +227,8 @@ export interface DecoratedGraphNodeData extends GraphNodeData {
   grpcInErr: number;
   grpcInNoResponse: number;
   grpcOut: number;
-  health: string; // Health Status name
+  health: Health;
+  healthStatus: string; // status name
   httpIn: number;
   httpIn3xx: number;
   httpIn4xx: number;
