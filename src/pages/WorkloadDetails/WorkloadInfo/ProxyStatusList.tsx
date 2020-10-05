@@ -33,9 +33,10 @@ class ProxyStatusList extends React.Component<Props> {
       { c: 'RDS', s: this.props.status.RDS }
     ].map((value: { c: string; s: string }, i: number) => {
       if (!this.isComponentSynced(value.s)) {
+        const status = value.s ? value.s : '-';
         return (
           <StackItem key={'proxy-status-' + i} className={smallStyle}>
-            {value.c + ': ' + value.s}
+            {value.c + ': ' + status}
           </StackItem>
         );
       } else {

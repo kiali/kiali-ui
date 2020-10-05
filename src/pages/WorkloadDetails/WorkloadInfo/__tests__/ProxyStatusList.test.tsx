@@ -66,4 +66,37 @@ describe('ProxyStatusList', () => {
       expect(statusItems.at(1).html()).toContain('RDS: STALE');
     });
   });
+
+  describe('when there are components without value', () => {
+    const statuses: ProxyStatus = syncedProxyStatus;
+    syncedProxyStatus.RDS = '';
+    syncedProxyStatus.CDS = '';
+
+    const subject = shallowComponent(statuses);
+
+    it('match the snapshot', () => {
+      expect(shallowToJson(subject)).toMatchSnapshot();
+    });
+
+    it('renders the tooltip', () => {
+      const tooltip = subject.find(Tooltip);
+      expect(tooltip).toHaveLength(1);
+    });
+
+    it('renders a degraded icon', () => {
+      expect(subject.find(ExclamationTriangleIcon)).toBeDefined();
+    });
+
+    it('renders all unsynced statuses', () => {
+      const stack = shallow(subject.props().content);
+      expect(stack).toHaveLength(1);
+
+      const statusList = stack.children();
+      expect(statusList).toHaveLength(2);
+
+      const statusItems = statusList.find(StackItem);
+      expect(statusItems.at(0).html()).toContain('CDS: -');
+      expect(statusItems.at(1).html()).toContain('RDS: -');
+    });
+  });
 });

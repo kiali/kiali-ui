@@ -10,6 +10,62 @@ exports[`ProxyStatusList when status is synced match the snapshot 1`] = `
 />
 `;
 
+exports[`ProxyStatusList when there are components without value match the snapshot 1`] = `
+<Tooltip
+  appendTo={[Function]}
+  aria="describedby"
+  aria-label="Istio Proxy Status"
+  boundary="window"
+  className=""
+  content={
+    <Stack>
+      <StackItem
+        className="f1e63p1b"
+      >
+        CDS: -
+      </StackItem>
+      <StackItem
+        className="f1e63p1b"
+      >
+        RDS: -
+      </StackItem>
+    </Stack>
+  }
+  distance={15}
+  enableFlip={true}
+  entryDelay={500}
+  exitDelay={500}
+  flipBehavior={
+    Array [
+      "top",
+      "right",
+      "bottom",
+      "left",
+      "top",
+      "right",
+      "bottom",
+    ]
+  }
+  id=""
+  isAppLauncher={false}
+  isContentLeftAligned={false}
+  isVisible={false}
+  maxWidth="18.75rem"
+  position="auto"
+  tippyProps={Object {}}
+  trigger="mouseenter focus"
+  zIndex={9999}
+>
+  <ExclamationTriangleIcon
+    className="icon-degraded"
+    color="var(--pf-global--warning-color--100)"
+    noVerticalAlign={false}
+    size="sm"
+    title={null}
+  />
+</Tooltip>
+`;
+
 exports[`ProxyStatusList when there are unsyced components match the snapshot 1`] = `
 <Tooltip
   appendTo={[Function]}
