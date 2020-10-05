@@ -56,7 +56,9 @@ class ProxyStatusList extends React.Component<Props> {
           enableFlip={true}
           content={this.statusList()}
         >
-          {createIcon(DEGRADED)}
+          <span>
+            {createIcon(DEGRADED)}
+          </span>
         </Tooltip>
       );
     } else {

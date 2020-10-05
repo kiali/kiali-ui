@@ -56,13 +56,15 @@ exports[`ProxyStatusList when there are components without value match the snaps
   trigger="mouseenter focus"
   zIndex={9999}
 >
-  <ExclamationTriangleIcon
-    className="icon-degraded"
-    color="var(--pf-global--warning-color--100)"
-    noVerticalAlign={false}
-    size="sm"
-    title={null}
-  />
+  <span>
+    <ExclamationTriangleIcon
+      className="icon-degraded"
+      color="var(--pf-global--warning-color--100)"
+      noVerticalAlign={false}
+      size="sm"
+      title={null}
+    />
+  </span>
 </Tooltip>
 `;
 
@@ -112,12 +114,14 @@ exports[`ProxyStatusList when there are unsyced components match the snapshot 1`
   trigger="mouseenter focus"
   zIndex={9999}
 >
-  <ExclamationTriangleIcon
-    className="icon-degraded"
-    color="var(--pf-global--warning-color--100)"
-    noVerticalAlign={false}
-    size="sm"
-    title={null}
-  />
+  <span>
+    <ExclamationTriangleIcon
+      className="icon-degraded"
+      color="var(--pf-global--warning-color--100)"
+      noVerticalAlign={false}
+      size="sm"
+      title={null}
+    />
+  </span>
 </Tooltip>
 `;
