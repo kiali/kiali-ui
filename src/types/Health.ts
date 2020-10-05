@@ -176,7 +176,7 @@ export const ratioCheck = (
   }
 
   // When there are proxies that are not sync, degrade
-  if (syncedProxies < desiredReplicas) {
+  if (syncedProxies >= 0 && syncedProxies < desiredReplicas) {
     return DEGRADED;
   }
 
