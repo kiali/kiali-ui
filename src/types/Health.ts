@@ -206,6 +206,19 @@ export const proxyStatusMessage = (syncedProxies: number, desiredReplicas: numbe
   return msg;
 };
 
+export const isProxyStatusSynced = (status: ProxyStatus): boolean => {
+  return (
+    isProxyStatusComponentSynced(status.CDS) &&
+    isProxyStatusComponentSynced(status.EDS) &&
+    isProxyStatusComponentSynced(status.LDS) &&
+    isProxyStatusComponentSynced(status.RDS)
+  );
+};
+
+export const isProxyStatusComponentSynced = (componentStatus: string): boolean => {
+  return componentStatus === 'Synced';
+};
+
 export const mergeStatus = (s1: Status, s2: Status): Status => {
   return s1.priority > s2.priority ? s1 : s2;
 };

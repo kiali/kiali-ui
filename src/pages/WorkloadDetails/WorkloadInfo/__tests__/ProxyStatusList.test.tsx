@@ -2,9 +2,8 @@ import * as React from 'react';
 import { shallow } from 'enzyme';
 import ProxyStatusList from '../ProxyStatusList';
 import { ProxyStatus } from '../../../../types/Health';
-import { StackItem, Tooltip } from '@patternfly/react-core';
+import { Stack, StackItem } from '@patternfly/react-core';
 import { shallowToJson } from 'enzyme-to-json';
-import { ExclamationTriangleIcon } from '@patternfly/react-icons';
 
 const syncedProxyStatus: ProxyStatus = {
   CDS: 'Synced',
@@ -21,12 +20,8 @@ describe('ProxyStatusList', () => {
   describe('when status is synced', () => {
     const subject = shallowComponent(syncedProxyStatus);
 
-    it('renders the sync icon', () => {
-      expect(subject.find(Tooltip)).toHaveLength(0);
-    });
-
-    it('does not render the tooltip', () => {
-      expect(subject.find(Tooltip)).toHaveLength(0);
+    it('does not render the stack', () => {
+      expect(subject.find(Stack)).toHaveLength(0);
     });
 
     it('match the snapshot', () => {
@@ -45,25 +40,17 @@ describe('ProxyStatusList', () => {
       expect(shallowToJson(subject)).toMatchSnapshot();
     });
 
-    it('renders the tooltip', () => {
-      const tooltip = subject.find(Tooltip);
-      expect(tooltip).toHaveLength(1);
-    });
-
-    it('renders a degraded icon', () => {
-      expect(subject.find(ExclamationTriangleIcon)).toBeDefined();
+    it('renders the stack', () => {
+      const stack = subject.find(Stack);
+      expect(stack).toHaveLength(1);
     });
 
     it('renders all unsynced statuses', () => {
-      const stack = shallow(subject.props().content);
-      expect(stack).toHaveLength(1);
-
-      const statusList = stack.children();
-      expect(statusList).toHaveLength(2);
-
-      const statusItems = statusList.find(StackItem);
-      expect(statusItems.at(0).html()).toContain('CDS: NOT_SENT');
-      expect(statusItems.at(1).html()).toContain('RDS: STALE');
+      const stackItems = subject.find(StackItem);
+      expect(stackItems).toHaveLength(3);
+      expect(stackItems.at(0).html()).toContain('Istio Proxy Status');
+      expect(stackItems.at(1).html()).toContain('CDS: NOT_SENT');
+      expect(stackItems.at(2).html()).toContain('RDS: STALE');
     });
   });
 
@@ -78,25 +65,12 @@ describe('ProxyStatusList', () => {
       expect(shallowToJson(subject)).toMatchSnapshot();
     });
 
-    it('renders the tooltip', () => {
-      const tooltip = subject.find(Tooltip);
-      expect(tooltip).toHaveLength(1);
-    });
-
-    it('renders a degraded icon', () => {
-      expect(subject.find(ExclamationTriangleIcon)).toBeDefined();
-    });
-
     it('renders all unsynced statuses', () => {
-      const stack = shallow(subject.props().content);
-      expect(stack).toHaveLength(1);
-
-      const statusList = stack.children();
-      expect(statusList).toHaveLength(2);
-
-      const statusItems = statusList.find(StackItem);
-      expect(statusItems.at(0).html()).toContain('CDS: -');
-      expect(statusItems.at(1).html()).toContain('RDS: -');
+      const stackItems = subject.find(StackItem);
+      expect(stackItems).toHaveLength(3);
+      expect(stackItems.at(0).html()).toContain('Istio Proxy Status');
+      expect(stackItems.at(1).html()).toContain('CDS: -');
+      expect(stackItems.at(2).html()).toContain('RDS: -');
     });
   });
 });
