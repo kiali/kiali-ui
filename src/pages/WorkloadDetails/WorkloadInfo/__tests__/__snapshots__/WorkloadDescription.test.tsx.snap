@@ -147,6 +147,7 @@ exports[`WorkloadDescription should render with runtimes 1`] = `
           },
           "_isError": false,
           "_isLoading": false,
+          "applyHealth": [Function],
           "decoratedData": [Function],
           "emit": [Function],
           "eventEmitter": EventEmitter {
@@ -155,14 +156,15 @@ exports[`WorkloadDescription should render with runtimes 1`] = `
           },
           "fetchDataForNamespaces": [Function],
           "fetchDataForNode": [Function],
-          "fetchEnd": 0,
           "fetchForApp": [Function],
           "fetchForNamespace": [Function],
           "fetchForService": [Function],
           "fetchForWorkload": [Function],
           "fetchGraphData": [Function],
+          "fetchGraphEnd": 0,
           "fetchHealth": [Function],
           "fetchHealthStart": 0,
+          "fetchOutsiderHealthStart": 0,
           "fetchStart": 0,
           "graphDuration": 0,
           "graphElements": Object {
@@ -171,6 +173,7 @@ exports[`WorkloadDescription should render with runtimes 1`] = `
           },
           "graphTimestamp": 0,
           "on": [Function],
+          "outsiderHealth": [Function],
           "promiseRegistry": PromisesRegistry {
             "promises": Map {},
           },
