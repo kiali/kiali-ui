@@ -1,5 +1,9 @@
 import React from 'react';
 
+// TOP_PADDING constant is used to adjust the height of the main div to allow scrolling in the inner container layer.
+// 76px (header) + 118px (breadcrumb + title)
+const TOP_PADDING = 76 + 118;
+
 export class RenderComponentScroll extends React.Component<{ className?: any }, { height: number }> {
   constructor(props) {
     super(props);
@@ -16,8 +20,7 @@ export class RenderComponentScroll extends React.Component<{ className?: any }, 
   }
 
   updateWindowDimensions = () => {
-    // 76px (header) + 115px (breadcrumb + title) + 40px (tabs)
-    this.setState({ height: window.innerHeight - 231 });
+    this.setState({ height: window.innerHeight - TOP_PADDING });
   };
 
   render() {
