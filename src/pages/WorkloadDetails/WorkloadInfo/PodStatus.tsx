@@ -6,6 +6,7 @@ import { createIcon } from '../../../components/Health/Helper';
 import ProxyStatusList from './ProxyStatusList';
 import { highestSeverity, validationToHealth } from '../../../types/ServiceInfo';
 import ValidationStack from '../../../components/Validations/ValidationStack';
+import './PodStatus.css';
 
 type Props = {
   checks?: ObjectCheck[];
@@ -27,22 +28,17 @@ class PodStatus extends React.Component<Props> {
 
   content = () => {
     return (
-      <>
+      <div className="pod-status-tooltip">
         <ProxyStatusList status={this.props.status} />
         <ValidationStack checks={this.props.checks} />
-      </>
+      </div>
     );
   };
 
   render() {
     if (this.showTooltip()) {
       return (
-        <Tooltip
-          aria-label={'Pod Status'}
-          position={TooltipPosition.auto}
-          enableFlip={true}
-          content={this.content()}
-        >
+        <Tooltip aria-label={'Pod Status'} position={TooltipPosition.auto} enableFlip={true} content={this.content()}>
           <span>{createIcon(this.severityIcon(), 'sm')}</span>
         </Tooltip>
       );

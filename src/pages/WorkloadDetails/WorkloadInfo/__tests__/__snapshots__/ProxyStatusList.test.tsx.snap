@@ -5,7 +5,7 @@ exports[`ProxyStatusList when status is synced match the snapshot 1`] = `""`;
 exports[`ProxyStatusList when there are components without value match the snapshot 1`] = `
 <Stack>
   <StackItem
-    className="f1f4ffwn"
+    className="f9bjrk9"
   >
     Istio Proxy Status
   </StackItem>
@@ -27,7 +27,7 @@ exports[`ProxyStatusList when there are components without value match the snaps
 exports[`ProxyStatusList when there are unsyced components match the snapshot 1`] = `
 <Stack>
   <StackItem
-    className="f1f4ffwn"
+    className="f9bjrk9"
   >
     Istio Proxy Status
   </StackItem>

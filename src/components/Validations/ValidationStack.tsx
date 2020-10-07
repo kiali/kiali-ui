@@ -2,7 +2,7 @@ import React from 'react';
 import { ObjectCheck, ValidationTypes } from '../../types/IstioObjects';
 import Validation from './Validation';
 import { highestSeverity } from '../../types/ServiceInfo';
-import { Stack, StackItem } from '@patternfly/react-core';
+import { Stack, StackItem, Text, TextVariants } from '@patternfly/react-core';
 import { style } from 'typestyle';
 import { PfColors } from '../Pf/PfColors';
 
@@ -11,7 +11,7 @@ type Props = {
 };
 
 const colorStyle = style({ color: PfColors.White });
-const marginTop = style({ marginTop: '1rem' });
+const titleStyle = style({ color: PfColors.White, fontSize: '1.1rem' });
 
 class ValidationStack extends React.Component<Props> {
   validationList() {
@@ -29,8 +29,10 @@ class ValidationStack extends React.Component<Props> {
     const isValid = severity === ValidationTypes.Correct;
     if (!isValid) {
       return (
-        <Stack className={marginTop}>
-          <StackItem className={colorStyle}>Istio validations</StackItem>
+        <Stack>
+          <StackItem className={titleStyle}>
+            <Text component={TextVariants.h1}>Istio validations</Text>
+          </StackItem>
           {this.validationList()}
         </Stack>
       );

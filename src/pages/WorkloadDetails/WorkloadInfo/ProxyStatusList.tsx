@@ -9,7 +9,7 @@ type Props = {
 };
 
 const smallStyle = style({ fontSize: '70%', color: PfColors.White });
-const colorStyle = style({ color: PfColors.White });
+const colorStyle = style({ fontSize: '1.1rem', color: PfColors.White });
 
 class ProxyStatusList extends React.Component<Props> {
   statusList = () => {
