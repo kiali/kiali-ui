@@ -2,8 +2,8 @@ import * as React from 'react';
 import { Paths } from '../../config';
 import { Link } from 'react-router-dom';
 import { Breadcrumb, BreadcrumbItem } from '@patternfly/react-core';
-import { FilterSelected } from '../Filters/StatefulFilters';
 import { dicIstioType } from '../../types/IstioConfigList';
+import { GlobalFilters } from 'utils/Filters';
 
 interface BreadCumbViewProps {
   location: {
@@ -71,7 +71,7 @@ export class BreadcrumbView extends React.Component<BreadCumbViewProps, BreadCum
   }
 
   cleanFilters = () => {
-    FilterSelected.resetFilters();
+    GlobalFilters.reset();
   };
 
   isIstio = () => {

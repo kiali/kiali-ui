@@ -10,9 +10,9 @@ import { connect } from 'react-redux';
 import Namespace from '../../types/Namespace';
 import { SortField } from '../../types/SortFilters';
 import NamespaceInfo from '../../pages/Overview/NamespaceInfo';
-import * as FilterHelper from '../FilterList/FilterHelper';
 import * as Sorts from '../../pages/Overview/Sorts';
 import { StatefulFilters } from '../Filters/StatefulFilters';
+import { currentSortField } from 'helpers/ListComponentHelper';
 
 // ******************************
 // VirtualList and its associated classes are intended to be used for main list pages: Applications,
@@ -100,7 +100,7 @@ class VirtualListC<R extends RenderResource> extends React.Component<VirtualList
       HistoryManager.setParam(URLParam.DIRECTION, direction);
     }
     HistoryManager.setParam(URLParam.SORT, String(this.state.conf.columns[index].param));
-    this.props.sort && this.props.sort(FilterHelper.currentSortField(Sorts.sortFields), direction === 'asc');
+    this.props.sort && this.props.sort(currentSortField(Sorts.sortFields), direction === 'asc');
   };
 
   render() {

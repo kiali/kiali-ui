@@ -32,7 +32,6 @@ import * as AlertUtils from '../../../../utils/AlertUtils';
 import history from '../../../../app/History';
 import { Iter8Experiment, Iter8Info, Winner } from '../../../../types/Iter8';
 import { Link } from 'react-router-dom';
-import * as FilterComponent from '../../../../components/FilterList/FilterComponent';
 
 import { KialiAppState } from '../../../../store/Store';
 import { activeNamespacesSelector, durationSelector } from '../../../../store/Selectors';
@@ -44,9 +43,11 @@ import { namespaceEquals } from '../../../../utils/Common';
 import { KialiIcon } from '../../../../config/KialiIcon';
 import { OkIcon, PowerOffIcon } from '@patternfly/react-icons';
 import * as Iter8ExperimentListFilters from './FiltersAndSorts';
-import { FilterSelected, StatefulFilters } from '../../../../components/Filters/StatefulFilters';
+import { StatefulFilters } from '../../../../components/Filters/StatefulFilters';
 import { PfColors } from 'components/Pf/PfColors';
 import TimeControlsContainer from '../../../../components/Time/TimeControls';
+import { ListComponentProps, ListComponentState } from 'helpers/ListComponentHelper';
+import { runFilters } from 'utils/Filters';
 
 // Style constants
 const containerPadding = style({ padding: '20px 20px 20px 20px' });
@@ -62,13 +63,13 @@ const statusIconStyle = style({
   fontSize: '1.0em'
 });
 
-interface Props extends FilterComponent.Props<Iter8Experiment> {
+interface Props extends ListComponentProps<Iter8Experiment> {
   activeNamespaces: Namespace[];
 }
 
 // State of the component/page
 // It stores the visual state of the components and the experiments fetched from the backend.
-interface State extends FilterComponent.State<Iter8Experiment> {
+interface State extends ListComponentState<Iter8Experiment> {
   iter8Info: Iter8Info;
   experimentLists: Iter8Experiment[];
   sortBy: ISortBy;
@@ -137,10 +138,11 @@ class ExperimentListPage extends React.Component<Props, State> {
           }
           API.getExperiments(namespaces)
             .then(result => {
+              const filtered = runFilters(result.data, Iter8ExperimentListFilters.availableFilters);
               this.setState(prevState => {
                 return {
                   iter8Info: iter8Info,
-                  experimentLists: Iter8ExperimentListFilters.filterBy(result.data, FilterSelected.getSelected()),
+                  experimentLists: filtered,
                   sortBy: prevState.sortBy
                 };
               });
@@ -213,7 +215,7 @@ class ExperimentListPage extends React.Component<Props, State> {
     });
   };
 
-  updateListItems = () => {
+  private updateListItems = () => {
     this.promises.cancelAll();
     const namespacesSelected = this.props.activeNamespaces.map(item => item.name);
     if (namespacesSelected.length === 0) {
@@ -272,16 +274,11 @@ class ExperimentListPage extends React.Component<Props, State> {
     );
   };
 
-  onFilterChange = () => {
-    // Resetting pagination when filters change
-    this.updateListItems();
-  };
-
   toolbar = () => {
     return (
       <StatefulFilters
         initialFilters={Iter8ExperimentListFilters.availableFilters}
-        onFilterChange={this.onFilterChange}
+        onFilterChange={this.updateListItems}
         rightToolbar={[
           <TimeControlsContainer
             key={'DurationDropdown'}

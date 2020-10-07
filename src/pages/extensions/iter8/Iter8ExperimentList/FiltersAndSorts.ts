@@ -1,8 +1,7 @@
-import { ActiveFiltersInfo, FILTER_ACTION_APPEND, FilterType, FilterTypes } from '../../../../types/Filters';
-import { SortField } from '../../../../types/SortFilters';
-import { Iter8Experiment } from '../../../../types/Iter8';
 import { TextInputTypes } from '@patternfly/react-core';
-import { getFilterSelectedValues } from '../../../../components/Filters/CommonFilters';
+import { FILTER_ACTION_APPEND, FilterTypes, Filter } from 'types/Filters';
+import { SortField } from 'types/SortFilters';
+import { Iter8Experiment } from 'types/Iter8';
 
 export const sortFields: SortField<Iter8Experiment>[] = [
   {
@@ -10,13 +9,7 @@ export const sortFields: SortField<Iter8Experiment>[] = [
     title: 'Namespace',
     isNumeric: false,
     param: 'ns',
-    compare: (a, b) => {
-      let sortValue = a.namespace.localeCompare(b.namespace);
-      if (sortValue === 0) {
-        sortValue = a.name.localeCompare(b.name);
-      }
-      return sortValue;
-    }
+    compare: (a, b) => a.namespace.localeCompare(b.namespace) || a.name.localeCompare(b.name)
   },
   {
     id: 'name',
@@ -36,113 +29,51 @@ export const sortFields: SortField<Iter8Experiment>[] = [
     id: 'baseline',
     title: 'Baseline',
     isNumeric: false,
-    param: 'is',
+    param: 'is', // !! same as phase?
     compare: (a, b) => a.name.localeCompare(b.name)
   },
   {
     id: 'candidate',
     title: 'Candidate',
     isNumeric: false,
-    param: 'is',
+    param: 'is', // !! same as phase?
     compare: (a, b) => a.name.localeCompare(b.name)
   }
 ];
 
-const filterByTargetService = (items: Iter8Experiment[], names: string[]): Iter8Experiment[] => {
-  return items.filter(item => {
-    let targetServiceFiltered = true;
-    if (names.length > 0) {
-      targetServiceFiltered = false;
-      for (let i = 0; i < names.length; i++) {
-        if (item.targetService.includes(names[i])) {
-          targetServiceFiltered = true;
-          break;
-        }
-      }
-    }
-    return targetServiceFiltered;
-  });
-};
+// !! candidateFilter has no effect?
 
-const filterByBaseline = (items: Iter8Experiment[], names: string[]): Iter8Experiment[] => {
-  return items.filter(item => {
-    let baselineFiltered = true;
-    if (names.length > 0) {
-      baselineFiltered = false;
-      for (let i = 0; i < names.length; i++) {
-        if (item.baseline.name.includes(names[i])) {
-          baselineFiltered = true;
-          break;
-        }
-      }
-    }
-    return baselineFiltered;
-  });
-};
-
-const filterByPhase = (items: Iter8Experiment[], names: string[]): Iter8Experiment[] => {
-  return items.filter(item => {
-    let phaseFiltered = true;
-    if (names.length > 0) {
-      phaseFiltered = false;
-      for (let i = 0; i < names.length; i++) {
-        if (item.phase.includes(names[i])) {
-          phaseFiltered = true;
-          break;
-        }
-      }
-    }
-    return phaseFiltered;
-  });
-};
-
-export const filterBy = (iter8Experiment: Iter8Experiment[], filters: ActiveFiltersInfo): Iter8Experiment[] => {
-  let ret = iter8Experiment;
-
-  const targetServiceSelected = getFilterSelectedValues(targetServiceFilter, filters);
-  if (targetServiceSelected.length > 0) {
-    ret = filterByTargetService(ret, targetServiceSelected);
-  }
-
-  const baselineSelected = getFilterSelectedValues(baselineFilter, filters);
-  if (baselineSelected.length > 0) {
-    ret = filterByBaseline(ret, baselineSelected);
-  }
-
-  const phaseSelected = getFilterSelectedValues(phaseFilter, filters);
-  if (phaseSelected.length > 0) {
-    return filterByPhase(ret, phaseSelected);
-  }
-  return ret;
-};
-
-const targetServiceFilter: FilterType = {
+const targetServiceFilter: Filter<Iter8Experiment> = {
   id: 'targetService',
   title: 'Service',
   placeholder: 'Filter by Service Name',
   filterType: TextInputTypes.text,
   action: FILTER_ACTION_APPEND,
-  filterValues: []
+  filterValues: [],
+  check: (item, active) => active.filters.some(f => item.targetService.includes(f.value))
 };
 
-const baselineFilter: FilterType = {
+const baselineFilter: Filter<Iter8Experiment> = {
   id: 'baselin',
   title: 'Baseline',
   placeholder: 'Filter by Baseline Name',
   filterType: TextInputTypes.text,
   action: FILTER_ACTION_APPEND,
-  filterValues: []
+  filterValues: [],
+  check: (item, active) => active.filters.some(f => item.baseline.name.includes(f.value))
 };
-const candidateFilter: FilterType = {
+const candidateFilter: Filter<Iter8Experiment> = {
   id: 'candidate',
   title: 'Candidate',
   placeholder: 'Filter by Candidate Name',
   filterType: TextInputTypes.text,
   action: FILTER_ACTION_APPEND,
-  filterValues: []
+  filterValues: [],
+  // NOT SURE OF THAT ONE
+  check: (item, active) => active.filters.some(f => item.candidates.some(c => c.name.includes(f.value)))
 };
 
-export const phaseFilter: FilterType = {
+export const phaseFilter: Filter<Iter8Experiment> = {
   id: 'phase',
   title: 'Phase',
   placeholder: 'Filter by Phase',
@@ -165,9 +96,15 @@ export const phaseFilter: FilterType = {
       id: 'Completed',
       title: 'Completed'
     }
-  ]
+  ],
+  check: (item, active) => active.filters.some(f => item.phase.includes(f.value))
 };
-export const availableFilters: FilterType[] = [targetServiceFilter, baselineFilter, candidateFilter, phaseFilter];
+export const availableFilters: Filter<Iter8Experiment>[] = [
+  targetServiceFilter,
+  baselineFilter,
+  candidateFilter,
+  phaseFilter
+];
 
 /** Sort Method */
 

@@ -5,11 +5,11 @@ import { JaegerTrace, Span } from 'types/JaegerInfo';
 import { SpanTable } from './SpanTable';
 import { KialiAppState } from 'store/Store';
 import { connect } from 'react-redux';
-import { FilterSelected, StatefulFilters } from 'components/Filters/StatefulFilters';
+import { StatefulFilters } from 'components/Filters/StatefulFilters';
 import { itemFromSpan, SpanTableItem } from './SpanTableItem';
 import { spanFilters } from './Filters';
-import { runFilters } from 'components/FilterList/FilterHelper';
-import { ActiveFiltersInfo } from 'types/Filters';
+import { Filter } from 'types/Filters';
+import { GlobalFilters, runFilters } from 'utils/Filters';
 
 interface Props {
   trace?: JaegerTrace;
@@ -20,20 +20,30 @@ interface Props {
 
 interface State {
   spanSelected?: Span;
-  activeFilters: ActiveFiltersInfo;
+  filteredSpans: SpanTableItem[];
+  filters: Filter<SpanTableItem>[];
 }
 
 class SpanDetails extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    const filters = spanFilters(this.buildSpansItems());
-    this.state = {
-      activeFilters: FilterSelected.init(filters)
-    };
+    const { filtered, filters } = this.filterSpans();
+    GlobalFilters.init(filters);
+    this.state = { filteredSpans: filtered, filters: filters };
   }
 
-  private buildSpansItems = (): SpanTableItem[] => {
-    return this.props.trace?.spans.map(s => itemFromSpan(s, this.props.namespace)) || [];
+  private filterSpans = (): { filtered: SpanTableItem[]; filters: Filter<SpanTableItem>[] } => {
+    const spans = this.props.trace?.spans.map(s => itemFromSpan(s, this.props.namespace)) || [];
+    const filters = spanFilters(spans);
+    return {
+      filtered: runFilters(spans, filters),
+      filters: filters
+    };
+  };
+
+  private onActiveFiltersChanged = () => {
+    const { filtered } = this.filterSpans();
+    this.setState({ filteredSpans: filtered });
   };
 
   render() {
@@ -43,13 +53,13 @@ class SpanDetails extends React.Component<Props, State> {
 
     const spans: SpanTableItem[] = this.props.trace.spans.map(s => itemFromSpan(s, this.props.namespace));
     const filters = spanFilters(spans);
-    const filteredSpans = runFilters(spans, filters, this.state.activeFilters);
+    const filteredSpans = runFilters(spans, filters);
     return (
       <Card isCompact style={{ border: '1px solid #e6e6e6' }}>
         <CardBody>
-          <StatefulFilters initialFilters={filters} onFilterChange={active => this.setState({ activeFilters: active })}>
+          <StatefulFilters initialFilters={filters} onFilterChange={this.onActiveFiltersChanged}>
             <div style={{ marginLeft: 5 }}>
-              {this.state.activeFilters.filters.length > 0 && `${filteredSpans.length} / `}
+              {GlobalFilters.getActive().filters.length > 0 && `${filteredSpans.length} / `}
               {pluralize(spans.length, 'Span')}
             </div>
           </StatefulFilters>

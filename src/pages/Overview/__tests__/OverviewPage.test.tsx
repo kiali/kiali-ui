@@ -6,15 +6,14 @@ import { shallowToJson } from 'enzyme-to-json';
 import { mount, shallow, ReactWrapper } from 'enzyme';
 import { OverviewPage } from '../OverviewPage';
 import OverviewPageContainer from '../OverviewPage';
-import { FilterSelected } from '../../../components/Filters/StatefulFilters';
 import * as API from '../../../services/Api';
 import { AppHealth, NamespaceAppHealth, HEALTHY, FAILURE, DEGRADED } from '../../../types/Health';
 import { store } from '../../../store/ConfigStore';
 import { MTLSStatuses } from '../../../types/TLSStatus';
-import { FilterType, ActiveFiltersInfo } from 'types/Filters';
-import { healthFilter } from 'components/Filters/CommonFilters';
+import { FilterDefinition, ActiveFiltersInfo, healthFilter } from 'types/Filters';
 import { nameFilter } from '../Filters';
 import { DEFAULT_LABEL_OPERATION } from '../../../types/Filters';
+import { GlobalFilters } from 'utils/Filters';
 
 const mockAPIToPromise = (func: keyof typeof API, obj: any, encapsData: boolean): Promise<void> => {
   return new Promise((resolve, reject) => {
@@ -67,7 +66,7 @@ const mountPage = () => {
   );
 };
 
-const genActiveFilters = (filter: FilterType, values: string[]): ActiveFiltersInfo => {
+const genActiveFilters = (filter: FilterDefinition, values: string[]): ActiveFiltersInfo => {
   return {
     filters: values.map(v => {
       return {
@@ -105,7 +104,7 @@ describe('Overview page', () => {
   });
 
   it('renders all without filters', done => {
-    FilterSelected.setSelected({ filters: [], op: DEFAULT_LABEL_OPERATION });
+    GlobalFilters.setActive({ filters: [], op: DEFAULT_LABEL_OPERATION });
     Promise.all([
       mockNamespaces(['a', 'b', 'c']),
       mockNamespaceHealth({
@@ -126,7 +125,7 @@ describe('Overview page', () => {
   });
 
   it('filters failures match', done => {
-    FilterSelected.setSelected(genActiveFilters(healthFilter, ['Failure']));
+    GlobalFilters.setActive(genActiveFilters(healthFilter, ['Failure']));
     Promise.all([
       mockNamespaces(['a']),
       mockNamespaceHealth({
@@ -149,7 +148,7 @@ describe('Overview page', () => {
   });
 
   it('filters failures no match', done => {
-    FilterSelected.setSelected(genActiveFilters(healthFilter, ['Failure']));
+    GlobalFilters.setActive(genActiveFilters(healthFilter, ['Failure']));
     Promise.all([
       mockNamespaces(['a']),
       mockNamespaceHealth({
@@ -172,7 +171,7 @@ describe('Overview page', () => {
   });
 
   it('multi-filters health match', done => {
-    FilterSelected.setSelected(genActiveFilters(healthFilter, ['Failure', 'Degraded']));
+    GlobalFilters.setActive(genActiveFilters(healthFilter, ['Failure', 'Degraded']));
     Promise.all([
       mockNamespaces(['a']),
       mockNamespaceHealth({
@@ -192,7 +191,7 @@ describe('Overview page', () => {
   });
 
   it('multi-filters health no match', done => {
-    FilterSelected.setSelected(genActiveFilters(healthFilter, ['Failure', 'Degraded']));
+    GlobalFilters.setActive(genActiveFilters(healthFilter, ['Failure', 'Degraded']));
     Promise.all([
       mockNamespaces(['a']),
       mockNamespaceHealth({
@@ -212,7 +211,7 @@ describe('Overview page', () => {
   });
 
   it('filters namespaces info name match', done => {
-    FilterSelected.setSelected(genActiveFilters(nameFilter, ['bc']));
+    GlobalFilters.setActive(genActiveFilters(nameFilter, ['bc']));
     Promise.all([
       mockNamespaces(['abc', 'bce', 'ced']),
       mockNamespaceHealth({
@@ -229,7 +228,7 @@ describe('Overview page', () => {
   });
 
   it('filters namespaces info name no match', done => {
-    FilterSelected.setSelected(genActiveFilters(nameFilter, ['yz']));
+    GlobalFilters.setActive(genActiveFilters(nameFilter, ['yz']));
     mockNamespaces(['abc', 'bce', 'ced']).then(() => {
       mounted!.update();
       expect(mounted!.find('Card')).toHaveLength(0);
@@ -239,9 +238,7 @@ describe('Overview page', () => {
   });
 
   it('filters namespaces info name and health match', done => {
-    FilterSelected.setSelected(
-      concat(genActiveFilters(nameFilter, ['bc']), genActiveFilters(healthFilter, ['Healthy']))
-    );
+    GlobalFilters.setActive(concat(genActiveFilters(nameFilter, ['bc']), genActiveFilters(healthFilter, ['Healthy'])));
     Promise.all([
       mockNamespaces(['abc', 'bce', 'ced']),
       mockNamespaceHealth({
@@ -258,9 +255,7 @@ describe('Overview page', () => {
   });
 
   it('filters namespaces info name and health no match', done => {
-    FilterSelected.setSelected(
-      concat(genActiveFilters(nameFilter, ['bc']), genActiveFilters(healthFilter, ['Healthy']))
-    );
+    GlobalFilters.setActive(concat(genActiveFilters(nameFilter, ['bc']), genActiveFilters(healthFilter, ['Healthy'])));
     Promise.all([
       mockNamespaces(['abc', 'bce', 'ced']),
       mockNamespaceHealth({

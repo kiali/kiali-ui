@@ -12,6 +12,7 @@ import {
   ICell
 } from '@patternfly/react-table';
 import { ExternalLinkAltIcon, ExclamationCircleIcon } from '@patternfly/react-icons';
+import { style } from 'typestyle';
 
 import history from 'app/History';
 import { formatDuration } from './transform';
@@ -21,10 +22,9 @@ import {
   extractOpenTracingTCPInfo,
   isErrorTag
 } from '../JaegerHelper';
-import { style } from 'typestyle';
 import { PFAlertColor } from 'components/Pf/PfColors';
 import { SpanTableItem } from './SpanTableItem';
-import { compareNullable } from 'components/FilterList/FilterHelper';
+import { compareNullable } from 'utils/Compare';
 
 type SortableCell<T> = ICell & {
   compare?: (a: T, b: T) => number;

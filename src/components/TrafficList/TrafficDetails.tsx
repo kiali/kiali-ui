@@ -15,9 +15,9 @@ import GraphDataSource from 'services/GraphDataSource';
 import { DurationInSeconds } from 'types/Common';
 import { RightActionBar } from 'components/RightActionBar/RightActionBar';
 import TrafficListComponent from 'components/TrafficList/TrafficListComponent';
-import * as FilterHelper from '../FilterList/FilterHelper';
 import * as TrafficListFilters from './FiltersAndSorts';
 import TimeControlsContainer from '../Time/TimeControls';
+import { currentSortField, isCurrentSortAscending } from 'helpers/ListComponentHelper';
 
 export interface AppNode {
   id: string;
@@ -117,8 +117,8 @@ class TrafficDetails extends React.Component<TrafficDetailsProps, TrafficDetails
               <Card>
                 <CardBody>
                   <TrafficListComponent
-                    currentSortField={FilterHelper.currentSortField(TrafficListFilters.sortFields)}
-                    isSortAscending={FilterHelper.isCurrentSortAscending()}
+                    currentSortField={currentSortField(TrafficListFilters.sortFields)}
+                    isSortAscending={isCurrentSortAscending()}
                     trafficItems={this.state.traffic}
                   />
                 </CardBody>

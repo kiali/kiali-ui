@@ -1,26 +1,20 @@
+import { TextInputTypes } from '@patternfly/react-core';
 import {
-  ActiveFiltersInfo,
   FILTER_ACTION_APPEND,
   FILTER_ACTION_UPDATE,
-  FilterType,
-  FilterTypes
-} from '../../types/Filters';
-import { WorkloadListItem, WorkloadType } from '../../types/Workload';
-import { SortField } from '../../types/SortFilters';
-import { WithWorkloadHealth, hasHealth } from '../../types/Health';
-import {
+  FilterTypes,
   presenceValues,
   istioSidecarFilter,
   healthFilter,
-  labelFilter,
-  getFilterSelectedValues,
-  getPresenceFilterValue,
-  filterByHealth
-} from '../../components/Filters/CommonFilters';
-import { hasMissingSidecar } from '../../components/VirtualList/Config';
-import { TextInputTypes } from '@patternfly/react-core';
-import { filterByLabel } from '../../helpers/LabelFilterHelper';
-import { calculateErrorRate } from '../../types/ErrorRate';
+  Filter,
+  presenceCheck
+} from 'types/Filters';
+import { WorkloadListItem, WorkloadType } from 'types/Workload';
+import { SortField } from 'types/SortFilters';
+import { WithWorkloadHealth } from 'types/Health';
+import { hasMissingSidecar } from 'components/VirtualList/Config';
+import { compareHealth } from 'utils/Compare';
+import { labelFilter } from 'helpers/LabelFilterHelper';
 
 const missingLabels = (r: WorkloadListItem): number => {
   return r.appLabel && r.versionLabel ? 0 : r.appLabel || r.versionLabel ? 1 : 2;
@@ -32,27 +26,21 @@ export const sortFields: SortField<WorkloadListItem>[] = [
     title: 'Namespace',
     isNumeric: false,
     param: 'ns',
-    compare: (a: WorkloadListItem, b: WorkloadListItem) => {
-      let sortValue = a.namespace.localeCompare(b.namespace);
-      if (sortValue === 0) {
-        sortValue = a.name.localeCompare(b.name);
-      }
-      return sortValue;
-    }
+    compare: (a, b) => a.namespace.localeCompare(b.namespace) || a.name.localeCompare(b.name)
   },
   {
     id: 'workloadname',
     title: 'Workload Name',
     isNumeric: false,
     param: 'wn',
-    compare: (a: WorkloadListItem, b: WorkloadListItem) => a.name.localeCompare(b.name)
+    compare: (a, b) => a.name.localeCompare(b.name)
   },
   {
     id: 'workloadtype',
     title: 'Workload Type',
     isNumeric: false,
     param: 'wt',
-    compare: (a: WorkloadListItem, b: WorkloadListItem) => a.type.localeCompare(b.type)
+    compare: (a, b) => a.type.localeCompare(b.type)
   },
   {
     id: 'details',
@@ -152,56 +140,41 @@ export const sortFields: SortField<WorkloadListItem>[] = [
     title: 'Health',
     isNumeric: false,
     param: 'he',
-    compare: (a, b) => {
-      if (hasHealth(a) && hasHealth(b)) {
-        const statusForA = a.health.getGlobalStatus();
-        const statusForB = b.health.getGlobalStatus();
-
-        if (statusForA.priority === statusForB.priority) {
-          // If both workloads have same health status, use error rate to determine order.
-          const ratioA = calculateErrorRate(a.namespace, a.name, 'workload', a.health.requests).errorRatio.global.status
-            .value;
-          const ratioB = calculateErrorRate(b.namespace, b.name, 'workload', b.health.requests).errorRatio.global.status
-            .value;
-          return ratioA === ratioB ? a.name.localeCompare(b.name) : ratioB - ratioA;
-        }
-
-        return statusForB.priority - statusForA.priority;
-      } else {
-        return 0;
-      }
-    }
+    compare: (a, b) => compareHealth('workload', a, b)
   }
 ];
 
-const workloadNameFilter: FilterType = {
+const workloadNameFilter: Filter<WorkloadListItem> = {
   id: 'workloadname',
   title: 'Workload Name',
   placeholder: 'Filter by Workload Name',
   filterType: TextInputTypes.text,
   action: FILTER_ACTION_APPEND,
-  filterValues: []
+  filterValues: [],
+  check: (item, active) => active.filters.some(f => item.name.includes(f.value))
 };
 
-export const appLabelFilter: FilterType = {
+export const appLabelFilter: Filter<WorkloadListItem> = {
   id: 'applabel',
   title: 'App Label',
   placeholder: 'Filter by App Label Validation',
   filterType: FilterTypes.select,
   action: FILTER_ACTION_UPDATE,
-  filterValues: presenceValues
+  filterValues: presenceValues,
+  check: (item, active) => active.filters.some(f => presenceCheck(f, item.appLabel))
 };
 
-export const versionLabelFilter: FilterType = {
+export const versionLabelFilter: Filter<WorkloadListItem> = {
   id: 'versionlabel',
   title: 'Version Label',
   placeholder: 'Filter by Version Label Validation',
   filterType: FilterTypes.select,
   action: FILTER_ACTION_UPDATE,
-  filterValues: presenceValues
+  filterValues: presenceValues,
+  check: (item, active) => active.filters.some(f => presenceCheck(f, item.versionLabel))
 };
 
-const workloadTypeFilter: FilterType = {
+const workloadTypeFilter: Filter<WorkloadListItem> = {
   id: 'workloadtype',
   title: 'Workload Type',
   placeholder: 'Filter by Workload Type',
@@ -244,10 +217,11 @@ const workloadTypeFilter: FilterType = {
       id: WorkloadType.StatefulSet,
       title: WorkloadType.StatefulSet
     }
-  ]
+  ],
+  check: (item, active) => active.filters.some(f => item.type.includes(f.value))
 };
 
-export const availableFilters: FilterType[] = [
+export const availableFilters = [
   workloadNameFilter,
   workloadTypeFilter,
   istioSidecarFilter,
@@ -256,75 +230,6 @@ export const availableFilters: FilterType[] = [
   versionLabelFilter,
   labelFilter
 ];
-
-/** Filter Method */
-const includeName = (name: string, names: string[]) => {
-  for (let i = 0; i < names.length; i++) {
-    if (name.includes(names[i])) {
-      return true;
-    }
-  }
-  return false;
-};
-
-const filterByType = (items: WorkloadListItem[], filter: string[]): WorkloadListItem[] => {
-  if (filter && filter.length === 0) {
-    return items;
-  }
-  return items.filter(item => includeName(item.type, filter));
-};
-
-const filterByLabelPresence = (
-  items: WorkloadListItem[],
-  istioSidecar: boolean | undefined,
-  app: boolean | undefined,
-  version: boolean | undefined
-): WorkloadListItem[] => {
-  let result = items;
-  if (istioSidecar !== undefined) {
-    result = result.filter(item => item.istioSidecar === istioSidecar);
-  }
-  if (app !== undefined) {
-    result = result.filter(item => item.appLabel === app);
-  }
-  if (version !== undefined) {
-    result = result.filter(item => item.versionLabel === version);
-  }
-  return result;
-};
-
-const filterByName = (items: WorkloadListItem[], names: string[]): WorkloadListItem[] => {
-  if (names.length === 0) {
-    return items;
-  }
-  return items.filter(item => names.some(name => item.name.includes(name)));
-};
-
-export const filterBy = (
-  items: WorkloadListItem[],
-  filters: ActiveFiltersInfo
-): Promise<WorkloadListItem[]> | WorkloadListItem[] => {
-  const workloadTypeFilters = getFilterSelectedValues(workloadTypeFilter, filters);
-  const workloadNamesSelected = getFilterSelectedValues(workloadNameFilter, filters);
-  const istioSidecar = getPresenceFilterValue(istioSidecarFilter, filters);
-  const appLabel = getPresenceFilterValue(appLabelFilter, filters);
-  const versionLabel = getPresenceFilterValue(versionLabelFilter, filters);
-  const labelFilters = getFilterSelectedValues(labelFilter, filters);
-
-  let ret = items;
-  ret = filterByType(ret, workloadTypeFilters);
-  ret = filterByName(ret, workloadNamesSelected);
-  ret = filterByLabelPresence(ret, istioSidecar, appLabel, versionLabel);
-  ret = filterByLabel(ret, labelFilters, filters.op) as WorkloadListItem[];
-
-  // We may have to perform a second round of filtering, using data fetched asynchronously (health)
-  // If not, exit fast
-  const healthSelected = getFilterSelectedValues(healthFilter, filters);
-  if (healthSelected.length > 0) {
-    return filterByHealth(ret, healthSelected);
-  }
-  return ret;
-};
 
 /** Sort Method */
 

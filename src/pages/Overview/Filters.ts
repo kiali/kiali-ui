@@ -1,18 +1,17 @@
-import { ActiveFiltersInfo, FILTER_ACTION_APPEND, FilterTypes, RunnableFilter, FilterValue } from '../../types/Filters';
+import { ActiveFiltersInfo, FILTER_ACTION_APPEND, FilterTypes, Filter, FilterValue } from '../../types/Filters';
 import { DEGRADED, FAILURE, HEALTHY } from '../../types/Health';
 import { NamespaceInfo } from './NamespaceInfo';
 import { MTLSStatuses } from '../../types/TLSStatus';
 import { TextInputTypes } from '@patternfly/react-core';
 
-export const nameFilter: RunnableFilter<NamespaceInfo> = {
+export const nameFilter: Filter<NamespaceInfo> = {
   id: 'namespace_search',
   title: 'Namespace',
   placeholder: 'Filter by Namespace',
   filterType: TextInputTypes.text,
   action: FILTER_ACTION_APPEND,
   filterValues: [],
-  run: (namespace: NamespaceInfo, filters: ActiveFiltersInfo) =>
-    filters.filters.some(f => namespace.name.includes(f.value))
+  check: (namespace, active) => active.filters.some(f => namespace.name.includes(f.value))
 };
 
 export const mtlsValues: FilterValue[] = [
@@ -28,27 +27,26 @@ const statusMap = new Map<string, string>([
   [MTLSStatuses.DISABLED, 'Disabled']
 ]);
 
-export const mtlsFilter: RunnableFilter<NamespaceInfo> = {
+export const mtlsFilter: Filter<NamespaceInfo> = {
   id: 'mtls',
   title: 'mTLS status',
   placeholder: 'Filter by mTLS status',
   filterType: FilterTypes.select,
   action: FILTER_ACTION_APPEND,
   filterValues: mtlsValues,
-  run: (ns: NamespaceInfo, filters: ActiveFiltersInfo) => {
-    return ns.tlsStatus ? filters.filters.some(f => statusMap.get(ns.tlsStatus!.status) === f.value) : false;
-  }
+  check: (ns, active) =>
+    ns.tlsStatus ? active.filters.some(f => statusMap.get(ns.tlsStatus!.status) === f.value) : false
 };
 
-export const labelFilter: RunnableFilter<NamespaceInfo> = {
+export const nsLabelFilter: Filter<NamespaceInfo> = {
   id: 'nsLabel',
   title: 'Namespace Label',
   placeholder: 'Filter by Label',
   filterType: FilterTypes.nsLabel,
   action: FILTER_ACTION_APPEND,
   filterValues: [],
-  run: (ns: NamespaceInfo, filters: ActiveFiltersInfo) => {
-    return filters.filters.some(f => {
+  check: (ns: NamespaceInfo, active: ActiveFiltersInfo) => {
+    return active.filters.some(f => {
       if (f.value.includes(':')) {
         const [k, v] = f.value.split(':');
         return v.split(',').some(val => !!ns.labels && k in ns.labels && ns.labels[k].startsWith(val));
@@ -99,15 +97,15 @@ const summarizeHealthFilters = (healthFilters: ActiveFiltersInfo) => {
   };
 };
 
-export const healthFilter: RunnableFilter<NamespaceInfo> = {
+export const nsHealthFilter: Filter<NamespaceInfo> = {
   id: 'health',
   title: 'Health',
   placeholder: 'Filter by Application Health',
   filterType: FilterTypes.select,
   action: FILTER_ACTION_APPEND,
   filterValues: healthValues,
-  run: (ns: NamespaceInfo, filters: ActiveFiltersInfo) => {
-    const { showInError, showInWarning, showInSuccess, noFilter } = summarizeHealthFilters(filters);
+  check: (ns: NamespaceInfo, active: ActiveFiltersInfo) => {
+    const { showInError, showInWarning, showInSuccess, noFilter } = summarizeHealthFilters(active);
     return noFilter
       ? true
       : ns.status
@@ -118,4 +116,4 @@ export const healthFilter: RunnableFilter<NamespaceInfo> = {
   }
 };
 
-export const availableFilters: RunnableFilter<NamespaceInfo>[] = [nameFilter, healthFilter, mtlsFilter, labelFilter];
+export const availableFilters: Filter<NamespaceInfo>[] = [nameFilter, nsHealthFilter, mtlsFilter, nsLabelFilter];

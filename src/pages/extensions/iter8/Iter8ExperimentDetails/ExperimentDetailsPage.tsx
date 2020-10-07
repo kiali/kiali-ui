@@ -16,7 +16,6 @@ import {
 } from '../../../../types/Iter8';
 import Iter8Dropdown, { ManualOverride } from './Iter8Dropdown';
 import history from '../../../../app/History';
-import * as FilterHelper from '../../../../components/FilterList/FilterHelper';
 import { connect } from 'react-redux';
 
 import ExperimentInfoDescription from './ExperimentInfoDescription';
@@ -27,6 +26,7 @@ import { durationSelector } from '../../../../store/Selectors';
 import { PfColors } from '../../../../components/Pf/PfColors';
 import { DurationInSeconds, TimeInMilliseconds } from '../../../../types/Common';
 import RefreshContainer from '../../../../components/Refresh/Refresh';
+import { currentDuration } from 'helpers/ListComponentHelper';
 
 interface ExpeerimentId {
   namespace: string;
@@ -272,7 +272,7 @@ class ExperimentDetailsPage extends React.Component<Props, State> {
           experiment={this.props.match.params.name}
           target={this.state.target}
           experimentDetails={this.state.experiment}
-          duration={FilterHelper.currentDuration()}
+          duration={currentDuration()}
           actionTaken={this.state.actionTaken}
         />
       </Tab>

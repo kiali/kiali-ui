@@ -43,10 +43,11 @@ const getAggregate = (
   };
 };
 
+export type ErrorRateKind = 'app' | 'service' | 'workload';
 export const calculateErrorRate = (
   ns: string,
   name: string,
-  kind: string,
+  kind: ErrorRateKind,
   requests: RequestHealth
 ): { errorRatio: ErrorRatio; config: RateHealthConfig | undefined } => {
   // Get the first configuration that match with the case

@@ -1,4 +1,3 @@
-import { FilterType } from '../../types/Filters';
 import { SortField } from '../../types/SortFilters';
 import { TrafficListItem } from './TrafficListComponent';
 
@@ -41,5 +40,3 @@ export const sortFields: SortField<TrafficListItem>[] = [
     compare: (a: TrafficListItem, b: TrafficListItem) => a.protocol.localeCompare(b.protocol)
   }
 ];
-
-export const availableFilters: FilterType[] = [];

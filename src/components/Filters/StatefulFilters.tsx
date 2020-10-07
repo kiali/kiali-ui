@@ -22,66 +22,32 @@ import {
   ActiveFiltersInfo,
   DEFAULT_LABEL_OPERATION,
   FILTER_ACTION_UPDATE,
-  FilterType,
+  FilterDefinition,
   FilterTypes,
   LabelOperation
 } from '../../types/Filters';
-import * as FilterHelper from '../FilterList/FilterHelper';
 import { PromisesRegistry } from '../../utils/CancelablePromises';
 import { style } from 'typestyle';
 import { LabelFilters } from './LabelFilter';
 import { arrayEquals, groupBy } from 'utils/Common';
-import { labelFilter } from './CommonFilters';
+import { filtersMatchURL, GlobalFilters, setFiltersToURL } from 'utils/Filters';
+import { labelFilter } from 'helpers/LabelFilterHelper';
 
 var classNames = require('classnames');
 
 export interface StatefulFiltersProps {
   onFilterChange: (active: ActiveFiltersInfo) => void;
-  initialFilters: FilterType[];
+  initialFilters: FilterDefinition[];
   rightToolbar?: JSX.Element[];
   ref?: React.RefObject<StatefulFilters>;
 }
 
 export interface StatefulFiltersState {
-  filterTypes: FilterType[];
-  currentFilterType: FilterType;
+  filterTypes: FilterDefinition[];
+  currentFilterType: FilterDefinition;
   activeFilters: ActiveFiltersInfo;
   currentValue: string;
   isExpanded: boolean;
-}
-
-export class FilterSelected {
-  static selectedFilters: ActiveFilter[] | undefined = undefined;
-  static opSelected: LabelOperation;
-
-  static init = (filterTypes: FilterType[]) => {
-    let active = FilterSelected.getSelected();
-    if (!FilterSelected.isInitialized()) {
-      active = FilterHelper.getFiltersFromURL(filterTypes);
-      FilterSelected.setSelected(active);
-    } else if (!FilterHelper.filtersMatchURL(filterTypes, active)) {
-      active = FilterHelper.setFiltersToURL(filterTypes, active);
-      FilterSelected.setSelected(active);
-    }
-    return active;
-  };
-
-  static resetFilters = () => {
-    FilterSelected.selectedFilters = undefined;
-  };
-
-  static setSelected = (activeFilters: ActiveFiltersInfo) => {
-    FilterSelected.selectedFilters = activeFilters.filters;
-    FilterSelected.opSelected = activeFilters.op;
-  };
-
-  static getSelected = (): ActiveFiltersInfo => {
-    return { filters: FilterSelected.selectedFilters || [], op: FilterSelected.opSelected || 'or' };
-  };
-
-  static isInitialized = () => {
-    return FilterSelected.selectedFilters !== undefined;
-  };
 }
 
 const rightToolbar = style({
@@ -99,7 +65,7 @@ export class StatefulFilters extends React.Component<StatefulFiltersProps, State
     this.state = {
       currentFilterType: this.props.initialFilters[0],
       filterTypes: this.props.initialFilters,
-      activeFilters: FilterSelected.init(this.props.initialFilters),
+      activeFilters: GlobalFilters.init(this.props.initialFilters),
       isExpanded: false,
       currentValue: ''
     };
@@ -142,15 +108,15 @@ export class StatefulFilters extends React.Component<StatefulFiltersProps, State
     ) {
       const current =
         this.props.initialFilters.find(f => f.id === this.state.currentFilterType.id) || this.props.initialFilters[0];
-      const active = FilterHelper.setFiltersToURL(this.props.initialFilters, this.state.activeFilters);
+      const active = setFiltersToURL(this.props.initialFilters, this.state.activeFilters);
       this.setState({
         currentFilterType: current,
         filterTypes: this.props.initialFilters,
         activeFilters: active
       });
       this.loadDynamicFilters();
-    } else if (!FilterHelper.filtersMatchURL(this.state.filterTypes, this.state.activeFilters)) {
-      FilterHelper.setFiltersToURL(this.state.filterTypes, this.state.activeFilters);
+    } else if (!filtersMatchURL(this.state.filterTypes, this.state.activeFilters)) {
+      setFiltersToURL(this.state.filterTypes, this.state.activeFilters);
     }
   }
 
@@ -159,13 +125,13 @@ export class StatefulFilters extends React.Component<StatefulFiltersProps, State
   }
 
   updateActiveFilters(activeFilters: ActiveFiltersInfo) {
-    const cleanFilters = FilterHelper.setFiltersToURL(this.state.filterTypes, activeFilters);
-    FilterSelected.setSelected(cleanFilters);
+    const cleanFilters = setFiltersToURL(this.state.filterTypes, activeFilters);
+    GlobalFilters.setActive(cleanFilters);
     this.setState({ activeFilters: cleanFilters, currentValue: '' });
     this.props.onFilterChange(cleanFilters);
   }
 
-  filterAdded = (field: FilterType, value: string) => {
+  filterAdded = (field: FilterDefinition, value: string) => {
     const activeFilters = this.state.activeFilters;
     const activeFilter: ActiveFilter = {
       id: field.id,
@@ -228,7 +194,7 @@ export class StatefulFilters extends React.Component<StatefulFiltersProps, State
     }
   };
 
-  isActive = (type: FilterType, value: string): boolean => {
+  isActive = (type: FilterDefinition, value: string): boolean => {
     return this.state.activeFilters.filters.some(active => value === active.value && type.id === active.id);
   };
 
@@ -372,7 +338,7 @@ export class StatefulFilters extends React.Component<StatefulFiltersProps, State
             </ToolbarItem>
           </ToolbarGroup>
           {this.renderChildren()}
-          {(this.state.activeFilters.filters.filter(f => f.id === labelFilter.id).length > 0 ||
+          {(this.state.activeFilters.filters.some(f => f.id === labelFilter.id) ||
             this.state.currentFilterType.filterType === FilterTypes.label) && (
             <ToolbarGroup>
               <ToolbarItem className={classNames('pf-u-mr-md')}>

@@ -4,32 +4,29 @@ import * as API from '../../services/Api';
 import Namespace from '../../types/Namespace';
 import { WorkloadListItem, WorkloadNamespaceResponse } from '../../types/Workload';
 import * as WorkloadListFilters from './FiltersAndSorts';
-import { FilterSelected, StatefulFilters } from '../../components/Filters/StatefulFilters';
-import { ActiveFiltersInfo } from '../../types/Filters';
+import { StatefulFilters } from '../../components/Filters/StatefulFilters';
 import { PromisesRegistry } from '../../utils/CancelablePromises';
 import { SortField } from '../../types/SortFilters';
-import * as FilterComponent from '../../components/FilterList/FilterComponent';
 import { namespaceEquals } from '../../utils/Common';
 import { KialiAppState } from '../../store/Store';
 import { activeNamespacesSelector, durationSelector } from '../../store/Selectors';
 import { DurationInSeconds } from '../../types/Common';
 import VirtualList from '../../components/VirtualList/VirtualList';
 import TimeControlsContainer from 'components/Time/TimeControls';
+import { ListComponentProps, ListComponentState } from 'helpers/ListComponentHelper';
+import { runPromiseFilters } from 'utils/Filters';
+import { addError } from 'utils/AlertUtils';
 
-type WorkloadListComponentState = FilterComponent.State<WorkloadListItem>;
+type WorkloadListComponentState = ListComponentState<WorkloadListItem>;
 
 type ReduxProps = {
   duration: DurationInSeconds;
   activeNamespaces: Namespace[];
 };
 
-type WorkloadListComponentProps = ReduxProps & FilterComponent.Props<WorkloadListItem>;
+type WorkloadListComponentProps = ReduxProps & ListComponentProps<WorkloadListItem>;
 
-class WorkloadListComponent extends FilterComponent.Component<
-  WorkloadListComponentProps,
-  WorkloadListComponentState,
-  WorkloadListItem
-> {
+class WorkloadListComponent extends React.Component<WorkloadListComponentProps, WorkloadListComponentState> {
   private promises = new PromisesRegistry();
 
   constructor(props: WorkloadListComponentProps) {
@@ -79,31 +76,26 @@ class WorkloadListComponent extends FilterComponent.Component<
     );
   }
 
-  updateListItems() {
+  private updateListItems = () => {
     this.promises.cancelAll();
 
-    const activeFilters: ActiveFiltersInfo = FilterSelected.getSelected();
     const namespacesSelected = this.props.activeNamespaces.map(item => item.name);
-
     if (namespacesSelected.length === 0) {
       this.promises
         .register('namespaces', API.getNamespaces())
         .then(namespacesResponse => {
           const namespaces: Namespace[] = namespacesResponse.data;
-          this.fetchWorkloads(
-            namespaces.map(namespace => namespace.name),
-            activeFilters
-          );
+          this.fetchWorkloads(namespaces.map(namespace => namespace.name));
         })
         .catch(namespacesError => {
           if (!namespacesError.isCanceled) {
-            this.handleAxiosError('Could not fetch namespace list', namespacesError);
+            addError('Could not fetch namespace list', namespacesError);
           }
         });
     } else {
-      this.fetchWorkloads(namespacesSelected, activeFilters);
+      this.fetchWorkloads(namespacesSelected);
     }
-  }
+  };
 
   getDeploymentItems = (data: WorkloadNamespaceResponse): WorkloadListItem[] => {
     if (data.workloads) {
@@ -128,7 +120,7 @@ class WorkloadListComponent extends FilterComponent.Component<
     return [];
   };
 
-  fetchWorkloads(namespaces: string[], filters: ActiveFiltersInfo) {
+  fetchWorkloads(namespaces: string[]) {
     const workloadsConfigPromises = namespaces.map(namespace => API.getWorkloads(namespace));
     this.promises
       .registerAll('workloads', workloadsConfigPromises)
@@ -137,7 +129,7 @@ class WorkloadListComponent extends FilterComponent.Component<
         responses.forEach(response => {
           workloadsItems = workloadsItems.concat(this.getDeploymentItems(response.data));
         });
-        return WorkloadListFilters.filterBy(workloadsItems, filters);
+        return runPromiseFilters(workloadsItems, WorkloadListFilters.availableFilters);
       })
       .then(workloadsItems => {
         this.promises.cancel('sort');
@@ -155,7 +147,7 @@ class WorkloadListComponent extends FilterComponent.Component<
       })
       .catch(err => {
         if (!err.isCanceled) {
-          this.handleAxiosError('Could not fetch workloads list', err);
+          addError('Could not fetch workloads list', err);
         }
       });
   }
@@ -165,7 +157,7 @@ class WorkloadListComponent extends FilterComponent.Component<
       <VirtualList rows={this.state.listItems}>
         <StatefulFilters
           initialFilters={WorkloadListFilters.availableFilters}
-          onFilterChange={this.onFilterChange}
+          onFilterChange={this.updateListItems}
           rightToolbar={[
             <TimeControlsContainer
               key={'DurationDropdown'}

@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { Badge, Tooltip, TooltipPosition } from '@patternfly/react-core';
-import * as FilterHelper from '../FilterList/FilterHelper';
 import { appLabelFilter, versionLabelFilter } from '../../pages/WorkloadList/FiltersAndSorts';
 
 import MissingSidecar from '../MissingSidecar/MissingSidecar';
@@ -24,8 +23,10 @@ import OverviewCardContentExpanded from '../../pages/Overview/OverviewCardConten
 import { OverviewToolbar } from '../../pages/Overview/OverviewToolbar';
 import { StatefulFilters } from '../Filters/StatefulFilters';
 import { GetIstioObjectUrl } from '../Link/IstioObjectLink';
-import { labelFilter } from 'components/Filters/CommonFilters';
-import { labelFilter as NsLabelFilter } from '../../pages/Overview/Filters';
+import { currentDuration } from 'helpers/ListComponentHelper';
+import { nsLabelFilter } from 'pages/Overview/Filters';
+import { getFiltersFromURL } from 'utils/Filters';
+import { labelFilter } from 'helpers/LabelFilterHelper';
 
 // Links
 
@@ -138,7 +139,7 @@ export const status: Renderer<NamespaceInfo> = (ns: NamespaceInfo) => {
         <OverviewCardContentExpanded
           key={ns.name}
           name={ns.name}
-          duration={FilterHelper.currentDuration()}
+          duration={currentDuration()}
           status={ns.status}
           type={OverviewToolbar.currentOverviewType()}
           metrics={ns.metrics}
@@ -220,8 +221,8 @@ export const labels: Renderer<SortResource | NamespaceInfo> = (
 ) => {
   let path = window.location.pathname;
   path = path.substr(path.lastIndexOf('/console') + '/console'.length + 1);
-  const labelFilt = path === 'overview' ? NsLabelFilter : labelFilter;
-  const filters = FilterHelper.getFiltersFromURL([labelFilt, appLabelFilter, versionLabelFilter]);
+  const labelFilt = path === 'overview' ? nsLabelFilter : labelFilter;
+  const filters = getFiltersFromURL([labelFilt, appLabelFilter, versionLabelFilter]);
   return (
     <td
       role="gridcell"
@@ -232,9 +233,7 @@ export const labels: Renderer<SortResource | NamespaceInfo> = (
         Object.entries(item.labels).map(([key, value]) => {
           const label = `${key}:${value}`;
           const labelAct = labelActivate(filters.filters, key, value, labelFilt.id);
-          const isExactlyLabelFilter = FilterHelper.getFiltersFromURL([labelFilt]).filters.some(f =>
-            f.value.includes(label)
-          );
+          const isExactlyLabelFilter = getFiltersFromURL([labelFilt]).filters.some(f => f.value.includes(label));
           const badgeComponent = (
             <Badge
               key={`labelbadge_${key}_${value}_${item.name}`}
@@ -257,6 +256,7 @@ export const labels: Renderer<SortResource | NamespaceInfo> = (
 
           return statefulFilter ? (
             <Tooltip
+              key={'tooltip-' + key}
               content={
                 labelAct ? (
                   isExactlyLabelFilter ? (

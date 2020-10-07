@@ -4,14 +4,14 @@ import { style } from 'typestyle';
 import { IRow, sortable, SortByDirection, Table, TableBody, TableHeader, cellWidth } from '@patternfly/react-table';
 import { Link } from 'react-router-dom';
 import { TrafficItem, TrafficNode, TrafficDirection } from './TrafficDetails';
-import * as FilterComponent from '../FilterList/FilterComponent';
 import { ThresholdStatus, NA } from 'types/Health';
 import { NodeType, hasProtocolTraffic, ProtocolTraffic } from 'types/Graph';
 import { getTrafficHealth } from 'types/ErrorRate';
-import history, { URLParam } from 'app/History';
+import history, { HistoryManager, URLParam } from 'app/History';
 import { createIcon } from 'components/Health/Helper';
 import { sortFields } from './FiltersAndSorts';
 import { SortField } from 'types/SortFilters';
+import { ListComponentProps, ListComponentState } from 'helpers/ListComponentHelper';
 
 export interface TrafficListItem {
   direction: TrafficDirection;
@@ -23,11 +23,11 @@ export interface TrafficListItem {
   trafficPercentSuccess: string;
 }
 
-type TrafficListComponentProps = FilterComponent.Props<TrafficListItem> & {
+type TrafficListComponentProps = ListComponentProps<TrafficListItem> & {
   trafficItems: TrafficItem[];
 };
 
-type TrafficListComponentState = FilterComponent.State<TrafficListItem>;
+type TrafficListComponentState = ListComponentState<TrafficListItem>;
 
 const columns = [
   {
@@ -58,11 +58,7 @@ const columns = [
 // Style constants
 const containerPadding = style({ padding: '20px' });
 
-class TrafficListComponent extends FilterComponent.Component<
-  TrafficListComponentProps,
-  TrafficListComponentState,
-  TrafficListItem
-> {
+class TrafficListComponent extends React.Component<TrafficListComponentProps, TrafficListComponentState> {
   constructor(props: TrafficListComponentProps) {
     super(props);
     this.state = {
@@ -145,7 +141,15 @@ class TrafficListComponent extends FilterComponent.Component<
 
     const isSortAscending = sortDirection === SortByDirection.asc;
     if (sortField.id !== this.state.currentSortField.id || isSortAscending !== this.state.isSortAscending) {
-      this.updateSort(sortField, isSortAscending);
+      this.sortItemList(this.state.listItems, sortField, isSortAscending).then(sorted => {
+        this.setState({
+          currentSortField: sortField,
+          isSortAscending: isSortAscending,
+          listItems: sorted
+        });
+        HistoryManager.setParam(URLParam.SORT, sortField.param);
+        HistoryManager.setParam(URLParam.DIRECTION, isSortAscending ? 'asc' : 'desc');
+      });
     }
   };
 

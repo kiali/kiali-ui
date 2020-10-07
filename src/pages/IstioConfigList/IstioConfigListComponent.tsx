@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { FilterSelected, StatefulFilters } from '../../components/Filters/StatefulFilters';
+import { StatefulFilters } from '../../components/Filters/StatefulFilters';
 import { ActiveFiltersInfo } from '../../types/Filters';
 import * as API from '../../services/Api';
 import Namespace from '../../types/Namespace';
@@ -13,9 +13,7 @@ import {
 } from '../../types/IstioConfigList';
 import { PromisesRegistry } from '../../utils/CancelablePromises';
 import * as IstioConfigListFilters from './FiltersAndSorts';
-import * as FilterComponent from '../../components/FilterList/FilterComponent';
 import { SortField } from '../../types/SortFilters';
-import { getFilterSelectedValues } from '../../components/Filters/CommonFilters';
 import { namespaceEquals } from '../../utils/Common';
 import { KialiAppState } from '../../store/Store';
 import { activeNamespacesSelector } from '../../store/Selectors';
@@ -24,18 +22,17 @@ import VirtualList from '../../components/VirtualList/VirtualList';
 import { showInMessageCenter } from '../../utils/IstioValidationUtils';
 import { ObjectValidation } from '../../types/IstioObjects';
 import IstioActionsNamespaceDropdown from '../../components/IstioActions/IstioActionsNamespaceDropdown';
+import { ListComponentProps, ListComponentState } from 'helpers/ListComponentHelper';
+import { getFilterSelectedValues, GlobalFilters } from 'utils/Filters';
+import { addError } from 'utils/AlertUtils';
 
-interface IstioConfigListComponentState extends FilterComponent.State<IstioConfigItem> {}
-interface IstioConfigListComponentProps extends FilterComponent.Props<IstioConfigItem> {
+interface IstioConfigListComponentState extends ListComponentState<IstioConfigItem> {}
+interface IstioConfigListComponentProps extends ListComponentProps<IstioConfigItem> {
   // We keep this as Optional because it does not come from the params
   activeNamespaces?: Namespace[];
 }
 
-class IstioConfigListComponent extends FilterComponent.Component<
-  IstioConfigListComponentProps,
-  IstioConfigListComponentState,
-  IstioConfigItem
-> {
+class IstioConfigListComponent extends React.Component<IstioConfigListComponentProps, IstioConfigListComponentState> {
   private promises = new PromisesRegistry();
 
   constructor(props: IstioConfigListComponentProps) {
@@ -84,10 +81,10 @@ class IstioConfigListComponent extends FilterComponent.Component<
     return IstioConfigListFilters.sortIstioItems(apps, sortField, isAscending);
   }
 
-  updateListItems() {
+  private updateListItems = () => {
     this.promises.cancelAll();
 
-    const activeFilters: ActiveFiltersInfo = FilterSelected.getSelected();
+    const activeFilters: ActiveFiltersInfo = GlobalFilters.getActive();
     const namespacesSelected = this.props.activeNamespaces!.map(item => item.name);
     const istioTypeFilters = getFilterSelectedValues(IstioConfigListFilters.istioTypeFilter, activeFilters).map(
       value => dicIstioType[value]
@@ -112,13 +109,13 @@ class IstioConfigListComponent extends FilterComponent.Component<
         })
         .catch(namespacesError => {
           if (!namespacesError.isCanceled) {
-            this.handleAxiosError('Could not fetch namespace list', namespacesError);
+            addError('Could not fetch namespace list', namespacesError);
           }
         });
     } else {
       this.fetchConfigs(namespacesSelected, istioTypeFilters, istioNameFilters, configValidationFilters);
     }
-  }
+  };
 
   fetchConfigs(
     namespaces: string[],
@@ -150,7 +147,7 @@ class IstioConfigListComponent extends FilterComponent.Component<
       .catch(istioError => {
         console.log(istioError);
         if (!istioError.isCanceled) {
-          this.handleAxiosError('Could not fetch Istio objects list', istioError);
+          addError('Could not fetch Istio objects list', istioError);
         }
       });
   }
@@ -176,10 +173,10 @@ class IstioConfigListComponent extends FilterComponent.Component<
       <VirtualList rows={this.state.listItems}>
         <StatefulFilters
           initialFilters={IstioConfigListFilters.availableFilters}
-          onFilterChange={this.onFilterChange}
+          onFilterChange={this.updateListItems}
           rightToolbar={[
             <RefreshButtonContainer key={'Refresh'} handleRefresh={this.updateListItems} />,
-            <IstioActionsNamespaceDropdown />
+            <IstioActionsNamespaceDropdown key={'Actions'} />
           ]}
         />
       </VirtualList>

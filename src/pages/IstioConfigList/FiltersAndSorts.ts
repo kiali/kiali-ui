@@ -1,6 +1,6 @@
 import { SortField } from '../../types/SortFilters';
 import { IstioConfigItem } from '../../types/IstioConfigList';
-import { FILTER_ACTION_APPEND, FilterType, FilterTypes } from '../../types/Filters';
+import { FILTER_ACTION_APPEND, FilterDefinition, FilterTypes } from '../../types/Filters';
 
 export const sortFields: SortField<IstioConfigItem>[] = [
   {
@@ -63,7 +63,7 @@ export const sortFields: SortField<IstioConfigItem>[] = [
   }
 ];
 
-export const istioNameFilter: FilterType = {
+export const istioNameFilter: FilterDefinition = {
   id: 'istioname',
   title: 'Istio Name',
   placeholder: 'Filter by Istio Name',
@@ -72,7 +72,7 @@ export const istioNameFilter: FilterType = {
   filterValues: []
 };
 
-export const istioTypeFilter: FilterType = {
+export const istioTypeFilter: FilterDefinition = {
   id: 'istiotype',
   title: 'Istio Type',
   placeholder: 'Filter by Istio Type',
@@ -186,7 +186,7 @@ export const istioTypeFilter: FilterType = {
   ]
 };
 
-export const configValidationFilter: FilterType = {
+export const configValidationFilter: FilterDefinition = {
   id: 'configvalidation',
   title: 'Config',
   placeholder: 'Filter by Config Validation',
@@ -212,7 +212,7 @@ export const configValidationFilter: FilterType = {
   ]
 };
 
-export const availableFilters: FilterType[] = [istioTypeFilter, istioNameFilter, configValidationFilter];
+export const availableFilters: FilterDefinition[] = [istioTypeFilter, istioNameFilter, configValidationFilter];
 
 export const sortIstioItems = (
   unsorted: IstioConfigItem[],

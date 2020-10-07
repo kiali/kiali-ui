@@ -8,7 +8,6 @@ import { KialiAppAction } from '../../actions/KialiAppAction';
 import { UserSettingsActions } from '../../actions/UserSettingsActions';
 import { HistoryManager, URLParam } from '../../app/History';
 import { StatefulFilters } from '../../components/Filters/StatefulFilters';
-import * as FilterHelper from '../../components/FilterList/FilterHelper';
 import { ToolbarDropdown } from '../../components/ToolbarDropdown/ToolbarDropdown';
 import { KialiAppState } from '../../store/Store';
 import { durationSelector, refreshIntervalSelector } from '../../store/Selectors';
@@ -19,6 +18,7 @@ import { ThinStyle } from '../../components/Filters/FilterStyles';
 import * as Sorts from './Sorts';
 import * as Filters from './Filters';
 import TimeControlsContainer from 'components/Time/TimeControls';
+import { currentSortField, isCurrentSortAscending } from 'helpers/ListComponentHelper';
 
 type ReduxProps = {
   duration: DurationInSeconds;
@@ -27,7 +27,6 @@ type ReduxProps = {
 };
 
 type Props = ReduxProps & {
-  onError: (msg: string) => void;
   onRefresh: () => void;
   sort: (sortField: SortField<NamespaceInfo>, isAscending: boolean) => void;
   displayMode: OverviewDisplayMode;
@@ -75,15 +74,15 @@ export class OverviewToolbar extends React.Component<Props, State> {
     super(props);
 
     this.state = {
-      isSortAscending: FilterHelper.isCurrentSortAscending(),
+      isSortAscending: isCurrentSortAscending(),
       overviewType: OverviewToolbar.currentOverviewType(),
-      sortField: FilterHelper.currentSortField(Sorts.sortFields)
+      sortField: currentSortField(Sorts.sortFields)
     };
   }
 
   componentDidUpdate() {
-    const urlSortField = FilterHelper.currentSortField(Sorts.sortFields);
-    const urlIsSortAscending = FilterHelper.isCurrentSortAscending();
+    const urlSortField = currentSortField(Sorts.sortFields);
+    const urlIsSortAscending = isCurrentSortAscending();
     if (!this.paramsAreSynced(urlSortField, urlIsSortAscending)) {
       this.setState({
         sortField: urlSortField,

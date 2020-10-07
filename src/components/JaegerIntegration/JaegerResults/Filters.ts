@@ -1,7 +1,7 @@
-import { FILTER_ACTION_APPEND, FILTER_ACTION_UPDATE, FilterTypes, FilterValue, RunnableFilter } from 'types/Filters';
+import { FILTER_ACTION_APPEND, FILTER_ACTION_UPDATE, FilterTypes, FilterValue, Filter } from 'types/Filters';
 import { SpanTableItem } from './SpanTableItem';
 
-const byWorkload = (workloads: FilterValue[]): RunnableFilter<SpanTableItem> => {
+const byWorkload = (workloads: FilterValue[]): Filter<SpanTableItem> => {
   return {
     id: 'workload',
     title: 'Workload',
@@ -9,11 +9,11 @@ const byWorkload = (workloads: FilterValue[]): RunnableFilter<SpanTableItem> => 
     filterType: FilterTypes.typeAhead,
     action: FILTER_ACTION_APPEND,
     filterValues: workloads,
-    run: (item, filters) => filters.filters.some(f => f.value === item.workload)
+    check: (item, active) => active.filters.some(f => f.value === item.workload)
   };
 };
 
-const byApp = (apps: FilterValue[]): RunnableFilter<SpanTableItem> => {
+const byApp = (apps: FilterValue[]): Filter<SpanTableItem> => {
   return {
     id: 'app',
     title: 'App',
@@ -21,11 +21,11 @@ const byApp = (apps: FilterValue[]): RunnableFilter<SpanTableItem> => {
     filterType: FilterTypes.typeAhead,
     action: FILTER_ACTION_APPEND,
     filterValues: apps,
-    run: (item, filters) => filters.filters.some(f => f.value === item.app)
+    check: (item, active) => active.filters.some(f => f.value === item.app)
   };
 };
 
-const byComponent = (components: FilterValue[]): RunnableFilter<SpanTableItem> => {
+const byComponent = (components: FilterValue[]): Filter<SpanTableItem> => {
   return {
     id: 'type',
     title: 'Component',
@@ -33,11 +33,11 @@ const byComponent = (components: FilterValue[]): RunnableFilter<SpanTableItem> =
     filterType: FilterTypes.typeAhead,
     action: FILTER_ACTION_APPEND,
     filterValues: components,
-    run: (item, filters) => filters.filters.some(f => f.value === item.component)
+    check: (item, active) => active.filters.some(f => f.value === item.component)
   };
 };
 
-const byOperation = (ops: FilterValue[]): RunnableFilter<SpanTableItem> => {
+const byOperation = (ops: FilterValue[]): Filter<SpanTableItem> => {
   return {
     id: 'operation',
     title: 'Operation',
@@ -45,11 +45,11 @@ const byOperation = (ops: FilterValue[]): RunnableFilter<SpanTableItem> => {
     filterType: FilterTypes.typeAhead,
     action: FILTER_ACTION_APPEND,
     filterValues: ops,
-    run: (item, filters) => filters.filters.some(f => f.value === item.operationName)
+    check: (item, active) => active.filters.some(f => f.value === item.operationName)
   };
 };
 
-const byError: RunnableFilter<SpanTableItem> = {
+const byError: Filter<SpanTableItem> = {
   id: 'error',
   title: 'Error',
   placeholder: 'Filter by Error',
@@ -59,10 +59,10 @@ const byError: RunnableFilter<SpanTableItem> = {
     { id: 'yes', title: 'Yes' },
     { id: 'no', title: 'No' }
   ],
-  run: (item, filters) => filters.filters.some(f => f.value === (item.hasError ? 'Yes' : 'No'))
+  check: (item, active) => active.filters.some(f => f.value === (item.hasError ? 'Yes' : 'No'))
 };
 
-export const spanFilters = (spans: SpanTableItem[]): RunnableFilter<SpanTableItem>[] => {
+export const spanFilters = (spans: SpanTableItem[]): Filter<SpanTableItem>[] => {
   const workloads = new Set<string>();
   const apps = new Set<string>();
   const components = new Set<string>();

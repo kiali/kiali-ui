@@ -1,7 +1,9 @@
-import { filterByLabel } from '../LabelFilterHelper';
 import { AppListItem } from '../../types/AppList';
 import { WorkloadListItem } from '../../types/Workload';
 import { ServiceListItem } from '../../types/ServiceList';
+import { runSingleFilter } from 'utils/Filters';
+import { labelFilter } from 'helpers/LabelFilterHelper';
+import { ActiveFilter, ActiveFiltersInfo, LabelOperation } from 'types/Filters';
 
 const appList: AppListItem[] = [
   {
@@ -132,14 +134,20 @@ const serviceList: ServiceListItem[] = [
   }
 ];
 
+const genActiveFilterInfo = (values: string[], op: LabelOperation): ActiveFiltersInfo => {
+  return { filters: values.map(v => ({ id: labelFilter.id, value: v } as ActiveFilter)), op: op };
+};
+
 describe('LabelFilter', () => {
   it('check Label Filter with AppList and OR Operation', () => {
-    const result = filterByLabel(appList, ['app', 'service:details']);
+    const active = genActiveFilterInfo(['app', 'service:details'], 'or');
+    const result = runSingleFilter(appList, labelFilter, active);
     expect(result).toEqual(appList);
   });
 
   it('check Label Filter with AppList and AND Operation', () => {
-    const result = filterByLabel(appList, ['app', 'service:details'], 'and');
+    const active = genActiveFilterInfo(['app', 'service:details'], 'and');
+    const result = runSingleFilter(appList, labelFilter, active);
     expect(result).toEqual([
       {
         namespace: 'bookinfo',
@@ -152,7 +160,8 @@ describe('LabelFilter', () => {
   });
 
   it('check Label Filter with AppList and AND Operation with multiple values', () => {
-    const result = filterByLabel(appList, ['app', 'version:v2'], 'and');
+    const active = genActiveFilterInfo(['app', 'version:v2'], 'and');
+    const result = runSingleFilter(appList, labelFilter, active);
     expect(result).toEqual([
       {
         namespace: 'bookinfo',
@@ -165,12 +174,14 @@ describe('LabelFilter', () => {
   });
 
   it('check Label Filter with WorkloadList and OR Operation', () => {
-    const result = filterByLabel(workloadList, ['app', 'version:v1']);
+    const active = genActiveFilterInfo(['app', 'version:v1'], 'or');
+    const result = runSingleFilter(workloadList, labelFilter, active);
     expect(result).toEqual(workloadList);
   });
 
   it('check Label Filter with WorkloadList and AND Operation', () => {
-    const result = filterByLabel(workloadList, ['app:reviews', 'version'], 'and');
+    const active = genActiveFilterInfo(['app:reviews', 'version'], 'and');
+    const result = runSingleFilter(workloadList, labelFilter, active);
     expect(result).toEqual([
       {
         namespace: 'bookinfo',
@@ -206,12 +217,14 @@ describe('LabelFilter', () => {
   });
 
   it('check Label Filter with ServiceList and OR Operation', () => {
-    const result = filterByLabel(serviceList, ['app', 'service:details']);
+    const active = genActiveFilterInfo(['app', 'service:details'], 'or');
+    const result = runSingleFilter(serviceList, labelFilter, active);
     expect(result).toEqual(serviceList);
   });
 
   it('check Label Filter with ServiceList and AND Operation', () => {
-    const result = filterByLabel(serviceList, ['app', 'service:de'], 'and');
+    const active = genActiveFilterInfo(['app', 'service:de'], 'and');
+    const result = runSingleFilter(serviceList, labelFilter, active);
     expect(result).toEqual([
       {
         namespace: 'bookinfo',

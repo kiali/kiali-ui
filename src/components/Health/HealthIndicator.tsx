@@ -67,6 +67,7 @@ export class HealthIndicator extends React.PureComponent<Props, HealthState> {
       </>
     );
   }
+
   renderHealthTooltip(health: H.Health) {
     return (
       <TextContent style={{ color: PfColors.White }}>

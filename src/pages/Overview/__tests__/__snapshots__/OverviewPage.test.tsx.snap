@@ -7,7 +7,6 @@ exports[`Overview page renders initial layout 1`] = `
   >
     <Connect(OverviewToolbar)
       displayMode={1}
-      onError={[Function]}
       onRefresh={[Function]}
       setDisplayMode={[Function]}
       sort={[Function]}

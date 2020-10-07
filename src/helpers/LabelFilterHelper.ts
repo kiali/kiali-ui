@@ -1,8 +1,4 @@
-import { AppListItem } from '../types/AppList';
-import { WorkloadListItem } from '../types/Workload';
-import { ServiceListItem } from '../types/ServiceList';
-
-type itemsType = AppListItem | ServiceListItem | WorkloadListItem;
+import { FilterTypes, FILTER_ACTION_APPEND, Filter } from 'types/Filters';
 
 /*
  OR Operation for labels
@@ -87,10 +83,6 @@ const filterLabelByOp = (labels: { [key: string]: string }, filters: string[], o
   return op === 'or' ? orLabelOperation(labels, filters) : andLabelOperation(labels, filters);
 };
 
-export const filterByLabel = (items: itemsType[], filter: string[], op: string = 'or'): itemsType[] => {
-  return filter.length === 0 ? items : items.filter(item => filterLabelByOp(item.labels, filter, op));
-};
-
 const getKeyAndValues = (filters: string[]): { keys: string[]; keyValues: string[] } => {
   // keys => List of filters with only Label Presence
   // keyValues => List of filters with Label and value
@@ -101,4 +93,19 @@ const getKeyAndValues = (filters: string[]): { keys: string[]; keyValues: string
   const keys = filters.filter(f => !f.includes(':'));
   const keyValues = filters.filter(f => f.includes(':'));
   return { keys, keyValues };
+};
+
+export const labelFilter: Filter<{ labels: { [key: string]: string } }> = {
+  id: 'label',
+  title: 'Label',
+  placeholder: 'Filter by Label',
+  filterType: FilterTypes.label,
+  action: FILTER_ACTION_APPEND,
+  filterValues: [],
+  check: (item, active) =>
+    filterLabelByOp(
+      item.labels,
+      active.filters.map(f => f.value),
+      active.op
+    )
 };

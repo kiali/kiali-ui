@@ -17,10 +17,7 @@ import {
   TooltipPosition
 } from '@patternfly/react-core';
 import { style } from 'typestyle';
-import { AxiosError } from 'axios';
 import _ from 'lodash';
-import { FilterSelected } from '../../components/Filters/StatefulFilters';
-import * as FilterHelper from '../../components/FilterList/FilterHelper';
 import * as API from '../../services/Api';
 import {
   DEGRADED,
@@ -66,6 +63,8 @@ import * as AlertUtils from '../../utils/AlertUtils';
 import { MessageType } from '../../types/MessageCenter';
 import GraphDataSource from '../../services/GraphDataSource';
 import { AuthorizationPolicy } from '../../types/IstioObjects';
+import { GlobalFilters, runFilters } from 'utils/Filters';
+import { currentDuration, currentSortField, isCurrentSortAscending } from 'helpers/ListComponentHelper';
 
 const gridStyleCompact = style({
   backgroundColor: '#f5f5f5',
@@ -189,7 +188,7 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
     this.promises
       .register('namespaces', API.getNamespaces())
       .then(namespacesResponse => {
-        const nameFilters = FilterSelected.getSelected().filters.filter(f => f.id === Filters.nameFilter.id);
+        const nameFilters = GlobalFilters.getActive().filters.filter(f => f.id === Filters.nameFilter.id);
         const allNamespaces: NamespaceInfo[] = namespacesResponse.data
           .filter(ns => {
             return nameFilters.length === 0 || nameFilters.some(f => ns.name.includes(f.value));
@@ -205,8 +204,8 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
               labels: ns.labels
             };
           });
-        const isAscending = FilterHelper.isCurrentSortAscending();
-        const sortField = FilterHelper.currentSortField(Sorts.sortFields);
+        const isAscending = isCurrentSortAscending();
+        const sortField = currentSortField(Sorts.sortFields);
         const type = OverviewToolbar.currentOverviewType();
         const displayMode = this.displayModeSet
           ? this.state.displayMode
@@ -237,13 +236,13 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
       })
       .catch(namespacesError => {
         if (!namespacesError.isCanceled) {
-          this.handleAxiosError('Could not fetch namespace list', namespacesError);
+          AlertUtils.addError('Could not fetch namespace list', namespacesError);
         }
       });
   };
 
   fetchHealth(isAscending: boolean, sortField: SortField<NamespaceInfo>, type: OverviewType) {
-    const duration = FilterHelper.currentDuration();
+    const duration = currentDuration();
     // debounce async for back-pressure, ten by ten
     _.chunk(this.state.namespaces, 10).forEach(chunk => {
       this.promises
@@ -303,11 +302,11 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
           result.nsInfo.status = nsStatus;
         });
       })
-      .catch(err => this.handleAxiosError('Could not fetch health', err));
+      .catch(err => AlertUtils.addError('Could not fetch health', err));
   }
 
   fetchMetrics() {
-    const duration = FilterHelper.currentDuration();
+    const duration = currentDuration();
     // debounce async for back-pressure, ten by ten
     _.chunk(this.state.namespaces, 10).forEach(chunk => {
       this.promises
@@ -340,7 +339,7 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
           return nsInfo;
         });
       })
-    ).catch(err => this.handleAxiosError('Could not fetch health', err));
+    ).catch(err => AlertUtils.addError('Could not fetch health', err));
   }
 
   fetchTLS(isAscending: boolean, sortField: SortField<NamespaceInfo>) {
@@ -372,7 +371,7 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
           };
         });
       })
-      .catch(err => this.handleAxiosError('Could not fetch TLS status', err));
+      .catch(err => AlertUtils.addError('Could not fetch TLS status', err));
   }
 
   fetchValidations(isAscending: boolean, sortField: SortField<NamespaceInfo>) {
@@ -408,11 +407,7 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
           result.nsInfo.istioConfig = result.istioConfig;
         });
       })
-      .catch(err => this.handleAxiosError('Could not fetch validations status', err));
-  }
-
-  handleAxiosError(message: string, error: AxiosError) {
-    FilterHelper.handleError(`${message}: ${API.getErrorString(error)}`);
+      .catch(err => AlertUtils.addError('Could not fetch validations status', err));
   }
 
   sort = (sortField: SortField<NamespaceInfo>, isAscending: boolean) => {
@@ -705,11 +700,7 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
   render() {
     const sm = this.state.displayMode === OverviewDisplayMode.COMPACT ? 3 : 6;
     const md = this.state.displayMode === OverviewDisplayMode.COMPACT ? 3 : 4;
-    const filteredNamespaces = FilterHelper.runFilters(
-      this.state.namespaces,
-      Filters.availableFilters,
-      FilterSelected.getSelected()
-    );
+    const filteredNamespaces = runFilters(this.state.namespaces, Filters.availableFilters);
     const namespaceActions = filteredNamespaces.map((ns, i) => {
       const actions = this.getNamespaceActions(ns);
       return <OverviewNamespaceActions key={'namespaceAction_' + i} namespace={ns.name} actions={actions} />;
@@ -723,7 +714,6 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
         <div className={overviewHeader}>
           <OverviewToolbarContainer
             onRefresh={this.load}
-            onError={FilterHelper.handleError}
             sort={this.sort}
             displayMode={this.state.displayMode}
             setDisplayMode={this.setDisplayMode}
@@ -859,7 +849,7 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
         <OverviewCardContentExpanded
           key={ns.name}
           name={ns.name}
-          duration={FilterHelper.currentDuration()}
+          duration={currentDuration()}
           status={ns.status}
           type={this.state.type}
           metrics={ns.metrics}

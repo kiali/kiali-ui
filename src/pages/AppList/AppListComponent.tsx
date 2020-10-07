@@ -5,28 +5,29 @@ import Namespace from '../../types/Namespace';
 import { AppListItem } from '../../types/AppList';
 import * as AppListFilters from './FiltersAndSorts';
 import * as AppListClass from './AppListClass';
-import { FilterSelected, StatefulFilters } from '../../components/Filters/StatefulFilters';
-import { ActiveFiltersInfo } from '../../types/Filters';
+import { StatefulFilters } from '../../components/Filters/StatefulFilters';
 import { PromisesRegistry } from '../../utils/CancelablePromises';
 import { SortField } from '../../types/SortFilters';
-import * as FilterComponent from '../../components/FilterList/FilterComponent';
 import { KialiAppState } from '../../store/Store';
 import { activeNamespacesSelector, durationSelector } from '../../store/Selectors';
 import { namespaceEquals } from '../../utils/Common';
 import { DurationInSeconds } from '../../types/Common';
 import VirtualList from '../../components/VirtualList/VirtualList';
 import TimeControlsContainer from 'components/Time/TimeControls';
+import { ListComponentProps, ListComponentState } from 'helpers/ListComponentHelper';
+import { runPromiseFilters } from 'utils/Filters';
+import { addError } from 'utils/AlertUtils';
 
-type AppListComponentState = FilterComponent.State<AppListItem>;
+type AppListComponentState = ListComponentState<AppListItem>;
 
 type ReduxProps = {
   duration: DurationInSeconds;
   activeNamespaces: Namespace[];
 };
 
-type AppListComponentProps = ReduxProps & FilterComponent.Props<AppListItem>;
+type AppListComponentProps = ReduxProps & ListComponentProps<AppListItem>;
 
-class AppListComponent extends FilterComponent.Component<AppListComponentProps, AppListComponentState, AppListItem> {
+class AppListComponent extends React.Component<AppListComponentProps, AppListComponentState, AppListItem> {
   private promises = new PromisesRegistry();
 
   constructor(props: AppListComponentProps) {
@@ -75,12 +76,10 @@ class AppListComponent extends FilterComponent.Component<AppListComponentProps, 
     );
   }
 
-  updateListItems() {
+  private updateListItems = () => {
     this.promises.cancelAll();
 
-    const activeFilters: ActiveFiltersInfo = FilterSelected.getSelected();
     const namespacesSelected = this.props.activeNamespaces.map(item => item.name);
-
     if (namespacesSelected.length === 0) {
       this.promises
         .register('namespaces', API.getNamespaces())
@@ -88,21 +87,20 @@ class AppListComponent extends FilterComponent.Component<AppListComponentProps, 
           const namespaces: Namespace[] = namespacesResponse.data;
           this.fetchApps(
             namespaces.map(namespace => namespace.name),
-            activeFilters,
             this.props.duration
           );
         })
         .catch(namespacesError => {
           if (!namespacesError.isCanceled) {
-            this.handleAxiosError('Could not fetch namespace list', namespacesError);
+            addError('Could not fetch namespace list', namespacesError);
           }
         });
     } else {
-      this.fetchApps(namespacesSelected, activeFilters, this.props.duration);
+      this.fetchApps(namespacesSelected, this.props.duration);
     }
-  }
+  };
 
-  fetchApps(namespaces: string[], filters: ActiveFiltersInfo, rateInterval: number) {
+  fetchApps(namespaces: string[], rateInterval: number) {
     const appsPromises = namespaces.map(namespace => API.getApps(namespace));
     this.promises
       .registerAll('apps', appsPromises)
@@ -111,7 +109,7 @@ class AppListComponent extends FilterComponent.Component<AppListComponentProps, 
         responses.forEach(response => {
           appListItems = appListItems.concat(AppListClass.getAppItems(response.data, rateInterval));
         });
-        return AppListFilters.filterBy(appListItems, filters);
+        return runPromiseFilters(appListItems, AppListFilters.availableFilters);
       })
       .then(appListItems => {
         this.promises.cancel('sort');
@@ -129,7 +127,7 @@ class AppListComponent extends FilterComponent.Component<AppListComponentProps, 
       })
       .catch(err => {
         if (!err.isCanceled) {
-          this.handleAxiosError('Could not fetch apps list', err);
+          addError('Could not fetch apps list', err);
         }
       });
   }
@@ -139,7 +137,7 @@ class AppListComponent extends FilterComponent.Component<AppListComponentProps, 
       <VirtualList rows={this.state.listItems}>
         <StatefulFilters
           initialFilters={AppListFilters.availableFilters}
-          onFilterChange={this.onFilterChange}
+          onFilterChange={this.updateListItems}
           rightToolbar={[
             <TimeControlsContainer
               key={'DurationDropdown'}

@@ -1,15 +1,13 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { FilterSelected, StatefulFilters } from '../../components/Filters/StatefulFilters';
+import { StatefulFilters } from '../../components/Filters/StatefulFilters';
 import * as API from '../../services/Api';
 import Namespace from '../../types/Namespace';
-import { ActiveFiltersInfo } from '../../types/Filters';
 import { ServiceList, ServiceListItem } from '../../types/ServiceList';
 import { PromisesRegistry } from '../../utils/CancelablePromises';
 import * as ServiceListFilters from './FiltersAndSorts';
 import './ServiceListComponent.css';
 import { SortField } from '../../types/SortFilters';
-import * as FilterComponent from '../../components/FilterList/FilterComponent';
 import { namespaceEquals } from '../../utils/Common';
 import { KialiAppState } from '../../store/Store';
 import { activeNamespacesSelector, durationSelector } from '../../store/Selectors';
@@ -17,21 +15,20 @@ import { DurationInSeconds } from '../../types/Common';
 import { ObjectValidation, Validations } from '../../types/IstioObjects';
 import VirtualList from '../../components/VirtualList/VirtualList';
 import TimeControlsContainer from 'components/Time/TimeControls';
+import { ListComponentProps, ListComponentState } from 'helpers/ListComponentHelper';
+import { runPromiseFilters } from 'utils/Filters';
+import { addError } from 'utils/AlertUtils';
 
-type ServiceListComponentState = FilterComponent.State<ServiceListItem>;
+type ServiceListComponentState = ListComponentState<ServiceListItem>;
 
 type ReduxProps = {
   duration: DurationInSeconds;
   activeNamespaces: Namespace[];
 };
 
-type ServiceListComponentProps = ReduxProps & FilterComponent.Props<ServiceListItem>;
+type ServiceListComponentProps = ReduxProps & ListComponentProps<ServiceListItem>;
 
-class ServiceListComponent extends FilterComponent.Component<
-  ServiceListComponentProps,
-  ServiceListComponentState,
-  ServiceListItem
-> {
+class ServiceListComponent extends React.Component<ServiceListComponentProps, ServiceListComponentState> {
   private promises = new PromisesRegistry();
 
   constructor(props: ServiceListComponentProps) {
@@ -82,12 +79,10 @@ class ServiceListComponent extends FilterComponent.Component<
     );
   }
 
-  updateListItems() {
+  private updateListItems = () => {
     this.promises.cancelAll();
 
-    const activeFilters: ActiveFiltersInfo = FilterSelected.getSelected();
     const namespacesSelected = this.props.activeNamespaces.map(item => item.name);
-
     if (namespacesSelected.length === 0) {
       this.promises
         .register('namespaces', API.getNamespaces())
@@ -95,19 +90,18 @@ class ServiceListComponent extends FilterComponent.Component<
           const namespaces: Namespace[] = namespacesResponse.data;
           this.fetchServices(
             namespaces.map(namespace => namespace.name),
-            activeFilters,
             this.props.duration
           );
         })
         .catch(namespacesError => {
           if (!namespacesError.isCanceled) {
-            this.handleAxiosError('Could not fetch namespace list', namespacesError);
+            addError('Could not fetch namespace list', namespacesError);
           }
         });
     } else {
-      this.fetchServices(namespacesSelected, activeFilters, this.props.duration);
+      this.fetchServices(namespacesSelected, this.props.duration);
     }
-  }
+  };
 
   getServiceItem(data: ServiceList, rateInterval: number): ServiceListItem[] {
     if (data.services) {
@@ -124,7 +118,7 @@ class ServiceListComponent extends FilterComponent.Component<
     return [];
   }
 
-  fetchServices(namespaces: string[], filters: ActiveFiltersInfo, rateInterval: number) {
+  private fetchServices(namespaces: string[], rateInterval: number) {
     const servicesPromises = namespaces.map(ns => API.getServices(ns));
 
     this.promises
@@ -134,7 +128,7 @@ class ServiceListComponent extends FilterComponent.Component<
         responses.forEach(response => {
           serviceListItems = serviceListItems.concat(this.getServiceItem(response.data, rateInterval));
         });
-        return ServiceListFilters.filterBy(serviceListItems, filters);
+        return runPromiseFilters(serviceListItems, ServiceListFilters.availableFilters);
       })
       .then(serviceListItems => {
         this.promises.cancel('sort');
@@ -152,7 +146,7 @@ class ServiceListComponent extends FilterComponent.Component<
       })
       .catch(err => {
         if (!err.isCanceled) {
-          this.handleAxiosError('Could not fetch services list', err);
+          addError('Could not fetch services list', err);
         }
       });
   }
@@ -167,7 +161,7 @@ class ServiceListComponent extends FilterComponent.Component<
       <VirtualList rows={this.state.listItems}>
         <StatefulFilters
           initialFilters={ServiceListFilters.availableFilters}
-          onFilterChange={this.onFilterChange}
+          onFilterChange={this.updateListItems}
           rightToolbar={[
             <TimeControlsContainer
               key={'DurationDropdown'}

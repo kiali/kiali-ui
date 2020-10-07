@@ -1,19 +1,11 @@
-import { ActiveFiltersInfo, FilterType, FILTER_ACTION_APPEND } from '../../types/Filters';
-import { WithServiceHealth, hasHealth } from '../../types/Health';
+import { FILTER_ACTION_APPEND, healthFilter, istioSidecarFilter, Filter } from '../../types/Filters';
+import { WithServiceHealth } from '../../types/Health';
 import { ServiceListItem } from '../../types/ServiceList';
 import { SortField } from '../../types/SortFilters';
-import {
-  istioSidecarFilter,
-  healthFilter,
-  labelFilter,
-  getPresenceFilterValue,
-  getFilterSelectedValues,
-  filterByHealth
-} from '../../components/Filters/CommonFilters';
 import { hasMissingSidecar } from '../../components/VirtualList/Config';
 import { TextInputTypes } from '@patternfly/react-core';
-import { filterByLabel } from '../../helpers/LabelFilterHelper';
-import { calculateErrorRate } from '../../types/ErrorRate';
+import { compareHealth } from 'utils/Compare';
+import { labelFilter } from 'helpers/LabelFilterHelper';
 
 export const sortFields: SortField<ServiceListItem>[] = [
   {
@@ -21,20 +13,14 @@ export const sortFields: SortField<ServiceListItem>[] = [
     title: 'Namespace',
     isNumeric: false,
     param: 'ns',
-    compare: (a: ServiceListItem, b: ServiceListItem) => {
-      let sortValue = a.namespace.localeCompare(b.namespace);
-      if (sortValue === 0) {
-        sortValue = a.name.localeCompare(b.name);
-      }
-      return sortValue;
-    }
+    compare: (a, b) => a.namespace.localeCompare(b.namespace) || a.name.localeCompare(b.name)
   },
   {
     id: 'servicename',
     title: 'Service Name',
     isNumeric: false,
     param: 'sn',
-    compare: (a: ServiceListItem, b: ServiceListItem) => a.name.localeCompare(b.name)
+    compare: (a, b) => a.name.localeCompare(b.name)
   },
   {
     id: 'details',
@@ -71,25 +57,7 @@ export const sortFields: SortField<ServiceListItem>[] = [
     title: 'Health',
     isNumeric: false,
     param: 'he',
-    compare: (a, b) => {
-      if (hasHealth(a) && hasHealth(b)) {
-        const statusForA = a.health.getGlobalStatus();
-        const statusForB = b.health.getGlobalStatus();
-
-        if (statusForA.priority === statusForB.priority) {
-          // If both services have same health status, use error rate to determine order.
-          const ratioA = calculateErrorRate(a.namespace, a.name, 'service', a.health.requests).errorRatio.global.status
-            .value;
-          const ratioB = calculateErrorRate(b.namespace, b.name, 'service', b.health.requests).errorRatio.global.status
-            .value;
-          return ratioA === ratioB ? a.name.localeCompare(b.name) : ratioB - ratioA;
-        }
-
-        return statusForB.priority - statusForA.priority;
-      } else {
-        return 0;
-      }
-    }
+    compare: (a, b) => compareHealth('service', a, b)
   },
   {
     id: 'configvalidation',
@@ -121,64 +89,17 @@ export const sortFields: SortField<ServiceListItem>[] = [
   }
 ];
 
-const serviceNameFilter: FilterType = {
+const serviceNameFilter: Filter<ServiceListItem> = {
   id: 'servicename',
   title: 'Service Name',
   placeholder: 'Filter by Service Name',
   filterType: TextInputTypes.text,
   action: FILTER_ACTION_APPEND,
-  filterValues: []
+  filterValues: [],
+  check: (item, active) => active.filters.some(f => item.name.includes(f.value))
 };
 
-export const availableFilters: FilterType[] = [serviceNameFilter, istioSidecarFilter, healthFilter, labelFilter];
-
-const filterByIstioSidecar = (items: ServiceListItem[], istioSidecar: boolean): ServiceListItem[] => {
-  return items.filter(item => item.istioSidecar === istioSidecar);
-};
-
-const filterByName = (items: ServiceListItem[], names: string[]): ServiceListItem[] => {
-  return items.filter(item => {
-    let serviceNameFiltered = true;
-    if (names.length > 0) {
-      serviceNameFiltered = false;
-      for (let i = 0; i < names.length; i++) {
-        if (item.name.includes(names[i])) {
-          serviceNameFiltered = true;
-          break;
-        }
-      }
-    }
-    return serviceNameFiltered;
-  });
-};
-
-export const filterBy = (
-  items: ServiceListItem[],
-  filters: ActiveFiltersInfo
-): Promise<ServiceListItem[]> | ServiceListItem[] => {
-  let ret = items;
-  const istioSidecar = getPresenceFilterValue(istioSidecarFilter, filters);
-  if (istioSidecar !== undefined) {
-    ret = filterByIstioSidecar(ret, istioSidecar);
-  }
-
-  const serviceNamesSelected = getFilterSelectedValues(serviceNameFilter, filters);
-  if (serviceNamesSelected.length > 0) {
-    ret = filterByName(ret, serviceNamesSelected);
-  }
-
-  const serviceFilterSelected = getFilterSelectedValues(labelFilter, filters);
-  if (serviceFilterSelected.length > 0) {
-    ret = filterByLabel(ret, serviceFilterSelected, filters.op) as ServiceListItem[];
-  }
-  // We may have to perform a second round of filtering, using data fetched asynchronously (health)
-  // If not, exit fast
-  const healthSelected = getFilterSelectedValues(healthFilter, filters);
-  if (healthSelected.length > 0) {
-    return filterByHealth(ret, healthSelected);
-  }
-  return ret;
-};
+export const availableFilters = [serviceNameFilter, istioSidecarFilter, healthFilter, labelFilter];
 
 // Exported for test
 export const sortServices = (

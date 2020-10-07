@@ -1,19 +1,11 @@
-import { ActiveFiltersInfo, FILTER_ACTION_APPEND, FilterType } from '../../types/Filters';
-import { calculateErrorRate } from '../../types/ErrorRate';
+import { FILTER_ACTION_APPEND, istioSidecarFilter, healthFilter, Filter } from '../../types/Filters';
 import { AppListItem } from '../../types/AppList';
 import { SortField } from '../../types/SortFilters';
-import { WithAppHealth, hasHealth } from '../../types/Health';
-import {
-  istioSidecarFilter,
-  healthFilter,
-  getPresenceFilterValue,
-  getFilterSelectedValues,
-  filterByHealth,
-  labelFilter
-} from '../../components/Filters/CommonFilters';
+import { WithAppHealth } from '../../types/Health';
 import { hasMissingSidecar } from '../../components/VirtualList/Config';
 import { TextInputTypes } from '@patternfly/react-core';
-import { filterByLabel } from '../../helpers/LabelFilterHelper';
+import { compareHealth } from 'utils/Compare';
+import { labelFilter } from 'helpers/LabelFilterHelper';
 
 export const sortFields: SortField<AppListItem>[] = [
   {
@@ -21,13 +13,7 @@ export const sortFields: SortField<AppListItem>[] = [
     title: 'Namespace',
     isNumeric: false,
     param: 'ns',
-    compare: (a, b) => {
-      let sortValue = a.namespace.localeCompare(b.namespace);
-      if (sortValue === 0) {
-        sortValue = a.name.localeCompare(b.name);
-      }
-      return sortValue;
-    }
+    compare: (a, b) => a.namespace.localeCompare(b.namespace) || a.name.localeCompare(b.name)
   },
   {
     id: 'appname',
@@ -57,89 +43,21 @@ export const sortFields: SortField<AppListItem>[] = [
     title: 'Health',
     isNumeric: false,
     param: 'he',
-    compare: (a, b) => {
-      if (hasHealth(a) && hasHealth(b)) {
-        const statusForA = a.health.getGlobalStatus();
-        const statusForB = b.health.getGlobalStatus();
-
-        if (statusForA.priority === statusForB.priority) {
-          // If both apps have same health status, use error rate to determine order.
-          const ratioA = calculateErrorRate(a.namespace, a.name, 'app', a.health.requests).errorRatio.global.status
-            .value;
-          const ratioB = calculateErrorRate(b.namespace, b.name, 'app', b.health.requests).errorRatio.global.status
-            .value;
-          return ratioA === ratioB ? a.name.localeCompare(b.name) : ratioB - ratioA;
-        }
-
-        return statusForB.priority - statusForA.priority;
-      } else {
-        return 0;
-      }
-    }
+    compare: (a, b) => compareHealth('app', a, b)
   }
 ];
 
-const appNameFilter: FilterType = {
+const appNameFilter: Filter<AppListItem> = {
   id: 'appname',
   title: 'App Name',
   placeholder: 'Filter by App Name',
   filterType: TextInputTypes.text,
   action: FILTER_ACTION_APPEND,
-  filterValues: []
+  filterValues: [],
+  check: (item, active) => active.filters.some(f => item.name.includes(f.value))
 };
 
-export const availableFilters: FilterType[] = [appNameFilter, istioSidecarFilter, healthFilter, labelFilter];
-
-/** Filter Method */
-
-const filterByName = (items: AppListItem[], names: string[]): AppListItem[] => {
-  return items.filter(item => {
-    let appNameFiltered = true;
-    if (names.length > 0) {
-      appNameFiltered = false;
-      for (let i = 0; i < names.length; i++) {
-        if (item.name.includes(names[i])) {
-          appNameFiltered = true;
-          break;
-        }
-      }
-    }
-    return appNameFiltered;
-  });
-};
-
-const filterByIstioSidecar = (items: AppListItem[], istioSidecar: boolean): AppListItem[] => {
-  return items.filter(item => item.istioSidecar === istioSidecar);
-};
-
-export const filterBy = (
-  appsList: AppListItem[],
-  filters: ActiveFiltersInfo
-): Promise<AppListItem[]> | AppListItem[] => {
-  let ret = appsList;
-  const istioSidecar = getPresenceFilterValue(istioSidecarFilter, filters);
-  if (istioSidecar !== undefined) {
-    ret = filterByIstioSidecar(ret, istioSidecar);
-  }
-
-  const appNamesSelected = getFilterSelectedValues(appNameFilter, filters);
-  if (appNamesSelected.length > 0) {
-    ret = filterByName(ret, appNamesSelected);
-  }
-
-  const appLabelsSelected = getFilterSelectedValues(labelFilter, filters);
-  if (appLabelsSelected.length > 0) {
-    ret = filterByLabel(ret, appLabelsSelected, filters.op) as AppListItem[];
-  }
-
-  // We may have to perform a second round of filtering, using data fetched asynchronously (health)
-  // If not, exit fast
-  const healthSelected = getFilterSelectedValues(healthFilter, filters);
-  if (healthSelected.length > 0) {
-    return filterByHealth(ret, healthSelected);
-  }
-  return ret;
-};
+export const availableFilters = [appNameFilter, istioSidecarFilter, healthFilter, labelFilter];
 
 /** Sort Method */
 

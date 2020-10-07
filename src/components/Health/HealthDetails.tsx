@@ -11,7 +11,7 @@ interface Props {
 }
 
 export class HealthDetails extends React.PureComponent<Props, {}> {
-  renderErrorRate = (item: H.HealthItem, idx: number) => {
+  renderErrorRate = (item: H.HealthItem) => {
     const config = this.props.health.getStatusConfig();
     const isValueInConfig =
       config && this.props.health.health.statusConfig ? this.props.health.health.statusConfig.value > 0 : false;
@@ -23,7 +23,7 @@ export class HealthDetails extends React.PureComponent<Props, {}> {
         }).length > 0
       : false;
     return showTraffic ? (
-      <div key={idx}>
+      <div>
         <strong>
           {' ' + item.title + (item.text && item.text.length > 0 ? ': ' : '')}{' '}
           {config && <InfoAltIcon color={PfColors.Gray} />}
@@ -56,11 +56,11 @@ export class HealthDetails extends React.PureComponent<Props, {}> {
     );
   };
 
-  renderChildren = (item: H.HealthItem, idx: number) => {
+  renderChildren = (item: H.HealthItem) => {
     return item.title.startsWith(H.TRAFFICSTATUS)
-      ? this.renderErrorRate(item, idx)
+      ? this.renderErrorRate(item)
       : (item.status !== H.HEALTHY || !this.props.tooltip) && (
-          <div key={idx}>
+          <div>
             <strong>{' ' + item.title + (item.text && item.text.length > 0 ? ': ' : '')}</strong>
             {item.text}
             {item.children && (
@@ -80,8 +80,8 @@ export class HealthDetails extends React.PureComponent<Props, {}> {
 
   render() {
     const health = this.props.health;
-    return health.health.items.map((item, idx) => {
-      return this.renderChildren(item, idx);
-    });
+    return health.health.items.map((item, idx) => (
+      <React.Fragment key={'health-' + idx}>{this.renderChildren(item)}</React.Fragment>
+    ));
   }
 }
