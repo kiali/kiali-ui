@@ -106,10 +106,6 @@ export default class GraphDataSource {
     graphData => decorateGraphData(graphData)
   );
 
-  private fetchStart: TimeInMilliseconds = 0;
-  private fetchEnd: TimeInMilliseconds = 0;
-  private fetchHealthStart: TimeInMilliseconds = 0;
-
   // Public methods
 
   constructor() {
@@ -136,8 +132,6 @@ export default class GraphDataSource {
   }
 
   public fetchGraphData = (fetchParams: FetchParams) => {
-    this.fetchStart = Date.now();
-
     const previousFetchParams = this.fetchParameters;
 
     // Copy fetch parameters to a local attribute
@@ -234,84 +228,55 @@ export default class GraphDataSource {
 
   // Some helpers
 
-  public fetchForApp = (
-    duration: DurationInSeconds,
-    namespace: string,
-    app: string,
-    includeHealth?: boolean,
-    injectServiceNodes?: boolean
-  ) => {
+  public fetchForApp = (duration: DurationInSeconds, namespace: string, app: string) => {
+    const params = this.fetchForAppParams(duration, namespace, app);
+    this.fetchGraphData(params);
+  };
+
+  public fetchForAppParams = (duration: DurationInSeconds, namespace: string, app: string): FetchParams => {
     const params = GraphDataSource.defaultFetchParams(duration, namespace);
     params.graphType = GraphType.APP;
-    if (includeHealth !== undefined) {
-      params.includeHealth = includeHealth;
-    }
-    if (injectServiceNodes !== undefined) {
-      params.injectServiceNodes = injectServiceNodes;
-    }
     params.node!.nodeType = NodeType.APP;
     params.node!.app = app;
+    return params;
+  };
+
+  public fetchForWorkload = (duration: DurationInSeconds, namespace: string, workload: string) => {
+    const params = this.fetchForWorkloadParams(duration, namespace, workload);
     this.fetchGraphData(params);
   };
 
-  public fetchForWorkload = (
-    duration: DurationInSeconds,
-    namespace: string,
-    workload: string,
-    includeHealth?: boolean,
-    injectServiceNodes?: boolean
-  ) => {
+  public fetchForWorkloadParams = (duration: DurationInSeconds, namespace: string, workload: string): FetchParams => {
     const params = GraphDataSource.defaultFetchParams(duration, namespace);
     params.graphType = GraphType.WORKLOAD;
-    if (includeHealth !== undefined) {
-      params.includeHealth = includeHealth;
-    }
-    if (injectServiceNodes !== undefined) {
-      params.injectServiceNodes = injectServiceNodes;
-    }
     params.node!.nodeType = NodeType.WORKLOAD;
     params.node!.workload = workload;
+    return params;
+  };
+
+  public fetchForService = (duration: DurationInSeconds, namespace: string, service: string) => {
+    const params = this.fetchForServiceParams(duration, namespace, service);
     this.fetchGraphData(params);
   };
 
-  public fetchForService = (
-    duration: DurationInSeconds,
-    namespace: string,
-    service: string,
-    includeHealth?: boolean,
-    injectServiceNodes?: boolean
-  ) => {
+  public fetchForServiceParams = (duration: DurationInSeconds, namespace: string, service: string): FetchParams => {
     const params = GraphDataSource.defaultFetchParams(duration, namespace);
     params.graphType = GraphType.WORKLOAD;
-    if (includeHealth !== undefined) {
-      params.includeHealth = includeHealth;
-    }
-    if (injectServiceNodes !== undefined) {
-      params.injectServiceNodes = injectServiceNodes;
-    }
     params.node!.nodeType = NodeType.SERVICE;
     params.node!.service = service;
+    return params;
+  };
+
+  public fetchForNamespace = (duration: DurationInSeconds, namespace: string) => {
+    const params = this.fetchForNamespaceParams(duration, namespace);
     this.fetchGraphData(params);
   };
 
-  public fetchForNamespace = (
-    duration: DurationInSeconds,
-    namespace: string,
-    includeHealth?: boolean,
-    injectServiceNodes?: boolean
-  ) => {
+  public fetchForNamespaceParams = (duration: DurationInSeconds, namespace: string): FetchParams => {
     const params = GraphDataSource.defaultFetchParams(duration, namespace);
     params.graphType = GraphType.WORKLOAD;
-    if (includeHealth !== undefined) {
-      params.includeHealth = includeHealth;
-    }
-    if (injectServiceNodes !== undefined) {
-      params.injectServiceNodes = injectServiceNodes;
-    }
     params.showSecurity = true;
-    if (includeHealth !== undefined) {
-      params.includeHealth = includeHealth;
-    }
+    return params;
   };
 
   // Private methods
@@ -415,8 +380,6 @@ export default class GraphDataSource {
 
   // Limit health fetches to only the necessary namespaces for the necessary types
   private fetchHealth = (decoratedGraphElements: DecoratedGraphElements) => {
-    this.fetchHealthStart = Date.now();
-    console.log('fetchHealth');
     if (!decoratedGraphElements.nodes || decoratedGraphElements.nodes.length === 0) {
       this._isLoading = false;
       this.emit('fetchSuccess', this.graphTimestamp, this.graphDuration, decoratedGraphElements, this.fetchParameters);
@@ -493,7 +456,6 @@ export default class GraphDataSource {
             if (health) {
               nh.node.data.health = health;
               nh.node.data.healthStatus = health.getGlobalStatus().name;
-              console.log(`health for [${nh.node.data.nodeType}] [${nh.key}] = ${nh.node.data.healthStatus}`);
             } else {
               nh.node.data.healthStatus = NA.name;
               console.debug(`No health found for [${nh.node.data.nodeType}] [${nh.key}]`);
@@ -501,16 +463,6 @@ export default class GraphDataSource {
           });
         });
 
-        console.log('Emitting...');
-        this.fetchEnd = Date.now();
-        const total = this.fetchEnd - this.fetchStart;
-        const graphTotal = this.fetchHealthStart - this.fetchStart;
-        const graphPercent = Number((graphTotal / total) * 100).toFixed(2);
-        const healthTotal = this.fetchEnd - this.fetchHealthStart;
-        const healthPercent = Number((healthTotal / total) * 100).toFixed(2);
-        console.log(`Total  fetch time=${total}ms`);
-        console.log(`Graph  fetch time=${graphTotal}ms (${graphPercent})%`);
-        console.log(`Health fetch time=${healthTotal}ms (${healthPercent})%`);
         this._isLoading = false;
         this.emit(
           'fetchSuccess',
