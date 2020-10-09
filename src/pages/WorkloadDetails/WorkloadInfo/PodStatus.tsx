@@ -10,18 +10,22 @@ import './PodStatus.css';
 
 type Props = {
   checks?: ObjectCheck[];
-  status: ProxyStatus;
+  status?: ProxyStatus;
 };
 
 class PodStatus extends React.Component<Props> {
+  proxyStatusSeverity = (): Status => {
+    return this.props.status && !isProxyStatusSynced(this.props.status) ? DEGRADED : HEALTHY;
+  };
+
   severityIcon = () => {
-    const proxyStatusSeverity: Status = isProxyStatusSynced(this.props.status) ? HEALTHY : DEGRADED;
+    const proxyStatusSeverity: Status = this.proxyStatusSeverity();
     const validationSeverity: Status = validationToHealth(highestSeverity(this.props.checks || []));
     return mergeStatus(proxyStatusSeverity, validationSeverity);
   };
 
   showTooltip = (): boolean => {
-    const proxyStatusSeverity: Status = isProxyStatusSynced(this.props.status) ? HEALTHY : DEGRADED;
+    const proxyStatusSeverity: Status = this.proxyStatusSeverity();
     const validationSeverity: ValidationTypes = highestSeverity(this.props.checks || []);
     return proxyStatusSeverity.name !== HEALTHY.name || validationSeverity !== ValidationTypes.Correct;
   };

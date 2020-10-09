@@ -358,7 +358,10 @@ export class AppHealth extends Health {
       // Pods
       const children: HealthSubItem[] = workloadStatuses.map(d => {
         const status = ratioCheck(d.availableReplicas, d.currentReplicas, d.desiredReplicas, d.syncedProxies);
-        const proxyMessage = proxyStatusMessage(d.syncedProxies, d.desiredReplicas);
+        let proxyMessage = '';
+        if (d.syncedProxies >= 0) {
+          proxyMessage = proxyStatusMessage(d.syncedProxies, d.desiredReplicas);
+        }
         return {
           text: d.name + ': ' + d.availableReplicas + ' / ' + d.desiredReplicas + proxyMessage,
           status: status
@@ -457,14 +460,17 @@ export class WorkloadHealth extends Health {
             text: String(
               workloadStatus.availableReplicas + ' available pod' + (workloadStatus.availableReplicas !== 1 ? 's' : '')
             )
-          },
-          {
+          }
+        ];
+
+        if (workloadStatus.syncedProxies >= 0) {
+          item.children.push({
             status: podsStatus,
             text: String(
               workloadStatus.syncedProxies + ' synced prox' + (workloadStatus.availableReplicas !== 1 ? 'ies' : 'y')
             )
-          }
-        ];
+          });
+        }
       }
       items.push(item);
     }

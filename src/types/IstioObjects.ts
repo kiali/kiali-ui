@@ -122,7 +122,7 @@ export interface Pod {
   status: string;
   appLabel: boolean;
   versionLabel: boolean;
-  proxyStatus: ProxyStatus;
+  proxyStatus?: ProxyStatus;
 }
 
 export type Logs = string;
