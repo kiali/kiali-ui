@@ -27,6 +27,7 @@ import { FullScreenLogModal } from './FullScreenLogModal';
 import { DurationDropdownContainer } from '../../../components/DurationDropdown/DurationDropdown';
 import RefreshContainer from '../../../components/Refresh/Refresh';
 import { RightActionBar } from '../../../components/RightActionBar/RightActionBar';
+import screenfull from 'screenfull';
 
 export interface WorkloadPodLogsProps {
   namespace: string;
@@ -683,10 +684,16 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
 
   private openAppFullScreenLog = () => {
     this.appFullScreenLogModalRef.current!.open();
+    if (screenfull.isEnabled) {
+      screenfull.request();
+    }
   };
 
   private openProxyFullScreenLog = () => {
     this.proxyFullScreenLogModalRef.current!.open();
+    if (screenfull.isEnabled) {
+      screenfull.request();
+    }
   };
 
   private getContainerInfo = (pod: Pod): ContainerInfo => {
