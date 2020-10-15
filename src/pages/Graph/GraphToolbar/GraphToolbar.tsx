@@ -169,9 +169,9 @@ export class GraphToolbar extends React.PureComponent<GraphToolbarProps> {
             )}
             <TourStopContainer info={GraphTourStops.Display}>
               <GraphSettingsContainer graphType={this.props.graphType} />
+              <GraphFindContainer cy={this.props.cy} />
             </TourStopContainer>
           </div>
-          <GraphFindContainer cy={this.props.cy} />
           <ToolbarGroup className={rightToolbarStyle} aria-label="graph_refresh_toolbar">
             <TourStopContainer info={GraphTourStops.TimeRange}>
               <TimeControlsContainer
