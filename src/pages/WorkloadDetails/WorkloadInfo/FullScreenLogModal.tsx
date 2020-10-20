@@ -54,14 +54,19 @@ export class FullScreenLogModal extends React.PureComponent<FullScreenLogProps, 
   }
 
   open = () => {
-    this.setState({ show: true });
+    this.setState({ show: true }, () => {
+      if (screenfull.isEnabled) {
+        screenfull.request();
+      }
+    });
   };
 
   close = () => {
-    this.setState({ show: false });
-    if (screenfull.isEnabled) {
-      screenfull.exit();
-    }
+    this.setState({ show: false }, () => {
+      if (screenfull.isEnabled) {
+        screenfull.exit();
+      }
+    });
   };
 
   componentDidUpdate(
