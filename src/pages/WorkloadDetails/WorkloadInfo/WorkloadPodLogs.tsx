@@ -456,7 +456,12 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
             </ToolbarItem>
             <ToolbarItem className={toolbarSpace}>
               <Tooltip key="expand_app_logs" position="top" content="Expand App logs full screen">
-                <Button variant={ButtonVariant.link} onClick={this.openAppFullScreenLog} isInline>
+                <Button
+                  variant={ButtonVariant.link}
+                  onClick={this.openAppFullScreenLog}
+                  isDisabled={!this.state.filteredAppLogs}
+                  isInline
+                >
                   <KialiIcon.Expand className={defaultIconStyle} />
                 </Button>
               </Tooltip>
@@ -495,9 +500,14 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
                 </CopyToClipboard>
               </Tooltip>
             </ToolbarItem>
-            <ToolbarItem className={toolbarSpace}>
+            <ToolbarItem className={toolbarSpace} disabled={true}>
               <Tooltip key="expand_proxy_logs" position="top" content="Expand Istio proxy logs full screen">
-                <Button variant={ButtonVariant.link} onClick={this.openProxyFullScreenLog} isInline>
+                <Button
+                  variant={ButtonVariant.link}
+                  onClick={this.openProxyFullScreenLog}
+                  isInline
+                  isDisabled={!this.state.filteredProxyLogs}
+                >
                   <KialiIcon.Expand className={defaultIconStyle} />
                 </Button>
               </Tooltip>
