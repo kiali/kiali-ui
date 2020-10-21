@@ -98,9 +98,12 @@ const infoIcons = style({
   width: '24px'
 });
 
-const logsTitle = style({
-  fontWeight: 'bold'
-});
+const fullscreenTitleBackground = (isFullscreen: boolean) => ({ color: isFullscreen ? 'white' : 'black' });
+
+const logsTitle = (isFullscreen: boolean) =>
+  style(fullscreenTitleBackground(isFullscreen), {
+    fontWeight: 'bold'
+  });
 
 const proxyLogsDiv = style({
   height: '100%'
@@ -424,7 +427,7 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
     return (
       <div id="appLogDiv" className={this.state.sideBySideOrientation ? appLogsDivHorizontal : appLogsDivVertical}>
         <Toolbar className={toolbarTitle()}>
-          <ToolbarItem className={logsTitle}>
+          <ToolbarItem className={logsTitle(this.isFullscreen())}>
             {this.state.containerInfo!.containerOptions[this.state.containerInfo!.container]}
           </ToolbarItem>
           <ToolbarGroup className={toolbarRight}>
@@ -473,7 +476,7 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
     return (
       <div id="proxyLogDiv" className={proxyLogsDiv}>
         <Toolbar className={toolbarTitle(this.state.sideBySideOrientation ? 'right' : 'bottom')}>
-          <ToolbarItem className={logsTitle}>Istio proxy (sidecar)</ToolbarItem>
+          <ToolbarItem className={logsTitle(this.isFullscreen())}>Istio proxy (sidecar)</ToolbarItem>
           <ToolbarGroup className={toolbarRight}>
             <ToolbarItem>
               <Tooltip key="copy_proxy_logs" position="top" content="Copy Istio proxy logs to clipboard">
@@ -687,6 +690,11 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
         screenFullAlias.request(element);
       }
     }
+  };
+
+  private isFullscreen = () => {
+    const screenFullAlias = screenfull as Screenfull; // this casting was necessary
+    return screenFullAlias.isFullscreen;
   };
 
   private toggleFullscreen = (elementId: string) => {
