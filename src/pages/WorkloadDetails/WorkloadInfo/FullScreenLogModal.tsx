@@ -43,12 +43,14 @@ export class FullScreenLogModal extends React.PureComponent<FullScreenLogProps, 
   }
 
   componentDidMount() {
-    const myScreenful = screenfull as Screenfull; // this casting was necessary
-    if (myScreenful.isEnabled) {
-      myScreenful.onchange((_event: Event) => {
-        if (!myScreenful.isFullscreen) {
-          this.setState({ show: false });
-        }
+    const sf = screenfull as Screenfull; // this casting was necessary
+    if (sf.isEnabled) {
+      sf.on('change', () => {
+        this.setState({ show: sf.isFullscreen });
+      });
+      sf.on('error', () => {
+        this.setState({ show: false });
+
       });
     }
   }
@@ -76,6 +78,15 @@ export class FullScreenLogModal extends React.PureComponent<FullScreenLogProps, 
   ) {
     if (this.textareaRef.current) {
       this.textareaRef.current.scrollTop = this.textareaRef.current.scrollHeight;
+    }
+  }
+
+  componentWillUnmount() {
+    const sf = screenfull as Screenfull; // this casting was necessary
+    if (sf.isEnabled) {
+      sf.off('change', () => {});
+      sf.off('error', () => {});
+      sf.exit();
     }
   }
 

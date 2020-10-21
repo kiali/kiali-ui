@@ -47,7 +47,6 @@ interface WorkloadPodLogsState {
   filteredProxyLogs?: LogLines;
   hideError?: string;
   hideLogValue: string;
-  isLogWindowSelectExpanded: boolean;
   loadingAppLogs: boolean;
   loadingAppLogsError?: string;
   loadingProxyLogs: boolean;
@@ -168,7 +167,6 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
     if (this.props.pods.length < 1) {
       this.state = {
         hideLogValue: '',
-        isLogWindowSelectExpanded: false,
         loadingAppLogs: false,
         loadingAppLogsError: 'There are no logs to display because no pods are available.',
         loadingProxyLogs: false,
@@ -197,7 +195,6 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
     this.state = {
       containerInfo: containerInfo,
       hideLogValue: '',
-      isLogWindowSelectExpanded: false,
       loadingAppLogs: false,
       loadingProxyLogs: false,
       logWindowSelections: [],
