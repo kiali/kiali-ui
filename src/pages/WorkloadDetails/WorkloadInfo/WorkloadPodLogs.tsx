@@ -23,10 +23,10 @@ import { RenderComponentScroll } from '../../../components/Nav/Page';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import Splitter from 'm-react-splitters';
 import { KialiIcon, defaultIconStyle } from '../../../config/KialiIcon';
-import { FullScreenLogModal } from './FullScreenLogModal';
 import { DurationDropdownContainer } from '../../../components/DurationDropdown/DurationDropdown';
 import RefreshContainer from '../../../components/Refresh/Refresh';
 import { RightActionBar } from '../../../components/RightActionBar/RightActionBar';
+import screenfull, { Screenfull } from 'screenfull';
 
 export interface WorkloadPodLogsProps {
   namespace: string;
@@ -154,15 +154,15 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
   private podOptions: string[] = [];
   private readonly appLogsRef: React.RefObject<any>;
   private readonly proxyLogsRef: React.RefObject<any>;
-  private readonly appFullScreenLogModalRef: React.RefObject<FullScreenLogModal>;
-  private readonly proxyFullScreenLogModalRef: React.RefObject<FullScreenLogModal>;
+  // private readonly appFullScreenLogModalRef: React.RefObject<FullScreenLogModal>;
+  // private readonly proxyFullScreenLogModalRef: React.RefObject<FullScreenLogModal>;
 
   constructor(props: WorkloadPodLogsProps) {
     super(props);
     this.appLogsRef = React.createRef();
     this.proxyLogsRef = React.createRef();
-    this.appFullScreenLogModalRef = React.createRef();
-    this.proxyFullScreenLogModalRef = React.createRef();
+    // this.appFullScreenLogModalRef = React.createRef();
+    // this.proxyFullScreenLogModalRef = React.createRef();
 
     if (this.props.pods.length < 1) {
       this.state = {
@@ -257,17 +257,6 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
               <GridItem span={12}>
                 <Card style={{ height: '100%' }}>
                   <CardBody>
-                    {/*we need two FullScreenLogModal components because you cant pass anything to modal.open() */}
-                    <FullScreenLogModal
-                      logText={WorkloadPodLogs.linesToString(this.state.filteredAppLogs)}
-                      title={this.props.pods[this.state.podValue!].name}
-                      ref={this.appFullScreenLogModalRef}
-                    />
-                    <FullScreenLogModal
-                      logText={WorkloadPodLogs.linesToString(this.state.filteredProxyLogs)}
-                      title="Istio Proxy Logs (sidecar)"
-                      ref={this.proxyFullScreenLogModalRef}
-                    />
                     <Toolbar className={toolbar}>
                       <ToolbarGroup>
                         <ToolbarItem className={displayFlex}>
@@ -433,7 +422,7 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
     const appLogsEnabled = !!this.state.filteredAppLogs;
     const appLogs = appLogsEnabled ? WorkloadPodLogs.linesToString(this.state.filteredAppLogs) : NoAppLogsFoundMessage;
     return (
-      <div className={this.state.sideBySideOrientation ? appLogsDivHorizontal : appLogsDivVertical}>
+      <div id="appLogDiv" className={this.state.sideBySideOrientation ? appLogsDivHorizontal : appLogsDivVertical}>
         <Toolbar className={toolbarTitle()}>
           <ToolbarItem className={logsTitle}>
             {this.state.containerInfo!.containerOptions[this.state.containerInfo!.container]}
@@ -467,6 +456,7 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
         </Toolbar>
 
         <textarea
+          id="appLogTextArea"
           className={logsTextarea(!!this.state.filteredAppLogs, this.state.sideBySideOrientation ? 'left' : 'top')}
           ref={this.appLogsRef}
           readOnly={true}
@@ -481,7 +471,7 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
       ? WorkloadPodLogs.linesToString(this.state.filteredProxyLogs)
       : NoProxyLogsFoundMessage;
     return (
-      <div className={proxyLogsDiv}>
+      <div id="proxyLogDiv" className={proxyLogsDiv}>
         <Toolbar className={toolbarTitle(this.state.sideBySideOrientation ? 'right' : 'bottom')}>
           <ToolbarItem className={logsTitle}>Istio proxy (sidecar)</ToolbarItem>
           <ToolbarGroup className={toolbarRight}>
@@ -512,6 +502,7 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
           </ToolbarGroup>
         </Toolbar>
         <textarea
+          id="proxyLogTextArea"
           className={logsTextarea(
             !!this.state.filteredProxyLogs,
             this.state.sideBySideOrientation ? 'right' : 'bottom'
@@ -688,12 +679,31 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
     this.proxyLogsRef.current.select();
   };
 
+  private makeElementFullScreen = (elementId: string) => {
+    const screenFullAlias = screenfull as Screenfull; // this casting was necessary
+    const element = document.getElementById(elementId);
+    if (screenFullAlias.isEnabled) {
+      if (element) {
+        screenFullAlias.request(element);
+      }
+    }
+  };
+
+  private toggleFullscreen = (elementId: string) => {
+    const screenFullAlias = screenfull as Screenfull; // this casting was necessary
+    if (screenFullAlias.isFullscreen) {
+      screenFullAlias.exit();
+    } else {
+      this.makeElementFullScreen(elementId);
+    }
+  };
+
   private openAppFullScreenLog = () => {
-    this.appFullScreenLogModalRef.current!.open();
+    this.toggleFullscreen('appLogDiv');
   };
 
   private openProxyFullScreenLog = () => {
-    this.proxyFullScreenLogModalRef.current!.open();
+    this.toggleFullscreen('proxyLogDiv');
   };
 
   private getContainerInfo = (pod: Pod): ContainerInfo => {
