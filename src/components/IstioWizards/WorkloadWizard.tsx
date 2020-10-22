@@ -60,7 +60,9 @@ class WorkloadWizard extends React.Component<WorkloadWizardProps, WorkloadWizard
               {'Create'}
             </Button>
           ]}
-        ></Modal>
+        >
+          <>Workload Wizard Skeleton</>
+        </Modal>
       </>
     );
   }
