@@ -112,10 +112,6 @@ export const istioTypeFilter: FilterType = {
       title: 'Sidecar'
     },
     {
-      id: 'Template',
-      title: 'Template'
-    },
-    {
       id: 'VirtualService',
       title: 'VirtualService'
     },
