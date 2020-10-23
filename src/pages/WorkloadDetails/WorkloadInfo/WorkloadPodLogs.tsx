@@ -18,20 +18,21 @@ import { Pod, PodLogs, LogEntry } from '../../../types/IstioObjects';
 import { getPodLogs, Response } from '../../../services/Api';
 import { CancelablePromise, makeCancelablePromise } from '../../../utils/CancelablePromises';
 import { ToolbarDropdown } from '../../../components/ToolbarDropdown/ToolbarDropdown';
-import { DurationInSeconds } from '../../../types/Common';
+import { TimeRange, evalTimeRange } from '../../../types/Common';
 import { RenderComponentScroll } from '../../../components/Nav/Page';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import Splitter from 'm-react-splitters';
 import { KialiIcon, defaultIconStyle } from '../../../config/KialiIcon';
-import { DurationDropdownContainer } from '../../../components/DurationDropdown/DurationDropdown';
 import RefreshContainer from '../../../components/Refresh/Refresh';
 import { RightActionBar } from '../../../components/RightActionBar/RightActionBar';
 import screenfull, { Screenfull } from 'screenfull';
+import { retrieveTimeRange } from 'components/Time/TimeRangeHelper';
+import * as MetricsHelper from '../../../components/Metrics/Helper';
+import TimeRangeComponent from 'components/Time/TimeRangeComponent';
 
 export interface WorkloadPodLogsProps {
   namespace: string;
   pods: Pod[];
-  duration: DurationInSeconds;
 }
 
 interface ContainerInfo {
@@ -62,6 +63,7 @@ interface WorkloadPodLogsState {
   showTimestamps: boolean;
   sideBySideOrientation: boolean;
   tailLines: number;
+  timeRange: TimeRange;
   useRegex: boolean;
 }
 
@@ -164,25 +166,30 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
     this.appLogsRef = React.createRef();
     this.proxyLogsRef = React.createRef();
 
+    const timeRange = retrieveTimeRange() || MetricsHelper.defaultMetricsDuration; // align with metrics for default
+    const defaultState = {
+      filteredAppLogs: [],
+      filteredProxyLogs: [],
+      hideLogValue: '',
+      loadingAppLogs: false,
+      loadingProxyLogs: false,
+      logWindowSelections: [],
+      rawAppLogs: [],
+      rawProxyLogs: [],
+      showClearHideLogButton: false,
+      showClearShowLogButton: false,
+      showLogValue: '',
+      showTimestamps: false,
+      sideBySideOrientation: false,
+      tailLines: TailLinesDefault,
+      timeRange: timeRange,
+      useRegex: false
+    };
     if (this.props.pods.length < 1) {
       this.state = {
-        filteredAppLogs: [],
-        filteredProxyLogs: [],
-        hideLogValue: '',
-        loadingAppLogs: false,
+        ...defaultState,
         loadingAppLogsError: 'There are no logs to display because no pods are available.',
-        loadingProxyLogs: false,
-        loadingProxyLogsError: 'There are no logs to display because no container logs are available.',
-        logWindowSelections: [],
-        rawAppLogs: [],
-        rawProxyLogs: [],
-        sideBySideOrientation: false,
-        showClearHideLogButton: false,
-        showClearShowLogButton: false,
-        showLogValue: '',
-        showTimestamps: false,
-        tailLines: TailLinesDefault,
-        useRegex: false
+        loadingProxyLogsError: 'There are no logs to display because no container logs are available.'
       };
       return;
     }
@@ -198,23 +205,9 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
     const containerInfo = this.getContainerInfo(pod);
 
     this.state = {
+      ...defaultState,
       containerInfo: containerInfo,
-      filteredAppLogs: [],
-      filteredProxyLogs: [],
-      hideLogValue: '',
-      loadingAppLogs: false,
-      loadingProxyLogs: false,
-      logWindowSelections: [],
-      podValue: podValue,
-      rawAppLogs: [],
-      rawProxyLogs: [],
-      showClearHideLogButton: false,
-      showClearShowLogButton: false,
-      showLogValue: '',
-      showTimestamps: false,
-      sideBySideOrientation: false,
-      tailLines: TailLinesDefault,
-      useRegex: false
+      podValue: podValue
     };
   }
 
@@ -226,21 +219,21 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
         pod.name,
         this.state.containerInfo.container,
         this.state.tailLines,
-        this.props.duration
+        this.state.timeRange
       );
     }
   }
 
-  componentDidUpdate(prevProps: WorkloadPodLogsProps, prevState: WorkloadPodLogsState) {
+  componentDidUpdate(_prevProps: WorkloadPodLogsProps, prevState: WorkloadPodLogsState) {
     const prevContainer = prevState.containerInfo ? prevState.containerInfo.container : undefined;
     const newContainer = this.state.containerInfo ? this.state.containerInfo.container : undefined;
     const updateContainerInfo = this.state.containerInfo && this.state.containerInfo !== prevState.containerInfo;
     const updateContainer = newContainer && newContainer !== prevContainer;
-    const updateDuration = this.props.duration && this.props.duration !== prevProps.duration;
+    const updateTimeRange = this.state.timeRange && this.state.timeRange !== prevState.timeRange;
     const updateTailLines = this.state.tailLines && prevState.tailLines !== this.state.tailLines;
-    if (updateContainerInfo || updateContainer || updateDuration || updateTailLines) {
+    if (updateContainerInfo || updateContainer || updateTimeRange || updateTailLines) {
       const pod = this.props.pods[this.state.podValue!];
-      this.fetchLogs(this.props.namespace, pod.name, newContainer!, this.state.tailLines, this.props.duration);
+      this.fetchLogs(this.props.namespace, pod.name, newContainer!, this.state.tailLines, this.state.timeRange);
     }
     this.proxyLogsRef.current.scrollTop = this.proxyLogsRef.current.scrollHeight;
     this.appLogsRef.current.scrollTop = this.appLogsRef.current.scrollHeight;
@@ -258,7 +251,12 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
     return (
       <>
         <RightActionBar>
-          <DurationDropdownContainer id="workload-pod-logging-duration-dropdown" prefix="Last" />
+          <TimeRangeComponent
+            range={this.state.timeRange}
+            onChanged={this.handleTimeRangeChange}
+            tooltip={'Time range'}
+            allowCustom={true}
+          />
           <RefreshContainer id="workload-pod-logging-refresh" handleRefresh={this.handleRefresh} hideLabel={true} />
         </RightActionBar>
         <RenderComponentScroll key={this.state.sideBySideOrientation ? 'vertical' : 'horizontal'}>
@@ -564,6 +562,10 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
     });
   };
 
+  private handleTimeRangeChange = (range: TimeRange) => {
+    this.setState({ timeRange: range });
+  };
+
   private handleRefresh = () => {
     const pod = this.props.pods[this.state.podValue!];
     this.fetchLogs(
@@ -571,7 +573,7 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
       pod.name,
       this.state.containerInfo!.container,
       this.state.tailLines,
-      this.props.duration
+      this.state.timeRange
     );
   };
 
@@ -756,16 +758,26 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
     podName: string,
     container: string,
     tailLines: number,
-    duration: DurationInSeconds
+    timeRange: TimeRange
   ) => {
-    const sinceTime = Math.floor(Date.now() / 1000) - duration;
-    const appPromise: Promise<Response<PodLogs>> = getPodLogs(namespace, podName, container, tailLines, sinceTime);
+    const timeRangeDates = evalTimeRange(timeRange);
+    const sinceTime = Math.floor(timeRangeDates[0].getTime() / 1000);
+    const duration = Math.floor(timeRangeDates[1].getTime() / 1000) - sinceTime;
+    const appPromise: Promise<Response<PodLogs>> = getPodLogs(
+      namespace,
+      podName,
+      container,
+      tailLines,
+      sinceTime,
+      duration
+    );
     const proxyPromise: Promise<Response<PodLogs>> = getPodLogs(
       namespace,
       podName,
       'istio-proxy',
       tailLines,
-      sinceTime
+      sinceTime,
+      duration
     );
     this.loadAppLogsPromise = makeCancelablePromise(Promise.all([appPromise]));
     this.loadProxyLogsPromise = makeCancelablePromise(Promise.all([proxyPromise]));
@@ -773,7 +785,6 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
     this.loadAppLogsPromise.promise
       .then(response => {
         const rawAppLogs = response[0].data.entries;
-        rawAppLogs.forEach(le => console.log(`[${le.message}]`));
         const filteredAppLogs = this.filterLogs(rawAppLogs, this.state.showLogValue, this.state.hideLogValue);
 
         this.setState({
