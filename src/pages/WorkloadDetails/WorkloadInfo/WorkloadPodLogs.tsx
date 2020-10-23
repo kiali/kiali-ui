@@ -14,11 +14,11 @@ import {
   Tooltip
 } from '@patternfly/react-core';
 import { style } from 'typestyle';
-import { Pod, PodLogs } from '../../../types/IstioObjects';
+import { Pod, PodLogs, LogEntry } from '../../../types/IstioObjects';
 import { getPodLogs, Response } from '../../../services/Api';
 import { CancelablePromise, makeCancelablePromise } from '../../../utils/CancelablePromises';
 import { ToolbarDropdown } from '../../../components/ToolbarDropdown/ToolbarDropdown';
-import { DurationInSeconds, LogLines } from '../../../types/Common';
+import { DurationInSeconds } from '../../../types/Common';
 import { RenderComponentScroll } from '../../../components/Nav/Page';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import Splitter from 'm-react-splitters';
@@ -43,8 +43,8 @@ type TextAreaPosition = 'left' | 'right' | 'top' | 'bottom';
 
 interface WorkloadPodLogsState {
   containerInfo?: ContainerInfo;
-  filteredAppLogs?: LogLines;
-  filteredProxyLogs?: LogLines;
+  filteredAppLogs?: LogEntry[];
+  filteredProxyLogs?: LogEntry[];
   hideError?: string;
   hideLogValue: string;
   loadingAppLogs: boolean;
@@ -53,8 +53,8 @@ interface WorkloadPodLogsState {
   loadingProxyLogsError?: string;
   logWindowSelections: any[];
   podValue?: number;
-  rawAppLogs?: LogLines;
-  rawProxyLogs?: LogLines;
+  rawAppLogs?: LogEntry[];
+  rawProxyLogs?: LogEntry[];
   showClearHideLogButton: boolean;
   showClearShowLogButton: boolean;
   showError?: string;
@@ -556,8 +556,8 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
   };
 
   private doShowAndHide = () => {
-    const rawAppLogs = !!this.state.rawAppLogs ? this.state.rawAppLogs : ([] as LogLines);
-    const rawProxyLogs = !!this.state.rawProxyLogs ? this.state.rawProxyLogs : ([] as LogLines);
+    const rawAppLogs = !!this.state.rawAppLogs ? this.state.rawAppLogs : [];
+    const rawProxyLogs = !!this.state.rawProxyLogs ? this.state.rawProxyLogs : [];
     const filteredAppLogs = this.filterLogs(rawAppLogs, this.state.showLogValue, this.state.hideLogValue);
     const filteredProxyLogs = this.filterLogs(rawProxyLogs, this.state.showLogValue, this.state.hideLogValue);
     this.setState({
@@ -584,14 +584,14 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
     }
   };
 
-  private filterLogs = (rawLogs: LogLines, showValue: string, hideValue: string): LogLines => {
+  private filterLogs = (rawLogs: LogEntry[], showValue: string, hideValue: string): LogEntry[] => {
     let filteredLogs = rawLogs;
 
     if (!!showValue) {
       if (this.state.useRegex) {
         try {
           const regexp = RegExp(showValue);
-          filteredLogs = filteredLogs.filter(l => regexp.test(l));
+          filteredLogs = filteredLogs.filter(le => regexp.test(le.message));
           if (!!this.state.showError) {
             this.setState({ showError: undefined });
           }
@@ -599,14 +599,14 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
           this.setState({ showError: `Show: ${e.message}` });
         }
       } else {
-        filteredLogs = filteredLogs.filter(l => l.includes(showValue));
+        filteredLogs = filteredLogs.filter(le => le.message.includes(showValue));
       }
     }
     if (!!hideValue) {
       if (this.state.useRegex) {
         try {
           const regexp = RegExp(hideValue);
-          filteredLogs = filteredLogs.filter(l => !regexp.test(l));
+          filteredLogs = filteredLogs.filter(le => !regexp.test(le.message));
           if (!!this.state.hideError) {
             this.setState({ hideError: undefined });
           }
@@ -614,7 +614,7 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
           this.setState({ hideError: `Hide: ${e.message}` });
         }
       } else {
-        filteredLogs = filteredLogs.filter(l => !l.includes(hideValue));
+        filteredLogs = filteredLogs.filter(le => !le.message.includes(hideValue));
       }
     }
     return filteredLogs;
@@ -628,8 +628,8 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
       htmlInputElement.value = '';
     }
 
-    const rawAppLogs = this.state.rawAppLogs ? this.state.rawAppLogs : ([] as LogLines);
-    const rawProxyLogs = this.state.rawProxyLogs ? this.state.rawProxyLogs : ([] as LogLines);
+    const rawAppLogs = this.state.rawAppLogs ? this.state.rawAppLogs : [];
+    const rawProxyLogs = this.state.rawProxyLogs ? this.state.rawProxyLogs : [];
     this.setState({
       showError: undefined,
       showLogValue: '',
@@ -663,8 +663,8 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
       htmlInputElement.value = '';
     }
 
-    const rawAppLogs = this.state.rawAppLogs ? this.state.rawAppLogs : ([] as LogLines);
-    const rawProxyLogs = this.state.rawProxyLogs ? this.state.rawProxyLogs : ([] as LogLines);
+    const rawAppLogs = this.state.rawAppLogs ? this.state.rawAppLogs : [];
+    const rawProxyLogs = this.state.rawProxyLogs ? this.state.rawProxyLogs : [];
     this.setState({
       hideError: undefined,
       hideLogValue: '',
@@ -754,7 +754,8 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
 
     this.loadAppLogsPromise.promise
       .then(response => {
-        const rawAppLogs = WorkloadPodLogs.stringToLines(response[0].data.logs as string, tailLines);
+        const rawAppLogs = response[0].data.entries;
+        // const rawAppLogs = WorkloadPodLogs.stringToLines(response[0].data.entries as , tailLines);
         const filteredAppLogs = this.filterLogs(rawAppLogs, this.state.showLogValue, this.state.hideLogValue);
 
         this.setState({
@@ -774,13 +775,21 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
         const errorMsg = error.response && error.response.data.error ? error.response.data.error : error.message;
         this.setState({
           loadingAppLogs: false,
-          rawAppLogs: [`Failed to fetch app logs: ${errorMsg}`]
+          rawAppLogs: [
+            {
+              severity: 'Error',
+              timestamp: Date.toString(),
+              timestampUnix: Date.now(),
+              message: `Failed to fetch app logs: ${errorMsg}`
+            }
+          ]
         });
       });
 
     this.loadProxyLogsPromise.promise
       .then(response => {
-        const rawProxyLogs = WorkloadPodLogs.stringToLines(response[0].data.logs as string, tailLines);
+        const rawProxyLogs = response[0].data.entries;
+        // const rawProxyLogs = WorkloadPodLogs.stringToLines(response[0].data.logs as string, tailLines);
         const filteredProxyLogs = this.filterLogs(rawProxyLogs, this.state.showLogValue, this.state.hideLogValue);
 
         this.setState({
@@ -800,7 +809,14 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
         const errorMsg = error.response && error.response.data.error ? error.response.data.error : error.message;
         this.setState({
           loadingProxyLogs: false,
-          rawProxyLogs: [`Failed to fetch proxy logs: ${errorMsg}`]
+          rawProxyLogs: [
+            {
+              severity: 'Error',
+              timestamp: Date.toString(),
+              timestampUnix: Date.now(),
+              message: `Failed to fetch proxy logs: ${errorMsg}`
+            }
+          ]
         });
       });
 
@@ -812,14 +828,7 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
     });
   };
 
-  private static stringToLines = (logs: string, maxLines: number): LogLines => {
-    let logLines = logs.split('\n');
-    const rawLines = logLines.length;
-    logLines = logLines.filter((_l, i) => rawLines - i <= maxLines);
-    return logLines;
-  };
-
-  private static linesToString = (logLines?: LogLines): string => {
-    return !logLines?.length ? '' : logLines.join('\n');
+  private static linesToString = (entries?: LogEntry[]): string => {
+    return !entries?.length ? '' : entries.map(le => le.message).join('\n');
   };
 }
