@@ -760,9 +760,15 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
     tailLines: number,
     timeRange: TimeRange
   ) => {
+    const now = Date.now();
     const timeRangeDates = evalTimeRange(timeRange);
     const sinceTime = Math.floor(timeRangeDates[0].getTime() / 1000);
-    const duration = Math.floor(timeRangeDates[1].getTime() / 1000) - sinceTime;
+    const endTime = timeRangeDates[1].getTime();
+    // to save work on the server-side, only supply duration when time range is in the past
+    let duration = 0;
+    if (endTime < now) {
+      duration = Math.floor(timeRangeDates[1].getTime() / 1000) - sinceTime;
+    }
     const appPromise: Promise<Response<PodLogs>> = getPodLogs(
       namespace,
       podName,
