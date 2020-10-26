@@ -8,24 +8,11 @@ export default class SubsetValidator {
   }
 
   public isValid() {
-    return this.hasValidName() && this.hasValidLabels();
+    return this.hasValidName();
   }
 
   hasValidName() {
     return this.hasStringType(this.subset.name);
-  }
-
-  hasValidLabels() {
-    const valid =
-      this.subset.labels &&
-      Object.keys(this.subset.labels).every(
-        (k, _i) => this.subset.labels && this.hasValidLabel(k, this.subset.labels[k])
-      );
-    return this.subset.labels instanceof Object && valid;
-  }
-
-  hasValidLabel(name: string, value: string): boolean {
-    return this.hasStringType(name) && this.hasStringType(value);
   }
 
   hasStringType(value: any) {
