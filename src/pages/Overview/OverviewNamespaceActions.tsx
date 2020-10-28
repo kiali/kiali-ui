@@ -73,6 +73,7 @@ export class OverviewNamespaceActions extends React.Component<Props, State> {
               const item = (
                 <DropdownItem
                   key={itemKey}
+                  isDisabled={subaction.isDisabled}
                   onClick={() => (subaction.action ? subaction.action(this.props.namespace) : undefined)}
                 >
                   {subaction.title}
@@ -90,14 +91,23 @@ export class OverviewNamespaceActions extends React.Component<Props, State> {
           />
         );
       } else if (action.title && action.action) {
-        return (
+        const item = (
           <DropdownItem
             key={'action_' + i}
+            isDisabled={action.isDisabled}
             onClick={() => (action.action ? action.action(this.props.namespace) : undefined)}
           >
             {action.title}
           </DropdownItem>
         );
+        return action.isDisabled
+          ? this.renderTooltip(
+              'tooltip_action_' + i,
+              TooltipPosition.left,
+              'User has not enough permissions for this action',
+              item
+            )
+          : item;
       }
       return undefined;
     });
