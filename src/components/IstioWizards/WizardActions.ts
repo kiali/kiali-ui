@@ -1172,6 +1172,24 @@ export const buildPeerAuthentication = (
   return pa;
 };
 
+export const buildMutualTlsPeerAuthentication = (name: string, namespace: string): PeerAuthentication => {
+  const pa: PeerAuthentication = {
+    metadata: {
+      name: name,
+      namespace: namespace,
+      labels: {
+        [KIALI_WIZARD_LABEL]: 'PeerAuthentication'
+      }
+    },
+    spec: {
+      mtls: {
+        mode: PeerAuthenticationMutualTLSMode.STRICT
+      }
+    }
+  };
+  return pa;
+};
+
 export const buildRequestAuthentication = (
   name: string,
   namespace: string,

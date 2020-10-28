@@ -59,14 +59,16 @@ import { OverviewNamespaceAction, OverviewNamespaceActions } from './OverviewNam
 import history from '../../app/History';
 import {
   buildGraphAuthorizationPolicy,
+  buildMutualTlsPeerAuthentication,
   buildNamespaceInjectionPatch
 } from '../../components/IstioWizards/WizardActions';
 import * as AlertUtils from '../../utils/AlertUtils';
 import { MessageType } from '../../types/MessageCenter';
 import GraphDataSource from '../../services/GraphDataSource';
-import { AuthorizationPolicy } from '../../types/IstioObjects';
+import { AuthorizationPolicy, PeerAuthentication } from '../../types/IstioObjects';
 import { IstioPermissions } from '../../types/IstioConfigDetails';
 import { AUTHORIZATION_POLICIES } from '../IstioConfigNew/AuthorizationPolicyForm';
+import { PEER_AUTHENTICATIONS } from '../IstioConfigNew/PeerAuthenticationForm';
 
 const gridStyleCompact = style({
   backgroundColor: '#f5f5f5',
@@ -400,7 +402,7 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
       chunk.map(nsInfo => {
         return Promise.all([
           API.getNamespaceValidations(nsInfo.name),
-          API.getIstioConfig(nsInfo.name, ['authorizationpolicies'], false, '', '')
+          API.getIstioConfig(nsInfo.name, [AUTHORIZATION_POLICIES, PEER_AUTHENTICATIONS], false, '', '')
         ]).then(results => {
           return { validations: results[0].data, istioConfig: results[1].data, nsInfo: nsInfo };
         });
@@ -614,6 +616,31 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
     if (aps.length > 0) {
       namespaceActions.push(removeAuthorizationAction);
     }
+
+    const pas = nsInfo.istioConfig?.peerAuthentications || [];
+    if (pas.length > 0) {
+      const removeMutualTlsAction = {
+        isGroup: false,
+        isSeparator: false,
+        isDisabled: !canWrite,
+        title: 'Disable Mutual TLS',
+        action: (ns: string) => {
+          this.onDeleteMutualTls(ns, pas);
+        }
+      };
+      namespaceActions.push(removeMutualTlsAction);
+    } else {
+      const addMutualTlsAction = {
+        isGroup: false,
+        isSeparator: false,
+        isDisabled: !canWrite,
+        title: 'Enable Mutual TLS',
+        action: (ns: string) => {
+          this.onCreateMutualTls(ns, this.load);
+        }
+      };
+      namespaceActions.push(addMutualTlsAction);
+    }
     return namespaceActions;
   };
 
@@ -658,7 +685,7 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
       this.promises
         .registerAll(
           'authorizationPoliciesDelete',
-          authorizationPolicies.map(ap => API.deleteIstioConfigDetail(ns, 'authorizationpolicies', ap.metadata.name))
+          authorizationPolicies.map(ap => API.deleteIstioConfigDetail(ns, AUTHORIZATION_POLICIES, ap.metadata.name))
         )
         .then(_ => {
           if (!remove) {
@@ -688,7 +715,7 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
       this.promises
         .registerAll(
           'authorizationPoliciesCreate',
-          aps.map(ap => API.createIstioConfigDetail(ns, 'authorizationpolicies', JSON.stringify(ap)))
+          aps.map(ap => API.createIstioConfigDetail(ns, AUTHORIZATION_POLICIES, JSON.stringify(ap)))
         )
         .then(results => {
           if (results.length > 0) {
@@ -711,6 +738,39 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
       AlertUtils.addError(errorMessage);
     });
     graphDataSource.fetchForNamespace(this.props.duration, ns);
+  };
+
+  onCreateMutualTls = (ns: string, callback: () => void) => {
+    const pa = buildMutualTlsPeerAuthentication('mutualtls-' + ns, ns);
+    this.promises
+      .register('peerAuthenticationCreate', API.createIstioConfigDetail(ns, PEER_AUTHENTICATIONS, JSON.stringify(pa)))
+      .then(_ => {
+        AlertUtils.add('PeerAuthentication created for ' + ns + ' namespace.', 'default', MessageType.SUCCESS);
+        callback();
+      })
+      .catch(errorCreate => {
+        if (!errorCreate.isCanceled) {
+          AlertUtils.addError('Could not create AuthorizationPolicies.', errorCreate);
+        }
+      });
+  };
+
+  onDeleteMutualTls = (ns: string, peerAuthentications: PeerAuthentication[]) => {
+    if (peerAuthentications.length > 0) {
+      this.promises
+        .registerAll(
+          'peerAuthenticationDelete',
+          peerAuthentications.map(pa => API.deleteIstioConfigDetail(ns, PEER_AUTHENTICATIONS, pa.metadata.name))
+        )
+        .then(_ => {
+          this.load();
+        })
+        .catch(errorDelete => {
+          if (!errorDelete.isCanceled) {
+            AlertUtils.addError('Could not delete PeerAuthentications.', errorDelete);
+          }
+        });
+    }
   };
 
   hideConfirmModal = () => {
