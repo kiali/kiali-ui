@@ -34,6 +34,8 @@ export const getErrorCodeRate = (requests: RequestHealth): { inbound: number; ou
 
 /*
 Cached this method to avoid use regexp in next calculations to improve performance
++ it's cached for config.
+-   We can't cached this for annotations because are mutable
  */
 export const checkExpr = (value: RegexConfig | undefined, testV: string): boolean => {
   let reg = value;

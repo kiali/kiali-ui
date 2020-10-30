@@ -61,9 +61,11 @@ Example: { "http": {"200": 2, "404": 1 ...} ... }
 export interface RequestType {
   [key: string]: { [key: string]: number };
 }
+
 export interface RequestHealth {
   inbound: RequestType;
   outbound: RequestType;
+  config?: ToleranceConfig[];
 }
 
 export interface Status {

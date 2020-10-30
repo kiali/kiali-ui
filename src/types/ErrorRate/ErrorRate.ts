@@ -1,5 +1,5 @@
 import { getRequestErrorsStatus, HEALTHY, NA, RATIO_NA, RequestHealth, RequestType, ThresholdStatus } from '../Health';
-import { RateHealthConfig, ToleranceConfig } from '../ServerConfig';
+import { ToleranceConfig } from '../ServerConfig';
 import { checkExpr, emptyRate, getRateHealthConfig, getErrorCodeRate } from './utils';
 import { ErrorRatio, Rate, RequestTolerance } from './types';
 
@@ -29,15 +29,15 @@ export const sumRequests = (inbound: RequestType, outbound: RequestType): Reques
 
 const getAggregate = (
   requests: RequestHealth,
-  conf: RateHealthConfig
+  tolerances: ToleranceConfig[]
 ): { global: RequestTolerance[]; inbound: RequestTolerance[]; outbound: RequestTolerance[] } => {
   // Get all tolerances where direction is inbound
-  const inboundTolerances = conf?.tolerance.filter(tol => checkExpr(tol.direction, 'inbound'));
+  const inboundTolerances = tolerances.filter(tol => checkExpr(tol.direction, 'inbound'));
   // Get all tolerances where direction is outbound
-  const outboundTolerances = conf?.tolerance.filter(tol => checkExpr(tol.direction, 'outbound'));
+  const outboundTolerances = tolerances.filter(tol => checkExpr(tol.direction, 'outbound'));
 
   return {
-    global: aggregate(sumRequests(requests.inbound, requests.outbound), conf.tolerance),
+    global: aggregate(sumRequests(requests.inbound, requests.outbound), tolerances),
     inbound: aggregate(requests.inbound, inboundTolerances),
     outbound: aggregate(requests.outbound, outboundTolerances)
   };
@@ -48,9 +48,9 @@ export const calculateErrorRate = (
   name: string,
   kind: string,
   requests: RequestHealth
-): { errorRatio: ErrorRatio; config: RateHealthConfig | undefined } => {
+): { errorRatio: ErrorRatio; config: ToleranceConfig[] } => {
   // Get the first configuration that match with the case
-  const conf = getRateHealthConfig(ns, name, kind);
+  const conf = requests.config || getRateHealthConfig(ns, name, kind).tolerance;
   // Get aggregate
   let status = getAggregate(requests, conf);
   const globalStatus = calculateStatus(status.global);
