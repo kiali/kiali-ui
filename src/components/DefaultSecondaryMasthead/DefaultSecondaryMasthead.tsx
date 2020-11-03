@@ -1,7 +1,7 @@
 import React from 'react';
 import { Title } from '@patternfly/react-core';
-import SecondaryMasthead from '../Nav/SecondaryMasthead';
 import NamespaceDropdownContainer from '../NamespaceDropdown';
+import { style } from 'typestyle';
 
 const titles = [
   'applications',
@@ -13,7 +13,26 @@ const titles = [
   'extensions/iter8/new',
   'extensions/iter8/newfromfile'
 ];
-export default class DefaultSecondaryMasthead extends React.Component {
+
+type Props = {
+  rightToolbar?: JSX.Element;
+};
+
+const mainPadding = style({
+  padding: '10px 20px 0px 20px'
+});
+
+const titleStyle = style({
+  display: 'flex',
+  flexWrap: 'wrap'
+});
+
+const rightToolbarStyle = style({
+  marginLeft: 'auto',
+  marginTop: '16px'
+});
+
+export default class DefaultSecondaryMasthead extends React.Component<Props> {
   showTitle() {
     let path = window.location.pathname;
     path = path.substr(path.lastIndexOf('/console') + '/console'.length + 1);
@@ -48,10 +67,13 @@ export default class DefaultSecondaryMasthead extends React.Component {
   render() {
     const { title, disabled } = this.showTitle();
     return (
-      <SecondaryMasthead title={title ? true : false}>
+      <div className={mainPadding}>
         <NamespaceDropdownContainer disabled={disabled} />
-        {title}
-      </SecondaryMasthead>
+        <div className={titleStyle}>
+          <div>{title}</div>
+          {this.props.rightToolbar && <div className={rightToolbarStyle}>{this.props.rightToolbar}</div>}
+        </div>
+      </div>
     );
   }
 }
