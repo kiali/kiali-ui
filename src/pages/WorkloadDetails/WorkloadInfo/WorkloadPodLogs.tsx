@@ -745,7 +745,7 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
     }
 
     const containerNames = containers.map(c => c.name);
-    containerNames.map(n => {
+    containerNames.forEach(n => {
       const version = pod.appLabel && pod.labels ? pod.labels[serverConfig.istioLabels.versionLabelName] : undefined;
       options[n] = !!version ? `${n}-${version}` : n;
     });
