@@ -25,9 +25,6 @@ import TraceDetails from './JaegerResults/TraceDetails';
 import JaegerScatter from './JaegerScatter';
 import { HistoryManager, URLParam } from '../../app/History';
 import { config } from '../../config';
-import TimeRangeComponent from 'components/Time/TimeRangeComponent';
-import RefreshContainer from 'components/Refresh/Refresh';
-import { RightActionBar } from 'components/RightActionBar/RightActionBar';
 import { TracesFetcher } from './TracesFetcher';
 import { getTimeRangeMicros, buildTags } from './JaegerHelper';
 import SpanDetails from './JaegerResults/SpanDetails';
@@ -273,7 +270,6 @@ class TracesComponent extends React.Component<TracesProps, TracesState> {
       : 'none';
     return (
       <>
-        {this.renderActions()}
         <RenderComponentScroll>
           <Grid style={{ padding: '10px' }} gutter="md">
             <GridItem span={12}>
@@ -413,15 +409,6 @@ class TracesComponent extends React.Component<TracesProps, TracesState> {
       </>
     );
   }
-
-  private renderActions = (): JSX.Element => {
-    return (
-      <RightActionBar>
-        <TimeRangeComponent onChanged={this.refresh} allowCustom={false} tooltip={'Time range'} />
-        <RefreshContainer id="traces-refresh" handleRefresh={this.refresh} hideLabel={true} />
-      </RightActionBar>
-    );
-  };
 }
 
 const mapStateToProps = (state: KialiAppState) => {

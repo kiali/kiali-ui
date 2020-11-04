@@ -97,6 +97,7 @@ class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, Workload
           itemName={this.props.match.params.workload}
           itemType={MetricsObjectTypes.WORKLOAD}
           namespace={this.props.match.params.namespace}
+          lastRefresh={0}
         />
       </Tab>
     );
@@ -122,6 +123,7 @@ class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, Workload
           object={this.props.match.params.workload}
           objectType={MetricsObjectTypes.WORKLOAD}
           direction={'inbound'}
+          lastRefresh={0}
         />
       </Tab>
     );
@@ -133,6 +135,7 @@ class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, Workload
           object={this.props.match.params.workload}
           objectType={MetricsObjectTypes.WORKLOAD}
           direction={'outbound'}
+          lastRefresh={0}
         />
       </Tab>
     );

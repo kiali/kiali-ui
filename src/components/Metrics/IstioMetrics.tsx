@@ -4,7 +4,6 @@ import { RouteComponentProps, withRouter } from 'react-router';
 import { Card, CardBody, Grid, GridItem, Toolbar, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
 import { style } from 'typestyle';
 
-import RefreshContainer from '../../components/Refresh/Refresh';
 import { RenderComponentScroll } from '../../components/Nav/Page';
 import * as API from '../../services/Api';
 import { KialiAppState } from '../../store/Store';
@@ -22,9 +21,8 @@ import { GrafanaInfo } from '../../types/GrafanaInfo';
 import { MessageType } from '../../types/MessageCenter';
 import { GrafanaLinks } from './GrafanaLinks';
 import { SpanOverlay, JaegerLineInfo } from './SpanOverlay';
-import TimeRangeComponent from 'components/Time/TimeRangeComponent';
 import { retrieveTimeRange, storeBounds } from 'components/Time/TimeRangeHelper';
-import { RightActionBar } from 'components/RightActionBar/RightActionBar';
+
 import { DashboardModel, ExternalLink } from 'types/Dashboards';
 import { Overlay } from 'types/Overlay';
 import { RawOrBucket } from 'types/VictoryChartInfo';
@@ -47,6 +45,7 @@ type IstioMetricsProps = ObjectId &
   RouteComponentProps<{}> & {
     objectType: MetricsObjectTypes;
     direction: Direction;
+    lastRefresh: number;
   };
 
 type Props = IstioMetricsProps & {
@@ -87,23 +86,27 @@ class IstioMetrics extends React.Component<Props, MetricsState> {
   }
 
   componentDidMount() {
+    console.log('TODELETE IstioMetrics - componentDidMount() ');
     this.fetchGrafanaInfo();
     this.refresh();
   }
 
   componentDidUpdate(prev: Props) {
+    console.log('TODELETE IstioMetrics - componentDidUpdate() ');
     if (
       this.props.direction !== prev.direction ||
       this.props.namespace !== prev.namespace ||
       this.props.object !== prev.object ||
-      this.props.objectType !== prev.objectType
+      this.props.objectType !== prev.objectType ||
+      this.props.lastRefresh !== prev.lastRefresh
     ) {
       if (this.props.direction !== prev.direction) {
         const settings = MetricsHelper.retrieveMetricsSettings();
         this.options = this.initOptions(settings);
       }
       this.spanOverlay.reset();
-      this.setState({ dashboard: undefined, spanOverlay: undefined });
+      const timeRange = retrieveTimeRange() || MetricsHelper.defaultMetricsDuration;
+      this.setState({ dashboard: undefined, spanOverlay: undefined, timeRange: timeRange });
       this.refresh();
     }
   }
@@ -230,20 +233,12 @@ class IstioMetrics extends React.Component<Props, MetricsState> {
   }
 
   render() {
+    console.log('TODELETE IstioMetrics - render() ');
     const urlParams = new URLSearchParams(history.location.search);
     const expandedChart = urlParams.get('expand') || undefined;
 
     return (
       <>
-        <RightActionBar>
-          <TimeRangeComponent
-            range={this.state.timeRange}
-            onChanged={this.onTimeFrameChanged}
-            tooltip={'Time range'}
-            allowCustom={true}
-          />
-          <RefreshContainer id="metrics-refresh" handleRefresh={this.refresh} hideLabel={true} />
-        </RightActionBar>
         <RenderComponentScroll>
           <Grid style={{ padding: '10px' }}>
             <GridItem span={12}>

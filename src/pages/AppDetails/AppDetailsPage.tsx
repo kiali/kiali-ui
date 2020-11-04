@@ -20,9 +20,15 @@ import { JaegerInfo } from '../../types/JaegerInfo';
 import { PfColors } from '../../components/Pf/PfColors';
 import TracesComponent from '../../components/JaegerIntegration/TracesComponent';
 import TrafficDetails from 'components/TrafficList/TrafficDetails';
+import TimeControlsContainer from '../../components/Time/TimeControls';
+import TimeRangeComponent from '../../components/Time/TimeRangeComponent';
+import { retrieveTimeRange } from '../../components/Time/TimeRangeHelper';
+import * as MetricsHelper from '../../components/Metrics/Helper';
+import RefreshContainer from '../../components/Refresh/Refresh';
 
 type AppDetailsState = {
   app?: App;
+  lastRefresh: number;
   // currentTab is needed to (un)mount tab components
   // when the tab is not rendered.
   currentTab: string;
@@ -51,7 +57,7 @@ const nextTabIndex = 5;
 class AppDetails extends React.Component<AppDetailsProps, AppDetailsState> {
   constructor(props: AppDetailsProps) {
     super(props);
-    this.state = { currentTab: activeTab(tabName, defaultTab), nbErrorTraces: 0 };
+    this.state = { currentTab: activeTab(tabName, defaultTab), lastRefresh: new Date().getTime(), nbErrorTraces: 0 };
   }
 
   componentDidMount(): void {
@@ -86,7 +92,7 @@ class AppDetails extends React.Component<AppDetailsProps, AppDetailsState> {
 
   private fetchApp = () => {
     API.getApp(this.props.match.params.namespace, this.props.match.params.app)
-      .then(details => this.setState({ app: details.data }))
+      .then(details => this.setState({ app: details.data, lastRefresh: new Date().getTime() }))
       .catch(error => AlertUtils.addError('Could not fetch App Details.', error));
   };
 
@@ -121,7 +127,7 @@ class AppDetails extends React.Component<AppDetailsProps, AppDetailsState> {
   private staticTabs() {
     const overTab = (
       <Tab title="Overview" eventKey={0} key={'Overview'}>
-        <AppInfo app={this.state.app} duration={this.props.duration} onRefresh={this.fetchApp} />
+        <AppInfo app={this.state.app} duration={this.props.duration} />
       </Tab>
     );
 
@@ -132,6 +138,7 @@ class AppDetails extends React.Component<AppDetailsProps, AppDetailsState> {
           itemName={this.props.match.params.app}
           itemType={MetricsObjectTypes.APP}
           namespace={this.props.match.params.namespace}
+          lastRefresh={this.state.lastRefresh}
         />
       </Tab>
     );
@@ -143,6 +150,7 @@ class AppDetails extends React.Component<AppDetailsProps, AppDetailsState> {
           object={this.props.match.params.app}
           objectType={MetricsObjectTypes.APP}
           direction={'inbound'}
+          lastRefresh={this.state.lastRefresh}
         />
       </Tab>
     );
@@ -154,6 +162,7 @@ class AppDetails extends React.Component<AppDetailsProps, AppDetailsState> {
           object={this.props.match.params.app}
           objectType={MetricsObjectTypes.APP}
           direction={'outbound'}
+          lastRefresh={this.state.lastRefresh}
         />
       </Tab>
     );
@@ -210,15 +219,51 @@ class AppDetails extends React.Component<AppDetailsProps, AppDetailsState> {
     return this.staticTabs().concat(this.runtimeTabs());
   }
 
+  handleAppDetailsRefresh = () => {
+    this.fetchApp();
+  };
+
   render() {
+    const timeControlComponent = (
+      <TimeControlsContainer
+        key={'DurationDropdown'}
+        id="app-info-duration-dropdown"
+        handleRefresh={this.handleAppDetailsRefresh}
+        disabled={false}
+      />
+    );
+    const timeRange = retrieveTimeRange() || MetricsHelper.defaultMetricsDuration;
+    const timeRangeComponent = (
+      <>
+        <TimeRangeComponent
+          range={timeRange}
+          onChanged={this.handleAppDetailsRefresh}
+          tooltip={'Time range'}
+          allowCustom={true}
+        />
+        <RefreshContainer
+          id="metrics-refresh"
+          handleRefresh={this.handleAppDetailsRefresh}
+          hideLabel={true}
+          manageURL={true}
+        />
+      </>
+    );
+
+    let timeComponent: JSX.Element;
+    switch (this.state.currentTab) {
+      case 'info':
+      case 'traffic':
+      case 'traces':
+        timeComponent = timeControlComponent;
+        break;
+      default:
+        timeComponent = timeRangeComponent;
+        break;
+    }
     return (
       <>
-        <RenderHeader location={this.props.location}>
-          {
-            // This magic space will align details header width with Graph, List pages
-          }
-          <div style={{ paddingBottom: 14 }} />
-        </RenderHeader>
+        <RenderHeader location={this.props.location} rightToolbar={timeComponent} />
         {this.state.app && (
           <ParameterizedTabs
             id="basic-tabs"

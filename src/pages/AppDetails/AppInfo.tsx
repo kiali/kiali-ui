@@ -9,13 +9,10 @@ import './AppInfo.css';
 import { DurationInSeconds } from 'types/Common';
 import GraphDataSource from 'services/GraphDataSource';
 import { AppHealth } from 'types/Health';
-import { RightActionBar } from 'components/RightActionBar/RightActionBar';
-import TimeControlsContainer from '../../components/Time/TimeControls';
 
 type AppInfoProps = {
   app?: App;
   duration: DurationInSeconds;
-  onRefresh: () => void;
 };
 
 type AppInfoState = {
@@ -31,10 +28,12 @@ class AppInfo extends React.Component<AppInfoProps, AppInfoState> {
   }
 
   componentDidMount() {
+    console.log('TODELETE AppInfo - componentDidMount() ');
     this.fetchBackend();
   }
 
   componentDidUpdate(prev: AppInfoProps) {
+    console.log('TODELETE AppInfo - componentDidUpdate() ');
     if (prev.duration !== this.props.duration || prev.app !== this.props.app) {
       this.fetchBackend();
     }
@@ -52,16 +51,9 @@ class AppInfo extends React.Component<AppInfoProps, AppInfoState> {
   };
 
   render() {
+    console.log('TODELETE AppInfo - render() ');
     return (
       <>
-        <RightActionBar>
-          <TimeControlsContainer
-            key={'DurationDropdown'}
-            id="app-info-duration-dropdown"
-            handleRefresh={this.fetchBackend}
-            disabled={false}
-          />
-        </RightActionBar>
         <RenderComponentScroll>
           <Grid style={{ margin: '10px' }} gutter={'md'}>
             <GridItem span={12}>

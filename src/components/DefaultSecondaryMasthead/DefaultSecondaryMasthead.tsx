@@ -19,7 +19,7 @@ type Props = {
 };
 
 const mainPadding = style({
-  padding: '10px 20px 0px 20px'
+  padding: '10px 20px 10px 20px'
 });
 
 const titleStyle = style({
@@ -28,8 +28,7 @@ const titleStyle = style({
 });
 
 const rightToolbarStyle = style({
-  marginLeft: 'auto',
-  marginTop: '16px'
+  marginLeft: 'auto'
 });
 
 export default class DefaultSecondaryMasthead extends React.Component<Props> {
@@ -53,7 +52,7 @@ export default class DefaultSecondaryMasthead extends React.Component<Props> {
       }
       return {
         title: (
-          <Title headingLevel="h1" size="3xl" style={{ margin: '18px 0 18px' }}>
+          <Title headingLevel="h1" size="3xl" style={{ margin: '15px 0 11px' }}>
             {title}
           </Title>
         ),
@@ -68,11 +67,13 @@ export default class DefaultSecondaryMasthead extends React.Component<Props> {
     const { title, disabled } = this.showTitle();
     return (
       <div className={mainPadding}>
-        <NamespaceDropdownContainer disabled={disabled} />
         <div className={titleStyle}>
-          <div>{title}</div>
+          <div>
+            <NamespaceDropdownContainer disabled={disabled} />
+          </div>
           {this.props.rightToolbar && <div className={rightToolbarStyle}>{this.props.rightToolbar}</div>}
         </div>
+        {title}
       </div>
     );
   }

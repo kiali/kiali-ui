@@ -73,6 +73,7 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
           itemName={this.props.match.params.service}
           itemType={MetricsObjectTypes.SERVICE}
           namespace={this.props.match.params.namespace}
+          lastRefresh={0}
         />
       </Tab>
     );
@@ -83,6 +84,7 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
           object={this.props.match.params.service}
           objectType={MetricsObjectTypes.SERVICE}
           direction={'inbound'}
+          lastRefresh={0}
         />
       </Tab>
     );
