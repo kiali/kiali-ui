@@ -3,7 +3,7 @@ import { InfoAltIcon } from '@patternfly/react-icons';
 import _round from 'lodash/round';
 
 import * as API from 'services/Api';
-import { Color, HeatMap } from 'components/HeatMap/HeatMap';
+import { HeatMap } from 'components/HeatMap/HeatMap';
 import { MetricsStatsQuery, Target } from 'types/MetricsOptions';
 import { EnvoySpanInfo } from '../JaegerHelper';
 import { SpanTableItem } from './SpanTableItem';
@@ -12,12 +12,10 @@ import { PfColors } from 'components/Pf/PfColors';
 import { Button, ButtonVariant, Tooltip } from '@patternfly/react-core';
 
 // TODO / follow-up: these variables are to be removed from here and managed from the toolbar
-const statsQuantiles = ['0.5', '0.75', '0.9', '0.99'];
+const statsQuantiles = ['0.5', '0.9', '0.99'];
 const statsAvgWithQuantiles = ['avg', ...statsQuantiles];
 const statsIntervals = ['6h', '60m', '10m'];
 const statsPerPeer = false;
-const statsRed: Color = { r: 1, g: 0, b: 0 };
-const statsGreen: Color = { r: 0, g: 1, b: 0 };
 let statsCompareKind: 'app' | 'workload' = 'workload';
 
 const statToText = {
@@ -112,8 +110,8 @@ const renderHeatMap = (item: SpanTableItem, stats: StatsWithIntervalIndex[]) => 
       xLabels={statsIntervals}
       yLabels={statsAvgWithQuantiles.map(s => statToText[s]?.short || s)}
       data={data}
-      colorRange={{ min: statsGreen, max: statsRed }}
-      dataRange={{ min: -10, max: 10 }}
+      colorMap={HeatMap.HealthColorMap}
+      dataRange={{ from: -10, to: 10 }}
       colorUndefined={PfColors.Black200}
       valueFormat={v => (v > 0 ? '+' : '') + _round(v, 1)}
       tooltip={(x, y, v) => {

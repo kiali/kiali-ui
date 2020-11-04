@@ -5,15 +5,16 @@ import { PfColors } from 'components/Pf/PfColors';
 import React from 'react';
 import { style } from 'typestyle';
 
-// rgb needs to be in [0,1] bounds
+// rgb in [0,255] bounds
 export type Color = { r: number; g: number; b: number };
+export type ColorMap = Color[];
 
 type Props = {
   xLabels: string[];
   yLabels: string[];
   data: (number | undefined)[][];
-  colorRange: { min: Color; max: Color };
-  dataRange: { min: number; max: number };
+  colorMap: ColorMap;
+  dataRange: { from: number; to: number };
   colorUndefined: string;
   valueFormat: (v: number) => string;
   tooltip: (x: number, y: number, v: number) => string;
@@ -52,8 +53,6 @@ const xLabelStyle = style({
 });
 
 const cellStyle = style({
-  border: '1px solid #000',
-  borderWidth: '1px 1px 0 0',
   textAlign: 'center',
   overflow: 'hidden',
   boxSizing: 'border-box',
@@ -65,27 +64,31 @@ const cellStyle = style({
 });
 
 export class HeatMap extends React.Component<Props> {
+  static HealthColorMap: ColorMap = [
+    { r: 62, g: 134, b: 53 }, // Success (#3e8635)
+    { r: 146, g: 212, b: 0 }, // PF Success 100 (#92d400)
+    { r: 228, g: 245, b: 188 }, // PF Light green 100 (#e4f5bc)
+    { r: 240, g: 171, b: 0 }, // PF Warning 100 (#f0ab00)
+    { r: 201, g: 25, b: 11 } // PF Danger 100 (#c9190b)
+  ];
+
   private getCellColors = (value: number) => {
-    const r = Math.floor(256 * this.interpolate(c => c.r, value));
-    const g = Math.floor(256 * this.interpolate(c => c.g, value));
-    const b = Math.floor(256 * this.interpolate(c => c.b, value));
+    const { from, to } = this.props.dataRange;
+    const clamped = Math.max(from, Math.min(to, value));
+    const ratio = (clamped - from) / (to - from); // e.g. 0.8 | 0 | 1
+    const colorRatio = ratio * (this.props.colorMap.length - 1); // e.g. (length is 3) 1.6 | 0 | 2
+    const colorLow = this.props.colorMap[Math.floor(colorRatio)]; // e.g. m[1] | m[0] | m[2]
+    const colorHigh = this.props.colorMap[Math.ceil(colorRatio)]; // e.g. m[2] | m[0] | m[2]
+    const remains = colorRatio - Math.floor(colorRatio); // e.g. 0.6 | 0 | 0
+    const r = Math.floor((colorHigh.r - colorLow.r) * remains + colorLow.r);
+    const g = Math.floor((colorHigh.g - colorLow.g) * remains + colorLow.g);
+    const b = Math.floor((colorHigh.b - colorLow.b) * remains + colorLow.b);
     const brightness = 0.21 * r + 0.72 * g + 0.07 * b; // https://www.johndcook.com/blog/2009/08/24/algorithms-convert-color-grayscale/
-    const textColor = brightness > 90 ? PfColors.Black900 : PfColors.Black300;
+    const textColor = brightness > 110 ? PfColors.Black900 : PfColors.Black300;
     return {
       color: textColor,
       backgroundColor: `rgb(${r},${g},${b})`
     };
-  };
-
-  private interpolate = (getColChan: (c: Color) => number, value: number) => {
-    const minC = getColChan(this.props.colorRange.min);
-    const maxC = getColChan(this.props.colorRange.max);
-    const { min, max } = this.props.dataRange;
-    const clamped = Math.max(min, Math.min(max, value));
-    const ratio = (clamped - min) / (max - min);
-    const c = (maxC - minC) * ratio + minC;
-    // Returning c² here gives prettier result (darker in middle colors, brighter on bounds)
-    return c * c;
   };
 
   render() {
