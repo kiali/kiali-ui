@@ -15,9 +15,15 @@ import ServiceInfo from './ServiceInfo';
 import TracesComponent from 'components/JaegerIntegration/TracesComponent';
 import { JaegerInfo } from 'types/JaegerInfo';
 import TrafficDetails from 'components/TrafficList/TrafficDetails';
+import TimeControlsContainer from '../../components/Time/TimeControls';
+import { retrieveTimeRange } from '../../components/Time/TimeRangeHelper';
+import * as MetricsHelper from '../../components/Metrics/Helper';
+import TimeRangeComponent from '../../components/Time/TimeRangeComponent';
+import RefreshContainer from '../../components/Refresh/Refresh';
 
 type ServiceDetailsState = {
   currentTab: string;
+  lastRefresh: number;
 };
 
 interface ServiceDetailsProps extends RouteComponentProps<ServiceId> {
@@ -40,7 +46,8 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
   constructor(props: ServiceDetailsProps) {
     super(props);
     this.state = {
-      currentTab: activeTab(tabName, defaultTab)
+      currentTab: activeTab(tabName, defaultTab),
+      lastRefresh: new Date().getTime()
     };
   }
 
@@ -52,17 +59,54 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
       this.state.currentTab !== active ||
       prevProps.duration !== this.props.duration
     ) {
-      this.setState({ currentTab: active });
+      this.setState({ currentTab: active, lastRefresh: new Date().getTime() });
     }
   }
 
+  fetchService = () => {};
+
+  refresh = () => {
+    this.setState({
+      lastRefresh: new Date().getTime()
+    });
+  };
+
   render() {
+    const timeControlComponent = (
+      <TimeControlsContainer
+        key={'DurationDropdown'}
+        id="app-info-duration-dropdown"
+        handleRefresh={this.refresh}
+        disabled={false}
+      />
+    );
+    const timeRange = retrieveTimeRange() || MetricsHelper.defaultMetricsDuration;
+    const timeRangeComponent = (
+      <>
+        <TimeRangeComponent range={timeRange} onChanged={this.refresh} tooltip={'Time range'} allowCustom={true} />
+        <RefreshContainer id="metrics-refresh" handleRefresh={this.refresh} hideLabel={true} manageURL={true} />
+      </>
+    );
+
+    let timeComponent: JSX.Element;
+    switch (this.state.currentTab) {
+      case 'info':
+      case 'traffic':
+      case 'traces':
+        timeComponent = timeControlComponent;
+        break;
+      default:
+        timeComponent = timeRangeComponent;
+        break;
+    }
+
     const overviewTab = (
       <Tab eventKey={0} title="Overview" key="Overview">
         <ServiceInfo
           namespace={this.props.match.params.namespace}
           service={this.props.match.params.service}
           duration={this.props.duration}
+          lastRefresh={this.state.lastRefresh}
         />
       </Tab>
     );
@@ -73,7 +117,7 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
           itemName={this.props.match.params.service}
           itemType={MetricsObjectTypes.SERVICE}
           namespace={this.props.match.params.namespace}
-          lastRefresh={0}
+          lastRefresh={this.state.lastRefresh}
         />
       </Tab>
     );
@@ -84,7 +128,7 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
           object={this.props.match.params.service}
           objectType={MetricsObjectTypes.SERVICE}
           direction={'inbound'}
-          lastRefresh={0}
+          lastRefresh={this.state.lastRefresh}
         />
       </Tab>
     );
@@ -109,12 +153,7 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
 
     return (
       <>
-        <RenderHeader location={this.props.location}>
-          {
-            // This magic space will align details header width with Graph, List pages
-          }
-          <div style={{ paddingBottom: 14 }} />
-        </RenderHeader>
+        <RenderHeader location={this.props.location} rightToolbar={timeComponent} />
         <ParameterizedTabs
           id="basic-tabs"
           onSelect={tabValue => {

@@ -24,6 +24,7 @@ import TimeControlsContainer from '../../components/Time/TimeControls';
 
 interface Props extends ServiceId {
   duration: DurationInSeconds;
+  lastRefresh: number;
 }
 
 type ServiceInfoState = {
@@ -73,7 +74,7 @@ class ServiceInfo extends React.Component<Props, ServiceInfoState> {
     if (this.state.currentTab !== aTab) {
       this.setState({ currentTab: aTab });
     }
-    if (prev.duration !== this.props.duration) {
+    if (prev.duration !== this.props.duration || prev.lastRefresh !== this.props.lastRefresh) {
       this.fetchBackend();
     }
   }
