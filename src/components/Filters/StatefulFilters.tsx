@@ -210,7 +210,7 @@ export class StatefulFilters extends React.Component<StatefulFiltersProps, State
   };
 
   removeFilter = (id: string, value: string) => {
-    const updated = this.state.activeFilters.filters.filter(x => x.id !== id || x.value !== value);
+    const updated = this.state.activeFilters.filters.filter(x => x.id !== id || (x.id === id && x.value !== value));
     if (updated.length !== this.state.activeFilters.filters.length) {
       this.updateActiveFilters({ filters: updated, op: this.state.activeFilters.op });
     }
