@@ -16,12 +16,9 @@ import Validation from '../../components/Validations/Validation';
 import ErrorBoundaryWithMessage from '../../components/ErrorBoundary/ErrorBoundaryWithMessage';
 import GraphDataSource from '../../services/GraphDataSource';
 import { DurationInSeconds } from 'types/Common';
-import { RightActionBar } from 'components/RightActionBar/RightActionBar';
-import WorkloadWizardDropdown from '../../components/IstioWizards/WorkloadWizardDropdown';
 import { isIstioNamespace } from '../../config/ServerConfig';
 import { IstioConfigList, toIstioItems } from '../../types/IstioConfigList';
 import IstioConfigSubList from '../../components/IstioConfigSubList/IstioConfigSubList';
-import TimeControlsContainer from '../../components/Time/TimeControls';
 
 type WorkloadInfoProps = {
   namespace: string;
@@ -293,21 +290,6 @@ class WorkloadInfo extends React.Component<WorkloadInfoProps, WorkloadInfoState>
     );
     return (
       <>
-        <RightActionBar>
-          <TimeControlsContainer
-            key={'DurationDropdown'}
-            id="worload-info-duration-dropdown"
-            handleRefresh={this.props.refreshWorkload}
-            disabled={false}
-          />
-          {workload && (
-            <WorkloadWizardDropdown
-              namespace={this.props.namespace}
-              workload={workload}
-              onChange={this.props.refreshWorkload}
-            />
-          )}
-        </RightActionBar>
         <RenderComponentScroll>
           <Grid style={{ margin: '10px' }} gutter={'md'}>
             <GridItem span={12}>

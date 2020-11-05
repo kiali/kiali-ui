@@ -23,17 +23,15 @@ import { RenderComponentScroll } from '../../../components/Nav/Page';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import Splitter from 'm-react-splitters';
 import { KialiIcon, defaultIconStyle } from '../../../config/KialiIcon';
-import RefreshContainer from '../../../components/Refresh/Refresh';
-import { RightActionBar } from '../../../components/RightActionBar/RightActionBar';
 import screenfull, { Screenfull } from 'screenfull';
 import { retrieveTimeRange } from 'components/Time/TimeRangeHelper';
 import * as MetricsHelper from '../../../components/Metrics/Helper';
-import TimeRangeComponent from 'components/Time/TimeRangeComponent';
 import { serverConfig } from 'config';
 
 export interface WorkloadPodLogsProps {
   namespace: string;
   pods: Pod[];
+  lastRefresh: number;
 }
 
 const NoAppContainer = 'n/a';
@@ -215,6 +213,7 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
   }
 
   componentDidMount() {
+    console.log('TODELETE WorkloadPodLogs - componentDidMount() ');
     if (this.state.containerInfo) {
       const pod = this.props.pods[this.state.podValue!];
       this.fetchLogs(
@@ -227,16 +226,20 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
     }
   }
 
-  componentDidUpdate(_prevProps: WorkloadPodLogsProps, prevState: WorkloadPodLogsState) {
+  componentDidUpdate(prevProps: WorkloadPodLogsProps, prevState: WorkloadPodLogsState) {
+    console.log('TODELETE WorkloadPodLogs - componentDidUpdate() ');
+    const timeRange = retrieveTimeRange() || MetricsHelper.defaultMetricsDuration; // align with metrics for default
     const prevContainer = prevState.containerInfo ? prevState.containerInfo.container : undefined;
     const newContainer = this.state.containerInfo ? this.state.containerInfo.container : undefined;
     const updateContainerInfo = this.state.containerInfo && this.state.containerInfo !== prevState.containerInfo;
     const updateContainer = newContainer && newContainer !== prevContainer;
-    const updateTimeRange = this.state.timeRange && this.state.timeRange !== prevState.timeRange;
+
     const updateTailLines = this.state.tailLines && prevState.tailLines !== this.state.tailLines;
-    if (updateContainerInfo || updateContainer || updateTimeRange || updateTailLines) {
+    const lastRefreshChanged = prevProps.lastRefresh !== this.props.lastRefresh;
+    if (updateContainerInfo || updateContainer || updateTailLines || lastRefreshChanged) {
       const pod = this.props.pods[this.state.podValue!];
-      this.fetchLogs(this.props.namespace, pod.name, newContainer!, this.state.tailLines, this.state.timeRange);
+      console.log('TODELETE WorkloadPodLogs - timeRange: ' + JSON.stringify(timeRange));
+      this.fetchLogs(this.props.namespace, pod.name, newContainer!, this.state.tailLines, timeRange);
     }
     this.proxyLogsRef.current.scrollTop = this.proxyLogsRef.current.scrollHeight;
     this.appLogsRef.current.scrollTop = this.appLogsRef.current.scrollHeight;
@@ -253,15 +256,6 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
   render() {
     return (
       <>
-        <RightActionBar>
-          <TimeRangeComponent
-            range={this.state.timeRange}
-            onChanged={this.handleTimeRangeChange}
-            tooltip={'Time range'}
-            allowCustom={true}
-          />
-          <RefreshContainer id="workload-pod-logging-refresh" handleRefresh={this.handleRefresh} hideLabel={true} />
-        </RightActionBar>
         <RenderComponentScroll key={this.state.sideBySideOrientation ? 'vertical' : 'horizontal'}>
           {this.state.containerInfo && (
             <Grid style={{ padding: '10px 10px 0 10px', height: '100%' }}>
@@ -561,21 +555,6 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
     });
   };
 
-  private handleTimeRangeChange = (range: TimeRange) => {
-    this.setState({ timeRange: range });
-  };
-
-  private handleRefresh = () => {
-    const pod = this.props.pods[this.state.podValue!];
-    this.fetchLogs(
-      this.props.namespace,
-      pod.name,
-      this.state.containerInfo!.container,
-      this.state.tailLines,
-      this.state.timeRange
-    );
-  };
-
   private doShowAndHide = () => {
     const filteredAppLogs = this.filterLogs(this.state.rawAppLogs, this.state.showLogValue, this.state.hideLogValue);
     const filteredProxyLogs = this.filterLogs(
@@ -855,7 +834,8 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
       loadingAppLogs: true,
       loadingProxyLogs: true,
       rawAppLogs: [],
-      rawProxyLogs: []
+      rawProxyLogs: [],
+      timeRange: timeRange
     });
   };
 

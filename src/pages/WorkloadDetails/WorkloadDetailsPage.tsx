@@ -20,9 +20,16 @@ import ParameterizedTabs, { activeTab } from '../../components/Tab/Tabs';
 import TracesComponent from 'components/JaegerIntegration/TracesComponent';
 import { JaegerInfo } from 'types/JaegerInfo';
 import TrafficDetails from 'components/TrafficList/TrafficDetails';
+import TimeControlsContainer from '../../components/Time/TimeControls';
+import { retrieveTimeRange } from '../../components/Time/TimeRangeHelper';
+import * as MetricsHelper from '../../components/Metrics/Helper';
+import TimeRangeComponent from '../../components/Time/TimeRangeComponent';
+import RefreshContainer from '../../components/Refresh/Refresh';
+import WorkloadWizardDropdown from '../../components/IstioWizards/WorkloadWizardDropdown';
 
 type WorkloadDetailsState = {
   workload?: Workload;
+  lastRefresh: number;
   currentTab: string;
 };
 
@@ -47,7 +54,7 @@ const nextTabIndex = 6;
 class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, WorkloadDetailsState> {
   constructor(props: WorkloadDetailsPageProps) {
     super(props);
-    this.state = { currentTab: activeTab(tabName, defaultTab) };
+    this.state = { currentTab: activeTab(tabName, defaultTab), lastRefresh: new Date().getTime() };
   }
 
   componentDidMount(): void {
@@ -71,7 +78,8 @@ class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, Workload
     API.getWorkload(this.props.match.params.namespace, this.props.match.params.workload)
       .then(details =>
         this.setState({
-          workload: details.data
+          workload: details.data,
+          lastRefresh: new Date().getTime()
         })
       )
       .catch(error => AlertUtils.addError('Could not fetch Workload.', error));
@@ -97,14 +105,18 @@ class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, Workload
           itemName={this.props.match.params.workload}
           itemType={MetricsObjectTypes.WORKLOAD}
           namespace={this.props.match.params.namespace}
-          lastRefresh={0}
+          lastRefresh={this.state.lastRefresh}
         />
       </Tab>
     );
     const logTab = (
       <Tab title="Logs" eventKey={2} key={'Logs'}>
         {hasPods ? (
-          <WorkloadPodLogs namespace={this.props.match.params.namespace} pods={this.state.workload!.pods} />
+          <WorkloadPodLogs
+            namespace={this.props.match.params.namespace}
+            pods={this.state.workload!.pods}
+            lastRefresh={this.state.lastRefresh}
+          />
         ) : (
           <EmptyState variant={EmptyStateVariant.full}>
             <Title headingLevel="h5" size="lg">
@@ -123,7 +135,7 @@ class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, Workload
           object={this.props.match.params.workload}
           objectType={MetricsObjectTypes.WORKLOAD}
           direction={'inbound'}
-          lastRefresh={0}
+          lastRefresh={this.state.lastRefresh}
         />
       </Tab>
     );
@@ -135,7 +147,7 @@ class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, Workload
           object={this.props.match.params.workload}
           objectType={MetricsObjectTypes.WORKLOAD}
           direction={'outbound'}
-          lastRefresh={0}
+          lastRefresh={this.state.lastRefresh}
         />
       </Tab>
     );
@@ -199,14 +211,55 @@ class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, Workload
   }
 
   render() {
+    const timeControlComponent = (
+      <TimeControlsContainer
+        key={'DurationDropdown'}
+        id="app-info-duration-dropdown"
+        handleRefresh={this.fetchWorkload}
+        disabled={false}
+      />
+    );
+    const timeRange = retrieveTimeRange() || MetricsHelper.defaultMetricsDuration;
+    const timeRangeComponent = (
+      <>
+        <TimeRangeComponent
+          range={timeRange}
+          onChanged={this.fetchWorkload}
+          tooltip={'Time range'}
+          allowCustom={true}
+        />
+        <RefreshContainer id="metrics-refresh" handleRefresh={this.fetchWorkload} hideLabel={true} manageURL={true} />
+      </>
+    );
+
+    let timeComponent: JSX.Element;
+    switch (this.state.currentTab) {
+      case 'info':
+      case 'traffic':
+      case 'traces':
+        timeComponent = timeControlComponent;
+        break;
+      default:
+        timeComponent = timeRangeComponent;
+        break;
+    }
+    if (this.state.currentTab === 'info') {
+      timeComponent = (
+        <>
+          {timeComponent}
+          {this.state.workload && (
+            <WorkloadWizardDropdown
+              namespace={this.props.match.params.namespace}
+              workload={this.state.workload}
+              onChange={this.fetchWorkload}
+            />
+          )}
+        </>
+      );
+    }
     return (
       <>
-        <RenderHeader location={this.props.location}>
-          {
-            // This magic space will align details header width with Graph, List pages
-          }
-          <div style={{ paddingBottom: 14 }} />
-        </RenderHeader>
+        <RenderHeader location={this.props.location} rightToolbar={timeComponent} />
         {this.state.workload && (
           <ParameterizedTabs
             id="basic-tabs"

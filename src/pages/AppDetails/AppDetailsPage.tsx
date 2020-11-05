@@ -219,34 +219,20 @@ class AppDetails extends React.Component<AppDetailsProps, AppDetailsState> {
     return this.staticTabs().concat(this.runtimeTabs());
   }
 
-  handleAppDetailsRefresh = () => {
-    this.fetchApp();
-  };
-
   render() {
     const timeControlComponent = (
       <TimeControlsContainer
         key={'DurationDropdown'}
         id="app-info-duration-dropdown"
-        handleRefresh={this.handleAppDetailsRefresh}
+        handleRefresh={this.fetchApp}
         disabled={false}
       />
     );
     const timeRange = retrieveTimeRange() || MetricsHelper.defaultMetricsDuration;
     const timeRangeComponent = (
       <>
-        <TimeRangeComponent
-          range={timeRange}
-          onChanged={this.handleAppDetailsRefresh}
-          tooltip={'Time range'}
-          allowCustom={true}
-        />
-        <RefreshContainer
-          id="metrics-refresh"
-          handleRefresh={this.handleAppDetailsRefresh}
-          hideLabel={true}
-          manageURL={true}
-        />
+        <TimeRangeComponent range={timeRange} onChanged={this.fetchApp} tooltip={'Time range'} allowCustom={true} />
+        <RefreshContainer id="metrics-refresh" handleRefresh={this.fetchApp} hideLabel={true} manageURL={true} />
       </>
     );
 
