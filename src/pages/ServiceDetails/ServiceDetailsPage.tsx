@@ -20,9 +20,20 @@ import { retrieveTimeRange } from '../../components/Time/TimeRangeHelper';
 import * as MetricsHelper from '../../components/Metrics/Helper';
 import TimeRangeComponent from '../../components/Time/TimeRangeComponent';
 import RefreshContainer from '../../components/Refresh/Refresh';
+import * as API from '../../services/Api';
+import Namespace from '../../types/Namespace';
+import * as AlertUtils from '../../utils/AlertUtils';
+import { PromisesRegistry } from '../../utils/CancelablePromises';
+import { ServiceDetailsInfo } from '../../types/ServiceInfo';
+import { PeerAuthentication, Validations } from '../../types/IstioObjects';
+import ServiceWizardDropdown from '../../components/IstioWizards/ServiceWizardDropdown';
 
 type ServiceDetailsState = {
   currentTab: string;
+  gateways: string[];
+  serviceDetails?: ServiceDetailsInfo;
+  peerAuthentications: PeerAuthentication[];
+  validations: Validations;
   lastRefresh: number;
 };
 
@@ -43,12 +54,21 @@ const tabIndex: { [tab: string]: number } = {
 };
 
 class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetailsState> {
+  private promises = new PromisesRegistry();
+
   constructor(props: ServiceDetailsProps) {
     super(props);
     this.state = {
       currentTab: activeTab(tabName, defaultTab),
+      gateways: [],
+      validations: {},
+      peerAuthentications: [],
       lastRefresh: new Date().getTime()
     };
+  }
+
+  componentDidMount(): void {
+    this.fetchService();
   }
 
   componentDidUpdate(prevProps: ServiceDetailsProps, _prevState: ServiceDetailsState) {
@@ -63,50 +83,70 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
     }
   }
 
-  fetchService = () => {};
+  private fetchService = () => {
+    this.promises.cancelAll();
+    this.promises
+      .register('namespaces', API.getNamespaces())
+      .then(namespacesResponse => {
+        const namespaces: Namespace[] = namespacesResponse.data;
+        this.promises
+          .registerAll(
+            'gateways',
+            namespaces.map(ns => API.getIstioConfig(ns.name, ['gateways'], false, '', ''))
+          )
+          .then(responses => {
+            let gatewayList: string[] = [];
+            responses.forEach(response => {
+              const ns = response.data.namespace;
+              response.data.gateways.forEach(gw => {
+                gatewayList = gatewayList.concat(ns.name + '/' + gw.metadata.name);
+              });
+            });
+            this.setState({ gateways: gatewayList });
+          })
+          .catch(gwError => {
+            AlertUtils.addError('Could not fetch Gateways list.', gwError);
+          });
+      })
+      .catch(error => {
+        AlertUtils.addError('Could not fetch Namespaces list.', error);
+      });
 
-  refresh = () => {
-    this.setState({
-      lastRefresh: new Date().getTime()
-    });
+    API.getServiceDetail(this.props.match.params.namespace, this.props.match.params.service, true, this.props.duration)
+      .then(results => {
+        this.setState({
+          serviceDetails: results,
+          validations: results.validations,
+          lastRefresh: new Date().getTime()
+        });
+      })
+      .catch(error => {
+        AlertUtils.addError('Could not fetch Service Details.', error);
+      });
+
+    API.getIstioConfig(this.props.match.params.namespace, ['peerauthentications'], false, '', '')
+      .then(results => {
+        this.setState({
+          peerAuthentications: results.data.peerAuthentications
+        });
+      })
+      .catch(error => {
+        AlertUtils.addError('Could not fetch PeerAuthentications.', error);
+      });
   };
 
-  render() {
-    const timeControlComponent = (
-      <TimeControlsContainer
-        key={'DurationDropdown'}
-        id="app-info-duration-dropdown"
-        handleRefresh={this.refresh}
-        disabled={false}
-      />
-    );
-    const timeRange = retrieveTimeRange() || MetricsHelper.defaultMetricsDuration;
-    const timeRangeComponent = (
-      <>
-        <TimeRangeComponent range={timeRange} onChanged={this.refresh} tooltip={'Time range'} allowCustom={true} />
-        <RefreshContainer id="metrics-refresh" handleRefresh={this.refresh} hideLabel={true} manageURL={true} />
-      </>
-    );
-
-    let timeComponent: JSX.Element;
-    switch (this.state.currentTab) {
-      case 'info':
-      case 'traffic':
-      case 'traces':
-        timeComponent = timeControlComponent;
-        break;
-      default:
-        timeComponent = timeRangeComponent;
-        break;
-    }
-
-    const overviewTab = (
+  private renderTabs() {
+    const overTab = (
       <Tab eventKey={0} title="Overview" key="Overview">
         <ServiceInfo
           namespace={this.props.match.params.namespace}
           service={this.props.match.params.service}
           duration={this.props.duration}
           lastRefresh={this.state.lastRefresh}
+          serviceDetails={this.state.serviceDetails}
+          gateways={this.state.gateways}
+          peerAuthentications={this.state.peerAuthentications}
+          validations={this.state.validations}
         />
       </Tab>
     );
@@ -121,7 +161,8 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
         />
       </Tab>
     );
-    const inboundMetricsTab = (
+
+    const inTab = (
       <Tab eventKey={2} title="Inbound Metrics" key="Inbound Metrics">
         <IstioMetricsContainer
           namespace={this.props.match.params.namespace}
@@ -133,10 +174,8 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
       </Tab>
     );
 
-    // Default tabs
-    const tabsArray: JSX.Element[] = [overviewTab, trafficTab, inboundMetricsTab];
+    const tabsArray: JSX.Element[] = [overTab, trafficTab, inTab];
 
-    // Conditional Traces tab
     if (this.props.jaegerInfo && this.props.jaegerInfo.enabled && this.props.jaegerInfo.integration) {
       tabsArray.push(
         <Tab eventKey={3} title="Traces" key="Traces">
@@ -150,6 +189,59 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
         </Tab>
       );
     }
+
+    return tabsArray;
+  }
+
+  render() {
+    const timeControlComponent = (
+      <TimeControlsContainer
+        key={'DurationDropdown'}
+        id="service-info-duration-dropdown"
+        handleRefresh={this.fetchService}
+        disabled={false}
+      />
+    );
+    const timeRange = retrieveTimeRange() || MetricsHelper.defaultMetricsDuration;
+    const timeRangeComponent = (
+      <>
+        <TimeRangeComponent range={timeRange} onChanged={this.fetchService} tooltip={'Time range'} allowCustom={true} />
+        <RefreshContainer id="metrics-refresh" handleRefresh={this.fetchService} hideLabel={true} manageURL={true} />
+      </>
+    );
+
+    let timeComponent: JSX.Element;
+    switch (this.state.currentTab) {
+      case 'info':
+      case 'traffic':
+      case 'traces':
+        timeComponent = timeControlComponent;
+        break;
+      default:
+        timeComponent = timeRangeComponent;
+        break;
+    }
+    timeComponent = (
+      <>
+        {timeComponent}
+        {this.state.serviceDetails && (
+          <ServiceWizardDropdown
+            namespace={this.props.match.params.namespace}
+            serviceName={this.state.serviceDetails.service.name}
+            show={false}
+            workloads={this.state.serviceDetails.workloads || []}
+            virtualServices={this.state.serviceDetails.virtualServices}
+            destinationRules={this.state.serviceDetails.destinationRules}
+            gateways={this.state.gateways}
+            peerAuthentications={this.state.peerAuthentications}
+            tlsStatus={this.state.serviceDetails.namespaceMTLS}
+            onChange={() => {
+              this.fetchService();
+            }}
+          />
+        )}
+      </>
+    );
 
     return (
       <>
@@ -166,7 +258,7 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
           mountOnEnter={true}
           unmountOnExit={true}
         >
-          {tabsArray}
+          {this.renderTabs()}
         </ParameterizedTabs>
       </>
     );
