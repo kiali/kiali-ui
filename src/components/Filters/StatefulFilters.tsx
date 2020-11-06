@@ -383,7 +383,7 @@ export class StatefulFilters extends React.Component<StatefulFiltersProps, State
                       {items.map(item => (
                         <Chip
                           key={'filter_' + category + '_' + item.value}
-                          onClick={() => this.removeFilter(category, item.value)}
+                          onClick={() => this.removeFilter(item.id, item.value)}
                         >
                           {item.value}
                         </Chip>
