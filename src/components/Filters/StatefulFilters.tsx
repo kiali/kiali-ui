@@ -87,7 +87,6 @@ export class FilterSelected {
 const rightToolbar = style({
   marginLeft: 'auto'
 });
-
 const filterWithChildrenStyle = style({ borderRight: '1px solid #d1d1d1;', paddingRight: '10px', display: 'inherit' });
 const dividerStyle = style({ borderRight: '1px solid #d1d1d1;', padding: '10px', display: 'inherit' });
 const paddingStyle = style({ padding: '10px' });
@@ -234,10 +233,7 @@ export class StatefulFilters extends React.Component<StatefulFiltersProps, State
   };
 
   removeFilter = (id: string, value: string) => {
-    console.log('Remove ' + id + ' _ ' + value);
-    console.log(this.state.activeFilters.filters);
     const updated = this.state.activeFilters.filters.filter(x => x.id !== id || x.value !== value);
-    console.log(updated);
     if (updated.length !== this.state.activeFilters.filters.length) {
       this.updateActiveFilters({ filters: updated, op: this.state.activeFilters.op });
     }
