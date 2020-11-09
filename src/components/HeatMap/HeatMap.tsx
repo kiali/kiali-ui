@@ -35,7 +35,8 @@ const columnStyle = style({
 const yLabelStyle = style({
   boxSizing: 'border-box',
   padding: '0 0.2rem',
-  lineHeight: cellHeight
+  lineHeight: cellHeight,
+  whiteSpace: 'nowrap'
 });
 
 const xLabelRowStyle = style({
@@ -60,7 +61,9 @@ const cellStyle = style({
   flexShrink: 0,
   height: cellHeight,
   lineHeight: cellHeight,
-  fontSize: '.7rem'
+  fontSize: '.7rem',
+  borderRadius: 3,
+  margin: 1
 });
 
 export class HeatMap extends React.Component<Props> {
@@ -84,7 +87,7 @@ export class HeatMap extends React.Component<Props> {
     const g = Math.floor((colorHigh.g - colorLow.g) * remains + colorLow.g);
     const b = Math.floor((colorHigh.b - colorLow.b) * remains + colorLow.b);
     const brightness = 0.21 * r + 0.72 * g + 0.07 * b; // https://www.johndcook.com/blog/2009/08/24/algorithms-convert-color-grayscale/
-    const textColor = brightness > 110 ? PfColors.Black900 : PfColors.Black300;
+    const textColor = brightness > 128 ? PfColors.Black1000 : PfColors.Black100;
     return {
       color: textColor,
       backgroundColor: `rgb(${r},${g},${b})`
@@ -110,17 +113,18 @@ export class HeatMap extends React.Component<Props> {
             ))}
           </div>
           <div className={columnStyle}>
-            {this.props.data.map((rowItems, xi) => (
-              <div key={xi} className={rowStyle}>
-                {rowItems.map((value, yi) => {
+            {this.props.yLabels.map((_, y) => (
+              <div key={`heatmap_${y}`} className={rowStyle}>
+                {this.props.xLabels.map((_, x) => {
+                  const value = this.props.data[x][y];
                   if (value) {
                     const style = this.getCellColors(value);
                     return (
                       <div
-                        key={`${xi}-${yi}`}
+                        key={`heatmap_${x}-${y}`}
                         className={cellStyle}
                         style={style}
-                        title={this.props.tooltip(xi, yi, value)}
+                        title={this.props.tooltip(x, y, value)}
                       >
                         {this.props.valueFormat(value)}
                       </div>
@@ -128,7 +132,7 @@ export class HeatMap extends React.Component<Props> {
                   }
                   return (
                     <div
-                      key={`${xi}-${yi}`}
+                      key={`heatmap_${x}-${y}`}
                       className={cellStyle}
                       style={{ backgroundColor: this.props.colorUndefined }}
                     >

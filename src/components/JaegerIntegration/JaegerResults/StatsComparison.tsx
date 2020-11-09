@@ -14,7 +14,7 @@ import { Button, ButtonVariant, Tooltip } from '@patternfly/react-core';
 // TODO / follow-up: these variables are to be removed from here and managed from the toolbar
 const statsQuantiles = ['0.5', '0.9', '0.99'];
 const statsAvgWithQuantiles = ['avg', ...statsQuantiles];
-const statsIntervals = ['6h', '60m', '10m'];
+const statsIntervals = ['10m', '60m', '6h'];
 const statsPerPeer = false;
 let statsCompareKind: 'app' | 'workload' = 'workload';
 
@@ -107,8 +107,8 @@ const renderHeatMap = (item: SpanTableItem, stats: StatsWithIntervalIndex[]) => 
   const data = buildStatsData(item, stats);
   return (
     <HeatMap
-      xLabels={statsIntervals}
-      yLabels={statsAvgWithQuantiles.map(s => statToText[s]?.short || s)}
+      xLabels={statsAvgWithQuantiles.map(s => statToText[s]?.short || s)}
+      yLabels={statsIntervals}
       data={data}
       colorMap={HeatMap.HealthColorMap}
       dataRange={{ from: -10, to: 10 }}
