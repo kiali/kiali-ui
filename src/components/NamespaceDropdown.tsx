@@ -53,7 +53,7 @@ const checkboxLabelStyle = style({ marginLeft: '0.5em' });
 const headerStyle = style({
   height: 40,
   margin: '5px 10px 5px 0.5em',
-  width: 350
+  width: 375
 });
 
 const filterStyle = style({
@@ -265,6 +265,7 @@ export class NamespaceDropdown extends React.PureComponent<NamespaceDropdownProp
             </DropdownToggle>
           }
           isOpen={this.state.isOpen}
+          onKeyDownCapture={this.checkSpecialKey}
         >
           {this.getHeader()}
           {this.getBody()}
@@ -307,6 +308,17 @@ export class NamespaceDropdown extends React.PureComponent<NamespaceDropdownProp
     this.setState({
       isOpen
     });
+  };
+
+  private checkSpecialKey = event => {
+    const keyCode = event.keyCode ? event.keyCode : event.which;
+    switch (keyCode) {
+      case 27: // Esc
+        this.onClose(false);
+        break;
+      default:
+        break;
+    }
   };
 
   private onClose = (isUpdate: boolean) => {
