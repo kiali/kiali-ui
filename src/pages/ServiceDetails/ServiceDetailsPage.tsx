@@ -221,31 +221,27 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
         timeComponent = timeRangeComponent;
         break;
     }
-    timeComponent = (
-      <>
-        {timeComponent}
-        {this.state.serviceDetails && (
-          <ServiceWizardDropdown
-            namespace={this.props.match.params.namespace}
-            serviceName={this.state.serviceDetails.service.name}
-            show={false}
-            workloads={this.state.serviceDetails.workloads || []}
-            virtualServices={this.state.serviceDetails.virtualServices}
-            destinationRules={this.state.serviceDetails.destinationRules}
-            gateways={this.state.gateways}
-            peerAuthentications={this.state.peerAuthentications}
-            tlsStatus={this.state.serviceDetails.namespaceMTLS}
-            onChange={() => {
-              this.fetchService();
-            }}
-          />
-        )}
-      </>
-    );
+
+    const actionsToolbar = this.state.serviceDetails ? (
+      <ServiceWizardDropdown
+        namespace={this.props.match.params.namespace}
+        serviceName={this.state.serviceDetails.service.name}
+        show={false}
+        workloads={this.state.serviceDetails.workloads || []}
+        virtualServices={this.state.serviceDetails.virtualServices}
+        destinationRules={this.state.serviceDetails.destinationRules}
+        gateways={this.state.gateways}
+        peerAuthentications={this.state.peerAuthentications}
+        tlsStatus={this.state.serviceDetails.namespaceMTLS}
+        onChange={() => {
+          this.fetchService();
+        }}
+      />
+    ) : undefined;
 
     return (
       <>
-        <RenderHeader location={this.props.location} rightToolbar={timeComponent} />
+        <RenderHeader location={this.props.location} rightToolbar={timeComponent} actionsToolbar={actionsToolbar} />
         <ParameterizedTabs
           id="basic-tabs"
           onSelect={tabValue => {

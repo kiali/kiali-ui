@@ -36,20 +36,16 @@ import {
 } from '@patternfly/react-core';
 import { dicIstioType } from '../../types/IstioConfigList';
 import { showInMessageCenter } from '../../utils/IstioValidationUtils';
-import { PfColors } from '../../components/Pf/PfColors';
 import VirtualServiceOverview from './IstioObjectDetails/VirtualServiceOverview';
 import DestinationRuleOverview from './IstioObjectDetails/DestinationRuleOverview';
 import { AxiosError } from 'axios';
 import IstioStatusMessageList from './IstioObjectDetails/IstioStatusMessageList';
 import { Annotation } from 'react-ace/types';
 import ValidationReferences from './ValidationReferences';
+import RefreshButtonContainer from '../../components/Refresh/RefreshButton';
 
 const rightToolbarStyle = style({
-  position: 'absolute',
-  right: '20px',
-  zIndex: 500,
-  marginTop: '8px',
-  backgroundColor: PfColors.White
+  zIndex: 500
 });
 
 const editorDrawer = style({
@@ -554,12 +550,15 @@ class IstioConfigDetailsPage extends React.Component<RouteComponentProps<IstioCo
   render() {
     return (
       <>
-        <RenderHeader location={this.props.location}>
+        <RenderHeader
+          location={this.props.location}
+          rightToolbar={<RefreshButtonContainer key={'Refresh'} handleRefresh={this.onRefresh} />}
+          actionsToolbar={this.renderActions()}
+        >
           {
             // This magic space will align details header width with Graph, List pages
           }
-          <div style={{ paddingBottom: 14 }} />
-          {this.renderActions()}
+          <div style={{ paddingBottom: 3 }} />
         </RenderHeader>
         <ParameterizedTabs
           id="basic-tabs"

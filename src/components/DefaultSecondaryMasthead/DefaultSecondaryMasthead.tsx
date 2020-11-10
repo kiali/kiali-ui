@@ -16,19 +16,25 @@ const titles = [
 
 type Props = {
   rightToolbar?: JSX.Element;
+  actionsToolbar?: JSX.Element;
 };
 
 const mainPadding = style({
   padding: '10px 20px 10px 20px'
 });
 
-const titleStyle = style({
+const flexStyle = style({
   display: 'flex',
   flexWrap: 'wrap'
 });
 
 const rightToolbarStyle = style({
   marginLeft: 'auto'
+});
+
+const actionsToolbarStyle = style({
+  marginLeft: 'auto',
+  paddingTop: '17px'
 });
 
 export default class DefaultSecondaryMasthead extends React.Component<Props> {
@@ -67,13 +73,16 @@ export default class DefaultSecondaryMasthead extends React.Component<Props> {
     const { title, disabled } = this.showTitle();
     return (
       <div className={mainPadding}>
-        <div className={titleStyle}>
+        <div className={flexStyle}>
           <div>
             <NamespaceDropdownContainer disabled={disabled} />
           </div>
           {this.props.rightToolbar && <div className={rightToolbarStyle}>{this.props.rightToolbar}</div>}
         </div>
-        {title}
+        <div className={flexStyle}>
+          <div>{title}</div>
+          {this.props.actionsToolbar && <div className={actionsToolbarStyle}>{this.props.actionsToolbar}</div>}
+        </div>
       </div>
     );
   }

@@ -243,23 +243,17 @@ class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, Workload
         timeComponent = timeRangeComponent;
         break;
     }
-    if (this.state.currentTab === 'info') {
-      timeComponent = (
-        <>
-          {timeComponent}
-          {this.state.workload && (
-            <WorkloadWizardDropdown
-              namespace={this.props.match.params.namespace}
-              workload={this.state.workload}
-              onChange={this.fetchWorkload}
-            />
-          )}
-        </>
-      );
-    }
+    const actionsToolbar =
+      this.state.currentTab === 'info' && this.state.workload ? (
+        <WorkloadWizardDropdown
+          namespace={this.props.match.params.namespace}
+          workload={this.state.workload}
+          onChange={this.fetchWorkload}
+        />
+      ) : undefined;
     return (
       <>
-        <RenderHeader location={this.props.location} rightToolbar={timeComponent} />
+        <RenderHeader location={this.props.location} rightToolbar={timeComponent} actionsToolbar={actionsToolbar} />
         {this.state.workload && (
           <ParameterizedTabs
             id="basic-tabs"

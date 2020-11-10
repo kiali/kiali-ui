@@ -177,12 +177,8 @@ class IstioConfigListPageComponent extends FilterComponent.Component<
       <>
         <div style={{ backgroundColor: '#fff' }}>
           <DefaultSecondaryMasthead
-            rightToolbar={
-              <>
-                <RefreshButtonContainer key={'Refresh'} handleRefresh={this.updateListItems} />
-                <IstioActionsNamespaceDropdown />
-              </>
-            }
+            rightToolbar={<RefreshButtonContainer key={'Refresh'} handleRefresh={this.updateListItems} />}
+            actionsToolbar={<IstioActionsNamespaceDropdown />}
           />
         </div>
         <RenderContent>

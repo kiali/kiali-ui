@@ -527,16 +527,14 @@ class ExperimentListPageComponent extends React.Component<Props, State> {
         <div style={{ backgroundColor: '#fff' }}>
           <DefaultSecondaryMasthead
             rightToolbar={
-              <>
-                <TimeControlsContainer
-                  key={'DurationDropdown'}
-                  id="exp-list-duration-dropdown"
-                  handleRefresh={this.updateListItems}
-                  disabled={false}
-                />
-                <>{this.actionsToolbar()}</>
-              </>
+              <TimeControlsContainer
+                key={'DurationDropdown'}
+                id="exp-list-duration-dropdown"
+                handleRefresh={this.updateListItems}
+                disabled={false}
+              />
             }
+            actionsToolbar={this.actionsToolbar()}
           />
         </div>
         <RenderContent>
