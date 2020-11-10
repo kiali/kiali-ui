@@ -3,7 +3,16 @@ import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 import _ from 'lodash';
 import { style } from 'typestyle';
-import { Button, ButtonVariant, Dropdown, DropdownToggle, TextInput, Tooltip } from '@patternfly/react-core';
+import {
+  Button,
+  Dropdown,
+  DropdownToggle,
+  TextInput,
+  Tooltip,
+  // DropdownItem,
+  // DropdownPosition,
+  DropdownToggleCheckbox
+} from '@patternfly/react-core';
 import { KialiAppState } from '../store/Store';
 import { activeNamespacesSelector, namespaceFilterSelector, namespaceItemsSelector } from '../store/Selectors';
 import { KialiAppAction } from '../actions/KialiAppAction';
@@ -19,20 +28,38 @@ import { KialiIcon } from 'config/KialiIcon';
 import TourStopContainer from './Tour/TourStop';
 import { GraphTourStops } from '../pages/Graph/GraphHelpTour';
 
-interface ReduxProps {
+type ReduxProps = {
   activeNamespaces: Namespace[];
   filter: string;
-  items: Namespace[];
+  namespaces: Namespace[];
   refresh: () => void;
-  toggleNamespace: (namespace: Namespace) => void;
   setFilter: (filter: string) => void;
   setNamespaces: (namespaces: Namespace[]) => void;
-}
+};
 
-interface NamespaceDropdownProps extends ReduxProps {
+type NamespaceDropdownProps = ReduxProps & {
   disabled: boolean;
   clearAll: () => void;
-}
+};
+
+type NamespaceDropdownState = {
+  isBulkSelectorOpen: boolean;
+  isOpen: boolean;
+  selectedNamespaces: Namespace[];
+};
+
+const checkboxLabelStyle = style({ marginLeft: '0.5em' });
+
+const headerStyle = style({
+  height: 40,
+  margin: '5px 10px 5px 0.5em',
+  width: 350
+});
+
+const filterStyle = style({
+  float: 'right',
+  width: 225
+});
 
 const namespaceLabelStyle = style({
   fontWeight: 400
@@ -48,34 +75,13 @@ const namespaceContainerStyle = style({
   overflow: 'auto'
 });
 
-const clearAllButtonStyle = style({
-  margin: '0, 1em, 0, 0'
-});
-
-interface ReduxProps {
-  activeNamespaces: Namespace[];
-  filter: string;
-  items: Namespace[];
-  refresh: () => void;
-  toggleNamespace: (namespace: Namespace) => void;
-  setFilter: (filter: string) => void;
-  setNamespaces: (namespaces: Namespace[]) => void;
-}
-
-interface NamespaceDropdownProps extends ReduxProps {
-  disabled: boolean;
-  clearAll: () => void;
-}
-
-interface NamespaceDropdownState {
-  isOpen: boolean;
-}
-
 export class NamespaceDropdown extends React.PureComponent<NamespaceDropdownProps, NamespaceDropdownState> {
   constructor(props: NamespaceDropdownProps) {
     super(props);
     this.state = {
-      isOpen: false
+      isBulkSelectorOpen: false,
+      isOpen: false,
+      selectedNamespaces: [...this.props.activeNamespaces]
     };
   }
 
@@ -84,6 +90,24 @@ export class NamespaceDropdown extends React.PureComponent<NamespaceDropdownProp
     this.syncNamespacesURLParam();
   }
 
+  // update redux with URL namespaces if set, otherwise update URL with redux
+  syncNamespacesURLParam = () => {
+    const urlNamespaces = (HistoryManager.getParam(URLParam.NAMESPACES) || '').split(',').filter(Boolean);
+    if (
+      urlNamespaces.length > 0 &&
+      _.difference(
+        urlNamespaces,
+        this.props.activeNamespaces.map(item => item.name)
+      )
+    ) {
+      // We must change the props of namespaces
+      const items = urlNamespaces.map(ns => ({ name: ns } as Namespace));
+      this.props.setNamespaces(items);
+    } else if (urlNamespaces.length === 0 && this.props.activeNamespaces.length !== 0) {
+      HistoryManager.setParam(URLParam.NAMESPACES, this.props.activeNamespaces.map(item => item.name).join(','));
+    }
+  };
+
   componentDidUpdate(prevProps: NamespaceDropdownProps) {
     if (prevProps.activeNamespaces !== this.props.activeNamespaces) {
       if (this.props.activeNamespaces.length === 0) {
@@ -91,47 +115,19 @@ export class NamespaceDropdown extends React.PureComponent<NamespaceDropdownProp
       } else {
         HistoryManager.setParam(URLParam.NAMESPACES, this.props.activeNamespaces.map(item => item.name).join(','));
       }
+      this.setState({ selectedNamespaces: this.props.activeNamespaces });
     }
   }
 
-  syncNamespacesURLParam = () => {
-    const namespaces = (HistoryManager.getParam(URLParam.NAMESPACES) || '').split(',').filter(Boolean);
-    if (
-      namespaces.length > 0 &&
-      _.difference(
-        namespaces,
-        this.props.activeNamespaces.map(item => item.name)
-      )
-    ) {
-      // We must change the props of namespaces
-      const items = namespaces.map(ns => ({ name: ns } as Namespace));
-      this.props.setNamespaces(items);
-    } else if (namespaces.length === 0 && this.props.activeNamespaces.length !== 0) {
-      HistoryManager.setParam(URLParam.NAMESPACES, this.props.activeNamespaces.map(item => item.name).join(','));
-    }
-  };
-
-  onNamespaceToggled = (a: any) => {
-    this.props.toggleNamespace({ name: a.target.value });
-  };
-
-  onFilterChange = (value: string) => {
-    this.props.setFilter(value);
-  };
-
-  clearFilter = () => {
-    this.props.setFilter('');
-  };
-
-  namespaceButtonText() {
-    if (this.props.activeNamespaces.length === 0) {
-      return <span className={namespaceValueStyle}>Select a namespace</span>;
-    } else if (this.props.activeNamespaces.length === 1) {
+  private namespaceButtonText() {
+    if (this.state.selectedNamespaces.length === 0) {
+      return <span className={namespaceValueStyle}>Select Namespaces</span>;
+    } else if (this.state.selectedNamespaces.length === 1) {
       return (
         <>
           <span className={namespaceLabelStyle}>Namespace:</span>
           <span>&nbsp;</span>
-          <span className={namespaceValueStyle}>{this.props.activeNamespaces[0].name}</span>
+          <span className={namespaceValueStyle}>{this.state.selectedNamespaces[0].name}</span>
         </>
       );
     } else {
@@ -139,31 +135,61 @@ export class NamespaceDropdown extends React.PureComponent<NamespaceDropdownProp
         <>
           <span className={namespaceLabelStyle}>Namespaces:</span>
           <span>&nbsp;</span>
-          <span className={namespaceValueStyle}>{`${this.props.activeNamespaces.length} namespaces`}</span>
+          <span className={namespaceValueStyle}>{`${this.state.selectedNamespaces.length} namespaces`}</span>
         </>
       );
     }
   }
 
-  private onToggle = isOpen => {
-    if (isOpen) {
-      this.props.refresh();
-    }
-    this.setState({
-      isOpen
-    });
-  };
+  private getBulkSelector() {
+    const { selectedNamespaces } = this.state;
+    const numSelected = selectedNamespaces.length;
+    const allSelected = numSelected === this.props.namespaces.length;
+    const anySelected = numSelected > 0;
+    const someChecked = anySelected ? null : false;
+    const isChecked = allSelected ? true : someChecked;
 
-  private getHeaderContent() {
-    const headerWidth = 300;
-    const closeButtonWidth = this.props.filter ? 40 : 0;
-    const marginWidth = 10;
-    const inputWidth = headerWidth - closeButtonWidth - 2 * marginWidth;
+    /*
+    const items = [
+      <DropdownItem key="bulk-none" onClick={() => this.onBulkNone()}>
+        Clear All
+      </DropdownItem>,
+      <DropdownItem key="bulk-all" onClick={() => this.onBulkAll()}>
+        Select all
+      </DropdownItem>
+    ];
+*/
+    console.log('BulkSelector');
     return (
-      <>
-        <div style={{ float: 'left', width: headerWidth }}>
+      <span style={{ position: 'relative', top: 8 }}>
+        <DropdownToggleCheckbox
+          id="bulk-select-id"
+          key="bulk-select-key"
+          aria-label={anySelected ? 'Clear all' : 'Select all'}
+          isChecked={isChecked}
+          onClick={() => {
+            anySelected ? this.onBulkNone() : this.onBulkAll();
+          }}
+        ></DropdownToggleCheckbox>
+        <span className={checkboxLabelStyle}>{anySelected ? 'Clear all' : 'Select all'}</span>
+      </span>
+    );
+  }
+
+  private getHeader() {
+    return (
+      <div className={headerStyle}>
+        {this.getBulkSelector()}
+        <span>
+          {!!this.props.filter && (
+            <Tooltip key="ot_clear_namespace_filter" position="top" content="Clear Filter by Name">
+              <Button onClick={this.clearFilter} style={{ float: 'right' }}>
+                <KialiIcon.Close />
+              </Button>
+            </Tooltip>
+          )}
           <TextInput
-            style={{ marginLeft: marginWidth, width: inputWidth }}
+            className={filterStyle}
             aria-label="filter-namespace"
             type="text"
             name="namespace-filter"
@@ -171,37 +197,18 @@ export class NamespaceDropdown extends React.PureComponent<NamespaceDropdownProp
             value={this.props.filter}
             onChange={this.onFilterChange}
           />
-          {this.props.filter && (
-            <Tooltip key="ot_clear_namespace_filter" position="top" content="Clear Filter by Name">
-              <Button onClick={this.clearFilter}>
-                <KialiIcon.Close />
-              </Button>
-            </Tooltip>
-          )}
-        </div>
-        <div className="text-right">
-          <Button
-            variant={ButtonVariant.link}
-            disabled={this.props.activeNamespaces.length === -1}
-            onClick={this.props.clearAll}
-            className={clearAllButtonStyle}
-            aria-label="clear-all"
-          >
-            Clear all
-          </Button>
-        </div>
-      </>
+        </span>
+      </div>
     );
   }
 
-  private getPopoverContent() {
-    if (this.props.items.length > 0) {
-      const activeMap = this.props.activeNamespaces.reduce((map, namespace) => {
+  private getBody() {
+    if (this.props.namespaces.length > 0) {
+      const selectedMap = this.state.selectedNamespaces.reduce((map, namespace) => {
         map[namespace.name] = namespace.name;
         return map;
       }, {});
-      const checkboxLabelStyle = style({ marginLeft: '0.5em' });
-      const namespaces = this.props.items
+      const namespaces = this.props.namespaces
         .filter((namespace: Namespace) => namespace.name.includes(this.props.filter))
         .map((namespace: Namespace) => (
           <div
@@ -213,7 +220,7 @@ export class NamespaceDropdown extends React.PureComponent<NamespaceDropdownProp
               <input
                 type="checkbox"
                 value={namespace.name}
-                checked={!!activeMap[namespace.name]}
+                checked={!!selectedMap[namespace.name]}
                 onChange={this.onNamespaceToggled}
               />
               <span className={checkboxLabelStyle}>{namespace.name}</span>
@@ -232,11 +239,23 @@ export class NamespaceDropdown extends React.PureComponent<NamespaceDropdownProp
         </>
       );
     }
-    return <div>No namespaces found or they haven't loaded yet</div>;
+    return <div>No namespaces found</div>;
+  }
+
+  private getFooter() {
+    return (
+      <div style={{ padding: '10px 10px 0 10px' }}>
+        <Button key="cancel" variant="secondary" onClick={() => this.onClose(false)}>
+          Cancel
+        </Button>
+        <Button style={{ float: 'right' }} key="confirm" variant="primary" onClick={() => this.onClose(true)}>
+          OK
+        </Button>
+      </div>
+    );
   }
 
   render() {
-    const { isOpen } = this.state;
     return (
       <TourStopContainer info={GraphTourStops.Namespaces}>
         <Dropdown
@@ -245,19 +264,66 @@ export class NamespaceDropdown extends React.PureComponent<NamespaceDropdownProp
               {this.namespaceButtonText()}
             </DropdownToggle>
           }
-          isOpen={isOpen}
+          isOpen={this.state.isOpen}
         >
-          {this.getHeaderContent()}
-          {this.getPopoverContent()}
+          {this.getHeader()}
+          {this.getBody()}
+          {this.getFooter()}
         </Dropdown>
       </TourStopContainer>
     );
   }
+
+  private onBulkNone = () => {
+    this.setState({ selectedNamespaces: [] });
+  };
+
+  private onBulkAll = () => {
+    this.setState({ selectedNamespaces: [...this.props.namespaces] });
+  };
+
+  /*
+  private onBulkSelect = () => {
+    this.setState({ isBulkSelectorOpen: !this.state.isBulkSelectorOpen });
+  };
+  */
+
+  onNamespaceToggled = event => {
+    const namespace = event.target.value;
+    const selectedNamespaces = !!this.state.selectedNamespaces.find(n => n.name === namespace)
+      ? this.state.selectedNamespaces.filter(n => n.name !== namespace)
+      : this.state.selectedNamespaces.concat([{ name: event.target.value } as Namespace]);
+    this.setState({ selectedNamespaces: selectedNamespaces });
+  };
+
+  private onFilterChange = (value: string) => {
+    this.props.setFilter(value);
+  };
+
+  private onToggle = isOpen => {
+    if (isOpen) {
+      this.props.refresh();
+    }
+    this.setState({
+      isOpen
+    });
+  };
+
+  private onClose = (isUpdate: boolean) => {
+    if (isUpdate) {
+      this.props.setNamespaces(this.state.selectedNamespaces);
+    }
+    this.setState({ isOpen: false, selectedNamespaces: [...this.props.activeNamespaces] });
+  };
+
+  private clearFilter = () => {
+    this.props.setFilter('');
+  };
 }
 
 const mapStateToProps = (state: KialiAppState) => {
   return {
-    items: namespaceItemsSelector(state)!,
+    namespaces: namespaceItemsSelector(state)!,
     activeNamespaces: activeNamespacesSelector(state),
     filter: namespaceFilterSelector(state)
   };
@@ -267,9 +333,6 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<KialiAppState, void, KialiAp
   return {
     refresh: () => {
       dispatch(NamespaceThunkActions.fetchNamespacesIfNeeded());
-    },
-    toggleNamespace: (namespace: Namespace) => {
-      dispatch(NamespaceActions.toggleActiveNamespace(namespace));
     },
     clearAll: () => {
       dispatch(NamespaceActions.setActiveNamespaces([]));
