@@ -3,7 +3,7 @@ import React from 'react';
 // TOP_PADDING constant is used to adjust the height of the main div to allow scrolling in the inner container layer.
 // Overview page
 // 76px (header) + 76px (overview toolbar)
-const TOP_PADDING_OVERVIEW_NO_FILTER = 76 + 76;
+const TOP_PADDING_OVERVIEW_NO_FILTER = 76 + 56;
 // 76px (header) + 128px (overview toolbar + filters)
 const TOP_PADDING_OVERVIEW_FILTERED = 76 + 128;
 // List & Details pages

@@ -115,13 +115,6 @@ const cardNamespaceNameLongStyle = style({
   whiteSpace: 'nowrap'
 });
 
-// Yes, the 20px is a magic number to adjust the style as there are several chained components
-// with their own style.
-const overviewHeader = style({
-  backgroundColor: PfColors.White,
-  padding: '10px 20px 10px 20px'
-});
-
 enum Show {
   GRAPH,
   APPLICATIONS,
@@ -757,16 +750,14 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
         : '';
     return (
       <>
-        <div className={overviewHeader}>
-          <OverviewToolbarContainer
-            onRefresh={this.load}
-            onError={FilterHelper.handleError}
-            sort={this.sort}
-            displayMode={this.state.displayMode}
-            setDisplayMode={this.setDisplayMode}
-            statefulFilterRef={this.sFOverviewToolbar}
-          />
-        </div>
+        <OverviewToolbarContainer
+          onRefresh={this.load}
+          onError={FilterHelper.handleError}
+          sort={this.sort}
+          displayMode={this.state.displayMode}
+          setDisplayMode={this.setDisplayMode}
+          statefulFilterRef={this.sFOverviewToolbar}
+        />
         {filteredNamespaces.length > 0 ? (
           <RenderComponentScroll
             className={this.state.displayMode === OverviewDisplayMode.LIST ? gridStyleList : gridStyleCompact}

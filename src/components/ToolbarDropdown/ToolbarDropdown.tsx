@@ -23,6 +23,7 @@ type ToolbarDropdownProps = {
   value?: number | string;
   useName?: boolean;
   classNameSelect?: string;
+  classNameToolbar?: string;
 
   handleSelect: (value: string) => void;
   onToggle?: (isOpen: boolean) => void;
