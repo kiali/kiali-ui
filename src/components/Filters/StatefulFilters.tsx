@@ -38,7 +38,6 @@ var classNames = require('classnames');
 export interface StatefulFiltersProps {
   onFilterChange: (active: ActiveFiltersInfo) => void;
   initialFilters: FilterType[];
-  rightToolbar?: JSX.Element[];
   ref?: React.RefObject<StatefulFilters>;
 }
 
@@ -84,9 +83,6 @@ export class FilterSelected {
   };
 }
 
-const rightToolbar = style({
-  marginLeft: 'auto'
-});
 const filterWithChildrenStyle = style({ borderRight: '1px solid #d1d1d1;', paddingRight: '10px', display: 'inherit' });
 const dividerStyle = style({ borderRight: '1px solid #d1d1d1;', padding: '10px', display: 'inherit' });
 const paddingStyle = style({ padding: '10px' });
@@ -334,15 +330,6 @@ export class StatefulFilters extends React.Component<StatefulFiltersProps, State
     );
   };
 
-  renderRightToolbar = () => {
-    return (
-      <Toolbar className={rightToolbar}>
-        {this.props.rightToolbar ||
-          [].map((elem, index) => <ToolbarItem key={'Item_rightToolbar_' + index}>{elem}</ToolbarItem>)}
-      </Toolbar>
-    );
-  };
-
   onToggle = isExpanded => {
     this.setState({
       isExpanded: isExpanded
@@ -391,7 +378,6 @@ export class StatefulFilters extends React.Component<StatefulFiltersProps, State
               </ToolbarItem>
             </ToolbarGroup>
           )}
-          {this.props.rightToolbar && this.renderRightToolbar()}
         </ToolbarSection>
         {activeFilters && activeFilters.filters.length > 0 && (
           <ToolbarSection aria-label="FiltersSection" style={isOverview ? { marginLeft: '10px' } : {}}>
