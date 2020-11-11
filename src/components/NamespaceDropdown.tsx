@@ -3,7 +3,15 @@ import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 import _ from 'lodash';
 import { style } from 'typestyle';
-import { Button, Dropdown, DropdownToggle, TextInput, Tooltip, DropdownToggleCheckbox } from '@patternfly/react-core';
+import {
+  Button,
+  Dropdown,
+  DropdownToggle,
+  TextInput,
+  Tooltip,
+  DropdownToggleCheckbox,
+  Divider
+} from '@patternfly/react-core';
 import { KialiAppState } from '../store/Store';
 import { activeNamespacesSelector, namespaceFilterSelector, namespaceItemsSelector } from '../store/Selectors';
 import { KialiAppAction } from '../actions/KialiAppAction';
@@ -39,28 +47,22 @@ type NamespaceDropdownState = {
   selectedNamespaces: Namespace[];
 };
 
+const checkboxBulkStyle = style({
+  marginLeft: '0.5em',
+  position: 'relative',
+  top: 8
+});
+
+const checkboxStyle = style({ marginLeft: '1.0em' });
+
 const checkboxLabelStyle = style({ marginLeft: '0.5em' });
 
 const headerStyle = style({
-  height: 40,
-  margin: '5px 10px 5px 0.5em',
-  width: 375
+  margin: '0 0.5em 10px 0.5em',
+  width: 300
 });
 
-const filterStyle = style({
-  float: 'right',
-  width: 225
-});
-
-const namespaceLabelStyle = style({
-  fontWeight: 400
-});
-
-const namespaceValueStyle = style({
-  fontWeight: 400
-});
-
-const popoverMarginBottom = 20;
+const marginBottom = 20;
 
 const namespaceContainerStyle = style({
   overflow: 'auto'
@@ -112,21 +114,20 @@ export class NamespaceDropdown extends React.PureComponent<NamespaceDropdownProp
 
   private namespaceButtonText() {
     if (this.state.selectedNamespaces.length === 0) {
-      return <span className={namespaceValueStyle}>Select Namespaces</span>;
+      return <span>Select Namespaces</span>;
     } else if (this.state.selectedNamespaces.length === 1) {
       return (
         <>
-          <span className={namespaceLabelStyle}>Namespace:</span>
+          <span>Namespace:</span>
           <span>&nbsp;</span>
-          <span className={namespaceValueStyle}>{this.state.selectedNamespaces[0].name}</span>
+          <span>{this.state.selectedNamespaces[0].name}</span>
         </>
       );
     } else {
       return (
         <>
-          <span className={namespaceLabelStyle}>Namespaces:</span>
           <span>&nbsp;</span>
-          <span className={namespaceValueStyle}>{`${this.state.selectedNamespaces.length} namespaces`}</span>
+          <span>{`[${this.state.selectedNamespaces.length}] Namespaces`}</span>
         </>
       );
     }
@@ -141,35 +142,28 @@ export class NamespaceDropdown extends React.PureComponent<NamespaceDropdownProp
     const isChecked = allSelected ? true : someChecked;
 
     return (
-      <span style={{ position: 'relative', top: 8 }}>
+      <div className={checkboxBulkStyle}>
         <DropdownToggleCheckbox
           id="bulk-select-id"
           key="bulk-select-key"
-          aria-label={anySelected ? 'Clear all' : 'Select all'}
+          aria-label="Select all"
           isChecked={isChecked}
           onClick={() => {
             anySelected ? this.onBulkNone() : this.onBulkAll();
           }}
         ></DropdownToggleCheckbox>
-        <span className={checkboxLabelStyle}>{anySelected ? 'Clear all' : 'Select all'}</span>
-      </span>
+        <span className={checkboxLabelStyle}>Select all</span>
+      </div>
     );
   }
 
   private getHeader() {
+    const hasFilter = !!this.props.filter;
     return (
       <div className={headerStyle}>
-        {this.getBulkSelector()}
-        <span>
-          {!!this.props.filter && (
-            <Tooltip key="ot_clear_namespace_filter" position="top" content="Clear Filter by Name">
-              <Button onClick={this.clearFilter} style={{ float: 'right' }}>
-                <KialiIcon.Close />
-              </Button>
-            </Tooltip>
-          )}
+        <span style={{ width: '100%' }}>
           <TextInput
-            className={filterStyle}
+            style={{ width: hasFilter ? 'calc(100% - 44px)' : '100%' }}
             aria-label="filter-namespace"
             type="text"
             name="namespace-filter"
@@ -177,7 +171,16 @@ export class NamespaceDropdown extends React.PureComponent<NamespaceDropdownProp
             value={this.props.filter}
             onChange={this.onFilterChange}
           />
+          {hasFilter && (
+            <Tooltip key="ot_clear_namespace_filter" position="top" content="Clear Filter by Name">
+              <Button onClick={this.clearFilter} isInline>
+                <KialiIcon.Close />
+              </Button>
+            </Tooltip>
+          )}
         </span>
+        {this.getBulkSelector()}
+        <Divider style={{ paddingTop: '5px' }} />
       </div>
     );
   }
@@ -190,19 +193,17 @@ export class NamespaceDropdown extends React.PureComponent<NamespaceDropdownProp
       }, {});
       const namespaces = this.filtered().map((namespace: Namespace) => (
         <div
-          style={{ marginLeft: '0.5em' }}
+          className={checkboxStyle}
           id={`namespace-list-item[${namespace.name}]`}
           key={`namespace-list-item[${namespace.name}]`}
         >
-          <label>
-            <input
-              type="checkbox"
-              value={namespace.name}
-              checked={!!selectedMap[namespace.name]}
-              onChange={this.onNamespaceToggled}
-            />
-            <span className={checkboxLabelStyle}>{namespace.name}</span>
-          </label>
+          <input
+            type="checkbox"
+            value={namespace.name}
+            checked={!!selectedMap[namespace.name]}
+            onChange={this.onNamespaceToggled}
+          />
+          <span className={checkboxLabelStyle}>{namespace.name}</span>
         </div>
       ));
 
@@ -210,7 +211,7 @@ export class NamespaceDropdown extends React.PureComponent<NamespaceDropdownProp
         <>
           <BoundingClientAwareComponent
             className={namespaceContainerStyle}
-            maxHeight={{ type: PropertyType.VIEWPORT_HEIGHT_MINUS_TOP, margin: popoverMarginBottom }}
+            maxHeight={{ type: PropertyType.VIEWPORT_HEIGHT_MINUS_TOP, margin: marginBottom }}
           >
             {namespaces}
           </BoundingClientAwareComponent>
@@ -243,6 +244,7 @@ export class NamespaceDropdown extends React.PureComponent<NamespaceDropdownProp
       this.props.refresh();
     } else {
       this.props.setNamespaces(this.state.selectedNamespaces);
+      this.clearFilter();
     }
     this.setState({
       isOpen
