@@ -10,7 +10,8 @@ import {
   TextInput,
   Tooltip,
   DropdownToggleCheckbox,
-  Divider
+  Divider,
+  Badge
 } from '@patternfly/react-core';
 import { KialiAppState } from '../store/Store';
 import { activeNamespacesSelector, namespaceFilterSelector, namespaceItemsSelector } from '../store/Selectors';
@@ -115,22 +116,18 @@ export class NamespaceDropdown extends React.PureComponent<NamespaceDropdownProp
   private namespaceButtonText() {
     if (this.state.selectedNamespaces.length === 0) {
       return <span>Select Namespaces</span>;
-    } else if (this.state.selectedNamespaces.length === 1) {
-      return (
-        <>
-          <span>Namespace:</span>
-          <span>&nbsp;</span>
-          <span>{this.state.selectedNamespaces[0].name}</span>
-        </>
-      );
-    } else {
-      return (
-        <>
-          <span>&nbsp;</span>
-          <span>{`[${this.state.selectedNamespaces.length}] Namespaces`}</span>
-        </>
-      );
     }
+
+    return (
+      <>
+        <span style={{ paddingRight: '0.75em' }}>Namespace:</span>
+        {this.state.selectedNamespaces.length === 1 ? (
+          <span>{this.state.selectedNamespaces[0].name}</span>
+        ) : (
+          <Badge>{this.state.selectedNamespaces.length}</Badge>
+        )}
+      </>
+    );
   }
 
   private getBulkSelector() {
