@@ -338,8 +338,6 @@ export class StatefulFilters extends React.Component<StatefulFiltersProps, State
 
   render() {
     const { currentFilterType, activeFilters } = this.state;
-    const path = window.location.pathname;
-    const isOverview = path.substr(path.lastIndexOf('/console') + '/console'.length + 1) === 'overview';
     return (
       <Toolbar className="pf-l-toolbar pf-u-justify-content-space-between pf-u-mx-xl pf-u-my-md">
         <ToolbarSection aria-label="ToolbarSection">
@@ -380,7 +378,7 @@ export class StatefulFilters extends React.Component<StatefulFiltersProps, State
           )}
         </ToolbarSection>
         {activeFilters && activeFilters.filters.length > 0 && (
-          <ToolbarSection aria-label="FiltersSection" style={isOverview ? { marginLeft: '10px' } : {}}>
+          <ToolbarSection aria-label="FiltersSection">
             <>{'Active Filters:'}</>
             <div style={{ marginLeft: '5px', display: 'inline-flex', height: '80%' }}>
               <ChipGroup defaultIsOpen={true} withToolbar={true}>
