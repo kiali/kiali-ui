@@ -1,14 +1,16 @@
 import axios, { AxiosError } from 'axios';
 
-import Namespace from '../types/Namespace';
-import { DashboardQuery, IstioMetricsOptions, MetricsStatsQuery } from '../types/MetricsOptions';
-import { IstioMetricsMap, MetricsStatsResult } from '../types/Metrics';
-import { IstioConfigDetails, IstioPermissions } from '../types/IstioConfigDetails';
-import { IstioConfigList } from '../types/IstioConfigList';
-import { Workload, WorkloadNamespaceResponse } from '../types/Workload';
-import { ServiceDetailsInfo } from '../types/ServiceInfo';
-import { JaegerInfo, JaegerResponse, JaegerSingleResponse } from '../types/JaegerInfo';
+import { config } from '../config';
 import { LoginSession } from '../store/Store';
+
+import { App } from '../types/App';
+import { AppList } from '../types/AppList';
+import { AuthInfo } from '../types/Auth';
+import { MeshClusters } from '../types/Clustering';
+import { DurationInSeconds, HTTP_VERBS, Password, UserName } from '../types/Common';
+import { DashboardModel } from 'types/Dashboards';
+import { GrafanaInfo } from '../types/GrafanaInfo';
+import { GraphDefinition, NodeParamsType, NodeType } from '../types/Graph';
 import {
   AppHealth,
   NamespaceAppHealth,
@@ -17,22 +19,22 @@ import {
   ServiceHealth,
   WorkloadHealth
 } from '../types/Health';
-import { App } from '../types/App';
-import { ServerStatus } from '../types/ServerStatus';
-import { AppList } from '../types/AppList';
-import { AuthInfo } from '../types/Auth';
-import { DurationInSeconds, HTTP_VERBS, Password, UserName } from '../types/Common';
-import { GraphDefinition, NodeParamsType, NodeType } from '../types/Graph';
-import { ServiceList } from '../types/ServiceList';
-import { config } from '../config';
-import { ServerConfig } from '../types/ServerConfig';
-import { TLSStatus } from '../types/TLSStatus';
+import { IstioConfigDetails, IstioPermissions } from '../types/IstioConfigDetails';
+import { IstioConfigList } from '../types/IstioConfigList';
 import { Pod, PodLogs, ValidationStatus } from '../types/IstioObjects';
-import { GrafanaInfo } from '../types/GrafanaInfo';
-import { Span, TracingQuery } from 'types/Tracing';
-import { Iter8ExpDetailsInfo, Iter8Experiment, Iter8Info, ExperimentSpec } from '../types/Iter8';
 import { ComponentStatus } from '../types/IstioStatus';
-import { DashboardModel } from 'types/Dashboards';
+import { Iter8ExpDetailsInfo, Iter8Experiment, Iter8Info, ExperimentSpec } from '../types/Iter8';
+import { JaegerInfo, JaegerResponse, JaegerSingleResponse } from '../types/JaegerInfo';
+import { DashboardQuery, IstioMetricsOptions, MetricsStatsQuery } from '../types/MetricsOptions';
+import { IstioMetricsMap, MetricsStatsResult } from '../types/Metrics';
+import Namespace from '../types/Namespace';
+import { ServerConfig } from '../types/ServerConfig';
+import { ServerStatus } from '../types/ServerStatus';
+import { ServiceDetailsInfo } from '../types/ServiceInfo';
+import { ServiceList } from '../types/ServiceList';
+import { Span, TracingQuery } from 'types/Tracing';
+import { TLSStatus } from '../types/TLSStatus';
+import { Workload, WorkloadNamespaceResponse } from '../types/Workload';
 
 export const ANONYMOUS_USER = 'anonymous';
 
@@ -574,4 +576,8 @@ export const updateExperiment = (namespace: string, name: string, specBody: stri
 
 export const getMetricsStats = (queries: MetricsStatsQuery[]) => {
   return newRequest<MetricsStatsResult>(HTTP_VERBS.POST, urls.metricsStats, {}, { queries: queries });
+};
+
+export const getMeshClusters = () => {
+  return newRequest<MeshClusters>(HTTP_VERBS.GET, urls.meshClusters, {}, {});
 };

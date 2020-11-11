@@ -138,6 +138,7 @@ const conf = {
       jaegerTrace: (idTrace: string) => `api/traces/${idTrace}`,
       logout: 'api/logout',
       metricsStats: 'api/stats/metrics',
+      meshClusters: 'api/mesh_clusters',
       namespaces: 'api/namespaces',
       namespace: (namespace: string) => `api/namespaces/${namespace}`,
       namespacesGraphElements: `api/namespaces/graph`,

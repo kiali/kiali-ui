@@ -16,6 +16,7 @@ import ExperimentListPage from './pages/extensions/iter8/Iter8ExperimentList/Exp
 import ExperimentCreatePageContainer from './pages/extensions/iter8/Iter8ExperimentDetails/ExperimentCreatePage';
 import ExperimentDetailsPage from './pages/extensions/iter8/Iter8ExperimentDetails/ExperimentDetailsPage';
 import ExperimentCreateFromFileContainer from './pages/extensions/iter8/Iter8ExperimentDetails/ExperimentCreateFromFile';
+import MeshStructurePage from './pages/MeshStructure/MeshStructurePage';
 
 /**
  * Return array of objects that describe vertical menu
@@ -55,6 +56,10 @@ const navItems: MenuItem[] = [
   {
     title: 'Distributed Tracing',
     to: '/jaeger'
+  },
+  {
+    title: 'Mesh Structure',
+    to: '/mesh_structure'
   }
 ];
 
@@ -141,6 +146,10 @@ const pathRoutes: Path[] = [
   {
     path: '/' + Paths.JAEGER,
     component: undefined
+  },
+  {
+    path: '/mesh_structure',
+    component: MeshStructurePage
   }
 ];
 
@@ -167,6 +176,10 @@ const secondaryMastheadRoutes: Path[] = [
   },
   {
     path: '/extensions/iter8',
+    component: DefaultSecondaryMasthead
+  },
+  {
+    path: '/mesh_structure',
     component: DefaultSecondaryMasthead
   }
 ];

@@ -5,13 +5,14 @@ import NamespaceDropdownContainer from '../NamespaceDropdown';
 
 const titles = [
   'applications',
-  'workloads',
-  'services',
   'istio',
   'istio/new',
+  'mesh_structure',
   'extensions/iter8',
   'extensions/iter8/new',
-  'extensions/iter8/newfromfile'
+  'extensions/iter8/newfromfile',
+  'services',
+  'workloads'
 ];
 export default class DefaultSecondaryMasthead extends React.Component {
   showTitle() {
@@ -31,6 +32,8 @@ export default class DefaultSecondaryMasthead extends React.Component {
         disabled = true;
       } else if (path === 'extensions/iter8/newfromfile') {
         title = 'Create New Iter8 Experiment from File';
+      } else if (path === 'mesh_structure') {
+        title = 'Mesh Structure';
       }
       return {
         title: (
