@@ -1,10 +1,9 @@
 import * as React from 'react';
 
 import ParameterizedTabs, { activeTab } from '../../../../components/Tab/Tabs';
-import { Link, RouteComponentProps } from 'react-router-dom';
+import { RouteComponentProps } from 'react-router-dom';
 import { RenderHeader } from '../../../../components/Nav/Page';
-import { Breadcrumb, BreadcrumbItem, Tab } from '@patternfly/react-core';
-import { style } from 'typestyle';
+import { Tab } from '@patternfly/react-core';
 import * as API from '../../../../services/Api';
 import * as AlertUtils from '../../../../utils/AlertUtils';
 import {
@@ -24,7 +23,6 @@ import CriteriaInfoDescription from './CriteriaInfoDescription';
 import AssessmentInfoDescription from './AssessmentInfoDescription';
 import { KialiAppState } from '../../../../store/Store';
 import { durationSelector } from '../../../../store/Selectors';
-import { PfColors } from '../../../../components/Pf/PfColors';
 import { DurationInSeconds, TimeInMilliseconds } from '../../../../types/Common';
 import RefreshContainer from '../../../../components/Refresh/Refresh';
 
@@ -58,13 +56,13 @@ const tabIndex: { [tab: string]: number } = {
   assessment: 1,
   criteria: 2
 };
-const extensionHeader = style({
+/*const extensionHeader = style({
   padding: '0px 20px 16px 0px',
   backgroundColor: PfColors.White
 });
 const breadcrumbPadding = style({
   padding: '22px 0 5px 0'
-});
+});*/
 
 class ExperimentDetailsPage extends React.Component<Props, State> {
   constructor(props: Props) {
@@ -170,33 +168,6 @@ class ExperimentDetailsPage extends React.Component<Props, State> {
       });
     }
   }
-
-  // Extensions breadcrumb,
-  breadcrumb = () => {
-    return (
-      <div className={extensionHeader}>
-        <Breadcrumb className={breadcrumbPadding}>
-          <BreadcrumbItem>
-            <Link to={`/extensions/iter8`}>Iter8 Experiments</Link>
-          </BreadcrumbItem>
-          <BreadcrumbItem>
-            <Link to={`/extensions/iter8?namespaces=${this.props.match.params.namespace}`}>
-              Namespace: {this.props.match.params.namespace}
-            </Link>
-          </BreadcrumbItem>
-          <BreadcrumbItem isActive={true}>
-            <Link
-              to={
-                '/extensions/namespaces/' + this.props.match.params.namespace + '/iter8/' + this.props.match.params.name
-              }
-            >
-              {this.props.match.params.name}
-            </Link>
-          </BreadcrumbItem>
-        </Breadcrumb>
-      </div>
-    );
-  };
 
   backToList = () => {
     // Back to list page
@@ -315,11 +286,32 @@ class ExperimentDetailsPage extends React.Component<Props, State> {
     const tabsArray: any[] = [overviewTab, assessmentTab, criteriaTab];
     return (
       <>
-        <RenderHeader>
-          {this.breadcrumb()}
-          {this.renderRightToolbar()}
-        </RenderHeader>
-
+        <RenderHeader
+          location={this.props.location}
+          rightToolbar={
+            <RefreshContainer
+              id="time_range_refresh"
+              hideLabel={true}
+              handleRefresh={this.doRefresh}
+              manageURL={true}
+            />
+          }
+          actionsToolbar={
+            <Iter8Dropdown
+              experimentName={this.props.match.params.name}
+              manualOverride={this.state.manualOverride}
+              canDelete={this.state.canDelete}
+              startTime={this.state.experiment ? this.state.experiment.experimentItem.startTime : ''}
+              endTime={this.state.experiment ? this.state.experiment.experimentItem.endTime : ''}
+              phase={this.state.experiment ? this.state.experiment.experimentItem.phase : ' '}
+              onDelete={this.doDelete}
+              onResume={() => this.doIter8Action('resume')}
+              onPause={() => this.doIter8Action('pause')}
+              onTerminate={() => this.doIter8Action('terminate')}
+              doTrafficSplit={this.doTrafficSplit}
+            />
+          }
+        />
         <ParameterizedTabs
           id="basic-tabs"
           onSelect={tabValue => {
