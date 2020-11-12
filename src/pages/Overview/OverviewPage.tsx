@@ -226,7 +226,7 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
             this.fetchTLS(isAscending, sortField);
             this.fetchValidations(isAscending, sortField);
             this.fetchPermissions();
-            if (displayMode === OverviewDisplayMode.EXPAND) {
+            if (displayMode !== OverviewDisplayMode.COMPACT) {
               this.fetchMetrics();
             }
           }
@@ -761,11 +761,6 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
         {filteredNamespaces.length > 0 ? (
           <RenderComponentScroll
             className={this.state.displayMode === OverviewDisplayMode.LIST ? gridStyleList : gridStyleCompact}
-            overview={
-              this.sFOverviewToolbar.current && this.sFOverviewToolbar.current.state.activeFilters.filters.length > 0
-                ? true
-                : false
-            }
           >
             {this.state.displayMode === OverviewDisplayMode.LIST ? (
               <VirtualList
