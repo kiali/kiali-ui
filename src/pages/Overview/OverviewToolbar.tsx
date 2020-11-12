@@ -79,6 +79,10 @@ const rightToolbarStyle = style({
   padding: '10px 0px 0px 0px'
 });
 
+const timeToolbarStyle = style({
+  textAlign: 'right'
+});
+
 const actionsToolbarStyle = style({
   paddingTop: '17px'
 });
@@ -178,14 +182,33 @@ export class OverviewToolbar extends React.Component<Props, State> {
         )}
       </StatefulFilters>
     );
+    const timeToolbar = (
+      <div className={timeToolbarStyle}>
+        <TimeControlsContainer
+          key="overview-time-range"
+          id="overview-time-range"
+          disabled={false}
+          handleRefresh={this.props.onRefresh}
+        />
+      </div>
+    );
     const actionsToolbar = (
       <div className={actionsToolbarStyle}>
+        <ToolbarDropdown
+          id="overview-type"
+          disabled={false}
+          handleSelect={this.updateOverviewType}
+          nameDropdown="Show health for"
+          value={this.state.overviewType}
+          label={overviewTypes[this.state.overviewType]}
+          options={overviewTypes}
+        />
         <Tooltip content={<>Expand view</>} position={TooltipPosition.top}>
           <Button
             onClick={() => this.props.setDisplayMode(OverviewDisplayMode.EXPAND)}
             variant="plain"
             isActive={this.props.displayMode === OverviewDisplayMode.EXPAND}
-            style={{ padding: '0 4px 0 4px' }}
+            style={{ padding: '0 4px 0 16px' }}
           >
             <ThLargeIcon />
           </Button>
@@ -210,15 +233,6 @@ export class OverviewToolbar extends React.Component<Props, State> {
             <ListIcon />
           </Button>
         </Tooltip>
-        <ToolbarDropdown
-          id="overview-type"
-          disabled={false}
-          handleSelect={this.updateOverviewType}
-          nameDropdown="Show health for"
-          value={this.state.overviewType}
-          label={overviewTypes[this.state.overviewType]}
-          options={overviewTypes}
-        />
       </div>
     );
     return (
@@ -226,12 +240,7 @@ export class OverviewToolbar extends React.Component<Props, State> {
         <div className={containerFlex}>
           <div className={filterToolbarStyle}>{filterToolbar}</div>
           <div className={rightToolbarStyle}>
-            <TimeControlsContainer
-              key="overview-time-range"
-              id="overview-time-range"
-              disabled={false}
-              handleRefresh={this.props.onRefresh}
-            />
+            {timeToolbar}
             {actionsToolbar}
           </div>
         </div>
