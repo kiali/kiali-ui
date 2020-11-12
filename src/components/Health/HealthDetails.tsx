@@ -52,7 +52,7 @@ export class HealthDetails extends React.PureComponent<Props, {}> {
         )}
       </div>
     ) : (
-      <></>
+      <div key={idx}></div>
     );
   };
 
