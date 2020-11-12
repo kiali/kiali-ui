@@ -40,7 +40,6 @@ import {
   Tooltip,
   TooltipPosition
 } from '@patternfly/react-core';
-import TimeControlsContainer from '../../../../components/Time/TimeControls';
 import { PfColors } from '../../../../components/Pf/PfColors';
 import { KialiIcon } from '../../../../config/KialiIcon';
 import { OkIcon, PowerOffIcon } from '@patternfly/react-icons';
@@ -49,6 +48,7 @@ import { KialiAppState } from '../../../../store/Store';
 import { activeNamespacesSelector, durationSelector } from '../../../../store/Selectors';
 import { connect } from 'react-redux';
 import DefaultSecondaryMasthead from '../../../../components/DefaultSecondaryMasthead/DefaultSecondaryMasthead';
+import RefreshContainer from '../../../../components/Refresh/Refresh';
 
 // Style constants
 const containerPadding = style({ padding: '20px 20px 20px 20px' });
@@ -527,11 +527,12 @@ class ExperimentListPageComponent extends React.Component<Props, State> {
         <div style={{ backgroundColor: '#fff' }}>
           <DefaultSecondaryMasthead
             rightToolbar={
-              <TimeControlsContainer
-                key={'DurationDropdown'}
-                id="exp-list-duration-dropdown"
-                handleRefresh={this.updateListItems}
+              <RefreshContainer
+                id="exp_list_refresh"
                 disabled={false}
+                hideLabel={true}
+                handleRefresh={this.updateListItems}
+                manageURL={true}
               />
             }
             actionsToolbar={this.actionsToolbar()}
