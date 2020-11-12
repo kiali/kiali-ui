@@ -8,7 +8,8 @@ const widthAuto = style({
 
 const spacingRight = style({
   marginRight: '10px',
-  marginTop: '10px'
+  marginTop: '10px',
+  display: 'inline'
 });
 
 type ToolbarDropdownProps = {

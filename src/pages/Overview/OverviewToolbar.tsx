@@ -19,7 +19,8 @@ import { ThinStyle } from '../../components/Filters/FilterStyles';
 import * as Sorts from './Sorts';
 import * as Filters from './Filters';
 import TimeControlsContainer from '../../components/Time/TimeControls';
-import OverviewHeader from './OverviewHeader';
+import { style } from 'typestyle';
+import { PfColors } from '../../components/Pf/PfColors';
 
 type ReduxProps = {
   duration: DurationInSeconds;
@@ -57,6 +58,30 @@ const sortTypes = (function () {
   });
   return o;
 })();
+
+const containerPadding = style({
+  backgroundColor: PfColors.White,
+  padding: '0px 20px 0px 20px'
+});
+
+const containerFlex = style({
+  display: 'flex',
+  flexWrap: 'wrap'
+});
+
+const filterToolbarStyle = style({
+  paddingTop: '10px'
+});
+
+const rightToolbarStyle = style({
+  marginLeft: 'auto',
+  height: '118px',
+  padding: '10px 0px 0px 0px'
+});
+
+const actionsToolbarStyle = style({
+  paddingTop: '17px'
+});
 
 export type OverviewType = keyof typeof overviewTypes;
 
@@ -154,16 +179,7 @@ export class OverviewToolbar extends React.Component<Props, State> {
       </StatefulFilters>
     );
     const actionsToolbar = (
-      <>
-        <ToolbarDropdown
-          id="overview-type"
-          disabled={false}
-          handleSelect={this.updateOverviewType}
-          nameDropdown="Show health for"
-          value={this.state.overviewType}
-          label={overviewTypes[this.state.overviewType]}
-          options={overviewTypes}
-        />
+      <div className={actionsToolbarStyle}>
         <Tooltip content={<>Expand view</>} position={TooltipPosition.top}>
           <Button
             onClick={() => this.props.setDisplayMode(OverviewDisplayMode.EXPAND)}
@@ -194,21 +210,32 @@ export class OverviewToolbar extends React.Component<Props, State> {
             <ListIcon />
           </Button>
         </Tooltip>
-      </>
+        <ToolbarDropdown
+          id="overview-type"
+          disabled={false}
+          handleSelect={this.updateOverviewType}
+          nameDropdown="Show health for"
+          value={this.state.overviewType}
+          label={overviewTypes[this.state.overviewType]}
+          options={overviewTypes}
+        />
+      </div>
     );
     return (
-      <OverviewHeader
-        filterToolbar={filterToolbar}
-        rightToolbar={
-          <TimeControlsContainer
-            key="overview-time-range"
-            id="overview-time-range"
-            disabled={false}
-            handleRefresh={this.props.onRefresh}
-          />
-        }
-        actionsToolbar={actionsToolbar}
-      />
+      <div className={containerPadding}>
+        <div className={containerFlex}>
+          <div className={filterToolbarStyle}>{filterToolbar}</div>
+          <div className={rightToolbarStyle}>
+            <TimeControlsContainer
+              key="overview-time-range"
+              id="overview-time-range"
+              disabled={false}
+              handleRefresh={this.props.onRefresh}
+            />
+            {actionsToolbar}
+          </div>
+        </div>
+      </div>
     );
   }
 }
