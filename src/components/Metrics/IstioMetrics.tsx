@@ -7,7 +7,7 @@ import { style } from 'typestyle';
 import { RenderComponentScroll } from '../../components/Nav/Page';
 import * as API from '../../services/Api';
 import { KialiAppState } from '../../store/Store';
-import { TimeRange, evalTimeRange } from '../../types/Common';
+import { TimeRange, evalTimeRange, isEqualTimeRange } from '../../types/Common';
 import { Direction, IstioMetricsOptions, Reporter } from '../../types/MetricsOptions';
 import * as AlertUtils from '../../utils/AlertUtils';
 
@@ -91,27 +91,30 @@ class IstioMetrics extends React.Component<Props, MetricsState> {
     this.refresh();
   }
 
-  componentDidUpdate(prev: Props) {
+  componentDidUpdate(prevProps: Props) {
     console.log('TODELETE IstioMetrics - componentDidUpdate() ');
+    const timeRange = retrieveTimeRange() || MetricsHelper.defaultMetricsDuration;
+    console.log('TODELETE IstioMetrics timeRange ' + JSON.stringify(timeRange));
+    console.log('TODELETE IstioMetrics prevState.timeRange ' + JSON.stringify(this.state.timeRange));
     if (
-      this.props.direction !== prev.direction ||
-      this.props.namespace !== prev.namespace ||
-      this.props.object !== prev.object ||
-      this.props.objectType !== prev.objectType ||
-      this.props.lastRefresh !== prev.lastRefresh
+      this.props.direction !== prevProps.direction ||
+      this.props.namespace !== prevProps.namespace ||
+      this.props.object !== prevProps.object ||
+      this.props.objectType !== prevProps.objectType ||
+      this.props.lastRefresh !== prevProps.lastRefresh ||
+      !isEqualTimeRange(timeRange, this.state.timeRange)
     ) {
-      if (this.props.direction !== prev.direction) {
+      if (this.props.direction !== prevProps.direction) {
         const settings = MetricsHelper.retrieveMetricsSettings();
         this.options = this.initOptions(settings);
       }
       this.spanOverlay.reset();
-      const timeRange = retrieveTimeRange() || MetricsHelper.defaultMetricsDuration;
-      this.setState({ dashboard: undefined, spanOverlay: undefined, timeRange: timeRange });
-      this.refresh();
+      this.setState({ dashboard: undefined, spanOverlay: undefined, timeRange: timeRange }, () => this.refresh());
     }
   }
 
   private refresh = () => {
+    console.log('TODELETE IstioMetrics - refresh() ');
     this.fetchMetrics();
     if (this.props.jaegerIntegration) {
       this.spanOverlay.fetch({
@@ -124,6 +127,7 @@ class IstioMetrics extends React.Component<Props, MetricsState> {
   };
 
   private fetchMetrics = () => {
+    console.log('TODELETE IstioMetrics - fetchMetrics() ');
     // Time range needs to be reevaluated everytime fetching
     MetricsHelper.timeRangeToOptions(this.state.timeRange, this.options);
     let promise: Promise<API.Response<DashboardModel>>;

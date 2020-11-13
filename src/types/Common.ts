@@ -68,3 +68,12 @@ export const durationToBounds = (duration: DurationInSeconds): BoundsInMilliseco
     from: new Date().getTime() - duration * 1000
   };
 };
+
+export const isEqualTimeRange = (t1: TimeRange, t2: TimeRange): boolean => {
+  if ((t1 as BoundsInMilliseconds).from && (t2 as BoundsInMilliseconds).from) {
+    const t1b = t1 as BoundsInMilliseconds;
+    const t2b = t2 as BoundsInMilliseconds;
+    return t1b.from === t2b.from && t1b.to === t2b.to;
+  }
+  return t1 === t2;
+};

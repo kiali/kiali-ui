@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { RouteComponentProps } from 'react-router-dom';
-import { ExclamationCircleIcon, ExternalLinkAltIcon } from '@patternfly/react-icons';
+import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { Tab } from '@patternfly/react-core';
 
 import * as API from '../../services/Api';
@@ -17,7 +17,6 @@ import { KialiAppState } from '../../store/Store';
 import { durationSelector } from '../../store/Selectors';
 import ParameterizedTabs, { activeTab } from '../../components/Tab/Tabs';
 import { JaegerInfo } from '../../types/JaegerInfo';
-import { PfColors } from '../../components/Pf/PfColors';
 import TracesComponent from '../../components/JaegerIntegration/TracesComponent';
 import TrafficDetails from 'components/TrafficList/TrafficDetails';
 import TimeControlsContainer from '../../components/Time/TimeControls';
@@ -32,7 +31,6 @@ type AppDetailsState = {
   // currentTab is needed to (un)mount tab components
   // when the tab is not rendered.
   currentTab: string;
-  nbErrorTraces: number;
 };
 
 type ReduxProps = {
@@ -57,43 +55,38 @@ const nextTabIndex = 5;
 class AppDetails extends React.Component<AppDetailsProps, AppDetailsState> {
   constructor(props: AppDetailsProps) {
     super(props);
-    this.state = { currentTab: activeTab(tabName, defaultTab), lastRefresh: new Date().getTime(), nbErrorTraces: 0 };
+    this.state = { currentTab: activeTab(tabName, defaultTab), lastRefresh: new Date().getTime() };
   }
 
   componentDidMount(): void {
+    console.log('TODELETE AppDetails componentDidMount');
     this.fetchApp();
-    this.fetchJaegerErrors();
   }
 
   componentDidUpdate(prevProps: AppDetailsProps) {
-    const active = activeTab(tabName, defaultTab);
+    console.log('TODELETE AppDetails componentDidUpdate');
     if (
       this.props.match.params.namespace !== prevProps.match.params.namespace ||
-      this.props.match.params.app !== prevProps.match.params.app ||
-      this.state.currentTab !== active ||
-      this.props.duration !== prevProps.duration
+      this.props.match.params.app !== prevProps.match.params.app
     ) {
-      this.setState({ currentTab: active }, () => this.fetchJaegerErrors());
       this.fetchApp();
     }
   }
 
-  private fetchJaegerErrors = () => {
-    if (this.props.jaegerInfo && this.props.jaegerInfo.integration) {
-      API.getJaegerErrorTraces(this.props.match.params.namespace, this.props.match.params.app, this.props.duration)
-        .then(inError => {
-          this.setState({ nbErrorTraces: inError.data });
-        })
-        .catch(error => {
-          AlertUtils.addError('Could not fetch Jaeger errors.', error);
-        });
-    }
-  };
-
   private fetchApp = () => {
+    console.log('TODELETE AppDetails fetchApp');
     API.getApp(this.props.match.params.namespace, this.props.match.params.app)
       .then(details => this.setState({ app: details.data, lastRefresh: new Date().getTime() }))
       .catch(error => AlertUtils.addError('Could not fetch App Details.', error));
+  };
+
+  private onRefresh = () => {
+    console.log('TODELETE AppDetails onRefresh()');
+    if (this.state.currentTab === 'info') {
+      this.fetchApp();
+    } else {
+      this.setState({ lastRefresh: new Date().getTime() });
+    }
   };
 
   private runtimeTabs() {
@@ -127,7 +120,7 @@ class AppDetails extends React.Component<AppDetailsProps, AppDetailsState> {
   private staticTabs() {
     const overTab = (
       <Tab title="Overview" eventKey={0} key={'Overview'}>
-        <AppInfo app={this.state.app} duration={this.props.duration} />
+        <AppInfo app={this.state.app} duration={this.props.duration} lastRefresh={this.state.lastRefresh} />
       </Tab>
     );
 
@@ -173,21 +166,13 @@ class AppDetails extends React.Component<AppDetailsProps, AppDetailsState> {
     // Conditional Traces tab
     if (this.props.jaegerInfo && this.props.jaegerInfo.enabled) {
       if (this.props.jaegerInfo.integration) {
-        const jaegerTitle =
-          this.state.nbErrorTraces > 0 ? (
-            <>
-              Traces <ExclamationCircleIcon color={PfColors.Red200} />{' '}
-            </>
-          ) : (
-            'Traces'
-          );
         tabsArray.push(
-          <Tab eventKey={4} style={{ textAlign: 'center' }} title={jaegerTitle} key={tracesTabName}>
+          <Tab eventKey={4} style={{ textAlign: 'center' }} title={'Traces'} key={tracesTabName}>
             <TracesComponent
               namespace={this.props.match.params.namespace}
               target={this.props.match.params.app}
               targetKind={'app'}
-              showErrors={this.state.nbErrorTraces > 0}
+              showErrors={false}
               duration={this.props.duration}
             />
           </Tab>
@@ -220,19 +205,20 @@ class AppDetails extends React.Component<AppDetailsProps, AppDetailsState> {
   }
 
   render() {
+    console.log('TODELETE AppDetails render');
     const timeControlComponent = (
       <TimeControlsContainer
         key={'DurationDropdown'}
         id="app-info-duration-dropdown"
-        handleRefresh={this.fetchApp}
+        handleRefresh={this.onRefresh}
         disabled={false}
       />
     );
     const timeRange = retrieveTimeRange() || MetricsHelper.defaultMetricsDuration;
     const timeRangeComponent = (
       <>
-        <TimeRangeComponent range={timeRange} onChanged={this.fetchApp} tooltip={'Time range'} allowCustom={true} />
-        <RefreshContainer id="metrics-refresh" handleRefresh={this.fetchApp} hideLabel={true} manageURL={true} />
+        <TimeRangeComponent range={timeRange} onChanged={this.onRefresh} tooltip={'Time range'} allowCustom={true} />
+        <RefreshContainer id="metrics-refresh" handleRefresh={this.onRefresh} hideLabel={true} manageURL={true} />
       </>
     );
 

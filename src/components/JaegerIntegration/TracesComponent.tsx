@@ -127,10 +127,12 @@ class TracesComponent extends React.Component<TracesProps, TracesState> {
   }
 
   componentDidMount() {
+    console.log('TODELETE TracesComponent componentDidMount');
     this.refresh();
   }
 
   componentDidUpdate(prevProps: TracesProps) {
+    console.log('TODELETE TracesComponent componentDidUpdate');
     // Selected trace (coming from redux) might have been reloaded and needs to be updated within the traces list
     // Check reference of selected trace
     if (this.props.selectedTrace && prevProps.selectedTrace !== this.props.selectedTrace) {
@@ -142,9 +144,13 @@ class TracesComponent extends React.Component<TracesProps, TracesState> {
         this.setState({ traces: traces });
       }
     }
+    if (prevProps.duration !== this.props.duration) {
+      this.refresh();
+    }
   }
 
   private refresh = () => {
+    console.log('TODELETE TracesComponent refresh');
     this.fetcher.fetch(
       {
         namespace: this.props.namespace,
