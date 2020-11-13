@@ -1,3 +1,4 @@
+import * as React from 'react';
 import WorkloadListPage from './pages/WorkloadList/WorkloadListPage';
 import ServiceListPage from './pages/ServiceList/ServiceListPage';
 import IstioConfigPage from './pages/IstioConfigList/IstioConfigListPage';
@@ -58,7 +59,7 @@ const navItems: MenuItem[] = [
     to: '/jaeger'
   },
   {
-    title: 'Mesh Structure',
+    title: 'Mesh',
     to: '/mesh_structure'
   }
 ];
@@ -180,7 +181,7 @@ const secondaryMastheadRoutes: Path[] = [
   },
   {
     path: '/mesh_structure',
-    component: DefaultSecondaryMasthead
+    render: () => <DefaultSecondaryMasthead hideNamespaceSelector={true} />
   }
 ];
 
