@@ -174,6 +174,7 @@ class AppDetails extends React.Component<AppDetailsProps, AppDetailsState> {
               targetKind={'app'}
               showErrors={false}
               duration={this.props.duration}
+              lastRefresh={this.state.lastRefresh}
             />
           </Tab>
         );

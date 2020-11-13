@@ -68,22 +68,22 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
   }
 
   componentDidMount(): void {
+    console.log('TODELETE ServiceDetails componentDidMount');
     this.fetchService();
   }
 
   componentDidUpdate(prevProps: ServiceDetailsProps, _prevState: ServiceDetailsState) {
-    const active = activeTab(tabName, defaultTab);
+    console.log('TODELETE ServiceDetails componentDidMount');
     if (
       prevProps.match.params.namespace !== this.props.match.params.namespace ||
-      prevProps.match.params.service !== this.props.match.params.service ||
-      this.state.currentTab !== active ||
-      prevProps.duration !== this.props.duration
+      prevProps.match.params.service !== this.props.match.params.service
     ) {
-      this.setState({ currentTab: active, lastRefresh: new Date().getTime() });
+      this.fetchService();
     }
   }
 
   private fetchService = () => {
+    console.log('TODELETE ServiceDetails fetchService');
     this.promises.cancelAll();
     this.promises
       .register('namespaces', API.getNamespaces())
@@ -133,6 +133,15 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
       .catch(error => {
         AlertUtils.addError('Could not fetch PeerAuthentications.', error);
       });
+  };
+
+  private onRefresh = () => {
+    console.log('TODELETE ServiceDetails onRefresh()');
+    if (this.state.currentTab === 'info') {
+      this.fetchService();
+    } else {
+      this.setState({ lastRefresh: new Date().getTime() });
+    }
   };
 
   private renderTabs() {
@@ -185,6 +194,7 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
             targetKind={'service'}
             showErrors={false}
             duration={this.props.duration}
+            lastRefresh={this.state.lastRefresh}
           />
         </Tab>
       );
@@ -194,19 +204,20 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
   }
 
   render() {
+    console.log('TODELETE ServiceDetails render');
     const timeControlComponent = (
       <TimeControlsContainer
         key={'DurationDropdown'}
         id="service-info-duration-dropdown"
-        handleRefresh={this.fetchService}
+        handleRefresh={this.onRefresh}
         disabled={false}
       />
     );
     const timeRange = retrieveTimeRange() || MetricsHelper.defaultMetricsDuration;
     const timeRangeComponent = (
       <>
-        <TimeRangeComponent range={timeRange} onChanged={this.fetchService} tooltip={'Time range'} allowCustom={true} />
-        <RefreshContainer id="metrics-refresh" handleRefresh={this.fetchService} hideLabel={true} manageURL={true} />
+        <TimeRangeComponent range={timeRange} onChanged={this.onRefresh} tooltip={'Time range'} allowCustom={true} />
+        <RefreshContainer id="metrics-refresh" handleRefresh={this.onRefresh} hideLabel={true} manageURL={true} />
       </>
     );
 
@@ -234,7 +245,7 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
         peerAuthentications={this.state.peerAuthentications}
         tlsStatus={this.state.serviceDetails.namespaceMTLS}
         onChange={() => {
-          this.fetchService();
+          this.onRefresh();
         }}
       />
     ) : undefined;

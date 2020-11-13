@@ -24,6 +24,7 @@ type WorkloadInfoProps = {
   namespace: string;
   workload?: Workload;
   duration: DurationInSeconds;
+  lastRefresh: number;
   refreshWorkload: () => void;
 };
 
@@ -70,20 +71,15 @@ class WorkloadInfo extends React.Component<WorkloadInfoProps, WorkloadInfoState>
   }
 
   componentDidMount() {
+    console.log('TODELETE WorkloadInfo - componentDidMount()');
     this.fetchBackend();
   }
 
   componentDidUpdate(prev: WorkloadInfoProps) {
-    const aTab = activeTab(tabName, defaultTab);
-
-    if (this.state.currentTab !== aTab) {
-      this.setState({
-        currentTab: aTab
-      });
-    }
-
+    console.log('TODELETE WorkloadInfo - componentDidUpdate()');
     // Fetch WorkloadInfo backend on duration changes or workload updates (reference comparison)
-    if (prev.duration !== this.props.duration || prev.workload !== this.props.workload) {
+    const lastRefreshChanged = prev.lastRefresh !== this.props.lastRefresh;
+    if (prev.duration !== this.props.duration || lastRefreshChanged) {
       this.fetchBackend();
     }
   }

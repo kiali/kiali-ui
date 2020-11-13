@@ -58,23 +58,22 @@ class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, Workload
   }
 
   componentDidMount(): void {
+    console.log('TODELETE WorkloadDetails componentDidMount');
     this.fetchWorkload();
   }
 
   componentDidUpdate(prevProps: WorkloadDetailsPageProps) {
-    const aTab = activeTab(tabName, defaultTab);
+    console.log('TODELETE WorkloadDetails componentDidUpdate');
     if (
       this.props.match.params.namespace !== prevProps.match.params.namespace ||
-      this.props.match.params.workload !== prevProps.match.params.workload ||
-      this.state.currentTab !== aTab ||
-      this.props.duration !== prevProps.duration
+      this.props.match.params.workload !== prevProps.match.params.workload
     ) {
-      this.setState({ currentTab: aTab });
       this.fetchWorkload();
     }
   }
 
   private fetchWorkload = () => {
+    console.log('TODELETE WorkloadDetails fetchWorkload');
     API.getWorkload(this.props.match.params.namespace, this.props.match.params.workload)
       .then(details =>
         this.setState({
@@ -83,6 +82,15 @@ class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, Workload
         })
       )
       .catch(error => AlertUtils.addError('Could not fetch Workload.', error));
+  };
+
+  private onRefresh = () => {
+    console.log('TODELETE WorkloadDetails onRefresh()');
+    if (this.state.currentTab === 'info' || this.state.currentTab === 'logs') {
+      this.fetchWorkload();
+    } else {
+      this.setState({ lastRefresh: new Date().getTime() });
+    }
   };
 
   private staticTabs() {
@@ -94,7 +102,8 @@ class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, Workload
           workload={this.state.workload}
           namespace={this.props.match.params.namespace}
           duration={this.props.duration}
-          refreshWorkload={this.fetchWorkload}
+          lastRefresh={this.state.lastRefresh}
+          refreshWorkload={this.onRefresh}
         />
       </Tab>
     );
@@ -163,6 +172,7 @@ class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, Workload
             targetKind={'workload'}
             showErrors={false}
             duration={this.props.duration}
+            lastRefresh={this.state.lastRefresh}
           />
         </Tab>
       );
@@ -215,20 +225,15 @@ class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, Workload
       <TimeControlsContainer
         key={'DurationDropdown'}
         id="app-info-duration-dropdown"
-        handleRefresh={this.fetchWorkload}
+        handleRefresh={this.onRefresh}
         disabled={false}
       />
     );
     const timeRange = retrieveTimeRange() || MetricsHelper.defaultMetricsDuration;
     const timeRangeComponent = (
       <>
-        <TimeRangeComponent
-          range={timeRange}
-          onChanged={this.fetchWorkload}
-          tooltip={'Time range'}
-          allowCustom={true}
-        />
-        <RefreshContainer id="metrics-refresh" handleRefresh={this.fetchWorkload} hideLabel={true} manageURL={true} />
+        <TimeRangeComponent range={timeRange} onChanged={this.onRefresh} tooltip={'Time range'} allowCustom={true} />
+        <RefreshContainer id="metrics-refresh" handleRefresh={this.onRefresh} hideLabel={true} manageURL={true} />
       </>
     );
 
@@ -248,7 +253,7 @@ class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, Workload
         <WorkloadWizardDropdown
           namespace={this.props.match.params.namespace}
           workload={this.state.workload}
-          onChange={this.fetchWorkload}
+          onChange={this.onRefresh}
         />
       ) : undefined;
     return (

@@ -57,10 +57,12 @@ class ServiceInfo extends React.Component<Props, ServiceInfoState> {
   }
 
   componentDidMount() {
+    console.log('TODELETE ServiceInfo componentDidMount');
     this.fetchBackend();
   }
 
   componentDidUpdate(prev: Props) {
+    console.log('TODELETE ServiceInfo componentDidUpdate');
     const aTab = activeTab(tabName, defaultTab);
     if (this.state.currentTab !== aTab) {
       this.setState({ currentTab: aTab });
@@ -118,6 +120,7 @@ class ServiceInfo extends React.Component<Props, ServiceInfoState> {
   }
 
   render() {
+    console.log('TODELETE ServiceInfo render');
     const workloads = this.props.serviceDetails?.workloads || [];
     const validationChecks = this.validationChecks();
     const getSeverityIcon: any = (severity: ValidationTypes = ValidationTypes.Error) => (

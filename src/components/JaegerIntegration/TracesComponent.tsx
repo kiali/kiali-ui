@@ -38,6 +38,7 @@ interface TracesProps {
   namespaceSelector: boolean;
   showErrors: boolean;
   duration: number;
+  lastRefresh: number;
   selectedTrace?: JaegerTrace;
 }
 
@@ -144,7 +145,7 @@ class TracesComponent extends React.Component<TracesProps, TracesState> {
         this.setState({ traces: traces });
       }
     }
-    if (prevProps.duration !== this.props.duration) {
+    if (prevProps.duration !== this.props.duration || prevProps.lastRefresh !== this.props.lastRefresh) {
       this.refresh();
     }
   }
