@@ -76,11 +76,9 @@ class AppDetails extends React.Component<AppDetailsProps, AppDetailsState> {
 
   private fetchApp = () => {
     console.log('TODELETE AppDetails fetchApp');
-    if (this.state.currentTab === 'info') {
-      API.getApp(this.props.match.params.namespace, this.props.match.params.app)
-        .then(details => this.setState({ app: details.data }))
-        .catch(error => AlertUtils.addError('Could not fetch App Details.', error));
-    }
+    API.getApp(this.props.match.params.namespace, this.props.match.params.app)
+      .then(details => this.setState({ app: details.data }))
+      .catch(error => AlertUtils.addError('Could not fetch App Details.', error));
   };
 
   private runtimeTabs() {
