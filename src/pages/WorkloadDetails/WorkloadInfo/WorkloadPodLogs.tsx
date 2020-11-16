@@ -18,7 +18,7 @@ import { Pod, PodLogs, LogEntry } from '../../../types/IstioObjects';
 import { getPodLogs, Response } from '../../../services/Api';
 import { CancelablePromise, makeCancelablePromise } from '../../../utils/CancelablePromises';
 import { ToolbarDropdown } from '../../../components/ToolbarDropdown/ToolbarDropdown';
-import { TimeRange, evalTimeRange } from '../../../types/Common';
+import { TimeRange, evalTimeRange, TimeInMilliseconds } from '../../../types/Common';
 import { RenderComponentScroll } from '../../../components/Nav/Page';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import Splitter from 'm-react-splitters';
@@ -27,11 +27,13 @@ import screenfull, { Screenfull } from 'screenfull';
 import { retrieveTimeRange } from 'components/Time/TimeRangeHelper';
 import * as MetricsHelper from '../../../components/Metrics/Helper';
 import { serverConfig } from 'config';
+import { KialiAppState } from '../../../store/Store';
+import { connect } from 'react-redux';
 
 export interface WorkloadPodLogsProps {
   namespace: string;
   pods: Pod[];
-  lastRefresh: number;
+  lastRefreshAt: TimeInMilliseconds;
 }
 
 const NoAppContainer = 'n/a';
@@ -155,7 +157,7 @@ const logsTextarea = (enabled = true, position: TextAreaPosition = 'top', hasTit
     whiteSpace: 'pre'
   });
 
-export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodLogsState> {
+class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodLogsState> {
   private loadProxyLogsPromise?: CancelablePromise<Response<PodLogs>[]>;
   private loadAppLogsPromise?: CancelablePromise<Response<PodLogs>[]>;
   private podOptions: string[] = [];
@@ -235,7 +237,7 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
     const updateContainer = newContainer && newContainer !== prevContainer;
 
     const updateTailLines = this.state.tailLines && prevState.tailLines !== this.state.tailLines;
-    const lastRefreshChanged = prevProps.lastRefresh !== this.props.lastRefresh;
+    const lastRefreshChanged = prevProps.lastRefreshAt !== this.props.lastRefreshAt;
     if (updateContainerInfo || updateContainer || updateTailLines || lastRefreshChanged) {
       const pod = this.props.pods[this.state.podValue!];
       console.log('TODELETE WorkloadPodLogs - timeRange: ' + JSON.stringify(timeRange));
@@ -845,3 +847,10 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
 
   private hasEntries = (entries: LogEntry[]): boolean => !!entries && entries.length > 0;
 }
+
+const mapStateToProps = (state: KialiAppState) => ({
+  lastRefreshAt: state.globalState.lastRefreshAt
+});
+
+const WorkloadPodLogsContainer = connect(mapStateToProps)(WorkloadPodLogs);
+export default WorkloadPodLogsContainer;

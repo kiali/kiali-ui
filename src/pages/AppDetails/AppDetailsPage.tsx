@@ -12,7 +12,7 @@ import IstioMetricsContainer from '../../components/Metrics/IstioMetrics';
 import { MetricsObjectTypes } from '../../types/Metrics';
 import CustomMetricsContainer from '../../components/Metrics/CustomMetrics';
 import { RenderHeader } from '../../components/Nav/Page';
-import { DurationInSeconds } from '../../types/Common';
+import { DurationInSeconds, TimeInMilliseconds } from '../../types/Common';
 import { KialiAppState } from '../../store/Store';
 import { durationSelector } from '../../store/Selectors';
 import ParameterizedTabs, { activeTab } from '../../components/Tab/Tabs';
@@ -27,7 +27,6 @@ import RefreshContainer from '../../components/Refresh/Refresh';
 
 type AppDetailsState = {
   app?: App;
-  lastRefresh: number;
   // currentTab is needed to (un)mount tab components
   // when the tab is not rendered.
   currentTab: string;
@@ -36,6 +35,7 @@ type AppDetailsState = {
 type ReduxProps = {
   duration: DurationInSeconds;
   jaegerInfo?: JaegerInfo;
+  lastRefreshAt: TimeInMilliseconds;
 };
 
 type AppDetailsProps = RouteComponentProps<AppId> & ReduxProps;
@@ -55,7 +55,7 @@ const nextTabIndex = 5;
 class AppDetails extends React.Component<AppDetailsProps, AppDetailsState> {
   constructor(props: AppDetailsProps) {
     super(props);
-    this.state = { currentTab: activeTab(tabName, defaultTab), lastRefresh: new Date().getTime() };
+    this.state = { currentTab: activeTab(tabName, defaultTab) };
   }
 
   componentDidMount(): void {
@@ -67,7 +67,8 @@ class AppDetails extends React.Component<AppDetailsProps, AppDetailsState> {
     console.log('TODELETE AppDetails componentDidUpdate');
     if (
       this.props.match.params.namespace !== prevProps.match.params.namespace ||
-      this.props.match.params.app !== prevProps.match.params.app
+      this.props.match.params.app !== prevProps.match.params.app ||
+      this.props.lastRefreshAt !== prevProps.lastRefreshAt
     ) {
       this.fetchApp();
     }
@@ -75,17 +76,10 @@ class AppDetails extends React.Component<AppDetailsProps, AppDetailsState> {
 
   private fetchApp = () => {
     console.log('TODELETE AppDetails fetchApp');
-    API.getApp(this.props.match.params.namespace, this.props.match.params.app)
-      .then(details => this.setState({ app: details.data, lastRefresh: new Date().getTime() }))
-      .catch(error => AlertUtils.addError('Could not fetch App Details.', error));
-  };
-
-  private onRefresh = () => {
-    console.log('TODELETE AppDetails onRefresh()');
     if (this.state.currentTab === 'info') {
-      this.fetchApp();
-    } else {
-      this.setState({ lastRefresh: new Date().getTime() });
+      API.getApp(this.props.match.params.namespace, this.props.match.params.app)
+        .then(details => this.setState({ app: details.data }))
+        .catch(error => AlertUtils.addError('Could not fetch App Details.', error));
     }
   };
 
@@ -120,7 +114,7 @@ class AppDetails extends React.Component<AppDetailsProps, AppDetailsState> {
   private staticTabs() {
     const overTab = (
       <Tab title="Overview" eventKey={0} key={'Overview'}>
-        <AppInfo app={this.state.app} duration={this.props.duration} lastRefresh={this.state.lastRefresh} />
+        <AppInfo app={this.state.app} duration={this.props.duration} />
       </Tab>
     );
 
@@ -131,7 +125,6 @@ class AppDetails extends React.Component<AppDetailsProps, AppDetailsState> {
           itemName={this.props.match.params.app}
           itemType={MetricsObjectTypes.APP}
           namespace={this.props.match.params.namespace}
-          lastRefresh={this.state.lastRefresh}
         />
       </Tab>
     );
@@ -143,7 +136,6 @@ class AppDetails extends React.Component<AppDetailsProps, AppDetailsState> {
           object={this.props.match.params.app}
           objectType={MetricsObjectTypes.APP}
           direction={'inbound'}
-          lastRefresh={this.state.lastRefresh}
         />
       </Tab>
     );
@@ -155,7 +147,6 @@ class AppDetails extends React.Component<AppDetailsProps, AppDetailsState> {
           object={this.props.match.params.app}
           objectType={MetricsObjectTypes.APP}
           direction={'outbound'}
-          lastRefresh={this.state.lastRefresh}
         />
       </Tab>
     );
@@ -174,7 +165,6 @@ class AppDetails extends React.Component<AppDetailsProps, AppDetailsState> {
               targetKind={'app'}
               showErrors={false}
               duration={this.props.duration}
-              lastRefresh={this.state.lastRefresh}
             />
           </Tab>
         );
@@ -208,18 +198,13 @@ class AppDetails extends React.Component<AppDetailsProps, AppDetailsState> {
   render() {
     console.log('TODELETE AppDetails render');
     const timeControlComponent = (
-      <TimeControlsContainer
-        key={'DurationDropdown'}
-        id="app-info-duration-dropdown"
-        handleRefresh={this.onRefresh}
-        disabled={false}
-      />
+      <TimeControlsContainer key={'DurationDropdown'} id="app-info-duration-dropdown" disabled={false} />
     );
     const timeRange = retrieveTimeRange() || MetricsHelper.defaultMetricsDuration;
     const timeRangeComponent = (
       <>
-        <TimeRangeComponent range={timeRange} onChanged={this.onRefresh} tooltip={'Time range'} allowCustom={true} />
-        <RefreshContainer id="metrics-refresh" handleRefresh={this.onRefresh} hideLabel={true} manageURL={true} />
+        <TimeRangeComponent range={timeRange} tooltip={'Time range'} allowCustom={true} />
+        <RefreshContainer id="metrics-refresh" hideLabel={true} manageURL={true} />
       </>
     );
 
@@ -260,7 +245,8 @@ class AppDetails extends React.Component<AppDetailsProps, AppDetailsState> {
 
 const mapStateToProps = (state: KialiAppState) => ({
   duration: durationSelector(state),
-  jaegerInfo: state.jaegerState.info
+  jaegerInfo: state.jaegerState.info,
+  lastRefreshAt: state.globalState.lastRefreshAt
 });
 
 const AppDetailsContainer = connect(mapStateToProps)(AppDetails);

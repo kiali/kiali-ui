@@ -28,7 +28,7 @@ import { config } from '../../config';
 import { TracesFetcher } from './TracesFetcher';
 import { getTimeRangeMicros, buildTags } from './JaegerHelper';
 import SpanDetails from './JaegerResults/SpanDetails';
-import { TargetKind } from 'types/Common';
+import { TargetKind, TimeInMilliseconds } from 'types/Common';
 
 interface TracesProps {
   namespace: string;
@@ -38,8 +38,8 @@ interface TracesProps {
   namespaceSelector: boolean;
   showErrors: boolean;
   duration: number;
-  lastRefresh: number;
   selectedTrace?: JaegerTrace;
+  lastRefreshAt: TimeInMilliseconds;
 }
 
 type IntervalScale = 1 | 1000 | 1000000;
@@ -145,7 +145,7 @@ class TracesComponent extends React.Component<TracesProps, TracesState> {
         this.setState({ traces: traces });
       }
     }
-    if (prevProps.duration !== this.props.duration || prevProps.lastRefresh !== this.props.lastRefresh) {
+    if (prevProps.duration !== this.props.duration || prevProps.lastRefreshAt !== this.props.lastRefreshAt) {
       this.refresh();
     }
   }
@@ -422,7 +422,8 @@ const mapStateToProps = (state: KialiAppState) => {
   return {
     urlJaeger: state.jaegerState.info ? state.jaegerState.info.url : '',
     namespaceSelector: state.jaegerState.info ? state.jaegerState.info.namespaceSelector : true,
-    selectedTrace: state.jaegerState.selectedTrace
+    selectedTrace: state.jaegerState.selectedTrace,
+    lastRefreshAt: state.globalState.lastRefreshAt
   };
 };
 

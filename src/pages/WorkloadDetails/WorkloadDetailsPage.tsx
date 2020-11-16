@@ -13,7 +13,7 @@ import CustomMetricsContainer from '../../components/Metrics/CustomMetrics';
 import { RenderHeader } from '../../components/Nav/Page';
 import { serverConfig } from '../../config/ServerConfig';
 import WorkloadPodLogs from './WorkloadInfo/WorkloadPodLogs';
-import { DurationInSeconds } from '../../types/Common';
+import { DurationInSeconds, TimeInMilliseconds } from '../../types/Common';
 import { KialiAppState } from '../../store/Store';
 import { durationSelector } from '../../store/Selectors';
 import ParameterizedTabs, { activeTab } from '../../components/Tab/Tabs';
@@ -29,13 +29,13 @@ import WorkloadWizardDropdown from '../../components/IstioWizards/WorkloadWizard
 
 type WorkloadDetailsState = {
   workload?: Workload;
-  lastRefresh: number;
   currentTab: string;
 };
 
 type WorkloadDetailsPageProps = RouteComponentProps<WorkloadId> & {
   duration: DurationInSeconds;
   jaegerInfo?: JaegerInfo;
+  lastRefreshAt: TimeInMilliseconds;
 };
 
 const tabName = 'tab';
@@ -54,7 +54,7 @@ const nextTabIndex = 6;
 class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, WorkloadDetailsState> {
   constructor(props: WorkloadDetailsPageProps) {
     super(props);
-    this.state = { currentTab: activeTab(tabName, defaultTab), lastRefresh: new Date().getTime() };
+    this.state = { currentTab: activeTab(tabName, defaultTab) };
   }
 
   componentDidMount(): void {
@@ -66,7 +66,8 @@ class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, Workload
     console.log('TODELETE WorkloadDetails componentDidUpdate');
     if (
       this.props.match.params.namespace !== prevProps.match.params.namespace ||
-      this.props.match.params.workload !== prevProps.match.params.workload
+      this.props.match.params.workload !== prevProps.match.params.workload ||
+      this.props.lastRefreshAt !== prevProps.lastRefreshAt
     ) {
       this.fetchWorkload();
     }
@@ -77,8 +78,7 @@ class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, Workload
     API.getWorkload(this.props.match.params.namespace, this.props.match.params.workload)
       .then(details =>
         this.setState({
-          workload: details.data,
-          lastRefresh: new Date().getTime()
+          workload: details.data
         })
       )
       .catch(error => AlertUtils.addError('Could not fetch Workload.', error));
@@ -88,8 +88,6 @@ class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, Workload
     console.log('TODELETE WorkloadDetails onRefresh()');
     if (this.state.currentTab === 'info' || this.state.currentTab === 'logs') {
       this.fetchWorkload();
-    } else {
-      this.setState({ lastRefresh: new Date().getTime() });
     }
   };
 
@@ -102,7 +100,6 @@ class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, Workload
           workload={this.state.workload}
           namespace={this.props.match.params.namespace}
           duration={this.props.duration}
-          lastRefresh={this.state.lastRefresh}
           refreshWorkload={this.onRefresh}
         />
       </Tab>
@@ -114,18 +111,13 @@ class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, Workload
           itemName={this.props.match.params.workload}
           itemType={MetricsObjectTypes.WORKLOAD}
           namespace={this.props.match.params.namespace}
-          lastRefresh={this.state.lastRefresh}
         />
       </Tab>
     );
     const logTab = (
       <Tab title="Logs" eventKey={2} key={'Logs'}>
         {hasPods ? (
-          <WorkloadPodLogs
-            namespace={this.props.match.params.namespace}
-            pods={this.state.workload!.pods}
-            lastRefresh={this.state.lastRefresh}
-          />
+          <WorkloadPodLogs namespace={this.props.match.params.namespace} pods={this.state.workload!.pods} />
         ) : (
           <EmptyState variant={EmptyStateVariant.full}>
             <Title headingLevel="h5" size="lg">
@@ -144,7 +136,6 @@ class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, Workload
           object={this.props.match.params.workload}
           objectType={MetricsObjectTypes.WORKLOAD}
           direction={'inbound'}
-          lastRefresh={this.state.lastRefresh}
         />
       </Tab>
     );
@@ -156,7 +147,6 @@ class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, Workload
           object={this.props.match.params.workload}
           objectType={MetricsObjectTypes.WORKLOAD}
           direction={'outbound'}
-          lastRefresh={this.state.lastRefresh}
         />
       </Tab>
     );
@@ -172,7 +162,6 @@ class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, Workload
             targetKind={'workload'}
             showErrors={false}
             duration={this.props.duration}
-            lastRefresh={this.state.lastRefresh}
           />
         </Tab>
       );

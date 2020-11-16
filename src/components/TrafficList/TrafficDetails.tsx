@@ -12,10 +12,12 @@ import {
 import { RenderComponentScroll } from '../Nav/Page';
 import { MetricsObjectTypes } from '../../types/Metrics';
 import GraphDataSource from 'services/GraphDataSource';
-import { DurationInSeconds } from 'types/Common';
+import { DurationInSeconds, TimeInMilliseconds } from 'types/Common';
 import TrafficListComponent from 'components/TrafficList/TrafficListComponent';
 import * as FilterHelper from '../FilterList/FilterHelper';
 import * as TrafficListFilters from './FiltersAndSorts';
+import { KialiAppState } from '../../store/Store';
+import { connect } from 'react-redux';
 
 export interface AppNode {
   id: string;
@@ -60,7 +62,7 @@ type TrafficDetailsProps = {
   itemName: string;
   itemType: MetricsObjectTypes;
   namespace: string;
-  lastRefresh: number;
+  lastRefreshAt: TimeInMilliseconds;
 };
 
 type TrafficDetailsState = {
@@ -96,9 +98,9 @@ class TrafficDetails extends React.Component<TrafficDetailsProps, TrafficDetails
     const itemNameChanged = prevProps.itemName !== this.props.itemName;
     const itemTypeChanged = prevProps.itemType !== this.props.itemType;
     const namespaceChanged = prevProps.namespace !== this.props.namespace;
-    const lastRefreshChanged = prevProps.lastRefresh !== this.props.lastRefresh;
+    const refreshChanged = prevProps.lastRefreshAt !== this.props.lastRefreshAt;
 
-    if (durationChanged || itemNameChanged || itemTypeChanged || namespaceChanged || lastRefreshChanged) {
+    if (durationChanged || itemNameChanged || itemTypeChanged || namespaceChanged || refreshChanged) {
       this.fetchDataSource();
     }
   }
@@ -292,4 +294,11 @@ class TrafficDetails extends React.Component<TrafficDetailsProps, TrafficDetails
   };
 }
 
-export default TrafficDetails;
+const mapStateToProps = (state: KialiAppState) => {
+  return {
+    lastRefreshAt: state.globalState.lastRefreshAt
+  };
+};
+
+const TrafficDetailsContainer = connect(mapStateToProps)(TrafficDetails);
+export default TrafficDetailsContainer;

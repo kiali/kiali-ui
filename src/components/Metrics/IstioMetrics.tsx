@@ -7,7 +7,7 @@ import { style } from 'typestyle';
 import { RenderComponentScroll } from '../../components/Nav/Page';
 import * as API from '../../services/Api';
 import { KialiAppState } from '../../store/Store';
-import { TimeRange, evalTimeRange, isEqualTimeRange } from '../../types/Common';
+import { TimeRange, evalTimeRange, isEqualTimeRange, TimeInMilliseconds } from '../../types/Common';
 import { Direction, IstioMetricsOptions, Reporter } from '../../types/MetricsOptions';
 import * as AlertUtils from '../../utils/AlertUtils';
 
@@ -45,12 +45,12 @@ type IstioMetricsProps = ObjectId &
   RouteComponentProps<{}> & {
     objectType: MetricsObjectTypes;
     direction: Direction;
-    lastRefresh: number;
   };
 
 type Props = IstioMetricsProps & {
   // Redux props
   jaegerIntegration: boolean;
+  lastRefreshAt: TimeInMilliseconds;
 };
 
 const displayFlex = style({
@@ -101,7 +101,7 @@ class IstioMetrics extends React.Component<Props, MetricsState> {
       this.props.namespace !== prevProps.namespace ||
       this.props.object !== prevProps.object ||
       this.props.objectType !== prevProps.objectType ||
-      this.props.lastRefresh !== prevProps.lastRefresh ||
+      this.props.lastRefreshAt !== prevProps.lastRefreshAt ||
       !isEqualTimeRange(timeRange, this.state.timeRange)
     ) {
       if (this.props.direction !== prevProps.direction) {
@@ -313,7 +313,8 @@ class IstioMetrics extends React.Component<Props, MetricsState> {
 
 const mapStateToProps = (state: KialiAppState) => {
   return {
-    jaegerIntegration: state.jaegerState.info ? state.jaegerState.info.integration : false
+    jaegerIntegration: state.jaegerState.info ? state.jaegerState.info.integration : false,
+    lastRefreshAt: state.globalState.lastRefreshAt
   };
 };
 

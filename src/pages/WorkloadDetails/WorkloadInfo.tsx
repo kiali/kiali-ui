@@ -15,16 +15,18 @@ import { RenderComponentScroll } from '../../components/Nav/Page';
 import Validation from '../../components/Validations/Validation';
 import ErrorBoundaryWithMessage from '../../components/ErrorBoundary/ErrorBoundaryWithMessage';
 import GraphDataSource from '../../services/GraphDataSource';
-import { DurationInSeconds } from 'types/Common';
+import { DurationInSeconds, TimeInMilliseconds } from 'types/Common';
 import { isIstioNamespace } from '../../config/ServerConfig';
 import { IstioConfigList, toIstioItems } from '../../types/IstioConfigList';
 import IstioConfigSubList from '../../components/IstioConfigSubList/IstioConfigSubList';
+import { KialiAppState } from '../../store/Store';
+import { connect } from 'react-redux';
 
 type WorkloadInfoProps = {
   namespace: string;
   workload?: Workload;
   duration: DurationInSeconds;
-  lastRefresh: number;
+  lastRefreshAt: TimeInMilliseconds;
   refreshWorkload: () => void;
 };
 
@@ -78,8 +80,7 @@ class WorkloadInfo extends React.Component<WorkloadInfoProps, WorkloadInfoState>
   componentDidUpdate(prev: WorkloadInfoProps) {
     console.log('TODELETE WorkloadInfo - componentDidUpdate()');
     // Fetch WorkloadInfo backend on duration changes or workload updates (reference comparison)
-    const lastRefreshChanged = prev.lastRefresh !== this.props.lastRefresh;
-    if (prev.duration !== this.props.duration || lastRefreshChanged) {
+    if (prev.duration !== this.props.duration || prev.lastRefreshAt !== this.props.lastRefreshAt) {
       this.fetchBackend();
     }
   }
@@ -340,4 +341,9 @@ class WorkloadInfo extends React.Component<WorkloadInfoProps, WorkloadInfoState>
   }
 }
 
-export default WorkloadInfo;
+const mapStateToProps = (state: KialiAppState) => ({
+  lastRefreshAt: state.globalState.lastRefreshAt
+});
+
+const WorkloadInfoContainer = connect(mapStateToProps)(WorkloadInfo);
+export default WorkloadInfoContainer;

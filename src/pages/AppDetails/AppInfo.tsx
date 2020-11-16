@@ -6,14 +6,16 @@ import AppDescription from './AppInfo/AppDescription';
 import { App } from '../../types/App';
 import { RenderComponentScroll } from '../../components/Nav/Page';
 import './AppInfo.css';
-import { DurationInSeconds } from 'types/Common';
+import { DurationInSeconds, TimeInMilliseconds } from 'types/Common';
 import GraphDataSource from 'services/GraphDataSource';
 import { AppHealth } from 'types/Health';
+import { KialiAppState } from '../../store/Store';
+import { connect } from 'react-redux';
 
 type AppInfoProps = {
   app?: App;
   duration: DurationInSeconds;
-  lastRefresh: number;
+  lastRefreshAt: TimeInMilliseconds;
 };
 
 type AppInfoState = {
@@ -41,13 +43,12 @@ class AppInfo extends React.Component<AppInfoProps, AppInfoState> {
     console.log('TODELETE AppInfo prev.app [' + prev.app + '] !== this.props.app [' + this.props.app + ']');
     console.log(
       'TODELETE AppInfo prev.lastRefresh [' +
-        prev.lastRefresh +
+        prev.lastRefreshAt +
         '] !== this.props.lastRefresh [' +
-        this.props.lastRefresh +
+        this.props.lastRefreshAt +
         '] '
     );
-    const lastRefreshChanged = prev.lastRefresh !== this.props.lastRefresh;
-    if (prev.duration !== this.props.duration || lastRefreshChanged) {
+    if (this.props.duration !== prev.duration || this.props.lastRefreshAt !== prev.lastRefreshAt) {
       this.fetchBackend();
     }
   }
@@ -85,4 +86,9 @@ class AppInfo extends React.Component<AppInfoProps, AppInfoState> {
   }
 }
 
-export default AppInfo;
+const mapStateToProps = (state: KialiAppState) => ({
+  lastRefreshAt: state.globalState.lastRefreshAt
+});
+
+const AppInfoContainer = connect(mapStateToProps)(AppInfo);
+export default AppInfoContainer;

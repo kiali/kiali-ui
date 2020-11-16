@@ -11,14 +11,16 @@ import ErrorBoundaryWithMessage from '../../components/ErrorBoundary/ErrorBounda
 import Validation from '../../components/Validations/Validation';
 import { RenderComponentScroll } from '../../components/Nav/Page';
 import { PromisesRegistry } from 'utils/CancelablePromises';
-import { DurationInSeconds } from 'types/Common';
+import { DurationInSeconds, TimeInMilliseconds } from 'types/Common';
 import GraphDataSource from 'services/GraphDataSource';
 import IstioConfigSubList from '../../components/IstioConfigSubList/IstioConfigSubList';
 import { drToIstioItems, vsToIstioItems } from '../../types/IstioConfigList';
+import { KialiAppState } from '../../store/Store';
+import { connect } from 'react-redux';
 
 interface Props extends ServiceId {
   duration: DurationInSeconds;
-  lastRefresh: number;
+  lastRefreshAt: TimeInMilliseconds;
   serviceDetails?: ServiceDetailsInfo;
   gateways: string[];
   peerAuthentications: PeerAuthentication[];
@@ -70,7 +72,7 @@ class ServiceInfo extends React.Component<Props, ServiceInfoState> {
     if (
       prev.serviceDetails !== this.props.serviceDetails ||
       prev.duration !== this.props.duration ||
-      prev.lastRefresh !== this.props.lastRefresh
+      prev.lastRefreshAt !== this.props.lastRefreshAt
     ) {
       this.fetchBackend();
     }
@@ -232,4 +234,9 @@ class ServiceInfo extends React.Component<Props, ServiceInfoState> {
   }
 }
 
-export default ServiceInfo;
+const mapStateToProps = (state: KialiAppState) => ({
+  lastRefreshAt: state.globalState.lastRefreshAt
+});
+
+const ServiceInfoContainer = connect(mapStateToProps)(ServiceInfo);
+export default ServiceInfoContainer;

@@ -8,7 +8,7 @@ import IstioMetricsContainer from '../../components/Metrics/IstioMetrics';
 import { RenderHeader } from '../../components/Nav/Page';
 import { MetricsObjectTypes } from '../../types/Metrics';
 import { KialiAppState } from '../../store/Store';
-import { DurationInSeconds } from '../../types/Common';
+import { DurationInSeconds, TimeInMilliseconds } from '../../types/Common';
 import { durationSelector } from '../../store/Selectors';
 import ParameterizedTabs, { activeTab } from '../../components/Tab/Tabs';
 import ServiceInfo from './ServiceInfo';
@@ -34,12 +34,12 @@ type ServiceDetailsState = {
   serviceDetails?: ServiceDetailsInfo;
   peerAuthentications: PeerAuthentication[];
   validations: Validations;
-  lastRefresh: number;
 };
 
 interface ServiceDetailsProps extends RouteComponentProps<ServiceId> {
   duration: DurationInSeconds;
   jaegerInfo?: JaegerInfo;
+  lastRefreshAt: TimeInMilliseconds;
 }
 
 const tabName = 'tab';
@@ -62,8 +62,7 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
       currentTab: activeTab(tabName, defaultTab),
       gateways: [],
       validations: {},
-      peerAuthentications: [],
-      lastRefresh: new Date().getTime()
+      peerAuthentications: []
     };
   }
 
@@ -76,7 +75,8 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
     console.log('TODELETE ServiceDetails componentDidMount');
     if (
       prevProps.match.params.namespace !== this.props.match.params.namespace ||
-      prevProps.match.params.service !== this.props.match.params.service
+      prevProps.match.params.service !== this.props.match.params.service ||
+      prevProps.lastRefreshAt !== this.props.lastRefreshAt
     ) {
       this.fetchService();
     }
@@ -116,8 +116,7 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
       .then(results => {
         this.setState({
           serviceDetails: results,
-          validations: results.validations,
-          lastRefresh: new Date().getTime()
+          validations: results.validations
         });
       })
       .catch(error => {
@@ -139,8 +138,6 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
     console.log('TODELETE ServiceDetails onRefresh()');
     if (this.state.currentTab === 'info') {
       this.fetchService();
-    } else {
-      this.setState({ lastRefresh: new Date().getTime() });
     }
   };
 
@@ -151,7 +148,6 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
           namespace={this.props.match.params.namespace}
           service={this.props.match.params.service}
           duration={this.props.duration}
-          lastRefresh={this.state.lastRefresh}
           serviceDetails={this.state.serviceDetails}
           gateways={this.state.gateways}
           peerAuthentications={this.state.peerAuthentications}
@@ -166,7 +162,6 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
           itemName={this.props.match.params.service}
           itemType={MetricsObjectTypes.SERVICE}
           namespace={this.props.match.params.namespace}
-          lastRefresh={this.state.lastRefresh}
         />
       </Tab>
     );
@@ -178,7 +173,6 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
           object={this.props.match.params.service}
           objectType={MetricsObjectTypes.SERVICE}
           direction={'inbound'}
-          lastRefresh={this.state.lastRefresh}
         />
       </Tab>
     );
@@ -194,7 +188,6 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
             targetKind={'service'}
             showErrors={false}
             duration={this.props.duration}
-            lastRefresh={this.state.lastRefresh}
           />
         </Tab>
       );
@@ -274,7 +267,8 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
 
 const mapStateToProps = (state: KialiAppState) => ({
   duration: durationSelector(state),
-  jaegerInfo: state.jaegerState.info
+  jaegerInfo: state.jaegerState.info,
+  lastRefreshAt: state.globalState.lastRefreshAt
 });
 
 const ServiceDetailsPageContainer = connect(mapStateToProps)(ServiceDetails);

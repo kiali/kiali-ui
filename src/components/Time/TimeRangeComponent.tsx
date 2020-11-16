@@ -17,7 +17,7 @@ type Props = {
   range?: TimeRange;
   allowCustom: boolean;
   tooltip: string;
-  onChanged: (range: TimeRange) => void;
+  onChanged?: (range: TimeRange) => void;
 };
 
 export default class TimeRangeComponent extends React.Component<Props> {
@@ -47,7 +47,9 @@ export default class TimeRangeComponent extends React.Component<Props> {
       this.range = Number(key);
       storeDuration(this.range);
     }
-    this.props.onChanged(this.range);
+    if (this.props.onChanged) {
+      this.props.onChanged(this.range);
+    }
   };
 
   onStartPickerChanged = (d?: Date) => {
@@ -58,7 +60,9 @@ export default class TimeRangeComponent extends React.Component<Props> {
         this.range.from = this.range.to;
       }
       storeBounds(this.range);
-      this.props.onChanged(this.range);
+      if (this.props.onChanged) {
+        this.props.onChanged(this.range);
+      }
     }
   };
 
@@ -69,7 +73,9 @@ export default class TimeRangeComponent extends React.Component<Props> {
       this.range.to = this.range.from;
     }
     storeBounds(this.range);
-    this.props.onChanged(this.range);
+    if (this.props.onChanged) {
+      this.props.onChanged(this.range);
+    }
   };
 
   render() {
