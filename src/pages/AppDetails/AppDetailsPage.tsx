@@ -59,12 +59,10 @@ class AppDetails extends React.Component<AppDetailsProps, AppDetailsState> {
   }
 
   componentDidMount(): void {
-    console.log('TODELETE AppDetails componentDidMount');
     this.fetchApp();
   }
 
   componentDidUpdate(prevProps: AppDetailsProps) {
-    console.log('TODELETE AppDetails componentDidUpdate');
     if (
       this.props.match.params.namespace !== prevProps.match.params.namespace ||
       this.props.match.params.app !== prevProps.match.params.app ||
@@ -75,7 +73,6 @@ class AppDetails extends React.Component<AppDetailsProps, AppDetailsState> {
   }
 
   private fetchApp = () => {
-    console.log('TODELETE AppDetails fetchApp');
     API.getApp(this.props.match.params.namespace, this.props.match.params.app)
       .then(details => this.setState({ app: details.data }))
       .catch(error => AlertUtils.addError('Could not fetch App Details.', error));
@@ -194,7 +191,6 @@ class AppDetails extends React.Component<AppDetailsProps, AppDetailsState> {
   }
 
   render() {
-    console.log('TODELETE AppDetails render');
     const timeControlComponent = (
       <TimeControlsContainer key={'DurationDropdown'} id="app-info-duration-dropdown" disabled={false} />
     );

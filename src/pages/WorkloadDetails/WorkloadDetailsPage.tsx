@@ -58,12 +58,10 @@ class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, Workload
   }
 
   componentDidMount(): void {
-    console.log('TODELETE WorkloadDetails componentDidMount');
     this.fetchWorkload();
   }
 
   componentDidUpdate(prevProps: WorkloadDetailsPageProps) {
-    console.log('TODELETE WorkloadDetails componentDidUpdate');
     if (
       this.props.match.params.namespace !== prevProps.match.params.namespace ||
       this.props.match.params.workload !== prevProps.match.params.workload ||
@@ -74,7 +72,6 @@ class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, Workload
   }
 
   private fetchWorkload = () => {
-    console.log('TODELETE WorkloadDetails fetchWorkload');
     API.getWorkload(this.props.match.params.namespace, this.props.match.params.workload)
       .then(details =>
         this.setState({

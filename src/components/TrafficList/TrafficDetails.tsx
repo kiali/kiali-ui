@@ -80,20 +80,17 @@ class TrafficDetails extends React.Component<TrafficDetailsProps, TrafficDetails
   }
 
   componentDidMount() {
-    console.log('TODELETE TrafficDetails - componentDidMount() ');
     this.graphDataSource.on('fetchSuccess', this.graphDsFetchSuccess);
     this.graphDataSource.on('fetchError', this.graphDsFetchError);
     this.fetchDataSource();
   }
 
   componentWillUnmount() {
-    console.log('TODELETE TrafficDetails - componentWillUnmount() ');
     this.graphDataSource.removeListener('fetchSuccess', this.graphDsFetchSuccess);
     this.graphDataSource.removeListener('fetchError', this.graphDsFetchError);
   }
 
   componentDidUpdate(prevProps: TrafficDetailsProps) {
-    console.log('TODELETE TrafficDetails - componentDidUpdate() ');
     const durationChanged = prevProps.duration !== this.props.duration;
     const itemNameChanged = prevProps.itemName !== this.props.itemName;
     const itemTypeChanged = prevProps.itemType !== this.props.itemType;

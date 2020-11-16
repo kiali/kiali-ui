@@ -73,13 +73,11 @@ class WorkloadInfo extends React.Component<WorkloadInfoProps, WorkloadInfoState>
   }
 
   componentDidMount() {
-    console.log('TODELETE WorkloadInfo - componentDidMount()');
     this.fetchBackend();
   }
 
   componentDidUpdate(prev: WorkloadInfoProps) {
-    console.log('TODELETE WorkloadInfo - componentDidUpdate()');
-    // Fetch WorkloadInfo backend on duration changes or workload updates (reference comparison)
+    // Fetch WorkloadInfo backend on duration changes or WorkloadDetailsPage update
     if (prev.duration !== this.props.duration || prev.lastRefreshAt !== this.props.lastRefreshAt) {
       this.fetchBackend();
     }

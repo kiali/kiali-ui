@@ -67,12 +67,10 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
   }
 
   componentDidMount(): void {
-    console.log('TODELETE ServiceDetails componentDidMount');
     this.fetchService();
   }
 
   componentDidUpdate(prevProps: ServiceDetailsProps, _prevState: ServiceDetailsState) {
-    console.log('TODELETE ServiceDetails componentDidMount');
     if (
       prevProps.match.params.namespace !== this.props.match.params.namespace ||
       prevProps.match.params.service !== this.props.match.params.service ||
@@ -83,7 +81,6 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
   }
 
   private fetchService = () => {
-    console.log('TODELETE ServiceDetails fetchService');
     this.promises.cancelAll();
     this.promises
       .register('namespaces', API.getNamespaces())
@@ -190,7 +187,6 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
   }
 
   render() {
-    console.log('TODELETE ServiceDetails render');
     const timeControlComponent = (
       <TimeControlsContainer key={'DurationDropdown'} id="service-info-duration-dropdown" disabled={false} />
     );

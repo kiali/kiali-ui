@@ -86,16 +86,12 @@ class IstioMetrics extends React.Component<Props, MetricsState> {
   }
 
   componentDidMount() {
-    console.log('TODELETE IstioMetrics - componentDidMount() ');
     this.fetchGrafanaInfo();
     this.refresh();
   }
 
   componentDidUpdate(prevProps: Props) {
-    console.log('TODELETE IstioMetrics - componentDidUpdate() ');
     const timeRange = retrieveTimeRange() || MetricsHelper.defaultMetricsDuration;
-    console.log('TODELETE IstioMetrics timeRange ' + JSON.stringify(timeRange));
-    console.log('TODELETE IstioMetrics prevState.timeRange ' + JSON.stringify(this.state.timeRange));
     if (
       this.props.direction !== prevProps.direction ||
       this.props.namespace !== prevProps.namespace ||
@@ -114,7 +110,6 @@ class IstioMetrics extends React.Component<Props, MetricsState> {
   }
 
   private refresh = () => {
-    console.log('TODELETE IstioMetrics - refresh() ');
     this.fetchMetrics();
     if (this.props.jaegerIntegration) {
       this.spanOverlay.fetch({
@@ -127,7 +122,6 @@ class IstioMetrics extends React.Component<Props, MetricsState> {
   };
 
   private fetchMetrics = () => {
-    console.log('TODELETE IstioMetrics - fetchMetrics() ');
     // Time range needs to be reevaluated everytime fetching
     MetricsHelper.timeRangeToOptions(this.state.timeRange, this.options);
     let promise: Promise<API.Response<DashboardModel>>;
@@ -237,7 +231,6 @@ class IstioMetrics extends React.Component<Props, MetricsState> {
   }
 
   render() {
-    console.log('TODELETE IstioMetrics - render() ');
     const urlParams = new URLSearchParams(history.location.search);
     const expandedChart = urlParams.get('expand') || undefined;
 

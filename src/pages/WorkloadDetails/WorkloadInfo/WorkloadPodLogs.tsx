@@ -215,7 +215,6 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
   }
 
   componentDidMount() {
-    console.log('TODELETE WorkloadPodLogs - componentDidMount() ');
     if (this.state.containerInfo) {
       const pod = this.props.pods[this.state.podValue!];
       this.fetchLogs(
@@ -229,7 +228,6 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
   }
 
   componentDidUpdate(prevProps: WorkloadPodLogsProps, prevState: WorkloadPodLogsState) {
-    console.log('TODELETE WorkloadPodLogs - componentDidUpdate() ');
     const timeRange = retrieveTimeRange() || MetricsHelper.defaultMetricsDuration; // align with metrics for default
     const prevContainer = prevState.containerInfo ? prevState.containerInfo.container : undefined;
     const newContainer = this.state.containerInfo ? this.state.containerInfo.container : undefined;
@@ -240,7 +238,6 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
     const lastRefreshChanged = prevProps.lastRefreshAt !== this.props.lastRefreshAt;
     if (updateContainerInfo || updateContainer || updateTailLines || lastRefreshChanged) {
       const pod = this.props.pods[this.state.podValue!];
-      console.log('TODELETE WorkloadPodLogs - timeRange: ' + JSON.stringify(timeRange));
       this.fetchLogs(this.props.namespace, pod.name, newContainer!, this.state.tailLines, timeRange);
     }
     this.proxyLogsRef.current.scrollTop = this.proxyLogsRef.current.scrollHeight;

@@ -128,12 +128,10 @@ class TracesComponent extends React.Component<TracesProps, TracesState> {
   }
 
   componentDidMount() {
-    console.log('TODELETE TracesComponent componentDidMount');
-    this.refresh();
+    this.fetchTraces();
   }
 
   componentDidUpdate(prevProps: TracesProps) {
-    console.log('TODELETE TracesComponent componentDidUpdate');
     // Selected trace (coming from redux) might have been reloaded and needs to be updated within the traces list
     // Check reference of selected trace
     if (this.props.selectedTrace && prevProps.selectedTrace !== this.props.selectedTrace) {
@@ -146,12 +144,11 @@ class TracesComponent extends React.Component<TracesProps, TracesState> {
       }
     }
     if (prevProps.duration !== this.props.duration || prevProps.lastRefreshAt !== this.props.lastRefreshAt) {
-      this.refresh();
+      this.fetchTraces();
     }
   }
 
-  private refresh = () => {
-    console.log('TODELETE TracesComponent refresh');
+  private fetchTraces = () => {
     this.fetcher.fetch(
       {
         namespace: this.props.namespace,
@@ -178,7 +175,7 @@ class TracesComponent extends React.Component<TracesProps, TracesState> {
 
   private setErrorTraces = (value: string) => {
     this.fetcher.resetLastFetchTime();
-    this.setState({ showErrors: value === 'Error traces' }, this.refresh);
+    this.setState({ showErrors: value === 'Error traces' }, this.fetchTraces);
   };
 
   private saveValue = (key: URLParam, value: string) => {
@@ -211,7 +208,7 @@ class TracesComponent extends React.Component<TracesProps, TracesState> {
   private handleStatusCode = (value: string) => {
     this.fetcher.resetLastFetchTime();
     this.saveValue(URLParam.JAEGER_STATUS_CODE, value);
-    this.setState({ selectedStatusCode: value }, this.refresh);
+    this.setState({ selectedStatusCode: value }, this.fetchTraces);
   };
 
   private handleIntervalDuration = (key: string) => {
@@ -231,7 +228,7 @@ class TracesComponent extends React.Component<TracesProps, TracesState> {
     } else {
       this.removeValue(URLParam.JAEGER_LIMIT_TRACES);
     }
-    this.setState({ selectedLimitSpans: value }, this.refresh);
+    this.setState({ selectedLimitSpans: value }, this.fetchTraces);
   };
 
   private extractIntervalDurations = (traces: JaegerTrace[]): IntervalDuration[] => {
