@@ -554,12 +554,7 @@ class IstioConfigDetailsPage extends React.Component<RouteComponentProps<IstioCo
           location={this.props.location}
           rightToolbar={<RefreshButtonContainer key={'Refresh'} handleRefresh={this.onRefresh} />}
           actionsToolbar={this.renderActions()}
-        >
-          {
-            // This magic space will align details header width with Graph, List pages
-          }
-          <div style={{ paddingBottom: 3 }} />
-        </RenderHeader>
+        />
         <ParameterizedTabs
           id="basic-tabs"
           onSelect={tabValue => {
