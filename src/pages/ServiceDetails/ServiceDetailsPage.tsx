@@ -134,13 +134,6 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
       });
   };
 
-  private onRefresh = () => {
-    console.log('TODELETE ServiceDetails onRefresh()');
-    if (this.state.currentTab === 'info') {
-      this.fetchService();
-    }
-  };
-
   private renderTabs() {
     const overTab = (
       <Tab eventKey={0} title="Overview" key="Overview">
@@ -199,18 +192,13 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
   render() {
     console.log('TODELETE ServiceDetails render');
     const timeControlComponent = (
-      <TimeControlsContainer
-        key={'DurationDropdown'}
-        id="service-info-duration-dropdown"
-        handleRefresh={this.onRefresh}
-        disabled={false}
-      />
+      <TimeControlsContainer key={'DurationDropdown'} id="service-info-duration-dropdown" disabled={false} />
     );
     const timeRange = retrieveTimeRange() || MetricsHelper.defaultMetricsDuration;
     const timeRangeComponent = (
       <>
-        <TimeRangeComponent range={timeRange} onChanged={this.onRefresh} tooltip={'Time range'} allowCustom={true} />
-        <RefreshContainer id="metrics-refresh" handleRefresh={this.onRefresh} hideLabel={true} manageURL={true} />
+        <TimeRangeComponent range={timeRange} tooltip={'Time range'} allowCustom={true} />
+        <RefreshContainer id="metrics-refresh" hideLabel={true} manageURL={true} />
       </>
     );
 
@@ -237,9 +225,7 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
         gateways={this.state.gateways}
         peerAuthentications={this.state.peerAuthentications}
         tlsStatus={this.state.serviceDetails.namespaceMTLS}
-        onChange={() => {
-          this.onRefresh();
-        }}
+        onChange={this.fetchService}
       />
     ) : undefined;
 

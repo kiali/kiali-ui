@@ -84,13 +84,6 @@ class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, Workload
       .catch(error => AlertUtils.addError('Could not fetch Workload.', error));
   };
 
-  private onRefresh = () => {
-    console.log('TODELETE WorkloadDetails onRefresh()');
-    if (this.state.currentTab === 'info' || this.state.currentTab === 'logs') {
-      this.fetchWorkload();
-    }
-  };
-
   private staticTabs() {
     const hasPods = this.state.workload?.pods.length;
 
@@ -100,7 +93,7 @@ class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, Workload
           workload={this.state.workload}
           namespace={this.props.match.params.namespace}
           duration={this.props.duration}
-          refreshWorkload={this.onRefresh}
+          refreshWorkload={this.fetchWorkload}
         />
       </Tab>
     );
@@ -211,18 +204,13 @@ class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, Workload
 
   render() {
     const timeControlComponent = (
-      <TimeControlsContainer
-        key={'DurationDropdown'}
-        id="app-info-duration-dropdown"
-        handleRefresh={this.onRefresh}
-        disabled={false}
-      />
+      <TimeControlsContainer key={'DurationDropdown'} id="app-info-duration-dropdown" disabled={false} />
     );
     const timeRange = retrieveTimeRange() || MetricsHelper.defaultMetricsDuration;
     const timeRangeComponent = (
       <>
-        <TimeRangeComponent range={timeRange} onChanged={this.onRefresh} tooltip={'Time range'} allowCustom={true} />
-        <RefreshContainer id="metrics-refresh" handleRefresh={this.onRefresh} hideLabel={true} manageURL={true} />
+        <TimeRangeComponent range={timeRange} tooltip={'Time range'} allowCustom={true} />
+        <RefreshContainer id="metrics-refresh" hideLabel={true} manageURL={true} />
       </>
     );
 
@@ -242,7 +230,7 @@ class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, Workload
         <WorkloadWizardDropdown
           namespace={this.props.match.params.namespace}
           workload={this.state.workload}
-          onChange={this.onRefresh}
+          onChange={this.fetchWorkload}
         />
       ) : undefined;
     return (
