@@ -275,7 +275,7 @@ class TracesComponent extends React.Component<TracesProps, TracesState> {
     return (
       <>
         <RenderComponentScroll>
-          <Grid style={{ padding: '10px' }} gutter="md">
+          <Grid gutter="md">
             <GridItem span={12}>
               <Card>
                 <CardBody>

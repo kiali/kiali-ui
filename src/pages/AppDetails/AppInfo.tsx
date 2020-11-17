@@ -55,7 +55,7 @@ class AppInfo extends React.Component<AppInfoProps, AppInfoState> {
     return (
       <>
         <RenderComponentScroll>
-          <Grid style={{ margin: '10px' }} gutter={'md'}>
+          <Grid gutter={'md'}>
             <GridItem span={12}>
               <AppDescription
                 app={this.props.app}

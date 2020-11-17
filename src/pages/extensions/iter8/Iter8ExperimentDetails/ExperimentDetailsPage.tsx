@@ -56,13 +56,6 @@ const tabIndex: { [tab: string]: number } = {
   assessment: 1,
   criteria: 2
 };
-/*const extensionHeader = style({
-  padding: '0px 20px 16px 0px',
-  backgroundColor: PfColors.White
-});
-const breadcrumbPadding = style({
-  padding: '22px 0 5px 0'
-});*/
 
 class ExperimentDetailsPage extends React.Component<Props, State> {
   constructor(props: Props) {

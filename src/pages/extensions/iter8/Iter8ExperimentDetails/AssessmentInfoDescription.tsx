@@ -30,9 +30,6 @@ import { RenderComponentScroll } from '../../../../components/Nav/Page';
 import styles from '@patternfly/react-styles/css/components/Table/table';
 import { DurationInSeconds, TimeInMilliseconds } from '../../../../types/Common';
 import * as AlertUtils from '../../../../utils/AlertUtils';
-import { DurationDropdownContainer } from '../../../../components/DurationDropdown/DurationDropdown';
-import RefreshButtonContainer from '../../../../components/Refresh/RefreshButton';
-import { RightActionBar } from '../../../../components/RightActionBar/RightActionBar';
 import { KialiAppState } from '../../../../store/Store';
 import { durationSelector, lastRefreshAtSelector } from '../../../../store/Selectors';
 import { connect } from 'react-redux';
@@ -357,12 +354,8 @@ class AssessmentInfoDescriptionTab extends React.Component<AssesmentInfoDescript
     const { columns, rows } = this.state;
     return (
       <>
-        <RightActionBar>
-          <DurationDropdownContainer id="assesment-duration-dropdown" prefix="Last" />
-          <RefreshButtonContainer handleRefresh={this.fetchAssesment} />
-        </RightActionBar>
         <RenderComponentScroll>
-          <Grid gutter="md" style={{ margin: '10px' }}>
+          <Grid gutter="md">
             <GridItem span={12}>
               <Table
                 aria-label="SpanTable"

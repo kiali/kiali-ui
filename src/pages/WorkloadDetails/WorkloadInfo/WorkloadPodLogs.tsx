@@ -257,7 +257,7 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
       <>
         <RenderComponentScroll key={this.state.sideBySideOrientation ? 'vertical' : 'horizontal'}>
           {this.state.containerInfo && (
-            <Grid style={{ padding: '10px 10px 0 10px', height: '100%' }}>
+            <Grid style={{ height: '100%' }}>
               <GridItem span={12}>
                 <Card style={{ height: '100%' }}>
                   <CardBody>

@@ -49,9 +49,7 @@ const rightToolbarStyle = style({
 });
 
 const editorDrawer = style({
-  marginTop: '10px',
-  marginRight: '10px',
-  marginLeft: '10px'
+  margin: '0'
 });
 
 // TODO perhaps we may want to enable automatic refresh in all list/details pages

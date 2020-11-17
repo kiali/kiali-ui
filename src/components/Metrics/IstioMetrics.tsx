@@ -237,7 +237,7 @@ class IstioMetrics extends React.Component<Props, MetricsState> {
     return (
       <>
         <RenderComponentScroll>
-          <Grid style={{ padding: '10px' }}>
+          <Grid>
             <GridItem span={12}>
               <Card>
                 <CardBody>
