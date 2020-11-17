@@ -82,7 +82,7 @@ const gridStyleList = style({
   marginTop: '0px'
 });
 
-const cardGridStyle = style({ borderTop: '2px solid #39a5dc', textAlign: 'center', marginTop: '10px' });
+const cardGridStyle = style({ borderTop: '2px solid #39a5dc', textAlign: 'center', marginTop: '0px' });
 
 const emptyStateStyle = style({
   height: '300px',
@@ -774,7 +774,7 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
                 {filteredNamespaces.map((ns, i) => {
                   const isLongNs = ns.name.length > NS_LONG;
                   return (
-                    <GridItem sm={sm} md={md} key={'CardItem_' + ns.name} style={{ margin: '0px 10px 0 10px' }}>
+                    <GridItem sm={sm} md={md} key={'CardItem_' + ns.name} style={{ margin: '0px 5px 0 5px' }}>
                       <Card isCompact={true} className={cardGridStyle}>
                         <CardHead>
                           <CardActions>{namespaceActions[i]}</CardActions>
