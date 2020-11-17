@@ -44,7 +44,6 @@ interface ExperimentInfoDescriptionProps {
   namespace: string;
   experimentDetails: Iter8ExpDetailsInfo;
   experiment: string;
-  duration: number;
   actionTaken: string;
 }
 

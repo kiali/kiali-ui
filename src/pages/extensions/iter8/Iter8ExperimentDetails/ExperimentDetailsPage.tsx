@@ -15,7 +15,6 @@ import {
 } from '../../../../types/Iter8';
 import Iter8Dropdown, { ManualOverride } from './Iter8Dropdown';
 import history from '../../../../app/History';
-import * as FilterHelper from '../../../../components/FilterList/FilterHelper';
 import { connect } from 'react-redux';
 
 import ExperimentInfoDescription from './ExperimentInfoDescription';
@@ -23,7 +22,7 @@ import CriteriaInfoDescription from './CriteriaInfoDescription';
 import AssessmentInfoDescription from './AssessmentInfoDescription';
 import { KialiAppState } from '../../../../store/Store';
 import { durationSelector } from '../../../../store/Selectors';
-import { DurationInSeconds, TimeInMilliseconds } from '../../../../types/Common';
+import { TimeInMilliseconds } from '../../../../types/Common';
 import RefreshContainer from '../../../../components/Refresh/Refresh';
 
 interface ExpeerimentId {
@@ -32,7 +31,7 @@ interface ExpeerimentId {
 }
 
 interface Props extends RouteComponentProps<ExpeerimentId> {
-  duration: DurationInSeconds;
+  lastRefreshAt: TimeInMilliseconds;
 }
 
 interface State {
@@ -155,7 +154,10 @@ class ExperimentDetailsPage extends React.Component<Props, State> {
   }
 
   componentDidUpdate(prevProps: Props) {
-    if (this.state.currentTab !== activeTab(tabName, defaultTab) || prevProps.duration !== this.props.duration) {
+    if (
+      this.state.currentTab !== activeTab(tabName, defaultTab) ||
+      prevProps.lastRefreshAt !== this.props.lastRefreshAt
+    ) {
       this.setState({
         currentTab: activeTab(tabName, defaultTab)
       });
@@ -236,7 +238,6 @@ class ExperimentDetailsPage extends React.Component<Props, State> {
           experiment={this.props.match.params.name}
           target={this.state.target}
           experimentDetails={this.state.experiment}
-          duration={FilterHelper.currentDuration()}
           actionTaken={this.state.actionTaken}
         />
       </Tab>
@@ -262,7 +263,6 @@ class ExperimentDetailsPage extends React.Component<Props, State> {
           namespace={this.props.match.params.namespace}
           experimentItem={this.state.experiment.experimentItem}
           metricInfo={metricProgressInfo}
-          duration={this.props.duration}
           fetchOp={() => this.fetchExperiment()}
         />
       </Tab>
@@ -326,7 +326,8 @@ class ExperimentDetailsPage extends React.Component<Props, State> {
 }
 
 const mapStateToProps = (state: KialiAppState) => ({
-  duration: durationSelector(state)
+  duration: durationSelector(state),
+  lastRefreshAt: state.globalState.lastRefreshAt
 });
 
 const ExperimentDetailsPageContainer = connect(mapStateToProps, null)(ExperimentDetailsPage);

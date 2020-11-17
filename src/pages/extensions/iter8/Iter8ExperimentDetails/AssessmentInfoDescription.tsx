@@ -28,7 +28,7 @@ import { style } from 'typestyle';
 import { css } from '@patternfly/react-styles';
 import { RenderComponentScroll } from '../../../../components/Nav/Page';
 import styles from '@patternfly/react-styles/css/components/Table/table';
-import { DurationInSeconds, TimeInMilliseconds } from '../../../../types/Common';
+import { TimeInMilliseconds } from '../../../../types/Common';
 import * as AlertUtils from '../../../../utils/AlertUtils';
 import { KialiAppState } from '../../../../store/Store';
 import { durationSelector, lastRefreshAtSelector } from '../../../../store/Selectors';
@@ -45,7 +45,6 @@ interface AssesmentInfoDescriptionProps {
   namespace: string;
   experimentItem: Iter8Experiment;
   metricInfo: Map<string, MetricProgressInfo>;
-  duration: DurationInSeconds;
   fetchOp: () => void;
 }
 
@@ -85,7 +84,10 @@ class AssessmentInfoDescriptionTab extends React.Component<AssesmentInfoDescript
   }
 
   componentDidUpdate(prevProps: AssesmentInfoDescriptionProps) {
-    if (this.props.experimentItem !== prevProps.experimentItem || prevProps.duration !== this.props.duration) {
+    if (
+      this.props.experimentItem !== prevProps.experimentItem ||
+      prevProps.lastRefreshAt !== this.props.lastRefreshAt
+    ) {
       this.renderRows();
     }
   }
