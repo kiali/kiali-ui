@@ -111,6 +111,7 @@ const conf = {
       appMetrics: (namespace: string, app: string) => `api/namespaces/${namespace}/apps/${app}/metrics`,
       appDashboard: (namespace: string, app: string) => `api/namespaces/${namespace}/apps/${app}/dashboard`,
       appSpans: (namespace: string, app: string) => `api/namespaces/${namespace}/apps/${app}/spans`,
+      clusters: 'api/clusters',
       serviceSpans: (namespace: string, service: string) => `api/namespaces/${namespace}/services/${service}/spans`,
       workloadSpans: (namespace: string, workload: string) => `api/namespaces/${namespace}/workloads/${workload}/spans`,
       customDashboard: (namespace: string, template: string) =>
@@ -138,7 +139,6 @@ const conf = {
       jaegerTrace: (idTrace: string) => `api/traces/${idTrace}`,
       logout: 'api/logout',
       metricsStats: 'api/stats/metrics',
-      meshClusters: 'api/mesh_clusters',
       namespaces: 'api/namespaces',
       namespace: (namespace: string) => `api/namespaces/${namespace}`,
       namespacesGraphElements: `api/namespaces/graph`,

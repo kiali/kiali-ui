@@ -1,6 +1,6 @@
 export interface MeshCluster {
   apiEndpoint: string;
-  isHomeCluster: boolean;
+  isKialiHome: boolean;
   name: string;
   secretName: string;
 }

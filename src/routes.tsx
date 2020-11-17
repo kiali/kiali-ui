@@ -17,7 +17,7 @@ import ExperimentListPage from './pages/extensions/iter8/Iter8ExperimentList/Exp
 import ExperimentCreatePageContainer from './pages/extensions/iter8/Iter8ExperimentDetails/ExperimentCreatePage';
 import ExperimentDetailsPage from './pages/extensions/iter8/Iter8ExperimentDetails/ExperimentDetailsPage';
 import ExperimentCreateFromFileContainer from './pages/extensions/iter8/Iter8ExperimentDetails/ExperimentCreateFromFile';
-import MeshStructurePage from './pages/MeshStructure/MeshStructurePage';
+import MeshPage from './pages/Mesh/MeshPage';
 
 /**
  * Return array of objects that describe vertical menu
@@ -60,7 +60,7 @@ const navItems: MenuItem[] = [
   },
   {
     title: 'Mesh',
-    to: '/mesh_structure'
+    to: '/mesh'
   }
 ];
 
@@ -149,8 +149,8 @@ const pathRoutes: Path[] = [
     component: undefined
   },
   {
-    path: '/mesh_structure',
-    component: MeshStructurePage
+    path: '/mesh',
+    component: MeshPage
   }
 ];
 
@@ -180,7 +180,7 @@ const secondaryMastheadRoutes: Path[] = [
     component: DefaultSecondaryMasthead
   },
   {
-    path: '/mesh_structure',
+    path: '/mesh',
     render: () => <DefaultSecondaryMasthead hideNamespaceSelector={true} />
   }
 ];

@@ -6,7 +6,6 @@ import { LoginSession } from '../store/Store';
 import { App } from '../types/App';
 import { AppList } from '../types/AppList';
 import { AuthInfo } from '../types/Auth';
-import { MeshClusters } from '../types/Clustering';
 import { DurationInSeconds, HTTP_VERBS, Password, UserName } from '../types/Common';
 import { DashboardModel } from 'types/Dashboards';
 import { GrafanaInfo } from '../types/GrafanaInfo';
@@ -25,6 +24,7 @@ import { Pod, PodLogs, ValidationStatus } from '../types/IstioObjects';
 import { ComponentStatus } from '../types/IstioStatus';
 import { Iter8ExpDetailsInfo, Iter8Experiment, Iter8Info, ExperimentSpec } from '../types/Iter8';
 import { JaegerInfo, JaegerResponse, JaegerSingleResponse } from '../types/JaegerInfo';
+import { MeshClusters } from '../types/Mesh';
 import { DashboardQuery, IstioMetricsOptions, MetricsStatsQuery } from '../types/MetricsOptions';
 import { IstioMetricsMap, MetricsStatsResult } from '../types/Metrics';
 import Namespace from '../types/Namespace';
@@ -578,6 +578,6 @@ export const getMetricsStats = (queries: MetricsStatsQuery[]) => {
   return newRequest<MetricsStatsResult>(HTTP_VERBS.POST, urls.metricsStats, {}, { queries: queries });
 };
 
-export const getMeshClusters = () => {
-  return newRequest<MeshClusters>(HTTP_VERBS.GET, urls.meshClusters, {}, {});
+export const getClusters = () => {
+  return newRequest<MeshClusters>(HTTP_VERBS.GET, urls.clusters, {}, {});
 };

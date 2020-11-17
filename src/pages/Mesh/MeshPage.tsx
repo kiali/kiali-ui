@@ -5,11 +5,11 @@ import { cellWidth, sortable, SortByDirection, Table, TableBody, TableHeader } f
 import { style } from 'typestyle';
 
 import { RenderContent } from '../../components/Nav/Page';
-import { getMeshClusters } from '../../services/Api';
-import { MeshClusters } from '../../types/Clustering';
+import { getClusters } from '../../services/Api';
+import { MeshClusters } from '../../types/Mesh';
 import { addError } from '../../utils/AlertUtils';
 
-const MeshStructurePage: React.FunctionComponent = () => {
+const MeshPage: React.FunctionComponent = () => {
   const [meshClustersList, setMeshClustersList] = React.useState(null as MeshClusters | null);
   const [sortBy, setSortBy] = React.useState({ index: 0, direction: SortByDirection.asc });
 
@@ -43,7 +43,7 @@ const MeshStructurePage: React.FunctionComponent = () => {
     const tableRows = sortedList.map(cluster => ({
       cells: [
         <>
-          {cluster.isHomeCluster ? <StarIcon /> : null} {cluster.name}
+          {cluster.isKialiHome ? <StarIcon /> : null} {cluster.name}
         </>,
         cluster.apiEndpoint,
         cluster.secretName
@@ -55,7 +55,7 @@ const MeshStructurePage: React.FunctionComponent = () => {
 
   async function fetchMeshClusters() {
     try {
-      const meshClusters = await getMeshClusters();
+      const meshClusters = await getClusters();
       setMeshClustersList(meshClusters.data);
     } catch (e) {
       addError('Could not fetch the list of clusters that are part of the mesh.', e);
@@ -100,4 +100,4 @@ const MeshStructurePage: React.FunctionComponent = () => {
   );
 };
 
-export default MeshStructurePage;
+export default MeshPage;
