@@ -12,6 +12,7 @@ import {
 import * as API from '../../services/Api';
 import * as AlertUtils from '../../utils/AlertUtils';
 import { MessageType } from '../../types/MessageCenter';
+import { EnvoyDetailsModal } from '../Envoy/EnvoyPopup';
 
 interface Props {
   namespace: string;
@@ -44,6 +45,12 @@ class WorkloadWizardDropdown extends React.Component<Props, State> {
   onActionsToggle = (isOpen: boolean) => {
     this.setState({
       isActionsOpen: isOpen
+    });
+  };
+
+  onWizardToggle = (isOpen: boolean) => {
+    this.setState({
+      showWizard: isOpen
     });
   };
 
@@ -80,7 +87,7 @@ class WorkloadWizardDropdown extends React.Component<Props, State> {
     }
   };
 
-  onClose = (changed: boolean) => {
+  onClose = (changed?: boolean) => {
     this.setState({ showWizard: false });
     if (changed) {
       this.props.onChange();
@@ -117,6 +124,17 @@ class WorkloadWizardDropdown extends React.Component<Props, State> {
           Remove Auto Injection
         </DropdownItem>
       );
+
+      const envoyAction = (
+        <DropdownItem
+          key="envoy-details"
+          component="button"
+          onClick={ () => this.onWizardToggle(true)}
+        >
+          Show Envoy details
+        </DropdownItem>
+      );
+
       if (this.props.workload.istioInjectionAnnotation !== undefined && this.props.workload.istioInjectionAnnotation) {
         items.push(disableAction);
         items.push(removeAction);
@@ -130,6 +148,10 @@ class WorkloadWizardDropdown extends React.Component<Props, State> {
         // If sidecar is present, we offer first the disable action
         items.push(this.props.workload.istioSidecar ? disableAction : enableAction);
       }
+
+      // TODO: THIS IS NOT A WIZARD ACTION: needs to be move out of this.
+      // TODO: Needs to rethink how to mix wizard action with non-wizard ones.
+      items.push(envoyAction);
     }
     return items;
   };
@@ -153,7 +175,12 @@ class WorkloadWizardDropdown extends React.Component<Props, State> {
       />
     );
     // TODO WorkloadWizard component contains only 3scale actions but in the future we may need to bring it back
-    return <>{dropdown}</>;
+    return (
+      <>
+        {dropdown}
+        <EnvoyDetailsModal namespace={this.props.namespace} workload={this.props.workload} isOpen={this.state.showWizard} onClose={this.onClose}/>
+      </>
+    );
   }
 }
 

@@ -139,6 +139,10 @@ export interface PodLogs {
   entries: LogEntry[];
 }
 
+export interface EnvoyProxy {
+  configs: any[];
+}
+
 export interface Service {
   name: string;
   createdAt: string;
