@@ -16,9 +16,9 @@ const conf = {
     defaultDuration: 1 * UNIT_TIME.MINUTE,
     /** By default refresh is 15 seconds */
     defaultRefreshInterval: 15 * MILLISECONDS,
-    /** Time Range default in 1 minute **/
+    /** Time Range default in 10 minutes **/
     defaultTimeRange: {
-      rangeDuration: 1 * UNIT_TIME.MINUTE
+      rangeDuration: 10 * UNIT_TIME.MINUTE
     },
     /** Options in refresh */
     refreshInterval: {

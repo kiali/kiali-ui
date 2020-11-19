@@ -21,7 +21,7 @@ import { PromisesRegistry } from '../../utils/CancelablePromises';
 import { ServiceDetailsInfo } from '../../types/ServiceInfo';
 import { PeerAuthentication, Validations } from '../../types/IstioObjects';
 import ServiceWizardDropdown from '../../components/IstioWizards/ServiceWizardDropdown';
-import MainTimeControl from '../../components/Time/MainTimeControl';
+import TimeControl from '../../components/Time/TimeControl';
 
 type ServiceDetailsState = {
   currentTab: string;
@@ -214,7 +214,7 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
       <>
         <RenderHeader
           location={this.props.location}
-          rightToolbar={<MainTimeControl customDuration={useCustomTime} />}
+          rightToolbar={<TimeControl customDuration={useCustomTime} />}
           actionsToolbar={actionsToolbar}
         />
         <ParameterizedTabs

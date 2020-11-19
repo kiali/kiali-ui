@@ -7,7 +7,7 @@ import { GraphTourStops } from '../GraphHelpTour';
 import ToolbarDropdown from 'components/ToolbarDropdown/ToolbarDropdown';
 import { GraphType } from 'types/Graph';
 import * as _ from 'lodash';
-import TimeControlsContainer from '../../../components/Time/TimeControls';
+import TimeDurationContainer from '../../../components/Time/TimeDurationComponent';
 
 type GraphSecondaryMastheadProps = {
   disabled: boolean;
@@ -68,7 +68,7 @@ export default class GraphSecondaryMasthead extends React.PureComponent<GraphSec
           </TourStopContainer>
           <div className={rightToolbarStyle}>
             <TourStopContainer info={GraphTourStops.TimeRange}>
-              <TimeControlsContainer
+              <TimeDurationContainer
                 id="graph_time_range"
                 disabled={this.props.disabled}
                 handleRefresh={this.props.onHandleRefresh}

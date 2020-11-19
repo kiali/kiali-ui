@@ -14,11 +14,11 @@ import { FilterSelected, StatefulFilters } from '../../components/Filters/Statef
 import * as API from '../../services/Api';
 import { ObjectValidation, Validations } from '../../types/IstioObjects';
 import VirtualList from '../../components/VirtualList/VirtualList';
-import TimeControlsContainer from '../../components/Time/TimeControls';
 import { KialiAppState } from '../../store/Store';
 import { activeNamespacesSelector, durationSelector } from '../../store/Selectors';
 import DefaultSecondaryMasthead from '../../components/DefaultSecondaryMasthead/DefaultSecondaryMasthead';
 import { connect } from 'react-redux';
+import TimeDurationContainer from '../../components/Time/TimeDurationComponent';
 
 type ServiceListPageState = FilterComponent.State<ServiceListItem>;
 
@@ -169,7 +169,7 @@ class ServiceListPageComponent extends FilterComponent.Component<
         <div style={{ backgroundColor: '#fff' }}>
           <DefaultSecondaryMasthead
             rightToolbar={
-              <TimeControlsContainer
+              <TimeDurationContainer
                 key={'DurationDropdown'}
                 id="service-list-duration-dropdown"
                 handleRefresh={this.updateListItems}

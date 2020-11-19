@@ -13,11 +13,11 @@ import { ActiveFiltersInfo } from '../../types/Filters';
 import { FilterSelected, StatefulFilters } from '../../components/Filters/StatefulFilters';
 import * as API from '../../services/Api';
 import VirtualList from '../../components/VirtualList/VirtualList';
-import TimeControlsContainer from '../../components/Time/TimeControls';
 import { KialiAppState } from '../../store/Store';
 import { activeNamespacesSelector, durationSelector } from '../../store/Selectors';
 import { connect } from 'react-redux';
 import DefaultSecondaryMasthead from '../../components/DefaultSecondaryMasthead/DefaultSecondaryMasthead';
+import TimeDurationContainer from '../../components/Time/TimeDurationComponent';
 
 type WorkloadListPageState = FilterComponent.State<WorkloadListItem>;
 
@@ -169,7 +169,7 @@ class WorkloadListPageComponent extends FilterComponent.Component<
         <div style={{ backgroundColor: '#fff' }}>
           <DefaultSecondaryMasthead
             rightToolbar={
-              <TimeControlsContainer
+              <TimeDurationContainer
                 key={'DurationDropdown'}
                 id="workload-list-duration-dropdown"
                 handleRefresh={this.updateListItems}

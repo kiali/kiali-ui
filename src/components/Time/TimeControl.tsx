@@ -1,20 +1,20 @@
 import * as React from 'react';
-import TimeControlsContainer from './TimeControls';
-import TimeRangeComponent from './TimeRangeComponent';
 import RefreshContainer from '../Refresh/Refresh';
+import TimeDurationContainer from './TimeDurationComponent';
+import TimeRangeContainer from './TimeRangeComponent';
 
 type Props = {
   customDuration: boolean;
 };
 
-export default class MainTimeControl extends React.Component<Props> {
+export default class TimeControl extends React.Component<Props> {
   render() {
     const timeControlComponent = (
-      <TimeControlsContainer key={'DurationDropdown'} id="app-info-duration-dropdown" disabled={false} />
+      <TimeDurationContainer key={'DurationDropdown'} id="app-info-duration-dropdown" disabled={false} />
     );
     const timeRangeComponent = (
       <div style={{ display: 'flex' }}>
-        <TimeRangeComponent tooltip={'Time range'} />
+        <TimeRangeContainer tooltip={'Time range'} />
         <RefreshContainer id="metrics-refresh" hideLabel={true} manageURL={true} />
       </div>
     );

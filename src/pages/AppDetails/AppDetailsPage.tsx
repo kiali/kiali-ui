@@ -18,7 +18,7 @@ import ParameterizedTabs, { activeTab } from '../../components/Tab/Tabs';
 import { JaegerInfo } from '../../types/JaegerInfo';
 import TracesComponent from '../../components/JaegerIntegration/TracesComponent';
 import TrafficDetails from 'components/TrafficList/TrafficDetails';
-import MainTimeControl from '../../components/Time/MainTimeControl';
+import TimeControl from '../../components/Time/TimeControl';
 
 type AppDetailsState = {
   app?: App;
@@ -204,10 +204,7 @@ class AppDetails extends React.Component<AppDetailsProps, AppDetailsState> {
     }
     return (
       <>
-        <RenderHeader
-          location={this.props.location}
-          rightToolbar={<MainTimeControl customDuration={useCustomTime} />}
-        />
+        <RenderHeader location={this.props.location} rightToolbar={<TimeControl customDuration={useCustomTime} />} />
         {this.state.app && (
           <ParameterizedTabs
             id="basic-tabs"

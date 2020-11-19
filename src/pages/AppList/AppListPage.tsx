@@ -18,7 +18,7 @@ import { FilterSelected, StatefulFilters } from '../../components/Filters/Statef
 import * as API from '../../services/Api';
 import * as AppListClass from './AppListClass';
 import VirtualList from '../../components/VirtualList/VirtualList';
-import TimeControlsContainer from '../../components/Time/TimeControls';
+import TimeDurationContainer from '../../components/Time/TimeDurationComponent';
 
 type AppListPageState = FilterComponent.State<AppListItem>;
 
@@ -143,7 +143,7 @@ class AppListPageComponent extends FilterComponent.Component<AppListPageProps, A
         <div style={{ backgroundColor: '#fff' }}>
           <DefaultSecondaryMasthead
             rightToolbar={
-              <TimeControlsContainer
+              <TimeDurationContainer
                 key={'DurationDropdown'}
                 id="app-list-duration-dropdown"
                 handleRefresh={this.updateListItems}

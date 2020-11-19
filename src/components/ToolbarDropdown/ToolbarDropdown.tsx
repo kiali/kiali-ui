@@ -21,6 +21,7 @@ type ToolbarDropdownProps = {
   nameDropdown?: string;
   options: object;
   tooltip?: string;
+  tooltipBottom?: boolean;
   value?: number | string;
   useName?: boolean;
   classNameSelect?: string;
@@ -96,7 +97,12 @@ export class ToolbarDropdown extends React.Component<ToolbarDropdownProps, Toolb
           </Text>
         )}
         {this.props.tooltip ? (
-          <Tooltip key={'ot-' + this.props.id} entryDelay={1000} content={<>{this.props.tooltip}</>}>
+          <Tooltip
+            key={'ot-' + this.props.id}
+            entryDelay={1000}
+            position={this.props.tooltipBottom ? 'bottom' : 'top'}
+            content={<>{this.props.tooltip}</>}
+          >
             {dropdownButton}
           </Tooltip>
         ) : (

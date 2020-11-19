@@ -20,7 +20,7 @@ import TracesComponent from 'components/JaegerIntegration/TracesComponent';
 import { JaegerInfo } from 'types/JaegerInfo';
 import TrafficDetails from 'components/TrafficList/TrafficDetails';
 import WorkloadWizardDropdown from '../../components/IstioWizards/WorkloadWizardDropdown';
-import MainTimeControl from '../../components/Time/MainTimeControl';
+import TimeControl from '../../components/Time/TimeControl';
 
 type WorkloadDetailsState = {
   workload?: Workload;
@@ -222,7 +222,7 @@ class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, Workload
       <>
         <RenderHeader
           location={this.props.location}
-          rightToolbar={<MainTimeControl customDuration={useCustomTime} />}
+          rightToolbar={<TimeControl customDuration={useCustomTime} />}
           actionsToolbar={actionsToolbar}
         />
         {this.state.workload && (
