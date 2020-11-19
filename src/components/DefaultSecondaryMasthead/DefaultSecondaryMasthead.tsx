@@ -15,8 +15,9 @@ const titles = [
 ];
 
 type Props = {
-  rightToolbar?: JSX.Element;
   actionsToolbar?: JSX.Element;
+  hideNamespaceSelector?: boolean;
+  rightToolbar?: JSX.Element;
 };
 
 const mainPadding = style({
@@ -55,6 +56,8 @@ export default class DefaultSecondaryMasthead extends React.Component<Props> {
         disabled = true;
       } else if (path === 'extensions/iter8/newfromfile') {
         title = 'Create New Iter8 Experiment from File';
+      } else if (path === 'mesh_structure') {
+        title = 'Mesh';
       }
       return {
         title: (
@@ -75,7 +78,7 @@ export default class DefaultSecondaryMasthead extends React.Component<Props> {
       <div className={mainPadding}>
         <div className={flexStyle}>
           <div>
-            <NamespaceDropdownContainer disabled={disabled} />
+            {this.props.hideNamespaceSelector === true ? null : <NamespaceDropdownContainer disabled={disabled} />}
           </div>
           {this.props.rightToolbar && <div className={rightToolbarStyle}>{this.props.rightToolbar}</div>}
         </div>
