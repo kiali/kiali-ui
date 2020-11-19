@@ -12,20 +12,17 @@ import { MetricsObjectTypes } from '../../types/Metrics';
 import CustomMetricsContainer from '../../components/Metrics/CustomMetrics';
 import { RenderHeader } from '../../components/Nav/Page';
 import { serverConfig } from '../../config/ServerConfig';
-import WorkloadPodLogs from './WorkloadInfo/WorkloadPodLogs';
-import { DurationInSeconds, TimeInMilliseconds } from '../../types/Common';
+import WorkloadPodLogs from './WorkloadPodLogs';
+import { TimeInMilliseconds } from '../../types/Common';
 import { KialiAppState } from '../../store/Store';
-import { durationSelector } from '../../store/Selectors';
 import ParameterizedTabs, { activeTab } from '../../components/Tab/Tabs';
 import TracesComponent from 'components/JaegerIntegration/TracesComponent';
 import { JaegerInfo } from 'types/JaegerInfo';
 import TrafficDetails from 'components/TrafficList/TrafficDetails';
 import TimeControlsContainer from '../../components/Time/TimeControls';
-import { retrieveTimeRange } from '../../components/Time/TimeRangeHelper';
-import * as MetricsHelper from '../../components/Metrics/Helper';
-import TimeRangeComponent from '../../components/Time/TimeRangeComponent';
 import RefreshContainer from '../../components/Refresh/Refresh';
 import WorkloadWizardDropdown from '../../components/IstioWizards/WorkloadWizardDropdown';
+import TimeRangeContainer from '../../components/Time/TimeRangeComponent';
 
 type WorkloadDetailsState = {
   workload?: Workload;
@@ -33,7 +30,6 @@ type WorkloadDetailsState = {
 };
 
 type WorkloadDetailsPageProps = RouteComponentProps<WorkloadId> & {
-  duration: DurationInSeconds;
   jaegerInfo?: JaegerInfo;
   lastRefreshAt: TimeInMilliseconds;
 };
@@ -62,12 +58,19 @@ class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, Workload
   }
 
   componentDidUpdate(prevProps: WorkloadDetailsPageProps) {
+    const currentTab = activeTab(tabName, defaultTab);
     if (
       this.props.match.params.namespace !== prevProps.match.params.namespace ||
       this.props.match.params.workload !== prevProps.match.params.workload ||
-      this.props.lastRefreshAt !== prevProps.lastRefreshAt
+      this.props.lastRefreshAt !== prevProps.lastRefreshAt ||
+      currentTab !== this.state.currentTab
     ) {
-      this.fetchWorkload();
+      if (currentTab === 'info' || currentTab === 'logs') {
+        this.fetchWorkload();
+      }
+      if (currentTab !== this.state.currentTab) {
+        this.setState({ currentTab: currentTab });
+      }
     }
   }
 
@@ -89,7 +92,6 @@ class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, Workload
         <WorkloadInfo
           workload={this.state.workload}
           namespace={this.props.match.params.namespace}
-          duration={this.props.duration}
           refreshWorkload={this.fetchWorkload}
         />
       </Tab>
@@ -97,7 +99,6 @@ class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, Workload
     const trafficTab = (
       <Tab title="Traffic" eventKey={1} key={'Traffic'}>
         <TrafficDetails
-          duration={this.props.duration}
           itemName={this.props.match.params.workload}
           itemType={MetricsObjectTypes.WORKLOAD}
           namespace={this.props.match.params.namespace}
@@ -150,8 +151,6 @@ class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, Workload
             namespace={this.props.match.params.namespace}
             target={this.props.match.params.workload}
             targetKind={'workload'}
-            showErrors={false}
-            duration={this.props.duration}
           />
         </Tab>
       );
@@ -203,10 +202,9 @@ class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, Workload
     const timeControlComponent = (
       <TimeControlsContainer key={'DurationDropdown'} id="app-info-duration-dropdown" disabled={false} />
     );
-    const timeRange = retrieveTimeRange() || MetricsHelper.defaultMetricsDuration;
     const timeRangeComponent = (
       <>
-        <TimeRangeComponent range={timeRange} tooltip={'Time range'} allowCustom={true} />
+        <TimeRangeContainer tooltip={'Time range'} />
         <RefreshContainer id="metrics-refresh" hideLabel={true} manageURL={true} />
       </>
     );
@@ -255,7 +253,6 @@ class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, Workload
 }
 
 const mapStateToProps = (state: KialiAppState) => ({
-  duration: durationSelector(state),
   jaegerInfo: state.jaegerState.info
 });
 

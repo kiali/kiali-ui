@@ -17,6 +17,7 @@ import IstioConfigSubList from '../../components/IstioConfigSubList/IstioConfigS
 import { drToIstioItems, vsToIstioItems } from '../../types/IstioConfigList';
 import { KialiAppState } from '../../store/Store';
 import { connect } from 'react-redux';
+import { durationSelector } from '../../store/Selectors';
 
 interface Props extends ServiceId {
   duration: DurationInSeconds;
@@ -228,6 +229,7 @@ class ServiceInfo extends React.Component<Props, ServiceInfoState> {
 }
 
 const mapStateToProps = (state: KialiAppState) => ({
+  duration: durationSelector(state),
   lastRefreshAt: state.globalState.lastRefreshAt
 });
 

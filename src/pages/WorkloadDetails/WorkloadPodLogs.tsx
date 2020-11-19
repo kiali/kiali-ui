@@ -14,25 +14,25 @@ import {
   Tooltip
 } from '@patternfly/react-core';
 import { style } from 'typestyle';
-import { Pod, PodLogs, LogEntry } from '../../../types/IstioObjects';
-import { getPodLogs, Response } from '../../../services/Api';
-import { CancelablePromise, makeCancelablePromise } from '../../../utils/CancelablePromises';
-import { ToolbarDropdown } from '../../../components/ToolbarDropdown/ToolbarDropdown';
-import { TimeRange, evalTimeRange, TimeInMilliseconds } from '../../../types/Common';
-import { RenderComponentScroll } from '../../../components/Nav/Page';
+import { Pod, PodLogs, LogEntry } from '../../types/IstioObjects';
+import { getPodLogs, Response } from '../../services/Api';
+import { CancelablePromise, makeCancelablePromise } from '../../utils/CancelablePromises';
+import { ToolbarDropdown } from '../../components/ToolbarDropdown/ToolbarDropdown';
+import { TimeRange, evalTimeRange, TimeInMilliseconds, isEqualTimeRange } from '../../types/Common';
+import { RenderComponentScroll } from '../../components/Nav/Page';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import Splitter from 'm-react-splitters';
-import { KialiIcon, defaultIconStyle } from '../../../config/KialiIcon';
+import { KialiIcon, defaultIconStyle } from '../../config/KialiIcon';
 import screenfull, { Screenfull } from 'screenfull';
-import { retrieveTimeRange } from 'components/Time/TimeRangeHelper';
-import * as MetricsHelper from '../../../components/Metrics/Helper';
 import { serverConfig } from 'config';
-import { KialiAppState } from '../../../store/Store';
+import { KialiAppState } from '../../store/Store';
 import { connect } from 'react-redux';
+import { timeRangeSelector } from '../../store/Selectors';
 
 export interface WorkloadPodLogsProps {
   namespace: string;
   pods: Pod[];
+  timeRange: TimeRange;
   lastRefreshAt: TimeInMilliseconds;
 }
 
@@ -66,7 +66,6 @@ interface WorkloadPodLogsState {
   showTimestamps: boolean;
   sideBySideOrientation: boolean;
   tailLines: number;
-  timeRange: TimeRange;
   useRegex: boolean;
 }
 
@@ -169,7 +168,6 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
     this.appLogsRef = React.createRef();
     this.proxyLogsRef = React.createRef();
 
-    const timeRange = retrieveTimeRange() || MetricsHelper.defaultMetricsDuration; // align with metrics for default
     const defaultState = {
       filteredAppLogs: [],
       filteredProxyLogs: [],
@@ -185,7 +183,6 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
       showTimestamps: false,
       sideBySideOrientation: false,
       tailLines: TailLinesDefault,
-      timeRange: timeRange,
       useRegex: false
     };
     if (this.props.pods.length < 1) {
@@ -222,23 +219,24 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
         pod.name,
         this.state.containerInfo.container,
         this.state.tailLines,
-        this.state.timeRange
+        this.props.timeRange
       );
     }
   }
 
   componentDidUpdate(prevProps: WorkloadPodLogsProps, prevState: WorkloadPodLogsState) {
-    const timeRange = retrieveTimeRange() || MetricsHelper.defaultMetricsDuration; // align with metrics for default
+    console.log('TODELETE WorkloadPodLogs componentDidUpdate');
+    console.log('TODELETE this.props.timeRange ' + JSON.stringify(this.props.timeRange));
     const prevContainer = prevState.containerInfo ? prevState.containerInfo.container : undefined;
     const newContainer = this.state.containerInfo ? this.state.containerInfo.container : undefined;
     const updateContainerInfo = this.state.containerInfo && this.state.containerInfo !== prevState.containerInfo;
     const updateContainer = newContainer && newContainer !== prevContainer;
-
     const updateTailLines = this.state.tailLines && prevState.tailLines !== this.state.tailLines;
     const lastRefreshChanged = prevProps.lastRefreshAt !== this.props.lastRefreshAt;
-    if (updateContainerInfo || updateContainer || updateTailLines || lastRefreshChanged) {
+    const timeRangeChanged = !isEqualTimeRange(this.props.timeRange, prevProps.timeRange);
+    if (updateContainerInfo || updateContainer || updateTailLines || lastRefreshChanged || timeRangeChanged) {
       const pod = this.props.pods[this.state.podValue!];
-      this.fetchLogs(this.props.namespace, pod.name, newContainer!, this.state.tailLines, timeRange);
+      this.fetchLogs(this.props.namespace, pod.name, newContainer!, this.state.tailLines, this.props.timeRange);
     }
     this.proxyLogsRef.current.scrollTop = this.proxyLogsRef.current.scrollHeight;
     this.appLogsRef.current.scrollTop = this.appLogsRef.current.scrollHeight;
@@ -253,6 +251,7 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
   };
 
   render() {
+    console.log('TODELETE WorkloadPodLogs render()');
     return (
       <>
         <RenderComponentScroll key={this.state.sideBySideOrientation ? 'vertical' : 'horizontal'}>
@@ -833,8 +832,7 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
       loadingAppLogs: true,
       loadingProxyLogs: true,
       rawAppLogs: [],
-      rawProxyLogs: [],
-      timeRange: timeRange
+      rawProxyLogs: []
     });
   };
 
@@ -845,9 +843,12 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
   private hasEntries = (entries: LogEntry[]): boolean => !!entries && entries.length > 0;
 }
 
-const mapStateToProps = (state: KialiAppState) => ({
-  lastRefreshAt: state.globalState.lastRefreshAt
-});
+const mapStateToProps = (state: KialiAppState) => {
+  return {
+    timeRange: timeRangeSelector(state),
+    lastRefreshAt: state.globalState.lastRefreshAt
+  };
+};
 
 const WorkloadPodLogsContainer = connect(mapStateToProps)(WorkloadPodLogs);
 export default WorkloadPodLogsContainer;

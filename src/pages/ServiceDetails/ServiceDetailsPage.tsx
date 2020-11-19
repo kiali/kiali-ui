@@ -9,15 +9,12 @@ import { RenderHeader } from '../../components/Nav/Page';
 import { MetricsObjectTypes } from '../../types/Metrics';
 import { KialiAppState } from '../../store/Store';
 import { DurationInSeconds, TimeInMilliseconds } from '../../types/Common';
-import { durationSelector } from '../../store/Selectors';
 import ParameterizedTabs, { activeTab } from '../../components/Tab/Tabs';
 import ServiceInfo from './ServiceInfo';
 import TracesComponent from 'components/JaegerIntegration/TracesComponent';
 import { JaegerInfo } from 'types/JaegerInfo';
 import TrafficDetails from 'components/TrafficList/TrafficDetails';
 import TimeControlsContainer from '../../components/Time/TimeControls';
-import { retrieveTimeRange } from '../../components/Time/TimeRangeHelper';
-import * as MetricsHelper from '../../components/Metrics/Helper';
 import TimeRangeComponent from '../../components/Time/TimeRangeComponent';
 import RefreshContainer from '../../components/Refresh/Refresh';
 import * as API from '../../services/Api';
@@ -71,12 +68,18 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
   }
 
   componentDidUpdate(prevProps: ServiceDetailsProps, _prevState: ServiceDetailsState) {
+    const currentTab = activeTab(tabName, defaultTab);
     if (
       prevProps.match.params.namespace !== this.props.match.params.namespace ||
       prevProps.match.params.service !== this.props.match.params.service ||
       prevProps.lastRefreshAt !== this.props.lastRefreshAt
     ) {
-      this.fetchService();
+      if (currentTab === 'info') {
+        this.fetchService();
+      }
+      if (currentTab !== this.state.currentTab) {
+        this.setState({ currentTab: currentTab });
+      }
     }
   }
 
@@ -137,7 +140,6 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
         <ServiceInfo
           namespace={this.props.match.params.namespace}
           service={this.props.match.params.service}
-          duration={this.props.duration}
           serviceDetails={this.state.serviceDetails}
           gateways={this.state.gateways}
           peerAuthentications={this.state.peerAuthentications}
@@ -148,7 +150,6 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
     const trafficTab = (
       <Tab eventKey={1} title="Traffic" key={trafficTabName}>
         <TrafficDetails
-          duration={this.props.duration}
           itemName={this.props.match.params.service}
           itemType={MetricsObjectTypes.SERVICE}
           namespace={this.props.match.params.namespace}
@@ -176,8 +177,6 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
             namespace={this.props.match.params.namespace}
             target={this.props.match.params.service}
             targetKind={'service'}
-            showErrors={false}
-            duration={this.props.duration}
           />
         </Tab>
       );
@@ -190,10 +189,9 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
     const timeControlComponent = (
       <TimeControlsContainer key={'DurationDropdown'} id="service-info-duration-dropdown" disabled={false} />
     );
-    const timeRange = retrieveTimeRange() || MetricsHelper.defaultMetricsDuration;
     const timeRangeComponent = (
       <>
-        <TimeRangeComponent range={timeRange} tooltip={'Time range'} allowCustom={true} />
+        <TimeRangeComponent tooltip={'Time range'} />
         <RefreshContainer id="metrics-refresh" hideLabel={true} manageURL={true} />
       </>
     );
@@ -248,7 +246,6 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
 }
 
 const mapStateToProps = (state: KialiAppState) => ({
-  duration: durationSelector(state),
   jaegerInfo: state.jaegerState.info,
   lastRefreshAt: state.globalState.lastRefreshAt
 });

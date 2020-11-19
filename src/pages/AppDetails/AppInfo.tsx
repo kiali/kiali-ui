@@ -11,6 +11,7 @@ import GraphDataSource from 'services/GraphDataSource';
 import { AppHealth } from 'types/Health';
 import { KialiAppState } from '../../store/Store';
 import { connect } from 'react-redux';
+import { durationSelector } from '../../store/Selectors';
 
 type AppInfoProps = {
   app?: App;
@@ -71,6 +72,7 @@ class AppInfo extends React.Component<AppInfoProps, AppInfoState> {
 }
 
 const mapStateToProps = (state: KialiAppState) => ({
+  duration: durationSelector(state),
   lastRefreshAt: state.globalState.lastRefreshAt
 });
 

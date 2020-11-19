@@ -12,17 +12,14 @@ import IstioMetricsContainer from '../../components/Metrics/IstioMetrics';
 import { MetricsObjectTypes } from '../../types/Metrics';
 import CustomMetricsContainer from '../../components/Metrics/CustomMetrics';
 import { RenderHeader } from '../../components/Nav/Page';
-import { DurationInSeconds, TimeInMilliseconds } from '../../types/Common';
+import { TimeInMilliseconds, TimeRange } from '../../types/Common';
 import { KialiAppState } from '../../store/Store';
-import { durationSelector } from '../../store/Selectors';
 import ParameterizedTabs, { activeTab } from '../../components/Tab/Tabs';
 import { JaegerInfo } from '../../types/JaegerInfo';
 import TracesComponent from '../../components/JaegerIntegration/TracesComponent';
 import TrafficDetails from 'components/TrafficList/TrafficDetails';
 import TimeControlsContainer from '../../components/Time/TimeControls';
 import TimeRangeComponent from '../../components/Time/TimeRangeComponent';
-import { retrieveTimeRange } from '../../components/Time/TimeRangeHelper';
-import * as MetricsHelper from '../../components/Metrics/Helper';
 import RefreshContainer from '../../components/Refresh/Refresh';
 
 type AppDetailsState = {
@@ -33,9 +30,9 @@ type AppDetailsState = {
 };
 
 type ReduxProps = {
-  duration: DurationInSeconds;
   jaegerInfo?: JaegerInfo;
   lastRefreshAt: TimeInMilliseconds;
+  timeRange: TimeRange;
 };
 
 type AppDetailsProps = RouteComponentProps<AppId> & ReduxProps;
@@ -63,12 +60,19 @@ class AppDetails extends React.Component<AppDetailsProps, AppDetailsState> {
   }
 
   componentDidUpdate(prevProps: AppDetailsProps) {
+    const currentTab = activeTab(tabName, defaultTab);
     if (
       this.props.match.params.namespace !== prevProps.match.params.namespace ||
       this.props.match.params.app !== prevProps.match.params.app ||
-      this.props.lastRefreshAt !== prevProps.lastRefreshAt
+      this.props.lastRefreshAt !== prevProps.lastRefreshAt ||
+      currentTab !== this.state.currentTab
     ) {
-      this.fetchApp();
+      if (currentTab === 'info') {
+        this.fetchApp();
+      }
+      if (currentTab !== this.state.currentTab) {
+        this.setState({ currentTab: currentTab });
+      }
     }
   }
 
@@ -109,14 +113,13 @@ class AppDetails extends React.Component<AppDetailsProps, AppDetailsState> {
   private staticTabs() {
     const overTab = (
       <Tab title="Overview" eventKey={0} key={'Overview'}>
-        <AppInfo app={this.state.app} duration={this.props.duration} />
+        <AppInfo app={this.state.app} />
       </Tab>
     );
 
     const trafficTab = (
       <Tab title="Traffic" eventKey={1} key={'Traffic'}>
         <TrafficDetails
-          duration={this.props.duration}
           itemName={this.props.match.params.app}
           itemType={MetricsObjectTypes.APP}
           namespace={this.props.match.params.namespace}
@@ -158,8 +161,6 @@ class AppDetails extends React.Component<AppDetailsProps, AppDetailsState> {
               namespace={this.props.match.params.namespace}
               target={this.props.match.params.app}
               targetKind={'app'}
-              showErrors={false}
-              duration={this.props.duration}
             />
           </Tab>
         );
@@ -191,13 +192,13 @@ class AppDetails extends React.Component<AppDetailsProps, AppDetailsState> {
   }
 
   render() {
+    console.log('TODELETE render()');
     const timeControlComponent = (
       <TimeControlsContainer key={'DurationDropdown'} id="app-info-duration-dropdown" disabled={false} />
     );
-    const timeRange = retrieveTimeRange() || MetricsHelper.defaultMetricsDuration;
     const timeRangeComponent = (
       <>
-        <TimeRangeComponent range={timeRange} tooltip={'Time range'} allowCustom={true} />
+        <TimeRangeComponent tooltip={'Time range'} />
         <RefreshContainer id="metrics-refresh" hideLabel={true} manageURL={true} />
       </>
     );
@@ -238,11 +239,9 @@ class AppDetails extends React.Component<AppDetailsProps, AppDetailsState> {
 }
 
 const mapStateToProps = (state: KialiAppState) => ({
-  duration: durationSelector(state),
   jaegerInfo: state.jaegerState.info,
   lastRefreshAt: state.globalState.lastRefreshAt
 });
 
 const AppDetailsContainer = connect(mapStateToProps)(AppDetails);
-
 export default AppDetailsContainer;

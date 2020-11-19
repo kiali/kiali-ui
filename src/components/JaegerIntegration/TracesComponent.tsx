@@ -29,6 +29,7 @@ import { TracesFetcher } from './TracesFetcher';
 import { getTimeRangeMicros, buildTags } from './JaegerHelper';
 import SpanDetails from './JaegerResults/SpanDetails';
 import { TargetKind, TimeInMilliseconds } from 'types/Common';
+import { durationSelector } from '../../store/Selectors';
 
 interface TracesProps {
   namespace: string;
@@ -36,7 +37,6 @@ interface TracesProps {
   targetKind: TargetKind;
   urlJaeger: string;
   namespaceSelector: boolean;
-  showErrors: boolean;
   duration: number;
   selectedTrace?: JaegerTrace;
   lastRefreshAt: TimeInMilliseconds;
@@ -114,7 +114,7 @@ class TracesComponent extends React.Component<TracesProps, TracesState> {
       url: '',
       width: 0,
       adjustTime: false,
-      showErrors: this.props.showErrors,
+      showErrors: false,
       intervalDurations: [],
       selectedIntervalDuration: interval ? intervalFromKey(interval) : undefined,
       selectedStatusCode: statusCode,
@@ -417,6 +417,7 @@ class TracesComponent extends React.Component<TracesProps, TracesState> {
 
 const mapStateToProps = (state: KialiAppState) => {
   return {
+    duration: durationSelector(state),
     urlJaeger: state.jaegerState.info ? state.jaegerState.info.url : '',
     namespaceSelector: state.jaegerState.info ? state.jaegerState.info.namespaceSelector : true,
     selectedTrace: state.jaegerState.selectedTrace,

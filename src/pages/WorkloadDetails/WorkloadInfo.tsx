@@ -21,6 +21,7 @@ import { IstioConfigList, toIstioItems } from '../../types/IstioConfigList';
 import IstioConfigSubList from '../../components/IstioConfigSubList/IstioConfigSubList';
 import { KialiAppState } from '../../store/Store';
 import { connect } from 'react-redux';
+import { durationSelector } from '../../store/Selectors';
 
 type WorkloadInfoProps = {
   namespace: string;
@@ -340,6 +341,7 @@ class WorkloadInfo extends React.Component<WorkloadInfoProps, WorkloadInfoState>
 }
 
 const mapStateToProps = (state: KialiAppState) => ({
+  duration: durationSelector(state),
   lastRefreshAt: state.globalState.lastRefreshAt
 });
 

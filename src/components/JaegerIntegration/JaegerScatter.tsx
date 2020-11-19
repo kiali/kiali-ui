@@ -9,7 +9,6 @@ import { isErrorTag } from './JaegerHelper';
 import { PfColors } from '../Pf/PfColors';
 
 import jaegerIcon from '../../assets/img/jaeger-icon.svg';
-import * as MetricsHelper from '../Metrics/Helper';
 import { retrieveTimeRange } from 'components/Time/TimeRangeHelper';
 import { evalTimeRange } from 'types/Common';
 import { KialiAppState } from 'store/Store';
@@ -49,7 +48,7 @@ class JaegerScatter extends React.Component<JaegerScatterProps> {
   render() {
     const tracesRaw: Datapoint[] = [];
     const tracesError: Datapoint[] = [];
-    const timeWindow = evalTimeRange(retrieveTimeRange() || MetricsHelper.defaultMetricsDuration);
+    const timeWindow = evalTimeRange(retrieveTimeRange());
 
     let traces = this.props.traces;
     // Add currently selected trace in list in case it wasn't

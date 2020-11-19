@@ -18,6 +18,7 @@ import * as FilterHelper from '../FilterList/FilterHelper';
 import * as TrafficListFilters from './FiltersAndSorts';
 import { KialiAppState } from '../../store/Store';
 import { connect } from 'react-redux';
+import { durationSelector } from '../../store/Selectors';
 
 export interface AppNode {
   id: string;
@@ -293,6 +294,7 @@ class TrafficDetails extends React.Component<TrafficDetailsProps, TrafficDetails
 
 const mapStateToProps = (state: KialiAppState) => {
   return {
+    duration: durationSelector(state),
     lastRefreshAt: state.globalState.lastRefreshAt
   };
 };
