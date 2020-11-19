@@ -12,7 +12,7 @@ import {
 import * as API from '../../services/Api';
 import * as AlertUtils from '../../utils/AlertUtils';
 import { MessageType } from '../../types/MessageCenter';
-import { EnvoyDetailsModal } from '../Envoy/EnvoyPopup';
+import { EnvoyDetailsModal } from '../Envoy/EnvoyModal';
 
 interface Props {
   namespace: string;

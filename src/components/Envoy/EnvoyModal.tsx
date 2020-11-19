@@ -9,7 +9,7 @@ import AceEditor from 'react-ace';
 import { aceOptions } from '../../types/IstioConfigDetails';
 import { style } from 'typestyle';
 
-const resources: string[] = ['All', 'Clusters', 'Listeners', 'Routes'];
+const resources: string[] = ['all', 'clusters', 'routes'];
 
 const displayFlex = style({
   display: 'flex'
@@ -53,10 +53,20 @@ class EnvoyDetail extends React.Component<EnvoyDetailProps, EnvoyDetailState> {
     this.aceEditorRef = React.createRef();
     this.state = {
       config: 'loading...',
-      resource: 'All',
+      resource: 'all',
       fetch: false,
       loading: true,
       pod: this.sortedPods()[0],
+    }
+  }
+
+  componentDidMount() {
+    this.fetchContent();
+  }
+
+  componentDidUpdate() {
+    if (this.state.fetch) {
+      this.fetchContent();
     }
   }
 
@@ -73,14 +83,23 @@ class EnvoyDetail extends React.Component<EnvoyDetailProps, EnvoyDetailState> {
   };
 
   setResource = (resource: string) => {
+    const resourceIdx: number = +resource;
     this.setState({
-      resource: resource,
+      fetch: true,
+      resource: resources[resourceIdx],
     });
+  };
+
+  fetchContent = () => {
+    if(this.state.resource === "all") {
+      this.fetchEnvoyProxy()
+    } else {
+      this.fetchEnvoyProxyResourceEntries()
+    }
   };
 
   fetchEnvoyProxy = () => {
     API.getPodEnvoyProxy(this.props.namespace, this.state.pod.name).then(resultEnvoyProxy => {
-      console.log(`Update proxy status: ${this.props.namespace}, ${this.state.pod.name}`);
       this.setState({
         config: resultEnvoyProxy.data,
         fetch: false,
@@ -91,16 +110,17 @@ class EnvoyDetail extends React.Component<EnvoyDetailProps, EnvoyDetailState> {
     });
   };
 
-  componentDidMount() {
-    this.fetchEnvoyProxy();
-  }
-
-  componentDidUpdate() {
-    if (this.state.fetch) {
-      console.log("update fetch!");
-     this.fetchEnvoyProxy();
-    }
-  }
+  fetchEnvoyProxyResourceEntries = () => {
+    API.getPodEnvoyProxyResourceEntries(this.props.namespace, this.state.pod.name, this.state.resource).then(resultEnvoyProxy => {
+      this.setState({
+        config: resultEnvoyProxy.data,
+        fetch: false,
+        loading: false,
+      });
+    }).catch(error => {
+      AlertUtils.addError(`Could not fetch envoy config ${this.state.resource} entries for ${this.state.pod.name}.`, error);
+    });
+  };
 
   render() {
     return (

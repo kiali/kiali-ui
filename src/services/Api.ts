@@ -499,6 +499,10 @@ export const getPodEnvoyProxy = (namespace: string, pod: string) => {
   return newRequest<EnvoyProxy>(HTTP_VERBS.GET, urls.podEnvoyProxy(namespace, pod), {}, {});
 };
 
+export const getPodEnvoyProxyResourceEntries = (namespace: string, pod: string, resource: string) => {
+  return newRequest<EnvoyProxy>(HTTP_VERBS.GET, urls.podEnvoyProxyResourceEntries(namespace, pod, resource), {}, {});
+};
+
 export const getErrorString = (error: AxiosError): string => {
   if (error && error.response) {
     if (error.response.data && error.response.data.error) {
