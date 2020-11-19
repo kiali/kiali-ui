@@ -5,15 +5,21 @@ import NamespaceDropdownContainer from '../NamespaceDropdown';
 
 const titles = [
   'applications',
-  'workloads',
-  'services',
   'istio',
   'istio/new',
+  'mesh_structure',
   'extensions/iter8',
   'extensions/iter8/new',
-  'extensions/iter8/newfromfile'
+  'extensions/iter8/newfromfile',
+  'services',
+  'workloads'
 ];
-export default class DefaultSecondaryMasthead extends React.Component {
+
+interface DefaultSecondaryMastheadProps {
+  hideNamespaceSelector?: boolean;
+}
+
+export default class DefaultSecondaryMasthead extends React.Component<DefaultSecondaryMastheadProps> {
   showTitle() {
     let path = window.location.pathname;
     path = path.substr(path.lastIndexOf('/console') + '/console'.length + 1);
@@ -31,6 +37,8 @@ export default class DefaultSecondaryMasthead extends React.Component {
         disabled = true;
       } else if (path === 'extensions/iter8/newfromfile') {
         title = 'Create New Iter8 Experiment from File';
+      } else if (path === 'mesh_structure') {
+        title = 'Mesh';
       }
       return {
         title: (
@@ -49,7 +57,7 @@ export default class DefaultSecondaryMasthead extends React.Component {
     const { title, disabled } = this.showTitle();
     return (
       <SecondaryMasthead title={title ? true : false}>
-        <NamespaceDropdownContainer disabled={disabled} />
+        {this.props.hideNamespaceSelector === true ? null : <NamespaceDropdownContainer disabled={disabled} />}
         {title}
       </SecondaryMasthead>
     );
