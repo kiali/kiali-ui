@@ -5,7 +5,8 @@ import {
   BoundsInMilliseconds,
   guardTimeRange,
   TimeRange,
-  durationToBounds
+  durationToBounds,
+  isEqualTimeRange
 } from '../../types/Common';
 import { ToolbarDropdown } from '../ToolbarDropdown/ToolbarDropdown';
 import { serverConfig, humanDurations } from '../../config/ServerConfig';
@@ -29,17 +30,14 @@ class TimeRangeComponent extends React.Component<Props> {
   constructor(props: Props) {
     super(props);
     const range = retrieveTimeRange();
-    console.log('TODELETE constructor this.range ' + JSON.stringify(range));
-    storeTimeRange(range);
-    this.props.setTimeRange(range);
+    if ((range.rangeDuration !== undefined || range.from !== undefined) && !isEqualTimeRange(props.timeRange, range)) {
+      this.props.setTimeRange(range);
+    }
+    storeTimeRange(this.props.timeRange);
   }
 
   componentDidUpdate() {
-    console.log('TODELETE TimeRangeComponent componentDidUpdate');
-    console.log('this.props.timeRange ' + JSON.stringify(this.props.timeRange));
-    if (this.props.timeRange) {
-      storeTimeRange(this.props.timeRange);
-    }
+    storeTimeRange(this.props.timeRange);
   }
 
   onDurationChanged = (key: string) => {
@@ -53,13 +51,11 @@ class TimeRangeComponent extends React.Component<Props> {
       range.from = undefined;
       range.to = undefined;
     }
-    console.log('TODELETE TimeRangeComponent setTimeRange this.range ' + JSON.stringify(range));
     this.props.setTimeRange(range);
   };
 
   onStartPickerChanged = (d?: Date) => {
     let range: TimeRange = {};
-    console.log('TODELETE onStartPickerChanged d: ' + JSON.stringify(d));
     if (d) {
       range = guardTimeRange(range, durationToBounds, b => b);
       range.from = d.getTime();
@@ -67,24 +63,20 @@ class TimeRangeComponent extends React.Component<Props> {
         range.from = range.to;
       }
       range.rangeDuration = undefined;
-      console.log('TODELETE setTimeRange this.props.setTimeRange: ' + JSON.stringify(range));
       this.props.setTimeRange(range);
     }
   };
 
   onEndPickerChanged = (d?: Date) => {
-    console.log('TODELETE onEndPickerChanged d: ' + JSON.stringify(d));
     const range = guardTimeRange(this.props.timeRange, durationToBounds, b => b);
     range.to = d ? d.getTime() : undefined;
     if (range.to && range.from && range.from > range.to) {
       range.to = range.from;
     }
-    console.log('TODELETE setTimeRange this.props.setTimeRange: ' + JSON.stringify(range));
     this.props.setTimeRange(range);
   };
 
   render() {
-    console.log('TODELETE TimeRangeComponent render()');
     return guardTimeRange(
       this.props.timeRange,
       d => this.renderDuration(d),
@@ -93,7 +85,6 @@ class TimeRangeComponent extends React.Component<Props> {
   }
 
   renderDuration(d?: DurationInSeconds) {
-    console.log('TODELETE renderDuration ' + JSON.stringify(d));
     const durations = humanDurations(serverConfig, 'Last', undefined);
     const options = { custom: 'Custom', ...durations };
     return (
@@ -110,7 +101,6 @@ class TimeRangeComponent extends React.Component<Props> {
   }
 
   renderWithCustom(bounds: BoundsInMilliseconds) {
-    console.log('TODELETE renderWithCustom ' + JSON.stringify(bounds));
     return (
       <>
         {this.renderDuration()}
@@ -124,8 +114,6 @@ class TimeRangeComponent extends React.Component<Props> {
 }
 
 const mapStateToProps = (state: KialiAppState) => {
-  console.log('TODELETE mapStateToProps ' + JSON.stringify(state.userSettings.timeRange));
-  console.log('TODELETE timeRangeSelector(state) ' + JSON.stringify(timeRangeSelector(state)));
   return {
     timeRange: timeRangeSelector(state)
   };

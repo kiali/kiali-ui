@@ -96,8 +96,5 @@ export const isEqualTimeRange = (t1: TimeRange, t2: TimeRange): boolean => {
   if (t1.rangeDuration && t2.rangeDuration && t1.rangeDuration !== t2.rangeDuration) {
     return false;
   }
-  console.log('TODELETE isEqualTimeRange ');
-  console.log('TODELETE t1: ' + JSON.stringify(t1));
-  console.log('TODELETE t2: ' + JSON.stringify(t2));
   return true;
 };

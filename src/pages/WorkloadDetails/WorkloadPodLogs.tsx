@@ -225,8 +225,6 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
   }
 
   componentDidUpdate(prevProps: WorkloadPodLogsProps, prevState: WorkloadPodLogsState) {
-    console.log('TODELETE WorkloadPodLogs componentDidUpdate');
-    console.log('TODELETE this.props.timeRange ' + JSON.stringify(this.props.timeRange));
     const prevContainer = prevState.containerInfo ? prevState.containerInfo.container : undefined;
     const newContainer = this.state.containerInfo ? this.state.containerInfo.container : undefined;
     const updateContainerInfo = this.state.containerInfo && this.state.containerInfo !== prevState.containerInfo;
@@ -251,7 +249,6 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
   };
 
   render() {
-    console.log('TODELETE WorkloadPodLogs render()');
     return (
       <>
         <RenderComponentScroll key={this.state.sideBySideOrientation ? 'vertical' : 'horizontal'}>

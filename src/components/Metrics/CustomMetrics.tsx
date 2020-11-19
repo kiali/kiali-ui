@@ -8,7 +8,7 @@ import { serverConfig } from '../../config/ServerConfig';
 import history, { URLParam } from '../../app/History';
 import * as API from '../../services/Api';
 import { KialiAppState } from '../../store/Store';
-import { TimeRange, evalTimeRange, TimeInMilliseconds } from '../../types/Common';
+import { TimeRange, evalTimeRange, TimeInMilliseconds, isEqualTimeRange } from '../../types/Common';
 import * as AlertUtils from '../../utils/AlertUtils';
 import { RenderComponentScroll } from '../../components/Nav/Page';
 import * as MetricsHelper from './Helper';
@@ -18,7 +18,7 @@ import MetricsRawAggregation from '../MetricsOptions/MetricsRawAggregation';
 import { GrafanaLinks } from './GrafanaLinks';
 import { MetricsObjectTypes } from 'types/Metrics';
 import { SpanOverlay, JaegerLineInfo } from './SpanOverlay';
-import { retrieveTimeRange, storeTimeRange } from 'components/Time/TimeRangeHelper';
+import { retrieveTimeRange } from 'components/Time/TimeRangeHelper';
 import { DashboardModel, ExternalLink } from 'types/Dashboards';
 import { Overlay } from 'types/Overlay';
 import { Aggregator, DashboardQuery } from 'types/MetricsOptions';
@@ -89,13 +89,15 @@ export class CustomMetrics extends React.Component<Props, MetricsState> {
     this.refresh();
   }
 
-  componentDidUpdate(prev: Props) {
+  componentDidUpdate(prevProps: Props) {
     if (
-      this.props.namespace !== prev.namespace ||
-      this.props.app !== prev.app ||
-      this.props.workload !== prev.workload ||
-      this.props.version !== prev.version ||
-      this.props.template !== prev.template
+      this.props.namespace !== prevProps.namespace ||
+      this.props.app !== prevProps.app ||
+      this.props.workload !== prevProps.workload ||
+      this.props.version !== prevProps.version ||
+      this.props.template !== prevProps.template ||
+      this.props.lastRefreshAt !== prevProps.lastRefreshAt ||
+      !isEqualTimeRange(this.props.timeRange, prevProps.timeRange)
     ) {
       const settings = MetricsHelper.retrieveMetricsSettings();
       this.options = this.initOptions(settings);
@@ -165,7 +167,6 @@ export class CustomMetrics extends React.Component<Props, MetricsState> {
         from: dates[0].getTime(),
         to: dates[1].getTime()
       };
-      storeTimeRange(range);
       this.props.setTimeRange(range);
     }
   }

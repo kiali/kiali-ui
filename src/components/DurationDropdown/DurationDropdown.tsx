@@ -66,12 +66,10 @@ export const withURLAwareness = DurationDropdownComponent => {
     }
 
     componentDidUpdate() {
-      console.log('TODELETE componentDidUpdate() this.props ' + this.props.duration);
       HistoryManager.setParam(URLParam.DURATION, String(this.props.duration));
     }
 
     render() {
-      console.log('TODELETE render() this.props ' + this.props.duration);
       return <DurationDropdownComponent {...this.props} />;
     }
   };

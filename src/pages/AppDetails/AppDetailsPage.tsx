@@ -192,7 +192,6 @@ class AppDetails extends React.Component<AppDetailsProps, AppDetailsState> {
   }
 
   render() {
-    console.log('TODELETE render()');
     const timeControlComponent = (
       <TimeControlsContainer key={'DurationDropdown'} id="app-info-duration-dropdown" disabled={false} />
     );

@@ -7,7 +7,7 @@ import { style } from 'typestyle';
 import { RenderComponentScroll } from '../../components/Nav/Page';
 import * as API from '../../services/Api';
 import { KialiAppState } from '../../store/Store';
-import { TimeRange, evalTimeRange, TimeInMilliseconds } from '../../types/Common';
+import { TimeRange, evalTimeRange, TimeInMilliseconds, isEqualTimeRange } from '../../types/Common';
 import { Direction, IstioMetricsOptions, Reporter } from '../../types/MetricsOptions';
 import * as AlertUtils from '../../utils/AlertUtils';
 
@@ -27,7 +27,10 @@ import { Overlay } from 'types/Overlay';
 import { RawOrBucket } from 'types/VictoryChartInfo';
 import { Dashboard } from 'components/Charts/Dashboard';
 import { timeRangeSelector } from '../../store/Selectors';
-import { storeTimeRange } from '../Time/TimeRangeHelper';
+import { ThunkDispatch } from 'redux-thunk';
+import { KialiAppAction } from '../../actions/KialiAppAction';
+import { UserSettingsActions } from '../../actions/UserSettingsActions';
+import { bindActionCreators } from 'redux';
 
 type MetricsState = {
   dashboard?: DashboardModel;
@@ -66,7 +69,6 @@ class IstioMetrics extends React.Component<Props, MetricsState> {
 
   constructor(props: Props) {
     super(props);
-    console.log('TODELETE IstioMetrics constructor ');
     const settings = MetricsHelper.retrieveMetricsSettings();
     this.options = this.initOptions(settings);
     // Initialize active filters from URL
@@ -87,21 +89,18 @@ class IstioMetrics extends React.Component<Props, MetricsState> {
   }
 
   componentDidMount() {
-    console.log('TODELETE componentDidMount ');
     this.fetchGrafanaInfo();
     this.refresh();
   }
 
   componentDidUpdate(prevProps: Props) {
-    console.log('TODELETE componenDidUpdate ');
-    console.log('TODELETE this.props ' + JSON.stringify(this.props));
-    console.log('TODELETE prevProps ' + JSON.stringify(prevProps));
     if (
       this.props.direction !== prevProps.direction ||
       this.props.namespace !== prevProps.namespace ||
       this.props.object !== prevProps.object ||
       this.props.objectType !== prevProps.objectType ||
-      this.props.lastRefreshAt !== prevProps.lastRefreshAt
+      this.props.lastRefreshAt !== prevProps.lastRefreshAt ||
+      !isEqualTimeRange(this.props.timeRange, prevProps.timeRange)
     ) {
       if (this.props.direction !== prevProps.direction) {
         const settings = MetricsHelper.retrieveMetricsSettings();
@@ -222,7 +221,6 @@ class IstioMetrics extends React.Component<Props, MetricsState> {
         from: dates[0].getTime(),
         to: dates[1].getTime()
       };
-      storeTimeRange(range);
       this.props.setTimeRange(range);
     }
   }
@@ -310,16 +308,14 @@ const mapStateToProps = (state: KialiAppState) => {
   };
 };
 
-/*
 const mapDispatchToProps = (dispatch: ThunkDispatch<KialiAppState, void, KialiAppAction>) => {
   return {
     setTimeRange: bindActionCreators(UserSettingsActions.setTimeRange, dispatch)
   };
 };
- */
 
 const IstioMetricsContainer = withRouter<RouteComponentProps<{}> & IstioMetricsProps, any>(
-  connect(mapStateToProps)(IstioMetrics)
+  connect(mapStateToProps, mapDispatchToProps)(IstioMetrics)
 );
 
 export default IstioMetricsContainer;

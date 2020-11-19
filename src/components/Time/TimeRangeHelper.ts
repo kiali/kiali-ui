@@ -1,9 +1,7 @@
 import { TimeRange } from 'types/Common';
 import { HistoryManager, URLParam } from 'app/History';
-import { defaultMetricsDuration } from '../Metrics/Helper';
 
 export const retrieveTimeRange = (): TimeRange => {
-  console.log('TODELETE retrieveTimeRange');
   const urlBounds = HistoryManager.getTimeBounds();
   const urlRangeDuration = HistoryManager.getRangeDuration();
   const tr: TimeRange = {
@@ -11,11 +9,10 @@ export const retrieveTimeRange = (): TimeRange => {
     to: urlBounds?.to,
     rangeDuration: urlRangeDuration
   };
-  return urlBounds === undefined && urlRangeDuration === undefined ? { rangeDuration: defaultMetricsDuration } : tr;
+  return tr;
 };
 
 export const storeTimeRange = (range: TimeRange) => {
-  console.log('TODELETE storeTimeRange');
   if (range.from) {
     HistoryManager.setParam(URLParam.FROM, String(range.from));
     if (range.to) {

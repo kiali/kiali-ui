@@ -16,14 +16,12 @@ export const INITIAL_USER_SETTINGS_STATE: UserSettings = {
 };
 
 const UserSettingsState = (state: UserSettings = INITIAL_USER_SETTINGS_STATE, action: KialiAppAction): UserSettings => {
-  console.log('TODELETE UserSettingsState action.type ' + action.type);
   switch (action.type) {
     case getType(UserSettingsActions.navCollapse):
       return updateState(state, {
         interface: { navCollapse: action.payload.collapse }
       });
     case getType(UserSettingsActions.setDuration):
-      console.log('TODELETE UserSettingsState setDuration action.payload ' + JSON.stringify(action.payload));
       return updateState(state, {
         duration: action.payload
       });
@@ -44,7 +42,6 @@ const UserSettingsState = (state: UserSettings = INITIAL_USER_SETTINGS_STATE, ac
       });
     }
     case getType(UserSettingsActions.setTimeRange): {
-      console.log('TODELETE UserSettingsState setTimeRange action.payload ' + JSON.stringify(action.payload));
       return updateState(state, {
         timeRange: action.payload
       });
