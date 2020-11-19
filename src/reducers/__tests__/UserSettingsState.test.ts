@@ -27,7 +27,7 @@ describe('UserSettingsState reducer', () => {
       replayActive: false,
       replayQueryTime: 0,
       replayWindow: { interval: 0, startTime: 0 },
-      timeRange: { rangeDuration: 60 }
+      timeRange: { rangeDuration: 600 }
     });
   });
 
