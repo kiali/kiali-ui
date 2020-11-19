@@ -9,7 +9,6 @@ describe('#ServiceInfo render correctly with data', () => {
       <ServiceInfo
         namespace="istio-system"
         service="reviews"
-        duration={600}
         gateways={[]}
         peerAuthentications={[]}
         validations={{}}
