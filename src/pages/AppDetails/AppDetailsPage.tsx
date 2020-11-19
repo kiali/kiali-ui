@@ -18,9 +18,7 @@ import ParameterizedTabs, { activeTab } from '../../components/Tab/Tabs';
 import { JaegerInfo } from '../../types/JaegerInfo';
 import TracesComponent from '../../components/JaegerIntegration/TracesComponent';
 import TrafficDetails from 'components/TrafficList/TrafficDetails';
-import TimeControlsContainer from '../../components/Time/TimeControls';
-import TimeRangeComponent from '../../components/Time/TimeRangeComponent';
-import RefreshContainer from '../../components/Refresh/Refresh';
+import MainTimeControl from '../../components/Time/MainTimeControl';
 
 type AppDetailsState = {
   app?: App;
@@ -192,30 +190,24 @@ class AppDetails extends React.Component<AppDetailsProps, AppDetailsState> {
   }
 
   render() {
-    const timeControlComponent = (
-      <TimeControlsContainer key={'DurationDropdown'} id="app-info-duration-dropdown" disabled={false} />
-    );
-    const timeRangeComponent = (
-      <>
-        <TimeRangeComponent tooltip={'Time range'} />
-        <RefreshContainer id="metrics-refresh" hideLabel={true} manageURL={true} />
-      </>
-    );
-
-    let timeComponent: JSX.Element;
+    let useCustomTime = false;
     switch (this.state.currentTab) {
       case 'info':
       case 'traffic':
       case 'traces':
-        timeComponent = timeControlComponent;
+        useCustomTime = false;
         break;
-      default:
-        timeComponent = timeRangeComponent;
+      case 'in_metrics':
+      case 'out_metrics':
+        useCustomTime = true;
         break;
     }
     return (
       <>
-        <RenderHeader location={this.props.location} rightToolbar={timeComponent} />
+        <RenderHeader
+          location={this.props.location}
+          rightToolbar={<MainTimeControl customDuration={useCustomTime} />}
+        />
         {this.state.app && (
           <ParameterizedTabs
             id="basic-tabs"

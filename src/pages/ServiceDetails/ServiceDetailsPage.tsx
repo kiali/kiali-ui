@@ -14,9 +14,6 @@ import ServiceInfo from './ServiceInfo';
 import TracesComponent from 'components/JaegerIntegration/TracesComponent';
 import { JaegerInfo } from 'types/JaegerInfo';
 import TrafficDetails from 'components/TrafficList/TrafficDetails';
-import TimeControlsContainer from '../../components/Time/TimeControls';
-import TimeRangeComponent from '../../components/Time/TimeRangeComponent';
-import RefreshContainer from '../../components/Refresh/Refresh';
 import * as API from '../../services/Api';
 import Namespace from '../../types/Namespace';
 import * as AlertUtils from '../../utils/AlertUtils';
@@ -24,6 +21,7 @@ import { PromisesRegistry } from '../../utils/CancelablePromises';
 import { ServiceDetailsInfo } from '../../types/ServiceInfo';
 import { PeerAuthentication, Validations } from '../../types/IstioObjects';
 import ServiceWizardDropdown from '../../components/IstioWizards/ServiceWizardDropdown';
+import MainTimeControl from '../../components/Time/MainTimeControl';
 
 type ServiceDetailsState = {
   currentTab: string;
@@ -186,28 +184,17 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
   }
 
   render() {
-    const timeControlComponent = (
-      <TimeControlsContainer key={'DurationDropdown'} id="service-info-duration-dropdown" disabled={false} />
-    );
-    const timeRangeComponent = (
-      <>
-        <TimeRangeComponent tooltip={'Time range'} />
-        <RefreshContainer id="metrics-refresh" hideLabel={true} manageURL={true} />
-      </>
-    );
-
-    let timeComponent: JSX.Element;
+    let useCustomTime = false;
     switch (this.state.currentTab) {
       case 'info':
       case 'traffic':
       case 'traces':
-        timeComponent = timeControlComponent;
+        useCustomTime = false;
         break;
-      default:
-        timeComponent = timeRangeComponent;
+      case 'metrics':
+        useCustomTime = true;
         break;
     }
-
     const actionsToolbar = this.state.serviceDetails ? (
       <ServiceWizardDropdown
         namespace={this.props.match.params.namespace}
@@ -225,7 +212,11 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
 
     return (
       <>
-        <RenderHeader location={this.props.location} rightToolbar={timeComponent} actionsToolbar={actionsToolbar} />
+        <RenderHeader
+          location={this.props.location}
+          rightToolbar={<MainTimeControl customDuration={useCustomTime} />}
+          actionsToolbar={actionsToolbar}
+        />
         <ParameterizedTabs
           id="basic-tabs"
           onSelect={tabValue => {

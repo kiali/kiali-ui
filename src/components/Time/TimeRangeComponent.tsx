@@ -19,12 +19,17 @@ import { KialiAppAction } from '../../actions/KialiAppAction';
 import { UserSettingsActions } from '../../actions/UserSettingsActions';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { style } from 'typestyle';
 
 type Props = {
   timeRange: TimeRange;
   tooltip: string;
   setTimeRange: (range: TimeRange) => void;
 };
+
+const labelStyle = style({
+  margin: '5px 5px 0px 5px'
+});
 
 class TimeRangeComponent extends React.Component<Props> {
   constructor(props: Props) {
@@ -104,9 +109,9 @@ class TimeRangeComponent extends React.Component<Props> {
     return (
       <>
         {this.renderDuration()}
-        {' From '}
+        <div className={labelStyle}>From</div>
         <DateTimePicker selected={bounds.from} onChange={date => this.onStartPickerChanged(date)} maxDate={bounds.to} />
-        {' To '}
+        <div className={labelStyle}>To</div>
         <DateTimePicker selected={bounds.to} onChange={date => this.onEndPickerChanged(date)} minDate={bounds.from} />
       </>
     );

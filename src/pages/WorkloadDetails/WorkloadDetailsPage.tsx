@@ -19,10 +19,8 @@ import ParameterizedTabs, { activeTab } from '../../components/Tab/Tabs';
 import TracesComponent from 'components/JaegerIntegration/TracesComponent';
 import { JaegerInfo } from 'types/JaegerInfo';
 import TrafficDetails from 'components/TrafficList/TrafficDetails';
-import TimeControlsContainer from '../../components/Time/TimeControls';
-import RefreshContainer from '../../components/Refresh/Refresh';
 import WorkloadWizardDropdown from '../../components/IstioWizards/WorkloadWizardDropdown';
-import TimeRangeContainer from '../../components/Time/TimeRangeComponent';
+import MainTimeControl from '../../components/Time/MainTimeControl';
 
 type WorkloadDetailsState = {
   workload?: Workload;
@@ -199,25 +197,17 @@ class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, Workload
   }
 
   render() {
-    const timeControlComponent = (
-      <TimeControlsContainer key={'DurationDropdown'} id="app-info-duration-dropdown" disabled={false} />
-    );
-    const timeRangeComponent = (
-      <>
-        <TimeRangeContainer tooltip={'Time range'} />
-        <RefreshContainer id="metrics-refresh" hideLabel={true} manageURL={true} />
-      </>
-    );
-
-    let timeComponent: JSX.Element;
+    let useCustomTime = false;
     switch (this.state.currentTab) {
       case 'info':
       case 'traffic':
       case 'traces':
-        timeComponent = timeControlComponent;
+        useCustomTime = false;
         break;
-      default:
-        timeComponent = timeRangeComponent;
+      case 'in_metrics':
+      case 'out_metrics':
+      case 'logs':
+        useCustomTime = true;
         break;
     }
     const actionsToolbar =
@@ -230,7 +220,11 @@ class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, Workload
       ) : undefined;
     return (
       <>
-        <RenderHeader location={this.props.location} rightToolbar={timeComponent} actionsToolbar={actionsToolbar} />
+        <RenderHeader
+          location={this.props.location}
+          rightToolbar={<MainTimeControl customDuration={useCustomTime} />}
+          actionsToolbar={actionsToolbar}
+        />
         {this.state.workload && (
           <ParameterizedTabs
             id="basic-tabs"
