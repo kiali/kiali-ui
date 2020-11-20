@@ -1,7 +1,21 @@
 import * as API from '../../services/Api';
 import * as AlertUtils from '../../utils/AlertUtils';
 import * as React from 'react';
-import { Card, GutterSize, Modal, Stack, StackItem, Toolbar, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
+import {
+  Card,
+  EmptyState,
+  EmptyStateIcon,
+  EmptyStateVariant,
+  GutterSize,
+  Modal,
+  Spinner,
+  Stack,
+  StackItem,
+  Title,
+  Toolbar,
+  ToolbarGroup,
+  ToolbarItem
+} from '@patternfly/react-core';
 import { Workload } from '../../types/Workload';
 import { Pod } from '../../types/IstioObjects';
 import ToolbarDropdown from '../ToolbarDropdown/ToolbarDropdown';
@@ -24,22 +38,21 @@ type EnvoyDetailModalProps = {
   workload: Workload;
   isOpen: boolean;
   onClose: (changed?: boolean) => void;
-}
+};
 
 type EnvoyDetailProps = {
   namespace: string;
-  workload: Workload
-}
+  workload: Workload;
+};
 
 type EnvoyDetailState = {
   config: any;
-  resource: string,
+  resource: string;
   fetch: boolean;
-  loading: boolean;
-  pod: Pod
-}
+  pod: Pod;
+};
 
-export const EnvoyDetailsModal = ({namespace, workload, isOpen, onClose}: EnvoyDetailModalProps) => (
+export const EnvoyDetailsModal = ({ namespace, workload, isOpen, onClose }: EnvoyDetailModalProps) => (
   <Modal isLarge={true} title={`Envoy config for ${workload.name}`} isOpen={isOpen} onClose={onClose}>
     <EnvoyDetail namespace={namespace} workload={workload} />
   </Modal>
@@ -54,10 +67,9 @@ class EnvoyDetail extends React.Component<EnvoyDetailProps, EnvoyDetailState> {
     this.state = {
       config: 'loading...',
       resource: 'all',
-      fetch: false,
-      loading: true,
-      pod: this.sortedPods()[0],
-    }
+      fetch: true,
+      pod: this.sortedPods()[0]
+    };
   }
 
   componentDidMount() {
@@ -71,14 +83,14 @@ class EnvoyDetail extends React.Component<EnvoyDetailProps, EnvoyDetailState> {
   }
 
   sortedPods = (): Pod[] => {
-    return this.props.workload.pods.sort((p1: Pod, p2: Pod) => (p1.name >= p2.name ? 1 : -1))
+    return this.props.workload.pods.sort((p1: Pod, p2: Pod) => (p1.name >= p2.name ? 1 : -1));
   };
 
   setPod = (podName: string) => {
     const podIdx: number = +podName;
     this.setState({
       fetch: true,
-      pod: this.sortedPods()[podIdx],
+      pod: this.sortedPods()[podIdx]
     });
   };
 
@@ -86,40 +98,45 @@ class EnvoyDetail extends React.Component<EnvoyDetailProps, EnvoyDetailState> {
     const resourceIdx: number = +resource;
     this.setState({
       fetch: true,
-      resource: resources[resourceIdx],
+      resource: resources[resourceIdx]
     });
   };
 
   fetchContent = () => {
-    if(this.state.resource === "all") {
-      this.fetchEnvoyProxy()
+    if (this.state.resource === 'all') {
+      this.fetchEnvoyProxy();
     } else {
-      this.fetchEnvoyProxyResourceEntries()
+      this.fetchEnvoyProxyResourceEntries();
     }
   };
 
   fetchEnvoyProxy = () => {
-    API.getPodEnvoyProxy(this.props.namespace, this.state.pod.name).then(resultEnvoyProxy => {
-      this.setState({
-        config: resultEnvoyProxy.data,
-        fetch: false,
-        loading: false,
+    API.getPodEnvoyProxy(this.props.namespace, this.state.pod.name)
+      .then(resultEnvoyProxy => {
+        this.setState({
+          config: resultEnvoyProxy.data,
+          fetch: false
+        });
+      })
+      .catch(error => {
+        AlertUtils.addError(`Could not fetch envoy config for ${this.state.pod.name}.`, error);
       });
-    }).catch(error => {
-      AlertUtils.addError(`Could not fetch envoy config for ${this.state.pod.name}.`, error);
-    });
   };
 
   fetchEnvoyProxyResourceEntries = () => {
-    API.getPodEnvoyProxyResourceEntries(this.props.namespace, this.state.pod.name, this.state.resource).then(resultEnvoyProxy => {
-      this.setState({
-        config: resultEnvoyProxy.data,
-        fetch: false,
-        loading: false,
+    API.getPodEnvoyProxyResourceEntries(this.props.namespace, this.state.pod.name, this.state.resource)
+      .then(resultEnvoyProxy => {
+        this.setState({
+          config: resultEnvoyProxy.data,
+          fetch: false
+        });
+      })
+      .catch(error => {
+        AlertUtils.addError(
+          `Could not fetch envoy config ${this.state.resource} entries for ${this.state.pod.name}.`,
+          error
+        );
       });
-    }).catch(error => {
-      AlertUtils.addError(`Could not fetch envoy config ${this.state.resource} entries for ${this.state.pod.name}.`, error);
-    });
   };
 
   render() {
@@ -131,18 +148,18 @@ class EnvoyDetail extends React.Component<EnvoyDetailProps, EnvoyDetailState> {
               <ToolbarItem className={displayFlex}>
                 <ToolbarDropdown
                   id="envoy_pods_list"
-                  nameDropdown={"Pod"}
+                  nameDropdown={'Pod'}
                   tooltip="Display envoy config for the selected pod"
                   handleSelect={key => this.setPod(key)}
                   value={this.state.pod.name}
                   label={this.state.pod.name}
-                  options={this.props.workload.pods.map((pod:Pod) => pod.name).sort()}
+                  options={this.props.workload.pods.map((pod: Pod) => pod.name).sort()}
                 />
               </ToolbarItem>
               <ToolbarItem className={[displayFlex, toolbarSpace].join(' ')}>
                 <ToolbarDropdown
                   id="envoy_xds_list"
-                  nameDropdown={"Resources"}
+                  nameDropdown={'Resources'}
                   tooltip="Display the selected resources from the Envoy config"
                   handleSelect={key => this.setResource(key)}
                   value={this.state.resource}
@@ -154,8 +171,10 @@ class EnvoyDetail extends React.Component<EnvoyDetailProps, EnvoyDetailState> {
           </Toolbar>
         </StackItem>
         <StackItem>
-          <Card style={{height: '400px'}}>
-            {this.state.loading ? 'loading...' :
+          <Card style={{ height: '400px' }}>
+            {this.state.fetch ? (
+              <Loading />
+            ) : (
               <AceEditor
                 ref={this.aceEditorRef}
                 mode="yaml"
@@ -165,13 +184,22 @@ class EnvoyDetail extends React.Component<EnvoyDetailProps, EnvoyDetailState> {
                 className={'istio-ace-editor'}
                 wrapEnabled={true}
                 readOnly={true}
-                setOptions={aceOptions || { foldStyle: "markbegin" } }
+                setOptions={aceOptions || { foldStyle: 'markbegin' }}
                 value={JSON.stringify(this.state.config, null, 2)}
               />
-            }
+            )}
           </Card>
         </StackItem>
       </Stack>
     );
   }
 }
+
+export const Loading = () => (
+  <EmptyState variant={EmptyStateVariant.full}>
+    <EmptyStateIcon variant="container" component={Spinner} />
+    <Title size="lg" headingLevel="h4">
+      Loading...
+    </Title>
+  </EmptyState>
+);

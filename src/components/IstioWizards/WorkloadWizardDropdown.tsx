@@ -126,11 +126,7 @@ class WorkloadWizardDropdown extends React.Component<Props, State> {
       );
 
       const envoyAction = (
-        <DropdownItem
-          key="envoy-details"
-          component="button"
-          onClick={ () => this.onWizardToggle(true)}
-        >
+        <DropdownItem key="envoy-details" component="button" onClick={() => this.onWizardToggle(true)}>
           Show Envoy details
         </DropdownItem>
       );
@@ -178,7 +174,12 @@ class WorkloadWizardDropdown extends React.Component<Props, State> {
     return (
       <>
         {dropdown}
-        <EnvoyDetailsModal namespace={this.props.namespace} workload={this.props.workload} isOpen={this.state.showWizard} onClose={this.onClose}/>
+        <EnvoyDetailsModal
+          namespace={this.props.namespace}
+          workload={this.props.workload}
+          isOpen={this.state.showWizard}
+          onClose={this.onClose}
+        />
       </>
     );
   }
