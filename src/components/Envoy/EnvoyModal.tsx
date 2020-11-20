@@ -22,6 +22,10 @@ import ToolbarDropdown from '../ToolbarDropdown/ToolbarDropdown';
 import AceEditor from 'react-ace';
 import { aceOptions } from '../../types/IstioConfigDetails';
 import { style } from 'typestyle';
+import { SummaryWriterBuilder } from './writers/BaseWriter';
+
+// Enables the search box for the ACEeditor
+require("ace-builds/src-noconflict/ext-searchbox");
 
 const resources: string[] = ['all', 'clusters', 'routes'];
 
@@ -58,6 +62,15 @@ export const EnvoyDetailsModal = ({ namespace, workload, isOpen, onClose }: Envo
   </Modal>
 );
 
+export const Loading = () => (
+  <EmptyState variant={EmptyStateVariant.full}>
+    <EmptyStateIcon variant="container" component={Spinner} />
+    <Title size="lg" headingLevel="h4">
+      Loading...
+    </Title>
+  </EmptyState>
+);
+
 class EnvoyDetail extends React.Component<EnvoyDetailProps, EnvoyDetailState> {
   aceEditorRef: React.RefObject<AceEditor>;
 
@@ -88,18 +101,24 @@ class EnvoyDetail extends React.Component<EnvoyDetailProps, EnvoyDetailState> {
 
   setPod = (podName: string) => {
     const podIdx: number = +podName;
-    this.setState({
-      fetch: true,
-      pod: this.sortedPods()[podIdx]
-    });
+    const targetPod: Pod = this.sortedPods()[podIdx];
+    if (targetPod.name !== this.state.pod.name) {
+      this.setState({
+        fetch: true,
+        pod: targetPod,
+      });
+    }
   };
 
   setResource = (resource: string) => {
     const resourceIdx: number = +resource;
-    this.setState({
-      fetch: true,
-      resource: resources[resourceIdx]
-    });
+    const targetResource: string = resources[resourceIdx];
+    if(targetResource !== this.state.resource) {
+      this.setState({
+        fetch: true,
+        resource: targetResource,
+      });
+    }
   };
 
   fetchContent = () => {
@@ -140,6 +159,9 @@ class EnvoyDetail extends React.Component<EnvoyDetailProps, EnvoyDetailState> {
   };
 
   render() {
+    const builder = SummaryWriterBuilder(this.state.resource, this.state.config);
+    const SummaryWriterComp = builder[0];
+    const summaryWriter = builder[1];
     return (
       <Stack gutter={GutterSize.sm}>
         <StackItem>
@@ -174,7 +196,7 @@ class EnvoyDetail extends React.Component<EnvoyDetailProps, EnvoyDetailState> {
           <Card style={{ height: '400px' }}>
             {this.state.fetch ? (
               <Loading />
-            ) : (
+            ) : this.state.resource === 'all' ? (
               <AceEditor
                 ref={this.aceEditorRef}
                 mode="yaml"
@@ -187,6 +209,8 @@ class EnvoyDetail extends React.Component<EnvoyDetailProps, EnvoyDetailState> {
                 setOptions={aceOptions || { foldStyle: 'markbegin' }}
                 value={JSON.stringify(this.state.config, null, 2)}
               />
+            ) : (
+              <SummaryWriterComp writer={summaryWriter} />
             )}
           </Card>
         </StackItem>
@@ -194,12 +218,3 @@ class EnvoyDetail extends React.Component<EnvoyDetailProps, EnvoyDetailState> {
     );
   }
 }
-
-export const Loading = () => (
-  <EmptyState variant={EmptyStateVariant.full}>
-    <EmptyStateIcon variant="container" component={Spinner} />
-    <Title size="lg" headingLevel="h4">
-      Loading...
-    </Title>
-  </EmptyState>
-);
