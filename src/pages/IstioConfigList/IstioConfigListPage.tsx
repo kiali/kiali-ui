@@ -77,12 +77,6 @@ class IstioConfigListPageComponent extends FilterComponent.Component<
     this.promises.cancelAll();
   }
 
-  paramsAreSynced = (prevProps: IstioConfigListPageProps): [boolean, boolean] => {
-    const activeNamespacesCompare = namespaceEquals(prevProps.activeNamespaces!, this.props.activeNamespaces!);
-    const paramsSynced = activeNamespacesCompare;
-    return [paramsSynced, activeNamespacesCompare];
-  };
-
   sortItemList(apps: IstioConfigItem[], sortField: SortField<IstioConfigItem>, isAscending: boolean) {
     return IstioConfigListFilters.sortIstioItems(apps, sortField, isAscending);
   }
