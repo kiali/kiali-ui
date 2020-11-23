@@ -20,8 +20,12 @@ const MeshPage: React.FunctionComponent = () => {
       transforms: [sortable, cellWidth(30)]
     },
     {
+      title: 'Network',
+      transforms: [sortable, cellWidth(20)]
+    },
+    {
       title: 'API Endpoint',
-      transforms: [sortable, cellWidth(30)]
+      transforms: [sortable, cellWidth(20)]
     },
     {
       title: 'Secret name',
@@ -34,7 +38,7 @@ const MeshPage: React.FunctionComponent = () => {
       return [];
     }
 
-    const sortAttributes = ['name', 'apiEndpoint', 'secretName'];
+    const sortAttributes = ['name', 'apiEndpoint', 'network', 'secretName'];
     const sortByAttr = sortAttributes[sortBy.index];
     const sortedList = Array.from(meshClustersList).sort((a, b) =>
       a[sortByAttr].localeCompare(b[sortByAttr], undefined, { sensitivity: 'base' })
@@ -45,6 +49,7 @@ const MeshPage: React.FunctionComponent = () => {
         <>
           {cluster.isKialiHome ? <StarIcon /> : null} {cluster.name}
         </>,
+        cluster.network,
         cluster.apiEndpoint,
         cluster.secretName
       ]
