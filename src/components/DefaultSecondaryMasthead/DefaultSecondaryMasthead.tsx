@@ -7,7 +7,7 @@ const titles = [
   'applications',
   'istio',
   'istio/new',
-  'mesh_structure',
+  'mesh',
   'extensions/iter8',
   'extensions/iter8/new',
   'extensions/iter8/newfromfile',
@@ -37,7 +37,7 @@ export default class DefaultSecondaryMasthead extends React.Component<DefaultSec
         disabled = true;
       } else if (path === 'extensions/iter8/newfromfile') {
         title = 'Create New Iter8 Experiment from File';
-      } else if (path === 'mesh_structure') {
+      } else if (path === 'mesh') {
         title = 'Mesh';
       }
       return {
