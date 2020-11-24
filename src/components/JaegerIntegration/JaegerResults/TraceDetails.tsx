@@ -1,23 +1,29 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
+import _round from 'lodash/round';
 import { Button, ButtonVariant, Card, CardBody, Grid, GridItem, Tooltip } from '@patternfly/react-core';
 
-import { JaegerTrace } from '../../../types/JaegerInfo';
+import { JaegerTrace, RichSpanData } from 'types/JaegerInfo';
 import { JaegerTraceTitle } from './JaegerTraceTitle';
 import { CytoscapeGraphSelectorBuilder } from 'components/CytoscapeGraph/CytoscapeGraphSelector';
 import { GraphType, NodeType } from 'types/Graph';
 import { FormattedTraceInfo, shortIDStyle } from './FormattedTraceInfo';
 import { formatDuration } from './transform';
-import { PFAlertColor } from 'components/Pf/PfColors';
+import { PFAlertColor, PfColors } from 'components/Pf/PfColors';
 import { KialiAppState } from 'store/Store';
 import { KialiAppAction } from 'actions/KialiAppAction';
 import { JaegerThunkActions } from 'actions/JaegerThunkActions';
 import { getTraceId } from 'utils/SearchParamUtils';
 import { average } from 'utils/MathUtils';
-import { averageSpanDuration, isSimilarTrace } from 'utils/TraceStats';
+import { averageSpanDuration, isSimilarTrace, reduceMetricsStats } from 'utils/TraceStats';
 import { TraceLabels } from './TraceLabels';
 import { TargetKind } from 'types/Common';
+import { MetricsStatsQuery } from 'types/MetricsOptions';
+import MetricsStatsThunkActions from 'actions/MetricsStatsThunkActions';
+import { buildQueriesFromSpans, StatsMatrix, renderTraceHeatMap } from './StatsComparison';
+import { sameSpans } from '../JaegerHelper';
+import { HeatMap } from 'components/HeatMap/HeatMap';
 
 interface Props {
   otherTraces: JaegerTrace[];
@@ -27,9 +33,13 @@ interface Props {
   targetKind: TargetKind;
   setTraceId: (traceId?: string) => void;
   trace?: JaegerTrace;
+  loadMetricsStats: (queries: MetricsStatsQuery[]) => void;
+  statsMatrix?: StatsMatrix;
+  isStatsMatrixComplete: boolean;
 }
 
 interface State {}
+export const heatmapIntervals = ['10m', '60m', '6h'];
 
 class TraceDetails extends React.Component<Props, State> {
   constructor(props: Props) {
@@ -41,6 +51,24 @@ class TraceDetails extends React.Component<Props, State> {
       // Remove old stored selected trace
       props.setTraceId(undefined);
     }
+    this.state = { completeMetricsStats: false };
+  }
+
+  componentDidMount() {
+    if (this.props.trace) {
+      this.fetchComparisonMetrics(this.props.trace.spans);
+    }
+  }
+
+  componentDidUpdate(prevProps: Readonly<Props>) {
+    if (this.props.trace && !sameSpans(prevProps.trace?.spans || [], this.props.trace.spans)) {
+      this.fetchComparisonMetrics(this.props.trace.spans);
+    }
+  }
+
+  private fetchComparisonMetrics(spans: RichSpanData[]) {
+    const queries = buildQueriesFromSpans(spans);
+    this.props.loadMetricsStats(queries);
   }
 
   private getGraphURL = (traceID: string) => {
@@ -93,6 +121,11 @@ class TraceDetails extends React.Component<Props, State> {
             .map(t => `&cohort=${t.traceID}`)
             .join('')}`
         : undefined;
+    const genDiff = (a: number | undefined, b: number | undefined) => (a && b ? (a - b) / 1000 : undefined);
+    const onScreenComparisonMatrix = [
+      [genDiff(trace.duration, similarMeanDuration), genDiff(avgSpanDuration, similarMeanAvgSpanDuration)],
+      [genDiff(trace.duration, otherMeanDuration), genDiff(avgSpanDuration, otherMeanAvgSpanDuration)]
+    ];
 
     return (
       <Card isCompact style={{ border: '1px solid #e6e6e6' }}>
@@ -113,26 +146,6 @@ class TraceDetails extends React.Component<Props, State> {
               </Tooltip>
               {formatDuration(trace.duration)}
               <br />
-              <small style={{ paddingLeft: 15 }}>
-                versus similar mean:{' '}
-                {comparedDurations(
-                  trace.duration,
-                  similarMeanDuration,
-                  formattedTrace.shortID(),
-                  'similar traces displayed'
-                )}
-              </small>
-              <br />
-              <small style={{ paddingLeft: 15 }}>
-                versus all others mean:{' '}
-                {comparedDurations(
-                  trace.duration,
-                  otherMeanDuration,
-                  formattedTrace.shortID(),
-                  'other traces displayed'
-                )}
-              </small>
-              <br />
               <Tooltip
                 content={
                   <>
@@ -145,32 +158,39 @@ class TraceDetails extends React.Component<Props, State> {
               </Tooltip>
               {avgSpanDuration ? formatDuration(avgSpanDuration) : 'n/a'}
               <br />
-              <small style={{ paddingLeft: 15 }}>
-                versus similar mean:{' '}
-                {comparedDurations(
-                  avgSpanDuration,
-                  similarMeanAvgSpanDuration,
-                  formattedTrace.shortID(),
-                  'similar traces displayed'
-                )}
-              </small>
+              <strong>Compared with traces on screen: </strong>
+              <HeatMap
+                xLabels={['Similar', 'All']}
+                yLabels={[`Full duration`, `Spans average`]}
+                data={onScreenComparisonMatrix}
+                displayMode={'large'}
+                colorMap={HeatMap.HealthColorMap}
+                dataRange={{ from: -10, to: 10 }}
+                colorUndefined={PfColors.Black200}
+                valueFormat={v => (v > 0 ? '+' : '') + _round(v, 1)}
+                tooltip={(x, _, v) => {
+                  // Build explanation tooltip
+                  const slowOrFast = v > 0 ? 'slower' : 'faster';
+                  const otherOrSimilar = x === 0 ? 'similar' : 'other';
+                  return `${formattedTrace.shortID()} is ${_round(
+                    Math.abs(v),
+                    2
+                  )}ms ${slowOrFast} than the ${otherOrSimilar} traces displayed`;
+                }}
+              />
               <br />
-              <small style={{ paddingLeft: 15 }}>
-                versus all others mean:{' '}
-                {comparedDurations(
-                  avgSpanDuration,
-                  otherMeanAvgSpanDuration,
-                  formattedTrace.shortID(),
-                  'other traces displayed'
-                )}
-              </small>
-              <br />
+              {this.props.statsMatrix && (
+                <>
+                  <strong>Compared with metrics: </strong>
+                  {renderTraceHeatMap(this.props.statsMatrix, heatmapIntervals, false)}
+                </>
+              )}
             </GridItem>
             <GridItem span={6}>
               <strong>Similar traces</strong>
               <ul>
                 {similarTraces.length > 0
-                  ? similarTraces.slice(0, 3).map(t => {
+                  ? similarTraces.slice(0, 10).map(t => {
                       const info = new FormattedTraceInfo(t);
                       return (
                         <li key={t.traceID}>
@@ -233,12 +253,28 @@ export const comparedDurations = (
   );
 };
 
-const mapStateToProps = (state: KialiAppState) => ({
-  trace: state.jaegerState.selectedTrace
-});
+const mapStateToProps = (state: KialiAppState) => {
+  if (state.jaegerState.selectedTrace) {
+    const { matrix, isComplete } = reduceMetricsStats(
+      state.jaegerState.selectedTrace,
+      heatmapIntervals,
+      state.metricsStats.data
+    );
+    return {
+      trace: state.jaegerState.selectedTrace,
+      statsMatrix: matrix,
+      isStatsMatrixComplete: isComplete
+    };
+  }
+  return {
+    trace: state.jaegerState.selectedTrace,
+    isStatsMatrixComplete: false
+  };
+};
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<KialiAppState, void, KialiAppAction>) => ({
-  setTraceId: (traceId?: string) => dispatch(JaegerThunkActions.setTraceId(traceId))
+  setTraceId: (traceId?: string) => dispatch(JaegerThunkActions.setTraceId(traceId)),
+  loadMetricsStats: (queries: MetricsStatsQuery[]) => dispatch(MetricsStatsThunkActions.load(queries))
 });
 
 const TraceDetailsContainer = connect(mapStateToProps, mapDispatchToProps)(TraceDetails);

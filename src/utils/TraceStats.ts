@@ -1,4 +1,10 @@
+import {
+  getSpanStats,
+  initStatsMatrix,
+  statsAvgWithQuantiles
+} from 'components/JaegerIntegration/JaegerResults/StatsComparison';
 import { JaegerTrace } from 'types/JaegerInfo';
+import { MetricsStats } from 'types/Metrics';
 import { average } from './MathUtils';
 
 export const averageSpanDuration = (trace: JaegerTrace): number | undefined => {
@@ -54,4 +60,48 @@ export const isSimilarTrace = (t1: JaegerTrace, t2: JaegerTrace): boolean => {
 const distanceScore = (n1: number, n2: number): number => {
   // Some score of how two numbers are "close" to each other
   return Math.abs(n1 - n2) / Math.max(1, Math.max(n1, n2));
+};
+
+export const reduceMetricsStats = (trace: JaegerTrace, intervals: string[], allStats: Map<string, MetricsStats>) => {
+  let isComplete = true;
+  // Aggregate all spans stats, per stat name/interval, into a temporary map
+  type AggregatedStat = { name: string; intervalIndex: number; values: number[] };
+  const aggregatedStats = new Map<string, AggregatedStat>();
+  trace.spans
+    .filter(s => s.type === 'envoy')
+    .forEach(span => {
+      const spanStats = getSpanStats(span, intervals, allStats);
+      if (spanStats.length > 0) {
+        spanStats.forEach(statsPerInterval => {
+          statsPerInterval.responseTimes.forEach(stat => {
+            const aggKey = stat.name + '@' + statsPerInterval.intervalIndex;
+            const aggStat = aggregatedStats.get(aggKey);
+            if (aggStat) {
+              aggStat.values.push(stat.value);
+            } else {
+              aggregatedStats.set(aggKey, {
+                name: stat.name,
+                intervalIndex: statsPerInterval.intervalIndex,
+                values: [stat.value]
+              });
+            }
+          });
+        });
+      } else {
+        isComplete = false;
+      }
+    });
+  // Convert the temporary map into a matrix
+  const matrix = initStatsMatrix(intervals);
+  aggregatedStats.forEach(aggStat => {
+    // compute mean per stat
+    const x = statsAvgWithQuantiles.indexOf(aggStat.name);
+    if (x >= 0) {
+      const len = aggStat.values.length;
+      if (len > 0) {
+        matrix[x][aggStat.intervalIndex] = aggStat.values.reduce((p, c) => p + c, 0) / len;
+      }
+    }
+  });
+  return { matrix: matrix, isComplete: isComplete };
 };
