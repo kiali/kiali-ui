@@ -45,7 +45,7 @@ import ValidationReferences from './ValidationReferences';
 import RefreshButtonContainer from '../../components/Refresh/RefreshButton';
 
 // Enables the search box for the ACEeditor
-require("ace-builds/src-noconflict/ext-searchbox");
+require('ace-builds/src-noconflict/ext-searchbox');
 
 const rightToolbarStyle = style({
   zIndex: 500

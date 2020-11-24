@@ -25,7 +25,7 @@ import { style } from 'typestyle';
 import { SummaryWriterBuilder } from './writers/BaseWriter';
 
 // Enables the search box for the ACEeditor
-require("ace-builds/src-noconflict/ext-searchbox");
+require('ace-builds/src-noconflict/ext-searchbox');
 
 const resources: string[] = ['all', 'bootstrap', 'clusters', 'routes'];
 
@@ -105,7 +105,7 @@ class EnvoyDetail extends React.Component<EnvoyDetailProps, EnvoyDetailState> {
     if (targetPod.name !== this.state.pod.name) {
       this.setState({
         fetch: true,
-        pod: targetPod,
+        pod: targetPod
       });
     }
   };
@@ -113,10 +113,10 @@ class EnvoyDetail extends React.Component<EnvoyDetailProps, EnvoyDetailState> {
   setResource = (resource: string) => {
     const resourceIdx: number = +resource;
     const targetResource: string = resources[resourceIdx];
-    if(targetResource !== this.state.resource) {
+    if (targetResource !== this.state.resource) {
       this.setState({
         fetch: true,
-        resource: targetResource,
+        resource: targetResource
       });
     }
   };
