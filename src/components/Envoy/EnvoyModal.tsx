@@ -27,7 +27,7 @@ import { SummaryWriterBuilder } from './writers/BaseWriter';
 // Enables the search box for the ACEeditor
 require("ace-builds/src-noconflict/ext-searchbox");
 
-const resources: string[] = ['all', 'clusters', 'routes'];
+const resources: string[] = ['all', 'bootstrap', 'clusters', 'routes'];
 
 const displayFlex = style({
   display: 'flex'
@@ -196,7 +196,7 @@ class EnvoyDetail extends React.Component<EnvoyDetailProps, EnvoyDetailState> {
           <Card style={{ height: '400px' }}>
             {this.state.fetch ? (
               <Loading />
-            ) : this.state.resource === 'all' ? (
+            ) : this.state.resource === 'all' || this.state.resource === 'bootstrap' ? (
               <AceEditor
                 ref={this.aceEditorRef}
                 mode="yaml"
