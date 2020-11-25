@@ -65,7 +65,7 @@ export interface RequestType {
 export interface RequestHealth {
   inbound: RequestType;
   outbound: RequestType;
-  config?: ToleranceConfig[];
+  config?: string;
 }
 
 export interface Status {

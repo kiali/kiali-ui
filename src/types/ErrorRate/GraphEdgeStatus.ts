@@ -14,14 +14,18 @@ export const getEdgeHealth = (
   target: DecoratedGraphNodeData
 ): ThresholdStatus => {
   // We need to check the configuration for item A outbound requests and configuration of B for inbound requests
-  const configSource =
-    'healthAnnotation' in source
-      ? source.healthAnnotation
-      : getRateHealthConfig(source.namespace, source[source.nodeType], source.nodeType).tolerance;
-  const configTarget =
-    'healthAnnotation' in target
-      ? target.healthAnnotation
-      : getRateHealthConfig(target.namespace, target[target.nodeType], target.nodeType).tolerance;
+  const configSource = getRateHealthConfig(
+    source.namespace,
+    source[source.nodeType],
+    source.nodeType,
+    'healthAnnotation' in source ? source.healthAnnotation : undefined
+  );
+  const configTarget = getRateHealthConfig(
+    target.namespace,
+    target[target.nodeType],
+    target.nodeType,
+    'healthAnnotation' in source ? source.healthAnnotation : undefined
+  );
 
   // If there is not tolerances with this configuration we'll use defaults
   const tolerancesSource = configSource.filter(tol => checkExpr(tol.direction, 'outbound'));

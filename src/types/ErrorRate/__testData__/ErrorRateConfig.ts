@@ -1,4 +1,4 @@
-import { getExpr } from '../../config/HealthConfig';
+import { getExpr } from '../../../config/HealthConfig';
 
 export const serverRateConfig = {
   kialiFeatureFlags: {

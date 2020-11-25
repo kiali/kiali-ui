@@ -5,7 +5,7 @@ import { shallowToJson } from 'enzyme-to-json';
 import { HealthDetails } from '../HealthDetails';
 import { ServiceHealth } from '../../../types/Health';
 import { setServerConfig } from '../../../config/ServerConfig';
-import { serverRateConfig } from '../../../types/__testData__/ErrorRateConfig';
+import { serverRateConfig } from '../../../types/ErrorRate/__testData__/ErrorRateConfig';
 
 describe('HealthDetails', () => {
   beforeAll(() => {

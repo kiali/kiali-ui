@@ -12,7 +12,11 @@ export const emptyRate = (): Rate => {
 
 export const DEFAULTCONF = {
   http: new RegExp('^[4|5]\\d\\d$'),
-  grpc: new RegExp('^[1-9]$|^1[0-6]$')
+  grpc: new RegExp('^[1-9]$|^1[0-6]$'),
+  degraded: 10,
+  failure: 20,
+  protocol: new RegExp('.*'),
+  direction: new RegExp('.*')
 };
 
 const requestsErrorRateCode = (requests: RequestType): number => {
@@ -51,7 +55,7 @@ export const checkExpr = (value: RegexConfig | undefined, testV: string): boolea
 // Cache the configuration to avoid multiple calls to regExp
 export let configCache: { [key: string]: RateHealthConfig } = {};
 
-export const getRateHealthConfig = (ns: string, name: string, kind: string): RateHealthConfig => {
+export const getRateHealthConfigBy = (ns: string, name: string, kind: string): RateHealthConfig => {
   const key = ns + '_' + kind + '_' + name;
   // If we have the configuration cached then return it
   if (configCache[key]) {
@@ -116,4 +120,63 @@ export const aggregate = (
     }
   }
   return result;
+};
+
+export const getRateHealthConfig = (ns: string, name: string, kind: string, config?: string): ToleranceConfig[] => {
+  if (config && config != '') {
+    const tolerances: ToleranceConfig[] = [];
+    for (var cad of config.split(';')) {
+      tolerances.push(parseAnnotation(cad));
+    }
+
+    return tolerances;
+  }
+  return getRateHealthConfigBy(ns, name, kind).tolerance;
+};
+
+const isNumber = (value: string | number): boolean => {
+  return value != null && value !== '' && !isNaN(Number(value.toString()));
+};
+
+export const parseAnnotation = (tolerance: string): ToleranceConfig => {
+  const cads = tolerance.split(',');
+  var code = cads[0];
+  var degraded = DEFAULTCONF.degraded;
+  var failure = DEFAULTCONF.failure;
+  var protocol = DEFAULTCONF.protocol;
+  var direction = DEFAULTCONF.direction;
+  cads.splice(0, 1); // Remove code value
+
+  var len = cads.length;
+  // More information ?
+  if (len > 0) {
+    // Check other parameters
+    if (isNumber(cads[0])) {
+      // Defined degraded and maybe failure
+      degraded = Number(cads[0]);
+      if (len > 1 && isNumber(cads[1])) {
+        // Defined failure too
+        failure = Number(cads[1]);
+        cads.splice(0, 2);
+      } else {
+        cads.splice(0, 1);
+      }
+      len = cads.length;
+    }
+    if (len > 0) {
+      // Defined Protocol or direction
+      if (len > 1) {
+        direction = new RegExp(cads[1]);
+      }
+      protocol = new RegExp(cads[0]);
+    }
+  }
+  const regex = code.toLowerCase().replace('x', 'd');
+  return {
+    code: new RegExp(regex),
+    degraded: degraded,
+    failure: failure,
+    protocol: protocol,
+    direction: direction
+  };
 };

@@ -50,7 +50,7 @@ export const calculateErrorRate = (
   requests: RequestHealth
 ): { errorRatio: ErrorRatio; config: ToleranceConfig[] } => {
   // Get the first configuration that match with the case
-  const conf = requests.config || getRateHealthConfig(ns, name, kind).tolerance;
+  const conf = getRateHealthConfig(ns, name, kind, requests.config);
   // Get aggregate
   let status = getAggregate(requests, conf);
   const globalStatus = calculateStatus(status.global);

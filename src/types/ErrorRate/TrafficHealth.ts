@@ -10,12 +10,14 @@ import { TrafficItem } from 'components/TrafficList/TrafficDetails';
 */
 export const getTrafficHealth = (item: TrafficItem, direction: Direction): ThresholdStatus => {
   // Get the configuration for the node
-  const config =
-    'healthAnnotation' in item.node
-      ? item.node.healthAnnotation
-      : getRateHealthConfig(item.node.namespace, item.node.name, item.node.type).tolerance;
+  const config = getRateHealthConfig(
+    item.node.namespace,
+    item.node.name,
+    item.node.type,
+    'healthAnnotation' in item.node ? item.node.healthAnnotation : undefined
+  );
   // Get tolerances of the configuration for the direction provided
-  const tolerances = config.filter(tol => checkExpr(tol.direction, direction));
+  const tolerances = config!.filter(tol => checkExpr(tol.direction, direction));
   // Get the responses like a item with traffic
   const traffic = item.traffic as ProtocolWithTraffic;
   // Aggregate the responses and transform them for calculate the status
