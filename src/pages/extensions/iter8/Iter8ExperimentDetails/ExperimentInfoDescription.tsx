@@ -21,6 +21,7 @@ import {
   PopoverPosition,
   Stack,
   StackItem,
+  Tab,
   Text,
   TextVariants,
   Title,
@@ -38,6 +39,12 @@ import jsyaml from 'js-yaml';
 import YAML from 'yaml';
 import { KialiIcon } from '../../../../config/KialiIcon';
 import { style } from 'typestyle';
+import equal from 'fast-deep-equal';
+import TrafficControlInfo from './TrafficControlInfo';
+import ParameterizedTabs, { activeTab } from '../../../../components/Tab/Tabs';
+import { PfColors } from '../../../../components/Pf/PfColors';
+
+const containerWhite = style({ backgroundColor: PfColors.White });
 
 interface ExperimentInfoDescriptionProps {
   target: string;
@@ -47,19 +54,31 @@ interface ExperimentInfoDescriptionProps {
   actionTaken: string;
 }
 
-type MiniGraphCardState = {
+type ExperimentInfoState = {
   isKebabOpen: boolean;
+  isUpdated: boolean;
+  currentTab: string;
 };
 
 const infoStyle = style({
   margin: '0px 16px 2px 4px'
 });
 
-class ExperimentInfoDescription extends React.Component<ExperimentInfoDescriptionProps, MiniGraphCardState> {
+const tabName = 'tab';
+const defaultTab = 'traffic control';
+const paramToTab: { [key: string]: number } = {
+  trafficControl: 0
+};
+
+class ExperimentInfoDescription extends React.Component<ExperimentInfoDescriptionProps, ExperimentInfoState> {
   constructor(props) {
     super(props);
 
-    this.state = { isKebabOpen: false };
+    this.state = {
+      isKebabOpen: false,
+      isUpdated: false,
+      currentTab: activeTab(tabName, defaultTab)
+    };
   }
 
   serviceLink(namespace: string, workload: string) {
@@ -206,6 +225,16 @@ class ExperimentInfoDescription extends React.Component<ExperimentInfoDescriptio
         </CardHeader>
       </CardHead>
     ];
+  }
+
+  componentDidMount() {}
+
+  componentDidUpdate(prevProps) {
+    if (!equal(this.props.experiment, prevProps.experiment)) {
+      this.setState({ isUpdated: true });
+    } else if (equal(this.props.experiment, prevProps.experiment) && this.state.isUpdated) {
+      this.setState({ isUpdated: false });
+    }
   }
 
   render() {
@@ -412,6 +441,24 @@ class ExperimentInfoDescription extends React.Component<ExperimentInfoDescriptio
                 </Stack>
               </CardBody>
             </Card>
+          </GridItem>
+          <GridItem span={12}>
+            <div className={`${containerWhite}`}>
+              <ParameterizedTabs
+                id="expmoredetail-tabs"
+                onSelect={tabValue => {
+                  this.setState({ currentTab: tabValue });
+                }}
+                tabMap={paramToTab}
+                tabName={tabName}
+                defaultTab={defaultTab}
+                activeTab={this.state.currentTab}
+              >
+                <Tab title={defaultTab} eventKey={0}>
+                  <TrafficControlInfo trafficControl={this.props.experimentDetails.trafficControl}></TrafficControlInfo>
+                </Tab>
+              </ParameterizedTabs>
+            </div>
           </GridItem>
         </Grid>
       </RenderComponentScroll>

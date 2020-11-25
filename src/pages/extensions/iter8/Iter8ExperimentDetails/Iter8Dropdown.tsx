@@ -1,5 +1,6 @@
 import * as React from 'react';
 import {
+  Alert,
   Button,
   Dropdown,
   DropdownItem,
@@ -42,6 +43,7 @@ type State = {
   dropdownOpen: boolean;
   manualOverride: ManualOverride;
   candidates: string[];
+  warning: string;
 };
 
 const ITER8_ACTIONS = ['Pause', 'Resume', 'Terminate'];
@@ -61,7 +63,8 @@ class Iter8Dropdown extends React.Component<Props, State> {
       showResumeConfirmModal: false,
       showTerminateConfirmModal: false,
       manualOverride: this.props.manualOverride,
-      candidates: candidates
+      candidates: candidates,
+      warning: ''
     };
   }
 
@@ -77,7 +80,7 @@ class Iter8Dropdown extends React.Component<Props, State> {
     });
   };
 
-  actionConfirmModal = (thisType: string, action: boolean) => {
+  actionConfirmModal = (thisType: string, action: boolean, reset: boolean) => {
     switch (thisType) {
       case 'Delete':
         this.setState({ showDeleteConfirmModal: action });
@@ -89,13 +92,16 @@ class Iter8Dropdown extends React.Component<Props, State> {
         this.setState({ showResumeConfirmModal: action });
         break;
       case 'Terminate':
+        if (reset) {
+          this.setState({ warning: '', manualOverride: { TrafficSplit: new Map(), totalTrafficSplitPercentage: 0 } });
+        }
         this.setState({ showTerminateConfirmModal: action });
         break;
     }
   };
 
   onAction = (action: string) => {
-    this.actionConfirmModal(action, false);
+    this.actionConfirmModal(action, false, false);
     switch (action) {
       case 'Delete':
         this.props.onDelete();
@@ -107,7 +113,15 @@ class Iter8Dropdown extends React.Component<Props, State> {
         this.props.onResume();
         break;
       case 'Terminate':
-        this.props.onTerminate();
+        if (this.state.manualOverride.totalTrafficSplitPercentage === 100) {
+          this.setState({ warning: '' });
+          this.props.onTerminate();
+        } else {
+          this.setState({
+            showTerminateConfirmModal: true,
+            warning: 'Total Traffic Split Percentage must be equal to 100%'
+          });
+        }
         break;
     }
   };
@@ -121,10 +135,17 @@ class Iter8Dropdown extends React.Component<Props, State> {
           total = total + Number(entry[1]);
         }
         prevState.manualOverride.totalTrafficSplitPercentage = total;
-
-        return {
-          manualOverride: prevState.manualOverride
-        };
+        if (total === 100) {
+          return {
+            manualOverride: prevState.manualOverride,
+            warning: ''
+          };
+        } else {
+          return {
+            manualOverride: prevState.manualOverride,
+            warning: prevState.warning
+          };
+        }
       },
       () => this.props.doTrafficSplit(this.state.manualOverride)
     );
@@ -154,6 +175,7 @@ class Iter8Dropdown extends React.Component<Props, State> {
             </>
           );
         })}
+        {this.state.warning !== '' ? <Alert variant="warning" isInline title={this.state.warning} /> : <></>}
       </Form>
     );
   };
@@ -165,9 +187,9 @@ class Iter8Dropdown extends React.Component<Props, State> {
         title={thisTitle}
         isSmall={true}
         isOpen={isThisOpen}
-        onClose={() => this.actionConfirmModal(action, false)}
+        onClose={() => this.actionConfirmModal(action, false, true)}
         actions={[
-          <Button key="cancel" variant="secondary" onClick={() => this.actionConfirmModal(action, false)}>
+          <Button key="cancel" variant="secondary" onClick={() => this.actionConfirmModal(action, false, true)}>
             Cancel
           </Button>,
           <Button key="confirm" variant="danger" onClick={() => this.onAction(action)}>
@@ -216,7 +238,7 @@ class Iter8Dropdown extends React.Component<Props, State> {
     let item = (
       <DropdownItem
         key={eventKey}
-        onClick={() => this.actionConfirmModal(actionString, true)}
+        onClick={() => this.actionConfirmModal(actionString, true, true)}
         isDisabled={!this.canAction(actions[0], checkPhase)}
       >
         {actionString}
@@ -238,7 +260,7 @@ class Iter8Dropdown extends React.Component<Props, State> {
       items = items.concat(
         <DropdownItem
           key="deleteExperiment"
-          onClick={() => this.actionConfirmModal('Delete', true)}
+          onClick={() => this.actionConfirmModal('Delete', true, false)}
           isDisabled={!this.props.canDelete}
         >
           Delete

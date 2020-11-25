@@ -211,22 +211,19 @@ class ExperimentDetailsPage extends React.Component<Props, State> {
 
   renderRightToolbar = () => {
     return (
-      <span style={{ position: 'absolute', right: '20px', zIndex: 1 }}>
-        <RefreshContainer id="time_range_refresh" hideLabel={true} handleRefresh={this.doRefresh} manageURL={true} />
-        <Iter8Dropdown
-          experimentName={this.props.match.params.name}
-          manualOverride={this.state.manualOverride}
-          canDelete={this.state.canDelete}
-          startTime={this.state.experiment ? this.state.experiment.experimentItem.startTime : ''}
-          endTime={this.state.experiment ? this.state.experiment.experimentItem.endTime : ''}
-          phase={this.state.experiment ? this.state.experiment.experimentItem.phase : ' '}
-          onDelete={this.doDelete}
-          onResume={() => this.doIter8Action('resume')}
-          onPause={() => this.doIter8Action('pause')}
-          onTerminate={() => this.doIter8Action('terminate')}
-          doTrafficSplit={this.doTrafficSplit}
-        />
-      </span>
+      <Iter8Dropdown
+        experimentName={this.props.match.params.name}
+        manualOverride={this.state.manualOverride}
+        canDelete={this.state.canDelete}
+        startTime={this.state.experiment ? this.state.experiment.experimentItem.startTime : ''}
+        endTime={this.state.experiment ? this.state.experiment.experimentItem.endTime : ''}
+        phase={this.state.experiment ? this.state.experiment.experimentItem.phase : ' '}
+        onDelete={this.doDelete}
+        onResume={() => this.doIter8Action('resume')}
+        onPause={() => this.doIter8Action('pause')}
+        onTerminate={() => this.doIter8Action('terminate')}
+        doTrafficSplit={this.doTrafficSplit}
+      />
     );
   };
 
@@ -289,21 +286,7 @@ class ExperimentDetailsPage extends React.Component<Props, State> {
               manageURL={true}
             />
           }
-          actionsToolbar={
-            <Iter8Dropdown
-              experimentName={this.props.match.params.name}
-              manualOverride={this.state.manualOverride}
-              canDelete={this.state.canDelete}
-              startTime={this.state.experiment ? this.state.experiment.experimentItem.startTime : ''}
-              endTime={this.state.experiment ? this.state.experiment.experimentItem.endTime : ''}
-              phase={this.state.experiment ? this.state.experiment.experimentItem.phase : ' '}
-              onDelete={this.doDelete}
-              onResume={() => this.doIter8Action('resume')}
-              onPause={() => this.doIter8Action('pause')}
-              onTerminate={() => this.doIter8Action('terminate')}
-              doTrafficSplit={this.doTrafficSplit}
-            />
-          }
+          actionsToolbar={this.renderRightToolbar()}
         />
         <ParameterizedTabs
           id="basic-tabs"
