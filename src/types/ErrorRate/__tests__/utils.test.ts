@@ -21,7 +21,7 @@ describe('Utils library', () => {
 
     it('should replace x or X by d', () => {
       var tol = defaultTolerance();
-      tol.code = new RegExp('[45]d[2]');
+      tol.code = new RegExp('[45]\\d[2]');
       expect(U.parseAnnotationTEST('[45]x[2]')).toEqual(tol);
       expect(U.parseAnnotationTEST('[45]X[2]')).toEqual(tol);
     });

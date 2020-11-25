@@ -171,7 +171,7 @@ export const parseAnnotation = (tolerance: string): ToleranceConfig => {
       protocol = new RegExp(cads[0]);
     }
   }
-  const regex = code.toLowerCase().replace('x', 'd');
+  const regex = code.toLowerCase().replace('x', '\\d');
   return {
     code: new RegExp(regex),
     degraded: degraded,
