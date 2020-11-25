@@ -123,7 +123,7 @@ export const aggregate = (
 };
 
 export const getRateHealthConfig = (ns: string, name: string, kind: string, config?: string): ToleranceConfig[] => {
-  if (config && config != '') {
+  if (config && config !== '') {
     const tolerances: ToleranceConfig[] = [];
     for (var cad of config.split(';')) {
       tolerances.push(parseAnnotation(cad));
