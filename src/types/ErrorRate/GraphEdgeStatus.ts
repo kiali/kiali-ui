@@ -1,7 +1,7 @@
 import { ToleranceConfig } from '../ServerConfig';
 import { ascendingThresholdCheck, ThresholdStatus, RATIO_NA, HEALTHY, NA, RequestType } from '../Health';
 import { DecoratedGraphEdgeData, DecoratedGraphNodeData, Responses } from '../Graph';
-import { aggregate, checkExpr, getRateHealthConfig, transformEdgeResponses } from './utils';
+import { aggregate, checkExpr, getHealthRateAnnotation, getRateHealthConfig, transformEdgeResponses } from './utils';
 import { RequestTolerance } from './types';
 
 // Graph Edge
@@ -18,13 +18,13 @@ export const getEdgeHealth = (
     source.namespace,
     source[source.nodeType],
     source.nodeType,
-    'healthAnnotation' in source ? source.healthAnnotation : undefined
+    'kialiAnnotation' in source ? getHealthRateAnnotation(source.kialiAnnotation) : undefined
   );
   const configTarget = getRateHealthConfig(
     target.namespace,
     target[target.nodeType],
     target.nodeType,
-    'healthAnnotation' in source ? source.healthAnnotation : undefined
+    'kialiAnnotation' in source ? getHealthRateAnnotation(source.kialiAnnotation) : undefined
   );
 
   // If there is not tolerances with this configuration we'll use defaults

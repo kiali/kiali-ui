@@ -1,7 +1,7 @@
 import { Direction } from '../MetricsOptions';
 import { ThresholdStatus } from '../Health';
 import { ProtocolWithTraffic } from '../Graph';
-import { aggregate, checkExpr, getRateHealthConfig, transformEdgeResponses } from './utils';
+import { aggregate, checkExpr, getHealthRateAnnotation, getRateHealthConfig, transformEdgeResponses } from './utils';
 import { calculateStatusGraph } from './GraphEdgeStatus';
 import { TrafficItem } from 'components/TrafficList/TrafficDetails';
 
@@ -14,7 +14,7 @@ export const getTrafficHealth = (item: TrafficItem, direction: Direction): Thres
     item.node.namespace,
     item.node.name,
     item.node.type,
-    'healthAnnotation' in item.node ? item.node.healthAnnotation : undefined
+    'kialiAnnotation' in item.node ? getHealthRateAnnotation(item.node.kialiAnnotation) : undefined
   );
   // Get tolerances of the configuration for the direction provided
   const tolerances = config!.filter(tol => checkExpr(tol.direction, direction));

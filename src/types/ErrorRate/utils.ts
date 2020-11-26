@@ -1,7 +1,7 @@
 import { RateHealthConfig, RegexConfig, ToleranceConfig } from '../ServerConfig';
 import { serverConfig } from '../../config';
 import { ResponseDetail, Responses } from '../Graph';
-import { RequestHealth, RequestType } from '../Health';
+import { healthAnnotation, RequestHealth, RequestType } from '../Health';
 import { Rate, RequestTolerance } from './types';
 import { generateRateForTolerance } from './ErrorRate';
 import { generateRateForGraphTolerance } from './GraphEdgeStatus';
@@ -36,6 +36,9 @@ export const getErrorCodeRate = (requests: RequestHealth): { inbound: number; ou
   return { inbound: requestsErrorRateCode(requests.inbound), outbound: requestsErrorRateCode(requests.outbound) };
 };
 
+export const getHealthRateAnnotation = (config?: { [key: string]: string }): string | undefined => {
+  return config && healthAnnotation.rateHealth in config ? config[healthAnnotation.rateHealth] : undefined;
+};
 /*
 Cached this method to avoid use regexp in next calculations to improve performance
 + it's cached for config.

@@ -20,6 +20,8 @@ import { KialiAppState } from '../../store/Store';
 import { connect } from 'react-redux';
 import { durationSelector } from '../../store/Selectors';
 
+type HealthAnnotation = { [key: string]: string };
+
 export interface AppNode {
   id: string;
   type: NodeType.APP;
@@ -34,7 +36,7 @@ export interface WorkloadNode {
   type: NodeType.WORKLOAD;
   namespace: string;
   name: string;
-  healthAnnotation: any;
+  kialiAnnotation: HealthAnnotation;
   isInaccessible: boolean;
 }
 
@@ -43,7 +45,7 @@ export interface ServiceNode {
   type: NodeType.SERVICE;
   namespace: string;
   name: string;
-  healthAnnotation: any;
+  kialiAnnotation: HealthAnnotation;
   isServiceEntry?: string;
   isInaccessible: boolean;
   destServices?: DestService[];
@@ -196,7 +198,7 @@ class TrafficDetails extends React.Component<TrafficDetailsProps, TrafficDetails
           type: node.nodeType,
           namespace: node.namespace,
           name: node.service || 'unknown',
-          healthAnnotation: node.healthAnnotation,
+          kialiAnnotation: node.kialiAnnotation,
           isServiceEntry: node.isServiceEntry,
           isInaccessible: node.isInaccessible || false,
           destServices: node.destServices
@@ -207,7 +209,7 @@ class TrafficDetails extends React.Component<TrafficDetailsProps, TrafficDetails
           type: NodeType.WORKLOAD,
           namespace: node.namespace,
           name: node.workload || 'unknown',
-          healthAnnotation: node.healthAnnotation,
+          kialiAnnotation: node.kialiAnnotation,
           isInaccessible: node.isInaccessible || false
         };
     }

@@ -151,7 +151,6 @@ class ServiceInfoDescription extends React.Component<ServiceInfoDescriptionProps
                       );
                     })}
                   </Stack>
-                  33
                 </Tab>
                 <Tab eventKey={1} title={'Network'}>
                   <Stack gutter={'md'} style={{ marginTop: '20px' }}>
