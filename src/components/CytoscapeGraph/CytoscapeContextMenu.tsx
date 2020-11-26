@@ -79,7 +79,7 @@ export class CytoscapeContextMenuWrapper extends React.PureComponent<Props> {
       event.preventDefault();
       if (event.target) {
         const currentContextMenu = this.getCurrentContextMenu();
-        if (!!currentContextMenu) {
+        if (currentContextMenu) {
           currentContextMenu.hide(0); // hide it in 0ms
         }
 
