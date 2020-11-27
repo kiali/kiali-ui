@@ -12,6 +12,8 @@ type Props = {
   workloads: WorkloadOverview[];
   initWeights: WorkloadWeight[];
   onChange: (valid: boolean, workloads: WorkloadWeight[], reset: boolean) => void;
+  showValid: boolean;
+  showMirror: boolean;
 };
 
 export type WorkloadWeight = {
@@ -19,6 +21,7 @@ export type WorkloadWeight = {
   weight: number;
   locked: boolean;
   maxWeight: number;
+  mirrored: boolean;
 };
 
 type State = {
@@ -35,6 +38,8 @@ const evenlyButtonStyle = style({
   width: '100%',
   textAlign: 'right'
 });
+
+export const MSG_WEIGHTS_NOT_VALID = 'The sum of all non-mirrored weights must be 100 %';
 
 class TrafficShifting extends React.Component<Props, State> {
   constructor(props: Props) {
@@ -82,8 +87,11 @@ class TrafficShifting extends React.Component<Props, State> {
         for (let i = 0; i < prevState.workloads.length; i++) {
           if (prevState.workloads[i].name === workloadName) {
             prevState.workloads[i].weight = newWeight;
-            maxWeight -= newWeight;
-          } else if (!prevState.workloads[i].locked) {
+            // Don't update maxWeight if node is mirrored
+            if (!prevState.workloads[i].mirrored) {
+              maxWeight -= newWeight;
+            }
+          } else if (!prevState.workloads[i].locked && !prevState.workloads[i].mirrored) {
             // Only adjust those nodes that are not locked
             nodeId.push(i);
           }
@@ -125,7 +133,7 @@ class TrafficShifting extends React.Component<Props, State> {
       }
       // Update non locked nodes maxWeight
       for (let i = 0; i < prevState.workloads.length; i++) {
-        if (!prevState.workloads[i].locked) {
+        if (!prevState.workloads[i].locked && !prevState.workloads[i].mirrored) {
           prevState.workloads[i].maxWeight = maxWeights;
         }
       }
@@ -135,9 +143,33 @@ class TrafficShifting extends React.Component<Props, State> {
     });
   };
 
+  onMirror = (workloadName: string, mirrored: boolean) => {
+    this.setState(
+      prevState => {
+        // Reset all mirrored workload but selected one.
+        for (let i = 0; i < prevState.workloads.length; i++) {
+          prevState.workloads[i].mirrored = false;
+          if (mirrored && prevState.workloads[i].name === workloadName) {
+            prevState.workloads[i].mirrored = mirrored;
+            prevState.workloads[i].locked = false;
+          }
+        }
+        return {
+          workloads: prevState.workloads
+        };
+      },
+      () => this.props.onChange(this.checkTotalWeight(), this.state.workloads, false)
+    );
+  };
+
   checkTotalWeight = (): boolean => {
     // Check all weights are equal to 100
-    return this.state.workloads.map(w => w.weight).reduce((a, b) => a + b, 0) === 100;
+    return (
+      this.state.workloads
+        .filter(w => !w.mirrored)
+        .map(w => w.weight)
+        .reduce((a, b) => a + b, 0) === 100
+    );
   };
 
   render() {
@@ -160,10 +192,22 @@ class TrafficShifting extends React.Component<Props, State> {
       return {
         cells: [
           <>
-            <Tooltip key={'tooltip_' + workload.name} position={TooltipPosition.top} content={<>Workload</>}>
-              <Badge className={'virtualitem_badge_definition'}>WS</Badge>
-            </Tooltip>
-            {workload.name}
+            <div>
+              {workload.mirrored ? (
+                <Tooltip
+                  key={'mirrorred_' + workload.name}
+                  position={TooltipPosition.top}
+                  content={<>Mirrored Workload</>}
+                >
+                  <Badge className={'faultinjection_badge_definition'}>MI</Badge>
+                </Tooltip>
+              ) : (
+                <Tooltip key={'tooltip_' + workload.name} position={TooltipPosition.top} content={<>Workload</>}>
+                  <Badge className={'virtualitem_badge_definition'}>WS</Badge>
+                </Tooltip>
+              )}
+              {workload.name}
+            </div>
           </>,
           // This <> wrapper is needed by Slider
           <>
@@ -186,6 +230,9 @@ class TrafficShifting extends React.Component<Props, State> {
               locked={this.state.workloads.length > 1 ? workload.locked : true}
               showLock={this.state.workloads.length > 2}
               onLock={locked => this.onLock(workload.name, locked)}
+              mirrored={workload.mirrored}
+              showMirror={this.props.showMirror && this.state.workloads.length > 2}
+              onMirror={mirrored => this.onMirror(workload.name, mirrored)}
             />
           </>
         ]
@@ -204,7 +251,7 @@ class TrafficShifting extends React.Component<Props, State> {
             </Button>{' '}
           </div>
         )}
-        {!isValid && <div className={validationStyle}>The sum of all weights must be 100 %</div>}
+        {this.props.showValid && !isValid && <div className={validationStyle}>{MSG_WEIGHTS_NOT_VALID}</div>}
       </>
     );
   }
