@@ -7,6 +7,7 @@ interface ClusterSummary {
   subset: string;
   direction: string;
   type: number;
+  destination_rule: string;
 }
 
 export class ClusterWriter implements SummaryWriter {
@@ -31,7 +32,8 @@ export class ClusterWriter implements SummaryWriter {
       { title: 'Port', transforms: [sortable] },
       { title: 'Subset', transforms: [sortable] },
       { title: 'Direction', transforms: [sortable] },
-      { title: 'Type', transforms: [sortable] }
+      { title: 'Type', transforms: [sortable] },
+      { title: 'DestinationRule', transforms: [sortable] }
     ];
   }
 
@@ -43,7 +45,8 @@ export class ClusterWriter implements SummaryWriter {
           summary.port.toString(),
           summary.subset,
           summary.direction,
-          summary.type.toString()
+          summary.type.toString(),
+          summary.destination_rule,
         ];
       })
       .sort((a: string[], b: string[]) => {
