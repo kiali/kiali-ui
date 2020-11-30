@@ -73,7 +73,7 @@ export const healthAnnotation = {
 export interface RequestHealth {
   inbound: RequestType;
   outbound: RequestType;
-  config?: { [key: string]: string };
+  annotations?: { [key: string]: string };
 }
 
 export interface Status {
