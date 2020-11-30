@@ -10,8 +10,8 @@ export type Color = { r: number; g: number; b: number };
 export type ColorMap = Color[];
 
 type Props = {
-  xLabels: string[];
-  yLabels: string[];
+  xLabels: (string | JSX.Element)[];
+  yLabels: (string | JSX.Element)[];
   data: (number | undefined)[][];
   colorMap: ColorMap;
   dataRange: { from: number; to: number };
@@ -75,15 +75,15 @@ export class HeatMap extends React.Component<Props> {
     return (
       <div style={this.getGridStyle()}>
         <div></div>
-        {this.props.xLabels.map(xLabel => (
-          <div key={xLabel} className={cellStyle}>
+        {this.props.xLabels.map((xLabel, x) => (
+          <div key={'xlabel_' + x} className={cellStyle}>
             {isCompact ? '' : xLabel}
           </div>
         ))}
         {this.props.yLabels.map((yLabel, y) => {
           return (
             <>
-              <div key={yLabel} className={cellStyle}>
+              <div key={'ylabel_' + y} className={cellStyle}>
                 {isCompact ? '' : yLabel}
               </div>
               {this.props.xLabels.map((_, x) => {
