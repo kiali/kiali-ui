@@ -2,6 +2,7 @@ import * as React from 'react';
 import { ICell, ISortBy, SortByDirection, Table, TableBody, TableHeader } from '@patternfly/react-table';
 import { ClusterSummaryWriter, ClusterWriter } from './ClusterWriter';
 import { RouteSummaryWriter, RouteWriter } from './RouteWriter';
+import { ListenerSummaryWriter, ListenerWriter } from './ListenerWriter';
 
 export interface SummaryWriter {
   head: () => ICell[];
@@ -67,6 +68,10 @@ export const SummaryWriterBuilder = (resource: string, config: any) => {
     case 'routes':
       writerComp = RouteSummaryWriter;
       writerProps = new RouteWriter(config);
+      break;
+    case 'listeners':
+      writerComp = ListenerSummaryWriter;
+      writerProps = new ListenerWriter(config);
       break;
   }
   return [writerComp, writerProps];

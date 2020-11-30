@@ -27,7 +27,7 @@ import { SummaryWriterBuilder } from './writers/BaseWriter';
 // Enables the search box for the ACEeditor
 require('ace-builds/src-noconflict/ext-searchbox');
 
-const resources: string[] = ['all', 'bootstrap', 'clusters', 'routes'];
+const resources: string[] = ['all', 'bootstrap', 'clusters', 'listeners', 'routes'];
 
 const displayFlex = style({
   display: 'flex'
