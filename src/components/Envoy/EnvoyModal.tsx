@@ -2,6 +2,7 @@ import * as API from '../../services/Api';
 import * as AlertUtils from '../../utils/AlertUtils';
 import * as React from 'react';
 import {
+  Button,
   Card,
   EmptyState,
   EmptyStateIcon,
@@ -47,6 +48,7 @@ type EnvoyDetailModalProps = {
 type EnvoyDetailProps = {
   namespace: string;
   workload: Workload;
+  onClose: (changed?: boolean) => void;
 };
 
 type EnvoyDetailState = {
@@ -57,8 +59,18 @@ type EnvoyDetailState = {
 };
 
 export const EnvoyDetailsModal = ({ namespace, workload, isOpen, onClose }: EnvoyDetailModalProps) => (
-  <Modal isLarge={true} title={`Envoy config for ${workload.name}`} isOpen={isOpen} onClose={onClose}>
-    <EnvoyDetail namespace={namespace} workload={workload} />
+  <Modal
+    isLarge={true}
+    title={`Envoy config for ${workload.name}`}
+    isOpen={isOpen}
+    onClose={onClose}
+    actions={[
+      <Button key="cancel" variant="secondary" onClick={() => onClose(false)}>
+        Cancel
+      </Button>
+    ]}
+  >
+    <EnvoyDetail namespace={namespace} workload={workload} onClose={onClose} />
   </Modal>
 );
 
@@ -138,6 +150,7 @@ class EnvoyDetail extends React.Component<EnvoyDetailProps, EnvoyDetailState> {
         });
       })
       .catch(error => {
+        this.props.onClose();
         AlertUtils.addError(`Could not fetch envoy config for ${this.state.pod.name}.`, error);
       });
   };
@@ -151,6 +164,7 @@ class EnvoyDetail extends React.Component<EnvoyDetailProps, EnvoyDetailState> {
         });
       })
       .catch(error => {
+        this.props.onClose();
         AlertUtils.addError(
           `Could not fetch envoy config ${this.state.resource} entries for ${this.state.pod.name}.`,
           error

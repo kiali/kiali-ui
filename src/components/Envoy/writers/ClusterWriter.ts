@@ -37,19 +37,19 @@ export class ClusterWriter implements SummaryWriter {
     ];
   }
 
-  rows(): string[][] {
+  rows(): (string | number)[][] {
     return this.summaries
       .map((summary: ClusterSummary) => {
         return [
           summary.service_fqdn,
-          summary.port.toString(),
-          summary.subset,
-          summary.direction,
-          summary.type.toString(),
+          summary.port || '-',
+          summary.subset || '-',
+          summary.direction || '-',
+          summary.type,
           summary.destination_rule
         ];
       })
-      .sort((a: string[], b: string[]) => {
+      .sort((a: any[], b: any[]) => {
         if (this.sortingDirection === 'asc') {
           return a[this.sortingIndex] < b[this.sortingIndex] ? -1 : a[this.sortingIndex] > b[this.sortingIndex] ? 1 : 0;
         } else {

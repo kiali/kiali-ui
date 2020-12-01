@@ -126,8 +126,13 @@ class WorkloadWizardDropdown extends React.Component<Props, State> {
       );
 
       const envoyAction = (
-        <DropdownItem key="envoy-details" component="button" onClick={() => this.onWizardToggle(true)}>
-          Show Envoy details
+        <DropdownItem
+          key="envoy-details"
+          component="button"
+          onClick={() => this.onWizardToggle(true)}
+          isDisabled={!this.props.workload.istioSidecar}
+        >
+          Show Envoy Details
         </DropdownItem>
       );
 
@@ -145,8 +150,6 @@ class WorkloadWizardDropdown extends React.Component<Props, State> {
         items.push(this.props.workload.istioSidecar ? disableAction : enableAction);
       }
 
-      // TODO: THIS IS NOT A WIZARD ACTION: needs to be move out of this.
-      // TODO: Needs to rethink how to mix wizard action with non-wizard ones.
       items.push(envoyAction);
     }
     return items;

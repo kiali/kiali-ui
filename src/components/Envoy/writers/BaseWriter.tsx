@@ -6,7 +6,7 @@ import { ListenerSummaryWriter, ListenerWriter } from './ListenerWriter';
 
 export interface SummaryWriter {
   head: () => ICell[];
-  rows: () => string[][];
+  rows: () => (string | number)[][];
   setSorting: (columnIndex: number, direction: string) => void;
 }
 

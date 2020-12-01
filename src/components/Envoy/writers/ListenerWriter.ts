@@ -3,7 +3,7 @@ import { ICell, sortable } from '@patternfly/react-table';
 
 interface ListenerSummary {
   address: string;
-  port: string;
+  port: number;
   match: string;
   destination: string;
 }
@@ -33,12 +33,12 @@ export class ListenerWriter implements SummaryWriter {
     ];
   }
 
-  rows(): string[][] {
+  rows(): (string | number)[][] {
     return this.summaries
       .map((summary: ListenerSummary) => {
         return [summary.address, summary.port, summary.match, summary.destination];
       })
-      .sort((a: string[], b: string[]) => {
+      .sort((a: (string | number)[], b: (string | number)[]) => {
         if (this.sortingDirection === 'asc') {
           return a[this.sortingIndex] < b[this.sortingIndex] ? -1 : a[this.sortingIndex] > b[this.sortingIndex] ? 1 : 0;
         } else {
