@@ -17,13 +17,13 @@ import {
 import { buildRow } from './SpanTableItem';
 import { compareNullable } from 'components/FilterList/FilterHelper';
 import { MetricsStats } from 'types/Metrics';
-import { buildQueriesFromSpans } from './StatsComparison';
 import { KialiAppState } from 'store/Store';
 import { KialiAppAction } from 'actions/KialiAppAction';
 import { MetricsStatsQuery } from 'types/MetricsOptions';
 import MetricsStatsThunkActions from 'actions/MetricsStatsThunkActions';
 import { sameSpans } from '../JaegerHelper';
 import { RichSpanData } from 'types/JaegerInfo';
+import { buildQueriesFromSpans } from 'utils/TraceStats';
 
 type SortableCell<T> = ICell & {
   compare?: (a: T, b: T) => number;

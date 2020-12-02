@@ -17,12 +17,18 @@ import { KialiAppAction } from 'actions/KialiAppAction';
 import { JaegerThunkActions } from 'actions/JaegerThunkActions';
 import { getTraceId } from 'utils/SearchParamUtils';
 import { average } from 'utils/MathUtils';
-import { averageSpanDuration, isSimilarTrace, reduceMetricsStats } from 'utils/TraceStats';
+import {
+  averageSpanDuration,
+  buildQueriesFromSpans,
+  isSimilarTrace,
+  reduceMetricsStats,
+  StatsMatrix
+} from 'utils/TraceStats';
 import { TraceLabels } from './TraceLabels';
 import { TargetKind } from 'types/Common';
 import { MetricsStatsQuery } from 'types/MetricsOptions';
 import MetricsStatsThunkActions from 'actions/MetricsStatsThunkActions';
-import { buildQueriesFromSpans, StatsMatrix, renderTraceHeatMap } from './StatsComparison';
+import { renderTraceHeatMap } from './StatsComparison';
 import { sameSpans } from '../JaegerHelper';
 import { HeatMap } from 'components/HeatMap/HeatMap';
 
