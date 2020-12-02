@@ -27,10 +27,10 @@ import { ServiceList } from '../types/ServiceList';
 import { config } from '../config';
 import { ServerConfig } from '../types/ServerConfig';
 import { TLSStatus } from '../types/TLSStatus';
-import { EnvoyProxy, Pod, PodLogs, ValidationStatus } from '../types/IstioObjects';
+import { EnvoyProxy, EnvoyProxyResourceEntries, Pod, PodLogs, ValidationStatus } from '../types/IstioObjects';
 import { GrafanaInfo } from '../types/GrafanaInfo';
 import { Span, TracingQuery } from 'types/Tracing';
-import { Iter8ExpDetailsInfo, Iter8Experiment, Iter8Info, ExperimentSpec } from '../types/Iter8';
+import { ExperimentSpec, Iter8ExpDetailsInfo, Iter8Experiment, Iter8Info } from '../types/Iter8';
 import { ComponentStatus } from '../types/IstioStatus';
 import { DashboardModel } from 'types/Dashboards';
 
@@ -500,7 +500,12 @@ export const getPodEnvoyProxy = (namespace: string, pod: string) => {
 };
 
 export const getPodEnvoyProxyResourceEntries = (namespace: string, pod: string, resource: string) => {
-  return newRequest<EnvoyProxy>(HTTP_VERBS.GET, urls.podEnvoyProxyResourceEntries(namespace, pod, resource), {}, {});
+  return newRequest<EnvoyProxyResourceEntries>(
+    HTTP_VERBS.GET,
+    urls.podEnvoyProxyResourceEntries(namespace, pod, resource),
+    {},
+    {}
+  );
 };
 
 export const getErrorString = (error: AxiosError): string => {

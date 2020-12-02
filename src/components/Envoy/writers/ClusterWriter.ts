@@ -1,14 +1,6 @@
 import { SummaryWriter, SummaryWriterRenderer } from './BaseWriter';
 import { ICell, sortable } from '@patternfly/react-table';
-
-interface ClusterSummary {
-  service_fqdn: string;
-  port: number;
-  subset: string;
-  direction: string;
-  type: number;
-  destination_rule: string;
-}
+import { ClusterSummary } from '../../../types/IstioObjects';
 
 export class ClusterWriter implements SummaryWriter {
   summaries: ClusterSummary[];

@@ -143,6 +143,35 @@ export interface EnvoyProxy {
   configs: any[];
 }
 
+export type EnvoyProxyResourceEntries = BootstrapSummary | ClusterSummary | ListenerSummary | RouteSummary;
+
+export interface ClusterSummary {
+  service_fqdn: string;
+  port: number;
+  subset: string;
+  direction: string;
+  type: number;
+  destination_rule: string;
+}
+
+export interface ListenerSummary {
+  address: string;
+  port: number;
+  match: string;
+  destination: string;
+}
+
+export interface RouteSummary {
+  name: string;
+  domains: string;
+  match: string;
+  virtual_service: string;
+}
+
+export interface BootstrapSummary {
+  bootstrap: any;
+}
+
 export interface Service {
   name: string;
   createdAt: string;

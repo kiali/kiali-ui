@@ -1,12 +1,6 @@
 import { SummaryWriter, SummaryWriterRenderer } from './BaseWriter';
 import { ICell, sortable } from '@patternfly/react-table';
-
-interface RouteSummary {
-  name: string;
-  domains: string;
-  match: string;
-  virtual_service: string;
-}
+import { RouteSummary } from '../../../types/IstioObjects';
 
 export class RouteWriter implements SummaryWriter {
   summaries: RouteSummary[];

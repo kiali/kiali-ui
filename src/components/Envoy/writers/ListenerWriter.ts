@@ -1,12 +1,6 @@
 import { SummaryWriter, SummaryWriterRenderer } from './BaseWriter';
 import { ICell, sortable } from '@patternfly/react-table';
-
-interface ListenerSummary {
-  address: string;
-  port: number;
-  match: string;
-  destination: string;
-}
+import { ListenerSummary } from '../../../types/IstioObjects';
 
 export class ListenerWriter implements SummaryWriter {
   summaries: ListenerSummary[];
