@@ -217,19 +217,9 @@ class TrafficShifting extends React.Component<Props, State> {
           cells: [
             <>
               <div>
-                {workload.mirrored ? (
-                  <Tooltip
-                    key={'mirrorred_' + workload.name}
-                    position={TooltipPosition.top}
-                    content={<>Mirrored Workload</>}
-                  >
-                    <Badge className={'faultinjection_badge_definition'}>MI</Badge>
-                  </Tooltip>
-                ) : (
-                  <Tooltip key={'tooltip_' + workload.name} position={TooltipPosition.top} content={<>Workload</>}>
-                    <Badge className={'virtualitem_badge_definition'}>WS</Badge>
-                  </Tooltip>
-                )}
+                <Tooltip key={'tooltip_' + workload.name} position={TooltipPosition.top} content={<>Workload</>}>
+                  <Badge className={'virtualitem_badge_definition'}>WS</Badge>
+                </Tooltip>
                 {workload.name}
               </div>
             </>,
@@ -255,7 +245,7 @@ class TrafficShifting extends React.Component<Props, State> {
                 showLock={this.state.workloads.length > 2}
                 onLock={locked => this.onLock(workload.name, locked)}
                 mirrored={workload.mirrored}
-                showMirror={this.props.showMirror && this.state.workloads.length > 2}
+                showMirror={this.props.showMirror && this.state.workloads.length > 1}
                 onMirror={mirrored => this.onMirror(workload.name, mirrored)}
               />
             </>
@@ -281,19 +271,13 @@ class TrafficShifting extends React.Component<Props, State> {
           cells: [
             <>
               <div>
-                {workload.mirrored ? (
-                  <Tooltip
-                    key={'mirrorred_' + workload.name}
-                    position={TooltipPosition.top}
-                    content={<>Mirrored Workload</>}
-                  >
-                    <Badge className={'faultinjection_badge_definition'}>MI</Badge>
-                  </Tooltip>
-                ) : (
-                  <Tooltip key={'tooltip_' + workload.name} position={TooltipPosition.top} content={<>Workload</>}>
-                    <Badge className={'virtualitem_badge_definition'}>WS</Badge>
-                  </Tooltip>
-                )}
+                <Tooltip
+                  key={'mirrorred_' + workload.name}
+                  position={TooltipPosition.top}
+                  content={<>Mirrored Workload</>}
+                >
+                  <Badge className={'faultinjection_badge_definition'}>MI</Badge>
+                </Tooltip>
                 {workload.name}
               </div>
             </>,
@@ -319,7 +303,7 @@ class TrafficShifting extends React.Component<Props, State> {
                 showLock={this.state.workloads.length > 2}
                 onLock={locked => this.onLock(workload.name, locked)}
                 mirrored={workload.mirrored}
-                showMirror={this.props.showMirror && this.state.workloads.length > 2}
+                showMirror={this.props.showMirror}
                 onMirror={mirrored => this.onMirror(workload.name, mirrored)}
               />
             </>
