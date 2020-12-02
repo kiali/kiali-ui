@@ -34,6 +34,9 @@
     b. For every child set the relative position to its parent
  */
 
+import { CyNode } from '../CytoscapeGraphUtils';
+import { BoxByType } from 'types/Graph';
+
 export const COMPOUND_PARENT_NODE_CLASS = '__compoundLayoutParentNodeClass';
 
 const NAMESPACE_KEY = 'group_compound_layout';
@@ -107,117 +110,119 @@ export default class GroupCompoundLayout {
    * This code gets executed on the cy.layout(...).run() is our entrypoint of this algorithm.
    */
   run() {
-    const { realLayout, compoundLayoutOptions } = this.options;
-    const parents = this.parents();
-    const children = parents.children();
+    [BoxByType.APP, BoxByType.NAMESPACE, BoxByType.CLUSTER].forEach(boxByType => {
+      const { realLayout, compoundLayoutOptions } = this.options;
+      const parents = this.parents(boxByType);
+      const children = parents.children();
 
-    // (1.a) Prepare parents by assigning a size and running the compound layout
-    parents.each(parent => {
-      const children = parent.children();
-      const targetElements = children.add(children.edgesTo(children));
-
-      // We expect a discrete layout here
-      const compoundLayout = targetElements.layout(compoundLayoutOptions);
-      compoundLayout.on('layoutstart layoutready layoutstop', _evt => {
-        // Avoid to propagate any local layout events up to cy, this would yield a global operation when not all nodes are ready.
-        return false;
-      });
-      compoundLayout.run();
-
-      // see https://github.com/cytoscape/cytoscape.js/issues/2402
-      const boundingBox = parent.boundingBox();
-
-      // Save the relative positions, as we will need them later.
-      parent.children().each(child => {
-        child.scratch(RELATIVE_POSITION_KEY, child.relativePosition());
-      });
-
-      const backupStyles: OverridenStyles = {
-        shape: parent.style('shape'),
-        height: parent.style('height'),
-        width: parent.style('width')
-      };
-
-      const newStyles: OverridenStyles = {
-        shape: 'rectangle',
-        height: `${boundingBox.h}px`,
-        width: `${boundingBox.w}px`
-      };
-      // Saves a backup of current styles to restore them after we finish
-      parent.scratch(STYLES_KEY, backupStyles);
-      parent.addClass(COMPOUND_PARENT_NODE_CLASS);
-      // (1.b) Set the size
-      parent.style(newStyles);
-    });
-
-    // (1.c) Add synthetic edges for every edge that touches a child node.
-    let syntheticEdges = this.cy.collection();
-    children.each(child => {
-      child.connectedEdges().each(edge => {
-        // (1.c) Create synthetic edges.
-        const syntheticEdge = this.syntheticEdgeGenerator.getEdge(edge.source(), edge.target());
-        if (syntheticEdge) {
-          syntheticEdges = syntheticEdges.add(this.cy.add(syntheticEdge));
-        }
-      });
-    });
-    // (1.d) Remove all child nodes from parents (and their edges).
-    const removedElements = this.cy.remove(children);
-
-    // Ensure we only touch the requested elements and not the whole graph.
-    const layoutElements = this.cy.collection().add(this.elements).subtract(removedElements).add(syntheticEdges);
-
-    // Before running the layout, reset the elements positions.
-    // This is not absolutely necessary, but without this we have seen some problems with
-    //  `cola` + firefox + a particular mesh
-    layoutElements.position({ x: 0, y: 0 });
-
-    const layout = this.cy.layout({
-      // Create a new layout
-      ...this.options, // Sharing the main options
-      name: realLayout, // but using the real layout
-      eles: this.cy.elements(), // and the current elements
-      realLayout: undefined // We don't want this realLayout stuff in there.
-    });
-
-    // (2) Add a one-time callback to be fired when the layout stops
-    layout.one('layoutstop', _event => {
-      // If we add any children back, our parent nodes position are going to take the bounding box's position of all
-      // their children. Before doing it, save this position in order to add this up to their children.
+      // (1.a) Prepare parents by assigning a size and running the compound layout
       parents.each(parent => {
-        parent.scratch(PARENT_POSITION_KEY, { ...parent.position() }); // Make a copy of the position, its an internal data from cy.
-      });
+        const children = parent.children();
+        const targetElements = children.add(children.edgesTo(children));
 
-      // (3) Remove synthetic edges
-      this.cy.remove(syntheticEdges);
+        // We expect a discrete layout here
+        const compoundLayout = targetElements.layout(compoundLayoutOptions);
+        compoundLayout.on('layoutstart layoutready layoutstop', _evt => {
+          // Avoid to propagate any local layout events up to cy, this would yield a global operation when not all nodes are ready.
+          return false;
+        });
+        compoundLayout.run();
 
-      // (4.a) Add back the child nodes (with edges still attached)
-      removedElements.restore();
-      // Add and position the children nodes according to the layout
-      parents.each(parent => {
-        // (4.b) Layout the children using our compound layout.
-        const parentPosition = parent.scratch(PARENT_POSITION_KEY);
+        // see https://github.com/cytoscape/cytoscape.js/issues/2402
+        const boundingBox = parent.boundingBox();
+
+        // Save the relative positions, as we will need them later.
         parent.children().each(child => {
-          const relativePosition = child.scratch(RELATIVE_POSITION_KEY);
-          child.position({
-            x: parentPosition.x + relativePosition.x,
-            y: parentPosition.y + relativePosition.y
-          });
-          child.removeData(RELATIVE_POSITION_KEY);
+          child.scratch(RELATIVE_POSITION_KEY, child.relativePosition());
         });
 
-        parent.style(parent.scratch(STYLES_KEY));
-        parent.removeClass(COMPOUND_PARENT_NODE_CLASS);
+        const backupStyles: OverridenStyles = {
+          shape: parent.style('shape'),
+          height: parent.style('height'),
+          width: parent.style('width')
+        };
 
-        // Discard the saved values
-        parent.removeScratch(STYLES_KEY);
-        parent.removeScratch(PARENT_POSITION_KEY);
+        const newStyles: OverridenStyles = {
+          shape: 'rectangle',
+          height: `${boundingBox.h}px`,
+          width: `${boundingBox.w}px`
+        };
+        // Saves a backup of current styles to restore them after we finish
+        parent.scratch(STYLES_KEY, backupStyles);
+        parent.addClass(COMPOUND_PARENT_NODE_CLASS);
+        // (1.b) Set the size
+        parent.style(newStyles);
       });
+
+      // (1.c) Add synthetic edges for every edge that touches a child node.
+      let syntheticEdges = this.cy.collection();
+      children.each(child => {
+        child.connectedEdges().each(edge => {
+          // (1.c) Create synthetic edges.
+          const syntheticEdge = this.syntheticEdgeGenerator.getEdge(edge.source(), edge.target());
+          if (syntheticEdge) {
+            syntheticEdges = syntheticEdges.add(this.cy.add(syntheticEdge));
+          }
+        });
+      });
+      // (1.d) Remove all child nodes from parents (and their edges).
+      const removedElements = this.cy.remove(children);
+
+      // Ensure we only touch the requested elements and not the whole graph.
+      const layoutElements = this.cy.collection().add(this.elements).subtract(removedElements).add(syntheticEdges);
+
+      // Before running the layout, reset the elements positions.
+      // This is not absolutely necessary, but without this we have seen some problems with
+      //  `cola` + firefox + a particular mesh
+      layoutElements.position({ x: 0, y: 0 });
+
+      const layout = this.cy.layout({
+        // Create a new layout
+        ...this.options, // Sharing the main options
+        name: realLayout, // but using the real layout
+        eles: this.cy.elements(), // and the current elements
+        realLayout: undefined // We don't want this realLayout stuff in there.
+      });
+
+      // (2) Add a one-time callback to be fired when the layout stops
+      layout.one('layoutstop', _event => {
+        // If we add any children back, our parent nodes position are going to take the bounding box's position of all
+        // their children. Before doing it, save this position in order to add this up to their children.
+        parents.each(parent => {
+          parent.scratch(PARENT_POSITION_KEY, { ...parent.position() }); // Make a copy of the position, its an internal data from cy.
+        });
+
+        // (3) Remove synthetic edges
+        this.cy.remove(syntheticEdges);
+
+        // (4.a) Add back the child nodes (with edges still attached)
+        removedElements.restore();
+        // Add and position the children nodes according to the layout
+        parents.each(parent => {
+          // (4.b) Layout the children using our compound layout.
+          const parentPosition = parent.scratch(PARENT_POSITION_KEY);
+          parent.children().each(child => {
+            const relativePosition = child.scratch(RELATIVE_POSITION_KEY);
+            child.position({
+              x: parentPosition.x + relativePosition.x,
+              y: parentPosition.y + relativePosition.y
+            });
+            child.removeData(RELATIVE_POSITION_KEY);
+          });
+
+          parent.style(parent.scratch(STYLES_KEY));
+          parent.removeClass(COMPOUND_PARENT_NODE_CLASS);
+
+          // Discard the saved values
+          parent.removeScratch(STYLES_KEY);
+          parent.removeScratch(PARENT_POSITION_KEY);
+        });
+      });
+      layout.run();
     });
-    layout.run();
   }
 
-  parents() {
-    return this.elements.nodes('$node > node');
+  parents(boxByType: BoxByType) {
+    return this.elements.nodes(`[${CyNode.isBox}="${boxByType}"]`);
   }
 }
