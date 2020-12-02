@@ -27,7 +27,7 @@ import { ServiceList } from '../types/ServiceList';
 import { config } from '../config';
 import { ServerConfig } from '../types/ServerConfig';
 import { TLSStatus } from '../types/TLSStatus';
-import { EnvoyProxy, EnvoyProxyResourceEntries, Pod, PodLogs, ValidationStatus } from '../types/IstioObjects';
+import { EnvoyProxyDump, EnvoyProxyResourceEntries, Pod, PodLogs, ValidationStatus } from '../types/IstioObjects';
 import { GrafanaInfo } from '../types/GrafanaInfo';
 import { Span, TracingQuery } from 'types/Tracing';
 import { ExperimentSpec, Iter8ExpDetailsInfo, Iter8Experiment, Iter8Info } from '../types/Iter8';
@@ -496,7 +496,7 @@ export const getPodLogs = (
 };
 
 export const getPodEnvoyProxy = (namespace: string, pod: string) => {
-  return newRequest<EnvoyProxy>(HTTP_VERBS.GET, urls.podEnvoyProxy(namespace, pod), {}, {});
+  return newRequest<EnvoyProxyDump>(HTTP_VERBS.GET, urls.podEnvoyProxy(namespace, pod), {}, {});
 };
 
 export const getPodEnvoyProxyResourceEntries = (namespace: string, pod: string, resource: string) => {

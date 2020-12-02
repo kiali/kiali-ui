@@ -139,7 +139,7 @@ export interface PodLogs {
   entries: LogEntry[];
 }
 
-export interface EnvoyProxy {
+export interface EnvoyProxyDump {
   configs: any[];
 }
 
