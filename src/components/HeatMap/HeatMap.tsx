@@ -41,13 +41,13 @@ export class HeatMap extends React.Component<Props> {
 
   private getGridStyle = (): React.CSSProperties => {
     const cellHeight = this.props.displayMode === 'compact' ? '1rem' : '2rem';
-    const cellWidth =
-      this.props.displayMode === 'compact' ? '1rem' : this.props.displayMode === 'large' ? '3rem' : '2rem';
+    const cellWidth = this.props.displayMode === 'compact' ? 1 : this.props.displayMode === 'large' ? 3 : 2;
     return {
       display: 'grid',
-      gridTemplateColumns: new Array(this.props.xLabels.length + 1).fill(cellWidth).join(' '),
+      gridTemplateColumns: `${cellWidth}rem repeat(${this.props.xLabels.length}, 1fr)`,
       gridTemplateRows: new Array(this.props.yLabels.length + 1).fill(cellHeight).join(' '),
-      gridGap: 2
+      gridGap: 2,
+      maxWidth: `${cellWidth * (1 + this.props.xLabels.length)}rem`
     };
   };
 
