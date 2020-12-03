@@ -38,14 +38,8 @@ const toolbarSpace = style({
   marginLeft: '1em'
 });
 
-type EnvoyDetailModalProps = {
-  namespace: string;
-  workload: Workload;
-  isOpen: boolean;
-  onClose: (changed?: boolean) => void;
-};
-
 type EnvoyDetailProps = {
+  show: boolean;
   namespace: string;
   workload: Workload;
   onClose: (changed?: boolean) => void;
@@ -58,22 +52,6 @@ type EnvoyDetailState = {
   pod: Pod;
 };
 
-export const EnvoyDetailsModal = ({ namespace, workload, isOpen, onClose }: EnvoyDetailModalProps) => (
-  <Modal
-    isLarge={true}
-    title={`Envoy config for ${workload.name}`}
-    isOpen={isOpen}
-    onClose={onClose}
-    actions={[
-      <Button key="cancel" variant="secondary" onClick={() => onClose(false)}>
-        Cancel
-      </Button>
-    ]}
-  >
-    <EnvoyDetail namespace={namespace} workload={workload} onClose={onClose} />
-  </Modal>
-);
-
 export const Loading = () => (
   <EmptyState variant={EmptyStateVariant.full}>
     <EmptyStateIcon variant="container" component={Spinner} />
@@ -83,7 +61,7 @@ export const Loading = () => (
   </EmptyState>
 );
 
-class EnvoyDetail extends React.Component<EnvoyDetailProps, EnvoyDetailState> {
+class EnvoyDetailsModal extends React.Component<EnvoyDetailProps, EnvoyDetailState> {
   aceEditorRef: React.RefObject<AceEditor>;
 
   constructor(props: EnvoyDetailProps) {
@@ -177,58 +155,72 @@ class EnvoyDetail extends React.Component<EnvoyDetailProps, EnvoyDetailState> {
     const SummaryWriterComp = builder[0];
     const summaryWriter = builder[1];
     return (
-      <Stack gutter={GutterSize.sm}>
-        <StackItem>
-          <Toolbar key="envoy-toolbar">
-            <ToolbarGroup>
-              <ToolbarItem className={displayFlex}>
-                <ToolbarDropdown
-                  id="envoy_pods_list"
-                  nameDropdown={'Pod'}
-                  tooltip="Display envoy config for the selected pod"
-                  handleSelect={key => this.setPod(key)}
-                  value={this.state.pod.name}
-                  label={this.state.pod.name}
-                  options={this.props.workload.pods.map((pod: Pod) => pod.name).sort()}
+      <Modal
+        width={'50%'}
+        title={`Envoy config for ${this.props.workload.name}`}
+        isOpen={this.props.show}
+        onClose={this.props.onClose}
+        actions={[
+          <Button key="cancel" variant="secondary" onClick={() => this.props.onClose(false)}>
+            Cancel
+          </Button>
+        ]}
+      >
+        <Stack gutter={GutterSize.sm}>
+          <StackItem>
+            <Toolbar key="envoy-toolbar">
+              <ToolbarGroup>
+                <ToolbarItem className={displayFlex}>
+                  <ToolbarDropdown
+                    id="envoy_pods_list"
+                    nameDropdown={'Pod'}
+                    tooltip="Display envoy config for the selected pod"
+                    handleSelect={key => this.setPod(key)}
+                    value={this.state.pod.name}
+                    label={this.state.pod.name}
+                    options={this.props.workload.pods.map((pod: Pod) => pod.name).sort()}
+                  />
+                </ToolbarItem>
+                <ToolbarItem className={[displayFlex, toolbarSpace].join(' ')}>
+                  <ToolbarDropdown
+                    id="envoy_xds_list"
+                    nameDropdown={'Resources'}
+                    tooltip="Display the selected resources from the Envoy config"
+                    handleSelect={key => this.setResource(key)}
+                    value={this.state.resource}
+                    label={this.state.resource}
+                    options={resources}
+                  />
+                </ToolbarItem>
+              </ToolbarGroup>
+            </Toolbar>
+          </StackItem>
+          <StackItem>
+            <Card style={{ height: '400px' }}>
+              {this.state.fetch ? (
+                <Loading />
+              ) : this.state.resource === 'all' || this.state.resource === 'bootstrap' ? (
+                <AceEditor
+                  ref={this.aceEditorRef}
+                  mode="yaml"
+                  theme="eclipse"
+                  height={'400px'}
+                  width={'100%'}
+                  className={'istio-ace-editor'}
+                  wrapEnabled={true}
+                  readOnly={true}
+                  setOptions={aceOptions || { foldStyle: 'markbegin' }}
+                  value={JSON.stringify(this.state.config, null, 2)}
                 />
-              </ToolbarItem>
-              <ToolbarItem className={[displayFlex, toolbarSpace].join(' ')}>
-                <ToolbarDropdown
-                  id="envoy_xds_list"
-                  nameDropdown={'Resources'}
-                  tooltip="Display the selected resources from the Envoy config"
-                  handleSelect={key => this.setResource(key)}
-                  value={this.state.resource}
-                  label={this.state.resource}
-                  options={resources}
-                />
-              </ToolbarItem>
-            </ToolbarGroup>
-          </Toolbar>
-        </StackItem>
-        <StackItem>
-          <Card style={{ height: '400px' }}>
-            {this.state.fetch ? (
-              <Loading />
-            ) : this.state.resource === 'all' || this.state.resource === 'bootstrap' ? (
-              <AceEditor
-                ref={this.aceEditorRef}
-                mode="yaml"
-                theme="eclipse"
-                height={'400px'}
-                width={'100%'}
-                className={'istio-ace-editor'}
-                wrapEnabled={true}
-                readOnly={true}
-                setOptions={aceOptions || { foldStyle: 'markbegin' }}
-                value={JSON.stringify(this.state.config, null, 2)}
-              />
-            ) : (
-              <SummaryWriterComp writer={summaryWriter} />
-            )}
-          </Card>
-        </StackItem>
-      </Stack>
+              ) : (
+                <SummaryWriterComp writer={summaryWriter} />
+              )}
+            </Card>
+          </StackItem>
+        </Stack>
+      </Modal>
     );
   }
 }
+
+export default EnvoyDetailsModal;

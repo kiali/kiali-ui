@@ -12,7 +12,7 @@ import {
 import * as API from '../../services/Api';
 import * as AlertUtils from '../../utils/AlertUtils';
 import { MessageType } from '../../types/MessageCenter';
-import { EnvoyDetailsModal } from '../Envoy/EnvoyModal';
+import EnvoyDetailsModal from '../Envoy/EnvoyModal';
 
 interface Props {
   namespace: string;
@@ -180,7 +180,7 @@ class WorkloadWizardDropdown extends React.Component<Props, State> {
         <EnvoyDetailsModal
           namespace={this.props.namespace}
           workload={this.props.workload}
-          isOpen={this.state.showWizard}
+          show={this.state.showWizard}
           onClose={this.onClose}
         />
       </>
