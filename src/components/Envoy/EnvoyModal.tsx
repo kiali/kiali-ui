@@ -23,7 +23,7 @@ import ToolbarDropdown from '../ToolbarDropdown/ToolbarDropdown';
 import AceEditor from 'react-ace';
 import { aceOptions } from '../../types/IstioConfigDetails';
 import { style } from 'typestyle';
-import { SummaryWriterBuilder } from './writers/BaseWriter';
+import { SummaryTableBuilder } from './writers/BaseTable';
 
 // Enables the search box for the ACEeditor
 require('ace-builds/src-noconflict/ext-searchbox');
@@ -173,7 +173,7 @@ class EnvoyDetail extends React.Component<EnvoyDetailProps, EnvoyDetailState> {
   };
 
   render() {
-    const builder = SummaryWriterBuilder(this.state.resource, this.state.config);
+    const builder = SummaryTableBuilder(this.state.resource, this.state.config);
     const SummaryWriterComp = builder[0];
     const summaryWriter = builder[1];
     return (

@@ -1,25 +1,28 @@
 import * as React from 'react';
 import { ICell, ISortBy, SortByDirection, Table, TableBody, TableHeader } from '@patternfly/react-table';
-import { ClusterSummaryWriter, ClusterWriter } from './ClusterWriter';
-import { RouteSummaryWriter, RouteWriter } from './RouteWriter';
-import { ListenerSummaryWriter, ListenerWriter } from './ListenerWriter';
+import { ClusterTable } from './ClusterTable';
+import { RouteTable } from './RouteTable';
+import { ListenerTable } from './ListenerTable';
+import { ClusterSummaryTable } from './ClusterTable';
+import { ListenerSummaryTable } from './ListenerTable';
+import { RouteSummaryTable } from './RouteTable';
 
-export interface SummaryWriter {
+export interface SummaryTable {
   head: () => ICell[];
   rows: () => (string | number)[][];
   setSorting: (columnIndex: number, direction: string) => void;
 }
 
-export function SummaryWriterRenderer<T extends SummaryWriter>() {
-  interface SummaryWriterProps<T> {
+export function SummaryTableRenderer<T extends SummaryTable>() {
+  interface SummaryTableProps<T> {
     writer: T;
   }
 
-  interface SummaryWriterState {
+  interface SummaryTableState {
     sortBy: ISortBy;
   }
 
-  return class SummaryWriter extends React.Component<SummaryWriterProps<T>, SummaryWriterState> {
+  return class SummaryTable extends React.Component<SummaryTableProps<T>, SummaryTableState> {
     constructor(props) {
       super(props);
       this.state = {
@@ -57,21 +60,21 @@ export function SummaryWriterRenderer<T extends SummaryWriter>() {
   };
 }
 
-export const SummaryWriterBuilder = (resource: string, config: any) => {
+export const SummaryTableBuilder = (resource: string, config: any) => {
   let writerComp, writerProps;
 
   switch (resource) {
     case 'clusters':
-      writerComp = ClusterSummaryWriter;
-      writerProps = new ClusterWriter(config);
+      writerComp = ClusterSummaryTable;
+      writerProps = new ClusterTable(config);
       break;
     case 'routes':
-      writerComp = RouteSummaryWriter;
-      writerProps = new RouteWriter(config);
+      writerComp = RouteSummaryTable;
+      writerProps = new RouteTable(config);
       break;
     case 'listeners':
-      writerComp = ListenerSummaryWriter;
-      writerProps = new ListenerWriter(config);
+      writerComp = ListenerSummaryTable;
+      writerProps = new ListenerTable(config);
       break;
   }
   return [writerComp, writerProps];

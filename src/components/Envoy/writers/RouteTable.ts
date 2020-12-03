@@ -1,8 +1,8 @@
-import { SummaryWriter, SummaryWriterRenderer } from './BaseWriter';
+import { SummaryTable, SummaryTableRenderer } from './BaseTable';
 import { ICell, sortable } from '@patternfly/react-table';
 import { RouteSummary } from '../../../types/IstioObjects';
 
-export class RouteWriter implements SummaryWriter {
+export class RouteTable implements SummaryTable {
   summaries: RouteSummary[];
   sortingIndex: number;
   sortingDirection: string;
@@ -42,4 +42,4 @@ export class RouteWriter implements SummaryWriter {
   }
 }
 
-export const RouteSummaryWriter = SummaryWriterRenderer<RouteWriter>();
+export const RouteSummaryTable = SummaryTableRenderer<RouteTable>();

@@ -1,8 +1,8 @@
-import { SummaryWriter, SummaryWriterRenderer } from './BaseWriter';
+import { SummaryTable, SummaryTableRenderer } from './BaseTable';
 import { ICell, sortable } from '@patternfly/react-table';
 import { ClusterSummary } from '../../../types/IstioObjects';
 
-export class ClusterWriter implements SummaryWriter {
+export class ClusterTable implements SummaryTable {
   summaries: ClusterSummary[];
   sortingIndex: number;
   sortingDirection: string;
@@ -51,4 +51,4 @@ export class ClusterWriter implements SummaryWriter {
   }
 }
 
-export const ClusterSummaryWriter = SummaryWriterRenderer<ClusterWriter>();
+export const ClusterSummaryTable = SummaryTableRenderer<ClusterTable>();

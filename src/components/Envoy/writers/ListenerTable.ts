@@ -1,8 +1,8 @@
-import { SummaryWriter, SummaryWriterRenderer } from './BaseWriter';
+import { SummaryTable, SummaryTableRenderer } from './BaseTable';
 import { ICell, sortable } from '@patternfly/react-table';
 import { ListenerSummary } from '../../../types/IstioObjects';
 
-export class ListenerWriter implements SummaryWriter {
+export class ListenerTable implements SummaryTable {
   summaries: ListenerSummary[];
   sortingIndex: number;
   sortingDirection: string;
@@ -42,4 +42,4 @@ export class ListenerWriter implements SummaryWriter {
   }
 }
 
-export const ListenerSummaryWriter = SummaryWriterRenderer<ListenerWriter>();
+export const ListenerSummaryTable = SummaryTableRenderer<ListenerTable>();
