@@ -18,7 +18,7 @@ import {
   ToolbarItem
 } from '@patternfly/react-core';
 import { Workload } from '../../types/Workload';
-import { Pod } from '../../types/IstioObjects';
+import { EnvoyProxyDump, Pod } from '../../types/IstioObjects';
 import ToolbarDropdown from '../ToolbarDropdown/ToolbarDropdown';
 import AceEditor from 'react-ace';
 import { aceOptions } from '../../types/IstioConfigDetails';
@@ -52,7 +52,7 @@ type EnvoyDetailProps = {
 };
 
 type EnvoyDetailState = {
-  config: any;
+  config: EnvoyProxyDump;
   resource: string;
   fetch: boolean;
   pod: Pod;
@@ -90,7 +90,7 @@ class EnvoyDetail extends React.Component<EnvoyDetailProps, EnvoyDetailState> {
     super(props);
     this.aceEditorRef = React.createRef();
     this.state = {
-      config: 'loading...',
+      config: {},
       resource: 'all',
       fetch: true,
       pod: this.sortedPods()[0]

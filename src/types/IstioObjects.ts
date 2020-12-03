@@ -140,10 +140,16 @@ export interface PodLogs {
 }
 
 export interface EnvoyProxyDump {
-  configs: any[];
+  configDump?: EnvoyConfigDump;
+  bootstrap?: BootstrapSummary;
+  clusters?: ClusterSummary[];
+  listeners?: ListenerSummary[];
+  routes?: RouteSummary[];
 }
 
-export type EnvoyProxyResourceEntries = BootstrapSummary | ClusterSummary | ListenerSummary | RouteSummary;
+export interface EnvoyConfigDump {
+  configs: any[];
+}
 
 export interface ClusterSummary {
   service_fqdn: string;

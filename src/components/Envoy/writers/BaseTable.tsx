@@ -6,6 +6,7 @@ import { ListenerTable } from './ListenerTable';
 import { ClusterSummaryTable } from './ClusterTable';
 import { ListenerSummaryTable } from './ListenerTable';
 import { RouteSummaryTable } from './RouteTable';
+import { EnvoyProxyDump } from '../../../types/IstioObjects';
 
 export interface SummaryTable {
   head: () => ICell[];
@@ -60,21 +61,21 @@ export function SummaryTableRenderer<T extends SummaryTable>() {
   };
 }
 
-export const SummaryTableBuilder = (resource: string, config: any) => {
+export const SummaryTableBuilder = (resource: string, config: EnvoyProxyDump) => {
   let writerComp, writerProps;
 
   switch (resource) {
     case 'clusters':
       writerComp = ClusterSummaryTable;
-      writerProps = new ClusterTable(config);
-      break;
-    case 'routes':
-      writerComp = RouteSummaryTable;
-      writerProps = new RouteTable(config);
+      writerProps = new ClusterTable(config.clusters || []);
       break;
     case 'listeners':
       writerComp = ListenerSummaryTable;
-      writerProps = new ListenerTable(config);
+      writerProps = new ListenerTable(config.listeners || []);
+      break;
+    case 'routes':
+      writerComp = RouteSummaryTable;
+      writerProps = new RouteTable(config.routes || []);
       break;
   }
   return [writerComp, writerProps];
