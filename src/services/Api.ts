@@ -20,7 +20,7 @@ import {
 } from '../types/Health';
 import { IstioConfigDetails, IstioPermissions } from '../types/IstioConfigDetails';
 import { IstioConfigList } from '../types/IstioConfigList';
-import { Pod, PodLogs, ValidationStatus } from '../types/IstioObjects';
+import { Pod, PodLogs, ValidationStatus, EnvoyProxyDump } from '../types/IstioObjects';
 import { ComponentStatus } from '../types/IstioStatus';
 import { Iter8ExpDetailsInfo, Iter8Experiment, Iter8Info, ExperimentSpec } from '../types/Iter8';
 import { JaegerInfo, JaegerResponse, JaegerSingleResponse } from '../types/JaegerInfo';
