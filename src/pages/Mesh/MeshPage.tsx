@@ -8,6 +8,8 @@ import { RenderContent } from '../../components/Nav/Page';
 import { getClusters } from '../../services/Api';
 import { MeshClusters } from '../../types/Mesh';
 import { addError } from '../../utils/AlertUtils';
+import DefaultSecondaryMasthead from 'components/DefaultSecondaryMasthead/DefaultSecondaryMasthead';
+import RefreshButtonContainer from 'components/Refresh/RefreshButton';
 
 const MeshPage: React.FunctionComponent = () => {
   const [meshClustersList, setMeshClustersList] = React.useState(null as MeshClusters | null);
@@ -79,14 +81,17 @@ const MeshPage: React.FunctionComponent = () => {
 
   return (
     <>
+      <div style={{ backgroundColor: '#fff' }}>
+        <DefaultSecondaryMasthead
+          hideNamespaceSelector={true}
+          rightToolbar={<RefreshButtonContainer key={'Refresh'} handleRefresh={fetchMeshClusters} />}
+        />
+      </div>
       <RenderContent>
         <div className={containerPadding}>
           <Alert isInline={true} variant="warning" title="This feature is experimental." />
         </div>
         <div className={containerPadding}>
-          <Title headingLevel="h5" size="lg">
-            Clusters in the Mesh
-          </Title>
           <Table aria-label="Sortable Table" cells={columns} onSort={onSortHandler} rows={clusterRows} sortBy={sortBy}>
             <TableHeader />
             <TableBody />
