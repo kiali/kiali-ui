@@ -5,10 +5,11 @@ import { style } from 'typestyle';
 
 const titles = [
   'applications',
-  'workloads',
-  'services',
   'istio',
   'istio/new',
+  'mesh',
+  'services',
+  'workloads',
   'extensions/iter8',
   'extensions/iter8/new',
   'extensions/iter8/newfromfile'
@@ -56,8 +57,8 @@ export default class DefaultSecondaryMasthead extends React.Component<Props> {
         disabled = true;
       } else if (path === 'extensions/iter8/newfromfile') {
         title = 'Create New Iter8 Experiment from File';
-      } else if (path === 'mesh_structure') {
-        title = 'Mesh';
+      } else if (path === 'mesh') {
+        title = 'Clusters';
       }
       return {
         title: (
