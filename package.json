@@ -127,11 +127,13 @@
     "typescript": "3.8.3"
   },
   "resolutions": {
+    "ajv": "6.12.3",
     "dot-prop": "4.2.1",
     "hoist-non-react-statics": "3.3.0",
     "kind-of": "6.0.3",
     "victory": "~34.0.1",
-    "victory-core": "~34.0.0"
+    "victory-core": "~34.0.0",
+    "y18n": "5.0.5"
   },
   "engines": {
     "node": ">=10.0.0 && <13",
