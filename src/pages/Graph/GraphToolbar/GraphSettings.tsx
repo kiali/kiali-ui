@@ -50,7 +50,7 @@ const marginBottom = 20;
 
 const containerStyle = style({
   overflow: 'auto',
-  width: '225px'
+  width: '230px'
 });
 
 // this emulates Select component .pf-c-select__menu
