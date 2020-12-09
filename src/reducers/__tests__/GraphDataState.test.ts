@@ -23,7 +23,6 @@ describe('GraphDataState', () => {
         showIdleEdges: false,
         showIdleNodes: false,
         showMissingSidecars: true,
-        showNodeLabels: true,
         showOperationNodes: false,
         showSecurity: false,
         showServiceNodes: true,

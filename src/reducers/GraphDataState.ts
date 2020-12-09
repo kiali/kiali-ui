@@ -24,7 +24,6 @@ export const INITIAL_GRAPH_STATE: GraphState = {
     showIdleNodes: false,
     showLegend: false,
     showMissingSidecars: true,
-    showNodeLabels: true,
     showOperationNodes: false,
     showSecurity: false,
     showServiceNodes: true,
@@ -113,18 +112,6 @@ const graphDataState = (state: GraphState = INITIAL_GRAPH_STATE, action: KialiAp
           showFindHelp: !state.toolbarState.showFindHelp
         })
       });
-    case getType(GraphToolbarActions.toggleIdleEdges):
-      return updateState(state, {
-        toolbarState: updateState(state.toolbarState, {
-          showIdleEdges: !state.toolbarState.showIdleEdges
-        })
-      });
-    case getType(GraphToolbarActions.toggleGraphNodeLabel):
-      return updateState(state, {
-        toolbarState: updateState(state.toolbarState, {
-          showNodeLabels: !state.toolbarState.showNodeLabels
-        })
-      });
     case getType(GraphToolbarActions.toggleGraphCircuitBreakers):
       return updateState(state, {
         toolbarState: updateState(state.toolbarState, {
@@ -147,6 +134,12 @@ const graphDataState = (state: GraphState = INITIAL_GRAPH_STATE, action: KialiAp
       return updateState(state, {
         toolbarState: updateState(state.toolbarState, {
           showSecurity: !state.toolbarState.showSecurity
+        })
+      });
+    case getType(GraphToolbarActions.toggleIdleEdges):
+      return updateState(state, {
+        toolbarState: updateState(state.toolbarState, {
+          showIdleEdges: !state.toolbarState.showIdleEdges
         })
       });
     case getType(GraphToolbarActions.toggleIdleNodes):

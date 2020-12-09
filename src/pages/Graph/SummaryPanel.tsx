@@ -109,7 +109,8 @@ class SummaryPanel extends React.Component<MainSummaryPanelPropType, SummaryPane
               rateInterval={this.props.rateInterval}
             />
           ) : null}
-          {this.props.data.summaryType === 'group' ? (
+          {this.props.data.summaryType === 'box' ? (
+            // TODO, how to handle non-app box?
             <SummaryPanelGroup
               data={this.props.data}
               namespaces={this.props.data.summaryTarget.namespaces}

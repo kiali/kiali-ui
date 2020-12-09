@@ -57,7 +57,6 @@ type CytoscapeGraphProps = {
   showIdleEdges: boolean;
   showIdleNodes: boolean;
   showMissingSidecars: boolean;
-  showNodeLabels: boolean;
   showOperationNodes: boolean;
   showSecurity: boolean;
   showServiceNodes: boolean;
@@ -140,7 +139,6 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
       this.props.compressOnHide !== nextProps.compressOnHide ||
       this.props.showCircuitBreakers !== nextProps.showCircuitBreakers ||
       this.props.showMissingSidecars !== nextProps.showMissingSidecars ||
-      this.props.showNodeLabels !== nextProps.showNodeLabels ||
       this.props.showTrafficAnimation !== nextProps.showTrafficAnimation ||
       this.props.showVirtualServices !== nextProps.showVirtualServices ||
       this.props.trace !== nextProps.trace;
@@ -238,22 +236,22 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
   static buildTapEventArgs(event: CytoscapeClickEvent): GraphNodeTapEvent {
     const target = event.summaryTarget;
     const targetType = event.summaryType;
-    const targetOrGroupChildren = targetType === 'group' ? target.descendants() : target;
+    const targetOrBoxChildren = targetType === 'box' ? target.descendants() : target;
 
     // Invoke callback
     return {
       aggregate: target.data(CyNode.aggregate),
       aggregateValue: target.data(CyNode.aggregateValue),
       app: target.data(CyNode.app),
-      hasMissingSC: targetOrGroupChildren.every(t => t.data(CyNode.hasMissingSC)),
+      hasMissingSC: targetOrBoxChildren.every(t => t.data(CyNode.hasMissingSC)),
+      isIdle: targetOrBoxChildren.every(t => t.data(CyNode.isIdle)),
       isInaccessible: target.data(CyNode.isInaccessible),
       isOutside: target.data(CyNode.isOutside),
       isServiceEntry: target.data(CyNode.isServiceEntry),
-      isIdle: targetOrGroupChildren.every(t => t.data(CyNode.isIdle)),
       namespace: target.data(CyNode.namespace),
       nodeType: target.data(CyNode.nodeType),
       service: target.data(CyNode.service),
-      version: targetType === 'group' ? undefined : target.data(CyNode.version),
+      version: targetType === 'box' ? undefined : target.data(CyNode.version),
       workload: target.data(CyNode.workload)
     };
   }
@@ -296,8 +294,8 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
       if (target === cy) {
         return { summaryType: 'graph', summaryTarget: cy };
       } else if (isNode(target)) {
-        if (target.data(CyNode.isGroup)) {
-          return { summaryType: 'group', summaryTarget: target };
+        if (target.data(CyNode.isBox)) {
+          return { summaryType: 'box', summaryTarget: target };
         } else {
           return { summaryType: 'node', summaryTarget: target };
         }
@@ -560,7 +558,6 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
       showCircuitBreakers: this.props.showCircuitBreakers,
       showMissingSidecars: this.props.showMissingSidecars,
       showSecurity: this.props.showSecurity,
-      showNodeLabels: this.props.showNodeLabels,
       showVirtualServices: this.props.showVirtualServices
     };
     cy.scratch(CytoscapeGlobalScratchNamespace, globalScratchData);
@@ -622,7 +619,7 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
   private selectTargetAndUpdateSummary = (target: Cy.NodeSingular | Cy.EdgeSingular) => {
     this.selectTarget(target);
     const event: CytoscapeClickEvent = {
-      summaryType: target.data(CyNode.isGroup) ? 'group' : 'node',
+      summaryType: target.data(CyNode.isBox) ? 'box' : 'node',
       summaryTarget: target
     };
     if (this.props.updateSummary) {
@@ -677,7 +674,7 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
 
   static isCyNodeClickEvent(event: CytoscapeClickEvent): boolean {
     const targetType = event.summaryType;
-    if (targetType !== 'node' && targetType !== 'group') {
+    if (targetType !== 'node' && targetType !== 'box') {
       return false;
     }
 

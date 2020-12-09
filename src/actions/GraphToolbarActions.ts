@@ -11,7 +11,6 @@ export const GraphToolbarActions = {
   setIdleNodes: createStandardAction(ActionKeys.GRAPH_TOOLBAR_SET_IDLE_NODES)<boolean>(),
   // Toggle actions
   toggleCompressOnHide: createAction(ActionKeys.GRAPH_TOOLBAR_TOGGLE_COMPRESS_ON_HIDE),
-  toggleGraphNodeLabel: createAction(ActionKeys.GRAPH_TOOLBAR_TOGGLE_GRAPH_NODE_LABEL),
   toggleLegend: createAction(ActionKeys.GRAPH_TOOLBAR_TOGGLE_LEGEND),
   toggleGraphVirtualServices: createAction(ActionKeys.GRAPH_TOOLBAR_TOGGLE_GRAPH_VIRTUAL_SERVICES),
   toggleGraphCircuitBreakers: createAction(ActionKeys.GRAPH_TOOLBAR_TOGGLE_GRAPH_CIRCUIT_BREAKERS),
