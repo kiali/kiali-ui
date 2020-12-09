@@ -96,7 +96,6 @@ export default class MiniGraphCard extends React.Component<MiniGraphCardProps, M
               refreshInterval={0}
               showCircuitBreakers={false}
               showMissingSidecars={true}
-              showNodeLabels={true}
               showOperationNodes={false}
               showSecurity={false}
               showServiceNodes={true}
@@ -155,10 +154,7 @@ export default class MiniGraphCard extends React.Component<MiniGraphCardProps, M
           .nodeType(NodeType.AGGREGATE);
         break;
       case NodeType.APP:
-        cytoscapeGraph = cytoscapeGraph
-          .app(this.props.dataSource.fetchParameters.node!.app)
-          .nodeType(NodeType.APP)
-          .isGroup(null);
+        cytoscapeGraph = cytoscapeGraph.app(this.props.dataSource.fetchParameters.node!.app).nodeType(NodeType.APP);
         break;
       case NodeType.SERVICE:
         graphType = GraphType.SERVICE;
@@ -167,6 +163,9 @@ export default class MiniGraphCard extends React.Component<MiniGraphCardProps, M
       case NodeType.WORKLOAD:
         graphType = GraphType.WORKLOAD;
         cytoscapeGraph = cytoscapeGraph.workload(this.props.dataSource.fetchParameters.node!.workload);
+        break;
+      default:
+        // NodeType.BOX is n/a
         break;
     }
 

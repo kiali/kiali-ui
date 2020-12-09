@@ -22,7 +22,6 @@ export const INITIAL_GRAPH_STATE: GraphState = {
     showFindHelp: false,
     showLegend: false,
     showMissingSidecars: true,
-    showNodeLabels: true,
     showOperationNodes: false,
     showSecurity: false,
     showServiceNodes: true,
@@ -110,12 +109,6 @@ const graphDataState = (state: GraphState = INITIAL_GRAPH_STATE, action: KialiAp
       return updateState(state, {
         toolbarState: updateState(state.toolbarState, {
           showFindHelp: !state.toolbarState.showFindHelp
-        })
-      });
-    case getType(GraphToolbarActions.toggleGraphNodeLabel):
-      return updateState(state, {
-        toolbarState: updateState(state.toolbarState, {
-          showNodeLabels: !state.toolbarState.showNodeLabels
         })
       });
     case getType(GraphToolbarActions.toggleGraphCircuitBreakers):

@@ -23,7 +23,6 @@ type ReduxProps = {
   toggleCompressOnHide(): void;
   toggleGraphCircuitBreakers(): void;
   toggleGraphMissingSidecars(): void;
-  toggleGraphNodeLabels(): void;
   toggleGraphSecurity(): void;
   toggleGraphVirtualServices(): void;
   toggleOperationNodes(): void;
@@ -145,7 +144,6 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
       edgeLabelMode,
       showCircuitBreakers,
       showMissingSidecars,
-      showNodeLabels,
       showOperationNodes,
       showSecurity,
       showServiceNodes,
@@ -159,7 +157,6 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
       toggleCompressOnHide,
       toggleGraphCircuitBreakers,
       toggleGraphMissingSidecars,
-      toggleGraphNodeLabels,
       toggleGraphSecurity,
       toggleGraphVirtualServices,
       toggleOperationNodes,
@@ -227,12 +224,6 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
             consumed by the hidden elements.
           </div>
         )
-      },
-      {
-        id: 'filterNodes',
-        labelText: 'Node Names',
-        isChecked: showNodeLabels,
-        onChange: toggleGraphNodeLabels
       },
       {
         id: 'filterOperationNodes',
@@ -411,7 +402,6 @@ const mapStateToProps = (state: KialiAppState) => ({
   edgeLabelMode: edgeLabelModeSelector(state),
   showCircuitBreakers: state.graph.toolbarState.showCircuitBreakers,
   showMissingSidecars: state.graph.toolbarState.showMissingSidecars,
-  showNodeLabels: state.graph.toolbarState.showNodeLabels,
   showOperationNodes: state.graph.toolbarState.showOperationNodes,
   showSecurity: state.graph.toolbarState.showSecurity,
   showServiceNodes: state.graph.toolbarState.showServiceNodes,
@@ -427,7 +417,6 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<KialiAppState, void, KialiAp
     toggleCompressOnHide: bindActionCreators(GraphToolbarActions.toggleCompressOnHide, dispatch),
     toggleGraphCircuitBreakers: bindActionCreators(GraphToolbarActions.toggleGraphCircuitBreakers, dispatch),
     toggleGraphMissingSidecars: bindActionCreators(GraphToolbarActions.toggleGraphMissingSidecars, dispatch),
-    toggleGraphNodeLabels: bindActionCreators(GraphToolbarActions.toggleGraphNodeLabel, dispatch),
     toggleGraphSecurity: bindActionCreators(GraphToolbarActions.toggleGraphSecurity, dispatch),
     toggleGraphVirtualServices: bindActionCreators(GraphToolbarActions.toggleGraphVirtualServices, dispatch),
     toggleOperationNodes: bindActionCreators(GraphToolbarActions.toggleOperationNodes, dispatch),
