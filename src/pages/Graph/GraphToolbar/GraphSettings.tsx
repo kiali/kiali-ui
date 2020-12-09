@@ -49,13 +49,19 @@ interface DisplayOptionType {
 const marginBottom = 20;
 
 const containerStyle = style({
-  overflow: 'auto',
-  width: '230px'
+  overflow: 'auto'
 });
 
 // this emulates Select component .pf-c-select__menu
 const menuStyle = style({
   fontSize: '14px'
+});
+
+// this emulates Select component .pf-c-select__menu
+const menuEntryStyle = style({
+  cursor: 'not-allowed',
+  display: 'inline-block',
+  width: '15.5em'
 });
 
 // this emulates Select component .pf-c-select__menu-group-title but with less bottom padding to conserve space
@@ -336,7 +342,7 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
         <div id="graph-display-menu" className={menuStyle}>
           <div className={titleStyle}>Show Edge Labels</div>
           {edgeLabelOptions.map((item: DisplayOptionType) => (
-            <div key={item.id} style={{ display: 'inline-block', cursor: 'not-allowed' }}>
+            <div key={item.id} className={menuEntryStyle}>
               <label key={item.id} className={itemStyle(!!item.tooltip)}>
                 <Radio
                   id={item.id}
