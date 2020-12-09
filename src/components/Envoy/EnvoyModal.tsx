@@ -70,17 +70,14 @@ class EnvoyDetailsModal extends React.Component<EnvoyDetailProps, EnvoyDetailSta
     this.state = {
       config: {},
       resource: 'all',
-      fetch: true,
+      fetch: false,
       pod: this.sortedPods()[0]
     };
   }
 
-  componentDidMount() {
-    this.fetchContent();
-  }
-
-  componentDidUpdate() {
-    if (this.state.fetch) {
+  componentDidUpdate(prevProps: EnvoyDetailProps) {
+    // Fetch data when the modal has just opened or some action request a fetch.
+    if ( (!prevProps.show && this.props.show) || this.state.fetch) {
       this.fetchContent();
     }
   }
@@ -94,6 +91,7 @@ class EnvoyDetailsModal extends React.Component<EnvoyDetailProps, EnvoyDetailSta
     const targetPod: Pod = this.sortedPods()[podIdx];
     if (targetPod.name !== this.state.pod.name) {
       this.setState({
+        config: {},
         fetch: true,
         pod: targetPod
       });
@@ -105,6 +103,7 @@ class EnvoyDetailsModal extends React.Component<EnvoyDetailProps, EnvoyDetailSta
     const targetResource: string = resources[resourceIdx];
     if (targetResource !== this.state.resource) {
       this.setState({
+        config: {},
         fetch: true,
         resource: targetResource
       });
@@ -148,6 +147,10 @@ class EnvoyDetailsModal extends React.Component<EnvoyDetailProps, EnvoyDetailSta
           error
         );
       });
+  };
+
+  isLoadingConfig = () => {
+    return Object.keys(this.state.config).length < 1;
   };
 
   render() {
@@ -197,7 +200,7 @@ class EnvoyDetailsModal extends React.Component<EnvoyDetailProps, EnvoyDetailSta
           </StackItem>
           <StackItem>
             <Card style={{ height: '400px' }}>
-              {this.state.fetch ? (
+              {this.isLoadingConfig() ? (
                 <Loading />
               ) : this.state.resource === 'all' || this.state.resource === 'bootstrap' ? (
                 <AceEditor
