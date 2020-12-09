@@ -101,7 +101,6 @@ type ReduxProps = {
   showIdleNodes: boolean;
   showLegend: boolean;
   showMissingSidecars: boolean;
-  showNodeLabels: boolean;
   showOperationNodes: boolean;
   showSecurity: boolean;
   showServiceNodes: boolean;
@@ -687,7 +686,6 @@ const mapStateToProps = (state: KialiAppState) => ({
   showIdleNodes: state.graph.toolbarState.showIdleNodes,
   showLegend: state.graph.toolbarState.showLegend,
   showMissingSidecars: state.graph.toolbarState.showMissingSidecars,
-  showNodeLabels: state.graph.toolbarState.showNodeLabels,
   showOperationNodes: state.graph.toolbarState.showOperationNodes,
   showSecurity: state.graph.toolbarState.showSecurity,
   showServiceNodes: state.graph.toolbarState.showServiceNodes,

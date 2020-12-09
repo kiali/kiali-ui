@@ -78,7 +78,6 @@ describe('CytoscapeGraph component test', () => {
           showCircuitBreakers={false}
           showIdleEdges={false}
           showMissingSidecars={true}
-          showNodeLabels={true}
           showOperationNodes={false}
           showSecurity={true}
           showServiceNodes={true}

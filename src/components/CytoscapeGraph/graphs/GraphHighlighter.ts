@@ -7,8 +7,7 @@ import { DimClass, HoveredClass, HighlightClass } from './GraphStyles';
 // When no node or edge is selected, hovering on a node or edge will highlight it and its neighborhood. Other
 // nodes and edges are dimmed.
 //
-// When an app box element is selected, we will highlight the contained nodes and their related nodes
-// (including edges).
+// When a box is selected, we will highlight the contained nodes and their related nodes (including edges).
 export class GraphHighlighter {
   cy: any;
   selected: CytoscapeClickEvent;
@@ -51,7 +50,7 @@ export class GraphHighlighter {
   onMouseIn = (event: CytoscapeMouseInEvent) => {
     // only highlight on hover when the graph is currently selected, otherwise leave the
     // selected element highlighted
-    if (this.selected.summaryType === 'graph' && ['node', 'edge', 'group'].indexOf(event.summaryType) !== -1) {
+    if (this.selected.summaryType === 'graph' && ['node', 'edge', 'box'].indexOf(event.summaryType) !== -1) {
       this.hovered = event;
       this.hovered.summaryTarget.addClass(HoveredClass);
       this.refresh();
@@ -93,8 +92,8 @@ export class GraphHighlighter {
           return this.getNodeHighlight(event.summaryTarget, isHover);
         case 'edge':
           return this.getEdgeHighlight(event.summaryTarget, isHover);
-        case 'group':
-          return this.getAppBoxHighlight(event.summaryTarget, isHover);
+        case 'box':
+          return this.getBoxHighlight(event.summaryTarget, isHover);
         default:
         // fall through
       }
@@ -129,14 +128,14 @@ export class GraphHighlighter {
     return this.includeParentNodes(elems.add(edge));
   }
 
-  getAppBoxHighlight(appBox: any, isHover: boolean) {
+  getBoxHighlight(box: any, isHover: boolean) {
     let elems;
     if (isHover) {
-      elems = appBox.children().reduce((prev, child) => {
+      elems = box.children().reduce((prev, child) => {
         return prev.add(child.closedNeighborhood());
       }, this.cy.collection());
     } else {
-      const children = appBox.children();
+      const children = box.children();
       elems = children.add(children.predecessors()).add(children.successors());
     }
     return this.includeParentNodes(elems);

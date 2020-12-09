@@ -128,7 +128,7 @@ export default class SummaryPanelGraph extends React.Component<SummaryPanelPropT
     const { numApps, numVersions } = this.countApps(cy);
     const numEdges = cy.edges().size();
     // when getting accumulated traffic rates don't count requests from injected service nodes
-    const nonServiceEdges = cy.$(`node[nodeType != "${NodeType.SERVICE}"][!isGroup]`).edgesTo('*');
+    const nonServiceEdges = cy.$(`node[nodeType != "${NodeType.SERVICE}"][!isBox]`).edgesTo('*');
     const totalRateGrpc = getAccumulatedTrafficRateGrpc(nonServiceEdges);
     const totalRateHttp = getAccumulatedTrafficRateHttp(nonServiceEdges);
     const incomingEdges = cy.$(`node[?${CyNode.isRoot}]`).edgesTo('*');
@@ -250,7 +250,7 @@ export default class SummaryPanelGraph extends React.Component<SummaryPanelPropT
   private countApps = (cy): { numApps: number; numVersions: number } => {
     const appVersions: { [key: string]: Set<string> } = {};
 
-    cy.$(`node[nodeType = "${NodeType.APP}"][!isGroup]`).forEach(node => {
+    cy.$(`node[nodeType = "${NodeType.APP}"]`).forEach(node => {
       const app = node.data(CyNode.app);
       if (appVersions[app] === undefined) {
         appVersions[app] = new Set();

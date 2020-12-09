@@ -1,10 +1,5 @@
 import * as LayoutDictionary from './graphs/LayoutDictionary';
-import {
-  CytoscapeGlobalScratchNamespace,
-  DecoratedGraphEdgeData,
-  DecoratedGraphNodeData,
-  Layout
-} from '../../types/Graph';
+import { DecoratedGraphEdgeData, DecoratedGraphNodeData, Layout } from '../../types/Graph';
 import { DagreGraph } from './graphs/DagreGraph';
 import * as Cy from 'cytoscape';
 
@@ -58,8 +53,8 @@ export const CyNode = {
   httpInNoResponse: 'httpInNoResponse',
   httpOut: 'httpOut',
   id: 'id',
+  isBox: 'isBox',
   isDead: 'isDead',
-  isGroup: 'isGroup',
   isIdle: 'isIdle',
   isInaccessible: 'isInaccessible',
   isIstio: 'isIstio',
@@ -92,11 +87,6 @@ export const safeFit = (cy: Cy.Core, centerElements?: Cy.Collection) => {
 };
 
 export const runLayout = (cy: Cy.Core, layout: Layout) => {
-  // Enable labels when doing a relayout, layouts can be told to take into account the labels to avoid
-  // overlap, but we need to have them enabled (nodeDimensionsIncludeLabels: true)
-  const showNodeLabels = cy.scratch(CytoscapeGlobalScratchNamespace).showNodeLabels;
-  cy.scratch(CytoscapeGlobalScratchNamespace).showNodeLabels = true;
-
   // Using an extension
   (cy as any).nodeHtmlLabel().updateNodeLabel(cy.nodes());
 
@@ -113,7 +103,6 @@ export const runLayout = (cy: Cy.Core, layout: Layout) => {
   } else {
     cy.layout(layoutOptions).run();
   }
-  cy.scratch(CytoscapeGlobalScratchNamespace).showNodeLabels = showNodeLabels;
 };
 
 export const decoratedEdgeData = (ele: Cy.EdgeSingular): DecoratedGraphEdgeData => {

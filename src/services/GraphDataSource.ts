@@ -5,7 +5,7 @@ import {
   GraphDefinition,
   GraphElements,
   GraphType,
-  GroupByType,
+  BoxByType,
   NodeParamsType,
   NodeType,
   UNKNOWN,
@@ -61,6 +61,8 @@ type NodeHealth = {
 };
 
 export interface FetchParams {
+  boxByCluster?: boolean;
+  boxByNamespace?: boolean;
   duration: DurationInSeconds;
   edgeLabelMode: EdgeLabelMode;
   graphType: GraphType;
@@ -155,8 +157,18 @@ export default class GraphDataSource {
       injectServiceNodes: fetchParams.injectServiceNodes
     };
 
+    const boxBy: string[] = [];
+    if (true || fetchParams.boxByCluster) {
+      boxBy.push(BoxByType.CLUSTER);
+    }
+    if (true || fetchParams.boxByNamespace) {
+      boxBy.push(BoxByType.NAMESPACE);
+    }
     if (fetchParams.graphType === GraphType.APP || fetchParams.graphType === GraphType.VERSIONED_APP) {
-      restParams.groupBy = GroupByType.APP;
+      boxBy.push(BoxByType.APP);
+    }
+    if (boxBy.length > 0) {
+      restParams.boxBy = boxBy.join(',');
     }
 
     if (fetchParams.queryTime) {

@@ -185,6 +185,7 @@ export const renderDestServicesLinks = (node: any) => {
     const serviceNodeData: GraphNodeData = {
       id: nodeData.id,
       app: '',
+      cluster: ds.cluster,
       isInaccessible: nodeData.isInaccessible,
       isOutside: nodeData.isOutside,
       isRoot: nodeData.isRoot,
