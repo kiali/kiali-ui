@@ -75,9 +75,12 @@ class EnvoyDetailsModal extends React.Component<EnvoyDetailProps, EnvoyDetailSta
     };
   }
 
-  componentDidUpdate(prevProps: EnvoyDetailProps) {
-    // Fetch data when the modal has just opened or some action request a fetch.
-    if ( (!prevProps.show && this.props.show) || this.state.fetch) {
+  componentDidMount() {
+    this.fetchContent();
+  }
+
+  componentDidUpdate() {
+    if (this.state.fetch) {
       this.fetchContent();
     }
   }
