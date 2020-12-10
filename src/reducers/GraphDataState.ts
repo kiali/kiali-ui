@@ -13,6 +13,8 @@ export const INITIAL_GRAPH_STATE: GraphState = {
   node: undefined,
   summaryData: null,
   toolbarState: {
+    boxByCluster: false,
+    boxByNamespace: false,
     compressOnHide: true,
     edgeLabelMode: EdgeLabelMode.NONE,
     findValue: '',
@@ -98,6 +100,18 @@ const graphDataState = (state: GraphState = INITIAL_GRAPH_STATE, action: KialiAp
       return updateState(state, {
         toolbarState: updateState(state.toolbarState, {
           showIdleNodes: action.payload
+        })
+      });
+    case getType(GraphToolbarActions.toggleBoxByCluster):
+      return updateState(state, {
+        toolbarState: updateState(state.toolbarState, {
+          boxByCluster: !state.toolbarState.boxByCluster
+        })
+      });
+    case getType(GraphToolbarActions.toggleBoxByNamespace):
+      return updateState(state, {
+        toolbarState: updateState(state.toolbarState, {
+          boxByNamespace: !state.toolbarState.boxByNamespace
         })
       });
     case getType(GraphToolbarActions.toggleCompressOnHide):
