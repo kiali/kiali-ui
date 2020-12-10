@@ -436,18 +436,17 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
 
   private getAppDiv = () => {
     const appLogs = this.hasEntries(this.state.filteredAppLogs)
-      ? this.entryToString(this.state.filteredAppLogs)
+      ? this.entriesToString(this.state.filteredAppLogs)
       : NoAppLogsFoundMessage;
+    const title = this.state.containerInfo!.containerOptions[this.state.containerInfo!.container];
     return (
       <div id="appLogDiv" className={this.state.sideBySideOrientation ? appLogsDivHorizontal : appLogsDivVertical}>
         <Toolbar className={toolbarTitle()}>
-          <ToolbarItem className={logsTitle(this.isFullscreen())}>
-            {this.state.containerInfo!.containerOptions[this.state.containerInfo!.container]}
-          </ToolbarItem>
+          <ToolbarItem className={logsTitle(this.isFullscreen())}>{title}</ToolbarItem>
           <ToolbarGroup className={toolbarRight}>
             <ToolbarItem>
               <Tooltip key="copy_app_logs" position="top" content="Copy app logs to clipboard">
-                <CopyToClipboard onCopy={this.copyAppLogCallback} text={this.entryToString(this.state.filteredAppLogs)}>
+                <CopyToClipboard onCopy={this.copyAppLogCallback} text={appLogs}>
                   <Button variant={ButtonVariant.link} isInline>
                     <KialiIcon.Copy className={defaultIconStyle} />
                   </Button>
@@ -485,7 +484,7 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
 
   private getProxyDiv = () => {
     const proxyLogs = this.hasEntries(this.state.filteredProxyLogs)
-      ? this.entryToString(this.state.filteredProxyLogs)
+      ? this.entriesToString(this.state.filteredProxyLogs)
       : NoProxyLogsFoundMessage;
     return (
       <div id="proxyLogDiv" className={proxyLogsDiv}>
@@ -494,10 +493,7 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
           <ToolbarGroup className={toolbarRight}>
             <ToolbarItem>
               <Tooltip key="copy_proxy_logs" position="top" content="Copy Istio proxy logs to clipboard">
-                <CopyToClipboard
-                  onCopy={this.copyProxyLogCallback}
-                  text={this.entryToString(this.state.filteredProxyLogs)}
-                >
+                <CopyToClipboard onCopy={this.copyProxyLogCallback} text={proxyLogs}>
                   <Button variant={ButtonVariant.link} isInline>
                     <KialiIcon.Copy className={defaultIconStyle} />
                   </Button>
@@ -862,9 +858,8 @@ export default class WorkloadPodLogs extends React.Component<WorkloadPodLogsProp
     });
   };
 
-  private entryToString = (entries: LogEntry[]): string => {
+  private entriesToString = (entries: LogEntry[]): string => {
     return entries.map(le => (this.state.showTimestamps ? `${le.timestamp} ${le.message}` : le.message)).join('\n');
   };
-
-  private hasEntries = (entries: LogEntry[]): boolean => entries.length > 0;
+  private hasEntries = (entries: LogEntry[]): boolean => !!entries && entries.length > 0;
 }
