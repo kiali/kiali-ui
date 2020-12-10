@@ -20,6 +20,8 @@ import { KialiIcon } from 'config/KialiIcon';
 
 type ReduxProps = {
   setEdgeLabelMode: (edgeLabelMode: EdgeLabelMode) => void;
+  toggleBoxByCluster(): void;
+  toggleBoxByNamespace(): void;
   toggleCompressOnHide(): void;
   toggleGraphCircuitBreakers(): void;
   toggleGraphMissingSidecars(): void;
@@ -150,6 +152,8 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
   private getPopoverContent() {
     // map our attributes from redux
     const {
+      boxByCluster,
+      boxByNamespace,
       compressOnHide,
       edgeLabelMode,
       showCircuitBreakers,
@@ -165,6 +169,8 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
 
     // map our dispatchers for redux
     const {
+      toggleBoxByCluster,
+      toggleBoxByNamespace,
       toggleCompressOnHide,
       toggleGraphCircuitBreakers,
       toggleGraphMissingSidecars,
@@ -226,8 +232,22 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
 
     const visibilityOptions: DisplayOptionType[] = [
       {
+        id: 'boxByCluster',
+        labelText: 'Cluster Boxes',
+        isChecked: boxByCluster,
+        onChange: toggleBoxByCluster,
+        tooltip: <div style={{ textAlign: 'left' }}>When enabled the graph will box nodes in the same cluster.</div>
+      },
+      {
+        id: 'boxByNamespace',
+        labelText: 'Namespace Boxes',
+        isChecked: boxByNamespace,
+        onChange: toggleBoxByNamespace,
+        tooltip: <div style={{ textAlign: 'left' }}>When enabled the graph will box nodes in the same cluster.</div>
+      },
+      {
         id: 'filterHide',
-        labelText: 'Compress Hidden',
+        labelText: 'Compressed Hide',
         isChecked: compressOnHide,
         onChange: toggleCompressOnHide,
         tooltip: (
@@ -423,6 +443,8 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
 
 // Allow Redux to map sections of our global app state to our props
 const mapStateToProps = (state: KialiAppState) => ({
+  boxByCluster: state.graph.toolbarState.boxByCluster,
+  boxByNamespace: state.graph.toolbarState.boxByNamespace,
   compressOnHide: state.graph.toolbarState.compressOnHide,
   edgeLabelMode: edgeLabelModeSelector(state),
   showCircuitBreakers: state.graph.toolbarState.showCircuitBreakers,
@@ -440,6 +462,8 @@ const mapStateToProps = (state: KialiAppState) => ({
 const mapDispatchToProps = (dispatch: ThunkDispatch<KialiAppState, void, KialiAppAction>) => {
   return {
     setEdgeLabelMode: bindActionCreators(GraphToolbarActions.setEdgelLabelMode, dispatch),
+    toggleBoxByCluster: bindActionCreators(GraphToolbarActions.toggleBoxByCluster, dispatch),
+    toggleBoxByNamespace: bindActionCreators(GraphToolbarActions.toggleBoxByNamespace, dispatch),
     toggleCompressOnHide: bindActionCreators(GraphToolbarActions.toggleCompressOnHide, dispatch),
     toggleGraphCircuitBreakers: bindActionCreators(GraphToolbarActions.toggleGraphCircuitBreakers, dispatch),
     toggleGraphMissingSidecars: bindActionCreators(GraphToolbarActions.toggleGraphMissingSidecars, dispatch),

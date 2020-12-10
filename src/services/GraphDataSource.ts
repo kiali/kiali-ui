@@ -158,10 +158,10 @@ export default class GraphDataSource {
     };
 
     const boxBy: string[] = [];
-    if (true || fetchParams.boxByCluster) {
+    if (fetchParams.boxByCluster) {
       boxBy.push(BoxByType.CLUSTER);
     }
-    if (true || fetchParams.boxByNamespace) {
+    if (fetchParams.boxByNamespace) {
       boxBy.push(BoxByType.NAMESPACE);
     }
     if (fetchParams.graphType === GraphType.APP || fetchParams.graphType === GraphType.VERSIONED_APP) {
@@ -297,17 +297,16 @@ export default class GraphDataSource {
   // Private methods
 
   private static defaultFetchParams(duration: DurationInSeconds, namespace: string): FetchParams {
+    // queryTime defaults to server's 'now', leave unset
     return {
-      namespaces: [{ name: namespace }],
+      boxByCluster: false,
+      boxByNamespace: false,
       duration: duration,
+      edgeLabelMode: EdgeLabelMode.NONE,
       graphType: GraphType.WORKLOAD,
       includeHealth: true,
       injectServiceNodes: true,
-      edgeLabelMode: EdgeLabelMode.NONE,
-      showIdleEdges: false,
-      showIdleNodes: false,
-      showOperationNodes: false,
-      showSecurity: false,
+      namespaces: [{ name: namespace }],
       node: {
         app: '',
         namespace: { name: namespace },
@@ -315,7 +314,11 @@ export default class GraphDataSource {
         service: '',
         version: '',
         workload: ''
-      }
+      },
+      showIdleEdges: false,
+      showIdleNodes: false,
+      showOperationNodes: false,
+      showSecurity: false
     };
   }
 
