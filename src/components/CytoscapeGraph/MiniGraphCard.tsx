@@ -95,6 +95,7 @@ export default class MiniGraphCard extends React.Component<MiniGraphCardProps, M
               onNodeTap={this.handleNodeTap}
               refreshInterval={0}
               showCircuitBreakers={false}
+              showIdleEdges={false}
               showMissingSidecars={true}
               showNodeLabels={true}
               showOperationNodes={false}

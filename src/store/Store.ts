@@ -45,6 +45,7 @@ export interface GraphToolbarState {
   // Toggle props
   compressOnHide: boolean;
   showCircuitBreakers: boolean;
+  showIdleEdges: boolean;
   showLegend: boolean;
   showMissingSidecars: boolean;
   showNodeLabels: boolean;

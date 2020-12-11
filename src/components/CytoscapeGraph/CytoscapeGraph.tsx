@@ -55,6 +55,7 @@ type CytoscapeGraphProps = {
   setTraceId?: (traceId?: string) => void;
   setUpdateTime?: (val: TimeInMilliseconds) => void;
   showCircuitBreakers: boolean;
+  showIdleEdges: boolean;
   showMissingSidecars: boolean;
   showNodeLabels: boolean;
   showOperationNodes: boolean;

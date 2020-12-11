@@ -21,6 +21,7 @@ export enum URLParam {
   FOCUS_SELECTOR = 'focusSelector',
   FROM = 'from',
   GRAPH_EDGES = 'edges',
+  GRAPH_IDLE_EDGES = 'idleEdges',
   GRAPH_LAYOUT = 'layout',
   GRAPH_SERVICE_NODES = 'injectServiceNodes',
   GRAPH_TYPE = 'graphType',

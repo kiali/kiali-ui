@@ -20,6 +20,7 @@ export const INITIAL_GRAPH_STATE: GraphState = {
     hideValue: '',
     showCircuitBreakers: true,
     showFindHelp: false,
+    showIdleEdges: false,
     showLegend: false,
     showMissingSidecars: true,
     showNodeLabels: true,
@@ -110,6 +111,12 @@ const graphDataState = (state: GraphState = INITIAL_GRAPH_STATE, action: KialiAp
       return updateState(state, {
         toolbarState: updateState(state.toolbarState, {
           showFindHelp: !state.toolbarState.showFindHelp
+        })
+      });
+    case getType(GraphToolbarActions.toggleIdleEdges):
+      return updateState(state, {
+        toolbarState: updateState(state.toolbarState, {
+          showIdleEdges: !state.toolbarState.showIdleEdges
         })
       });
     case getType(GraphToolbarActions.toggleGraphNodeLabel):

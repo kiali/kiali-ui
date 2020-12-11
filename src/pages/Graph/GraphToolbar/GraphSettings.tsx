@@ -26,6 +26,7 @@ type ReduxProps = {
   toggleGraphNodeLabels(): void;
   toggleGraphSecurity(): void;
   toggleGraphVirtualServices(): void;
+  toggleIdleEdges(): void;
   toggleOperationNodes(): void;
   toggleServiceNodes(): void;
   toggleTrafficAnimation(): void;
@@ -100,6 +101,14 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
     } else {
       HistoryManager.setParam(URLParam.OPERATION_NODES, String(this.props.showOperationNodes));
     }
+    const urlIncludeIdleEdges = HistoryManager.getBooleanParam(URLParam.GRAPH_IDLE_EDGES);
+    if (urlIncludeIdleEdges !== undefined) {
+      if (urlIncludeIdleEdges !== props.showIdleEdges) {
+        props.toggleIdleEdges();
+      }
+    } else {
+      HistoryManager.setParam(URLParam.GRAPH_IDLE_EDGES, String(this.props.showIdleEdges));
+    }
     const urlInjectServiceNodes = HistoryManager.getBooleanParam(URLParam.GRAPH_SERVICE_NODES);
     if (urlInjectServiceNodes !== undefined) {
       if (urlInjectServiceNodes !== props.showServiceNodes) {
@@ -118,6 +127,7 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
 
   componentDidUpdate(_prevProps: GraphSettingsProps) {
     // ensure redux state and URL are aligned
+    HistoryManager.setParam(URLParam.GRAPH_IDLE_EDGES, String(this.props.showIdleEdges));
     HistoryManager.setParam(URLParam.OPERATION_NODES, String(this.props.showOperationNodes));
     HistoryManager.setParam(URLParam.GRAPH_SERVICE_NODES, String(this.props.showServiceNodes));
   }
@@ -144,6 +154,7 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
       compressOnHide,
       edgeLabelMode,
       showCircuitBreakers,
+      showIdleEdges,
       showMissingSidecars,
       showNodeLabels,
       showOperationNodes,
@@ -162,6 +173,7 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
       toggleGraphNodeLabels,
       toggleGraphSecurity,
       toggleGraphVirtualServices,
+      toggleIdleEdges,
       toggleOperationNodes,
       toggleServiceNodes,
       toggleTrafficAnimation,
@@ -225,6 +237,18 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
           <div style={{ textAlign: 'left' }}>
             Compress the graph after graph-hide removes matching elements. Otherwise the graph maintains the space
             consumed by the hidden elements.
+          </div>
+        )
+      },
+      {
+        id: 'filterIdleEdges',
+        labelText: 'Idle Edges',
+        isChecked: showIdleEdges,
+        onChange: toggleIdleEdges,
+        tooltip: (
+          <div style={{ textAlign: 'left' }}>
+            Include edges that have no request traffic for the time period. Disabled by default to provide cleaner
+            graphs. Enable to help detect unexpected traffic omissions, or to confirm expected idle conditions.
           </div>
         )
       },
@@ -410,6 +434,7 @@ const mapStateToProps = (state: KialiAppState) => ({
   compressOnHide: state.graph.toolbarState.compressOnHide,
   edgeLabelMode: edgeLabelModeSelector(state),
   showCircuitBreakers: state.graph.toolbarState.showCircuitBreakers,
+  showIdleEdges: state.graph.toolbarState.showIdleEdges,
   showMissingSidecars: state.graph.toolbarState.showMissingSidecars,
   showNodeLabels: state.graph.toolbarState.showNodeLabels,
   showOperationNodes: state.graph.toolbarState.showOperationNodes,
@@ -430,6 +455,7 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<KialiAppState, void, KialiAp
     toggleGraphNodeLabels: bindActionCreators(GraphToolbarActions.toggleGraphNodeLabel, dispatch),
     toggleGraphSecurity: bindActionCreators(GraphToolbarActions.toggleGraphSecurity, dispatch),
     toggleGraphVirtualServices: bindActionCreators(GraphToolbarActions.toggleGraphVirtualServices, dispatch),
+    toggleIdleEdges: bindActionCreators(GraphToolbarActions.toggleIdleEdges, dispatch),
     toggleOperationNodes: bindActionCreators(GraphToolbarActions.toggleOperationNodes, dispatch),
     toggleServiceNodes: bindActionCreators(GraphToolbarActions.toggleServiceNodes, dispatch),
     toggleTrafficAnimation: bindActionCreators(GraphToolbarActions.toggleTrafficAnimation, dispatch),

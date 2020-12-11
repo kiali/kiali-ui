@@ -69,6 +69,7 @@ export interface FetchParams {
   namespaces: Namespace[];
   node?: NodeParamsType;
   queryTime?: TimeInMilliseconds; // default now
+  showIdleEdges: boolean;
   showOperationNodes: boolean;
   showSecurity: boolean;
   showUnusedNodes: boolean;
@@ -124,6 +125,7 @@ export default class GraphDataSource {
       includeHealth: true,
       injectServiceNodes: true,
       namespaces: [],
+      showIdleEdges: false,
       showOperationNodes: false,
       showSecurity: false,
       showUnusedNodes: false
@@ -149,6 +151,7 @@ export default class GraphDataSource {
     const restParams: any = {
       duration: fetchParams.duration + 's',
       graphType: fetchParams.graphType,
+      includeIdleEdges: fetchParams.showIdleEdges,
       injectServiceNodes: fetchParams.injectServiceNodes
     };
 
@@ -289,6 +292,7 @@ export default class GraphDataSource {
       includeHealth: true,
       injectServiceNodes: true,
       edgeLabelMode: EdgeLabelMode.NONE,
+      showIdleEdges: false,
       showOperationNodes: false,
       showSecurity: false,
       showUnusedNodes: false,

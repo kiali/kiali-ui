@@ -141,6 +141,7 @@ exports[`WorkloadDescription should render with runtimes 1`] = `
             "includeHealth": true,
             "injectServiceNodes": true,
             "namespaces": Array [],
+            "showIdleEdges": false,
             "showOperationNodes": false,
             "showSecurity": false,
             "showUnusedNodes": false,

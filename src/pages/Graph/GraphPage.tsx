@@ -94,6 +94,7 @@ type ReduxProps = {
   setTraceId: (traceId?: string) => void;
   setUpdateTime: (val: TimeInMilliseconds) => void;
   showCircuitBreakers: boolean;
+  showIdleEdges: boolean;
   showLegend: boolean;
   showMissingSidecars: boolean;
   showNodeLabels: boolean;
@@ -282,6 +283,7 @@ export class GraphPage extends React.Component<GraphPageProps, GraphPageState> {
           includeHealth: true,
           injectServiceNodes: props.showServiceNodes,
           edgeLabelMode: props.edgeLabelMode,
+          showIdleEdges: props.showIdleEdges,
           showOperationNodes: props.showOperationNodes,
           showSecurity: props.showSecurity,
           showUnusedNodes: props.showUnusedNodes,
@@ -333,6 +335,7 @@ export class GraphPage extends React.Component<GraphPageProps, GraphPageState> {
       prev.graphType !== curr.graphType ||
       (prev.lastRefreshAt !== curr.lastRefreshAt && curr.replayQueryTime === 0) ||
       prev.replayQueryTime !== curr.replayQueryTime ||
+      prev.showIdleEdges !== curr.showIdleEdges ||
       prev.showOperationNodes !== curr.showOperationNodes ||
       prev.showServiceNodes !== curr.showServiceNodes ||
       prev.showSecurity !== curr.showSecurity ||
@@ -583,6 +586,7 @@ export class GraphPage extends React.Component<GraphPageProps, GraphPageState> {
       graphType: this.state.graphData.fetchParams.graphType,
       node: targetNode,
       refreshInterval: this.props.refreshInterval,
+      showIdleEdges: this.props.showIdleEdges,
       showOperationNodes: this.props.showOperationNodes,
       showServiceNodes: this.props.showServiceNodes,
       showUnusedNodes: this.props.showUnusedNodes
@@ -643,6 +647,7 @@ export class GraphPage extends React.Component<GraphPageProps, GraphPageState> {
       includeHealth: true,
       injectServiceNodes: this.props.showServiceNodes,
       edgeLabelMode: this.props.edgeLabelMode,
+      showIdleEdges: this.props.showIdleEdges,
       showOperationNodes: this.props.showOperationNodes,
       showSecurity: this.props.showSecurity,
       showUnusedNodes: this.props.showUnusedNodes,
@@ -678,6 +683,7 @@ const mapStateToProps = (state: KialiAppState) => ({
   replayActive: replayActiveSelector(state),
   replayQueryTime: replayQueryTimeSelector(state),
   showCircuitBreakers: state.graph.toolbarState.showCircuitBreakers,
+  showIdleEdges: state.graph.toolbarState.showIdleEdges,
   showLegend: state.graph.toolbarState.showLegend,
   showMissingSidecars: state.graph.toolbarState.showMissingSidecars,
   showNodeLabels: state.graph.toolbarState.showNodeLabels,

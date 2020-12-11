@@ -38,6 +38,7 @@ describe('CytoscapeGraph component test', () => {
       duration: 60,
       edgeLabelMode: myEdgeLabelMode,
       queryTime: 0,
+      showIdleEdges: false,
       showOperationNodes: false,
       showSecurity: true,
       showUnusedNodes: false
@@ -59,6 +60,7 @@ describe('CytoscapeGraph component test', () => {
               duration: 60,
               edgeLabelMode: myEdgeLabelMode,
               queryTime: 0,
+              showIdleEdges: false,
               showOperationNodes: false,
               showSecurity: true,
               showUnusedNodes: false
@@ -74,6 +76,7 @@ describe('CytoscapeGraph component test', () => {
           setNode={testSetHandler}
           isMTLSEnabled={false}
           showCircuitBreakers={false}
+          showIdleEdges={false}
           showMissingSidecars={true}
           showNodeLabels={true}
           showOperationNodes={false}

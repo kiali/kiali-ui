@@ -20,6 +20,7 @@ describe('GraphDataState', () => {
         showCircuitBreakers: true,
         showFindHelp: false,
         showLegend: false,
+        showIdleEdges: false,
         showMissingSidecars: true,
         showNodeLabels: true,
         showOperationNodes: false,
