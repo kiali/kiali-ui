@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ValidationMessage, ValidationTypes } from '../../../types/IstioObjects';
+import { IstioLevelToSeverity, ValidationMessage, ValidationTypes } from '../../../types/IstioObjects';
 import {
   Card,
   CardBody,
@@ -32,18 +32,19 @@ class IstioStatusMessageList extends React.Component<Props> {
         <CardBody>
           <Stack gutter="lg">
             {this.props.messages.map((msg: ValidationMessage, i: number) => {
+              let severity: ValidationTypes = IstioLevelToSeverity[msg.level || 'info'] || ValidationTypes.Info;
               return (
                 <StackItem id={'msg-' + i}>
                   <Split gutter="sm">
                     <SplitItem>
-                      <Validation severity={ValidationTypes[msg.level]} />
+                      <Validation severity={severity} />
                     </SplitItem>
                     <SplitItem>
                       <Text component={TextVariants.h5}>
                         <a href={msg.documentation_url} target="_blank" rel="noopener noreferrer">
-                          {msg.code}
+                          {msg.type.code}
                         </a>
-                        {': ' + msg.message}
+                        {msg.description ? ': ' + msg.description : undefined}
                       </Text>
                     </SplitItem>
                   </Split>
