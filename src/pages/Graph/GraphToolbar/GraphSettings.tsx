@@ -248,7 +248,8 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
         tooltip: (
           <div style={{ textAlign: 'left' }}>
             Include edges that have no request traffic for the time period. Disabled by default to provide cleaner
-            graphs. Enable to help detect unexpected traffic omissions, or to confirm expected idle conditions.
+            graphs. Enable to help detect unexpected traffic omissions, or to confirm expected edges with no traffic
+            (due to routing, mirroring, etc).
           </div>
         )
       },
