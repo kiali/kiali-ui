@@ -22,9 +22,9 @@ const FETCH_PARAMS = {
   namespaces: [{ name: 'foo' }],
   queryTime: 0,
   showIdleEdges: false,
+  showIdleNodes: false,
   showOperationNodes: false,
-  showSecurity: false,
-  showUnusedNodes: false
+  showSecurity: false
 };
 
 describe('GraphDataSource', () => {

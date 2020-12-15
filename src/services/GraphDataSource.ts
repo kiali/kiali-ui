@@ -70,9 +70,9 @@ export interface FetchParams {
   node?: NodeParamsType;
   queryTime?: TimeInMilliseconds; // default now
   showIdleEdges: boolean;
+  showIdleNodes: boolean;
   showOperationNodes: boolean;
   showSecurity: boolean;
-  showUnusedNodes: boolean;
 }
 
 type OnEvents = {
@@ -126,9 +126,9 @@ export default class GraphDataSource {
       injectServiceNodes: true,
       namespaces: [],
       showIdleEdges: false,
+      showIdleNodes: false,
       showOperationNodes: false,
-      showSecurity: false,
-      showUnusedNodes: false
+      showSecurity: false
     };
     this._isError = this._isLoading = false;
   }
@@ -170,10 +170,10 @@ export default class GraphDataSource {
       appenders += ',aggregateNode';
     }
 
-    if (!fetchParams.node && fetchParams.showUnusedNodes) {
-      // note we only use the unusedNode appender if this is NOT a drilled-in node graph and
-      // the user specifically requests to see unused nodes.
-      appenders += ',unusedNode';
+    if (!fetchParams.node && fetchParams.showIdleNodes) {
+      // note we only use the idleNode appender if this is NOT a drilled-in node graph and
+      // the user specifically requests to see idle nodes.
+      appenders += ',idleNode';
     }
 
     if (fetchParams.showSecurity) {
@@ -204,7 +204,7 @@ export default class GraphDataSource {
       previousFetchParams.includeHealth !== this.fetchParameters.includeHealth ||
       previousFetchParams.injectServiceNodes !== this.fetchParameters.injectServiceNodes ||
       previousFetchParams.showOperationNodes !== this.fetchParameters.showOperationNodes ||
-      previousFetchParams.showUnusedNodes !== this.fetchParameters.showUnusedNodes;
+      previousFetchParams.showIdleNodes !== this.fetchParameters.showIdleNodes;
 
     if (isPreviousDataInvalid) {
       // Reset the graph data
@@ -293,9 +293,9 @@ export default class GraphDataSource {
       injectServiceNodes: true,
       edgeLabelMode: EdgeLabelMode.NONE,
       showIdleEdges: false,
+      showIdleNodes: false,
       showOperationNodes: false,
       showSecurity: false,
-      showUnusedNodes: false,
       node: {
         app: '',
         namespace: { name: namespace },

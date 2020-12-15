@@ -39,9 +39,9 @@ describe('CytoscapeGraph component test', () => {
       edgeLabelMode: myEdgeLabelMode,
       queryTime: 0,
       showIdleEdges: false,
+      showIdleNodes: false,
       showOperationNodes: false,
-      showSecurity: true,
-      showUnusedNodes: false
+      showSecurity: true
     });
 
     dataSource.on('fetchSuccess', () => {
@@ -61,9 +61,9 @@ describe('CytoscapeGraph component test', () => {
               edgeLabelMode: myEdgeLabelMode,
               queryTime: 0,
               showIdleEdges: false,
+              showIdleNodes: false,
               showOperationNodes: false,
-              showSecurity: true,
-              showUnusedNodes: false
+              showSecurity: true
             },
             timestamp: 0
           }}
@@ -83,9 +83,9 @@ describe('CytoscapeGraph component test', () => {
           showSecurity={true}
           showServiceNodes={true}
           showTrafficAnimation={false}
-          showUnusedNodes={false}
+          showIdleNodes={false}
           showVirtualServices={true}
-          displayUnusedNodes={() => undefined}
+          toggleIdleNodes={() => undefined}
         />
       );
 

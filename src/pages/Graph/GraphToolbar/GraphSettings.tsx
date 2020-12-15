@@ -27,10 +27,10 @@ type ReduxProps = {
   toggleGraphSecurity(): void;
   toggleGraphVirtualServices(): void;
   toggleIdleEdges(): void;
+  toggleIdleNodes(): void;
   toggleOperationNodes(): void;
   toggleServiceNodes(): void;
   toggleTrafficAnimation(): void;
-  toggleUnusedNodes(): void;
 };
 
 type GraphSettingsProps = ReduxProps &
@@ -155,13 +155,13 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
       edgeLabelMode,
       showCircuitBreakers,
       showIdleEdges,
+      showIdleNodes,
       showMissingSidecars,
       showNodeLabels,
       showOperationNodes,
       showSecurity,
       showServiceNodes,
       showTrafficAnimation,
-      showUnusedNodes,
       showVirtualServices
     } = this.props;
 
@@ -174,10 +174,10 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
       toggleGraphSecurity,
       toggleGraphVirtualServices,
       toggleIdleEdges,
+      toggleIdleNodes,
       toggleOperationNodes,
       toggleServiceNodes,
-      toggleTrafficAnimation,
-      toggleUnusedNodes
+      toggleTrafficAnimation
     } = this.props;
 
     const edgeLabelOptions: DisplayOptionType[] = [
@@ -247,9 +247,21 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
         onChange: toggleIdleEdges,
         tooltip: (
           <div style={{ textAlign: 'left' }}>
-            Include edges that have no request traffic for the time period. Disabled by default to provide cleaner
-            graphs. Enable to help detect unexpected traffic omissions, or to confirm expected edges with no traffic
-            (due to routing, mirroring, etc).
+            Idle edges have no request traffic for the time period. Disabled by default to provide cleaner graphs.
+            Enable to help detect unexpected traffic omissions, or to confirm expected edges with no traffic (due to
+            routing, mirroring, etc).
+          </div>
+        )
+      },
+      {
+        id: 'filterIdleNodes',
+        labelText: 'Idle Nodes',
+        isChecked: showIdleNodes,
+        onChange: toggleIdleNodes,
+        tooltip: (
+          <div style={{ textAlign: 'left' }}>
+            Idle nodes are orphan nodes, for defined services, that have never received traffic. Disabled by default to
+            provide cleaner graphs. Enable to help locate unused, misconfigured or obsolete services.
           </div>
         )
       },
@@ -305,18 +317,6 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
           <div style={{ textAlign: 'left' }}>
             Animate the graph to reflect traffic flow. The particle density and speed roughly reflects an edge's request
             load relevant to the other edges. Animation can be CPU intensive.
-          </div>
-        )
-      },
-      {
-        id: 'filterUnusedNodes',
-        labelText: 'Unused Nodes',
-        isChecked: showUnusedNodes,
-        onChange: toggleUnusedNodes,
-        tooltip: (
-          <div style={{ textAlign: 'left' }}>
-            Display orphan nodes for defined services that have never received traffic. This can help locate
-            misconfigured or obsolete services.
           </div>
         )
       }
@@ -436,13 +436,13 @@ const mapStateToProps = (state: KialiAppState) => ({
   edgeLabelMode: edgeLabelModeSelector(state),
   showCircuitBreakers: state.graph.toolbarState.showCircuitBreakers,
   showIdleEdges: state.graph.toolbarState.showIdleEdges,
+  showIdleNodes: state.graph.toolbarState.showIdleNodes,
   showMissingSidecars: state.graph.toolbarState.showMissingSidecars,
   showNodeLabels: state.graph.toolbarState.showNodeLabels,
   showOperationNodes: state.graph.toolbarState.showOperationNodes,
   showSecurity: state.graph.toolbarState.showSecurity,
   showServiceNodes: state.graph.toolbarState.showServiceNodes,
   showTrafficAnimation: state.graph.toolbarState.showTrafficAnimation,
-  showUnusedNodes: state.graph.toolbarState.showUnusedNodes,
   showVirtualServices: state.graph.toolbarState.showVirtualServices
 });
 
@@ -457,10 +457,10 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<KialiAppState, void, KialiAp
     toggleGraphSecurity: bindActionCreators(GraphToolbarActions.toggleGraphSecurity, dispatch),
     toggleGraphVirtualServices: bindActionCreators(GraphToolbarActions.toggleGraphVirtualServices, dispatch),
     toggleIdleEdges: bindActionCreators(GraphToolbarActions.toggleIdleEdges, dispatch),
+    toggleIdleNodes: bindActionCreators(GraphToolbarActions.toggleIdleNodes, dispatch),
     toggleOperationNodes: bindActionCreators(GraphToolbarActions.toggleOperationNodes, dispatch),
     toggleServiceNodes: bindActionCreators(GraphToolbarActions.toggleServiceNodes, dispatch),
-    toggleTrafficAnimation: bindActionCreators(GraphToolbarActions.toggleTrafficAnimation, dispatch),
-    toggleUnusedNodes: bindActionCreators(GraphToolbarActions.toggleUnusedNodes, dispatch)
+    toggleTrafficAnimation: bindActionCreators(GraphToolbarActions.toggleTrafficAnimation, dispatch)
   };
 };
 

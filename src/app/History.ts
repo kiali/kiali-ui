@@ -22,6 +22,7 @@ export enum URLParam {
   FROM = 'from',
   GRAPH_EDGES = 'edges',
   GRAPH_IDLE_EDGES = 'idleEdges',
+  GRAPH_IDLE_NODES = 'idleNodes',
   GRAPH_LAYOUT = 'layout',
   GRAPH_SERVICE_NODES = 'injectServiceNodes',
   GRAPH_TYPE = 'graphType',
@@ -39,7 +40,6 @@ export enum URLParam {
   SHOW_AVERAGE = 'avg',
   SORT = 'sort',
   TO = 'to',
-  UNUSED_NODES = 'unusedNodes',
   EXPERIMENTAL_FLAGS = 'xflags'
 }
 

@@ -46,6 +46,7 @@ export interface GraphToolbarState {
   compressOnHide: boolean;
   showCircuitBreakers: boolean;
   showIdleEdges: boolean;
+  showIdleNodes: boolean;
   showLegend: boolean;
   showMissingSidecars: boolean;
   showNodeLabels: boolean;
@@ -53,7 +54,6 @@ export interface GraphToolbarState {
   showSecurity: boolean;
   showServiceNodes: boolean;
   showTrafficAnimation: boolean;
-  showUnusedNodes: boolean;
   showVirtualServices: boolean;
 }
 
