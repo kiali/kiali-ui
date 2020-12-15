@@ -77,7 +77,7 @@ export const IstioLevelToSeverity = {
   0: ValidationTypes.Info,
   3: ValidationTypes.Error,
   8: ValidationTypes.Warning,
-  12: ValidationTypes.Info,
+  12: ValidationTypes.Info
 };
 
 export interface ObjectValidation {

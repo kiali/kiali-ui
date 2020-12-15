@@ -18,7 +18,7 @@ class IstioStatusMessageList extends React.Component<Props> {
           {this.props.messages.map((msg: ValidationMessage, i: number) => {
             const severity: ValidationTypes = IstioLevelToSeverity[msg.level || 0];
             return (
-              <StackItem id={'msg-' + i} className={"validation-message"}>
+              <StackItem id={'msg-' + i} className={'validation-message'}>
                 <Split>
                   <SplitItem>
                     <Validation severity={severity} />
