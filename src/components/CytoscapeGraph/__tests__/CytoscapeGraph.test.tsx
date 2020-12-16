@@ -77,12 +77,12 @@ describe('CytoscapeGraph component test', () => {
           isMTLSEnabled={false}
           showCircuitBreakers={false}
           showIdleEdges={false}
+          showIdleNodes={false}
           showMissingSidecars={true}
           showOperationNodes={false}
           showSecurity={true}
           showServiceNodes={true}
           showTrafficAnimation={false}
-          showIdleNodes={false}
           showVirtualServices={true}
           toggleIdleNodes={() => undefined}
         />
