@@ -12,6 +12,8 @@ describe('GraphDataState', () => {
       node: undefined,
       summaryData: null,
       toolbarState: {
+        boxByCluster: false,
+        boxByNamespace: false,
         compressOnHide: true,
         edgeLabelMode: EdgeLabelMode.NONE,
         findValue: '',
