@@ -23,7 +23,8 @@ import ToolbarDropdown from '../ToolbarDropdown/ToolbarDropdown';
 import AceEditor from 'react-ace';
 import { aceOptions } from '../../types/IstioConfigDetails';
 import { style } from 'typestyle';
-import { SummaryTableBuilder } from './writers/BaseTable';
+import { SummaryTableBuilder } from './tables/BaseTable';
+import { ClipboardCopyButton } from '@patternfly/react-core/dist/js/components/ClipboardCopy/ClipboardCopyButton';
 
 // Enables the search box for the ACEeditor
 require('ace-builds/src-noconflict/ext-searchbox');
@@ -47,9 +48,9 @@ type EnvoyDetailProps = {
 
 type EnvoyDetailState = {
   config: EnvoyProxyDump;
-  resource: string;
   fetch: boolean;
   pod: Pod;
+  resource: string;
 };
 
 export const Loading = () => (
@@ -69,9 +70,9 @@ class EnvoyDetailsModal extends React.Component<EnvoyDetailProps, EnvoyDetailSta
     this.aceEditorRef = React.createRef();
     this.state = {
       config: {},
-      resource: 'all',
       fetch: false,
-      pod: this.sortedPods()[0]
+      pod: this.sortedPods()[0],
+      resource: 'all'
     };
   }
 
@@ -156,13 +157,34 @@ class EnvoyDetailsModal extends React.Component<EnvoyDetailProps, EnvoyDetailSta
     return Object.keys(this.state.config).length < 1;
   };
 
+  showEditor = () => {
+    return this.state.resource === 'all' || this.state.resource === 'bootstrap';
+  };
+
+  editorContent = () => JSON.stringify(this.state.config, null, '  ');
+
+  // TODO: There is a bug in PF feature for this.
+  //  It is fixed in upstream (https://github.com/patternfly/patternfly-react/pull/4619)
+  clipboardCopy = (event: React.ClipboardEvent<HTMLDivElement>, text: string) => {
+    const clipboard = event.currentTarget.parentElement;
+    const el = document.createElement('textarea');
+    el.value = text;
+    if (clipboard) {
+      clipboard.appendChild(el);
+      el.select();
+      document.execCommand('copy');
+      clipboard.removeChild(el);
+    }
+  };
+
   render() {
     const builder = SummaryTableBuilder(this.state.resource, this.state.config);
     const SummaryWriterComp = builder[0];
     const summaryWriter = builder[1];
+
     return (
       <Modal
-        width={'50%'}
+        width={'75%'}
         title={`Envoy config for ${this.props.workload.name}`}
         isOpen={this.props.show}
         onClose={this.props.onClose}
@@ -199,13 +221,29 @@ class EnvoyDetailsModal extends React.Component<EnvoyDetailProps, EnvoyDetailSta
                   />
                 </ToolbarItem>
               </ToolbarGroup>
+              <ToolbarGroup style={{ marginLeft: 'auto' }}>
+                <ToolbarItem>
+                  {this.showEditor() ? (
+                    <ClipboardCopyButton
+                      maxWidth={'150px'}
+                      onClick={(event: any) => {
+                        this.clipboardCopy(event, this.editorContent());
+                      }}
+                      id={'envoy-config'}
+                      textId={'envoy-config'}
+                    >
+                      Copy to clipboard
+                    </ClipboardCopyButton>
+                  ) : undefined}
+                </ToolbarItem>
+              </ToolbarGroup>
             </Toolbar>
           </StackItem>
           <StackItem>
             <Card style={{ height: '400px' }}>
               {this.isLoadingConfig() ? (
                 <Loading />
-              ) : this.state.resource === 'all' || this.state.resource === 'bootstrap' ? (
+              ) : this.showEditor() ? (
                 <AceEditor
                   ref={this.aceEditorRef}
                   mode="yaml"
@@ -216,7 +254,7 @@ class EnvoyDetailsModal extends React.Component<EnvoyDetailProps, EnvoyDetailSta
                   wrapEnabled={true}
                   readOnly={true}
                   setOptions={aceOptions || { foldStyle: 'markbegin' }}
-                  value={JSON.stringify(this.state.config, null, 2)}
+                  value={this.editorContent()}
                 />
               ) : (
                 <SummaryWriterComp writer={summaryWriter} />
