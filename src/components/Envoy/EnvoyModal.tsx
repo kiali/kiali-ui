@@ -3,6 +3,7 @@ import * as AlertUtils from '../../utils/AlertUtils';
 import * as React from 'react';
 import {
   Button,
+  ButtonVariant,
   Card,
   EmptyState,
   EmptyStateIcon,
@@ -24,7 +25,8 @@ import AceEditor from 'react-ace';
 import { aceOptions } from '../../types/IstioConfigDetails';
 import { style } from 'typestyle';
 import { SummaryTableBuilder } from './tables/BaseTable';
-import { ClipboardCopyButton } from '@patternfly/react-core/dist/js/components/ClipboardCopy/ClipboardCopyButton';
+import { defaultIconStyle, KialiIcon } from '../../config/KialiIcon';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 
 // Enables the search box for the ACEeditor
 require('ace-builds/src-noconflict/ext-searchbox');
@@ -163,17 +165,10 @@ class EnvoyDetailsModal extends React.Component<EnvoyDetailProps, EnvoyDetailSta
 
   editorContent = () => JSON.stringify(this.state.config, null, '  ');
 
-  // TODO: There is a bug in PF feature for this.
-  //  It is fixed in upstream (https://github.com/patternfly/patternfly-react/pull/4619)
-  clipboardCopy = (event: React.ClipboardEvent<HTMLDivElement>, text: string) => {
-    const clipboard = event.currentTarget.parentElement;
-    const el = document.createElement('textarea');
-    el.value = text;
-    if (clipboard) {
-      clipboard.appendChild(el);
-      el.select();
-      document.execCommand('copy');
-      clipboard.removeChild(el);
+  onCopyToClipboard = (_text: string, _result: boolean) => {
+    const editor = this.aceEditorRef.current!['editor'];
+    if (editor) {
+      editor.selectAll();
     }
   };
 
@@ -224,16 +219,11 @@ class EnvoyDetailsModal extends React.Component<EnvoyDetailProps, EnvoyDetailSta
               <ToolbarGroup style={{ marginLeft: 'auto' }}>
                 <ToolbarItem>
                   {this.showEditor() ? (
-                    <ClipboardCopyButton
-                      maxWidth={'150px'}
-                      onClick={(event: any) => {
-                        this.clipboardCopy(event, this.editorContent());
-                      }}
-                      id={'envoy-config'}
-                      textId={'envoy-config'}
-                    >
-                      Copy to clipboard
-                    </ClipboardCopyButton>
+                    <CopyToClipboard onCopy={this.onCopyToClipboard} text={this.editorContent()}>
+                      <Button variant={ButtonVariant.link} isInline>
+                        <KialiIcon.Copy className={defaultIconStyle} />
+                      </Button>
+                    </CopyToClipboard>
                   ) : undefined}
                 </ToolbarItem>
               </ToolbarGroup>
