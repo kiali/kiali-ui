@@ -131,11 +131,11 @@ export class GraphHighlighter {
   getBoxHighlight(box: any, isHover: boolean) {
     let elems;
     if (isHover) {
-      elems = box.children().reduce((prev, child) => {
+      elems = box.descendants().reduce((prev, child) => {
         return prev.add(child.closedNeighborhood());
       }, this.cy.collection());
     } else {
-      const children = box.children();
+      const children = box.descendants();
       elems = children.add(children.predecessors()).add(children.successors());
     }
     return this.includeParentNodes(elems);
