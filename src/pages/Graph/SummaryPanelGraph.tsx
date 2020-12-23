@@ -141,7 +141,11 @@ export default class SummaryPanelGraph extends React.Component<SummaryPanelPropT
     return (
       <div className="panel panel-default" style={SummaryPanelGraph.panelStyle}>
         <div className="panel-heading" style={summaryHeader}>
+          <strong>Current Graph:</strong>
+          <br />
+          <br />
           {this.renderNamespacesSummary()}
+          <br />
           {this.renderTopologySummary(numSvc, numWorkloads, numApps, numVersions, numEdges)}
         </div>
         <div className={summaryBodyTabs}>
@@ -304,9 +308,6 @@ export default class SummaryPanelGraph extends React.Component<SummaryPanelPropT
     numEdges: number
   ) => (
     <>
-      <br />
-      <strong>Current Graph:</strong>
-      <br />
       {numApps > 0 && (
         <>
           <KialiIcon.Applications className={topologyStyle} />

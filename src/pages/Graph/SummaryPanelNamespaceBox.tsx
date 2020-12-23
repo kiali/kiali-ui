@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Tab } from '@patternfly/react-core';
+import { Tab, Tooltip, TooltipPosition, Badge } from '@patternfly/react-core';
 import { style } from 'typestyle';
 import _ from 'lodash';
 import { RateTableGrpc, RateTableHttp } from '../../components/SummaryPanel/RateTable';
@@ -26,6 +26,7 @@ import SimpleTabs from 'components/Tab/SimpleTabs';
 import { ValidationStatus } from 'types/IstioObjects';
 import Namespace from 'types/Namespace';
 import { PfColors } from '../../components/Pf/PfColors';
+import ValidationSummary from 'components/Validations/ValidationSummary';
 
 type SummaryPanelNamespaceBoxMetricsState = {
   reqRates: Datapoint[];
@@ -117,6 +118,7 @@ export default class SummaryPanelNamespaceBox extends React.Component<
   render() {
     const namespaceBox = this.props.data.summaryTarget;
     const boxed = namespaceBox.descendants();
+    const namespace = namespaceBox.data(CyNode.namespace);
 
     const numSvc = boxed.filter(`node[nodeType = "${NodeType.SERVICE}"]`).size();
     const numWorkloads = boxed.filter(`node[nodeType = "${NodeType.WORKLOAD}"]`).size();
@@ -126,19 +128,18 @@ export default class SummaryPanelNamespaceBox extends React.Component<
     const nonServiceEdges = boxed.filter(`node[nodeType != "${NodeType.SERVICE}"][!isBox]`).edgesTo('*');
     const totalRateGrpc = getAccumulatedTrafficRateGrpc(nonServiceEdges);
     const totalRateHttp = getAccumulatedTrafficRateHttp(nonServiceEdges);
-    const incomingEdges = boxed.filter(`node[?${CyNode.isRoot}]`).edgesTo('*');
+    const incomingEdges = namespaceBox.cy().nodes(`[${CyNode.namespace} != "${namespace}"]`).edgesTo(boxed);
     const incomingRateGrpc = getAccumulatedTrafficRateGrpc(incomingEdges);
     const incomingRateHttp = getAccumulatedTrafficRateHttp(incomingEdges);
-    const outgoingEdges = boxed
-      .filter()
-      .leaves(`node[?${CyNode.isOutside}],[?${CyNode.isServiceEntry}]`)
-      .connectedEdges();
+    const outgoingEdges = boxed.edgesTo(`[${CyNode.namespace} != "${namespace}"]`);
     const outgoingRateGrpc = getAccumulatedTrafficRateGrpc(outgoingEdges);
     const outgoingRateHttp = getAccumulatedTrafficRateHttp(outgoingEdges);
 
     return (
       <div className="panel panel-default" style={SummaryPanelNamespaceBox.panelStyle}>
         <div className="panel-heading" style={summaryHeader}>
+          {this.renderNamespace(namespace)}
+          <br />
           {this.renderTopologySummary(numSvc, numWorkloads, numApps, numVersions, numEdges)}
         </div>
         <div className={summaryBodyTabs}>
@@ -261,6 +262,32 @@ export default class SummaryPanelNamespaceBox extends React.Component<
     };
   };
 
+  private renderNamespace = (ns: string) => {
+    const validation = this.state.validationsMap[ns];
+    return (
+      <React.Fragment key={ns}>
+        <span>
+          <Tooltip position={TooltipPosition.auto} content={<>Namespace</>}>
+            <Badge className="virtualitem_badge_definition" style={{ marginBottom: '2px' }}>
+              NS
+            </Badge>
+          </Tooltip>
+          {ns}{' '}
+          {!!validation && (
+            <ValidationSummary
+              id={'ns-val-' + ns}
+              errors={validation.errors}
+              warnings={validation.warnings}
+              objectCount={validation.objectCount}
+              style={{ marginLeft: '5px' }}
+            />
+          )}
+        </span>
+        <br />
+      </React.Fragment>
+    );
+  };
+
   private renderTopologySummary = (
     numSvc: number,
     numWorkloads: number,
@@ -269,9 +296,6 @@ export default class SummaryPanelNamespaceBox extends React.Component<
     numEdges: number
   ) => (
     <>
-      <br />
-      <strong>Current Graph:</strong>
-      <br />
       {numApps > 0 && (
         <>
           <KialiIcon.Applications className={topologyStyle} />
