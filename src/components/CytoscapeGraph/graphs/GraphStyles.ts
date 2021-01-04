@@ -193,10 +193,15 @@ export class GraphStyles {
     }
 
     const label: string[] = [];
-    if ((isMultiNamespace || isOutside) && nodeType !== NodeType.UNKNOWN) {
-      if (isBox !== BoxByType.CLUSTER && isBox !== BoxByType.NAMESPACE && (!isBoxed || isBoxedBy !== BoxByType.APP)) {
-        label.push(`(${namespace})`);
-      }
+    if (
+      (isMultiNamespace || isOutside) &&
+      namespace !== UNKNOWN &&
+      nodeType !== NodeType.UNKNOWN &&
+      isBox !== BoxByType.CLUSTER &&
+      isBox !== BoxByType.NAMESPACE &&
+      (!isBoxed || isBoxedBy !== BoxByType.APP)
+    ) {
+      label.push(`(${namespace})`);
     }
 
     switch (nodeType) {

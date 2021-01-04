@@ -438,27 +438,51 @@ export default class GraphDataSource {
           const nodeHealths = promiseToNode.get(promise);
           nodeHealths!.push(nodeHealth);
         }
-      } else if (nodeType === NodeType.APP) {
-        let promise = appNamespacePromises.get(namespace);
-        const nodeHealth = { node: node, key: node.data.app! };
-        if (!promise) {
-          promise = API.getNamespaceAppHealth(namespace, duration);
-          appNamespacePromises.set(namespace, promise);
-          promiseToNode.set(promise, [nodeHealth]);
-        } else {
-          const nodeHealths = promiseToNode.get(promise);
-          nodeHealths!.push(nodeHealth);
-        }
-      } else if (nodeType === NodeType.SERVICE) {
-        let promise = serviceNamespacePromises.get(namespace);
-        const nodeHealth = { node: node, key: node.data.service! };
-        if (!promise) {
-          promise = API.getNamespaceServiceHealth(namespace, duration);
-          serviceNamespacePromises.set(namespace, promise);
-          promiseToNode.set(promise, [nodeHealth]);
-        } else {
-          const nodeHealths = promiseToNode.get(promise);
-          nodeHealths!.push(nodeHealth);
+      } else {
+        switch (nodeType) {
+          case NodeType.APP: {
+            let promise = appNamespacePromises.get(namespace);
+            const nodeHealth = { node: node, key: node.data.app! };
+            if (!promise) {
+              promise = API.getNamespaceAppHealth(namespace, duration);
+              appNamespacePromises.set(namespace, promise);
+              promiseToNode.set(promise, [nodeHealth]);
+            } else {
+              const nodeHealths = promiseToNode.get(promise);
+              nodeHealths!.push(nodeHealth);
+            }
+            break;
+          }
+          case NodeType.BOX: {
+            if (node.data.isBox === BoxByType.APP) {
+              let promise = appNamespacePromises.get(namespace);
+              const nodeHealth = { node: node, key: node.data.app! };
+              if (!promise) {
+                promise = API.getNamespaceAppHealth(namespace, duration);
+                appNamespacePromises.set(namespace, promise);
+                promiseToNode.set(promise, [nodeHealth]);
+              } else {
+                const nodeHealths = promiseToNode.get(promise);
+                nodeHealths!.push(nodeHealth);
+              }
+            }
+            break;
+          }
+          case NodeType.SERVICE: {
+            let promise = serviceNamespacePromises.get(namespace);
+            const nodeHealth = { node: node, key: node.data.service! };
+            if (!promise) {
+              promise = API.getNamespaceServiceHealth(namespace, duration);
+              serviceNamespacePromises.set(namespace, promise);
+              promiseToNode.set(promise, [nodeHealth]);
+            } else {
+              const nodeHealths = promiseToNode.get(promise);
+              nodeHealths!.push(nodeHealth);
+            }
+            break;
+          }
+          default:
+            break;
         }
       }
     }

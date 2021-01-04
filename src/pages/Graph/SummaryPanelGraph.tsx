@@ -43,7 +43,6 @@ type SummaryPanelGraphState = SummaryPanelGraphMetricsState & {
   isOpen: boolean;
   graph: any;
   loading: boolean;
-  validationsLoading: boolean;
   validationsMap: ValidationsMap;
 };
 
@@ -59,7 +58,6 @@ const defaultState: SummaryPanelGraphState = {
   isOpen: false,
   graph: null,
   loading: false,
-  validationsLoading: false,
   validationsMap: new Map<string, ValidationStatus>(),
   ...defaultMetricsState
 };
@@ -114,6 +112,9 @@ export default class SummaryPanelGraph extends React.Component<SummaryPanelPropT
   componentWillUnmount() {
     if (this.metricsPromise) {
       this.metricsPromise.cancel();
+    }
+    if (this.validationSummaryPromises) {
+      this.validationSummaryPromises.cancelAll();
     }
   }
 

@@ -19,12 +19,11 @@ import {
 import { Response } from '../../services/Api';
 import { IstioMetricsMap, Datapoint } from '../../types/Metrics';
 import { IstioMetricsOptions } from '../../types/MetricsOptions';
-import { CancelablePromise, makeCancelablePromise, PromisesRegistry } from '../../utils/CancelablePromises';
+import { CancelablePromise, makeCancelablePromise } from '../../utils/CancelablePromises';
 import { CyNode } from '../../components/CytoscapeGraph/CytoscapeGraphUtils';
 import { KialiIcon } from 'config/KialiIcon';
 import SimpleTabs from 'components/Tab/SimpleTabs';
 import { ValidationStatus } from 'types/IstioObjects';
-import Namespace from 'types/Namespace';
 import { PfColors } from '../../components/Pf/PfColors';
 import ValidationSummary from 'components/Validations/ValidationSummary';
 
@@ -36,14 +35,11 @@ type SummaryPanelNamespaceBoxMetricsState = {
   metricsLoadError: string | null;
 };
 
-type ValidationsMap = Map<string, ValidationStatus>;
-
 type SummaryPanelNamespaceBoxState = SummaryPanelNamespaceBoxMetricsState & {
   isOpen: boolean;
   namespaceBox: any;
   loading: boolean;
-  validationsLoading: boolean;
-  validationsMap: ValidationsMap;
+  validation: ValidationStatus | undefined;
 };
 
 const defaultMetricsState: SummaryPanelNamespaceBoxMetricsState = {
@@ -58,8 +54,7 @@ const defaultState: SummaryPanelNamespaceBoxState = {
   isOpen: false,
   namespaceBox: null,
   loading: false,
-  validationsLoading: false,
-  validationsMap: new Map<string, ValidationStatus>(),
+  validation: undefined,
   ...defaultMetricsState
 };
 
@@ -81,7 +76,7 @@ export default class SummaryPanelNamespaceBox extends React.Component<
   };
 
   private metricsPromise?: CancelablePromise<Response<IstioMetricsMap>>;
-  private validationSummaryPromises: PromisesRegistry = new PromisesRegistry();
+  private validationPromise?: CancelablePromise<Response<ValidationStatus>>;
 
   constructor(props: SummaryPanelPropType) {
     super(props);
@@ -99,19 +94,22 @@ export default class SummaryPanelNamespaceBox extends React.Component<
 
   componentDidMount() {
     this.updateRpsChart();
-    this.updateValidations();
+    this.updateValidation();
   }
 
   componentDidUpdate(prevProps: SummaryPanelPropType) {
     if (shouldRefreshData(prevProps, this.props)) {
       this.updateRpsChart();
-      this.updateValidations();
+      this.updateValidation();
     }
   }
 
   componentWillUnmount() {
     if (this.metricsPromise) {
       this.metricsPromise.cancel();
+    }
+    if (this.validationPromise) {
+      this.validationPromise.cancel();
     }
   }
 
@@ -263,7 +261,7 @@ export default class SummaryPanelNamespaceBox extends React.Component<
   };
 
   private renderNamespace = (ns: string) => {
-    const validation = this.state.validationsMap[ns];
+    const validation = this.state.validation;
     return (
       <React.Fragment key={ns}>
         <span>
@@ -399,34 +397,17 @@ export default class SummaryPanelNamespaceBox extends React.Component<
     this.setState({ loading: true, metricsLoadError: null });
   };
 
-  private updateValidations = () => {
-    const newValidationsMap = new Map<string, ValidationStatus>();
-    _.chunk([this.props.data.summaryTarget.data(CyNode.namespace)], 10).forEach(chunk => {
-      this.validationSummaryPromises
-        .registerChained('validationSummaryChunks', undefined, () =>
-          this.fetchValidationsChunk(chunk, newValidationsMap)
-        )
-        .then(() => {
-          this.setState({ validationsMap: newValidationsMap });
-        });
-    });
-  };
-
-  fetchValidationsChunk(chunk: Namespace[], validationsMap: ValidationsMap) {
-    return Promise.all(
-      chunk.map(ns => {
-        return API.getNamespaceValidations(ns.name).then(rs => ({ validation: rs.data, ns: ns }));
-      })
-    )
-      .then(results => {
-        results.forEach(result => {
-          validationsMap[result.ns.name] = result.validation;
-        });
+  private updateValidation = () => {
+    const namespace = this.props.data.summaryTarget.data(CyNode.namespace);
+    this.validationPromise = makeCancelablePromise(API.getNamespaceValidations(namespace));
+    this.validationPromise.promise
+      .then(rs => {
+        this.setState({ validation: rs.data });
       })
       .catch(err => {
         if (!err.isCanceled) {
-          console.log(`SummaryPanelGraph: Error fetching validation status: ${API.getErrorString(err)}`);
+          console.log(`SummaryPanelNamespaceBox: Error fetching validation status: ${API.getErrorString(err)}`);
         }
       });
-  }
+  };
 }
