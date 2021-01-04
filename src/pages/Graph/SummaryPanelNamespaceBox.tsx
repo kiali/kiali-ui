@@ -28,15 +28,14 @@ import { PfColors } from '../../components/Pf/PfColors';
 import ValidationSummary from 'components/Validations/ValidationSummary';
 
 type SummaryPanelNamespaceBoxMetricsState = {
-  reqRates: Datapoint[];
   errRates: Datapoint[];
+  metricsLoadError: string | null;
+  reqRates: Datapoint[];
   tcpSent: Datapoint[];
   tcpReceived: Datapoint[];
-  metricsLoadError: string | null;
 };
 
 type SummaryPanelNamespaceBoxState = SummaryPanelNamespaceBoxMetricsState & {
-  isOpen: boolean;
   namespaceBox: any;
   loading: boolean;
   validation: ValidationStatus | undefined;
@@ -51,7 +50,6 @@ const defaultMetricsState: SummaryPanelNamespaceBoxMetricsState = {
 };
 
 const defaultState: SummaryPanelNamespaceBoxState = {
-  isOpen: false,
   namespaceBox: null,
   loading: false,
   validation: undefined,
@@ -88,7 +86,7 @@ export default class SummaryPanelNamespaceBox extends React.Component<
     // if the summaryTarget (i.e. namespaceBox) has changed, then init the state and set to loading. The loading
     // will actually be kicked off after the render (in componentDidMount/Update).
     return props.data.summaryTarget !== state.namespaceBox
-      ? { graph: props.data.summaryTarget, loading: true, ...defaultMetricsState }
+      ? { namespaceBox: props.data.summaryTarget, loading: true, ...defaultMetricsState }
       : null;
   }
 

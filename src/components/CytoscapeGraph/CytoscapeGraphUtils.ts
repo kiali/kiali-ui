@@ -36,6 +36,7 @@ export const CyNode = {
   aggregate: 'aggregate',
   aggregateValue: 'aggregateValue',
   app: 'app',
+  cluster: 'cluster',
   destServices: 'destServices',
   grpcIn: 'grpcIn',
   grpcInErr: 'grpcInErr',

@@ -40,7 +40,6 @@ type SummaryPanelGraphMetricsState = {
 type ValidationsMap = Map<string, ValidationStatus>;
 
 type SummaryPanelGraphState = SummaryPanelGraphMetricsState & {
-  isOpen: boolean;
   graph: any;
   loading: boolean;
   validationsMap: ValidationsMap;
@@ -55,7 +54,6 @@ const defaultMetricsState: SummaryPanelGraphMetricsState = {
 };
 
 const defaultState: SummaryPanelGraphState = {
-  isOpen: false,
   graph: null,
   loading: false,
   validationsMap: new Map<string, ValidationStatus>(),

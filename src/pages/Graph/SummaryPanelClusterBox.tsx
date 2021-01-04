@@ -3,65 +3,20 @@ import { Tab, Tooltip, TooltipPosition, Badge } from '@patternfly/react-core';
 import { style } from 'typestyle';
 import _ from 'lodash';
 import { RateTableGrpc, RateTableHttp } from '../../components/SummaryPanel/RateTable';
-import { RpsChart, TcpChart } from '../../components/SummaryPanel/RpsChart';
 import { SummaryPanelPropType, NodeType } from '../../types/Graph';
 import { getAccumulatedTrafficRateGrpc, getAccumulatedTrafficRateHttp } from '../../utils/TrafficRate';
-import * as API from '../../services/Api';
-import {
-  shouldRefreshData,
-  getFirstDatapoints,
-  mergeMetricsResponses,
-  summaryFont,
-  summaryHeader,
-  summaryBodyTabs,
-  hr
-} from './SummaryPanelCommon';
-import { Response } from '../../services/Api';
-import { IstioMetricsMap, Datapoint } from '../../types/Metrics';
-import { IstioMetricsOptions } from '../../types/MetricsOptions';
-import { CancelablePromise, makeCancelablePromise, PromisesRegistry } from '../../utils/CancelablePromises';
+import { summaryFont, summaryHeader, summaryBodyTabs } from './SummaryPanelCommon';
 import { CyNode } from '../../components/CytoscapeGraph/CytoscapeGraphUtils';
 import { KialiIcon } from 'config/KialiIcon';
 import SimpleTabs from 'components/Tab/SimpleTabs';
-import { ValidationStatus } from 'types/IstioObjects';
-import Namespace from 'types/Namespace';
-import ValidationSummary from 'components/Validations/ValidationSummary';
 import { PfColors } from '../../components/Pf/PfColors';
 
-type SummaryPanelClusterBoxMetricsState = {
-  reqRates: Datapoint[];
-  errRates: Datapoint[];
-  tcpSent: Datapoint[];
-  tcpReceived: Datapoint[];
-  metricsLoadError: string | null;
-};
-
-// TODO replace with real type
-type ValidationsMap = Map<string, ValidationStatus>;
-
-type SummaryPanelClusterBoxState = SummaryPanelClusterBoxMetricsState & {
-  isOpen: boolean;
-  graph: any;
-  loading: boolean;
-  validationsLoading: boolean;
-  validationsMap: ValidationsMap;
-};
-
-const defaultMetricsState: SummaryPanelClusterBoxMetricsState = {
-  reqRates: [],
-  errRates: [],
-  tcpSent: [],
-  tcpReceived: [],
-  metricsLoadError: null
+type SummaryPanelClusterBoxState = {
+  clusterBox: any;
 };
 
 const defaultState: SummaryPanelClusterBoxState = {
-  isOpen: false,
-  graph: null,
-  loading: false,
-  validationsLoading: false,
-  validationsMap: new Map<string, ValidationStatus>(),
-  ...defaultMetricsState
+  clusterBox: null
 };
 
 const topologyStyle = style({
@@ -78,9 +33,6 @@ export default class SummaryPanelClusterBox extends React.Component<SummaryPanel
     width: '25em'
   };
 
-  private metricsPromise?: CancelablePromise<Response<IstioMetricsMap>>;
-  private validationSummaryPromises: PromisesRegistry = new PromisesRegistry();
-
   constructor(props: SummaryPanelPropType) {
     super(props);
 
@@ -88,60 +40,33 @@ export default class SummaryPanelClusterBox extends React.Component<SummaryPanel
   }
 
   static getDerivedStateFromProps(props: SummaryPanelPropType, state: SummaryPanelClusterBoxState) {
-    // if the summaryTarget (i.e. graph) has changed, then init the state and set to loading. The loading
-    // will actually be kicked off after the render (in componentDidMount/Update).
-    return props.data.summaryTarget !== state.graph
-      ? { graph: props.data.summaryTarget, loading: true, ...defaultMetricsState }
-      : null;
-  }
-
-  componentDidMount() {
-    if (this.shouldShowRPSChart()) {
-      this.updateRpsChart();
-    }
-    this.updateValidations();
-  }
-
-  componentDidUpdate(prevProps: SummaryPanelPropType) {
-    if (shouldRefreshData(prevProps, this.props)) {
-      if (this.shouldShowRPSChart()) {
-        this.updateRpsChart();
-      }
-      this.updateValidations();
-    }
-  }
-
-  componentWillUnmount() {
-    if (this.metricsPromise) {
-      this.metricsPromise.cancel();
-    }
+    // if the summaryTarget (i.e. graph) has changed, then init the state
+    return props.data.summaryTarget !== state.clusterBox ? { clusterBox: props.data.summaryTarget } : null;
   }
 
   render() {
-    const cy = this.props.data.summaryTarget;
-    if (!cy) {
-      return null;
-    }
+    const clusterBox = this.props.data.summaryTarget;
+    const boxed = clusterBox.descendants();
+    const cluster = clusterBox.data(CyNode.cluster);
 
-    const numSvc = cy.$(`node[nodeType = "${NodeType.SERVICE}"]`).size();
-    const numWorkloads = cy.$(`node[nodeType = "${NodeType.WORKLOAD}"]`).size();
-    const { numApps, numVersions } = this.countApps(cy);
-    const numEdges = cy.edges().size();
+    const numSvc = boxed.filter(`node[nodeType = "${NodeType.SERVICE}"]`).size();
+    const numWorkloads = boxed.filter(`node[nodeType = "${NodeType.WORKLOAD}"]`).size();
+    const { numApps, numVersions } = this.countApps(boxed);
+    const numEdges = boxed.edges().size();
     // when getting accumulated traffic rates don't count requests from injected service nodes
-    const nonServiceEdges = cy.$(`node[nodeType != "${NodeType.SERVICE}"][!isBox]`).edgesTo('*');
+    const nonServiceEdges = boxed.filter(`node[nodeType != "${NodeType.SERVICE}"][!isBox]`).edgesTo('*');
     const totalRateGrpc = getAccumulatedTrafficRateGrpc(nonServiceEdges);
     const totalRateHttp = getAccumulatedTrafficRateHttp(nonServiceEdges);
-    const incomingEdges = cy.$(`node[?${CyNode.isRoot}]`).edgesTo('*');
+    const incomingEdges = clusterBox.cy().nodes(`[${CyNode.cluster} != "${cluster}"]`).edgesTo(boxed);
     const incomingRateGrpc = getAccumulatedTrafficRateGrpc(incomingEdges);
     const incomingRateHttp = getAccumulatedTrafficRateHttp(incomingEdges);
-    const outgoingEdges = cy.nodes().leaves(`node[?${CyNode.isOutside}],[?${CyNode.isServiceEntry}]`).connectedEdges();
+    const outgoingEdges = boxed.edgesTo(`[${CyNode.cluster} != "${cluster}"]`);
     const outgoingRateGrpc = getAccumulatedTrafficRateGrpc(outgoingEdges);
     const outgoingRateHttp = getAccumulatedTrafficRateHttp(outgoingEdges);
-
     return (
       <div className="panel panel-default" style={SummaryPanelClusterBox.panelStyle}>
         <div className="panel-heading" style={summaryHeader}>
-          {this.renderNamespacesSummary()}
+          {this.renderCluster(cluster)}
           {this.renderTopologySummary(numSvc, numWorkloads, numApps, numVersions, numEdges)}
         </div>
         <div className={summaryBodyTabs}>
@@ -233,12 +158,6 @@ export default class SummaryPanelClusterBox extends React.Component<SummaryPanel
                     rateNR={totalRateHttp.rateNoResponse}
                   />
                 )}
-                {this.shouldShowRPSChart() && (
-                  <div>
-                    {hr()}
-                    {this.renderRpsChart()}
-                  </div>
-                )}
               </div>
             </Tab>
           </SimpleTabs>
@@ -247,10 +166,10 @@ export default class SummaryPanelClusterBox extends React.Component<SummaryPanel
     );
   }
 
-  private countApps = (cy): { numApps: number; numVersions: number } => {
+  private countApps = (boxed): { numApps: number; numVersions: number } => {
     const appVersions: { [key: string]: Set<string> } = {};
 
-    cy.$(`node[nodeType = "${NodeType.APP}"]`).forEach(node => {
+    boxed.filter(`node[nodeType = "${NodeType.APP}"]`).forEach(node => {
       const app = node.data(CyNode.app);
       if (appVersions[app] === undefined) {
         appVersions[app] = new Set();
@@ -266,30 +185,16 @@ export default class SummaryPanelClusterBox extends React.Component<SummaryPanel
     };
   };
 
-  private renderNamespacesSummary = () => {
-    return this.props.namespaces.map(namespace => this.renderNamespace(namespace.name));
-  };
-
-  private renderNamespace = (ns: string) => {
-    const validation = this.state.validationsMap[ns];
+  private renderCluster = (cluster: string) => {
     return (
-      <React.Fragment key={ns}>
+      <React.Fragment key={cluster}>
         <span>
-          <Tooltip position={TooltipPosition.auto} content={<>Namespace</>}>
+          <Tooltip position={TooltipPosition.auto} content={<>Cluster</>}>
             <Badge className="virtualitem_badge_definition" style={{ marginBottom: '2px' }}>
-              NS
+              C
             </Badge>
           </Tooltip>
-          {ns}{' '}
-          {!!validation && (
-            <ValidationSummary
-              id={'ns-val-' + ns}
-              errors={validation.errors}
-              warnings={validation.warnings}
-              objectCount={validation.objectCount}
-              style={{ marginLeft: '5px' }}
-            />
-          )}
+          {cluster}{' '}
         </span>
         <br />
       </React.Fragment>
@@ -337,112 +242,4 @@ export default class SummaryPanelClusterBox extends React.Component<SummaryPanel
       )}
     </>
   );
-
-  private renderRpsChart = () => {
-    if (this.state.loading) {
-      return <strong>Loading chart...</strong>;
-    } else if (this.state.metricsLoadError) {
-      return (
-        <div>
-          <KialiIcon.Warning /> <strong>Error loading metrics: </strong>
-          {this.state.metricsLoadError}
-        </div>
-      );
-    }
-
-    return (
-      <>
-        <RpsChart label="HTTP - Total Request Traffic" dataRps={this.state.reqRates} dataErrors={this.state.errRates} />
-        <TcpChart label="TCP - Total Traffic" receivedRates={this.state.tcpReceived} sentRates={this.state.tcpSent} />
-      </>
-    );
-  };
-
-  private shouldShowRPSChart() {
-    // TODO we omit the rps chart when dealing with multiple namespaces. There is no backend
-    // API support to gather the data. The whole-graph chart is of nominal value, it will likely be OK.
-    return this.props.namespaces.length === 1;
-  }
-
-  private updateRpsChart = () => {
-    const props: SummaryPanelPropType = this.props;
-    const options: IstioMetricsOptions = {
-      filters: ['request_count', 'request_error_count'],
-      queryTime: props.queryTime,
-      duration: props.duration,
-      step: props.step,
-      rateInterval: props.rateInterval,
-      direction: 'inbound',
-      reporter: 'destination'
-    };
-    const promiseHTTP = API.getNamespaceMetrics(props.namespaces[0].name, options);
-    // TCP metrics are only available for reporter="source"
-    const optionsTCP: IstioMetricsOptions = {
-      filters: ['tcp_sent', 'tcp_received'],
-      queryTime: props.queryTime,
-      duration: props.duration,
-      step: props.step,
-      rateInterval: props.rateInterval,
-      direction: 'inbound',
-      reporter: 'source'
-    };
-    const promiseTCP = API.getNamespaceMetrics(props.namespaces[0].name, optionsTCP);
-    this.metricsPromise = makeCancelablePromise(mergeMetricsResponses([promiseHTTP, promiseTCP]));
-
-    this.metricsPromise.promise
-      .then(response => {
-        this.setState({
-          loading: false,
-          reqRates: getFirstDatapoints(response.data.request_count),
-          errRates: getFirstDatapoints(response.data.request_error_count),
-          tcpSent: getFirstDatapoints(response.data.tcp_sent),
-          tcpReceived: getFirstDatapoints(response.data.tcp_received)
-        });
-      })
-      .catch(error => {
-        if (error.isCanceled) {
-          console.debug('SummaryPanelGraph: Ignore fetch error (canceled).');
-          return;
-        }
-        const errorMsg = error.response && error.response.data.error ? error.response.data.error : error.message;
-        this.setState({
-          loading: false,
-          metricsLoadError: errorMsg,
-          ...defaultMetricsState
-        });
-      });
-
-    this.setState({ loading: true, metricsLoadError: null });
-  };
-
-  private updateValidations = () => {
-    const newValidationsMap = new Map<string, ValidationStatus>();
-    _.chunk(this.props.namespaces, 10).forEach(chunk => {
-      this.validationSummaryPromises
-        .registerChained('validationSummaryChunks', undefined, () =>
-          this.fetchValidationsChunk(chunk, newValidationsMap)
-        )
-        .then(() => {
-          this.setState({ validationsMap: newValidationsMap });
-        });
-    });
-  };
-
-  fetchValidationsChunk(chunk: Namespace[], validationsMap: ValidationsMap) {
-    return Promise.all(
-      chunk.map(ns => {
-        return API.getNamespaceValidations(ns.name).then(rs => ({ validation: rs.data, ns: ns }));
-      })
-    )
-      .then(results => {
-        results.forEach(result => {
-          validationsMap[result.ns.name] = result.validation;
-        });
-      })
-      .catch(err => {
-        if (!err.isCanceled) {
-          console.log(`SummaryPanelGraph: Error fetching validation status: ${API.getErrorString(err)}`);
-        }
-      });
-  }
 }

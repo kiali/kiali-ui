@@ -248,54 +248,7 @@ export class GraphStyles {
       default:
         label.unshift('error');
     }
-    /*
-    } else {
-      const contentArray: string[] = [];
-      if ((isMultiNamespace || isOutside) && nodeType !== NodeType.UNKNOWN) {
-        contentArray.push(`(${namespace})`);
-      }
-      switch (nodeType) {
-        case NodeType.AGGREGATE:
-          contentArray.unshift(data.aggregateValue!);
-          break;
-        case NodeType.APP:
-          if (cyGlobal.graphType === GraphType.APP || version === UNKNOWN) {
-            contentArray.unshift(app);
-          } else {
-            contentArray.unshift(version);
-            contentArray.unshift(app);
-          }
-          break;
-        case NodeType.BOX:
-          switch (isBox) {
-            case BoxByType.APP:
-              contentArray.unshift(app);
-              break;
-            case BoxByType.CLUSTER:
-              contentArray.pop();
-              contentArray.push(data.cluster);
-              break;
-            case BoxByType.NAMESPACE:
-              contentArray.pop();
-              contentArray.push(data.namespace);
-              break;
-          }
-          break;
-        case NodeType.SERVICE:
-          contentArray.unshift(service);
-          break;
-        case NodeType.UNKNOWN:
-          contentArray.unshift(UNKNOWN);
-          break;
-        case NodeType.WORKLOAD:
-          contentArray.unshift(workload);
-          break;
-        default:
-          contentArray.unshift('error');
-      }
-      label = contentArray.join('<br/>');
-    }
-*/
+
     let labelHtml = label.join('<br/>');
     labelHtml = `<div class="${contentStyleDefault} ${
       hasBadge ? contentStyleWithBadges : ''
