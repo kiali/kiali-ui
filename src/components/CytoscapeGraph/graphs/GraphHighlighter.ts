@@ -101,11 +101,11 @@ export class GraphHighlighter {
     return undefined;
   }
 
-  includeParentNodes(nodes: any) {
+  includeAncestorNodes(nodes: any) {
     return nodes.reduce((all, current) => {
       all = all.add(current);
       if (current.isChild()) {
-        all = all.add(current.parent());
+        all = all.add(current.ancestors());
       }
       return all;
     }, this.cy.collection());
@@ -113,7 +113,7 @@ export class GraphHighlighter {
 
   getNodeHighlight(node: any, isHover: boolean) {
     const elems = isHover ? node.closedNeighborhood() : node.predecessors().add(node.successors());
-    return this.includeParentNodes(elems.add(node));
+    return this.includeAncestorNodes(elems.add(node));
   }
 
   getEdgeHighlight(edge: any, isHover: boolean) {
@@ -125,7 +125,7 @@ export class GraphHighlighter {
       const target = edge.target();
       elems = source.add(target).add(source.predecessors()).add(target.successors());
     }
-    return this.includeParentNodes(elems.add(edge));
+    return this.includeAncestorNodes(elems.add(edge));
   }
 
   getBoxHighlight(box: any, isHover: boolean) {
@@ -138,6 +138,6 @@ export class GraphHighlighter {
       const children = box.descendants();
       elems = children.add(children.predecessors()).add(children.successors());
     }
-    return this.includeParentNodes(elems);
+    return this.includeAncestorNodes(elems);
   }
 }
