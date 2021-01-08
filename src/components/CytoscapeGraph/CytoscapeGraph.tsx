@@ -72,6 +72,7 @@ export interface GraphNodeTapEvent {
   aggregateValue?: string;
   app: string;
   hasMissingSC: boolean;
+  isBox?: string;
   isInaccessible: boolean;
   isOutside: boolean;
   isServiceEntry: boolean;
@@ -178,6 +179,7 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
             selector + "[aggregate = '" + node.aggregate! + "'][aggregateValue = '" + node.aggregateValue! + "']";
           break;
         case NodeType.APP:
+        case NodeType.BOX: // we only support app box node graphs, treat like an app node
           selector = selector + "[app = '" + node.app + "']";
           if (node.version && node.version !== UNKNOWN) {
             selector = selector + "[version = '" + node.version + "']";
@@ -244,6 +246,7 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
       aggregateValue: target.data(CyNode.aggregateValue),
       app: target.data(CyNode.app),
       hasMissingSC: targetOrBoxChildren.every(t => t.data(CyNode.hasMissingSC)),
+      isBox: target.data(CyNode.isBox),
       isIdle: targetOrBoxChildren.every(t => t.data(CyNode.isIdle)),
       isInaccessible: target.data(CyNode.isInaccessible),
       isOutside: target.data(CyNode.isOutside),

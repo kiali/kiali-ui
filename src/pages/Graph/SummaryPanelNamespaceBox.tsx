@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Tab, Tooltip, TooltipPosition, Badge } from '@patternfly/react-core';
 import { style } from 'typestyle';
-import _ from 'lodash';
 import { RateTableGrpc, RateTableHttp } from '../../components/SummaryPanel/RateTable';
 import { RpsChart, TcpChart } from '../../components/SummaryPanel/RpsChart';
 import { SummaryPanelPropType, NodeType } from '../../types/Graph';

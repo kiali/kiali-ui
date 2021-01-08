@@ -21,7 +21,8 @@ import {
   NodeParamsType,
   NodeType,
   SummaryData,
-  UNKNOWN
+  UNKNOWN,
+  BoxByType
 } from '../../types/Graph';
 import { computePrometheusRateParams } from '../../services/Prometheus';
 import * as AlertUtils from '../../utils/AlertUtils';
@@ -517,7 +518,11 @@ export class GraphPage extends React.Component<GraphPageProps, GraphPageState> {
   };
 
   private handleDoubleTap = (event: GraphNodeDoubleTapEvent) => {
-    if (event.isInaccessible || event.isServiceEntry) {
+    if (
+      event.isInaccessible ||
+      event.isServiceEntry ||
+      (event.nodeType === NodeType.BOX && event.isBox !== BoxByType.APP)
+    ) {
       return;
     }
 
@@ -558,6 +563,10 @@ export class GraphPage extends React.Component<GraphPageProps, GraphPageState> {
           sameNode = sameNode && node.app === event.app;
           sameNode = sameNode && node.version === event.version;
           break;
+        case NodeType.BOX:
+          // we only support node graphs on app boxes, so assume app box
+          sameNode = sameNode && node.app === event.app;
+          break;
         case NodeType.SERVICE:
           sameNode = sameNode && node.service === event.service;
           break;
@@ -580,7 +589,7 @@ export class GraphPage extends React.Component<GraphPageProps, GraphPageState> {
       return;
     }
 
-    // In case user didn't dounble-tapped the same node, or if graph is in
+    // In case user didn't double-tapped the same node, or if graph is in
     // full graph mode, redirect to the drilled-down graph of the chosen node.
     const urlParams: GraphUrlParams = {
       activeNamespaces: this.state.graphData.fetchParams.namespaces,

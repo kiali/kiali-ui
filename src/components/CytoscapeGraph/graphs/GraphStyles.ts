@@ -447,6 +447,8 @@ export class GraphStyles {
           return 'round-pentagon';
         case NodeType.APP:
           return 'round-rectangle';
+        case NodeType.BOX:
+          return 'round-rectangle';
         case NodeType.SERVICE:
           return nodeData.isServiceEntry ? 'round-tag' : 'round-triangle';
         case NodeType.UNKNOWN:
