@@ -61,6 +61,12 @@ interface State {
   showDurationControl: boolean;
 }
 
+// Direction to move a match rule in the list
+export enum MOVE_TYPE {
+  UP,
+  DOWN
+}
+
 // Style constants
 const containerPadding = style({ padding: '20px 20px 20px 20px' });
 const regex = /^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[-a-z0-9]([-a-z0-9]*[a-z0-9])?)*$/;
@@ -821,7 +827,7 @@ class ExperimentCreatePage extends React.Component<Props, State> {
           </GridItem>
           <GridItem span={12}>
             <Text component={TextVariants.a}>
-              Number of Match Rules : {this.state.experiment.trafficControl.match.http.length}
+              Number of Match Rules: {this.state.experiment.trafficControl.match.http.length}
               <Popover
                 position={'right'}
                 hideOnOutsideClick={true}
@@ -853,6 +859,7 @@ class ExperimentCreatePage extends React.Component<Props, State> {
               matches={this.state.experiment.trafficControl.match.http}
               onRemove={this.onRemoveFromList}
               onAdd={this.onAddToList}
+              onMoveMatchRule={this.onMoveMatchRule}
             />
           </GridItem>
         </Grid>
@@ -860,6 +867,7 @@ class ExperimentCreatePage extends React.Component<Props, State> {
     );
   }
 
+  // TODO: Type should be an enum
   onRemoveFromList = (type: string, index: number) => {
     this.setState(prevState => {
       if (type === 'Criteria') {
@@ -888,6 +896,24 @@ class ExperimentCreatePage extends React.Component<Props, State> {
         }
       };
     });
+  };
+
+  onMoveMatchRule = (index: number, move: MOVE_TYPE) => {
+    this.setState(
+      prevState => {
+        const sourceRules = prevState.experiment.trafficControl.match.http;
+        const sourceRule = sourceRules[index];
+        const targetIndex = move === MOVE_TYPE.UP ? index - 1 : index + 1;
+        const targetRule = sourceRules[targetIndex];
+        sourceRules[targetIndex] = sourceRule;
+        sourceRules[index] = targetRule;
+        return {
+          ...prevState
+        };
+      }
+      // TODO: Is this necessary?
+      // () => this.onRulesChange(this.isValid(this.state.experiment.trafficControl.match.http), this.state.experiment.trafficControl.match.http)
+    );
   };
 
   renderCriteria() {
