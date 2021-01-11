@@ -93,13 +93,12 @@ export const runLayout = (cy: Cy.Core, layout: Layout) => {
 
   const layoutOptions = LayoutDictionary.getLayout(layout);
   if (cy.nodes('$node > node').length > 0) {
-    // if there is any parent node, run the group-compound-layout
+    // if there is any parent (i.e. box) node, run the box-layout
     cy.layout({
       ...layoutOptions,
-      name: 'group-compound-layout',
-      realLayout: layout.name,
-      // Currently we do not support non discrete layouts for the compounds, but this can be supported if needed.
-      compoundLayoutOptions: LayoutDictionary.getLayout(DagreGraph.getLayout())
+      name: 'box-layout',
+      appBoxLayout: LayoutDictionary.getLayout(DagreGraph.getLayout()),
+      defaultLayout: layout
     }).run();
   } else {
     cy.layout(layoutOptions).run();
