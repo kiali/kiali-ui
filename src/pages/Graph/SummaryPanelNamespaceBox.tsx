@@ -114,6 +114,7 @@ export default class SummaryPanelNamespaceBox extends React.Component<
     const namespaceBox = this.props.data.summaryTarget;
     const boxed = namespaceBox.descendants();
     const namespace = namespaceBox.data(CyNode.namespace);
+    const cluster = namespaceBox.data(CyNode.cluster);
 
     const numSvc = boxed.filter(`node[nodeType = "${NodeType.SERVICE}"]`).size();
     const numWorkloads = boxed.filter(`node[nodeType = "${NodeType.WORKLOAD}"]`).size();
@@ -121,12 +122,16 @@ export default class SummaryPanelNamespaceBox extends React.Component<
     const numEdges = boxed.edges().size();
     // when getting accumulated traffic rates don't count requests from injected service nodes
     const nonServiceEdges = boxed.filter(`node[nodeType != "${NodeType.SERVICE}"][!isBox]`).edgesTo('*');
-    const totalRateGrpc = getAccumulatedTrafficRateGrpc(nonServiceEdges);
-    const totalRateHttp = getAccumulatedTrafficRateHttp(nonServiceEdges);
-    const incomingEdges = namespaceBox.cy().nodes(`[${CyNode.namespace} != "${namespace}"]`).edgesTo(boxed);
+    const incomingEdges = namespaceBox
+      .cy()
+      .nodes(`[${CyNode.namespace} != "${namespace}"], [${CyNode.cluster} != "${cluster}"], [?${CyNode.isRoot}]`)
+      .edgesTo(boxed);
+    const effectiveRequestsEdges = nonServiceEdges.union(incomingEdges);
+    const totalRateGrpc = getAccumulatedTrafficRateGrpc(effectiveRequestsEdges);
+    const totalRateHttp = getAccumulatedTrafficRateHttp(effectiveRequestsEdges);
     const incomingRateGrpc = getAccumulatedTrafficRateGrpc(incomingEdges);
     const incomingRateHttp = getAccumulatedTrafficRateHttp(incomingEdges);
-    const outgoingEdges = boxed.edgesTo(`[${CyNode.namespace} != "${namespace}"]`);
+    const outgoingEdges = boxed.edgesTo(`[${CyNode.namespace} != "${namespace}"], [${CyNode.cluster} != "${cluster}"]`);
     const outgoingRateGrpc = getAccumulatedTrafficRateGrpc(outgoingEdges);
     const outgoingRateHttp = getAccumulatedTrafficRateHttp(outgoingEdges);
 

@@ -54,9 +54,13 @@ export default class SummaryPanelClusterBox extends React.Component<SummaryPanel
     const numEdges = boxed.edges().size();
     // when getting accumulated traffic rates don't count requests from injected service nodes
     const nonServiceEdges = boxed.filter(`node[nodeType != "${NodeType.SERVICE}"][!isBox]`).edgesTo('*');
-    const totalRateGrpc = getAccumulatedTrafficRateGrpc(nonServiceEdges);
-    const totalRateHttp = getAccumulatedTrafficRateHttp(nonServiceEdges);
-    const incomingEdges = clusterBox.cy().nodes(`[${CyNode.cluster} != "${cluster}"]`).edgesTo(boxed);
+    const incomingEdges = clusterBox
+      .cy()
+      .nodes(`[${CyNode.cluster} != "${cluster}"], [?${CyNode.isRoot}]`)
+      .edgesTo(boxed);
+    const effectiveRequestsEdges = nonServiceEdges.union(incomingEdges);
+    const totalRateGrpc = getAccumulatedTrafficRateGrpc(effectiveRequestsEdges);
+    const totalRateHttp = getAccumulatedTrafficRateHttp(effectiveRequestsEdges);
     const incomingRateGrpc = getAccumulatedTrafficRateGrpc(incomingEdges);
     const incomingRateHttp = getAccumulatedTrafficRateHttp(incomingEdges);
     const outgoingEdges = boxed.edgesTo(`[${CyNode.cluster} != "${cluster}"]`);
