@@ -147,14 +147,9 @@ export default class BoxLayout {
         const boxedElements = boxedNodes.add(boxedNodes.edgesTo(boxedNodes));
         const boxLayout = boxedElements.layout(boxLayoutOptions);
 
-        boxLayout.on('layoutstart layoutready layoutstop', _evt => {
-          // Avoid propagating any local layout events up to cy, this would yield a global operation before the nodes are ready.
-          return false;
-        });
-
-        // synch layouts (dagre) stop before run() returns, async layouts (cose,cola) don't, so
-        // wait for the async layouts to stop before continuing.
-        this.waitForLayout(boxLayout);
+        // discrete layouts (dagre) stop before run() returns, continuous layouts (cose,cola) don't,
+        // force discrete behavior because we need each box to layout before continuing.
+        this.runDiscrete(boxLayout);
 
         // see https://github.com/cytoscape/cytoscape.js/issues/2402
         const boundingBox = boxNode.boundingBox();
@@ -253,10 +248,19 @@ export default class BoxLayout {
     layout.run();
   }
 
-  async waitForLayout(layout) {
+  async runDiscrete(layout) {
+    layout.on('layoutstart layoutready layoutstop', _evt => {
+      // Avoid propagating any local layout events up to cy, this would yield a global operation before the nodes are ready.
+      return false;
+    });
+
+    await this.asyncRun(layout);
+  }
+
+  async asyncRun(layout) {
     const promise = layout.promiseOn('layoutstop');
     layout.run();
-    await promise;
+    return promise;
   }
 
   getBoxNodes(boxByType: BoxByType) {
