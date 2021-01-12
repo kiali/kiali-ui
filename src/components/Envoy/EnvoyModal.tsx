@@ -230,7 +230,7 @@ class EnvoyDetailsModal extends React.Component<EnvoyDetailProps, EnvoyDetailSta
             </Toolbar>
           </StackItem>
           <StackItem>
-            <Card style={{ height: '400px' }}>
+            <Card style={{ height: '600px' }}>
               {this.isLoadingConfig() ? (
                 <Loading />
               ) : this.showEditor() ? (
@@ -238,7 +238,7 @@ class EnvoyDetailsModal extends React.Component<EnvoyDetailProps, EnvoyDetailSta
                   ref={this.aceEditorRef}
                   mode="yaml"
                   theme="eclipse"
-                  height={'400px'}
+                  height={'600px'}
                   width={'100%'}
                   className={'istio-ace-editor'}
                   wrapEnabled={true}

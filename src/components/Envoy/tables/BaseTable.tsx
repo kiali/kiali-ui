@@ -1,17 +1,17 @@
 import * as React from 'react';
 import { ICell, ISortBy, SortByDirection, Table, TableBody, TableHeader } from '@patternfly/react-table';
-import { ClusterTable } from './ClusterTable';
-import { RouteTable } from './RouteTable';
-import { ListenerTable } from './ListenerTable';
-import { ClusterSummaryTable } from './ClusterTable';
-import { ListenerSummaryTable } from './ListenerTable';
-import { RouteSummaryTable } from './RouteTable';
+import { ClusterSummaryTable, ClusterTable } from './ClusterTable';
+import { RouteSummaryTable, RouteTable } from './RouteTable';
+import { ListenerSummaryTable, ListenerTable } from './ListenerTable';
 import { EnvoyProxyDump } from '../../../types/IstioObjects';
+import { StatefulFilters } from '../../Filters/StatefulFilters';
+import { ActiveFiltersInfo, FilterType } from '../../../types/Filters';
 
 export interface SummaryTable {
   head: () => ICell[];
   rows: () => (string | number)[][];
   setSorting: (columnIndex: number, direction: string) => void;
+  availableFilters: () => FilterType[];
 }
 
 export function SummaryTableRenderer<T extends SummaryTable>() {
@@ -46,16 +46,19 @@ export function SummaryTableRenderer<T extends SummaryTable>() {
 
     render() {
       return (
-        <Table
-          aria-label="Sortable Table"
-          cells={this.props.writer.head()}
-          rows={this.props.writer.rows()}
-          sortBy={this.state.sortBy}
-          onSort={this.onSort}
-        >
-          <TableHeader />
-          <TableBody />
-        </Table>
+        <>
+          <StatefulFilters initialFilters={this.props.writer.availableFilters()} onFilterChange={(active: ActiveFiltersInfo): void => {console.log(active);}} />
+          <Table
+            aria-label="Sortable Table"
+            cells={this.props.writer.head()}
+            rows={this.props.writer.rows()}
+            sortBy={this.state.sortBy}
+            onSort={this.onSort}
+          >
+            <TableHeader />
+            <TableBody />
+          </Table>
+        </>
       );
     }
   };

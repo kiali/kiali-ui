@@ -1,6 +1,7 @@
 import { SummaryTable, SummaryTableRenderer } from './BaseTable';
 import { ICell, sortable } from '@patternfly/react-table';
 import { RouteSummary } from '../../../types/IstioObjects';
+import { FILTER_ACTION_APPEND, FilterType, FilterTypes } from '../../../types/Filters';
 
 export class RouteTable implements SummaryTable {
   summaries: RouteSummary[];
@@ -26,6 +27,17 @@ export class RouteTable implements SummaryTable {
       { title: 'Virtual Service', transforms: [sortable] }
     ];
   }
+
+  availableFilters = (): FilterType[] => {
+    return [{
+      id: 'name',
+      title: 'Name',
+      placeholder: 'Name',
+      filterType: FilterTypes.text,
+      action: FILTER_ACTION_APPEND,
+      filterValues: [],
+    }];
+  };
 
   rows(): string[][] {
     return this.summaries

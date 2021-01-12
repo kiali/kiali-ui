@@ -1,6 +1,7 @@
 import { SummaryTable, SummaryTableRenderer } from './BaseTable';
 import { ICell, sortable } from '@patternfly/react-table';
 import { ListenerSummary } from '../../../types/IstioObjects';
+import { FILTER_ACTION_APPEND, FilterType, FilterTypes } from '../../../types/Filters';
 
 export class ListenerTable implements SummaryTable {
   summaries: ListenerSummary[];
@@ -18,14 +19,25 @@ export class ListenerTable implements SummaryTable {
     this.sortingIndex = columnIndex;
   };
 
-  head(): ICell[] {
+  head = (): ICell[] => {
     return [
       { title: 'Address', transforms: [sortable] },
       { title: 'Port', transforms: [sortable] },
       { title: 'Match', transforms: [sortable] },
       { title: 'Destination', transforms: [sortable] }
     ];
-  }
+  };
+
+  availableFilters = (): FilterType[] => {
+    return [{
+      id: 'address',
+      title: 'Address',
+      placeholder: 'Address',
+      filterType: FilterTypes.text,
+      action: FILTER_ACTION_APPEND,
+      filterValues: [],
+    }];
+  };
 
   rows(): (string | number)[][] {
     return this.summaries
