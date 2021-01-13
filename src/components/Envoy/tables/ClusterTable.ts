@@ -105,7 +105,11 @@ export class ClusterTable implements SummaryTable {
         }
         return activeFilters.filters.reduce((acc: boolean, filter: ActiveFilter) => {
           const row: number = filterToColumn[filter.id];
-          return acc && value[row].toString().includes(filter.value);
+          let match: boolean = true;
+          if(row !== undefined) {
+            match = value[row].toString().includes(filter.value);
+          }
+          return acc && match;
         }, true);
       })
       .sort((a: any[], b: any[]) => {

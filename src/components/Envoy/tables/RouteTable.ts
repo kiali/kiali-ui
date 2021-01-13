@@ -1,7 +1,13 @@
 import { SummaryTable, SummaryTableRenderer } from './BaseTable';
 import { ICell, ISortBy, sortable } from '@patternfly/react-table';
 import { RouteSummary } from '../../../types/IstioObjects';
-import { FILTER_ACTION_APPEND, FilterType, FilterTypes } from '../../../types/Filters';
+import { ActiveFilter, ActiveFiltersInfo, FILTER_ACTION_UPDATE, FilterType, FilterTypes } from '../../../types/Filters';
+import { FilterSelected } from '../../Filters/StatefulFilters';
+
+const filterToColumn = {
+  name: 0,
+  domains: 1
+};
 
 export class RouteTable implements SummaryTable {
   summaries: RouteSummary[];
@@ -42,7 +48,15 @@ export class RouteTable implements SummaryTable {
         title: 'Name',
         placeholder: 'Name',
         filterType: FilterTypes.text,
-        action: FILTER_ACTION_APPEND,
+        action: FILTER_ACTION_UPDATE,
+        filterValues: []
+      },
+      {
+        id: 'domains',
+        title: 'Domains',
+        placeholder: 'Domains',
+        filterType: FilterTypes.text,
+        action: FILTER_ACTION_UPDATE,
         filterValues: []
       }
     ];
@@ -52,6 +66,20 @@ export class RouteTable implements SummaryTable {
     return this.summaries
       .map((summary: RouteSummary) => {
         return [summary.name, summary.domains, summary.match, summary.virtual_service];
+      })
+      .filter((value: (string | number)[]) => {
+        const activeFilters: ActiveFiltersInfo = FilterSelected.getSelected();
+        if (activeFilters.filters.length === 0) {
+          return true;
+        }
+        return activeFilters.filters.reduce((acc: boolean, filter: ActiveFilter) => {
+          const row: number = filterToColumn[filter.id];
+          let match: boolean = true;
+          if(row !== undefined) {
+            match = value[row].toString().includes(filter.value);
+          }
+          return acc && match;
+        }, true);
       })
       .sort((a: string[], b: string[]) => {
         if (this.sortingDirection === 'asc') {

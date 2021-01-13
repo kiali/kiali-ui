@@ -4,8 +4,9 @@ import { ClusterSummaryTable, ClusterTable } from './ClusterTable';
 import { RouteSummaryTable, RouteTable } from './RouteTable';
 import { ListenerSummaryTable, ListenerTable } from './ListenerTable';
 import { EnvoyProxyDump } from '../../../types/IstioObjects';
-import { StatefulFilters } from '../../Filters/StatefulFilters';
+import { FilterSelected, StatefulFilters } from '../../Filters/StatefulFilters';
 import { ActiveFiltersInfo, FilterType } from '../../../types/Filters';
+import { setFiltersToURL } from '../../FilterList/FilterHelper';
 
 export interface SummaryTable {
   head: () => ICell[];
@@ -23,6 +24,11 @@ export function SummaryTableRenderer<T extends SummaryTable>() {
   }
 
   return class SummaryTable extends React.Component<SummaryTableProps<T>> {
+    componentWillUnmount() {
+      FilterSelected.resetFilters();
+      setFiltersToURL(this.props.writer.availableFilters(), {filters: [], op: 'and'})
+    }
+
     onSort = (_: React.MouseEvent, columnIndex: number, sortByDirection: SortByDirection) => {
       this.props.writer.setSorting(columnIndex, sortByDirection);
       this.props.onSort(columnIndex, sortByDirection);
