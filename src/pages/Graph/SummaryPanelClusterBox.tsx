@@ -51,19 +51,17 @@ export default class SummaryPanelClusterBox extends React.Component<SummaryPanel
     const numSvc = boxed.filter(`node[nodeType = "${NodeType.SERVICE}"]`).size();
     const numWorkloads = boxed.filter(`node[nodeType = "${NodeType.WORKLOAD}"]`).size();
     const { numApps, numVersions } = this.countApps(boxed);
-    const numEdges = boxed.edges().size();
-    // when getting accumulated traffic rates don't count requests from injected service nodes
-    const nonServiceEdges = boxed.filter(`node[nodeType != "${NodeType.SERVICE}"][!isBox]`).edgesTo('*');
-    const incomingEdges = clusterBox
-      .cy()
-      .nodes(`[${CyNode.cluster} != "${cluster}"], [?${CyNode.isRoot}]`)
-      .edgesTo(boxed);
-    const effectiveRequestsEdges = nonServiceEdges.union(incomingEdges);
-    const totalRateGrpc = getAccumulatedTrafficRateGrpc(effectiveRequestsEdges);
-    const totalRateHttp = getAccumulatedTrafficRateHttp(effectiveRequestsEdges);
+    const numEdges = boxed.connectedEdges().size();
+    // incoming edges are from a different cluster
+    const incomingEdges = clusterBox.cy().nodes(`[${CyNode.cluster} != "${cluster}"]`).edgesTo(boxed);
+    // outgoing edges are to a different cluster
+    const outgoingEdges = boxed.edgesTo(`[${CyNode.cluster} != "${cluster}"]`);
+    // total edges are incoming + edges from boxed workload/app/root nodes (i.e. not injected service nodes or box nodes)
+    const totalEdges = incomingEdges.add(boxed.filter(`[?${CyNode.workload}],[?${CyNode.isRoot}]`).edgesTo('*'));
+    const totalRateGrpc = getAccumulatedTrafficRateGrpc(totalEdges);
+    const totalRateHttp = getAccumulatedTrafficRateHttp(totalEdges);
     const incomingRateGrpc = getAccumulatedTrafficRateGrpc(incomingEdges);
     const incomingRateHttp = getAccumulatedTrafficRateHttp(incomingEdges);
-    const outgoingEdges = boxed.edgesTo(`[${CyNode.cluster} != "${cluster}"]`);
     const outgoingRateGrpc = getAccumulatedTrafficRateGrpc(outgoingEdges);
     const outgoingRateHttp = getAccumulatedTrafficRateHttp(outgoingEdges);
     return (

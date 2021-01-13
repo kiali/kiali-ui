@@ -119,19 +119,20 @@ export default class SummaryPanelNamespaceBox extends React.Component<
     const numSvc = boxed.filter(`node[nodeType = "${NodeType.SERVICE}"]`).size();
     const numWorkloads = boxed.filter(`node[nodeType = "${NodeType.WORKLOAD}"]`).size();
     const { numApps, numVersions } = this.countApps(boxed);
-    const numEdges = boxed.edges().size();
-    // when getting accumulated traffic rates don't count requests from injected service nodes
-    const nonServiceEdges = boxed.filter(`node[nodeType != "${NodeType.SERVICE}"][!isBox]`).edgesTo('*');
+    const numEdges = boxed.connectedEdges().size();
+    // incoming edges are from a different namespace or a different cluster
     const incomingEdges = namespaceBox
       .cy()
-      .nodes(`[${CyNode.namespace} != "${namespace}"], [${CyNode.cluster} != "${cluster}"], [?${CyNode.isRoot}]`)
+      .nodes(`[${CyNode.namespace} != "${namespace}"],[${CyNode.cluster} != "${cluster}"]`)
       .edgesTo(boxed);
-    const effectiveRequestsEdges = nonServiceEdges.union(incomingEdges);
-    const totalRateGrpc = getAccumulatedTrafficRateGrpc(effectiveRequestsEdges);
-    const totalRateHttp = getAccumulatedTrafficRateHttp(effectiveRequestsEdges);
+    // outgoing edges are to a different namespace or a different cluster
+    const outgoingEdges = boxed.edgesTo(`[${CyNode.namespace} != "${namespace}"],[${CyNode.cluster} != "${cluster}"]`);
+    // total edges are incoming + edges from boxed workload/app/root nodes (i.e. not injected service nodes or box nodes)
+    const totalEdges = incomingEdges.add(boxed.filter(`[?${CyNode.workload}],[?${CyNode.isRoot}]`).edgesTo('*'));
+    const totalRateGrpc = getAccumulatedTrafficRateGrpc(totalEdges);
+    const totalRateHttp = getAccumulatedTrafficRateHttp(totalEdges);
     const incomingRateGrpc = getAccumulatedTrafficRateGrpc(incomingEdges);
     const incomingRateHttp = getAccumulatedTrafficRateHttp(incomingEdges);
-    const outgoingEdges = boxed.edgesTo(`[${CyNode.namespace} != "${namespace}"], [${CyNode.cluster} != "${cluster}"]`);
     const outgoingRateGrpc = getAccumulatedTrafficRateGrpc(outgoingEdges);
     const outgoingRateHttp = getAccumulatedTrafficRateHttp(outgoingEdges);
 
