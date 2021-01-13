@@ -33,6 +33,8 @@ import { JaegerTrace } from 'types/JaegerInfo';
 import { showTrace, hideTrace } from './CytoscapeTrace';
 
 type CytoscapeGraphProps = {
+  boxByCluster: boolean;
+  boxByNamespace: boolean;
   compressOnHide: boolean;
   containerClassName?: string;
   contextMenuEdgeComponent?: EdgeContextMenuType;
@@ -555,6 +557,8 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
 
     const globalScratchData: CytoscapeGlobalScratchData = {
       activeNamespaces: this.props.graphData.fetchParams.namespaces,
+      boxByCluster: this.props.boxByCluster,
+      boxByNamespace: this.props.boxByNamespace,
       edgeLabelMode: this.props.edgeLabelMode,
       graphType: this.props.graphData.fetchParams.graphType,
       mtlsEnabled: this.props.isMTLSEnabled,

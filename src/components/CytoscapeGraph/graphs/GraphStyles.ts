@@ -195,11 +195,11 @@ export class GraphStyles {
     const label: string[] = [];
     if (
       (isMultiNamespace || isOutside) &&
+      !cyGlobal.boxByNamespace &&
       namespace !== UNKNOWN &&
       nodeType !== NodeType.UNKNOWN &&
       isBox !== BoxByType.CLUSTER &&
-      isBox !== BoxByType.NAMESPACE &&
-      (!isBoxed || isBoxedBy !== BoxByType.APP)
+      isBox !== BoxByType.NAMESPACE
     ) {
       label.push(`(${namespace})`);
     }
