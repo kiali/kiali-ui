@@ -29,27 +29,6 @@ export class ListenerTable implements SummaryTable {
     this.sortingDirection = sortBy.direction || 'asc';
   }
 
-  sortBy = (): ISortBy => {
-    return {
-      index: this.sortingIndex,
-      direction: this.sortingDirection
-    };
-  };
-
-  setSorting = (columnIndex: number, direction: 'asc' | 'desc') => {
-    this.sortingDirection = direction;
-    this.sortingIndex = columnIndex;
-  };
-
-  head = (): ICell[] => {
-    return [
-      { title: 'Address', transforms: [sortable] },
-      { title: 'Port', transforms: [sortable] },
-      { title: 'Match', transforms: [sortable] },
-      { title: 'Destination', transforms: [sortable] }
-    ];
-  };
-
   availableFilters = (): FilterType[] => {
     return [
       {
@@ -87,6 +66,29 @@ export class ListenerTable implements SummaryTable {
     ];
   };
 
+  head = (): ICell[] => {
+    return [
+      { title: 'Address', transforms: [sortable] },
+      { title: 'Port', transforms: [sortable] },
+      { title: 'Match', transforms: [sortable] },
+      { title: 'Destination', transforms: [sortable] }
+    ];
+  };
+
+  resource = (): string => 'listeners';
+
+  setSorting = (columnIndex: number, direction: 'asc' | 'desc') => {
+    this.sortingDirection = direction;
+    this.sortingIndex = columnIndex;
+  };
+
+  sortBy = (): ISortBy => {
+    return {
+      index: this.sortingIndex,
+      direction: this.sortingDirection
+    };
+  };
+
   rows(): (string | number)[][] {
     return this.summaries
       .map((summary: ListenerSummary) => {
@@ -100,7 +102,7 @@ export class ListenerTable implements SummaryTable {
         return activeFilters.filters.reduce((acc: boolean, filter: ActiveFilter) => {
           const row: number = filterToColumn[filter.id];
           let match: boolean = true;
-          if(row !== undefined) {
+          if (row !== undefined) {
             match = value[row].toString().includes(filter.value);
           }
           return acc && match;

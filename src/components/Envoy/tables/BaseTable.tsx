@@ -5,12 +5,14 @@ import { RouteSummaryTable, RouteTable } from './RouteTable';
 import { ListenerSummaryTable, ListenerTable } from './ListenerTable';
 import { EnvoyProxyDump } from '../../../types/IstioObjects';
 import { FilterSelected, StatefulFilters } from '../../Filters/StatefulFilters';
-import { ActiveFiltersInfo, FilterType } from '../../../types/Filters';
+import { FilterType } from '../../../types/Filters';
 import { setFiltersToURL } from '../../FilterList/FilterHelper';
+import { ResourceSorts } from '../EnvoyModal';
 
 export interface SummaryTable {
   head: () => ICell[];
   rows: () => (string | number)[][];
+  resource: () => string;
   sortBy: () => ISortBy;
   setSorting: (columnIndex: number, direction: 'asc' | 'desc') => void;
   availableFilters: () => FilterType[];
@@ -20,29 +22,24 @@ export function SummaryTableRenderer<T extends SummaryTable>() {
   interface SummaryTableProps<T> {
     writer: T;
     sortBy: ISortBy;
-    onSort: (columnIndex: number, sortByDirection: SortByDirection) => void;
+    onSort: (resource: string, columnIndex: number, sortByDirection: SortByDirection) => void;
   }
 
   return class SummaryTable extends React.Component<SummaryTableProps<T>> {
     componentWillUnmount() {
       FilterSelected.resetFilters();
-      setFiltersToURL(this.props.writer.availableFilters(), {filters: [], op: 'and'})
+      setFiltersToURL(this.props.writer.availableFilters(), { filters: [], op: 'and' });
     }
 
     onSort = (_: React.MouseEvent, columnIndex: number, sortByDirection: SortByDirection) => {
       this.props.writer.setSorting(columnIndex, sortByDirection);
-      this.props.onSort(columnIndex, sortByDirection);
+      this.props.onSort(this.props.writer.resource(), columnIndex, sortByDirection);
     };
 
     render() {
       return (
         <>
-          <StatefulFilters
-            initialFilters={this.props.writer.availableFilters()}
-            onFilterChange={(active: ActiveFiltersInfo): void => {
-              console.log(active);
-            }}
-          />
+          <StatefulFilters initialFilters={this.props.writer.availableFilters()} onFilterChange={() => void {}} />
           <Table
             aria-label="Sortable Table"
             cells={this.props.writer.head()}
@@ -59,21 +56,21 @@ export function SummaryTableRenderer<T extends SummaryTable>() {
   };
 }
 
-export const SummaryTableBuilder = (resource: string, config: EnvoyProxyDump, sortBy: ISortBy) => {
+export const SummaryTableBuilder = (resource: string, config: EnvoyProxyDump, sortBy: ResourceSorts) => {
   let writerComp, writerProps;
 
   switch (resource) {
     case 'clusters':
       writerComp = ClusterSummaryTable;
-      writerProps = new ClusterTable(config.clusters || [], sortBy);
+      writerProps = new ClusterTable(config.clusters || [], sortBy['clusters']);
       break;
     case 'listeners':
       writerComp = ListenerSummaryTable;
-      writerProps = new ListenerTable(config.listeners || [], sortBy);
+      writerProps = new ListenerTable(config.listeners || [], sortBy['listeners']);
       break;
     case 'routes':
       writerComp = RouteSummaryTable;
-      writerProps = new RouteTable(config.routes || [], sortBy);
+      writerProps = new RouteTable(config.routes || [], sortBy['routes']);
       break;
   }
   return [writerComp, writerProps];

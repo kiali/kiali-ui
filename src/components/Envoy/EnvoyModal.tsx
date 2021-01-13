@@ -54,8 +54,10 @@ type EnvoyDetailState = {
   fetch: boolean;
   pod: Pod;
   resource: string;
-  tableSortBy: ISortBy;
+  tableSortBy: ResourceSorts;
 };
+
+export type ResourceSorts = { [resource: string]: ISortBy };
 
 export const Loading = () => (
   <EmptyState variant={EmptyStateVariant.full}>
@@ -78,8 +80,18 @@ class EnvoyDetailsModal extends React.Component<EnvoyDetailProps, EnvoyDetailSta
       pod: this.sortedPods()[0],
       resource: 'all',
       tableSortBy: {
-        index: 0,
-        direction: 'asc'
+        clusters: {
+          index: 0,
+          direction: 'asc'
+        },
+        listeners: {
+          index: 0,
+          direction: 'asc'
+        },
+        routes: {
+          index: 0,
+          direction: 'asc'
+        }
       }
     };
   }
@@ -122,13 +134,13 @@ class EnvoyDetailsModal extends React.Component<EnvoyDetailProps, EnvoyDetailSta
     }
   };
 
-  onSort = (index: number, direction: SortByDirection) => {
-    if (this.state.tableSortBy.index !== index || this.state.tableSortBy.direction !== direction) {
+  onSort = (tab: string, index: number, direction: SortByDirection) => {
+    if (this.state.tableSortBy[tab].index !== index || this.state.tableSortBy[tab].direction !== direction) {
+      let tableSortBy = this.state.tableSortBy;
+      tableSortBy[tab].index = index;
+      tableSortBy[tab].direction = direction;
       this.setState({
-        tableSortBy: {
-          index: index,
-          direction: direction
-        }
+        tableSortBy: tableSortBy
       });
     }
   };
@@ -264,7 +276,11 @@ class EnvoyDetailsModal extends React.Component<EnvoyDetailProps, EnvoyDetailSta
                   value={this.editorContent()}
                 />
               ) : (
-                <SummaryWriterComp writer={summaryWriter} sortBy={this.state.tableSortBy} onSort={this.onSort} />
+                <SummaryWriterComp
+                  writer={summaryWriter}
+                  sortBy={this.state.tableSortBy[this.state.resource]}
+                  onSort={this.onSort}
+                />
               )}
             </Card>
           </StackItem>

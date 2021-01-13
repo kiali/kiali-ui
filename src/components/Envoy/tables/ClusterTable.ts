@@ -22,29 +22,6 @@ export class ClusterTable implements SummaryTable {
     this.sortingDirection = sortBy.direction || SortByDirection.asc;
   }
 
-  sortBy = (): ISortBy => {
-    return {
-      index: this.sortingIndex,
-      direction: this.sortingDirection || 'asc'
-    };
-  };
-
-  setSorting = (columnIndex: number, direction: 'asc' | 'desc') => {
-    this.sortingIndex = columnIndex;
-    this.sortingDirection = direction;
-  };
-
-  head = (): ICell[] => {
-    return [
-      { title: 'Service FQDN', transforms: [sortable] },
-      { title: 'Port', transforms: [sortable] },
-      { title: 'Subset', transforms: [sortable] },
-      { title: 'Direction', transforms: [sortable] },
-      { title: 'Type', transforms: [sortable] },
-      { title: 'DestinationRule', transforms: [sortable] }
-    ];
-  };
-
   availableFilters = (): FilterType[] => {
     return [
       {
@@ -86,6 +63,31 @@ export class ClusterTable implements SummaryTable {
     ];
   };
 
+  head = (): ICell[] => {
+    return [
+      { title: 'Service FQDN', transforms: [sortable] },
+      { title: 'Port', transforms: [sortable] },
+      { title: 'Subset', transforms: [sortable] },
+      { title: 'Direction', transforms: [sortable] },
+      { title: 'Type', transforms: [sortable] },
+      { title: 'DestinationRule', transforms: [sortable] }
+    ];
+  };
+
+  resource = (): string => 'clusters';
+
+  setSorting = (columnIndex: number, direction: 'asc' | 'desc') => {
+    this.sortingIndex = columnIndex;
+    this.sortingDirection = direction;
+  };
+
+  sortBy = (): ISortBy => {
+    return {
+      index: this.sortingIndex,
+      direction: this.sortingDirection || 'asc'
+    };
+  };
+
   rows(): (string | number)[][] {
     return this.summaries
       .map((summary: ClusterSummary): (string | number)[] => {
@@ -106,7 +108,7 @@ export class ClusterTable implements SummaryTable {
         return activeFilters.filters.reduce((acc: boolean, filter: ActiveFilter) => {
           const row: number = filterToColumn[filter.id];
           let match: boolean = true;
-          if(row !== undefined) {
+          if (row !== undefined) {
             match = value[row].toString().includes(filter.value);
           }
           return acc && match;

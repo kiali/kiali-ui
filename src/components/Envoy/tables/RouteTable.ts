@@ -20,27 +20,6 @@ export class RouteTable implements SummaryTable {
     this.sortingDirection = sortBy.direction || 'asc';
   }
 
-  sortBy = (): ISortBy => {
-    return {
-      index: this.sortingIndex,
-      direction: this.sortingDirection
-    };
-  };
-
-  setSorting = (columnIndex: number, direction: 'asc' | 'desc') => {
-    this.sortingDirection = direction;
-    this.sortingIndex = columnIndex;
-  };
-
-  head(): ICell[] {
-    return [
-      { title: 'Name', transforms: [sortable] },
-      { title: 'Domains', transforms: [sortable] },
-      { title: 'Match', transforms: [sortable] },
-      { title: 'Virtual Service', transforms: [sortable] }
-    ];
-  }
-
   availableFilters = (): FilterType[] => {
     return [
       {
@@ -62,6 +41,29 @@ export class RouteTable implements SummaryTable {
     ];
   };
 
+  head(): ICell[] {
+    return [
+      { title: 'Name', transforms: [sortable] },
+      { title: 'Domains', transforms: [sortable] },
+      { title: 'Match', transforms: [sortable] },
+      { title: 'Virtual Service', transforms: [sortable] }
+    ];
+  }
+
+  resource = (): string => 'routes';
+
+  setSorting = (columnIndex: number, direction: 'asc' | 'desc') => {
+    this.sortingDirection = direction;
+    this.sortingIndex = columnIndex;
+  };
+
+  sortBy = (): ISortBy => {
+    return {
+      index: this.sortingIndex,
+      direction: this.sortingDirection
+    };
+  };
+
   rows(): string[][] {
     return this.summaries
       .map((summary: RouteSummary) => {
@@ -75,7 +77,7 @@ export class RouteTable implements SummaryTable {
         return activeFilters.filters.reduce((acc: boolean, filter: ActiveFilter) => {
           const row: number = filterToColumn[filter.id];
           let match: boolean = true;
-          if(row !== undefined) {
+          if (row !== undefined) {
             match = value[row].toString().includes(filter.value);
           }
           return acc && match;
