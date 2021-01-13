@@ -1,30 +1,37 @@
 import { SummaryTable, SummaryTableRenderer } from './BaseTable';
-import { ICell, sortable } from '@patternfly/react-table';
+import { ICell, ISortBy, sortable, SortByDirection } from '@patternfly/react-table';
 import { ClusterSummary } from '../../../types/IstioObjects';
-import { ActiveFilter, ActiveFiltersInfo, FILTER_ACTION_APPEND, FilterType, FilterTypes } from '../../../types/Filters';
+import { ActiveFilter, ActiveFiltersInfo, FILTER_ACTION_UPDATE, FilterType, FilterTypes } from '../../../types/Filters';
 import { FilterSelected } from '../../Filters/StatefulFilters';
 
 const filterToColumn = {
-  'fqdn': 0,
-  'port': 1,
-  'subset': 2,
-  'direction': 3,
+  fqdn: 0,
+  port: 1,
+  subset: 2,
+  direction: 3
 };
 
 export class ClusterTable implements SummaryTable {
   summaries: ClusterSummary[];
   sortingIndex: number;
-  sortingDirection: string;
+  sortingDirection: 'asc' | 'desc';
 
-  constructor(summaries: ClusterSummary[]) {
+  constructor(summaries: ClusterSummary[], sortBy: ISortBy) {
     this.summaries = summaries;
-    this.sortingIndex = 0;
-    this.sortingDirection = 'asc';
+    this.sortingIndex = sortBy.index || 0;
+    this.sortingDirection = sortBy.direction || SortByDirection.asc;
   }
 
-  setSorting = (columnIndex: number, direction: string) => {
-    this.sortingDirection = direction;
+  sortBy = (): ISortBy => {
+    return {
+      index: this.sortingIndex,
+      direction: this.sortingDirection || 'asc'
+    };
+  };
+
+  setSorting = (columnIndex: number, direction: 'asc' | 'desc') => {
     this.sortingIndex = columnIndex;
+    this.sortingDirection = direction;
   };
 
   head = (): ICell[] => {
@@ -39,48 +46,49 @@ export class ClusterTable implements SummaryTable {
   };
 
   availableFilters = (): FilterType[] => {
-    return [{
+    return [
+      {
         id: 'fqdn',
         title: 'FQDN',
         placeholder: 'FQDN',
         filterType: FilterTypes.text,
-        action: FILTER_ACTION_APPEND,
-        filterValues: [],
+        action: FILTER_ACTION_UPDATE,
+        filterValues: []
       },
       {
         id: 'port',
         title: 'Port',
         placeholder: 'Port',
         filterType: FilterTypes.text,
-        action: FILTER_ACTION_APPEND,
-        filterValues: [],
+        action: FILTER_ACTION_UPDATE,
+        filterValues: []
       },
       {
         id: 'subset',
         title: 'Subset',
         placeholder: 'Subset',
         filterType: FilterTypes.text,
-        action: FILTER_ACTION_APPEND,
-        filterValues: [],
+        action: FILTER_ACTION_UPDATE,
+        filterValues: []
       },
       {
         id: 'direction',
         title: 'Direction',
         placeholder: 'Direction',
         filterType: FilterTypes.select,
-        action: FILTER_ACTION_APPEND,
+        action: FILTER_ACTION_UPDATE,
         filterValues: [
-          {id: "inbound", title: "Inbound"},
-          {id: "outbound", title: "Outbound"},
-          {id: "-", title: "-"},
-        ],
+          { id: 'inbound', title: 'inbound' },
+          { id: 'outbound', title: 'outbound' },
+          { id: '-', title: '-' }
+        ]
       }
     ];
   };
 
   rows(): (string | number)[][] {
     return this.summaries
-      .map((summary: ClusterSummary): (string|number)[] => {
+      .map((summary: ClusterSummary): (string | number)[] => {
         return [
           summary.service_fqdn,
           summary.port || '-',
@@ -90,15 +98,15 @@ export class ClusterTable implements SummaryTable {
           summary.destination_rule
         ];
       })
-      .filter((value: (string|number)[]) => {
+      .filter((value: (string | number)[]) => {
         const activeFilters: ActiveFiltersInfo = FilterSelected.getSelected();
-        if(activeFilters.filters.length === 0) {
+        if (activeFilters.filters.length === 0) {
           return true;
         }
-        return activeFilters.filters.some((filter: ActiveFilter) => {
+        return activeFilters.filters.reduce((acc: boolean, filter: ActiveFilter) => {
           const row: number = filterToColumn[filter.id];
-          return value[row].toString().includes(filter.value);
-        });
+          return acc && value[row].toString().includes(filter.value);
+        }, true);
       })
       .sort((a: any[], b: any[]) => {
         if (this.sortingDirection === 'asc') {

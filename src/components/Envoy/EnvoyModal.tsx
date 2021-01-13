@@ -27,6 +27,7 @@ import { style } from 'typestyle';
 import { SummaryTableBuilder } from './tables/BaseTable';
 import { defaultIconStyle, KialiIcon } from '../../config/KialiIcon';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
+import { ISortBy, SortByDirection } from '@patternfly/react-table';
 
 // Enables the search box for the ACEeditor
 require('ace-builds/src-noconflict/ext-searchbox');
@@ -53,6 +54,7 @@ type EnvoyDetailState = {
   fetch: boolean;
   pod: Pod;
   resource: string;
+  tableSortBy: ISortBy;
 };
 
 export const Loading = () => (
@@ -74,7 +76,11 @@ class EnvoyDetailsModal extends React.Component<EnvoyDetailProps, EnvoyDetailSta
       config: {},
       fetch: false,
       pod: this.sortedPods()[0],
-      resource: 'all'
+      resource: 'all',
+      tableSortBy: {
+        index: 0,
+        direction: 'asc'
+      }
     };
   }
 
@@ -112,6 +118,17 @@ class EnvoyDetailsModal extends React.Component<EnvoyDetailProps, EnvoyDetailSta
         config: {},
         fetch: true,
         resource: targetResource
+      });
+    }
+  };
+
+  onSort = (index: number, direction: SortByDirection) => {
+    if (this.state.tableSortBy.index !== index || this.state.tableSortBy.direction !== direction) {
+      this.setState({
+        tableSortBy: {
+          index: index,
+          direction: direction
+        }
       });
     }
   };
@@ -173,7 +190,7 @@ class EnvoyDetailsModal extends React.Component<EnvoyDetailProps, EnvoyDetailSta
   };
 
   render() {
-    const builder = SummaryTableBuilder(this.state.resource, this.state.config);
+    const builder = SummaryTableBuilder(this.state.resource, this.state.config, this.state.tableSortBy);
     const SummaryWriterComp = builder[0];
     const summaryWriter = builder[1];
 
@@ -247,7 +264,7 @@ class EnvoyDetailsModal extends React.Component<EnvoyDetailProps, EnvoyDetailSta
                   value={this.editorContent()}
                 />
               ) : (
-                <SummaryWriterComp writer={summaryWriter} />
+                <SummaryWriterComp writer={summaryWriter} sortBy={this.state.tableSortBy} onSort={this.onSort} />
               )}
             </Card>
           </StackItem>

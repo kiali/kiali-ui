@@ -1,20 +1,27 @@
 import { SummaryTable, SummaryTableRenderer } from './BaseTable';
-import { ICell, sortable } from '@patternfly/react-table';
+import { ICell, ISortBy, sortable } from '@patternfly/react-table';
 import { RouteSummary } from '../../../types/IstioObjects';
 import { FILTER_ACTION_APPEND, FilterType, FilterTypes } from '../../../types/Filters';
 
 export class RouteTable implements SummaryTable {
   summaries: RouteSummary[];
   sortingIndex: number;
-  sortingDirection: string;
+  sortingDirection: 'asc' | 'desc';
 
-  constructor(summaries: RouteSummary[]) {
+  constructor(summaries: RouteSummary[], sortBy: ISortBy) {
     this.summaries = summaries;
-    this.sortingIndex = 0;
-    this.sortingDirection = 'asc';
+    this.sortingIndex = sortBy.index || 0;
+    this.sortingDirection = sortBy.direction || 'asc';
   }
 
-  setSorting = (columnIndex: number, direction: string) => {
+  sortBy = (): ISortBy => {
+    return {
+      index: this.sortingIndex,
+      direction: this.sortingDirection
+    };
+  };
+
+  setSorting = (columnIndex: number, direction: 'asc' | 'desc') => {
     this.sortingDirection = direction;
     this.sortingIndex = columnIndex;
   };
@@ -29,14 +36,16 @@ export class RouteTable implements SummaryTable {
   }
 
   availableFilters = (): FilterType[] => {
-    return [{
-      id: 'name',
-      title: 'Name',
-      placeholder: 'Name',
-      filterType: FilterTypes.text,
-      action: FILTER_ACTION_APPEND,
-      filterValues: [],
-    }];
+    return [
+      {
+        id: 'name',
+        title: 'Name',
+        placeholder: 'Name',
+        filterType: FilterTypes.text,
+        action: FILTER_ACTION_APPEND,
+        filterValues: []
+      }
+    ];
   };
 
   rows(): string[][] {
