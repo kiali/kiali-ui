@@ -52,12 +52,13 @@ export default class SummaryPanelClusterBox extends React.Component<SummaryPanel
     const numWorkloads = boxed.filter(`node[nodeType = "${NodeType.WORKLOAD}"]`).size();
     const { numApps, numVersions } = this.countApps(boxed);
     const numEdges = boxed.connectedEdges().size();
-    // incoming edges are from a different cluster
-    const incomingEdges = clusterBox.cy().nodes(`[${CyNode.cluster} != "${cluster}"]`).edgesTo(boxed);
+    // incoming edges are from a different cluster, or from a local root node
+    let incomingEdges = clusterBox.cy().nodes(`[${CyNode.cluster} != "${cluster}"]`).edgesTo(boxed);
+    incomingEdges = incomingEdges.add(boxed.filter(`[?${CyNode.isRoot}]`).edgesTo('*'));
     // outgoing edges are to a different cluster
     const outgoingEdges = boxed.edgesTo(`[${CyNode.cluster} != "${cluster}"]`);
     // total edges are incoming + edges from boxed workload/app/root nodes (i.e. not injected service nodes or box nodes)
-    const totalEdges = incomingEdges.add(boxed.filter(`[?${CyNode.workload}],[?${CyNode.isRoot}]`).edgesTo('*'));
+    const totalEdges = incomingEdges.add(boxed.filter(`[?${CyNode.workload}]`).edgesTo('*'));
     const totalRateGrpc = getAccumulatedTrafficRateGrpc(totalEdges);
     const totalRateHttp = getAccumulatedTrafficRateHttp(totalEdges);
     const incomingRateGrpc = getAccumulatedTrafficRateGrpc(incomingEdges);

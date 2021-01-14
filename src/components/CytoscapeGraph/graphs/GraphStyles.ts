@@ -60,6 +60,7 @@ const NodeColorFillHoverFailure = '#ffe6e6';
 const NodeHeight = '25px';
 const NodeIconCB = icons.istio.circuitBreaker.className; // bolt
 const NodeIconMS = icons.istio.missingSidecar.className; // exclamation
+const NodeIconRoot = icons.istio.root.className; // alt-arrow-circle-right
 const NodeIconVS = icons.istio.virtualService.className; // code-branch
 const NodeTextColor = PfColors.Black;
 const NodeTextBackgroundColor = PfColors.White;
@@ -169,6 +170,9 @@ export class GraphStyles {
     }
 
     let badges = '';
+    if (data.isRoot) {
+      badges = `<span class="${NodeIconRoot} ${badgeStyle}"></span> ${badges}`;
+    }
     if (cyGlobal.showMissingSidecars && data.hasMissingSC) {
       badges = `<span class="${NodeIconMS} ${badgeStyle}"></span> ${badges}`;
     }
