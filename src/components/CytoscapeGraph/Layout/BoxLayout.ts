@@ -188,7 +188,6 @@ export default class BoxLayout {
 
       // (3.c) Add and position the children nodes according to the layout
       allBoxNodes.each(boxNode => {
-        // (4.b) Layout the children using our compound layout.
         const parentPosition = boxNode.scratch(PARENT_POSITION_KEY);
         boxNode.children().each(child => {
           const relativePosition = child.scratch(RELATIVE_POSITION_KEY);
