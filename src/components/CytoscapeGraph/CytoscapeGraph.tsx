@@ -493,7 +493,6 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
       if (this.props.onReady) {
         this.props.onReady(evt.cy);
       }
-      this.processGraphUpdate(cy, true);
     });
 
     cy.on('destroy', (_evt: Cy.EventObject) => {
