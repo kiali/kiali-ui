@@ -31,7 +31,7 @@ const showSpanSubtrace = (cy: Cy.Core, graphType: GraphType, span: Span) => {
     // In service graph type, parent can be a Service or a Workload (e.g. when it initiates the transaction)
     const sourceAppNs = searchParentApp(span);
     if (sourceAppNs) {
-      let selector = `node[!${CyNode.isGroup}][${CyNode.nodeType}="${NodeType.SERVICE}"][${CyNode.app}="${sourceAppNs.app}"][${CyNode.namespace}="${sourceAppNs.namespace}"]`;
+      let selector = `node[!${CyNode.isBox}][${CyNode.nodeType}="${NodeType.SERVICE}"][${CyNode.app}="${sourceAppNs.app}"][${CyNode.namespace}="${sourceAppNs.namespace}"]`;
       let parent = cy.elements(selector);
       if (!parent || parent.length === 0) {
         // Try workload
