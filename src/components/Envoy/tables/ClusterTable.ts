@@ -57,7 +57,6 @@ export class ClusterTable implements SummaryTable {
         filterValues: [
           { id: 'inbound', title: 'inbound' },
           { id: 'outbound', title: 'outbound' },
-          { id: '-', title: '-' }
         ]
       }
     ];
