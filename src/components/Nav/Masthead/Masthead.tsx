@@ -31,7 +31,7 @@ class Masthead extends React.Component {
                 <Tooltip
                   entryDelay={0}
                   position="bottom"
-                  content={<div>Kiali is observing "{serverConfig.clusterInfo.name}" cluster</div>}
+                  content={<div>Kiali home cluster: {serverConfig.clusterInfo.name}</div>}
                 >
                   <Label>
                     <ClusterIcon /> {serverConfig.clusterInfo.name}
