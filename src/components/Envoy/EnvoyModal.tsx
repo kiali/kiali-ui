@@ -101,10 +101,11 @@ class EnvoyDetailsModal extends React.Component<EnvoyDetailProps, EnvoyDetailSta
   }
 
   componentDidUpdate(_prevProps: EnvoyDetailProps, prevState: EnvoyDetailState) {
-    if(this.state.pod.name !== prevState.pod.name || this.state.resource !== prevState.resource) {
-      if (this.state.fetch) {
-        this.fetchContent();
-      }
+    if (
+      this.state.fetch &&
+      (this.state.pod.name !== prevState.pod.name || this.state.resource !== prevState.resource)
+    ) {
+      this.fetchContent();
     }
   }
 
