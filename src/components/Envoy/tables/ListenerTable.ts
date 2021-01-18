@@ -1,15 +1,7 @@
-import { SummaryTable, SummaryTableRenderer } from './BaseTable';
+import { defaultFilter, SummaryTable, SummaryTableRenderer } from './BaseTable';
 import { ICell, ISortBy, sortable } from '@patternfly/react-table';
 import { ListenerSummary } from '../../../types/IstioObjects';
-import {
-  ActiveFilter,
-  ActiveFiltersInfo,
-  FILTER_ACTION_APPEND,
-  FILTER_ACTION_UPDATE,
-  FilterType,
-  FilterTypes
-} from '../../../types/Filters';
-import { FilterSelected } from '../../Filters/StatefulFilters';
+import { FILTER_ACTION_APPEND, FilterType, FilterTypes } from '../../../types/Filters';
 
 const filterToColumn = {
   address: 0,
@@ -36,7 +28,7 @@ export class ListenerTable implements SummaryTable {
         title: 'Address',
         placeholder: 'Address',
         filterType: FilterTypes.text,
-        action: FILTER_ACTION_UPDATE,
+        action: FILTER_ACTION_APPEND,
         filterValues: []
       },
       {
@@ -44,7 +36,7 @@ export class ListenerTable implements SummaryTable {
         title: 'Port',
         placeholder: 'Port',
         filterType: FilterTypes.text,
-        action: FILTER_ACTION_UPDATE,
+        action: FILTER_ACTION_APPEND,
         filterValues: []
       },
       {
@@ -95,18 +87,7 @@ export class ListenerTable implements SummaryTable {
         return [summary.address, summary.port, summary.match, summary.destination];
       })
       .filter((value: (string | number)[]) => {
-        const activeFilters: ActiveFiltersInfo = FilterSelected.getSelected();
-        if (activeFilters.filters.length === 0) {
-          return true;
-        }
-        return activeFilters.filters.reduce((acc: boolean, filter: ActiveFilter) => {
-          const row: number = filterToColumn[filter.id];
-          let match: boolean = true;
-          if (row !== undefined) {
-            match = value[row].toString().includes(filter.value);
-          }
-          return acc && match;
-        }, true);
+        return defaultFilter(value, filterToColumn);
       })
       .sort((a: (string | number)[], b: (string | number)[]) => {
         if (this.sortingDirection === 'asc') {

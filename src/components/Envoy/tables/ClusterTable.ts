@@ -1,8 +1,7 @@
-import { SummaryTable, SummaryTableRenderer } from './BaseTable';
+import { defaultFilter, SummaryTable, SummaryTableRenderer } from './BaseTable';
 import { ICell, ISortBy, sortable, SortByDirection } from '@patternfly/react-table';
 import { ClusterSummary } from '../../../types/IstioObjects';
-import { ActiveFilter, ActiveFiltersInfo, FILTER_ACTION_UPDATE, FilterType, FilterTypes } from '../../../types/Filters';
-import { FilterSelected } from '../../Filters/StatefulFilters';
+import { FILTER_ACTION_APPEND, FilterType, FilterTypes } from '../../../types/Filters';
 
 const filterToColumn = {
   fqdn: 0,
@@ -29,7 +28,7 @@ export class ClusterTable implements SummaryTable {
         title: 'FQDN',
         placeholder: 'FQDN',
         filterType: FilterTypes.text,
-        action: FILTER_ACTION_UPDATE,
+        action: FILTER_ACTION_APPEND,
         filterValues: []
       },
       {
@@ -37,7 +36,7 @@ export class ClusterTable implements SummaryTable {
         title: 'Port',
         placeholder: 'Port',
         filterType: FilterTypes.text,
-        action: FILTER_ACTION_UPDATE,
+        action: FILTER_ACTION_APPEND,
         filterValues: []
       },
       {
@@ -45,7 +44,7 @@ export class ClusterTable implements SummaryTable {
         title: 'Subset',
         placeholder: 'Subset',
         filterType: FilterTypes.text,
-        action: FILTER_ACTION_UPDATE,
+        action: FILTER_ACTION_APPEND,
         filterValues: []
       },
       {
@@ -53,7 +52,7 @@ export class ClusterTable implements SummaryTable {
         title: 'Direction',
         placeholder: 'Direction',
         filterType: FilterTypes.select,
-        action: FILTER_ACTION_UPDATE,
+        action: FILTER_ACTION_APPEND,
         filterValues: [
           { id: 'inbound', title: 'inbound' },
           { id: 'outbound', title: 'outbound' }
@@ -100,18 +99,7 @@ export class ClusterTable implements SummaryTable {
         ];
       })
       .filter((value: (string | number)[]) => {
-        const activeFilters: ActiveFiltersInfo = FilterSelected.getSelected();
-        if (activeFilters.filters.length === 0) {
-          return true;
-        }
-        return activeFilters.filters.reduce((acc: boolean, filter: ActiveFilter) => {
-          const row: number = filterToColumn[filter.id];
-          let match: boolean = true;
-          if (row !== undefined) {
-            match = value[row].toString().includes(filter.value);
-          }
-          return acc && match;
-        }, true);
+        return defaultFilter(value, filterToColumn);
       })
       .sort((a: any[], b: any[]) => {
         if (this.sortingDirection === 'asc') {

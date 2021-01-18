@@ -1,8 +1,7 @@
-import { SummaryTable, SummaryTableRenderer } from './BaseTable';
+import { defaultFilter, SummaryTable, SummaryTableRenderer } from './BaseTable';
 import { ICell, ISortBy, sortable } from '@patternfly/react-table';
 import { RouteSummary } from '../../../types/IstioObjects';
-import { ActiveFilter, ActiveFiltersInfo, FILTER_ACTION_UPDATE, FilterType, FilterTypes } from '../../../types/Filters';
-import { FilterSelected } from '../../Filters/StatefulFilters';
+import { FILTER_ACTION_APPEND, FilterType, FilterTypes } from '../../../types/Filters';
 
 const filterToColumn = {
   name: 0,
@@ -27,7 +26,7 @@ export class RouteTable implements SummaryTable {
         title: 'Name',
         placeholder: 'Name',
         filterType: FilterTypes.text,
-        action: FILTER_ACTION_UPDATE,
+        action: FILTER_ACTION_APPEND,
         filterValues: []
       },
       {
@@ -35,7 +34,7 @@ export class RouteTable implements SummaryTable {
         title: 'Domains',
         placeholder: 'Domains',
         filterType: FilterTypes.text,
-        action: FILTER_ACTION_UPDATE,
+        action: FILTER_ACTION_APPEND,
         filterValues: []
       }
     ];
@@ -70,18 +69,7 @@ export class RouteTable implements SummaryTable {
         return [summary.name, summary.domains, summary.match, summary.virtual_service];
       })
       .filter((value: (string | number)[]) => {
-        const activeFilters: ActiveFiltersInfo = FilterSelected.getSelected();
-        if (activeFilters.filters.length === 0) {
-          return true;
-        }
-        return activeFilters.filters.reduce((acc: boolean, filter: ActiveFilter) => {
-          const row: number = filterToColumn[filter.id];
-          let match: boolean = true;
-          if (row !== undefined) {
-            match = value[row].toString().includes(filter.value);
-          }
-          return acc && match;
-        }, true);
+        return defaultFilter(value, filterToColumn);
       })
       .sort((a: string[], b: string[]) => {
         if (this.sortingDirection === 'asc') {
