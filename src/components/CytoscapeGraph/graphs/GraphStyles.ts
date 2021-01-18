@@ -60,6 +60,7 @@ const NodeColorFillHoverFailure = '#ffe6e6';
 const NodeHeight = '25px';
 const NodeIconCB = icons.istio.circuitBreaker.className; // bolt
 const NodeIconMS = icons.istio.missingSidecar.className; // exclamation
+const NodeIconRoot = icons.istio.root.className; // alt-arrow-circle-right
 const NodeIconVS = icons.istio.virtualService.className; // code-branch
 const NodeTextColor = PfColors.Black;
 const NodeTextBackgroundColor = PfColors.White;
@@ -169,6 +170,9 @@ export class GraphStyles {
     }
 
     let badges = '';
+    if (data.isRoot) {
+      badges = `<span class="${NodeIconRoot} ${badgeStyle}"></span> ${badges}`;
+    }
     if (cyGlobal.showMissingSidecars && data.hasMissingSC) {
       badges = `<span class="${NodeIconMS} ${badgeStyle}"></span> ${badges}`;
     }
@@ -193,10 +197,15 @@ export class GraphStyles {
     }
 
     const label: string[] = [];
-    if ((isMultiNamespace || isOutside) && nodeType !== NodeType.UNKNOWN) {
-      if (isBox !== BoxByType.CLUSTER && isBox !== BoxByType.NAMESPACE && (!isBoxed || isBoxedBy !== BoxByType.APP)) {
-        label.push(`(${namespace})`);
-      }
+    if (
+      (isMultiNamespace || isOutside) &&
+      !cyGlobal.boxByNamespace &&
+      namespace !== UNKNOWN &&
+      nodeType !== NodeType.UNKNOWN &&
+      isBox !== BoxByType.CLUSTER &&
+      isBox !== BoxByType.NAMESPACE
+    ) {
+      label.push(`(${namespace})`);
     }
 
     switch (nodeType) {
@@ -243,54 +252,7 @@ export class GraphStyles {
       default:
         label.unshift('error');
     }
-    /*
-    } else {
-      const contentArray: string[] = [];
-      if ((isMultiNamespace || isOutside) && nodeType !== NodeType.UNKNOWN) {
-        contentArray.push(`(${namespace})`);
-      }
-      switch (nodeType) {
-        case NodeType.AGGREGATE:
-          contentArray.unshift(data.aggregateValue!);
-          break;
-        case NodeType.APP:
-          if (cyGlobal.graphType === GraphType.APP || version === UNKNOWN) {
-            contentArray.unshift(app);
-          } else {
-            contentArray.unshift(version);
-            contentArray.unshift(app);
-          }
-          break;
-        case NodeType.BOX:
-          switch (isBox) {
-            case BoxByType.APP:
-              contentArray.unshift(app);
-              break;
-            case BoxByType.CLUSTER:
-              contentArray.pop();
-              contentArray.push(data.cluster);
-              break;
-            case BoxByType.NAMESPACE:
-              contentArray.pop();
-              contentArray.push(data.namespace);
-              break;
-          }
-          break;
-        case NodeType.SERVICE:
-          contentArray.unshift(service);
-          break;
-        case NodeType.UNKNOWN:
-          contentArray.unshift(UNKNOWN);
-          break;
-        case NodeType.WORKLOAD:
-          contentArray.unshift(workload);
-          break;
-        default:
-          contentArray.unshift('error');
-      }
-      label = contentArray.join('<br/>');
-    }
-*/
+
     let labelHtml = label.join('<br/>');
     labelHtml = `<div class="${contentStyleDefault} ${
       hasBadge ? contentStyleWithBadges : ''
@@ -488,6 +450,8 @@ export class GraphStyles {
         case NodeType.AGGREGATE:
           return 'round-pentagon';
         case NodeType.APP:
+          return 'round-rectangle';
+        case NodeType.BOX:
           return 'round-rectangle';
         case NodeType.SERVICE:
           return nodeData.isServiceEntry ? 'round-tag' : 'round-triangle';

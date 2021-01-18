@@ -406,6 +406,7 @@ export const getNodeGraphElements = (node: NodeParamsType, params: any) => {
             {}
           );
     case NodeType.APP:
+    case NodeType.BOX: // we only support app box node graphs, so treat like app
       return newRequest<GraphDefinition>(
         HTTP_VERBS.GET,
         urls.appGraphElements(node.namespace.name, node.app, node.version),
