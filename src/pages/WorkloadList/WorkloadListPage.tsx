@@ -107,6 +107,7 @@ class WorkloadListPageComponent extends FilterComponent.Component<
           this.props.duration,
           deployment.istioSidecar
         ),
+        healthAnnotations: deployment.healthAnnotations,
         labels: deployment.labels
       }));
     }

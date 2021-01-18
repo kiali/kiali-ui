@@ -480,6 +480,10 @@ export const updateWorkload = (
   return newRequest(HTTP_VERBS.PATCH, urls.workload(namespace, name), { type: type }, jsonPatch);
 };
 
+export const updateService = (namespace: string, service: string, jsonPatch: string): Promise<Response<string>> => {
+  return newRequest(HTTP_VERBS.PATCH, urls.service(namespace, service), {}, jsonPatch);
+};
+
 export const getPod = (namespace: string, name: string) => {
   return newRequest<Pod>(HTTP_VERBS.GET, urls.pod(namespace, name), {}, {});
 };

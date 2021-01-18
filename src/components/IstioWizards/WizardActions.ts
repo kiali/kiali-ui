@@ -49,6 +49,7 @@ export const WIZARD_TCP_TRAFFIC_SHIFTING = 'tcp_traffic_shifting';
 export const WIZARD_REQUEST_ROUTING = 'request_routing';
 export const WIZARD_FAULT_INJECTION = 'fault_injection';
 export const WIZARD_REQUEST_TIMEOUTS = 'request_timeouts';
+export const WIZARD_HEALTH_ANNOTATION = 'health_annotation';
 
 export const WIZARD_ENABLE_AUTO_INJECTION = 'enable_auto_injection';
 export const WIZARD_DISABLE_AUTO_INJECTION = 'disable_auto_injection';
@@ -59,7 +60,8 @@ export const SERVICE_WIZARD_ACTIONS = [
   WIZARD_FAULT_INJECTION,
   WIZARD_TRAFFIC_SHIFTING,
   WIZARD_TCP_TRAFFIC_SHIFTING,
-  WIZARD_REQUEST_TIMEOUTS
+  WIZARD_REQUEST_TIMEOUTS,
+  WIZARD_HEALTH_ANNOTATION
 ];
 
 export const WIZARD_TITLES = {
@@ -67,7 +69,8 @@ export const WIZARD_TITLES = {
   [WIZARD_FAULT_INJECTION]: 'Fault Injection',
   [WIZARD_TRAFFIC_SHIFTING]: 'Traffic Shifting',
   [WIZARD_TCP_TRAFFIC_SHIFTING]: 'TCP Traffic Shifting',
-  [WIZARD_REQUEST_TIMEOUTS]: 'Request Timeouts'
+  [WIZARD_REQUEST_TIMEOUTS]: 'Request Timeouts',
+  [WIZARD_HEALTH_ANNOTATION]: 'Health Annotation'
 };
 
 export type ServiceWizardProps = {
@@ -80,6 +83,7 @@ export type ServiceWizardProps = {
   workloads: WorkloadOverview[];
   virtualServices: VirtualServices;
   destinationRules: DestinationRules;
+  healthAnnotation?: { [key: string]: string };
   gateways: string[];
   peerAuthentications: PeerAuthentication[];
   onClose: (changed: boolean) => void;
@@ -108,6 +112,7 @@ export type ServiceWizardState = {
   vsHosts: string[];
   trafficPolicy: TrafficPolicyState;
   gateway?: GatewaySelectorState;
+  healthAnnotation: { [key: string]: string };
 };
 
 export type WorkloadWizardValid = {};
@@ -1392,5 +1397,14 @@ export const buildWorkloadInjectionPatch = (workloadType: string, enable: boolea
       }
     };
   }
+  return JSON.stringify(patch);
+};
+
+export const buildServiceInjectionPatch = (annotation: { [key: string]: string }): string => {
+  const patch = {
+    metadata: {
+      annotations: annotation
+    }
+  };
   return JSON.stringify(patch);
 };

@@ -26,6 +26,7 @@ import { StatefulFilters } from '../Filters/StatefulFilters';
 import { GetIstioObjectUrl } from '../Link/IstioObjectLink';
 import { labelFilter } from 'components/Filters/CommonFilters';
 import { labelFilter as NsLabelFilter } from '../../pages/Overview/Filters';
+import { KialiAnnotation } from '../../types/KialiAnnotation';
 
 // Links
 
@@ -59,6 +60,11 @@ export const details: Renderer<AppListItem | WorkloadListItem | ServiceListItem>
   const hasMissingVersion = isWorkload && !item['versionLabel'];
   const additionalDetails = (item as WorkloadListItem | ServiceListItem).additionalDetailSample;
   const spacer = hasMissingSC && additionalDetails && additionalDetails.icon;
+  const healthAnnotations = (item as WorkloadListItem | ServiceListItem).healthAnnotations;
+  const hasAnnotation = healthAnnotations
+    ? Object.keys(healthAnnotations).length > 0 &&
+      Object.keys(healthAnnotations).filter(k => healthAnnotations[k].length > 0).length > 0
+    : false;
   return (
     <td
       role="gridcell"
@@ -93,8 +99,40 @@ export const details: Renderer<AppListItem | WorkloadListItem | ServiceListItem>
         {additionalDetails && additionalDetails.icon && (
           <li>{renderAPILogo(additionalDetails.icon, additionalDetails.title, 0)}</li>
         )}
+        {hasAnnotation && renderKialiAnnotation(item as WorkloadListItem | ServiceListItem)}
       </ul>
     </td>
+  );
+};
+
+const renderKialiAnnotation = (item: WorkloadListItem | ServiceListItem) => {
+  const kialiValidation = new KialiAnnotation(item.healthAnnotations);
+  const key = 'kialiAnnotationLink_' + item.name;
+  const link =
+    'namespaces/' +
+    item.namespace +
+    '/' +
+    ('appLabel' in item ? 'workloads' : 'services') +
+    '/' +
+    item.name +
+    '?tab=kialiAnnotation';
+
+  const badge = (
+    <Link key={key} to={link}>
+      <Badge
+        className="virtualitem_badge_definition"
+        style={{ marginBottom: '2px', backgroundColor: !kialiValidation.isValid ? PfColors.Orange300 : '' }}
+      >
+        Kiali Annotation
+      </Badge>
+    </Link>
+  );
+  return kialiValidation.isValid ? (
+    badge
+  ) : (
+    <Tooltip position={TooltipPosition.auto} content={<>Kiali annotation has errors</>}>
+      {badge}
+    </Tooltip>
   );
 };
 

@@ -13,6 +13,7 @@ export interface ServiceOverview {
   name: string;
   istioSidecar: boolean;
   additionalDetailSample?: AdditionalItem;
+  healthAnnotations: { [key: string]: string };
   labels: { [key: string]: string };
 }
 

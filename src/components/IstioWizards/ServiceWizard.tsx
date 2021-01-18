@@ -11,6 +11,7 @@ import TrafficPolicyContainer, {
   TrafficPolicyState,
   UNSET
 } from '../../components/IstioWizards/TrafficPolicy';
+import { CreateAnnotation } from '../Annotation';
 import { ROUND_ROBIN } from './TrafficPolicy';
 import FaultInjection, { FaultInjectionRoute } from './FaultInjection';
 import { Rule } from './RequestRouting/Rules';
@@ -36,7 +37,8 @@ import {
   getInitTimeoutRetryRoute,
   getInitConnectionPool,
   getInitOutlierDetection,
-  WIZARD_TCP_TRAFFIC_SHIFTING
+  WIZARD_TCP_TRAFFIC_SHIFTING,
+  WIZARD_HEALTH_ANNOTATION
 } from './WizardActions';
 import { MessageType } from '../../types/MessageCenter';
 import GatewaySelector, { GatewaySelectorState } from './GatewaySelector';
@@ -47,7 +49,10 @@ import RequestTimeouts, { TimeoutRetryRoute } from './RequestTimeouts';
 import CircuitBreaker, { CircuitBreakerState } from './CircuitBreaker';
 import _ from 'lodash';
 
-const emptyServiceWizardState = (fqdnServiceName: string): ServiceWizardState => {
+const emptyServiceWizardState = (
+  fqdnServiceName: string,
+  annotation?: { [key: string]: string }
+): ServiceWizardState => {
   return {
     showWizard: false,
     showAdvanced: false,
@@ -119,7 +124,8 @@ const emptyServiceWizardState = (fqdnServiceName: string): ServiceWizardState =>
       addOutlierDetection: false,
       outlierDetection: {}
     },
-    gateway: undefined
+    gateway: undefined,
+    healthAnnotation: annotation || {}
   };
 };
 
@@ -130,7 +136,7 @@ const advancedOptionsStyle = style({
 class ServiceWizard extends React.Component<ServiceWizardProps, ServiceWizardState> {
   constructor(props: ServiceWizardProps) {
     super(props);
-    this.state = emptyServiceWizardState(fqdnServiceName(props.serviceName, props.namespace));
+    this.state = emptyServiceWizardState(fqdnServiceName(props.serviceName, props.namespace), props.healthAnnotation);
   }
 
   componentDidUpdate(prevProps: ServiceWizardProps) {
@@ -299,6 +305,16 @@ class ServiceWizard extends React.Component<ServiceWizardProps, ServiceWizardSta
           }
         }
         break;
+      case WIZARD_HEALTH_ANNOTATION:
+        const jsonInjectionPatch = buildServiceInjectionPatch(this.state.healthAnnotation);
+        API.updateService(this.props.namespace, this.props.serviceName, jsonInjectionPatch)
+          .then(result => {
+            console.log(result);
+          })
+          .catch(error => {
+            console.log(error);
+          });
+        break;
       default:
     }
     // Disable button before promise is completed. Then Wizard is closed.
@@ -462,6 +478,10 @@ class ServiceWizard extends React.Component<ServiceWizardProps, ServiceWizardSta
     });
   };
 
+  updateAnnotation = (healthAnnotation: { [key: string]: string }) => {
+    this.setState({ healthAnnotation });
+  };
+
   render() {
     const [gatewaySelected, isMesh] = getInitGateway(this.props.virtualServices);
     return (
@@ -526,6 +546,9 @@ class ServiceWizard extends React.Component<ServiceWizardProps, ServiceWizardSta
             )}
             onChange={this.onTimeoutRetryRouteChange}
           />
+        )}
+        {this.props.type === WIZARD_HEALTH_ANNOTATION && (
+          <CreateAnnotation annotation={this.props.healthAnnotation} updateAnnotation={this.updateAnnotation} />
         )}
         {(this.props.type === WIZARD_REQUEST_ROUTING ||
           this.props.type === WIZARD_FAULT_INJECTION ||

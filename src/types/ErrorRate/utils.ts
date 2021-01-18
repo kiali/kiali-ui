@@ -1,7 +1,8 @@
 import { RateHealthConfig, RegexConfig, ToleranceConfig } from '../ServerConfig';
 import { serverConfig } from '../../config';
 import { ResponseDetail, Responses } from '../Graph';
-import { healthAnnotation, RequestHealth, RequestType } from '../Health';
+import { RequestHealth, RequestType } from '../Health';
+import { KialiAnnotationConfig } from '../KialiAnnotation';
 import { Rate, RequestTolerance } from './types';
 import { generateRateForTolerance } from './ErrorRate';
 import { generateRateForGraphTolerance } from './GraphEdgeStatus';
@@ -37,7 +38,7 @@ export const getErrorCodeRate = (requests: RequestHealth): { inbound: number; ou
 };
 
 export const getHealthRateAnnotation = (config?: { [key: string]: string }): string | undefined => {
-  return config && healthAnnotation.rateHealth in config ? config[healthAnnotation.rateHealth] : undefined;
+  return config && KialiAnnotationConfig.HEALTH_RATE in config ? config[KialiAnnotationConfig.HEALTH_RATE] : undefined;
 };
 /*
 Cached this method to avoid use regexp in next calculations to improve performance

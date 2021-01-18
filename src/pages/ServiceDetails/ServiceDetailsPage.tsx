@@ -22,6 +22,9 @@ import { ServiceDetailsInfo } from '../../types/ServiceInfo';
 import { PeerAuthentication, Validations } from '../../types/IstioObjects';
 import ServiceWizardDropdown from '../../components/IstioWizards/ServiceWizardDropdown';
 import TimeControl from '../../components/Time/TimeControl';
+import Annotation from '../../components/Annotation/Annotation';
+import { KialiAnnotation } from '../../types/KialiAnnotation';
+import { KialiIcon } from '../../config/KialiIcon';
 
 type ServiceDetailsState = {
   currentTab: string;
@@ -29,6 +32,7 @@ type ServiceDetailsState = {
   serviceDetails?: ServiceDetailsInfo;
   peerAuthentications: PeerAuthentication[];
   validations: Validations;
+  healthAnnotation?: { [key: string]: string };
 };
 
 interface ServiceDetailsProps extends RouteComponentProps<ServiceId> {
@@ -40,12 +44,14 @@ interface ServiceDetailsProps extends RouteComponentProps<ServiceId> {
 const tabName = 'tab';
 const defaultTab = 'info';
 const trafficTabName = 'traffic';
+const kialiAnnotationTabName = 'kialiAnnotation';
 
 const tabIndex: { [tab: string]: number } = {
   info: 0,
   traffic: 1,
   metrics: 2,
-  traces: 3
+  traces: 3,
+  kialiAnnotation: 4
 };
 
 class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetailsState> {
@@ -114,7 +120,8 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
       .then(results => {
         this.setState({
           serviceDetails: results,
-          validations: results.validations
+          validations: results.validations,
+          healthAnnotation: results.service.healthAnnotations
         });
       })
       .catch(error => {
@@ -180,6 +187,39 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
       );
     }
 
+    const isHiddenAnnotation =
+      this.state.healthAnnotation &&
+      Object.keys(this.state.healthAnnotation).length > 0 &&
+      Object.keys(this.state.healthAnnotation).filter(k => this.state.healthAnnotation![k].length > 0).length > 0
+        ? false
+        : true;
+    if (!isHiddenAnnotation) {
+      var title = <>Kiali Annotation</>;
+      if (this.state.healthAnnotation) {
+        const kialiAnnotation = new KialiAnnotation(this.state.healthAnnotation);
+        title = this.state.healthAnnotation ? (
+          <>Kiali Annotation</>
+        ) : (
+          <>{kialiAnnotation.severity === 'error' ? <KialiIcon.Error /> : <KialiIcon.Warning />} Kiali Annotation</>
+        );
+      }
+      tabsArray.push(
+        <Tab eventKey={4} title={title} key={kialiAnnotationTabName} isHidden={isHiddenAnnotation}>
+          <Annotation
+            annotation={this.state.healthAnnotation}
+            promise={API.getServiceDetail(
+              this.props.match.params.namespace,
+              this.props.match.params.service,
+              true,
+              this.props.duration
+            )}
+          />
+        </Tab>
+      );
+    } else if (this.state.currentTab === kialiAnnotationTabName) {
+      this.setState({ currentTab: defaultTab });
+    }
+
     return tabsArray;
   }
 
@@ -203,6 +243,7 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
         workloads={this.state.serviceDetails.workloads || []}
         virtualServices={this.state.serviceDetails.virtualServices}
         destinationRules={this.state.serviceDetails.destinationRules}
+        healthAnnotation={this.state.healthAnnotation}
         gateways={this.state.gateways}
         peerAuthentications={this.state.peerAuthentications}
         tlsStatus={this.state.serviceDetails.namespaceMTLS}

@@ -44,6 +44,7 @@ export interface Service {
   ip: string;
   ports?: ServicePort[];
   externalName: string;
+  healthAnnotations: { [key: string]: string };
   labels?: { [key: string]: string };
   selectors?: { [key: string]: string };
 }

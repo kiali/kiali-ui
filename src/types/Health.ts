@@ -62,14 +62,6 @@ export interface RequestType {
   [key: string]: { [key: string]: number };
 }
 
-/*
-Config types
-*/
-
-export const healthAnnotation = {
-  rateHealth: 'health.kiali.io/rate'
-};
-
 export interface RequestHealth {
   inbound: RequestType;
   outbound: RequestType;

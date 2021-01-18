@@ -27,9 +27,11 @@ import {
   WIZARD_TITLES,
   WIZARD_TRAFFIC_SHIFTING,
   WIZARD_REQUEST_TIMEOUTS,
-  WIZARD_TCP_TRAFFIC_SHIFTING
+  WIZARD_TCP_TRAFFIC_SHIFTING,
+  WIZARD_HEALTH_ANNOTATION
 } from './WizardActions';
 import ServiceWizard from './ServiceWizard';
+import { KialiAnnotation } from '../../types/KialiAnnotation';
 
 type Props = {
   namespace: string;
@@ -38,6 +40,7 @@ type Props = {
   workloads: WorkloadOverview[];
   virtualServices: VirtualServices;
   destinationRules: DestinationRules;
+  healthAnnotation?: { [key: string]: string };
   gateways: string[];
   peerAuthentications: PeerAuthentication[];
   tlsStatus?: TLSStatus;
@@ -59,6 +62,7 @@ const DELETE_TRAFFIC_ROUTING = 'delete_traffic_routing';
 class ServiceWizardDropdown extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
+    console.log(this.props.healthAnnotation);
     this.state = {
       showWizard: props.show,
       wizardType: '',
@@ -191,6 +195,15 @@ class ServiceWizardDropdown extends React.Component<Props, State> {
         this.setState({ showWizard: true, wizardType: key, updateWizard: key === updateLabel });
         break;
       }
+      case WIZARD_HEALTH_ANNOTATION:
+        this.setState({
+          showWizard: true,
+          wizardType: key,
+          updateWizard: this.props.healthAnnotation
+            ? new KialiAnnotation(this.props.healthAnnotation).getHealthRate().length > 0
+            : false
+        });
+        break;
       case DELETE_TRAFFIC_ROUTING: {
         this.setState({ showConfirmDelete: true, deleteAction: key });
         break;
@@ -320,6 +333,12 @@ class ServiceWizardDropdown extends React.Component<Props, State> {
               deleteItem
             )
           : deleteItem;
+      case WIZARD_HEALTH_ANNOTATION:
+        return (
+          <DropdownItem key={eventKey} component="button" onClick={() => this.onAction(eventKey)}>
+            Edit Health Annotation
+          </DropdownItem>
+        );
       default:
         return <>Unsupported</>;
     }
@@ -382,6 +401,7 @@ class ServiceWizardDropdown extends React.Component<Props, State> {
           update={this.state.updateWizard}
           namespace={this.props.namespace}
           serviceName={this.props.serviceName}
+          healthAnnotation={this.props.healthAnnotation}
           workloads={validWorkloads}
           virtualServices={this.props.virtualServices}
           destinationRules={this.props.destinationRules}

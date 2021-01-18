@@ -18,7 +18,8 @@ export const SERVICE_DETAILS: ServiceDetailsInfo = {
         port: 9080
       }
     ],
-    resourceVersion: '2652'
+    resourceVersion: '2652',
+    healthAnnotations: {}
   },
   istioSidecar: true,
   endpoints: [
