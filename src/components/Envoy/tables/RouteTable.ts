@@ -1,4 +1,4 @@
-import { defaultFilter, SummaryTable, SummaryTableRenderer } from './BaseTable';
+import { defaultFilter, istioConfigLink, SummaryTable, SummaryTableRenderer } from './BaseTable';
 import { ICell, ISortBy, sortable } from '@patternfly/react-table';
 import { RouteSummary } from '../../../types/IstioObjects';
 import { FILTER_ACTION_APPEND, FilterType, FilterTypes } from '../../../types/Filters';
@@ -63,7 +63,7 @@ export class RouteTable implements SummaryTable {
     };
   };
 
-  rows(): string[][] {
+  rows(): (string|number|JSX.Element)[][] {
     return this.summaries
       .map((summary: RouteSummary) => {
         return [summary.name, summary.domains, summary.match, summary.virtual_service];
@@ -77,7 +77,11 @@ export class RouteTable implements SummaryTable {
         } else {
           return a[this.sortingIndex] > b[this.sortingIndex] ? -1 : a[this.sortingIndex] < b[this.sortingIndex] ? 1 : 0;
         }
-      });
+      }).map((value: (string|number|JSX.Element)[]) => {
+        const virtualService: string = value[3] as string;
+        value[3] = istioConfigLink(virtualService, 'virtualservice');
+        return value;
+    });
   }
 }
 

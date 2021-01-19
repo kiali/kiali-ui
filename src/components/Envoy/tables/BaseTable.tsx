@@ -4,19 +4,20 @@ import { ClusterSummaryTable, ClusterTable } from './ClusterTable';
 import { RouteSummaryTable, RouteTable } from './RouteTable';
 import { ListenerSummaryTable, ListenerTable } from './ListenerTable';
 import { EnvoyProxyDump } from '../../../types/IstioObjects';
-import { FilterSelected, StatefulFilters } from '../../Filters/StatefulFilters';
+import IstioObjectLink from '../../Link/IstioObjectLink';
 import { ActiveFilter, ActiveFiltersInfo, FilterType } from '../../../types/Filters';
+import { FilterSelected, StatefulFilters } from '../../Filters/StatefulFilters';
 import { setFiltersToURL } from '../../FilterList/FilterHelper';
 import { ResourceSorts } from '../EnvoyModal';
 
 export interface SummaryTable {
   head: () => ICell[];
-  rows: () => (string | number)[][];
+  rows: () => (string | number | JSX.Element)[][];
   resource: () => string;
   sortBy: () => ISortBy;
   setSorting: (columnIndex: number, direction: 'asc' | 'desc') => void;
   availableFilters: () => FilterType[];
-}
+};
 
 export function SummaryTableRenderer<T extends SummaryTable>() {
   interface SummaryTableProps<T> {
@@ -75,6 +76,7 @@ export const SummaryTableBuilder = (resource: string, config: EnvoyProxyDump, so
   }
   return [writerComp, writerProps];
 };
+
 export const defaultFilter = (value: (string | number)[], filterToColumn: { [id: string]: number }): boolean => {
   const activeFilters: ActiveFiltersInfo = FilterSelected.getSelected();
   // If there is no active filters, show the entry
@@ -110,4 +112,18 @@ export const defaultFilter = (value: (string | number)[], filterToColumn: { [id:
       })
     );
   }, true);
+};
+
+export const istioConfigLink = (halfQDN: string, objectType: string): (JSX.Element | string) => {
+  const nameParts: string[] = halfQDN.split('.');
+  if(nameParts.length === 2) {
+    return (
+      <React.Fragment>
+        <IstioObjectLink name={nameParts[0]} namespace={nameParts[1]} type={objectType}>
+          {halfQDN}
+        </IstioObjectLink>
+      </React.Fragment>
+    );
+  }
+  return halfQDN;
 };

@@ -1,4 +1,4 @@
-import { defaultFilter, SummaryTable, SummaryTableRenderer } from './BaseTable';
+import { defaultFilter, istioConfigLink, SummaryTable, SummaryTableRenderer } from './BaseTable';
 import { ICell, ISortBy, sortable, SortByDirection } from '@patternfly/react-table';
 import { ClusterSummary } from '../../../types/IstioObjects';
 import { FILTER_ACTION_APPEND, FilterType, FilterTypes } from '../../../types/Filters';
@@ -86,7 +86,7 @@ export class ClusterTable implements SummaryTable {
     };
   };
 
-  rows(): (string | number)[][] {
+  rows(): (string | number | JSX.Element)[][] {
     return this.summaries
       .map((summary: ClusterSummary): (string | number)[] => {
         return [
@@ -107,7 +107,11 @@ export class ClusterTable implements SummaryTable {
         } else {
           return a[this.sortingIndex] > b[this.sortingIndex] ? -1 : a[this.sortingIndex] < b[this.sortingIndex] ? 1 : 0;
         }
-      });
+      }).map((value: (string|number|JSX.Element)[]) => {
+        const destinationRule: string = value[5] as string;
+        value[5] = istioConfigLink(destinationRule, 'destinationrule');
+        return value;
+    });
   }
 }
 
