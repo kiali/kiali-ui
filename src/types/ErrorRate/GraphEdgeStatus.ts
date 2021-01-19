@@ -3,7 +3,7 @@ import { ascendingThresholdCheck, ThresholdStatus, RATIO_NA, HEALTHY, NA, Reques
 import { DecoratedGraphEdgeData, DecoratedGraphNodeData, Responses } from '../Graph';
 import { aggregate, checkExpr, getRateHealthConfig, transformEdgeResponses } from './utils';
 import { RequestTolerance } from './types';
-
+import { RateHealth } from '../HealthAnnotation';
 // Graph Edge
 /*
  Return the status for the edge from source to target
@@ -14,12 +14,20 @@ export const getEdgeHealth = (
   target: DecoratedGraphNodeData
 ): ThresholdStatus => {
   // We need to check the configuration for item A outbound requests and configuration of B for inbound requests
-  const configSource = getRateHealthConfig(source.namespace, source[source.nodeType], source.nodeType);
-  const configTarget = getRateHealthConfig(target.namespace, target[target.nodeType], target.nodeType);
+  const annotationSource = source.healthAnnotation ? new RateHealth(source.healthAnnotation) : undefined;
+  const configSource =
+    annotationSource && annotationSource.toleranceConfig
+      ? annotationSource.toleranceConfig
+      : getRateHealthConfig(source.namespace, source[source.nodeType], source.nodeType).tolerance;
+  const annotationTarget = target.healthAnnotation ? new RateHealth(target.healthAnnotation) : undefined;
+  const configTarget =
+    annotationTarget && annotationTarget.toleranceConfig
+      ? annotationTarget.toleranceConfig
+      : getRateHealthConfig(target.namespace, target[target.nodeType], target.nodeType).tolerance;
 
   // If there is not tolerances with this configuration we'll use defaults
-  const tolerancesSource = configSource?.tolerance.filter(tol => checkExpr(tol.direction, 'outbound'));
-  const tolerancesTarget = configTarget?.tolerance.filter(tol => checkExpr(tol.direction, 'inbound'));
+  const tolerancesSource = configSource.filter(tol => checkExpr(tol.direction, 'outbound'));
+  const tolerancesTarget = configTarget.filter(tol => checkExpr(tol.direction, 'inbound'));
 
   // Calculate aggregate
   const outboundEdge = aggregate(transformEdgeResponses(edge.responses, edge.protocol), tolerancesSource, true);
