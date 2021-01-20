@@ -240,6 +240,9 @@ export class GraphStyles {
             break;
           case BoxByType.NAMESPACE:
             label.unshift(data.namespace);
+            if (!cyGlobal.boxByCluster && data.cluster !== UNKNOWN) {
+              label.push(`(${data.cluster})`);
+            }
             break;
         }
         break;

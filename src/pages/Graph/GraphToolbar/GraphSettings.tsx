@@ -243,7 +243,11 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
         labelText: 'Namespace Boxes',
         isChecked: boxByNamespace,
         onChange: toggleBoxByNamespace,
-        tooltip: <div style={{ textAlign: 'left' }}>When enabled the graph will box nodes in the same cluster.</div>
+        tooltip: (
+          <div style={{ textAlign: 'left' }}>
+            When enabled the graph will box nodes in the same namespace, within the same cluster.
+          </div>
+        )
       },
       {
         id: 'filterHide',
