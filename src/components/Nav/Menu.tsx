@@ -56,7 +56,7 @@ class Menu extends React.Component<MenuProps, MenuState> {
         if (item.title === 'Iter8 Experiments') {
           return serverConfig.extensions!.iter8!.enabled;
         } else if (item.title === 'Mesh') {
-          return serverConfig.clusterInfo !== undefined && serverConfig.clusterInfo !== null;
+          return serverConfig.clusterInfo?.name !== undefined;
         }
         return true;
       })

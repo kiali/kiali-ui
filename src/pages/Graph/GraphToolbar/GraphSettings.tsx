@@ -236,7 +236,11 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
         labelText: 'Cluster Boxes',
         isChecked: boxByCluster,
         onChange: toggleBoxByCluster,
-        tooltip: <div style={{ textAlign: 'left' }}>When enabled the graph will box nodes in the same cluster.</div>
+        tooltip: (
+          <div style={{ textAlign: 'left' }}>
+            <strong>Experimental:</strong> When enabled the graph will box nodes in the same cluster.
+          </div>
+        )
       },
       {
         id: 'boxByNamespace',
