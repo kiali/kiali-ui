@@ -8,7 +8,7 @@ export const parseHealthConfig = (healthConfig: HealthConfig) => {
     healthConfig.rate[key].name = getExpr(healthConfig.rate[key].name);
     healthConfig.rate[key].kind = getExpr(healthConfig.rate[key].kind);
     for (let t of Object.values(r.tolerance)) {
-      t.code = getExpr(t.code);
+      t.code = getExpr(t.code, true);
       t.direction = getExpr(t.direction);
       t.protocol = getExpr(t.protocol);
     }
@@ -16,16 +16,21 @@ export const parseHealthConfig = (healthConfig: HealthConfig) => {
   return healthConfig;
 };
 
-export const getExpr = (value: RegexConfig | undefined): RegExp => {
+export const getExpr = (value: RegexConfig | undefined, code: boolean = false): RegExp => {
   if (value) {
     if (typeof value === 'string' && value !== '') {
-      return new RegExp(value.replace('\\\\', '\\'));
+      const v = value.replace('\\\\', '\\');
+      return new RegExp(code ? replaceXCode(v) : v);
     }
     if (typeof value === 'object' && value.toString() !== '/(?:)/') {
       return value;
     }
   }
   return allMatch;
+};
+
+const replaceXCode = (value: string): string => {
+  return value.replace(/x|X/g, '\\d');
 };
 
 /*
