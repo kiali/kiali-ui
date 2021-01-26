@@ -3,9 +3,8 @@ import { ICell, ISortBy, sortable } from '@patternfly/react-table';
 import { RouteSummary } from '../../../types/IstioObjects';
 import { ActiveFilter, FILTER_ACTION_APPEND, FilterType, FilterTypes } from '../../../types/Filters';
 import { SortField } from '../../../types/SortFilters';
-import { defaultFilter } from './FiltersAndSorts';
 import Namespace from '../../../types/Namespace';
-import { istioConfigLink, serviceLink } from './helpers';
+import { defaultFilter, istioConfigLink, serviceLink } from '../../../helpers/EnvoyHelpers';
 
 export class RouteTable implements SummaryTable {
   summaries: RouteSummary[];
@@ -49,10 +48,8 @@ export class RouteTable implements SummaryTable {
         return entry.name.toString().includes(filter.value);
       },
       domains: (entry: RouteSummary, filter: ActiveFilter): boolean => {
-        return [entry.domains.service, entry.domains.namespace, entry.domains.cluster]
-          .join('.')
-          .includes(filter.value);
-      },
+        return [entry.domains.service, entry.domains.namespace, entry.domains.cluster].join('.').includes(filter.value);
+      }
     };
   };
 
@@ -73,10 +70,28 @@ export class RouteTable implements SummaryTable {
         isNumeric: false,
         param: 'doms',
         compare: (a, b) => {
-        return [a.domains.service, a.domains.namespace, a.domains.cluster]
-          .join('.')
-          .localeCompare([b.domains.service, b.domains.namespace, b.domains.cluster].join('.'));
-  }
+          return [a.domains.service, a.domains.namespace, a.domains.cluster]
+            .join('.')
+            .localeCompare([b.domains.service, b.domains.namespace, b.domains.cluster].join('.'));
+        }
+      },
+      {
+        id: 'match',
+        title: 'Match',
+        isNumeric: false,
+        param: 'match',
+        compare: (a, b) => {
+          return a.match.localeCompare(b.match);
+        }
+      },
+      {
+        id: 'vs',
+        title: 'Virtual Service',
+        isNumeric: false,
+        param: 'vs',
+        compare: (a, b) => {
+          return a.virtual_service.localeCompare(b.virtual_service);
+        }
       }
     ];
   };
@@ -110,14 +125,18 @@ export class RouteTable implements SummaryTable {
         return defaultFilter(value, this.filterMethods());
       })
       .sort((a: RouteSummary, b: RouteSummary) => {
-        return this.sortFields()
-          .find((value: SortField<RouteSummary>): boolean => {
-            return value.id === this.sortFields()[this.sortingIndex].id;
-          })!
-          .compare(a, b);
+        const sortField = this.sortFields().find((value: SortField<RouteSummary>): boolean => {
+          return value.id === this.sortFields()[this.sortingIndex].id;
+        });
+        return this.sortingDirection === 'asc' ? sortField!.compare(a, b) : sortField!.compare(b, a);
       })
       .map((summary: RouteSummary): (string | number | JSX.Element)[] => {
-        return [summary.name, serviceLink(summary.domains, this.namespaces, this.namespace, true), summary.match, istioConfigLink(summary.virtual_service, 'virtualservice')];
+        return [
+          summary.name,
+          serviceLink(summary.domains, this.namespaces, this.namespace, true),
+          summary.match,
+          istioConfigLink(summary.virtual_service, 'virtualservice')
+        ];
       });
   }
 }
