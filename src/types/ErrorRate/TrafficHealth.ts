@@ -14,7 +14,7 @@ export const getTrafficHealth = (item: TrafficItem, direction: Direction): Thres
     item.node.namespace,
     item.node.name,
     item.node.type,
-    'kialiAnnotation' in item.node ? getHealthRateAnnotation(item.node.kialiAnnotation) : undefined
+    'healthAnnotation' in item.node ? getHealthRateAnnotation(item.node.healthAnnotation) : undefined
   );
   // Get tolerances of the configuration for the direction provided
   const tolerances = config!.filter(tol => checkExpr(tol.direction, direction));

@@ -18,13 +18,13 @@ export const getEdgeHealth = (
     source.namespace,
     source[source.nodeType],
     source.nodeType,
-    'kialiAnnotation' in source ? getHealthRateAnnotation(source.kialiAnnotation) : undefined
+    'healthAnnotation' in source ? getHealthRateAnnotation(source.healthAnnotation) : undefined
   );
   const configTarget = getRateHealthConfig(
     target.namespace,
     target[target.nodeType],
     target.nodeType,
-    'kialiAnnotation' in source ? getHealthRateAnnotation(source.kialiAnnotation) : undefined
+    'healthAnnotation' in source ? getHealthRateAnnotation(source.healthAnnotation) : undefined
   );
 
   // If there is not tolerances with this configuration we'll use defaults

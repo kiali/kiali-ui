@@ -55,6 +55,7 @@ class Slider extends React.Component<Props, State> {
     onSlideStop: noop,
     label: null,
     labelClass: null,
+    mirrored: false,
     input: false,
     sliderClass: null,
     inputFormat: '',

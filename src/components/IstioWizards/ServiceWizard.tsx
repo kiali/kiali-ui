@@ -38,7 +38,8 @@ import {
   getInitConnectionPool,
   getInitOutlierDetection,
   WIZARD_TCP_TRAFFIC_SHIFTING,
-  WIZARD_HEALTH_ANNOTATION
+  WIZARD_HEALTH_ANNOTATION,
+  buildServiceInjectionPatch
 } from './WizardActions';
 import { MessageType } from '../../types/MessageCenter';
 import GatewaySelector, { GatewaySelectorState } from './GatewaySelector';
