@@ -47,7 +47,7 @@ const toolbarSpace = style({
 });
 
 type ReduxProps = {
-  namespaces: Namespace[] | undefined;
+  namespaces: Namespace[];
 };
 
 type EnvoyDetailProps = ReduxProps & {
@@ -308,7 +308,7 @@ class EnvoyDetailsModal extends React.Component<EnvoyDetailProps, EnvoyDetailSta
 }
 
 const mapStateToProps = (state: KialiAppState) => ({
-  namespaces: namespaceItemsSelector(state)
+  namespaces: namespaceItemsSelector(state)!
 });
 
 const EnvoyDetailsModalConnected = connect(mapStateToProps)(EnvoyDetailsModal);

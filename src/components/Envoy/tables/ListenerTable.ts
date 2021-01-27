@@ -10,9 +10,9 @@ export class ListenerTable implements SummaryTable {
   summaries: ListenerSummary[];
   sortingIndex: number;
   sortingDirection: 'asc' | 'desc';
-  namespaces: Namespace[] | undefined;
+  namespaces: Namespace[];
 
-  constructor(summaries: ListenerSummary[], sortBy: ISortBy, namespaces: Namespace[] | undefined) {
+  constructor(summaries: ListenerSummary[], sortBy: ISortBy, namespaces: Namespace[]) {
     this.summaries = summaries;
     this.sortingIndex = sortBy.index || 0;
     this.sortingDirection = sortBy.direction || 'asc';

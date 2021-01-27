@@ -74,7 +74,7 @@ export const SummaryTableBuilder = (
   resource: string,
   config: EnvoyProxyDump,
   sortBy: ResourceSorts,
-  namespaces: Namespace[] | undefined,
+  namespaces: Namespace[],
   namespace: string
 ) => {
   let writerComp, writerProps;

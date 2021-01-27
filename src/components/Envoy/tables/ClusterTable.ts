@@ -13,7 +13,7 @@ export class ClusterTable implements SummaryTable {
   namespaces: Namespace[] | undefined;
   namespace: string;
 
-  constructor(summaries: ClusterSummary[], sortBy: ISortBy, namespaces: Namespace[] | undefined, namespace: string) {
+  constructor(summaries: ClusterSummary[], sortBy: ISortBy, namespaces: Namespace[], namespace: string) {
     this.summaries = summaries;
     this.sortingIndex = sortBy.index || 0;
     this.sortingDirection = sortBy.direction || SortByDirection.asc;

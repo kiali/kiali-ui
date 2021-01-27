@@ -10,10 +10,10 @@ export class RouteTable implements SummaryTable {
   summaries: RouteSummary[];
   sortingIndex: number;
   sortingDirection: 'asc' | 'desc';
-  namespaces: Namespace[] | undefined;
+  namespaces: Namespace[];
   namespace: string;
 
-  constructor(summaries: RouteSummary[], sortBy: ISortBy, namespaces: Namespace[] | undefined, namespace: string) {
+  constructor(summaries: RouteSummary[], sortBy: ISortBy, namespaces: Namespace[], namespace: string) {
     this.summaries = summaries;
     this.sortingIndex = sortBy.index || 0;
     this.sortingDirection = sortBy.direction || 'asc';
