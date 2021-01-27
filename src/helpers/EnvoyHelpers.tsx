@@ -46,7 +46,7 @@ export const serviceLink = (
       linkText += '.' + host.cluster;
     }
     // Show link if the namespace matches to one in the list of available namespaces
-    showLink = namespaces.findIndex((namespace: Namespace): boolean => namespace.name === host.namespace) > 0;
+    showLink = namespaces.findIndex((namespace: Namespace): boolean => namespace.name === host.namespace) >= 0;
   }
 
   if (showLink) {
