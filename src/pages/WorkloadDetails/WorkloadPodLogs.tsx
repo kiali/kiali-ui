@@ -16,7 +16,7 @@ import {
 import { style } from 'typestyle';
 import { Pod, PodLogs, LogEntry } from '../../types/IstioObjects';
 import { getPodLogs, Response } from '../../services/Api';
-import { CancelablePromise, makeCancelablePromise } from '../../utils/CancelablePromises';
+import { PromisesRegistry } from '../../utils/CancelablePromises';
 import { ToolbarDropdown } from '../../components/ToolbarDropdown/ToolbarDropdown';
 import { TimeRange, evalTimeRange, TimeInMilliseconds, isEqualTimeRange } from '../../types/Common';
 import { RenderComponentScroll } from '../../components/Nav/Page';
@@ -47,18 +47,14 @@ type TextAreaPosition = 'left' | 'right' | 'top' | 'bottom';
 
 interface WorkloadPodLogsState {
   containerInfo?: ContainerInfo;
-  filteredAppLogs: LogEntry[];
-  filteredProxyLogs: LogEntry[];
+  filteredLogs: LogEntry[];
   hideError?: string;
   hideLogValue: string;
-  loadingAppLogs: boolean;
-  loadingAppLogsError?: string;
-  loadingProxyLogs: boolean;
-  loadingProxyLogsError?: string;
+  loadingLogs: boolean;
+  loadingLogsError?: string;
   logWindowSelections: any[];
   podValue?: number;
-  rawAppLogs: LogEntry[];
-  rawProxyLogs: LogEntry[];
+  rawLogs: LogEntry[];
   showClearHideLogButton: boolean;
   showClearShowLogButton: boolean;
   showError?: string;
@@ -70,8 +66,7 @@ interface WorkloadPodLogsState {
 }
 
 const RETURN_KEY_CODE = 13;
-const NoAppLogsFoundMessage = 'No application container logs found for the time period.';
-const NoProxyLogsFoundMessage = 'No istio-proxy for the pod, or proxy logs for the time period.';
+const NoLogsFoundMessage = 'No container logs found for the time period.';
 
 const TailLinesDefault = 100;
 const TailLinesOptions = {
@@ -157,26 +152,20 @@ const logsTextarea = (enabled = true, position: TextAreaPosition = 'top', hasTit
   });
 
 class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodLogsState> {
-  private loadProxyLogsPromise?: CancelablePromise<Response<PodLogs>[]>;
-  private loadAppLogsPromise?: CancelablePromise<Response<PodLogs>[]>;
+  private promises: PromisesRegistry = new PromisesRegistry();
   private podOptions: string[] = [];
-  private readonly appLogsRef: React.RefObject<any>;
-  private readonly proxyLogsRef: React.RefObject<any>;
+  private readonly logsRef: React.RefObject<any>;
 
   constructor(props: WorkloadPodLogsProps) {
     super(props);
-    this.appLogsRef = React.createRef();
-    this.proxyLogsRef = React.createRef();
+    this.logsRef = React.createRef();
 
     const defaultState = {
-      filteredAppLogs: [],
-      filteredProxyLogs: [],
+      filteredLogs: [],
       hideLogValue: '',
-      loadingAppLogs: false,
-      loadingProxyLogs: false,
+      loadingLogs: false,
       logWindowSelections: [],
-      rawAppLogs: [],
-      rawProxyLogs: [],
+      rawLogs: [],
       showClearHideLogButton: false,
       showClearShowLogButton: false,
       showLogValue: '',
@@ -188,8 +177,7 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
     if (this.props.pods.length < 1) {
       this.state = {
         ...defaultState,
-        loadingAppLogsError: 'There are no logs to display because no pods are available.',
-        loadingProxyLogsError: 'There are no logs to display because no container logs are available.'
+        loadingLogsError: 'There are no logs to display because no pods are available.'
       };
       return;
     }
@@ -236,12 +224,15 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
       const pod = this.props.pods[this.state.podValue!];
       this.fetchLogs(this.props.namespace, pod.name, newContainer!, this.state.tailLines, this.props.timeRange);
     }
-    this.proxyLogsRef.current.scrollTop = this.proxyLogsRef.current.scrollHeight;
-    this.appLogsRef.current.scrollTop = this.appLogsRef.current.scrollHeight;
+    this.logsRef.current.scrollTop = this.logsRef.current.scrollHeight;
 
     if (prevState.useRegex !== this.state.useRegex) {
       this.doShowAndHide();
     }
+  }
+
+  componentWillUnmount() {
+    this.promises.cancelAll();
   }
 
   renderItem = object => {
@@ -392,7 +383,7 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
               </GridItem>
             </Grid>
           )}
-          {this.state.loadingAppLogsError && <div>{this.state.loadingAppLogsError}</div>}
+          {this.state.loadingLogsError && <div>{this.state.loadingLogsError}</div>}
         </RenderComponentScroll>
       </>
     );
@@ -427,9 +418,9 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
   };
 
   private getAppDiv = () => {
-    const appLogs = this.hasEntries(this.state.filteredAppLogs)
-      ? this.entriesToString(this.state.filteredAppLogs)
-      : NoAppLogsFoundMessage;
+    const appLogs = this.hasEntries(this.state.filteredLogs)
+      ? this.entriesToString(this.state.filteredLogs)
+      : NoLogsFoundMessage;
     const title = this.state.containerInfo!.containerOptions[this.state.containerInfo!.container];
     return (
       <div id="appLogDiv" className={this.state.sideBySideOrientation ? appLogsDivHorizontal : appLogsDivVertical}>
@@ -437,8 +428,8 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
           <ToolbarItem className={logsTitle(this.isFullscreen())}>{title}</ToolbarItem>
           <ToolbarGroup className={toolbarRight}>
             <ToolbarItem>
-              <Tooltip key="copy_app_logs" position="top" content="Copy app logs to clipboard">
-                <CopyToClipboard onCopy={this.copyAppLogCallback} text={appLogs}>
+              <Tooltip key="copy_logs" position="top" content="Copy logs to clipboard">
+                <CopyToClipboard onCopy={this.copyLogCallback} text={appLogs}>
                   <Button variant={ButtonVariant.link} isInline>
                     <KialiIcon.Copy className={defaultIconStyle} />
                   </Button>
@@ -449,8 +440,8 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
               <Tooltip key="expand_app_logs" position="top" content="Expand App logs full screen">
                 <Button
                   variant={ButtonVariant.link}
-                  onClick={this.openAppFullScreenLog}
-                  isDisabled={!this.hasEntries(this.state.filteredAppLogs)}
+                  onClick={this.openFullScreenLog}
+                  isDisabled={!this.hasEntries(this.state.filteredLogs)}
                   isInline
                 >
                   <KialiIcon.Expand className={defaultIconStyle} />
@@ -463,10 +454,10 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
         <textarea
           id="appLogTextArea"
           className={logsTextarea(
-            this.hasEntries(this.state.filteredAppLogs),
+            this.hasEntries(this.state.filteredLogs),
             this.state.sideBySideOrientation ? 'left' : 'top'
           )}
-          ref={this.appLogsRef}
+          ref={this.logsRef}
           readOnly={true}
           value={appLogs}
         />
@@ -475,47 +466,9 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
   };
 
   private getProxyDiv = () => {
-    const proxyLogs = this.hasEntries(this.state.filteredProxyLogs)
-      ? this.entriesToString(this.state.filteredProxyLogs)
-      : NoProxyLogsFoundMessage;
     return (
       <div id="proxyLogDiv" className={proxyLogsDiv}>
-        <Toolbar className={toolbarTitle(this.state.sideBySideOrientation ? 'right' : 'bottom')}>
-          <ToolbarItem className={logsTitle(this.isFullscreen())}>Istio proxy (sidecar)</ToolbarItem>
-          <ToolbarGroup className={toolbarRight}>
-            <ToolbarItem>
-              <Tooltip key="copy_proxy_logs" position="top" content="Copy Istio proxy logs to clipboard">
-                <CopyToClipboard onCopy={this.copyProxyLogCallback} text={proxyLogs}>
-                  <Button variant={ButtonVariant.link} isInline>
-                    <KialiIcon.Copy className={defaultIconStyle} />
-                  </Button>
-                </CopyToClipboard>
-              </Tooltip>
-            </ToolbarItem>
-            <ToolbarItem className={toolbarSpace} disabled={true}>
-              <Tooltip key="expand_proxy_logs" position="top" content="Expand Istio proxy logs full screen">
-                <Button
-                  variant={ButtonVariant.link}
-                  onClick={this.openProxyFullScreenLog}
-                  isInline
-                  isDisabled={!this.hasEntries(this.state.filteredProxyLogs)}
-                >
-                  <KialiIcon.Expand className={defaultIconStyle} />
-                </Button>
-              </Tooltip>
-            </ToolbarItem>
-          </ToolbarGroup>
-        </Toolbar>
-        <textarea
-          id="proxyLogTextArea"
-          className={logsTextarea(
-            this.hasEntries(this.state.filteredProxyLogs),
-            this.state.sideBySideOrientation ? 'right' : 'bottom'
-          )}
-          ref={this.proxyLogsRef}
-          readOnly={true}
-          value={proxyLogs}
-        />
+        Ignore
       </div>
     );
   };
@@ -551,15 +504,9 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
   };
 
   private doShowAndHide = () => {
-    const filteredAppLogs = this.filterLogs(this.state.rawAppLogs, this.state.showLogValue, this.state.hideLogValue);
-    const filteredProxyLogs = this.filterLogs(
-      this.state.rawProxyLogs,
-      this.state.showLogValue,
-      this.state.hideLogValue
-    );
+    const filteredLogs = this.filterLogs(this.state.rawLogs, this.state.showLogValue, this.state.hideLogValue);
     this.setState({
-      filteredAppLogs: filteredAppLogs,
-      filteredProxyLogs: filteredProxyLogs,
+      filteredLogs: filteredLogs,
       showClearShowLogButton: !!this.state.showLogValue,
       showClearHideLogButton: !!this.state.hideLogValue
     });
@@ -629,8 +576,7 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
       showError: undefined,
       showLogValue: '',
       showClearShowLogButton: false,
-      filteredAppLogs: this.filterLogs(this.state.rawAppLogs, '', this.state.hideLogValue),
-      filteredProxyLogs: this.filterLogs(this.state.rawProxyLogs, '', this.state.hideLogValue)
+      filteredLogs: this.filterLogs(this.state.rawLogs, '', this.state.hideLogValue)
     });
   };
 
@@ -662,17 +608,12 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
       hideError: undefined,
       hideLogValue: '',
       showClearHideLogButton: false,
-      filteredAppLogs: this.filterLogs(this.state.rawAppLogs, this.state.showLogValue, ''),
-      filteredProxyLogs: this.filterLogs(this.state.rawProxyLogs, this.state.showLogValue, '')
+      filteredLogs: this.filterLogs(this.state.rawLogs, this.state.showLogValue, '')
     });
   };
 
-  private copyAppLogCallback = (_text: string, _result: boolean) => {
-    this.appLogsRef.current.select();
-  };
-
-  private copyProxyLogCallback = (_text: string, _result: boolean) => {
-    this.proxyLogsRef.current.select();
+  private copyLogCallback = (_text: string, _result: boolean) => {
+    this.logsRef.current.select();
   };
 
   private makeElementFullScreen = (elementId: string) => {
@@ -699,12 +640,8 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
     }
   };
 
-  private openAppFullScreenLog = () => {
-    this.toggleFullscreen('appLogDiv');
-  };
-
-  private openProxyFullScreenLog = () => {
-    this.toggleFullscreen('proxyLogDiv');
+  private openFullScreenLog = () => {
+    this.toggleFullscreen('logDiv');
   };
 
   private getContainerInfo = (pod: Pod): ContainerInfo => {
@@ -756,32 +693,43 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
       duration
     );
 
-    this.loadAppLogsPromise = makeCancelablePromise(Promise.all([appPromise]));
-    this.loadProxyLogsPromise = makeCancelablePromise(Promise.all([proxyPromise]));
+    this.promises
+      .registerAll('logs', [appPromise, proxyPromise])
+      .then(responses => {
+        let rawLogs: LogEntry[] = [];
 
-    this.loadAppLogsPromise.promise
-      .then(response => {
-        const rawAppLogs = response[0].data.entries;
-        const filteredAppLogs = this.filterLogs(rawAppLogs, this.state.showLogValue, this.state.hideLogValue);
+        console.log(`Log Responses=[${responses.length}]`);
+        for (let i = 0; i < responses.length; i++) {
+          console.log(`Log [${i}]`);
+          const response = responses[i];
+          console.log(`Log [${i}]`);
+          const containerRawLogs = response.data.entries as LogEntry[];
+          console.log(`Log Entries=[${containerRawLogs.length}]`);
+          rawLogs.push(...containerRawLogs);
+        }
+
+        const filteredLogs = this.filterLogs(rawLogs, this.state.showLogValue, this.state.hideLogValue);
+        const sortedFilteredLogs = filteredLogs.sort((a, b) => a.timestampUnix - b.timestampUnix);
 
         this.setState({
-          loadingAppLogs: false,
-          rawAppLogs: rawAppLogs,
-          filteredAppLogs: filteredAppLogs
+          loadingLogs: false,
+          rawLogs: rawLogs,
+          filteredLogs: sortedFilteredLogs
         });
-        this.appLogsRef.current.scrollTop = this.appLogsRef.current.scrollHeight;
+
+        this.logsRef.current.scrollTop = this.logsRef.current.scrollHeight;
         return;
       })
       .catch(error => {
         if (error.isCanceled) {
-          console.debug('AppLogs: Ignore fetch error (canceled).');
-          this.setState({ loadingAppLogs: false });
+          console.debug('Logs: Ignore fetch error (canceled).');
+          this.setState({ loadingLogs: false });
           return;
         }
         const errorMsg = error.response && error.response.data.error ? error.response.data.error : error.message;
         this.setState({
-          loadingAppLogs: false,
-          rawAppLogs: [
+          loadingLogs: false,
+          rawLogs: [
             {
               severity: 'Error',
               timestamp: Date.toString(),
@@ -792,44 +740,9 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
         });
       });
 
-    this.loadProxyLogsPromise.promise
-      .then(response => {
-        const rawProxyLogs = response[0].data.entries;
-        const filteredProxyLogs = this.filterLogs(rawProxyLogs, this.state.showLogValue, this.state.hideLogValue);
-
-        this.setState({
-          loadingProxyLogs: false,
-          rawProxyLogs: rawProxyLogs,
-          filteredProxyLogs: filteredProxyLogs
-        });
-        this.proxyLogsRef.current.scrollTop = this.proxyLogsRef.current.scrollHeight;
-        return;
-      })
-      .catch(error => {
-        if (error.isCanceled) {
-          console.debug('ProxyLogs: Ignore fetch error (canceled).');
-          this.setState({ loadingProxyLogs: false });
-          return;
-        }
-        const errorMsg = error.response && error.response.data.error ? error.response.data.error : error.message;
-        this.setState({
-          loadingProxyLogs: false,
-          rawProxyLogs: [
-            {
-              severity: 'Error',
-              timestamp: Date.toString(),
-              timestampUnix: Date.now(),
-              message: `Failed to fetch proxy logs: ${errorMsg}`
-            }
-          ]
-        });
-      });
-
     this.setState({
-      loadingAppLogs: true,
-      loadingProxyLogs: true,
-      rawAppLogs: [],
-      rawProxyLogs: []
+      loadingLogs: true,
+      rawLogs: []
     });
   };
 
