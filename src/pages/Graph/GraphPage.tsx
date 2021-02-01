@@ -202,17 +202,17 @@ export class GraphPage extends React.Component<GraphPageProps, GraphPageState> {
 
   static getNodeParamsFromProps(props: RouteComponentProps<Partial<GraphURLPathProps>>): NodeParamsType | undefined {
     const aggregate = props.match.params.aggregate;
-    const aggregateOk = aggregate && aggregate !== UNKNOWN && aggregate !== 'undefined';
+    const aggregateOk = aggregate && aggregate !== UNKNOWN;
     const aggregateValue = props.match.params.aggregateValue;
-    const aggregateValueOk = aggregateValue && aggregateValue !== UNKNOWN && aggregateValue !== 'undefined';
+    const aggregateValueOk = aggregateValue && aggregateValue !== UNKNOWN;
     const app = props.match.params.app;
-    const appOk = app && app !== UNKNOWN && app !== 'undefined';
+    const appOk = app && app !== UNKNOWN;
     const namespace = props.match.params.namespace;
-    const namespaceOk = namespace && namespace !== UNKNOWN && namespace !== 'undefined';
+    const namespaceOk = namespace && namespace !== UNKNOWN;
     const service = props.match.params.service;
-    const serviceOk = service && service !== UNKNOWN && service !== 'undefined';
+    const serviceOk = service && service !== UNKNOWN;
     const workload = props.match.params.workload;
-    const workloadOk = workload && workload !== UNKNOWN && workload !== 'undefined';
+    const workloadOk = workload && workload !== UNKNOWN;
     if (!aggregateOk && !aggregateValueOk && !appOk && !namespaceOk && !serviceOk && !workloadOk) {
       // @ts-ignore
       return;
