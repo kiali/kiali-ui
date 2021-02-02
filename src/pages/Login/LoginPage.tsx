@@ -127,7 +127,7 @@ export class LoginPage extends React.Component<LoginProps, LoginState> {
     }
     if (this.props.status === LoginStatus.expired) {
       messages.push(
-        this.renderMessage('Your session has expired or was terminated in another window.', 'warning', 'sessionExpired')
+        this.renderMessage('Your session has expired or was terminated in another window!', 'warning', 'sessionExpired')
       );
     }
     if (this.props.status === LoginStatus.error) {
@@ -162,6 +162,12 @@ export class LoginPage extends React.Component<LoginProps, LoginState> {
         </ListItem>
       </>
     );
+
+    if (this.props.status === LoginStatus.expired) {
+      // we must clean out the token cookie because it is no longer valid
+      document.cookie =
+        'kiali-token=; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; MaxAge=-1; SameSite=Strict; Path=' + '/';
+    }
 
     let loginPane: React.ReactFragment;
     if (authenticationConfig.strategy === AuthStrategy.token) {
