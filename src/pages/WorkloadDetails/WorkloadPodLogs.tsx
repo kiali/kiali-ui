@@ -21,7 +21,6 @@ import { ToolbarDropdown } from '../../components/ToolbarDropdown/ToolbarDropdow
 import { TimeRange, evalTimeRange, TimeInMilliseconds, isEqualTimeRange } from '../../types/Common';
 import { RenderComponentScroll } from '../../components/Nav/Page';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import Splitter from 'm-react-splitters';
 import { KialiIcon, defaultIconStyle } from '../../config/KialiIcon';
 import screenfull, { Screenfull } from 'screenfull';
 import { serverConfig } from 'config';
@@ -60,7 +59,6 @@ interface WorkloadPodLogsState {
   showError?: string;
   showLogValue: string;
   showTimestamps: boolean;
-  sideBySideOrientation: boolean;
   tailLines: number;
   useRegex: boolean;
 }
@@ -81,12 +79,8 @@ const TailLinesOptions = {
 };
 
 const appLogsDivHorizontal = style({
-  height: '100%',
+  height: '90%',
   marginRight: '5px'
-});
-
-const appLogsDivVertical = style({
-  height: 'calc(100% + 3px)'
 });
 
 const displayFlex = style({
@@ -104,14 +98,6 @@ const logsTitle = (isFullscreen: boolean) =>
   style(fullscreenTitleBackground(isFullscreen), {
     fontWeight: 'bold'
   });
-
-const proxyLogsDiv = style({
-  height: '100%'
-});
-
-const splitter = style({
-  height: 'calc(100% - 80px)' // 80px compensates for toolbar height
-});
 
 const toolbar = style({
   margin: '0 0 10px 0'
@@ -170,7 +156,6 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
       showClearShowLogButton: false,
       showLogValue: '',
       showTimestamps: false,
-      sideBySideOrientation: false,
       tailLines: TailLinesDefault,
       useRegex: false
     };
@@ -242,7 +227,7 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
   render() {
     return (
       <>
-        <RenderComponentScroll key={this.state.sideBySideOrientation ? 'vertical' : 'horizontal'}>
+        <RenderComponentScroll>
           {this.state.containerInfo && (
             <Grid style={{ height: '100%' }}>
               <GridItem span={12}>
@@ -289,14 +274,6 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
                     </Toolbar>
                     <Toolbar className={toolbar}>
                       <ToolbarGroup>
-                        <ToolbarItem>
-                          <Switch
-                            id="orientation-switch"
-                            label="Side by Side"
-                            isChecked={this.state.sideBySideOrientation}
-                            onChange={this.handleOrientationChange}
-                          />
-                        </ToolbarItem>
                         <ToolbarItem className={toolbarSpace}>
                           <Switch
                             id="timestamps-switch"
@@ -377,7 +354,7 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
                         </ToolbarItem>
                       </ToolbarGroup>
                     </Toolbar>
-                    <div className={splitter}>{this.getSplitter()}</div>
+                    {this.getAppDiv()}
                   </CardBody>
                 </Card>
               </GridItem>
@@ -389,41 +366,13 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
     );
   }
 
-  private getSplitter = () => {
-    return this.state.sideBySideOrientation ? (
-      <Splitter
-        position="vertical"
-        primaryPaneMaxWidth="80%"
-        primaryPaneMinWidth="15%"
-        primaryPaneWidth="50%"
-        dispatchResize={true}
-        postPoned={true}
-      >
-        {this.getAppDiv()}
-        {this.getProxyDiv()}
-      </Splitter>
-    ) : (
-      <Splitter
-        position="horizontal"
-        primaryPaneMaxHeight="80%"
-        primaryPaneMinHeight="15%"
-        primaryPaneHeight="50%"
-        dispatchResize={true}
-        postPoned={true}
-      >
-        {this.getAppDiv()}
-        {this.getProxyDiv()}
-      </Splitter>
-    );
-  };
-
   private getAppDiv = () => {
     const appLogs = this.hasEntries(this.state.filteredLogs)
       ? this.entriesToString(this.state.filteredLogs)
       : NoLogsFoundMessage;
     const title = this.state.containerInfo!.containerOptions[this.state.containerInfo!.container];
     return (
-      <div id="appLogDiv" className={this.state.sideBySideOrientation ? appLogsDivHorizontal : appLogsDivVertical}>
+      <div id="appLogDiv" className={appLogsDivHorizontal}>
         <Toolbar className={toolbarTitle()}>
           <ToolbarItem className={logsTitle(this.isFullscreen())}>{title}</ToolbarItem>
           <ToolbarGroup className={toolbarRight}>
@@ -453,22 +402,11 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
 
         <textarea
           id="appLogTextArea"
-          className={logsTextarea(
-            this.hasEntries(this.state.filteredLogs),
-            this.state.sideBySideOrientation ? 'left' : 'top'
-          )}
+          className={logsTextarea(this.hasEntries(this.state.filteredLogs))}
           ref={this.logsRef}
           readOnly={true}
           value={appLogs}
         />
-      </div>
-    );
-  };
-
-  private getProxyDiv = () => {
-    return (
-      <div id="proxyLogDiv" className={proxyLogsDiv}>
-        Ignore
       </div>
     );
   };
@@ -487,10 +425,6 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
 
   private setTailLines = (tailLines: number) => {
     this.setState({ tailLines: tailLines });
-  };
-
-  private handleOrientationChange = (isChecked: boolean) => {
-    this.setState({ sideBySideOrientation: isChecked });
   };
 
   private handleTimestampsChange = (isChecked: boolean) => {
@@ -680,17 +614,20 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
     if (endTime < now) {
       duration = Math.floor(timeRangeDates[1].getTime() / 1000) - sinceTime;
     }
+
     const appPromise: Promise<Response<PodLogs>> =
       container !== NoAppContainer
-        ? getPodLogs(namespace, podName, container, tailLines, sinceTime, duration)
+        ? getPodLogs(namespace, podName, container, tailLines, sinceTime, duration, false)
         : Promise.resolve({ data: { entries: [] } });
+
     const proxyPromise: Promise<Response<PodLogs>> = getPodLogs(
       namespace,
       podName,
       'istio-proxy',
       tailLines,
       sinceTime,
-      duration
+      duration,
+      true
     );
 
     this.promises
@@ -699,17 +636,28 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
         let rawLogs: LogEntry[] = [];
 
         console.log(`Log Responses=[${responses.length}]`);
+
         for (let i = 0; i < responses.length; i++) {
-          console.log(`Log [${i}]`);
           const response = responses[i];
-          console.log(`Log [${i}]`);
           const containerRawLogs = response.data.entries as LogEntry[];
-          console.log(`Log Entries=[${containerRawLogs.length}]`);
           rawLogs.push(...containerRawLogs);
         }
 
         const filteredLogs = this.filterLogs(rawLogs, this.state.showLogValue, this.state.hideLogValue);
-        const sortedFilteredLogs = filteredLogs.sort((a, b) => a.timestampUnix - b.timestampUnix);
+        const sortedFilteredLogs = filteredLogs.sort((a, b) => {
+          let aTimestamp = a.timestampUnix;
+          let bTimestamp = b.timestampUnix;
+          if (a.accessLogEntry !== undefined) {
+            console.log(`a.accessLogEntry.timestampUnix=${a.accessLogEntry.timestampUnix}`);
+            aTimestamp = a.accessLogEntry.timestampUnix;
+          }
+          if (b.accessLogEntry !== undefined) {
+            console.log(`b.accessLogEntry.timestampUnix=${b.accessLogEntry.timestampUnix}`);
+            bTimestamp = b.accessLogEntry.timestampUnix;
+          }
+          console.log(`a=${aTimestamp}. b=${bTimestamp}`);
+          return aTimestamp - bTimestamp;
+        });
 
         this.setState({
           loadingLogs: false,

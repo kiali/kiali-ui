@@ -140,7 +140,13 @@ export interface Pod {
   proxyStatus?: ProxyStatus;
 }
 
+export type AccessLogEntry = {
+  timestamp: string;
+  timestampUnix: TimeInSeconds;
+};
+
 export type LogEntry = {
+  accessLogEntry?: AccessLogEntry;
   message: string;
   severity: string;
   timestamp: string;
