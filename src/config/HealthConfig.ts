@@ -38,3 +38,4 @@ const replaceXCode = (value: string): string => {
 */
 export const allMatchTEST = allMatch;
 export const getExprTEST = getExpr;
+export const replaceXCodeTEST = replaceXCode;
