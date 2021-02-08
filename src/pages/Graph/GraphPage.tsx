@@ -62,8 +62,8 @@ import { NamespaceActions } from '../../actions/NamespaceAction';
 import GraphThunkActions from '../../actions/GraphThunkActions';
 import { JaegerTrace } from 'types/JaegerInfo';
 import { JaegerThunkActions } from 'actions/JaegerThunkActions';
-import GraphTour, { GraphTourStops } from 'pages/Graph/GraphHelpTour';
-import TourStopContainer, { getNextTourStop, TourInfo } from 'components/Tour/TourStop';
+import GraphTour from 'pages/Graph/GraphHelpTour';
+import { getNextTourStop, TourInfo } from 'components/Tour/TourStop';
 
 // GraphURLPathProps holds path variable values.  Currenly all path variables are relevant only to a node graph
 type GraphURLPathProps = {
@@ -451,18 +451,16 @@ export class GraphPage extends React.Component<GraphPageProps, GraphPageState> {
               )}
             </ErrorBoundary>
             {this.props.summaryData && (
-              <TourStopContainer info={[GraphTourStops.Graph, GraphTourStops.ContextualMenu, GraphTourStops.SidePanel]}>
-                <SummaryPanel
-                  data={this.props.summaryData}
-                  namespaces={this.props.activeNamespaces}
-                  graphType={this.props.graphType}
-                  injectServiceNodes={this.props.showServiceNodes}
-                  queryTime={this.state.graphData.timestamp / 1000}
-                  duration={this.state.graphData.fetchParams.duration}
-                  isPageVisible={this.props.isPageVisible}
-                  {...computePrometheusRateParams(this.props.duration, NUMBER_OF_DATAPOINTS)}
-                />
-              </TourStopContainer>
+              <SummaryPanel
+                data={this.props.summaryData}
+                namespaces={this.props.activeNamespaces}
+                graphType={this.props.graphType}
+                injectServiceNodes={this.props.showServiceNodes}
+                queryTime={this.state.graphData.timestamp / 1000}
+                duration={this.state.graphData.fetchParams.duration}
+                isPageVisible={this.props.isPageVisible}
+                {...computePrometheusRateParams(this.props.duration, NUMBER_OF_DATAPOINTS)}
+              />
             )}
           </FlexView>
         </FlexView>
