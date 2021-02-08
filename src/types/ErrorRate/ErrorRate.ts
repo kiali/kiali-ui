@@ -53,9 +53,11 @@ export const calculateErrorRate = (
   // Get the first configuration that match with the case
   const rateAnnotation = new RateHealth(requests.healthAnnotations);
   const conf = rateAnnotation.toleranceConfig || getRateHealthConfig(ns, name, kind).tolerance;
+
   // Get aggregate
   let status = getAggregate(requests, conf);
   const globalStatus = calculateStatus(status.global);
+
   if (globalStatus.status.status !== HEALTHY) {
     return {
       errorRatio: {
@@ -87,7 +89,6 @@ export const calculateErrorRate = (
         ? valuesErrorCodes.outbound
         : result.errorRatio.outbound.status.value;
   }
-
   // In that case we want to keep values
   return result;
 };
@@ -110,7 +111,6 @@ export const calculateStatus = (
         reqTol.tolerance && checkExpr(reqTol!.tolerance!.protocol, protocol) ? reqTol.tolerance : undefined;
       // Calculate the status for the tolerance provided
       const auxStatus = getRequestErrorsStatus((rate as Rate).errorRatio, tolerance);
-
       // Check the priority of the status
       if (auxStatus.status.priority > result.status.status.priority) {
         result.status = auxStatus;
