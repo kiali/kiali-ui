@@ -74,7 +74,7 @@ let serverConfig: ComputedServerConfig = {
     uiDefaults: {
       namespaces: [],
       metricsPerRefresh: '1m',
-      autoRefreshInterval: ''
+      refreshInterval: ''
     }
   },
   prometheus: {

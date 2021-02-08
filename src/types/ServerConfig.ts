@@ -23,7 +23,7 @@ interface IstioAnnotations {
 interface UIDefaults {
   namespaces: string[];
   metricsPerRefresh: string;
-  autoRefreshInterval: string;
+  refreshInterval: string;
 }
 
 interface KialiFeatureFlags {

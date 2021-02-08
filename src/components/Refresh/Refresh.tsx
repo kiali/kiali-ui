@@ -133,7 +133,7 @@ const mapStateToProps = (state: KialiAppState) => ({
 const mapDispatchToProps = (dispatch: ThunkDispatch<KialiAppState, void, KialiAppAction>) => {
   return {
     defaultToServerRefreshInterval: () => {
-      const interval = serverConfig.kialiFeatureFlags.uiDefaults.autoRefreshInterval;
+      const interval = serverConfig.kialiFeatureFlags.uiDefaults.refreshInterval;
       dispatch(UserSettingsActions.setRefreshInterval(SERVER_REFRESH_INTERVALS[interval]));
     },
     setRefreshInterval: (refresh: IntervalInMilliseconds) => {
