@@ -33,6 +33,10 @@ const durationsTuples: [number, string][] = [
   [604800, '7d'],
   [2592000, '30d']
 ];
+export const durationsMap = durationsTuples.reduce((accum, [duration, human]) => {
+  accum[human] = duration;
+  return accum;
+}, {});
 
 const computeValidDurations = (cfg: ComputedServerConfig) => {
   let filtered = durationsTuples;
@@ -66,7 +70,12 @@ let serverConfig: ComputedServerConfig = {
     versionLabelName: 'version'
   },
   kialiFeatureFlags: {
-    istioInjectionAction: true
+    istioInjectionAction: true,
+    uiDefaults: {
+      namespaces: [],
+      metricsPerRefresh: '1m',
+      autoRefreshInterval: ''
+    }
   },
   prometheus: {
     globalScrapeInterval: 15,

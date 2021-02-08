@@ -35,6 +35,7 @@ type ReduxProps = {
   refresh: () => void;
   setFilter: (filter: string) => void;
   setNamespaces: (namespaces: Namespace[]) => void;
+  getServerDefaults: () => void;
 };
 
 type NamespaceDropdownProps = ReduxProps & {
@@ -80,6 +81,7 @@ export class NamespaceDropdown extends React.PureComponent<NamespaceDropdownProp
   }
 
   componentDidMount() {
+    this.props.getServerDefaults();
     this.props.refresh();
     this.syncNamespacesURLParam();
   }
@@ -295,6 +297,9 @@ const mapStateToProps = (state: KialiAppState) => {
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<KialiAppState, void, KialiAppAction>) => {
   return {
+    getServerDefaults: () => {
+      dispatch(NamespaceThunkActions.defaultToServerNamespaces());
+    },
     refresh: () => {
       dispatch(NamespaceThunkActions.fetchNamespacesIfNeeded());
     },

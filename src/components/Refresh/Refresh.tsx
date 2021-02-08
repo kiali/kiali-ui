@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { KialiAppState } from '../../store/Store';
 import { refreshIntervalSelector } from '../../store/Selectors';
-import { config } from '../../config';
+import { config, serverConfig } from '../../config';
 import { IntervalInMilliseconds, TimeInMilliseconds } from '../../types/Common';
 import { UserSettingsActions } from '../../actions/UserSettingsActions';
 import { KialiAppAction } from '../../actions/KialiAppAction';
@@ -25,6 +25,7 @@ type ComponentProps = {
   manageURL?: boolean;
 
   handleRefresh?: () => void;
+  defaultToServerRefreshInterval: () => void;
 };
 
 type Props = ComponentProps & ReduxProps;
@@ -34,6 +35,7 @@ type State = {
 };
 
 const REFRESH_INTERVALS = config.toolbar.refreshInterval;
+const SERVER_REFRESH_INTERVALS = config.toolbar.serverRefreshIntervals;
 
 class Refresh extends React.PureComponent<Props, State> {
   constructor(props: Props) {
@@ -57,6 +59,7 @@ class Refresh extends React.PureComponent<Props, State> {
   }
 
   componentDidMount() {
+    this.props.defaultToServerRefreshInterval();
     this.updateRefresher();
   }
 
@@ -129,6 +132,10 @@ const mapStateToProps = (state: KialiAppState) => ({
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<KialiAppState, void, KialiAppAction>) => {
   return {
+    defaultToServerRefreshInterval: () => {
+      const interval = serverConfig.kialiFeatureFlags.uiDefaults.autoRefreshInterval;
+      dispatch(UserSettingsActions.setRefreshInterval(SERVER_REFRESH_INTERVALS[interval]));
+    },
     setRefreshInterval: (refresh: IntervalInMilliseconds) => {
       dispatch(UserSettingsActions.setRefreshInterval(refresh));
     },

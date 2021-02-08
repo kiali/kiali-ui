@@ -1,5 +1,5 @@
 import ToolbarDropdown from '../ToolbarDropdown/ToolbarDropdown';
-import { serverConfig, humanDurations } from '../../config/ServerConfig';
+import { serverConfig, humanDurations, durationsMap } from '../../config/ServerConfig';
 import * as React from 'react';
 import { DurationInSeconds } from '../../types/Common';
 import { KialiAppState } from '../../store/Store';
@@ -77,6 +77,21 @@ export const withURLAwareness = DurationDropdownComponent => {
   };
 };
 
+export const withServerDefault = DurationDropdownComponent => {
+  return class extends React.Component<DurationDropdownProps> {
+    componentDidMount() {
+      console.log(durationsMap);
+      console.log(serverConfig.kialiFeatureFlags.uiDefaults.metricsPerRefresh);
+      console.log(durationsMap[serverConfig.kialiFeatureFlags.uiDefaults.metricsPerRefresh]);
+      this.props.setDuration(durationsMap[serverConfig.kialiFeatureFlags.uiDefaults.metricsPerRefresh]);
+    }
+
+    render() {
+      return <DurationDropdownComponent {...this.props} />;
+    }
+  };
+};
+
 const mapStateToProps = (state: KialiAppState) => ({
   duration: durationSelector(state)
 });
@@ -90,4 +105,4 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<KialiAppState, void, KialiAp
 export const DurationDropdownContainer = connect(
   mapStateToProps,
   mapDispatchToProps
-)(withURLAwareness(withDurations(DurationDropdown)));
+)(withServerDefault(withURLAwareness(withDurations(DurationDropdown))));

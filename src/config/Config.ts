@@ -30,6 +30,17 @@ const conf = {
       300000: 'Every 5m',
       900000: 'Every 15m'
     },
+    /** Matches the refresh intervals from the server to ones that we can use **/
+    serverRefreshIntervals: {
+      '': 0,
+      pause: 0,
+      '10s': 10000,
+      '15s': 15000,
+      '30s': 30000,
+      '1m': 60000,
+      '5m': 300000,
+      '15m': 900000
+    },
     /** Graphs layouts types */
     graphLayouts: {
       cola: 'Cola',
