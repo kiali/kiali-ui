@@ -96,7 +96,8 @@ export const calculateStatusGraph = (
         unit: '%'
       };
       // Calculate the status
-      const auxStatus = ascendingThresholdCheck(rate as number, thresholds);
+      const errRatio = (rate as number) / getTotalRequest(traffic);
+      const auxStatus = ascendingThresholdCheck(100 * errRatio, thresholds);
       // Check if the status has more priority than the previous one
       if (auxStatus.status.priority > result.status.status.priority) {
         result.status = auxStatus;
@@ -110,4 +111,12 @@ export const calculateStatusGraph = (
     result.status.value = 0;
   }
   return result;
+};
+
+export const getTotalRequest = (traffic: Responses): number => {
+  var reqRate = 0;
+  Object.values(traffic).forEach(item => {
+    Object.values(item.flags).forEach(v => (reqRate += Number(v)));
+  });
+  return reqRate;
 };

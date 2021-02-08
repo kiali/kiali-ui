@@ -20,6 +20,7 @@ export const getTrafficHealth = (item: TrafficItem, direction: Direction): Thres
     annotation && annotation.toleranceConfig
       ? annotation.toleranceConfig
       : getRateHealthConfig(item.node.namespace, item.node.name, item.node.type).tolerance;
+
   // Get tolerances of the configuration for the direction provided
   const tolerances = config.filter(tol => checkExpr(tol.direction, direction));
   // Get the responses like a item with traffic
