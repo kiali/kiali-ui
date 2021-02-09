@@ -14,12 +14,12 @@ export const getEdgeHealth = (
   target: DecoratedGraphNodeData
 ): ThresholdStatus => {
   // We need to check the configuration for item A outbound requests and configuration of B for inbound requests
-  const annotationSource = source.healthAnnotation ? new RateHealth(source.healthAnnotation) : undefined;
+  const annotationSource = source.hasHealthConfig ? new RateHealth(source.hasHealthConfig) : undefined;
   const configSource =
     annotationSource && annotationSource.toleranceConfig
       ? annotationSource.toleranceConfig
       : getRateHealthConfig(source.namespace, source[source.nodeType], source.nodeType).tolerance;
-  const annotationTarget = target.healthAnnotation ? new RateHealth(target.healthAnnotation) : undefined;
+  const annotationTarget = target.hasHealthConfig ? new RateHealth(target.hasHealthConfig) : undefined;
   const configTarget =
     annotationTarget && annotationTarget.toleranceConfig
       ? annotationTarget.toleranceConfig

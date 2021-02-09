@@ -200,7 +200,7 @@ class TrafficDetails extends React.Component<TrafficDetailsProps, TrafficDetails
           isServiceEntry: node.isServiceEntry,
           isInaccessible: node.isInaccessible || false,
           destServices: node.destServices,
-          healthAnnotation: node.healthAnnotation
+          healthAnnotation: node.hasHealthConfig
         };
       default:
         return {
@@ -209,7 +209,7 @@ class TrafficDetails extends React.Component<TrafficDetailsProps, TrafficDetails
           namespace: node.namespace,
           name: node.workload || 'unknown',
           isInaccessible: node.isInaccessible || false,
-          healthAnnotation: node.healthAnnotation
+          healthAnnotation: node.hasHealthConfig
         };
     }
   };
