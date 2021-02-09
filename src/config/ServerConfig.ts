@@ -2,6 +2,11 @@ import _ from 'lodash';
 
 import { ServerConfig } from '../types/ServerConfig';
 import { parseHealthConfig } from './HealthConfig';
+import { store } from 'store/ConfigStore';
+import { UserSettingsActions } from 'actions/UserSettingsActions';
+import { config } from 'config';
+import Namespace from 'types/Namespace';
+import { NamespaceActions } from 'actions/NamespaceAction';
 
 export type Durations = { [key: number]: string };
 
@@ -101,6 +106,64 @@ export const setServerConfig = (svcConfig: ServerConfig) => {
     : serverConfig.healthConfig;
 
   computeValidDurations(serverConfig);
+
+  // apply configured UI Defaults
+  const uiDefaults = serverConfig.kialiFeatureFlags.uiDefaults;
+  if (uiDefaults) {
+    // Duration (aka metricsPerRefresh)
+    if (uiDefaults.metricsPerRefresh) {
+      const validDurations = humanDurations(serverConfig, '', '');
+      let metricsPerRefresh = 0;
+      for (const [key, value] of Object.entries(validDurations)) {
+        if (value === uiDefaults.metricsPerRefresh) {
+          metricsPerRefresh = Number(key);
+          break;
+        }
+      }
+      if (metricsPerRefresh > 0) {
+        store.dispatch(UserSettingsActions.setDuration(metricsPerRefresh));
+        console.debug(`Setting UI Default: metricsPerRefresh [${uiDefaults.metricsPerRefresh}=${metricsPerRefresh}s]`);
+      } else {
+        console.debug(`Ignoring invalid UI Default: metricsPerRefresh [${uiDefaults.metricsPerRefresh}]`);
+      }
+    }
+
+    // Refresh Interval
+    let refreshInterval = -1;
+    if (uiDefaults.refreshInterval) {
+      for (const [key, value] of Object.entries(config.toolbar.refreshInterval)) {
+        if (value.endsWith(uiDefaults.refreshInterval)) {
+          refreshInterval = Number(key);
+          break;
+        }
+      }
+      if (refreshInterval >= 0) {
+        store.dispatch(UserSettingsActions.setRefreshInterval(refreshInterval));
+        console.debug(`Setting UI Default: refreshInterval [${uiDefaults.refreshInterval}=${refreshInterval}ms]`);
+      } else {
+        console.debug(`Ignoring invalid UI Default: refreshInterval [${uiDefaults.refreshInterval}]`);
+      }
+    }
+
+    // Selected Namespaces
+    if (uiDefaults.namespaces && uiDefaults.namespaces.length > 0) {
+      const namespaces = store.getState().namespaces.items;
+      const namespaceNames: string[] = namespaces ? namespaces.map(ns => ns.name) : [];
+      const activeNamespaces: Namespace[] = [];
+
+      for (const name of uiDefaults.namespaces) {
+        if (namespaceNames.includes(name)) {
+          activeNamespaces.push({ name: name } as Namespace);
+        } else {
+          console.debug(`Ignoring invalid UI Default: namespace [${name}]`);
+        }
+      }
+      if (activeNamespaces.length > 0) {
+        store.dispatch(NamespaceActions.setActiveNamespaces(activeNamespaces));
+        console.log(`Setting UI Default: namespaces ${JSON.stringify(activeNamespaces.map(ns => ns.name))}`);
+      }
+    }
+  }
 };
 
 export const isIstioNamespace = (namespace: string): boolean => {

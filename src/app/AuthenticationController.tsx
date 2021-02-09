@@ -21,6 +21,8 @@ import { AuthStrategy } from '../types/Auth';
 import { JaegerInfo } from '../types/JaegerInfo';
 import { LoginActions } from '../actions/LoginActions';
 import history from './History';
+import { NamespaceActions } from 'actions/NamespaceAction';
+import Namespace from 'types/Namespace';
 
 interface AuthenticationControllerReduxProps {
   authenticated: boolean;
@@ -30,6 +32,7 @@ interface AuthenticationControllerReduxProps {
   setJaegerInfo: (jaegerInfo: JaegerInfo | null) => void;
   setLandingRoute: (route: string | undefined) => void;
   setMeshTlsStatus: (meshStatus: TLSStatus) => void;
+  setNamespaces: (namespaces: Namespace[], receivedAt: Date) => void;
   setServerStatus: (serverStatus: ServerStatus) => void;
 }
 
@@ -164,8 +167,14 @@ class AuthenticationController extends React.Component<AuthenticationControllerP
           );
         });
 
-      const configs = await Promise.all([API.getServerConfig(), getStatusPromise, getJaegerInfoPromise]);
-      setServerConfig(configs[0].data);
+      const configs = await Promise.all([
+        API.getNamespaces(),
+        API.getServerConfig(),
+        getStatusPromise,
+        getJaegerInfoPromise
+      ]);
+      this.props.setNamespaces(configs[0].data, new Date());
+      setServerConfig(configs[1].data);
 
       if (this.props.landingRoute) {
         history.replace(this.props.landingRoute);
@@ -206,6 +215,7 @@ const mapDispatchToProps = (dispatch: KialiDispatch) => ({
   setJaegerInfo: bindActionCreators(JaegerActions.setInfo, dispatch),
   setLandingRoute: bindActionCreators(LoginActions.setLandingRoute, dispatch),
   setMeshTlsStatus: bindActionCreators(MeshTlsActions.setinfo, dispatch),
+  setNamespaces: bindActionCreators(NamespaceActions.receiveList, dispatch),
   setServerStatus: (serverStatus: ServerStatus) => processServerStatus(dispatch, serverStatus)
 });
 
