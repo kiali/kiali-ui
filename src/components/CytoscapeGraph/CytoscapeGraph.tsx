@@ -109,6 +109,7 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
   private focusSelector?: string;
   private graphHighlighter?: GraphHighlighter;
   private namespaceChanged: boolean;
+  private needsInitialLayout: boolean;
   private nodeChanged: boolean;
   private resetSelection: boolean = false;
   private trafficRenderer?: TrafficRender;
@@ -120,6 +121,7 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
     this.cytoscapeReactWrapperRef = React.createRef();
     this.focusSelector = props.focusSelector;
     this.namespaceChanged = false;
+    this.needsInitialLayout = false;
     this.nodeChanged = false;
   }
 
@@ -161,12 +163,14 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
 
     let updateLayout = false;
     if (
+      this.needsInitialLayout ||
       this.nodeNeedsRelayout() ||
       this.namespaceNeedsRelayout(prevProps.graphData.elements, this.props.graphData.elements) ||
       this.elementsNeedRelayout(prevProps.graphData.elements, this.props.graphData.elements) ||
       this.props.layout.name !== prevProps.layout.name
     ) {
       updateLayout = true;
+      this.needsInitialLayout = false;
     }
 
     this.processGraphUpdate(cy, updateLayout);
@@ -493,6 +497,7 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
       if (this.props.onReady) {
         this.props.onReady(evt.cy);
       }
+      this.needsInitialLayout = true;
     });
 
     cy.on('destroy', (_evt: Cy.EventObject) => {
