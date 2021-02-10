@@ -123,10 +123,10 @@ const toolbarTitle = (position: TextAreaPosition = 'top') =>
 
 const logTextAreaBackground = (enabled = true) => ({ backgroundColor: enabled ? '#003145' : 'gray' });
 
-const logsTextarea = (enabled = true, position: TextAreaPosition = 'top', hasTitle = true) =>
+const logsTextarea = (enabled = true, position: TextAreaPosition = 'top', _hasTitle = true) =>
   style(logTextAreaBackground(enabled), {
     width: `${['top', 'bottom'].includes(position) ? '100%' : 'calc(100% - 10px)'}`,
-    height: `calc(100% - ${position === 'top' ? '20px' : '0px'} - ${hasTitle ? '36px' : '0px'})`,
+    height: `calc(var(--kiali-details-pages-tab-content-height) - 185px)`,
     overflow: 'auto',
     resize: 'none',
     color: '#fff',
@@ -367,9 +367,6 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
   }
 
   private getAppDiv = () => {
-    const appLogs = this.hasEntries(this.state.filteredLogs)
-      ? this.entriesToString(this.state.filteredLogs)
-      : NoLogsFoundMessage;
     const title = this.state.containerInfo!.containerOptions[this.state.containerInfo!.container];
     return (
       <div id="appLogDiv" className={appLogsDivHorizontal}>
@@ -378,7 +375,7 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
           <ToolbarGroup className={toolbarRight}>
             <ToolbarItem>
               <Tooltip key="copy_logs" position="top" content="Copy logs to clipboard">
-                <CopyToClipboard onCopy={this.copyLogCallback} text={appLogs}>
+                <CopyToClipboard onCopy={this.copyLogCallback} text={this.entriesToString(this.state.filteredLogs)}>
                   <Button variant={ButtonVariant.link} isInline>
                     <KialiIcon.Copy className={defaultIconStyle} />
                   </Button>
@@ -400,13 +397,16 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
           </ToolbarGroup>
         </Toolbar>
 
-        <textarea
-          id="appLogTextArea"
-          className={logsTextarea(this.hasEntries(this.state.filteredLogs))}
-          ref={this.logsRef}
-          readOnly={true}
-          value={appLogs}
-        />
+        <div id="appLogTextArea" className={logsTextarea(this.hasEntries(this.state.filteredLogs))} ref={this.logsRef}>
+          {this.hasEntries(this.state.filteredLogs)
+            ? this.state.filteredLogs.map(le => (
+                <>
+                  <b>${le.message}</b>
+                  <br />
+                </>
+              ))
+            : NoLogsFoundMessage}
+        </div>
       </div>
     );
   };
