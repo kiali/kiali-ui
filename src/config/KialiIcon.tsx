@@ -42,7 +42,8 @@ import {
   StopIcon,
   UserClockIcon,
   OnRunningIcon,
-  InProgressIcon
+  InProgressIcon,
+  AsteriskIcon
 } from '@patternfly/react-icons';
 import { style } from 'typestyle';
 
@@ -90,6 +91,7 @@ export const KialiIcon: { [name: string]: React.FunctionComponent<IconProps> } =
   PauseCircle: (props: IconProps) => <PauseCircleIcon className={props.className} />,
   Play: (props: IconProps) => <PlayIcon className={props.className} />,
   PlayCircle: (props: IconProps) => <PlayCircleIcon className={props.className} />,
+  Regex: (props: IconProps) => <AsteriskIcon className={props.className} />,
   Repository: (props: IconProps) => <RepositoryIcon className={props.className} />,
   Services: (props: IconProps) => <ServiceIcon className={props.className} />,
   Stop: (props: IconProps) => <StopIcon className={props.className} />,

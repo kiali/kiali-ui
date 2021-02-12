@@ -11,11 +11,13 @@ import {
   Toolbar,
   ToolbarGroup,
   ToolbarItem,
-  Tooltip
+  Tooltip,
+  TooltipPosition,
+  Badge
 } from '@patternfly/react-core';
 import { style } from 'typestyle';
-import { Pod, PodLogs, LogEntry } from '../../types/IstioObjects';
-import { getPodLogs, Response } from '../../services/Api';
+import { Pod, LogEntry } from '../../types/IstioObjects';
+import { getPodLogs } from '../../services/Api';
 import { PromisesRegistry } from '../../utils/CancelablePromises';
 import { ToolbarDropdown } from '../../components/ToolbarDropdown/ToolbarDropdown';
 import { TimeRange, evalTimeRange, TimeInMilliseconds, isEqualTimeRange } from '../../types/Common';
@@ -27,6 +29,7 @@ import { serverConfig } from 'config';
 import { KialiAppState } from '../../store/Store';
 import { connect } from 'react-redux';
 import { timeRangeSelector } from '../../store/Selectors';
+import { VictoryLegend } from 'victory';
 
 export interface WorkloadPodLogsProps {
   namespace: string;
@@ -35,17 +38,19 @@ export interface WorkloadPodLogsProps {
   lastRefreshAt: TimeInMilliseconds;
 }
 
-const NoAppContainer = 'n/a';
+// const NoAppContainer = 'n/a';
 
-interface ContainerInfo {
-  container: string;
-  containerOptions: { [key: string]: string };
+interface Container {
+  displayName: string;
+  isProxy: boolean;
+  isSelected: boolean;
+  name: string;
 }
 
 type TextAreaPosition = 'left' | 'right' | 'top' | 'bottom';
 
 interface WorkloadPodLogsState {
-  containerInfo?: ContainerInfo;
+  containers?: Container[];
   filteredLogs: LogEntry[];
   hideError?: string;
   hideLogValue: string;
@@ -69,13 +74,13 @@ const NoLogsFoundMessage = 'No container logs found for the time period.';
 const TailLinesDefault = 100;
 const TailLinesOptions = {
   '-1': 'All lines',
-  '10': 'Last 10 lines',
-  '50': 'Last 50 lines',
-  '100': 'Last 100 lines',
-  '300': 'Last 300 lines',
-  '500': 'Last 500 lines',
-  '1000': 'Last 1000 lines',
-  '5000': 'Last 5000 lines'
+  '10': '10 lines',
+  '50': '50 lines',
+  '100': '100 lines',
+  '300': '300 lines',
+  '500': '500 lines',
+  '1000': '1000 lines',
+  '5000': '5000 lines'
 };
 
 const appLogsDivHorizontal = style({
@@ -105,6 +110,10 @@ const toolbar = style({
 
 const toolbarSpace = style({
   marginLeft: '1em'
+});
+
+const toolbarSmallSpace = style({
+  marginLeft: '0.5em'
 });
 
 const toolbarRight = style({
@@ -175,39 +184,33 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
 
     const podValue = 0;
     const pod = this.props.pods[podValue];
-    const containerInfo = this.getContainerInfo(pod);
+    const containers = this.getContainers(pod);
 
     this.state = {
       ...defaultState,
-      containerInfo: containerInfo,
+      containers: containers,
       podValue: podValue
     };
   }
 
   componentDidMount() {
-    if (this.state.containerInfo) {
+    if (this.state.containers) {
       const pod = this.props.pods[this.state.podValue!];
-      this.fetchLogs(
-        this.props.namespace,
-        pod.name,
-        this.state.containerInfo.container,
-        this.state.tailLines,
-        this.props.timeRange
-      );
+      this.fetchLogs(this.props.namespace, pod.name, this.state.containers, this.state.tailLines, this.props.timeRange);
     }
   }
 
   componentDidUpdate(prevProps: WorkloadPodLogsProps, prevState: WorkloadPodLogsState) {
-    const prevContainer = prevState.containerInfo ? prevState.containerInfo.container : undefined;
-    const newContainer = this.state.containerInfo ? this.state.containerInfo.container : undefined;
-    const updateContainerInfo = this.state.containerInfo && this.state.containerInfo !== prevState.containerInfo;
-    const updateContainer = newContainer && newContainer !== prevContainer;
+    const prevContainers = prevState.containers ? prevState.containers : undefined;
+    const newContainers = this.state.containers ? this.state.containers : undefined;
+    const updateContainerInfo = this.state.containers && this.state.containers !== prevState.containers;
+    const updateContainer = newContainers && newContainers !== prevContainers;
     const updateTailLines = this.state.tailLines && prevState.tailLines !== this.state.tailLines;
     const lastRefreshChanged = prevProps.lastRefreshAt !== this.props.lastRefreshAt;
     const timeRangeChanged = !isEqualTimeRange(this.props.timeRange, prevProps.timeRange);
     if (updateContainerInfo || updateContainer || updateTailLines || lastRefreshChanged || timeRangeChanged) {
       const pod = this.props.pods[this.state.podValue!];
-      this.fetchLogs(this.props.namespace, pod.name, newContainer!, this.state.tailLines, this.props.timeRange);
+      this.fetchLogs(this.props.namespace, pod.name, newContainers!, this.state.tailLines, this.props.timeRange);
     }
     this.logsRef.current.scrollTop = this.logsRef.current.scrollHeight;
 
@@ -228,17 +231,19 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
     return (
       <>
         <RenderComponentScroll>
-          {this.state.containerInfo && (
+          {this.state.containers && (
             <Grid style={{ height: '100%' }}>
               <GridItem span={12}>
                 <Card style={{ height: '100%' }}>
                   <CardBody>
                     <Toolbar className={toolbar}>
                       <ToolbarGroup>
+                        <Tooltip position={TooltipPosition.top} content={<>Pod</>}>
+                          <Badge className="virtualitem_badge_definition">P</Badge>
+                        </Tooltip>
                         <ToolbarItem className={displayFlex}>
                           <ToolbarDropdown
                             id={'wpl_pods'}
-                            nameDropdown="Pod"
                             tooltip="Display logs for the selected pod"
                             handleSelect={key => this.setPod(key)}
                             value={this.state.podValue}
@@ -246,49 +251,13 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
                             options={this.podOptions!}
                           />
                         </ToolbarItem>
-                        <ToolbarItem className={`${displayFlex} ${toolbarSpace}`}>
-                          <ToolbarDropdown
-                            id={'wpl_containers'}
-                            nameDropdown="Container"
-                            tooltip="Choose container for selected pod"
-                            handleSelect={key => this.setContainer(key)}
-                            value={this.state.containerInfo.container}
-                            label={this.state.containerInfo.container}
-                            options={this.state.containerInfo.containerOptions!}
-                          />
-                        </ToolbarItem>
                       </ToolbarGroup>
-                      <ToolbarGroup className={toolbarRight}>
-                        <ToolbarItem className={displayFlex}>
-                          <ToolbarDropdown
-                            id={'wpl_tailLines'}
-                            handleSelect={key => this.setTailLines(Number(key))}
-                            value={this.state.tailLines}
-                            label={TailLinesOptions[this.state.tailLines]}
-                            options={TailLinesOptions}
-                            tooltip={'Show up to last N log lines'}
-                            classNameSelect={toolbarTail}
-                          />
-                        </ToolbarItem>
-                      </ToolbarGroup>
-                    </Toolbar>
-                    <Toolbar className={toolbar}>
                       <ToolbarGroup>
-                        <ToolbarItem className={toolbarSpace}>
-                          <Switch
-                            id="timestamps-switch"
-                            label="Timestamps"
-                            isChecked={this.state.showTimestamps}
-                            onChange={this.handleTimestampsChange}
-                          />
-                        </ToolbarItem>
-                      </ToolbarGroup>
-                      <ToolbarGroup className={toolbarRight}>
                         <ToolbarItem>
                           <TextInput
                             id="log_show"
                             name="log_show"
-                            style={{ width: '10em' }}
+                            style={{ width: '8em' }}
                             isValid={!this.state.showError}
                             autoComplete="on"
                             type="text"
@@ -308,7 +277,7 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
                           <TextInput
                             id="log_hide"
                             name="log_hide"
-                            style={{ width: '10em' }}
+                            style={{ width: '8em' }}
                             isValid={!this.state.hideError}
                             autoComplete="on"
                             type="text"
@@ -337,20 +306,44 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
                             <KialiIcon.Info className={infoIcons} />
                           </Tooltip>
                         </ToolbarItem>
+                        <ToolbarItem className={toolbarSmallSpace}>
+                          <Tooltip
+                            key="show_hide_regex_help"
+                            position="top"
+                            content="Use regular expression matching for Show/Hide"
+                          >
+                            <Button
+                              variant={ButtonVariant.link}
+                              isBlock={this.state.useRegex}
+                              onClick={this.handleRegexChange}
+                              isInline
+                            >
+                              <KialiIcon.Regex className={defaultIconStyle} />
+                            </Button>
+                          </Tooltip>
+                        </ToolbarItem>
+                      </ToolbarGroup>
+                      <ToolbarGroup>
                         <ToolbarItem className={toolbarSpace}>
                           <Switch
-                            id="regex-switch"
-                            label="Activate Regex"
-                            isChecked={this.state.useRegex}
-                            onChange={this.handleRegexChange}
+                            id="timestamps-switch"
+                            label="Timestamps"
+                            isChecked={this.state.showTimestamps}
+                            onChange={this.handleTimestampsChange}
                           />
-                          <Tooltip
-                            key="show_log_regex_help"
-                            position="top"
-                            content="Use Regex instead of substring for more advanced use"
-                          >
-                            <KialiIcon.Info className={infoIcons} />
-                          </Tooltip>
+                        </ToolbarItem>
+                      </ToolbarGroup>
+                      <ToolbarGroup className={toolbarRight}>
+                        <ToolbarItem className={displayFlex}>
+                          <ToolbarDropdown
+                            id={'wpl_tailLines'}
+                            handleSelect={key => this.setTailLines(Number(key))}
+                            value={this.state.tailLines}
+                            label={TailLinesOptions[this.state.tailLines]}
+                            options={TailLinesOptions}
+                            tooltip={'Show up to last N log lines'}
+                            classNameSelect={toolbarTail}
+                          />
                         </ToolbarItem>
                       </ToolbarGroup>
                     </Toolbar>
@@ -366,12 +359,21 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
     );
   }
 
+  private getContainerLegend = () => {
+    const containers = this.state.containers!.map(c => {
+      return { name: c.displayName };
+    });
+    return <VictoryLegend orientation="horizontal" height={34} gutter={20} data={containers} />;
+  };
+
   private getAppDiv = () => {
-    const title = this.state.containerInfo!.containerOptions[this.state.containerInfo!.container];
+    // const title = this.state.containerInfo!.containerOptions[this.state.containerInfo!.container];
     return (
       <div id="appLogDiv" className={appLogsDivHorizontal}>
         <Toolbar className={toolbarTitle()}>
-          <ToolbarItem className={logsTitle(this.isFullscreen())}>{title}</ToolbarItem>
+          <ToolbarGroup>
+            <ToolbarItem className={logsTitle(this.isFullscreen())}>{this.getContainerLegend()}</ToolbarItem>
+          </ToolbarGroup>
           <ToolbarGroup className={toolbarRight}>
             <ToolbarItem>
               <Tooltip key="copy_logs" position="top" content="Copy logs to clipboard">
@@ -413,15 +415,17 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
 
   private setPod = (podValue: string) => {
     const pod = this.props.pods[Number(podValue)];
-    const containerInfo = this.getContainerInfo(pod);
-    this.setState({ containerInfo: containerInfo, podValue: Number(podValue) });
+    const containerNames = this.getContainers(pod);
+    this.setState({ containers: containerNames, podValue: Number(podValue) });
   };
 
+  /*
   private setContainer = (container: string) => {
     this.setState({
       containerInfo: { container: container, containerOptions: this.state.containerInfo!.containerOptions }
     });
   };
+  */
 
   private setTailLines = (tailLines: number) => {
     this.setState({ tailLines: tailLines });
@@ -578,30 +582,33 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
     this.toggleFullscreen('logDiv');
   };
 
-  private getContainerInfo = (pod: Pod): ContainerInfo => {
-    let containers = pod.containers ? pod.containers : [];
-    containers.push(...(pod.istioContainers ? pod.istioContainers : []));
-    containers = containers.filter(c => c.name !== 'istio-proxy');
-    const options: { [key: string]: string } = {};
-
-    if (containers.length === 0) {
-      options[NoAppContainer] = NoAppContainer;
-      return { container: NoAppContainer, containerOptions: options };
-    }
-
-    const containerNames = containers.map(c => c.name);
-    containerNames.forEach(n => {
+  private getContainers = (pod: Pod): Container[] => {
+    let podContainers = pod.containers || [];
+    let containers = podContainers.map(c => {
+      const name = c.name;
       const version = pod.appLabel && pod.labels ? pod.labels[serverConfig.istioLabels.versionLabelName] : undefined;
-      options[n] = !!version ? `${n}-${version}` : n;
+      const displayName = !version ? name : `${name}-${version}`;
+
+      return { name: name, displayName: displayName, isProxy: false, isSelected: true };
     });
 
-    return { container: containerNames[0], containerOptions: options };
+    podContainers = pod.istioContainers || [];
+    containers.push(
+      ...podContainers.map(c => {
+        const name = c.name;
+        const displayName = c.name;
+
+        return { name: name, displayName: displayName, isProxy: true, isSelected: true };
+      })
+    );
+
+    return containers;
   };
 
   private fetchLogs = (
     namespace: string,
     podName: string,
-    container: string,
+    containers: Container[],
     tailLines: number,
     timeRange: TimeRange
   ) => {
@@ -615,23 +622,14 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
       duration = Math.floor(timeRangeDates[1].getTime() / 1000) - sinceTime;
     }
 
-    const appPromise: Promise<Response<PodLogs>> =
-      container !== NoAppContainer
-        ? getPodLogs(namespace, podName, container, tailLines, sinceTime, duration, false)
-        : Promise.resolve({ data: { entries: [] } });
-
-    const proxyPromise: Promise<Response<PodLogs>> = getPodLogs(
-      namespace,
-      podName,
-      'istio-proxy',
-      tailLines,
-      sinceTime,
-      duration,
-      true
-    );
+    const containerPromises = containers
+      .filter(c => c.isSelected)
+      .map(c => {
+        return getPodLogs(namespace, podName, c.name, tailLines, sinceTime, duration, c.isProxy);
+      });
 
     this.promises
-      .registerAll('logs', [appPromise, proxyPromise])
+      .registerAll('logs', containerPromises)
       .then(responses => {
         let rawLogs: LogEntry[] = [];
 
