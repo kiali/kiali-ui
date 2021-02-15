@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Button, Tabs, Tab } from '@patternfly/react-core';
-import MatchBuilder from './MatchBuilder';
+import MatchBuilder, { HEADERS, URI, SCHEME, METHOD, AUTHORITY, PRESENCE, opOptions } from './MatchBuilder';
 import Matches from './Matches';
 import { style } from 'typestyle';
 import { WorkloadOverview } from '../../../types/ServiceInfo';
@@ -84,7 +84,11 @@ class RuleBuilder extends React.Component<Props, State> {
         <Tabs isFilled={true} activeKey={this.state.ruleTabKey} onSelect={this.ruleHandleTabClick}>
           <Tab eventKey={0} title={'Request Matching'}>
             <div style={{ marginTop: '20px' }}>
-              <MatchBuilder {...this.props} />
+              <MatchBuilder
+                {...this.props}
+                matchOptions={[HEADERS, URI, SCHEME, METHOD, AUTHORITY]}
+                opOptions={this.props.category === HEADERS ? [PRESENCE, ...opOptions] : opOptions}
+              />
               <Matches {...this.props} />
             </div>
           </Tab>

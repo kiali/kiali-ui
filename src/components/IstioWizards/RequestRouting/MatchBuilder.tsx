@@ -7,6 +7,8 @@ type Props = {
   headerName: string;
   matchValue: string;
   isValid: boolean;
+  matchOptions: string[];
+  opOptions: string[];
   onSelectCategory: (category: string) => void;
   onHeaderNameChange: (headerName: string) => void;
   onSelectOperator: (operator: string) => void;
@@ -19,23 +21,23 @@ type State = {
   isOperatorDropdown: boolean;
 };
 
+// Match options
 export const HEADERS = 'headers';
 export const URI = 'uri';
 export const SCHEME = 'scheme';
 export const METHOD = 'method';
 export const AUTHORITY = 'authority';
 
-const matchOptions: string[] = [HEADERS, URI, SCHEME, METHOD, AUTHORITY];
-
+// Operators
 export const EXACT = 'exact';
 export const PREFIX = 'prefix';
 export const REGEX = 'regex';
 
+export const opOptions: string[] = [EXACT, PREFIX, REGEX];
+
 // Pseudo operator
 export const PRESENCE = 'is present';
 export const ANYTHING = '^.*$';
-
-const opOptions: string[] = [EXACT, PREFIX, REGEX];
 
 const placeholderText = {
   [HEADERS]: 'Header value...',
@@ -67,13 +69,12 @@ class MatchBuilder extends React.Component<Props, State> {
   };
 
   render() {
-    const renderOpOptions: string[] = this.props.category === HEADERS ? [PRESENCE, ...opOptions] : opOptions;
     return (
       <InputGroup>
         <Dropdown
           toggle={<DropdownToggle onToggle={this.onMathOptionsToggle}>{this.props.category}</DropdownToggle>}
           isOpen={this.state.isMatchDropdown}
-          dropdownItems={matchOptions.map((mode, index) => (
+          dropdownItems={this.props.matchOptions.map((mode, index) => (
             <DropdownItem
               key={mode + '_' + index}
               value={mode}
@@ -98,7 +99,7 @@ class MatchBuilder extends React.Component<Props, State> {
         <Dropdown
           toggle={<DropdownToggle onToggle={this.onOperatorToggle}>{this.props.operator}</DropdownToggle>}
           isOpen={this.state.isOperatorDropdown}
-          dropdownItems={renderOpOptions.map((op, index) => (
+          dropdownItems={this.props.opOptions.map((op, index) => (
             <DropdownItem
               key={op + '_' + index}
               value={op}
