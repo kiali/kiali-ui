@@ -28,9 +28,17 @@ type State = {
   validationMsg: string;
 };
 
-const MSG_SAME_MATCHING = 'A Rule with same matching criteria is already added.';
-const MSG_HEADER_NAME_NON_EMPTY = 'Header name must be non empty';
-const MSG_HEADER_VALUE_NON_EMPTY = 'Header value must be non empty';
+export const MSG_SAME_MATCHING = 'A Rule with same matching criteria is already added.';
+export const MSG_HEADER_NAME_NON_EMPTY = 'Header name must be non empty';
+export const MSG_HEADER_VALUE_NON_EMPTY = 'Header value must be non empty';
+
+export function isMatchesIncluded(rules: Rule[], newRule: Rule) {
+  return rules.some(rule => {
+    return (
+      rule.matches.length === newRule.matches.length && rule.matches.every(match => newRule.matches.includes(match))
+    );
+  });
+}
 
 class RequestRouting extends React.Component<Props, State> {
   constructor(props: Props) {
@@ -78,21 +86,6 @@ class RequestRouting extends React.Component<Props, State> {
       validationMsg: ''
     };
   }
-
-  isMatchesIncluded = (rules: Rule[], rule: Rule) => {
-    let found = false;
-    for (let i = 0; i < rules.length; i++) {
-      const item = rules[i];
-      if (item.matches.length !== rule.matches.length) {
-        continue;
-      }
-      found = item.matches.every(value => rule.matches.includes(value));
-      if (found) {
-        break;
-      }
-    }
-    return found;
-  };
 
   isValid = (rules: Rule[]): boolean => {
     // Corner case, an empty rules shouldn't be a valid scenario to create a VS/DR
@@ -163,7 +156,7 @@ class RequestRouting extends React.Component<Props, State> {
         if (prevState.timeoutRetryRoute.isRetry && prevState.timeoutRetryRoute.isValidRetry) {
           newRule.retries = prevState.timeoutRetryRoute.retries;
         }
-        if (!this.isMatchesIncluded(prevState.rules, newRule)) {
+        if (!isMatchesIncluded(prevState.rules, newRule)) {
           prevState.rules.push(newRule);
           return {
             matches: prevState.matches,
