@@ -56,7 +56,7 @@ class MatchBuilder extends React.Component<Props, State> {
     };
   }
 
-  onMathOptionsToggle = () => {
+  onMatchOptionsToggle = () => {
     this.setState({
       isMatchDropdown: !this.state.isMatchDropdown
     });
@@ -72,7 +72,7 @@ class MatchBuilder extends React.Component<Props, State> {
     return (
       <InputGroup>
         <Dropdown
-          toggle={<DropdownToggle onToggle={this.onMathOptionsToggle}>{this.props.category}</DropdownToggle>}
+          toggle={<DropdownToggle onToggle={this.onMatchOptionsToggle}>{this.props.category}</DropdownToggle>}
           isOpen={this.state.isMatchDropdown}
           dropdownItems={this.props.matchOptions.map((mode, index) => (
             <DropdownItem
@@ -81,7 +81,7 @@ class MatchBuilder extends React.Component<Props, State> {
               component="button"
               onClick={() => {
                 this.props.onSelectCategory(mode);
-                this.onMathOptionsToggle();
+                this.onMatchOptionsToggle();
               }}
             >
               {mode}
