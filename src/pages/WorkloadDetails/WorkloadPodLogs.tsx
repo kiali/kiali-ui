@@ -53,6 +53,7 @@ interface Container {
 interface WorkloadPodLogsState {
   containers?: Container[];
   filteredLogs: LogEntry[];
+  fullscreen: boolean;
   hideError?: string;
   hideLogValue: string;
   loadingLogs: boolean;
@@ -84,11 +85,6 @@ const TailLinesOptions = {
   '5000': '5000 lines'
 };
 
-const appLogsDivHorizontal = style({
-  height: '90%',
-  marginRight: '5px'
-});
-
 const displayFlex = style({
   display: 'flex'
 });
@@ -97,13 +93,6 @@ const infoIcons = style({
   marginLeft: '0.5em',
   width: '24px'
 });
-
-const fullscreenTitleBackground = (isFullscreen: boolean) => ({ color: isFullscreen ? 'white' : 'black' });
-
-const logsTitle = (isFullscreen: boolean) =>
-  style(fullscreenTitleBackground(isFullscreen), {
-    fontWeight: 'bold'
-  });
 
 const toolbar = style({
   margin: '0 0 10px 0'
@@ -130,12 +119,18 @@ const toolbarTitle = style({
   margin: '0 10px 0 0'
 });
 
-const logTextAreaBackground = (enabled = true) => ({ backgroundColor: enabled ? '#003145' : 'gray' });
+const logsDiv = style({
+  marginRight: '5px'
+});
 
-const logsTextarea = (enabled = true) =>
-  style(logTextAreaBackground(enabled), {
+const logsTextBackground = (enabled: boolean) => ({ backgroundColor: enabled ? '#003145' : 'gray' });
+const logsTextHeight = (fullscreen: boolean) => ({
+  height: fullscreen ? `calc(100vh - 145px)` : `calc(var(--kiali-details-pages-tab-content-height) - 160px)`
+});
+
+const logsText = (enabled = true, fullscreen = false) =>
+  style(logsTextBackground(enabled), logsTextHeight(fullscreen), {
     width: '100%',
-    height: `calc(var(--kiali-details-pages-tab-content-height) - 185px)`,
     overflow: 'auto',
     resize: 'none',
     color: '#fff',
@@ -157,6 +152,7 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
 
     const defaultState = {
       filteredLogs: [],
+      fullscreen: false,
       hideLogValue: '',
       loadingLogs: false,
       logWindowSelections: [],
@@ -194,6 +190,9 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
   }
 
   componentDidMount() {
+    const screenFullAlias = screenfull as Screenfull;
+    screenFullAlias.onchange(() => this.setState({ fullscreen: !this.state.fullscreen }));
+
     if (this.state.containers) {
       const pod = this.props.pods[this.state.podValue!];
       this.fetchLogs(this.props.namespace, pod.name, this.state.containers, this.state.tailLines, this.props.timeRange);
@@ -232,7 +231,7 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
       <>
         <RenderComponentScroll>
           {this.state.containers && (
-            <Grid style={{ height: '100%' }}>
+            <Grid id="logsPage" style={{ height: '100%' }}>
               <GridItem span={12}>
                 <Card style={{ height: '100%' }}>
                   <CardBody>
@@ -347,7 +346,7 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
                         </ToolbarItem>
                       </ToolbarGroup>
                     </Toolbar>
-                    {this.getAppDiv()}
+                    {this.getLogsDiv()}
                   </CardBody>
                 </Card>
               </GridItem>
@@ -412,13 +411,12 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
     );
   };
 
-  private getAppDiv = () => {
-    // const title = this.state.containerInfo!.containerOptions[this.state.containerInfo!.container];
+  private getLogsDiv = () => {
     return (
-      <div id="appLogDiv" className={appLogsDivHorizontal}>
+      <div id="logsDiv" className={logsDiv}>
         <Toolbar className={toolbarTitle}>
           <ToolbarGroup>
-            <ToolbarItem className={logsTitle(this.isFullscreen())}>{this.getContainerLegend()}</ToolbarItem>
+            <ToolbarItem>{this.getContainerLegend()}</ToolbarItem>
           </ToolbarGroup>
           <ToolbarGroup className={toolbarRight}>
             <ToolbarItem>
@@ -431,10 +429,10 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
               </Tooltip>
             </ToolbarItem>
             <ToolbarItem className={toolbarSpace}>
-              <Tooltip key="expand_app_logs" position="top" content="Expand App logs full screen">
+              <Tooltip key="fullscreen_logs" position="top" content="Expand logs full screen">
                 <Button
                   variant={ButtonVariant.link}
-                  onClick={this.openFullScreenLog}
+                  onClick={this.toggleFullscreen}
                   isDisabled={!this.hasEntries(this.state.filteredLogs)}
                   isInline
                 >
@@ -445,11 +443,15 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
           </ToolbarGroup>
         </Toolbar>
 
-        <div id="appLogTextArea" className={logsTextarea(this.hasEntries(this.state.filteredLogs))} ref={this.logsRef}>
+        <div
+          id="logsText"
+          className={logsText(this.hasEntries(this.state.filteredLogs), this.state.fullscreen)}
+          ref={this.logsRef}
+        >
           {this.hasEntries(this.state.filteredLogs)
             ? this.state.filteredLogs.map(le => (
                 <>
-                  <p style={{ color: le.color! }}>${le.message}</p>
+                  <p style={{ color: le.color!, fontSize: '12px' }}>${le.message}</p>
                 </>
               ))
             : NoLogsFoundMessage}
@@ -463,14 +465,6 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
     const containerNames = this.getContainers(pod);
     this.setState({ containers: containerNames, podValue: Number(podValue) });
   };
-
-  /*
-  private setContainer = (container: string) => {
-    this.setState({
-      containerInfo: { container: container, containerOptions: this.state.containerInfo!.containerOptions }
-    });
-  };
-  */
 
   private setTailLines = (tailLines: number) => {
     this.setState({ tailLines: tailLines });
@@ -599,32 +593,18 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
     this.logsRef.current.select();
   };
 
-  private makeElementFullScreen = (elementId: string) => {
-    const screenFullAlias = screenfull as Screenfull; // this casting was necessary
-    const element = document.getElementById(elementId);
-    if (screenFullAlias.isEnabled) {
-      if (element) {
-        screenFullAlias.request(element);
-      }
-    }
-  };
-
-  private isFullscreen = () => {
-    const screenFullAlias = screenfull as Screenfull; // this casting was necessary
-    return screenFullAlias.isFullscreen;
-  };
-
-  private toggleFullscreen = (elementId: string) => {
+  private toggleFullscreen = () => {
     const screenFullAlias = screenfull as Screenfull; // this casting was necessary
     if (screenFullAlias.isFullscreen) {
       screenFullAlias.exit();
     } else {
-      this.makeElementFullScreen(elementId);
+      const element = document.getElementById('logsPage');
+      if (screenFullAlias.isEnabled) {
+        if (element) {
+          screenFullAlias.request(element);
+        }
+      }
     }
-  };
-
-  private openFullScreenLog = () => {
-    this.toggleFullscreen('logDiv');
   };
 
   private getContainers = (pod: Pod): Container[] => {
