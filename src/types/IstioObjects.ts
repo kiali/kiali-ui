@@ -3,6 +3,7 @@ import { ResourcePermissions } from './Permissions';
 import { ServicePort } from './ServiceInfo';
 import { ProxyStatus } from './Health';
 import { TimeInSeconds } from './Common';
+import { PFColorVal } from 'components/Pf/PfColors';
 
 // Common types
 
@@ -147,6 +148,7 @@ export type AccessLogEntry = {
 
 export type LogEntry = {
   accessLogEntry?: AccessLogEntry;
+  color?: PFColorVal;
   message: string;
   severity: string;
   timestamp: string;

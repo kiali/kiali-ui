@@ -30,6 +30,10 @@ import { KialiAppState } from '../../store/Store';
 import { connect } from 'react-redux';
 import { timeRangeSelector } from '../../store/Selectors';
 import { VictoryLegend } from 'victory';
+import { PfColors, PFColorVal } from 'components/Pf/PfColors';
+
+const appContainerColors = [PfColors.White, PfColors.LightGreen, PfColors.LightBlue, PfColors.Purple100];
+const proxyContainerColor = PfColors.Gold;
 
 export interface WorkloadPodLogsProps {
   namespace: string;
@@ -38,16 +42,13 @@ export interface WorkloadPodLogsProps {
   lastRefreshAt: TimeInMilliseconds;
 }
 
-// const NoAppContainer = 'n/a';
-
 interface Container {
+  color: PFColorVal;
   displayName: string;
   isProxy: boolean;
   isSelected: boolean;
   name: string;
 }
-
-type TextAreaPosition = 'left' | 'right' | 'top' | 'bottom';
 
 interface WorkloadPodLogsState {
   containers?: Container[];
@@ -124,24 +125,23 @@ const toolbarTail = style({
   marginTop: '2px'
 });
 
-const toolbarTitle = (position: TextAreaPosition = 'top') =>
-  style({
-    height: '36px',
-    margin: `${position === 'right' ? '0 0 0 10px' : '0 10px 0 0'}`
-  });
+const toolbarTitle = style({
+  height: '36px',
+  margin: '0 10px 0 0'
+});
 
 const logTextAreaBackground = (enabled = true) => ({ backgroundColor: enabled ? '#003145' : 'gray' });
 
-const logsTextarea = (enabled = true, position: TextAreaPosition = 'top', _hasTitle = true) =>
+const logsTextarea = (enabled = true) =>
   style(logTextAreaBackground(enabled), {
-    width: `${['top', 'bottom'].includes(position) ? '100%' : 'calc(100% - 10px)'}`,
+    width: '100%',
     height: `calc(var(--kiali-details-pages-tab-content-height) - 185px)`,
     overflow: 'auto',
     resize: 'none',
     color: '#fff',
     fontFamily: 'monospace',
     fontSize: '11pt',
-    margin: `${position === 'right' ? '0 0 0 10px' : 0}`,
+    margin: 0,
     padding: '10px',
     whiteSpace: 'pre'
   });
@@ -360,17 +360,63 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
   }
 
   private getContainerLegend = () => {
-    const containers = this.state.containers!.map(c => {
+    const data = this.state.containers!.map(c => {
       return { name: c.displayName };
     });
-    return <VictoryLegend orientation="horizontal" height={34} gutter={20} data={containers} />;
+    const colorScale = this.state.containers!.map(c => {
+      return c.color;
+    });
+    return (
+      <VictoryLegend
+        orientation="horizontal"
+        style={{
+          data: { stroke: 'navy', strokeWidth: 2 }
+        }}
+        colorScale={colorScale}
+        height={34}
+        gutter={20}
+        data={data}
+        events={[
+          {
+            target: 'data',
+            eventHandlers: {
+              onClick: evt => {
+                evt.stopPropagation();
+                return [
+                  {
+                    target: 'data',
+                    mutation: props => {
+                      console.log(`Data Props:${JSON.stringify(props)}`);
+                      const container = this.state.containers![props.datum.column];
+                      return !container.isSelected
+                        ? null
+                        : { style: { stroke: 'navy', strokeWidth: 2, fill: PfColors.Gray } };
+                    }
+                  },
+                  {
+                    target: 'labels',
+                    mutation: props => {
+                      console.log(`Labels Props:${JSON.stringify(props)}`);
+                      const container = this.state.containers![props.datum.column];
+                      container.isSelected = !container.isSelected;
+                      this.setState({ containers: [...this.state.containers!] });
+                      return container.isSelected ? null : { style: { fill: PfColors.Gray } };
+                    }
+                  }
+                ];
+              }
+            }
+          }
+        ]}
+      />
+    );
   };
 
   private getAppDiv = () => {
     // const title = this.state.containerInfo!.containerOptions[this.state.containerInfo!.container];
     return (
       <div id="appLogDiv" className={appLogsDivHorizontal}>
-        <Toolbar className={toolbarTitle()}>
+        <Toolbar className={toolbarTitle}>
           <ToolbarGroup>
             <ToolbarItem className={logsTitle(this.isFullscreen())}>{this.getContainerLegend()}</ToolbarItem>
           </ToolbarGroup>
@@ -403,8 +449,7 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
           {this.hasEntries(this.state.filteredLogs)
             ? this.state.filteredLogs.map(le => (
                 <>
-                  <b>${le.message}</b>
-                  <br />
+                  <p style={{ color: le.color! }}>${le.message}</p>
                 </>
               ))
             : NoLogsFoundMessage}
@@ -583,22 +628,24 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
   };
 
   private getContainers = (pod: Pod): Container[] => {
-    let podContainers = pod.containers || [];
+    // consistently position the proxy container first, if it (they?) exist.
+    let podContainers = pod.istioContainers || [];
     let containers = podContainers.map(c => {
       const name = c.name;
-      const version = pod.appLabel && pod.labels ? pod.labels[serverConfig.istioLabels.versionLabelName] : undefined;
-      const displayName = !version ? name : `${name}-${version}`;
+      const displayName = c.name;
 
-      return { name: name, displayName: displayName, isProxy: false, isSelected: true };
+      return { color: proxyContainerColor, displayName: displayName, isProxy: true, isSelected: true, name: name };
     });
 
-    podContainers = pod.istioContainers || [];
+    podContainers = pod.containers || [];
     containers.push(
-      ...podContainers.map(c => {
+      ...podContainers.map((c, i) => {
         const name = c.name;
-        const displayName = c.name;
+        const version = pod.appLabel && pod.labels ? pod.labels[serverConfig.istioLabels.versionLabelName] : undefined;
+        const displayName = !version ? name : `${name}-${version}`;
+        const color = appContainerColors[i % appContainerColors.length];
 
-        return { name: name, displayName: displayName, isProxy: true, isSelected: true };
+        return { color: color, isProxy: false, isSelected: true, displayName: displayName, name: name };
       })
     );
 
@@ -622,11 +669,10 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
       duration = Math.floor(timeRangeDates[1].getTime() / 1000) - sinceTime;
     }
 
-    const containerPromises = containers
-      .filter(c => c.isSelected)
-      .map(c => {
-        return getPodLogs(namespace, podName, c.name, tailLines, sinceTime, duration, c.isProxy);
-      });
+    const selectedContainers = containers.filter(c => c.isSelected);
+    const containerPromises = selectedContainers.map(c => {
+      return getPodLogs(namespace, podName, c.name, tailLines, sinceTime, duration, c.isProxy);
+    });
 
     this.promises
       .registerAll('logs', containerPromises)
@@ -638,6 +684,8 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
         for (let i = 0; i < responses.length; i++) {
           const response = responses[i];
           const containerRawLogs = response.data.entries as LogEntry[];
+          const color = selectedContainers[i].color;
+          containerRawLogs.forEach(le => (le.color = color));
           rawLogs.push(...containerRawLogs);
         }
 
