@@ -27,8 +27,7 @@ import { ValidationStatus } from 'types/IstioObjects';
 import Namespace from 'types/Namespace';
 import ValidationSummary from 'components/Validations/ValidationSummary';
 import { PfColors } from '../../components/Pf/PfColors';
-import { Link } from 'react-router-dom';
-import { Paths } from '../../config';
+import ValidationSummaryLink from '../../components/Link/ValidationSummaryLink';
 
 type SummaryPanelGraphMetricsState = {
   reqRates: Datapoint[];
@@ -276,28 +275,26 @@ export default class SummaryPanelGraph extends React.Component<SummaryPanelPropT
   };
 
   private renderValidations = (ns: string) => {
-    const validation = this.state.validationsMap[ns];
+    const validation: ValidationStatus = this.state.validationsMap[ns];
     if(!validation) {
       return undefined;
     }
-
-    let summary = (
-      <ValidationSummary
-        id={'ns-val-' + ns}
+    return (
+      <ValidationSummaryLink
+        namespace={ns}
+        objectCount={validation.objectCount}
         errors={validation.errors}
         warnings={validation.warnings}
-        objectCount={validation.objectCount}
-        style={{ marginLeft: '5px' }}
-      />
-    );
-
-    if(validation.objectCount && validation.objectCount > 0) {
-      summary = (
-        <Link to={`/${Paths.ISTIO}?namespaces=${ns}`}>{summary}</Link>
-      );
-    }
-
-    return summary;
+      >
+        <ValidationSummary
+          id={'ns-val-' + ns}
+          errors={validation.errors}
+          warnings={validation.warnings}
+          objectCount={validation.objectCount}
+          style={{ marginLeft: '5px' }}
+        />
+      </ValidationSummaryLink>
+    )
   };
 
   private renderNamespace = (ns: string) => {
