@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { Paths } from '../../config';
+import { FilterSelected } from '../Filters/StatefulFilters';
 
 interface Props {
   namespaces: string[];
@@ -39,6 +40,7 @@ class IstioConfigListLink extends React.Component<Props> {
   };
 
   render() {
+    FilterSelected.resetFilters();
     let params: string = this.namespacesToParams();
     const validationParams: string = this.validationToParams();
     if (params !== '' && validationParams !== '') {
