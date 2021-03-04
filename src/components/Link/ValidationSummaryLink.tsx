@@ -9,7 +9,6 @@ interface Props {
 }
 
 class ValidationSummaryLink extends React.PureComponent<Props> {
-
   hasIstioObjects = () => {
     return this.props.objectCount && this.props.objectCount > 0;
   };
@@ -19,7 +18,11 @@ class ValidationSummaryLink extends React.PureComponent<Props> {
 
     if (this.hasIstioObjects()) {
       link = (
-        <IstioConfigListLink namespaces={[this.props.namespace]} warnings={this.props.warnings > 0} errors={this.props.errors > 0}>
+        <IstioConfigListLink
+          namespaces={[this.props.namespace]}
+          warnings={this.props.warnings > 0}
+          errors={this.props.errors > 0}
+        >
           {this.props.children}
         </IstioConfigListLink>
       );

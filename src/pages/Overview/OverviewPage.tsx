@@ -906,8 +906,8 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
   }
 
   renderIstioConfigStatus(ns: NamespaceInfo): JSX.Element {
-    let validations: ValidationStatus = {objectCount: 0, errors: 0, warnings: 0};
-    if(!!ns.validations) {
+    let validations: ValidationStatus = { objectCount: 0, errors: 0, warnings: 0 };
+    if (!!ns.validations) {
       validations = ns.validations;
     }
 
@@ -925,7 +925,7 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
           objectCount={validations.objectCount}
         />
       </ValidationSummaryLink>
-    )
+    );
   }
 }
 

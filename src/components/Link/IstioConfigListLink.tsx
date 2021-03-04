@@ -20,33 +20,34 @@ class IstioConfigListLink extends React.Component<Props> {
   validationToParams = () => {
     let params: string = '';
 
-    if(this.props.warnings) {
+    if (this.props.warnings) {
       params += 'configvalidation=Warning';
     }
 
-    if(params !== '') {
-      params += '&'
+    let errorParams: string = '';
+    if (this.props.errors) {
+      errorParams += 'configvalidation=Not+Valid';
     }
 
-    if(this.props.errors) {
-      params += 'configvalidation=Not+Valid';
+    if (params !== '' && errorParams !== '') {
+      params += '&';
     }
+
+    params += errorParams;
 
     return params;
   };
 
   render() {
     let params: string = this.namespacesToParams();
-    if(params !== '') { params += '&'; }
-    params += this.validationToParams();
+    const validationParams: string = this.validationToParams();
+    if (params !== '' && validationParams !== '') {
+      params += '&';
+    }
+    params += validationParams;
 
-    return (
-      <Link to={`/${Paths.ISTIO}?${params}`}>
-        {this.props.children}
-      </Link>
-    )
+    return <Link to={`/${Paths.ISTIO}?${params}`}>{this.props.children}</Link>;
   }
 }
-
 
 export default IstioConfigListLink;

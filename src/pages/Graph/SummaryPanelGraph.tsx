@@ -276,7 +276,7 @@ export default class SummaryPanelGraph extends React.Component<SummaryPanelPropT
 
   private renderValidations = (ns: string) => {
     const validation: ValidationStatus = this.state.validationsMap[ns];
-    if(!validation) {
+    if (!validation) {
       return undefined;
     }
     return (
@@ -294,7 +294,7 @@ export default class SummaryPanelGraph extends React.Component<SummaryPanelPropT
           style={{ marginLeft: '5px' }}
         />
       </ValidationSummaryLink>
-    )
+    );
   };
 
   private renderNamespace = (ns: string) => {
@@ -306,8 +306,7 @@ export default class SummaryPanelGraph extends React.Component<SummaryPanelPropT
               NS
             </Badge>
           </Tooltip>
-          {ns}{' '}
-          {this.renderValidations(ns)}
+          {ns} {this.renderValidations(ns)}
         </span>
         <br />
       </React.Fragment>
