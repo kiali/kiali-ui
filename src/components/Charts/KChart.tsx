@@ -77,6 +77,15 @@ class KChart<T extends LineInfo> extends React.Component<KChartProps<T>, State> 
     };
   }
 
+  componentDidUpdate(prevProps: KChartProps<T>) {
+    // If it starts collapsed because it's empty, then checks if there is new data to expand
+    if (this.state.collapsed && this.props.data.length !== prevProps.data.length) {
+      this.setState({
+        collapsed: false
+      });
+    }
+  }
+
   render() {
     return (
       <Expandable
