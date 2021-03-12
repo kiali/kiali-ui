@@ -2,7 +2,12 @@ import * as React from 'react';
 import { ComponentStatus, Status } from '../../types/IstioStatus';
 import { IconType } from '@patternfly/react-icons/dist/js/createIcon';
 import { PFAlertColor } from '../Pf/PfColors';
-import { CheckCircleIcon, ExclamationCircleIcon, ExclamationTriangleIcon } from '@patternfly/react-icons';
+import {
+  CheckCircleIcon,
+  ExclamationCircleIcon,
+  ExclamationTriangleIcon,
+  MinusCircleIcon
+} from '@patternfly/react-icons';
 import { Split, SplitItem } from '@patternfly/react-core';
 
 type Props = {
@@ -22,6 +27,11 @@ const ErrorCoreComponent: ComponentIcon = {
 const ErrorAddonComponent: ComponentIcon = {
   color: PFAlertColor.Warning,
   icon: ExclamationTriangleIcon
+};
+
+const NotReadyComponent: ComponentIcon = {
+  color: PFAlertColor.Info,
+  icon: MinusCircleIcon
 };
 
 const SuccessComponent: ComponentIcon = {
@@ -46,7 +56,10 @@ const statusMsg = {
 
 class IstioComponentStatus extends React.Component<Props> {
   renderIcon = (status: Status, isCore: boolean) => {
-    const compIcon = validToIcon[`${status === Status.Healthy}-${isCore}`];
+    let compIcon = validToIcon[`${status === Status.Healthy}-${isCore}`];
+    if (status === Status.NotReady) {
+      compIcon = NotReadyComponent;
+    }
     const IconComponent = compIcon.icon;
     return <IconComponent style={{ color: compIcon.color, marginTop: 5 }} />;
   };
