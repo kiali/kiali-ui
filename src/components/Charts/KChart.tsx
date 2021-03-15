@@ -78,10 +78,13 @@ class KChart<T extends LineInfo> extends React.Component<KChartProps<T>, State> 
   }
 
   componentDidUpdate(prevProps: KChartProps<T>) {
-    // If it starts collapsed because it's empty, then checks if there is new data to expand
-    if (this.state.collapsed && this.props.data.length !== prevProps.data.length) {
+    // Check when there is a change on empty datapoints on a refresh to draw the chart collapsed the first time
+    // User can change the state after that point
+    const propsIsEmpty = !this.props.data.some(s => s.datapoints.length !== 0);
+    const prevPropsIsEmpty = !prevProps.data.some(s => s.datapoints.length !== 0);
+    if (propsIsEmpty !== prevPropsIsEmpty) {
       this.setState({
-        collapsed: false
+        collapsed: propsIsEmpty
       });
     }
   }
