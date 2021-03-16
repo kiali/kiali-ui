@@ -451,7 +451,7 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
           {this.hasEntries(this.state.filteredLogs)
             ? this.state.filteredLogs.map(le => (
                 <>
-                  <p style={{ color: le.color!, fontSize: '12px' }}>${le.message}</p>
+                  <p style={{ color: le.color!, fontSize: '12px' }}>{this.entryToString(le)}</p>
                 </>
               ))
             : NoLogsFoundMessage}
@@ -538,6 +538,7 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
         filteredLogs = filteredLogs.filter(le => !le.message.includes(hideValue));
       }
     }
+
     return filteredLogs;
   };
 
@@ -659,11 +660,12 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
       .then(responses => {
         let rawLogs: LogEntry[] = [];
 
-        console.log(`Log Responses=[${responses.length}]`);
-
         for (let i = 0; i < responses.length; i++) {
           const response = responses[i];
           const containerRawLogs = response.data.entries as LogEntry[];
+          if (!containerRawLogs) {
+            continue;
+          }
           const color = selectedContainers[i].color;
           containerRawLogs.forEach(le => (le.color = color));
           rawLogs.push(...containerRawLogs);
@@ -674,14 +676,11 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
           let aTimestamp = a.timestampUnix;
           let bTimestamp = b.timestampUnix;
           if (a.accessLogEntry !== undefined) {
-            console.log(`a.accessLogEntry.timestampUnix=${a.accessLogEntry.timestampUnix}`);
             aTimestamp = a.accessLogEntry.timestampUnix;
           }
           if (b.accessLogEntry !== undefined) {
-            console.log(`b.accessLogEntry.timestampUnix=${b.accessLogEntry.timestampUnix}`);
             bTimestamp = b.accessLogEntry.timestampUnix;
           }
-          console.log(`a=${aTimestamp}. b=${bTimestamp}`);
           return aTimestamp - bTimestamp;
         });
 
@@ -721,7 +720,11 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
   };
 
   private entriesToString = (entries: LogEntry[]): string => {
-    return entries.map(le => (this.state.showTimestamps ? `${le.timestamp} ${le.message}` : le.message)).join('\n');
+    return entries.map(le => this.entryToString(le)).join('\n');
+  };
+
+  private entryToString = (le: LogEntry): string => {
+    return this.state.showTimestamps ? `${le.timestamp} ${le.message}` : le.message;
   };
 
   private hasEntries = (entries: LogEntry[]): boolean => !!entries && entries.length > 0;
