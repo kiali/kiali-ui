@@ -57,6 +57,7 @@ const iconStyle = style({
 
 interface IconProps {
   className?: string;
+  color?: string;
 }
 
 // keep alphabetized
@@ -76,17 +77,17 @@ export const KialiIcon: { [name: string]: React.FunctionComponent<IconProps> } =
   Close: (props: IconProps) => <CloseIcon className={props.className} />,
   Compress: (props: IconProps) => <CompressIcon className={props.className} />,
   Copy: (props: IconProps) => <CopyIcon className={props.className} />,
-  Error: (props: IconProps) => <ErrorCircleOIcon className={props.className} color={PFColors.Danger} />,
+  Error: (props: IconProps) => <ErrorCircleOIcon className={props.className} color={props.color || PFColors.Danger} />,
   Expand: (props: IconProps) => <ExpandIcon className={props.className} />,
   Help: (props: IconProps) => <HelpIcon className={props.className} />,
   History: (props: IconProps) => <HistoryIcon className={props.className} />,
-  Info: (props: IconProps) => <InfoAltIcon className={props.className} color={PFColors.Info} />,
+  Info: (props: IconProps) => <InfoAltIcon className={props.className} color={props.color || PFColors.Info} />,
   IstioConfig: (props: IconProps) => <PficonTemplateIcon className={props.className} />,
   LocalTime: (props: IconProps) => <GlobeAmericasIcon className={props.className} />,
   MissingSidecar: (props: IconProps) => <BlueprintIcon className={props.className} />,
   MtlsLock: (props: IconProps) => <LockIcon className={props.className} />,
   MtlsUnlock: (props: IconProps) => <LockOpenIcon className={props.className} />,
-  Ok: (props: IconProps) => <OkIcon className={props.className} color={PFColors.Success} />,
+  Ok: (props: IconProps) => <OkIcon className={props.className} color={props.color || PFColors.Success} />,
   Pause: (props: IconProps) => <PauseIcon className={props.className} />,
   PauseCircle: (props: IconProps) => <PauseCircleIcon className={props.className} />,
   Play: (props: IconProps) => <PlayIcon className={props.className} />,
@@ -99,7 +100,9 @@ export const KialiIcon: { [name: string]: React.FunctionComponent<IconProps> } =
   Unknown: (props: IconProps) => <UnknownIcon className={props.className} />,
   UserClock: (props: IconProps) => <UserClockIcon className={props.className} />,
   VirtualService: (props: IconProps) => <CodeBranchIcon className={props.className} />,
-  Warning: (props: IconProps) => <WarningTriangleIcon className={props.className} color={PFColors.Warning} />,
+  Warning: (props: IconProps) => (
+    <WarningTriangleIcon className={props.className} color={props.color || PFColors.Warning} />
+  ),
   Website: (props: IconProps) => <HomeIcon className={props.className} />,
   Workloads: (props: IconProps) => <BundleIcon className={props.className} />,
   OnRunningIcon: (props: IconProps) => <OnRunningIcon className={props.className} />,

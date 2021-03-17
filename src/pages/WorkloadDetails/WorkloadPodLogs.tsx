@@ -16,7 +16,7 @@ import {
   Badge
 } from '@patternfly/react-core';
 import { style } from 'typestyle';
-import { Pod, LogEntry } from '../../types/IstioObjects';
+import { Pod, LogEntry, AccessLog } from '../../types/IstioObjects';
 import { getPodLogs } from '../../services/Api';
 import { PromisesRegistry } from '../../utils/CancelablePromises';
 import { ToolbarDropdown } from '../../components/ToolbarDropdown/ToolbarDropdown';
@@ -84,6 +84,17 @@ const TailLinesOptions = {
   '1000': '1000 lines',
   '5000': '5000 lines'
 };
+
+const alFieldName = style({
+  color: PfColors.Gold,
+  display: 'inline-block'
+});
+
+const alInfoIcon = style({
+  display: 'inline-block',
+  margin: '0px 5px 0px 0px',
+  width: '10px'
+});
 
 const displayFlex = style({
   display: 'flex'
@@ -449,11 +460,27 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
           ref={this.logsRef}
         >
           {this.hasEntries(this.state.filteredLogs)
-            ? this.state.filteredLogs.map(le => (
-                <>
-                  <p style={{ color: le.color!, fontSize: '12px' }}>{this.entryToString(le)}</p>
-                </>
-              ))
+            ? this.state.filteredLogs.map((le, i) => {
+                return !le.accessLog ? (
+                  <>
+                    <p style={{ color: le.color!, fontSize: '12px' }}>{this.entryToString(le)}</p>
+                  </>
+                ) : (
+                  <div>
+                    {this.state.showTimestamps && (
+                      <span style={{ color: le.color!, fontSize: '12px', marginRight: '5px' }}>{le.timestamp}</span>
+                    )}
+                    <Tooltip
+                      key={`al-${i}`}
+                      position={TooltipPosition.auto}
+                      content={this.accessLogContent(le.accessLog)}
+                    >
+                      <KialiIcon.Info className={alInfoIcon} color={PfColors.Gold} />
+                    </Tooltip>
+                    <p style={{ color: le.color!, fontSize: '12px', display: 'inline-block' }}>{le.message}</p>
+                  </div>
+                );
+              })
             : NoLogsFoundMessage}
         </div>
       </div>
@@ -673,15 +700,7 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
 
         const filteredLogs = this.filterLogs(rawLogs, this.state.showLogValue, this.state.hideLogValue);
         const sortedFilteredLogs = filteredLogs.sort((a, b) => {
-          let aTimestamp = a.timestampUnix;
-          let bTimestamp = b.timestampUnix;
-          if (a.accessLogEntry !== undefined) {
-            aTimestamp = a.accessLogEntry.timestampUnix;
-          }
-          if (b.accessLogEntry !== undefined) {
-            bTimestamp = b.accessLogEntry.timestampUnix;
-          }
-          return aTimestamp - bTimestamp;
+          return a.timestampUnix - b.timestampUnix;
         });
 
         this.setState({
@@ -728,6 +747,47 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
   };
 
   private hasEntries = (entries: LogEntry[]): boolean => !!entries && entries.length > 0;
+
+  private accessLogContent = (al: AccessLog): any => {
+    return (
+      <div style={{ textAlign: 'left' }}>
+        {this.accessLogField('authority', al.authority)}
+        {this.accessLogField('bytes received', al.bytes_received)}
+        {this.accessLogField('bytes sent', al.bytes_sent)}
+        {this.accessLogField('downstream local', al.downstream_local)}
+        {this.accessLogField('downstream remote', al.downstream_remote)}
+        {this.accessLogField('duration', al.duration)}
+        {this.accessLogField('forwarded for', al.forwarded_for)}
+        {this.accessLogField('method', al.method)}
+        {this.accessLogField('protocol', al.protocol)}
+        {this.accessLogField('request id', al.request_id)}
+        {this.accessLogField('requested server', al.requested_server)}
+        {this.accessLogField('response flags', al.response_flags)}
+        {this.accessLogField('route name', al.route_name)}
+        {this.accessLogField('status code', al.status_code)}
+        {this.accessLogField('tcp service time', al.tcp_service_time)}
+        {this.accessLogField('timestamp', al.timestamp)}
+        {this.accessLogField('upstream cluster', al.upstream_cluster)}
+        {this.accessLogField('upstream failure reason', al.upstream_failure_reason)}
+        {this.accessLogField('upstream local', al.upstream_local)}
+        {this.accessLogField('upstream service', al.upstream_service)}
+        {this.accessLogField('upstream service time', al.upstream_service_time)}
+        {this.accessLogField('uri param', al.uri_param)}
+        {this.accessLogField('uri path', al.uri_path)}
+        {this.accessLogField('user agent', al.user_agent)}
+      </div>
+    );
+  };
+
+  private accessLogField = (key: string, val: string): any => {
+    return !val ? null : (
+      <>
+        <span className={alFieldName}>{key}:&nbsp;</span>
+        <span>{val}</span>
+        <br />
+      </>
+    );
+  };
 }
 
 const mapStateToProps = (state: KialiAppState) => {
