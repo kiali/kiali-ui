@@ -130,6 +130,10 @@ export default class BoxLayout {
     this.runAsync();
   }
 
+  emit(events) {
+    this.emit(events);
+  }
+
   // Discrete layouts (dagre) always stop before layout.run() returns. Continuous layouts (cose,cola)
   // are started by layout.run() but may stop after run() returns. Because outer boxes require the inner
   // box layouts to complete, we need to force discrete behavior regardless of layout, and that is why
@@ -208,6 +212,8 @@ export default class BoxLayout {
         boxNode.removeScratch(STYLES_KEY);
         boxNode.removeScratch(PARENT_POSITION_KEY);
       });
+
+      this.emit('boxlayoutstop');
     });
 
     layout.run();
