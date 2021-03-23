@@ -1230,12 +1230,9 @@ export const buildGateway = (name: string, namespace: string, state: GatewayStat
       // Default for istio scenarios, user may change it editing YAML
       selector: {},
       servers: state.gatewayServers.map(s => ({
-        port: {
-          number: +s.portNumber,
-          protocol: s.portProtocol,
-          name: s.portName
-        },
-        hosts: s.hosts
+        port: s.port,
+        hosts: s.hosts,
+        tls: s.tls
       }))
     }
   };

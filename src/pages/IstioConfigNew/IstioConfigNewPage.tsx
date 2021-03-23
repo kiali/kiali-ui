@@ -314,7 +314,6 @@ class IstioConfigNewPage extends React.Component<Props, State> {
               label="Name"
               isRequired={true}
               fieldId="name"
-              helperText={this.props.match.params.objectType + ' name'}
               helperTextInvalid={'A valid ' + this.props.match.params.objectType + ' name is required'}
               isValid={isNameValid}
             >
