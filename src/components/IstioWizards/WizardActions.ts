@@ -1228,9 +1228,7 @@ export const buildGateway = (name: string, namespace: string, state: GatewayStat
     },
     spec: {
       // Default for istio scenarios, user may change it editing YAML
-      selector: {
-        istio: 'ingressgateway'
-      },
+      selector: {},
       servers: state.gatewayServers.map(s => ({
         port: {
           number: +s.portNumber,
@@ -1241,6 +1239,16 @@ export const buildGateway = (name: string, namespace: string, state: GatewayStat
       }))
     }
   };
+  state.selectorLabels
+    .trim()
+    .split(',')
+    .forEach(split => {
+      const labels = split.trim().split('=');
+      // It should be already validated with workloadSelectorValid, but just to add extra safe check
+      if (gw.spec.selector && labels.length === 2) {
+        gw.spec.selector[labels[0].trim()] = labels[1].trim();
+      }
+    });
   return gw;
 };
 

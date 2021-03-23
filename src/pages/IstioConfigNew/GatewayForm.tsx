@@ -1,10 +1,12 @@
 import * as React from 'react';
 import { cellWidth, ICell, Table, TableBody, TableHeader } from '@patternfly/react-table';
 // Use TextInputBase like workaround while PF4 team work in https://github.com/patternfly/patternfly-react/issues/4072
-import { Button, FormSelect, FormSelectOption, TextInputBase as TextInput } from '@patternfly/react-core';
+import { Button, FormGroup, FormSelect, FormSelectOption, TextInputBase as TextInput } from '@patternfly/react-core';
 import { style } from 'typestyle';
 import { PfColors } from '../../components/Pf/PfColors';
 import { isGatewayHostValid } from '../../utils/IstioConfigUtils';
+import ServerBuilder from './GatewayForm/ServerBuilder';
+import ServerList from './GatewayForm/ServerList';
 
 const headerCells: ICell[] = [
   {
@@ -59,12 +61,16 @@ export type GatewayServer = {
 
 // Gateway and Sidecar states are consolidated in the parent page
 export type GatewayState = {
+  selectorValid: boolean;
+  selectorLabels: string;
   gatewayServers: GatewayServer[];
   addGatewayServer: GatewayServer;
   validHosts: boolean;
 };
 
 export const initGateway = (): GatewayState => ({
+  selectorLabels: 'istio=ingressgateway',
+  selectorValid: true,
   gatewayServers: [],
   addGatewayServer: {
     hosts: [],
@@ -76,7 +82,7 @@ export const initGateway = (): GatewayState => ({
 });
 
 export const isGatewayStateValid = (g: GatewayState): boolean => {
-  return g.gatewayServers.length > 0;
+  return g.selectorValid && g.gatewayServers.length > 0;
 };
 
 class GatewayForm extends React.Component<Props, GatewayState> {
@@ -110,6 +116,46 @@ class GatewayForm extends React.Component<Props, GatewayState> {
       return [removeAction];
     }
     return [];
+  };
+
+  onAddGatewaySelector = (value: string, _) => {
+    if (value.length === 0) {
+      this.setState(
+        {
+          selectorValid: false,
+          selectorLabels: ''
+        },
+        () => this.props.onChange(this.state)
+      );
+      return;
+    }
+    value = value.trim();
+    const labels: string[] = value.split(',');
+    let isValid = true;
+    // Some smoke validation rules for the labels
+    for (let i = 0; i < labels.length; i++) {
+      const label = labels[i];
+      if (label.indexOf('=') < 0) {
+        isValid = false;
+        break;
+      }
+      const splitLabel: string[] = label.split('=');
+      if (splitLabel.length !== 2) {
+        isValid = false;
+        break;
+      }
+      if (splitLabel[0].trim().length === 0 || splitLabel[1].trim().length === 0) {
+        isValid = false;
+        break;
+      }
+    }
+    this.setState(
+      {
+        selectorValid: isValid,
+        selectorLabels: value
+      },
+      () => this.props.onChange(this.state)
+    );
   };
 
   onAddHosts = (value: string, _) => {
@@ -284,9 +330,28 @@ class GatewayForm extends React.Component<Props, GatewayState> {
       ]);
   }
 
-  render() {
+  renderOld() {
     return (
       <>
+        <FormGroup
+          label="Workload Selector"
+          isRequired={true}
+          fieldId="gateway-selector"
+          helperText="One or more labels to select a workload where Gateway is applied. Enter a label in the format <label>=<value>. Enter one or multiple labels separated by comma."
+          helperTextInvalid="Invalid labels format: One or more labels to select a workload where Gateway is applied. Enter a label in the format <label>=<value>. Enter one or multiple labels separated by comma."
+          isValid={this.state.selectorValid}
+        >
+          <TextInput
+            value={this.state.selectorLabels}
+            isRequired={true}
+            type="text"
+            id="name"
+            aria-describedby="name"
+            name="name"
+            onChange={this.onAddGatewaySelector}
+            isValid={this.state.selectorValid}
+          />
+        </FormGroup>
         Servers defined:
         <Table
           aria-label="Gateway Servers"
@@ -301,6 +366,45 @@ class GatewayForm extends React.Component<Props, GatewayState> {
         {this.state.gatewayServers.length === 0 && (
           <div className={noGatewayServerStyle}>Gateway has no Servers Defined</div>
         )}
+      </>
+    );
+  }
+
+  render() {
+    return (
+      <>
+        <FormGroup
+          label="Workload Selector"
+          isRequired={true}
+          fieldId="gateway-selector"
+          helperText="One or more labels to select a workload where Gateway is applied. Enter a label in the format <label>=<value>. Enter one or multiple labels separated by comma."
+          helperTextInvalid="Invalid labels format: One or more labels to select a workload where Gateway is applied. Enter a label in the format <label>=<value>. Enter one or multiple labels separated by comma."
+          isValid={this.state.selectorValid}
+        >
+          <TextInput
+            value={this.state.selectorLabels}
+            isRequired={true}
+            type="text"
+            id="name"
+            aria-describedby="name"
+            name="name"
+            onChange={this.onAddGatewaySelector}
+            isValid={this.state.selectorValid}
+          />
+        </FormGroup>
+        <ServerBuilder
+          onAddServer={server => {
+            console.log('TODELETE add gateway server ' + JSON.stringify(server));
+          }}
+        />
+        <FormGroup label="Server List" fieldId="gwServerList">
+          <ServerList
+            serverList={this.state.gatewayServers}
+            onRemoveServer={index => {
+              console.log('TODELETE remove gateway server ' + JSON.stringify(index));
+            }}
+          />
+        </FormGroup>
       </>
     );
   }

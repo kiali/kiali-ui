@@ -215,7 +215,9 @@ class AuthorizationPolicyForm extends React.Component<Props, AuthorizationPolicy
         )}
         {this.state.policy === RULES && <RuleBuilder onAddRule={this.onAddRule} />}
         {this.state.policy === RULES && (
-          <RuleList action={this.state.action} ruleList={this.state.rules} onRemoveRule={this.onRemoveRule} />
+          <FormGroup label="Rule list" fieldId="apRuleList">
+            <RuleList action={this.state.action} ruleList={this.state.rules} onRemoveRule={this.onRemoveRule} />
+          </FormGroup>
         )}
       </>
     );
