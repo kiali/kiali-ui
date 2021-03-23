@@ -27,6 +27,7 @@ const rulesPadding = style({
 });
 
 const noRulesStyle = style({
+  marginTop: 10,
   color: PfColors.Red100,
   textAlign: 'center',
   width: '100%'

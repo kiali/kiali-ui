@@ -46,6 +46,7 @@ import RequestAuthenticationForm, {
 import { isValidK8SName } from '../../helpers/ValidationHelpers';
 import DefaultSecondaryMasthead from '../../components/DefaultSecondaryMasthead/DefaultSecondaryMasthead';
 import { RouteComponentProps } from 'react-router-dom';
+import { PfColors } from '../../components/Pf/PfColors';
 
 export interface IstioConfigNewPageId {
   objectType: string;
@@ -66,6 +67,13 @@ type State = {
 };
 
 const formPadding = style({ padding: '30px 20px 30px 20px' });
+
+const warningStyle = style({
+  marginLeft: 15,
+  paddingTop: 5,
+  color: PfColors.Red100,
+  textAlign: 'center'
+});
 
 const DIC = {
   AuthorizationPolicy: AUTHORIZATION_POLICIES,
@@ -303,25 +311,6 @@ class IstioConfigNewPage extends React.Component<Props, State> {
         <RenderContent>
           <Form className={formPadding} isHorizontal={true}>
             <FormGroup
-              label="Namespaces"
-              isRequired={true}
-              fieldId="namespaces"
-              helperText={'Select namespace(s) where this configuration will be applied'}
-              helperTextInvalid={'At least one namespace should be selected'}
-              isValid={isNamespacesValid}
-            >
-              <TextInput
-                value={this.props.activeNamespaces.map(n => n.name).join(',')}
-                isRequired={true}
-                type="text"
-                id="namespaces"
-                aria-describedby="namespaces"
-                name="namespaces"
-                isDisabled={true}
-                isValid={isNamespacesValid}
-              />
-            </FormGroup>
-            <FormGroup
               label="Name"
               isRequired={true}
               fieldId="name"
@@ -371,6 +360,9 @@ class IstioConfigNewPage extends React.Component<Props, State> {
               <Button variant="secondary" onClick={() => this.backToList()}>
                 Cancel
               </Button>
+              {!isNamespacesValid && (
+                <span className={warningStyle}>An Istio Config resource needs at least a namespace selected</span>
+              )}
             </ActionGroup>
           </Form>
         </RenderContent>

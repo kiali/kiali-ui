@@ -176,7 +176,7 @@ class AuthorizationPolicyForm extends React.Component<Props, AuthorizationPolicy
           </FormSelect>
         </FormGroup>
         {this.state.policy === RULES && (
-          <FormGroup label="Add Workload Selector" fieldId="workloadSelectorSwitch">
+          <FormGroup label="Workload Selector" fieldId="workloadSelectorSwitch">
             <Switch
               id="workloadSelectorSwitch"
               label={' '}
@@ -215,7 +215,7 @@ class AuthorizationPolicyForm extends React.Component<Props, AuthorizationPolicy
         )}
         {this.state.policy === RULES && <RuleBuilder onAddRule={this.onAddRule} />}
         {this.state.policy === RULES && (
-          <FormGroup label="Rule list" fieldId="apRuleList">
+          <FormGroup label="Rule List" fieldId="apRuleList">
             <RuleList action={this.state.action} ruleList={this.state.rules} onRemoveRule={this.onRemoveRule} />
           </FormGroup>
         )}

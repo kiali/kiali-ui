@@ -145,7 +145,7 @@ class RequestAuthenticationForm extends React.Component<Props, RequestAuthentica
   render() {
     return (
       <>
-        <FormGroup label="Add Workload Selector" fieldId="workloadSelectorSwitch">
+        <FormGroup label="Workload Selector" fieldId="workloadSelectorSwitch">
           <Switch
             id="workloadSelectorSwitch"
             label={' '}
@@ -172,7 +172,7 @@ class RequestAuthenticationForm extends React.Component<Props, RequestAuthentica
             />
           </FormGroup>
         )}
-        <FormGroup label="Add JWT Rules" fieldId="addJWTRules">
+        <FormGroup label="JWT Rules" fieldId="addJWTRules">
           <Switch
             id="addJWTRules"
             label={' '}

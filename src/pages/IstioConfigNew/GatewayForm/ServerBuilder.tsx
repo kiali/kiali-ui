@@ -1,8 +1,11 @@
 import * as React from 'react';
 import { GatewayServer } from '../GatewayForm';
-import { FormGroup, FormSelect, FormSelectOption } from '@patternfly/react-core';
+import { Button, FormGroup, FormSelect, FormSelectOption } from '@patternfly/react-core';
 import { TextInputBase as TextInput } from '@patternfly/react-core/dist/js/components/TextInput/TextInput';
 import { cellWidth, ICell, Table, TableBody, TableHeader } from '@patternfly/react-table';
+import { style } from 'typestyle';
+import { PfColors } from '../../../components/Pf/PfColors';
+import { PlusCircleIcon } from '@patternfly/react-icons';
 
 type Props = {
   onAddServer: (server: GatewayServer) => void;
@@ -15,6 +18,17 @@ type State = {
   newPortName: string;
   newPortProtocol: string;
 };
+
+const warningStyle = style({
+  marginLeft: 25,
+  color: PfColors.Red100,
+  textAlign: 'center'
+});
+
+const addServerStyle = style({
+  marginLeft: 0,
+  paddingLeft: 0
+});
 
 const portHeader: ICell[] = [
   {
@@ -48,6 +62,11 @@ class ServerBuilder extends React.Component<Props, State> {
     };
   }
 
+  canAddServer = (): boolean => {
+    console.log('TODELETE canAddServer');
+    return false;
+  };
+
   onAddHosts = (value: string, _) => {
     console.log('TODELETE onAddHosts ' + value);
   };
@@ -62,6 +81,10 @@ class ServerBuilder extends React.Component<Props, State> {
 
   onAddPortProtocol = (value: string, _) => {
     console.log('TODELETE onAddPortProtocol ' + value);
+  };
+
+  onAddServer = () => {
+    console.log('TODELETE onAddServer');
   };
 
   portRows() {
@@ -112,7 +135,7 @@ class ServerBuilder extends React.Component<Props, State> {
     return (
       <>
         <FormGroup
-          label="Add Hosts"
+          label="Hosts"
           isRequired={true}
           fieldId="gateway-selector"
           helperText="One or more hosts exposed by this gateway. Enter one or hosts separated by comma."
@@ -130,11 +153,23 @@ class ServerBuilder extends React.Component<Props, State> {
             isValid={this.state.isHostsValid}
           />
         </FormGroup>
-        <FormGroup label="Add Port" isRequired={true} fieldId="server-port">
+        <FormGroup label="Port" isRequired={true} fieldId="server-port">
           <Table aria-label="Port Level MTLS" cells={portHeader} rows={this.portRows()}>
             <TableHeader />
             <TableBody />
           </Table>
+        </FormGroup>
+        <FormGroup fieldId="addRule">
+          <Button
+            variant="link"
+            icon={<PlusCircleIcon />}
+            onClick={this.onAddServer}
+            isDisabled={!this.canAddServer()}
+            className={addServerStyle}
+          >
+            Add Server to Server List
+          </Button>
+          {!this.canAddServer() && <span className={warningStyle}>A Server needs Hosts and Port sections defined</span>}
         </FormGroup>
       </>
     );

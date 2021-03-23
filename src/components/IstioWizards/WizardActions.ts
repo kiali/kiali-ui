@@ -1239,7 +1239,7 @@ export const buildGateway = (name: string, namespace: string, state: GatewayStat
       }))
     }
   };
-  state.selectorLabels
+  state.workloadSelectorLabels
     .trim()
     .split(',')
     .forEach(split => {
