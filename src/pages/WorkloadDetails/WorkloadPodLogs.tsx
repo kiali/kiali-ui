@@ -396,7 +396,6 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
                   {
                     target: 'data',
                     mutation: props => {
-                      console.log(`Data Props:${JSON.stringify(props)}`);
                       const container = this.state.containers![props.datum.column];
                       return !container.isSelected
                         ? null
@@ -406,7 +405,6 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
                   {
                     target: 'labels',
                     mutation: props => {
-                      console.log(`Labels Props:${JSON.stringify(props)}`);
                       const container = this.state.containers![props.datum.column];
                       container.isSelected = !container.isSelected;
                       this.setState({ containers: [...this.state.containers!] });
