@@ -5,7 +5,7 @@ import Matches from './../../../../components/IstioWizards/RequestRouting/Matche
 import ExperimentMatchBuilder, { ANYTHING, EXACT, HEADERS, PRESENCE, REGEX, URI } from './ExperimentMatchBuilder';
 import { style } from 'typestyle';
 import { PfColors } from './../../../../components/Pf/PfColors';
-import Rules, { MOVE_TYPE, Rule } from './../../../../components/IstioWizards/RequestRouting/Rules';
+import ExperimentRules, { MOVE_TYPE, Rule } from './ExperimentRules';
 import { OnRemoveFromListOptions } from './ExperimentCreatePage';
 
 const MSG_SAME_MATCHING = 'A Rule with same matching criteria is already added.';
@@ -317,7 +317,7 @@ class ExperimentTrafficForm extends React.Component<Props, TrafficState> {
             </Button>
           </span>
         </div>
-        <Rules
+        <ExperimentRules
           rules={rules}
           onRemoveRule={index => {
             this.props.onRemove(OnRemoveFromListOptions.Match, index);

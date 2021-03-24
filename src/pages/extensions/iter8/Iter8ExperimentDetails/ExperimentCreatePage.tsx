@@ -32,6 +32,7 @@ import { connect } from 'react-redux';
 import { PfColors } from '../../../../components/Pf/PfColors';
 import { InfoAltIcon } from '@patternfly/react-icons';
 import DefaultSecondaryMasthead from '../../../../components/DefaultSecondaryMasthead/DefaultSecondaryMasthead';
+import { MOVE_TYPE } from './ExperimentRules';
 
 interface Props {
   serviceName: string;
@@ -59,13 +60,6 @@ interface State {
   addHostGateway: boolean;
   showTrafficControl: boolean;
   showDurationControl: boolean;
-}
-
-// Borrowed from src/components/IstioWizards/RequestRouting/Rules.tsx
-// Direction to move a match rule in the list
-export enum MOVE_TYPE {
-  UP,
-  DOWN
 }
 
 export enum OnRemoveFromListOptions {
