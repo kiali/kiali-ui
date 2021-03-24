@@ -101,11 +101,10 @@ export const runLayout = (cy: Cy.Core, layout: Layout): Promise<any> => {
       appBoxLayout: 'dagre',
       defaultLayout: layout.name
     });
-    promise = cyLayout.promiseOn('boxlayoutstop');
   } else {
     cyLayout = cy.layout(layoutOptions);
-    promise = cyLayout.promiseOn('layoutstop');
   }
+  promise = cyLayout.promiseOn('layoutstop');
   cyLayout.run();
   return promise;
 };

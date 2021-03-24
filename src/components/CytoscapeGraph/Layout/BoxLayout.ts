@@ -130,8 +130,12 @@ export default class BoxLayout {
     this.runAsync();
   }
 
-  emit(events) {
-    this.emit(events);
+  /**
+   * This is a stub required by cytoscape to allow the layout impl to emit events
+   * @param _events space separated string of event names
+   */
+  emit(_events) {
+    // intentionally empty
   }
 
   // Discrete layouts (dagre) always stop before layout.run() returns. Continuous layouts (cose,cola)
@@ -213,7 +217,7 @@ export default class BoxLayout {
         boxNode.removeScratch(PARENT_POSITION_KEY);
       });
 
-      this.emit('boxlayoutstop');
+      this.emit('layoutstop');
     });
 
     layout.run();
@@ -292,9 +296,6 @@ export default class BoxLayout {
         const boxedNodes = boxNodes.children();
         for (const boxedNode of boxedNodes) {
           for (const edge of boxedNode.connectedEdges()) {
-            if (edge.source().id() === edge.target().parent().id()) {
-              console.log(`${edge.source().id()} === ${edge.target().parent().id()}`);
-            }
             const syntheticEdge = this.syntheticEdgeGenerator.getEdge(boxByType, edge.source(), edge.target());
             if (syntheticEdge) {
               syntheticEdges = syntheticEdges.add(this.cy.add(syntheticEdge));
