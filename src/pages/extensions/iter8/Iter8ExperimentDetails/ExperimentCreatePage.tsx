@@ -61,10 +61,17 @@ interface State {
   showDurationControl: boolean;
 }
 
+// Borrowed from src/components/IstioWizards/RequestRouting/Rules.tsx
 // Direction to move a match rule in the list
 export enum MOVE_TYPE {
   UP,
   DOWN
+}
+
+export enum OnRemoveFromListOptions {
+  Criteria,
+  Host,
+  Match
 }
 
 // Style constants
@@ -867,14 +874,13 @@ class ExperimentCreatePage extends React.Component<Props, State> {
     );
   }
 
-  // TODO: Type should be an enum
-  onRemoveFromList = (type: string, index: number) => {
+  onRemoveFromList = (type: OnRemoveFromListOptions, index: number) => {
     this.setState(prevState => {
-      if (type === 'Criteria') {
+      if (type === OnRemoveFromListOptions.Criteria) {
         prevState.experiment.criterias.splice(index, 1);
-      } else if (type === 'Host') {
+      } else if (type === OnRemoveFromListOptions.Host) {
         prevState.experiment.hosts.splice(index, 1);
-      } else if (type === 'Match') {
+      } else if (type === OnRemoveFromListOptions.Match) {
         prevState.experiment.trafficControl.match.http.splice(index, 1);
       }
 

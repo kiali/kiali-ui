@@ -6,6 +6,7 @@ import ExperimentMatchBuilder, { ANYTHING, EXACT, HEADERS, PRESENCE, REGEX, URI 
 import { style } from 'typestyle';
 import { PfColors } from './../../../../components/Pf/PfColors';
 import Rules, { MOVE_TYPE, Rule } from './../../../../components/IstioWizards/RequestRouting/Rules';
+import { OnRemoveFromListOptions } from './ExperimentCreatePage';
 
 const MSG_SAME_MATCHING = 'A Rule with same matching criteria is already added.';
 const MSG_HEADER_NAME_NON_EMPTY = 'Header name must be non empty';
@@ -25,7 +26,7 @@ const validationStyle = style({
 type Props = {
   matches: HttpMatch[];
 
-  onRemove: (type: string, index: number) => void;
+  onRemove: (type: OnRemoveFromListOptions, index: number) => void;
   onAdd: (criteria: Criteria, host: Host, match: any) => void;
   onMoveMatchRule: (index: number, move: MOVE_TYPE) => void;
 };
@@ -319,7 +320,7 @@ class ExperimentTrafficForm extends React.Component<Props, TrafficState> {
         <Rules
           rules={rules}
           onRemoveRule={index => {
-            this.props.onRemove('Match', index);
+            this.props.onRemove(OnRemoveFromListOptions.Match, index);
           }}
           onMoveRule={this.props.onMoveMatchRule}
         />
