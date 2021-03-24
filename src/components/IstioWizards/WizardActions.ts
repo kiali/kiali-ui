@@ -22,6 +22,7 @@ import {
   PeerAuthenticationWorkloadSelector,
   RequestAuthentication,
   RouteDestination,
+  ServiceEntry,
   Sidecar,
   Source,
   StringMatch,
@@ -43,6 +44,7 @@ import { Workload } from '../../types/Workload';
 import { FaultInjectionRoute } from './FaultInjection';
 import { TimeoutRetryRoute } from './RequestTimeouts';
 import { GraphDefinition, NodeType } from '../../types/Graph';
+import { ServiceEntryState } from '../../pages/IstioConfigNew/ServiceEntryForm';
 
 export const WIZARD_TRAFFIC_SHIFTING = 'traffic_shifting';
 export const WIZARD_TCP_TRAFFIC_SHIFTING = 'tcp_traffic_shifting';
@@ -1334,6 +1336,20 @@ export const buildRequestAuthentication = (
     ra.spec.jwtRules = state.jwtRules;
   }
   return ra;
+};
+
+export const buildServiceEntry = (name: string, namespace: string, state: ServiceEntryState): ServiceEntry => {
+  const se: ServiceEntry = {
+    metadata: {
+      name: name,
+      namespace: namespace,
+      labels: {
+        [KIALI_WIZARD_LABEL]: 'ServiceEntry'
+      }
+    },
+    spec: state.serviceEntry
+  };
+  return se;
 };
 
 export const buildSidecar = (name: string, namespace: string, state: SidecarState): Sidecar => {

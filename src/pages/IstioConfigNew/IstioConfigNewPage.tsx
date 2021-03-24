@@ -19,6 +19,7 @@ import {
   buildGateway,
   buildPeerAuthentication,
   buildRequestAuthentication,
+  buildServiceEntry,
   buildSidecar
 } from '../../components/IstioWizards/WizardActions';
 import { MessageType } from '../../types/MessageCenter';
@@ -47,6 +48,13 @@ import { isValidK8SName } from '../../helpers/ValidationHelpers';
 import DefaultSecondaryMasthead from '../../components/DefaultSecondaryMasthead/DefaultSecondaryMasthead';
 import { RouteComponentProps } from 'react-router-dom';
 import { PfColors } from '../../components/Pf/PfColors';
+import ServiceEntryForm, {
+  initServiceEntry,
+  isServiceEntryValid,
+  SERVICE_ENTRIES,
+  SERVICE_ENTRY,
+  ServiceEntryState
+} from './ServiceEntryForm';
 
 export interface IstioConfigNewPageId {
   objectType: string;
@@ -63,6 +71,7 @@ type State = {
   gateway: GatewayState;
   peerAuthentication: PeerAuthenticationState;
   requestAuthentication: RequestAuthenticationState;
+  serviceEntry: ServiceEntryState;
   sidecar: SidecarState;
 };
 
@@ -80,6 +89,7 @@ const DIC = {
   Gateway: GATEWAYS,
   PeerAuthentication: PEER_AUTHENTICATIONS,
   RequestAuthentication: REQUEST_AUTHENTICATIONS,
+  ServiceEntry: SERVICE_ENTRIES,
   Sidecar: SIDECARS
 };
 
@@ -89,6 +99,7 @@ export const NEW_ISTIO_RESOURCE = [
   { value: GATEWAY, label: GATEWAY, disabled: false },
   { value: PEER_AUTHENTICATION, label: PEER_AUTHENTICATION, disabled: false },
   { value: REQUEST_AUTHENTICATION, label: REQUEST_AUTHENTICATION, disabled: false },
+  { value: SERVICE_ENTRY, label: SERVICE_ENTRY, disabled: false },
   { value: SIDECAR, label: SIDECAR, disabled: false }
 ];
 
@@ -99,6 +110,7 @@ const initState = (): State => ({
   gateway: initGateway(),
   peerAuthentication: initPeerAuthentication(),
   requestAuthentication: initRequestAuthentication(),
+  serviceEntry: initServiceEntry(),
   // Init with the istio-system/* for sidecar
   sidecar: initSidecar(serverConfig.istioNamespace + '/*')
 });
@@ -196,6 +208,12 @@ class IstioConfigNewPage extends React.Component<Props, State> {
             json: JSON.stringify(buildRequestAuthentication(this.state.name, ns.name, this.state.requestAuthentication))
           });
           break;
+        case SERVICE_ENTRY:
+          jsonIstioObjects.push({
+            namespace: ns.name,
+            json: JSON.stringify(buildServiceEntry(this.state.name, ns.name, this.state.serviceEntry))
+          });
+          break;
         case SIDECAR:
           jsonIstioObjects.push({
             namespace: ns.name,
@@ -240,6 +258,8 @@ class IstioConfigNewPage extends React.Component<Props, State> {
         return isPeerAuthenticationStateValid(this.state.peerAuthentication);
       case REQUEST_AUTHENTICATION:
         return isRequestAuthenticationStateValid(this.state.requestAuthentication);
+      case SERVICE_ENTRY:
+        return isServiceEntryValid(this.state.serviceEntry);
       case SIDECAR:
         return isSidecarStateValid(this.state.sidecar);
       default:
@@ -285,6 +305,15 @@ class IstioConfigNewPage extends React.Component<Props, State> {
       );
       return {
         requestAuthentication: prevState.requestAuthentication
+      };
+    });
+  };
+
+  onChangeServiceEntry = (serviceEntry: ServiceEntryState) => {
+    this.setState(prevState => {
+      Object.keys(prevState.serviceEntry).forEach(key => (prevState.serviceEntry[key] = serviceEntry[key]));
+      return {
+        serviceEntry: prevState.serviceEntry
       };
     });
   };
@@ -348,6 +377,9 @@ class IstioConfigNewPage extends React.Component<Props, State> {
                 requestAuthentication={this.state.requestAuthentication}
                 onChange={this.onChangeRequestAuthentication}
               />
+            )}
+            {this.props.match.params.objectType === SERVICE_ENTRY && (
+              <ServiceEntryForm serviceEntry={this.state.serviceEntry} onChange={this.onChangeServiceEntry} />
             )}
             {this.props.match.params.objectType === SIDECAR && (
               <SidecarForm sidecar={this.state.sidecar} onChange={this.onChangeSidecar} />
