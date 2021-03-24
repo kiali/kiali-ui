@@ -905,21 +905,17 @@ class ExperimentCreatePage extends React.Component<Props, State> {
   };
 
   onMoveMatchRule = (index: number, move: MOVE_TYPE) => {
-    this.setState(
-      prevState => {
-        const sourceRules = prevState.experiment.trafficControl.match.http;
-        const sourceRule = sourceRules[index];
-        const targetIndex = move === MOVE_TYPE.UP ? index - 1 : index + 1;
-        const targetRule = sourceRules[targetIndex];
-        sourceRules[targetIndex] = sourceRule;
-        sourceRules[index] = targetRule;
-        return {
-          ...prevState
-        };
-      }
-      // TODO: Is this necessary?
-      // () => this.onRulesChange(this.isValid(this.state.experiment.trafficControl.match.http), this.state.experiment.trafficControl.match.http)
-    );
+    this.setState(prevState => {
+      const sourceRules = prevState.experiment.trafficControl.match.http;
+      const sourceRule = sourceRules[index];
+      const targetIndex = move === MOVE_TYPE.UP ? index - 1 : index + 1;
+      const targetRule = sourceRules[targetIndex];
+      sourceRules[targetIndex] = sourceRule;
+      sourceRules[index] = targetRule;
+      return {
+        ...prevState
+      };
+    });
   };
 
   renderCriteria() {
