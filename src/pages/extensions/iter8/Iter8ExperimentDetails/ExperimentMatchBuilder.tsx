@@ -23,11 +23,7 @@ type State = {
 
 export const HEADERS = 'headers';
 export const URI = 'uri';
-// export const SCHEME = 'scheme';
-// export const METHOD = 'method';
-// export const AUTHORITY = 'authority';
 
-// const matchOptions: string[] = [HEADERS, URI, SCHEME, METHOD, AUTHORITY];
 const matchOptions: string[] = [URI, HEADERS];
 
 export const EXACT = 'exact';
