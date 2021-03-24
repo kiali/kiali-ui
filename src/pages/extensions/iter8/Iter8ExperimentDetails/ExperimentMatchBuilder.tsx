@@ -1,4 +1,4 @@
-// Based off of ./../../../../components/IstioWizards/RequestRouting/MatchBuilder
+// Modified copy of src/components/IstioWizards/RequestRouting/MatchBuilder.tsx
 
 import * as React from 'react';
 import { Button, Dropdown, DropdownToggle, DropdownItem, InputGroup, TextInput } from '@patternfly/react-core';
@@ -28,7 +28,7 @@ export const URI = 'uri';
 // export const AUTHORITY = 'authority';
 
 // const matchOptions: string[] = [HEADERS, URI, SCHEME, METHOD, AUTHORITY];
-const matchOptions: string[] = [HEADERS, URI];
+const matchOptions: string[] = [URI, HEADERS];
 
 export const EXACT = 'exact';
 export const PREFIX = 'prefix';

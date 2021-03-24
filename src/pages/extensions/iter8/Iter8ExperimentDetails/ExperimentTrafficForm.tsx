@@ -188,7 +188,7 @@ class ExperimentTrafficForm extends React.Component<Props, TrafficState> {
 
       const uriMatchState: URIMatchState = {};
 
-      if (prevState.category === URI) {
+      if (prevState.category === URI && prevState.matchValue.length > 0) {
         uriMatchState.uriMatchString = istioMatchString;
         uriMatchState.uriMatch = {
           match: prevState.operator,
@@ -251,23 +251,25 @@ class ExperimentTrafficForm extends React.Component<Props, TrafficState> {
   };
 
   onAddRule = (rules: Rule[]) => {
-    const matches = this.getIstioMatchStrings();
+    if (this.state.uriMatch?.match && this.state.uriMatch?.stringMatch) {
+      const matches = this.getIstioMatchStrings();
 
-    const rule: Rule = {
-      matches,
-      workloadWeights: []
-    };
+      const rule: Rule = {
+        matches,
+        workloadWeights: []
+      };
 
-    const httpMatch: HttpMatch = {
-      uri: {
-        match: this.state.uriMatch?.match ? this.state.uriMatch.match : '',
-        stringMatch: this.state.uriMatch?.stringMatch ? this.state.uriMatch.stringMatch : ''
-      },
-      headers: Object.values(this.state.matchStringToHeaderMatch)
-    };
+      const httpMatch: HttpMatch = {
+        uri: {
+          match: this.state.uriMatch.match,
+          stringMatch: this.state.uriMatch.stringMatch
+        },
+        headers: Object.values(this.state.matchStringToHeaderMatch)
+      };
 
-    if (!this.isMatchesIncluded(rules, rule)) {
-      this.props.onAdd(initCriteria(), { name: '', gateway: '' }, httpMatch);
+      if (!this.isMatchesIncluded(rules, rule)) {
+        this.props.onAdd(initCriteria(), { name: '', gateway: '' }, httpMatch);
+      }
     }
   };
 
