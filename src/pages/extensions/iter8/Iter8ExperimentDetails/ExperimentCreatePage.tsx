@@ -919,7 +919,7 @@ class ExperimentCreatePage extends React.Component<Props, State> {
   renderCriteria() {
     return (
       <>
-        Assesstment Criteria:
+        Assessment Criteria:
         <ExperimentCriteriaForm
           iter8Info={this.state.iter8Info}
           criterias={this.state.experiment.criterias}
