@@ -79,9 +79,9 @@ class ServerBuilder extends React.Component<Props, State> {
     const portNameValid = this.state.newPortName.length > 0;
     const tlsRequired = this.state.newPortProtocol === 'HTTPS' || this.state.newPortProtocol === 'TLS';
     const tlsCertsValid = tlsRequired
-      ? (this.state.newTlsMode === 'SIMPLE' || this.state.newTlsMode === 'MUTUAL') &&
-        this.state.newTlsServerCertificate.length > 0 &&
-        this.state.newTlsPrivateKey.length > 0
+      ? this.state.newTlsMode === 'SIMPLE' || this.state.newTlsMode === 'MUTUAL'
+        ? this.state.newTlsServerCertificate.length > 0 && this.state.newTlsPrivateKey.length > 0
+        : true
       : true;
     const tlsCaValid =
       tlsRequired && this.state.newTlsMode === 'MUTUAL' ? this.state.newTlsCaCertificate.length > 0 : true;
@@ -274,7 +274,7 @@ class ServerBuilder extends React.Component<Props, State> {
         {showTls && (this.state.newTlsMode === 'SIMPLE' || this.state.newTlsMode === 'MUTUAL') && (
           <>
             <FormGroup
-              label="Server Cert"
+              label="Server Certificate"
               isRequired={true}
               fieldId="server-certificate"
               isValid={this.state.newTlsServerCertificate.length > 0}

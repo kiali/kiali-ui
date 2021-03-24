@@ -12,8 +12,18 @@ type Props = {
 
 const headerCells: ICell[] = [
   {
-    title: 'Rules to match the request',
-    transforms: [cellWidth(100) as any],
+    title: 'From',
+    transforms: [cellWidth(40) as any],
+    props: {}
+  },
+  {
+    title: 'To',
+    transforms: [cellWidth(40) as any],
+    props: {}
+  },
+  {
+    title: 'When',
+    transforms: [cellWidth(40) as any],
     props: {}
   },
   {
@@ -42,7 +52,6 @@ class RuleList extends React.Component<Props> {
           <>
             {rule.from.length > 0 && (
               <>
-                <b>From:</b>
                 <>
                   {rule.from.map((fromItem, i) => {
                     const keys = Object.keys(fromItem);
@@ -62,9 +71,10 @@ class RuleList extends React.Component<Props> {
                 </>
               </>
             )}
+          </>,
+          <>
             {rule.to.length > 0 && (
               <>
-                <b>To:</b>
                 {rule.to.map((toItem, i) => {
                   const keys = Object.keys(toItem);
                   return (
@@ -82,9 +92,10 @@ class RuleList extends React.Component<Props> {
                 })}
               </>
             )}
+          </>,
+          <>
             {rule.when.length > 0 && (
               <>
-                <b>When:</b>
                 {rule.when.map((whenItem, i) => {
                   return (
                     <div id={'when' + i} className={rulesPadding}>

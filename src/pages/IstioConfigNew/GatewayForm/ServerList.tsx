@@ -18,7 +18,17 @@ const noServerStyle = style({
 
 const headerCells: ICell[] = [
   {
-    title: 'Gateway Servers',
+    title: 'Server Hosts',
+    transforms: [cellWidth(100) as any],
+    props: {}
+  },
+  {
+    title: 'Port',
+    transforms: [cellWidth(20) as any],
+    props: {}
+  },
+  {
+    title: 'TLS',
     transforms: [cellWidth(100) as any],
     props: {}
   },
@@ -35,16 +45,31 @@ class ServerList extends React.Component<Props> {
         key: 'server_' + i,
         cells: [
           <>
+            {server.hosts.map(host => (
+              <div>{host}</div>
+            ))}
+          </>,
+          <>
+            <div>{server.port.name}</div>
             <div>
-              <span>
-                <b>Hosts:</b> [{server.hosts.join(',')}]
-              </span>
+              [{server.port.number}, {server.port.protocol}]
             </div>
-            <div>
-              <span>
-                <b>Port:</b> [{server.port.name}, {server.port.number}, {server.port.protocol}]
-              </span>
-            </div>
+          </>,
+          <>
+            {server.tls ? (
+              <>
+                <div>{server.tls.mode}</div>
+                {server.tls.serverCertificate && server.tls.serverCertificate.length > 0 ? (
+                  <div>[{server.tls.serverCertificate}]</div>
+                ) : undefined}
+                {server.tls.privateKey && server.tls.privateKey.length > 0 ? (
+                  <div>[{server.tls.privateKey}]</div>
+                ) : undefined}
+                {server.tls.caCertificates && server.tls.caCertificates.length > 0 ? (
+                  <div>[{server.tls.caCertificates}]</div>
+                ) : undefined}
+              </>
+            ) : undefined}
           </>,
           <></>
         ]
