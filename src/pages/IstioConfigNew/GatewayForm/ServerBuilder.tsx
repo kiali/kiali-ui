@@ -313,7 +313,7 @@ class ServerBuilder extends React.Component<Props, State> {
         )}
         {showTls && this.state.newTlsMode === 'MUTUAL' && (
           <FormGroup
-            label="CA Cert"
+            label="CA Certificate"
             isRequired={true}
             fieldId="ca-certificate"
             isValid={this.state.newTlsCaCertificate.length > 0}
