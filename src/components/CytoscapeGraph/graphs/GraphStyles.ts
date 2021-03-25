@@ -1,5 +1,5 @@
 import { style } from 'typestyle';
-import { withAlpha, PFColorVals, PFColorVal, PFColors } from '../../../components/Pf/PfColors';
+import { PFColorVals, PFColorVal, PFColors } from '../../../components/Pf/PfColors';
 import { FAILURE, DEGRADED } from '../../../types/Health';
 import {
   EdgeLabelMode,
@@ -81,7 +81,7 @@ const labelStyleDefault = style({
 
 const contentStyleDefault = style({
   alignItems: 'center',
-  backgroundColor: withAlpha(NodeTextBackgroundColor, 'a'),
+  backgroundColor: NodeTextBackgroundColor,
   color: NodeTextColor,
   display: 'flex',
   fontSize: NodeTextFontSize,

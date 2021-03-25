@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Chart, ChartBar, ChartStack, ChartAxis, ChartTooltip } from '@patternfly/react-charts';
 import { VictoryLegend } from 'victory';
 
-import { PFColorVals } from '../../components/Pf/PfColors';
+import { PFColors } from '../../components/Pf/PfColors';
 import { SUMMARY_PANEL_CHART_WIDTH } from '../../types/Graph';
 import { RichDataPoint, VCLines } from 'types/VictoryChartInfo';
 import { addLegendEvent, VCEvent } from 'utils/VictoryEvents';
@@ -112,7 +112,7 @@ export class RateChart extends React.Component<Props, State> {
           name={this.props.baseName + '-legend'}
           data={this.props.series.map((s, idx) => {
             if (this.state.hiddenSeries.has(idx)) {
-              return { ...s.legendItem, symbol: { fill: PFColorVals.Black600 } };
+              return { ...s.legendItem, symbol: { fill: PFColors.Black600 } };
             }
             return s.legendItem;
           })}
@@ -136,11 +136,11 @@ export const renderRateChartHttp = (
   percentNR: number
 ) => {
   const vcLines: VCLines<RichDataPoint> = [
-    { name: 'OK', x: 'rate', y: percent2xx, color: PFColorVals.Success },
-    { name: '3xx', x: 'rate', y: percent3xx, color: PFColorVals.Info },
-    { name: '4xx', x: 'rate', y: percent4xx, color: PFColorVals.ChartWarning }, // 4xx client error, use close but distinct color
-    { name: '5xx', x: 'rate', y: percent5xx, color: PFColorVals.ChartDanger },
-    { name: 'No Response', x: 'rate', y: percentNR, color: PFColorVals.ChartOther } // No Response, just use black
+    { name: 'OK', x: 'rate', y: percent2xx, color: PFColors.Success },
+    { name: '3xx', x: 'rate', y: percent3xx, color: PFColors.Info },
+    { name: '4xx', x: 'rate', y: percent4xx, color: PFColors.ChartWarning }, // 4xx client error, use close but distinct color
+    { name: '5xx', x: 'rate', y: percent5xx, color: PFColors.ChartDanger },
+    { name: 'No Response', x: 'rate', y: percentNR, color: PFColors.ChartOther } // No Response, just use black
   ].map(dp => {
     return {
       datapoints: [dp],
@@ -156,8 +156,8 @@ export const renderRateChartHttp = (
 
 export const renderRateChartGrpc = (percentOK: number, percentErr: number) => {
   const vcLines: VCLines<RichDataPoint> = [
-    { name: 'OK', x: 'rate', y: percentOK, color: PFColorVals.Success },
-    { name: 'Err', x: 'rate', y: percentErr, color: PFColorVals.Danger }
+    { name: 'OK', x: 'rate', y: percentOK, color: PFColors.Success },
+    { name: 'Err', x: 'rate', y: percentErr, color: PFColors.Danger }
   ].map(dp => {
     return {
       datapoints: [dp],
@@ -190,7 +190,7 @@ export const renderInOutRateChartHttp = (
         { x: 'In', y: percent2xxIn },
         { x: 'Out', y: percent2xxOut }
       ],
-      color: PFColorVals.Success
+      color: PFColors.Success
     },
     {
       name: '3xx',
@@ -198,7 +198,7 @@ export const renderInOutRateChartHttp = (
         { x: 'In', y: percent3xxIn },
         { x: 'Out', y: percent3xxOut }
       ],
-      color: PFColorVals.Info
+      color: PFColors.Info
     },
     {
       name: '4xx',
@@ -206,7 +206,7 @@ export const renderInOutRateChartHttp = (
         { x: 'In', y: percent4xxIn },
         { x: 'Out', y: percent4xxOut }
       ],
-      color: PFColorVals.ChartWarning
+      color: PFColors.ChartWarning
     }, // 4xx client error, use close but distinct color
     {
       name: '5xx',
@@ -214,7 +214,7 @@ export const renderInOutRateChartHttp = (
         { x: 'In', y: percent5xxIn },
         { x: 'Out', y: percent5xxOut }
       ],
-      color: PFColorVals.ChartDanger
+      color: PFColors.ChartDanger
     },
     {
       name: 'No Response',
@@ -222,7 +222,7 @@ export const renderInOutRateChartHttp = (
         { x: 'In', y: percentNRIn },
         { x: 'Out', y: percentNROut }
       ],
-      color: PFColorVals.ChartOther
+      color: PFColors.ChartOther
     } // No Response error, just use black
   ].map(line => {
     return {
@@ -254,7 +254,7 @@ export const renderInOutRateChartGrpc = (
         { x: 'In', y: percentOKIn },
         { x: 'Out', y: percentOKOut }
       ],
-      color: PFColorVals.Success
+      color: PFColors.Success
     },
     {
       name: 'Err',
@@ -262,7 +262,7 @@ export const renderInOutRateChartGrpc = (
         { x: 'In', y: percentErrIn },
         { x: 'Out', y: percentErrOut }
       ],
-      color: PFColorVals.Danger
+      color: PFColors.Danger
     }
   ].map(line => {
     return {
