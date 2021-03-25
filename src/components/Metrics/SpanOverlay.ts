@@ -1,4 +1,4 @@
-import { PfColors, PFAlertColor } from 'components/Pf/PfColors';
+import { PFColorVals } from 'components/Pf/PfColors';
 
 import * as API from 'services/Api';
 import { TimeRange, durationToBounds, guardTimeRange } from 'types/Common';
@@ -71,11 +71,11 @@ export class SpanOverlay {
         lineInfo: {
           name: 'Span duration',
           unit: 'seconds',
-          color: PfColors.Cyan300,
+          color: PFColorVals.Cyan300,
           symbol: 'circle',
           size: 10
         },
-        dataStyle: { fill: ({ datum }) => (datum.error ? PFAlertColor.Danger : PfColors.Cyan300), fillOpacity: 0.6 },
+        dataStyle: { fill: ({ datum }) => (datum.error ? PFColorVals.Danger : PFColorVals.Cyan300), fillOpacity: 0.6 },
         buckets: this.spans.length > 1000 ? 15 : 0
       };
       const dps = this.spans.map(span => {
@@ -87,7 +87,7 @@ export class SpanOverlay {
           x: new Date(span.startTime / 1000),
           y: Number(span.duration / 1000000),
           error: hasError,
-          color: hasError ? PFAlertColor.Danger : PfColors.Cyan300,
+          color: hasError ? PFColorVals.Danger : PFColorVals.Cyan300,
           size: 4,
           traceId: span.traceID,
           spanId: span.spanID

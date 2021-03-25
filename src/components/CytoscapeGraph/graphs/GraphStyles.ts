@@ -1,11 +1,5 @@
 import { style } from 'typestyle';
-import {
-  PfColors,
-  withAlpha,
-  getPFAlertColorVals,
-  PFColorVal,
-  PFAlertColorVals
-} from '../../../components/Pf/PfColors';
+import { withAlpha, PFColorVals, PFColorVal, PFColors } from '../../../components/Pf/PfColors';
 import { FAILURE, DEGRADED } from '../../../types/Health';
 import {
   EdgeLabelMode,
@@ -22,20 +16,20 @@ import NodeImageKey from '../../../assets/img/node-background-key.png';
 import { decoratedEdgeData, decoratedNodeData, CyNode } from '../CytoscapeGraphUtils';
 import _ from 'lodash';
 import * as Cy from 'cytoscape';
-
 import { getEdgeHealth } from '../../../types/ErrorRate';
-
 export const DimClass = 'mousedim';
 export const HighlightClass = 'mousehighlight';
 export const HoveredClass = 'mousehover';
 
+// Our node color choices are defined by UX here: https://github.com/kiali/kiali/issues/2435#issuecomment-404640317
+
 let EdgeColor: PFColorVal;
-const EdgeColorDead = PfColors.Black500;
+let EdgeColorDead: PFColorVal;
 let EdgeColorDegraded: PFColorVal;
 let EdgeColorFailure: PFColorVal;
-const EdgeColorTCPWithTraffic = PfColors.Blue600;
+let EdgeColorTCPWithTraffic: PFColorVal;
 const EdgeIconMTLS = icons.istio.mtls.ascii; // lock
-const EdgeTextOutlineColor = PfColors.White;
+let EdgeTextOutlineColor: PFColorVal;
 const EdgeTextOutlineWidth = '1px';
 const EdgeTextFont = 'Verdana,Arial,Helvetica,sans-serif,pficon';
 const EdgeTextFontSize = '6px';
@@ -44,29 +38,29 @@ const EdgeWidth = 2;
 const EdgeWidthSelected = 4;
 const NodeBorderWidth = '1px';
 const NodeBorderWidthSelected = '3px';
-const NodeColorBorder = PfColors.Black400;
-let NodeColorBorderDegraded: string;
-let NodeColorBorderFailure: string;
-const NodeColorBorderHover = PfColors.Blue300;
-const NodeColorBorderSelected = PfColors.Blue300;
-const NodeColorFill = PfColors.White;
-const NodeColorFillBoxApp = PfColors.White;
-const NodeColorFillBoxCluster = PfColors.LightGreen100;
-const NodeColorFillBoxNamespace = PfColors.LightBlue100;
-const NodeColorFillHover = PfColors.Blue50;
-const NodeColorFillHoverDegraded = '#fdf2e5';
-const NodeColorFillHoverFailure = '#ffe6e6';
+let NodeColorBorder: PFColorVal;
+let NodeColorBorderDegraded: PFColorVal;
+let NodeColorBorderFailure: PFColorVal;
+let NodeColorBorderHover: PFColorVal;
+let NodeColorBorderSelected: PFColorVal;
+let NodeColorFill: PFColorVal;
+let NodeColorFillBoxApp: PFColorVal;
+let NodeColorFillBoxCluster: PFColorVal;
+let NodeColorFillBoxNamespace: PFColorVal;
+let NodeColorFillHover: PFColorVal;
+let NodeColorFillHoverDegraded: PFColorVal;
+let NodeColorFillHoverFailure: PFColorVal;
 const NodeHeight = '25px';
 const NodeIconCB = icons.istio.circuitBreaker.className; // bolt
 const NodeIconMS = icons.istio.missingSidecar.className; // exclamation
 const NodeIconRoot = icons.istio.root.className; // alt-arrow-circle-right
 const NodeIconVS = icons.istio.virtualService.className; // code-branch
-const NodeTextColor = PfColors.Black;
-const NodeTextBackgroundColor = PfColors.White;
-const NodeVersionParentTextColor = PfColors.White;
-const NodeVersionParentBackgroundColor = PfColors.Black800;
-const NodeBadgeBackgroundColor = PfColors.Purple400;
-const NodeBadgeColor = PfColors.White;
+const NodeTextColor = PFColors.Black1000;
+const NodeTextBackgroundColor = PFColors.White;
+const NodeVersionParentTextColor = PFColors.White;
+const NodeVersionParentBackgroundColor = PFColors.Black800;
+const NodeBadgeBackgroundColor = PFColors.Purple400;
+const NodeBadgeColor = PFColors.White;
 const NodeBadgeFontSize = '12px';
 const NodeTextFont = EdgeTextFont;
 const NodeTextFontSize = '8px';
@@ -120,18 +114,32 @@ const badgeStyle = style({
 });
 
 export class GraphStyles {
-  static colorsDefined: boolean;
+  static runtimeColorsSet: boolean;
 
-  static defineColors = () => {
-    if (GraphStyles.colorsDefined) {
+  static setRuntimeColors = () => {
+    if (GraphStyles.runtimeColorsSet) {
       return;
     }
-    const colorVals: PFAlertColorVals = getPFAlertColorVals();
-    EdgeColor = colorVals.Success;
-    EdgeColorDegraded = colorVals.Warning;
-    EdgeColorFailure = colorVals.Danger;
-    NodeColorBorderDegraded = colorVals.Warning;
-    NodeColorBorderFailure = colorVals.Danger;
+    GraphStyles.runtimeColorsSet = true;
+
+    EdgeColor = PFColorVals.Success;
+    EdgeColorDead = PFColorVals.Black500;
+    EdgeColorDegraded = PFColorVals.Warning;
+    EdgeColorFailure = PFColorVals.Danger;
+    EdgeColorTCPWithTraffic = PFColorVals.Blue600;
+    EdgeTextOutlineColor = PFColorVals.White;
+    NodeColorBorder = PFColorVals.Black400;
+    NodeColorBorderDegraded = PFColorVals.Warning;
+    NodeColorBorderFailure = PFColorVals.Danger;
+    NodeColorBorderHover = PFColorVals.Blue300;
+    NodeColorBorderSelected = PFColorVals.Blue300;
+    NodeColorFill = PFColorVals.White;
+    NodeColorFillBoxApp = PFColorVals.White;
+    NodeColorFillBoxCluster = PFColorVals.Black400;
+    NodeColorFillBoxNamespace = '#F3FAF2';
+    NodeColorFillHover = PFColorVals.Blue50;
+    NodeColorFillHoverDegraded = '#fdf2e5'; // roughly an Orange50 if it were defined
+    NodeColorFillHoverFailure = '#ffe6e6'; // very close to Red50 if we want to change
   };
 
   static options() {
@@ -279,7 +287,7 @@ export class GraphStyles {
   }
 
   static styles(): Cy.Stylesheet[] {
-    GraphStyles.defineColors();
+    GraphStyles.setRuntimeColors();
 
     const getCyGlobalData = (ele: Cy.NodeSingular | Cy.EdgeSingular): CytoscapeGlobalScratchData => {
       return ele.cy().scratch(CytoscapeGlobalScratchNamespace);
@@ -636,7 +644,7 @@ export class GraphStyles {
       {
         selector: '*.find[^isBox]',
         style: {
-          'overlay-color': PfColors.Gold400,
+          'overlay-color': PFColorVals.Gold400,
           'overlay-padding': '7px',
           'overlay-opacity': 0.3
         }
@@ -644,7 +652,7 @@ export class GraphStyles {
       {
         selector: '*.span[^isBox]',
         style: {
-          'overlay-color': PfColors.Purple200,
+          'overlay-color': PFColorVals.Purple200,
           'overlay-padding': '7px',
           'overlay-opacity': 0.3
         }
