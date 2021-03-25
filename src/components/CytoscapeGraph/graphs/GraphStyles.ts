@@ -21,8 +21,6 @@ export const DimClass = 'mousedim';
 export const HighlightClass = 'mousehighlight';
 export const HoveredClass = 'mousehover';
 
-// Our node color choices are defined by UX here: https://github.com/kiali/kiali/issues/2435#issuecomment-404640317
-
 let EdgeColor: PFColorVal;
 let EdgeColorDead: PFColorVal;
 let EdgeColorDegraded: PFColorVal;
@@ -116,6 +114,9 @@ const badgeStyle = style({
 export class GraphStyles {
   static runtimeColorsSet: boolean;
 
+  // Our node color choices are defined by UX here:
+  // - https://github.com/kiali/kiali/issues/2435#issuecomment-404640317
+  // - https://github.com/kiali/kiali/issues/3675#issuecomment-807403919
   static setRuntimeColors = () => {
     if (GraphStyles.runtimeColorsSet) {
       return;
@@ -135,8 +136,8 @@ export class GraphStyles {
     NodeColorBorderSelected = PFColorVals.Blue300;
     NodeColorFill = PFColorVals.White;
     NodeColorFillBoxApp = PFColorVals.White;
-    NodeColorFillBoxCluster = PFColorVals.Black400;
-    NodeColorFillBoxNamespace = '#F3FAF2';
+    NodeColorFillBoxCluster = PFColorVals.Black200;
+    NodeColorFillBoxNamespace = PFColorVals.Black100;
     NodeColorFillHover = PFColorVals.Blue50;
     NodeColorFillHoverDegraded = '#fdf2e5'; // roughly an Orange50 if it were defined
     NodeColorFillHoverFailure = '#ffe6e6'; // very close to Red50 if we want to change

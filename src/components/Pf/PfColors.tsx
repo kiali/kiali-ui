@@ -55,6 +55,7 @@ export type PFColorVal = string;
 // Color values used by Kiali outside of CSS (i.e. when we must have the actual hex value)
 export type PFColorValues = {
   Black100: PFColorVal;
+  Black200: PFColorVal;
   Black400: PFColorVal;
   Black500: PFColorVal;
   Black1000: PFColorVal;
@@ -78,6 +79,7 @@ export const setPFColorVals = (element: Element) => {
   PFColorVals = {
     // color values used by kiali
     Black100: getComputedStyle(element).getPropertyValue('--pf-global--palette--black-100'),
+    Black200: getComputedStyle(element).getPropertyValue('--pf-global--palette--black-200'),
     Black400: getComputedStyle(element).getPropertyValue('--pf-global--palette--black-400'),
     Black500: getComputedStyle(element).getPropertyValue('--pf-global--palette--black-500'),
     Black1000: getComputedStyle(element).getPropertyValue('--pf-global--palette--black-1000'),
