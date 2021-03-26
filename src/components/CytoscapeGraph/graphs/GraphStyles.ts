@@ -63,6 +63,7 @@ const NodeBadgeFontSize = '12px';
 const NodeTextFont = EdgeTextFont;
 const NodeTextFontSize = '8px';
 const NodeTextFontSizeHover = '11px';
+const NodeTextFontSizeHoverBox = '14px';
 const NodeWidth = NodeHeight;
 
 const labelStyleDefault = style({
@@ -201,7 +202,8 @@ export class GraphStyles {
       contentRawStyle += `color: ${NodeVersionParentTextColor};`;
     }
     if (ele.hasClass(HighlightClass)) {
-      contentRawStyle += 'font-size: ' + NodeTextFontSizeHover + ';';
+      const fontSize = isBox ? NodeTextFontSizeHoverBox : NodeTextFontSizeHover;
+      contentRawStyle += 'font-size: ' + fontSize + ';';
     }
 
     const label: string[] = [];
@@ -268,9 +270,28 @@ export class GraphStyles {
     }
 
     let labelHtml = label.join('<br/>');
-    labelHtml = `<div class="${contentStyleDefault} ${
-      hasBadge ? contentStyleWithBadges : ''
-    }" style="${contentRawStyle}">${labelHtml}</div>`;
+    if (isBox) {
+      let letter = '';
+      switch (isBox) {
+        case BoxByType.APP:
+          letter = 'A';
+          break;
+        case BoxByType.CLUSTER:
+          letter = 'C';
+          break;
+        case BoxByType.NAMESPACE:
+          letter = 'NS';
+          break;
+        default:
+          console.warn(`GraphSyles: Unexpected box [${isBox}] `);
+      }
+      const badge = `<span class="pf-c-badge pf-m-unread virtualitem_badge_definition" style="margin-right: 5px;">${letter}</span>`;
+      labelHtml = `<div class="${contentStyleDefault}" style="${contentRawStyle}">${badge}${labelHtml}</div>`;
+    } else {
+      labelHtml = `<div class="${contentStyleDefault} ${
+        hasBadge ? contentStyleWithBadges : ''
+      }" style="${contentRawStyle}">${labelHtml}</div>`;
+    }
     return `<div class="${labelStyleDefault}" style="${labelRawStyle}">${badges}${labelHtml}</div>`;
   }
 

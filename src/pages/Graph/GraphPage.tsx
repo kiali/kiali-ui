@@ -50,7 +50,7 @@ import { KialiAppAction } from '../../actions/KialiAppAction';
 import { GraphActions } from '../../actions/GraphActions';
 import { GraphToolbarActions } from '../../actions/GraphToolbarActions';
 import { NodeContextMenuContainer } from '../../components/CytoscapeGraph/ContextMenu/NodeContextMenu';
-import { PFColors, PFColorVals } from 'components/Pf/PfColors';
+import { PFColors } from 'components/Pf/PfColors';
 import { TourActions } from 'actions/TourActions';
 import { arrayEquals } from 'utils/Common';
 import { isKioskMode, getFocusSelector, unsetFocusSelector, getTraceId } from 'utils/SearchParamUtils';
@@ -283,8 +283,6 @@ export class GraphPage extends React.Component<GraphPageProps, GraphPageState> {
     }
 
     this.graphDataSource = new GraphDataSource();
-
-    console.log('colors' + JSON.stringify(PFColorVals));
 
     this.state = {
       graphData: {
