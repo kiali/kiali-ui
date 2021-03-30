@@ -33,6 +33,7 @@ export enum PFColors {
   // semantic kiali colors
   Active = 'var(--pf-global--active-color--400)',
   ActiveText = 'var(--pf-global--primary-color--200)',
+  Badge = 'var(--pf-global--palette--blue-200)', // UX-assigned badge background. also, see dep in _VirtualList.scss
   Replay = 'var(--pf-global--active-color--300)', // also, see dep in _Time.scss
 
   // Health/Alert colors https://www.patternfly.org/v4/design-guidelines/styles/colors
@@ -58,6 +59,7 @@ export type PFColorValues = {
   Black200: PFColorVal;
   Black400: PFColorVal;
   Black500: PFColorVal;
+  Black600: PFColorVal;
   Black1000: PFColorVal;
   Blue50: PFColorVal;
   Blue300: PFColorVal;
@@ -82,6 +84,7 @@ export const setPFColorVals = (element: Element) => {
     Black200: getComputedStyle(element).getPropertyValue('--pf-global--palette--black-200'),
     Black400: getComputedStyle(element).getPropertyValue('--pf-global--palette--black-400'),
     Black500: getComputedStyle(element).getPropertyValue('--pf-global--palette--black-500'),
+    Black600: getComputedStyle(element).getPropertyValue('--pf-global--palette--black-600'),
     Black1000: getComputedStyle(element).getPropertyValue('--pf-global--palette--black-1000'),
     Blue50: getComputedStyle(element).getPropertyValue('--pf-global--palette--blue-50'),
     Blue300: getComputedStyle(element).getPropertyValue('--pf-global--palette--blue-300'),

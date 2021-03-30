@@ -37,6 +37,7 @@ const EdgeWidthSelected = 4;
 const NodeBorderWidth = '1px';
 const NodeBorderWidthSelected = '3px';
 let NodeColorBorder: PFColorVal;
+let NodeColorBorderBox: PFColorVal;
 let NodeColorBorderDegraded: PFColorVal;
 let NodeColorBorderFailure: PFColorVal;
 let NodeColorBorderHover: PFColorVal;
@@ -54,19 +55,69 @@ const NodeIconMS = icons.istio.missingSidecar.className; // exclamation
 const NodeIconRoot = icons.istio.root.className; // alt-arrow-circle-right
 const NodeIconVS = icons.istio.virtualService.className; // code-branch
 const NodeTextColor = PFColors.Black1000;
+const NodeTextColorBox = PFColors.White;
 const NodeTextBackgroundColor = PFColors.White;
-const NodeVersionParentTextColor = PFColors.White;
-const NodeVersionParentBackgroundColor = PFColors.Black800;
+const NodeTextBackgroundColorBox = PFColors.Black800;
 const NodeBadgeBackgroundColor = PFColors.Purple400;
 const NodeBadgeColor = PFColors.White;
 const NodeBadgeFontSize = '12px';
 const NodeTextFont = EdgeTextFont;
 const NodeTextFontSize = '8px';
+const NodeTextFontSizeBox = '10px';
 const NodeTextFontSizeHover = '11px';
 const NodeTextFontSizeHoverBox = '14px';
 const NodeWidth = NodeHeight;
 
-const labelStyleDefault = style({
+const badgeMargin = style({
+  marginLeft: '1px'
+});
+
+const badgesDefault = style({
+  alignItems: 'center',
+  backgroundColor: NodeBadgeBackgroundColor,
+  borderTopLeftRadius: '3px',
+  borderBottomLeftRadius: '3px',
+  color: NodeBadgeColor,
+  display: 'flex',
+  fontSize: NodeBadgeFontSize,
+  padding: '3px 3px'
+});
+
+const contentBoxPfBadge = style({
+  backgroundColor: PFColors.Badge,
+  fontSize: NodeTextFontSizeBox,
+  marginRight: '5px',
+  minWidth: '24px', // reduce typical minWidth for badge to save label space
+  paddingLeft: '0px',
+  paddingRight: '0px'
+});
+
+const contentDefault = style({
+  alignItems: 'center',
+  backgroundColor: NodeTextBackgroundColor,
+  borderRadius: '3px',
+  borderWidth: '1px',
+  color: NodeTextColor,
+  display: 'flex',
+  fontSize: NodeTextFontSize,
+  padding: '3px 5px'
+});
+
+const contentBox = style({
+  backgroundColor: NodeTextBackgroundColorBox,
+  color: NodeTextColorBox,
+  fontSize: NodeTextFontSizeBox
+});
+
+const contentWithBadges = style({
+  borderBottomLeftRadius: 'unset',
+  borderColor: NodeBadgeBackgroundColor,
+  borderStyle: 'solid',
+  borderTopLeftRadius: 'unset',
+  borderLeft: '0'
+});
+
+const labelDefault = style({
   borderRadius: '3px',
   boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 2px 8px 0 rgba(0, 0, 0, 0.19)',
   display: 'flex',
@@ -78,38 +129,8 @@ const labelStyleDefault = style({
   textAlign: 'center'
 });
 
-const contentStyleDefault = style({
-  alignItems: 'center',
-  backgroundColor: NodeTextBackgroundColor,
-  color: NodeTextColor,
-  display: 'flex',
-  fontSize: NodeTextFontSize,
-  padding: '3px 5px',
-  borderRadius: '3px',
-  borderWidth: '1px'
-});
-
-const contentStyleWithBadges = style({
-  borderBottomLeftRadius: 'unset',
-  borderColor: NodeBadgeBackgroundColor,
-  borderStyle: 'solid',
-  borderTopLeftRadius: 'unset',
-  borderLeft: '0'
-});
-
-const badgesDefaultStyle = style({
-  alignItems: 'center',
-  backgroundColor: NodeBadgeBackgroundColor,
-  borderTopLeftRadius: '3px',
-  borderBottomLeftRadius: '3px',
-  color: NodeBadgeColor,
-  display: 'flex',
-  fontSize: NodeBadgeFontSize,
-  padding: '3px 3px'
-});
-
-const badgeStyle = style({
-  marginLeft: '1px'
+const labelBox = style({
+  marginTop: '13px'
 });
 
 export class GraphStyles {
@@ -131,6 +152,7 @@ export class GraphStyles {
     EdgeColorTCPWithTraffic = PFColorVals.Blue600;
     EdgeTextOutlineColor = PFColorVals.White;
     NodeColorBorder = PFColorVals.Black400;
+    NodeColorBorderBox = PFColorVals.Black600;
     NodeColorBorderDegraded = PFColorVals.Warning;
     NodeColorBorderFailure = PFColorVals.Danger;
     NodeColorBorderHover = PFColorVals.Blue300;
@@ -167,46 +189,39 @@ export class GraphStyles {
     const version = data.version || '';
     const workload = data.workload || '';
 
-    let labelRawStyle = '';
-    if (ele.hasClass(HighlightClass)) {
-      labelRawStyle += 'font-size: ' + NodeTextFontSizeHover + ';';
-    }
-    if (ele.hasClass(DimClass)) {
-      labelRawStyle += 'opacity: 0.6;';
-    }
-    if (isBox) {
-      labelRawStyle += 'margin-top: 13px;';
-    }
-
     let badges = '';
     if (data.isRoot) {
-      badges = `<span class="${NodeIconRoot} ${badgeStyle}"></span> ${badges}`;
+      badges = `<span class="${NodeIconRoot} ${badgeMargin}"></span> ${badges}`;
     }
     if (cyGlobal.showMissingSidecars && data.hasMissingSC) {
-      badges = `<span class="${NodeIconMS} ${badgeStyle}"></span> ${badges}`;
+      badges = `<span class="${NodeIconMS} ${badgeMargin}"></span> ${badges}`;
     }
     if (cyGlobal.showCircuitBreakers && data.hasCB) {
-      badges = `<span class="${NodeIconCB} ${badgeStyle}"></span> ${badges}`;
+      badges = `<span class="${NodeIconCB} ${badgeMargin}"></span> ${badges}`;
     }
     if (cyGlobal.showVirtualServices && data.hasVS) {
-      badges = `<span class="${NodeIconVS} ${badgeStyle}"></span> ${badges}`;
-    }
-    if (badges.length > 0) {
-      badges = `<div class=${badgesDefaultStyle}>${badges}</div>`;
+      badges = `<span class="${NodeIconVS} ${badgeMargin}"></span> ${badges}`;
     }
     const hasBadge = badges.length > 0;
-
-    let contentRawStyle = '';
-    if (isBox) {
-      contentRawStyle += `background-color: ${NodeVersionParentBackgroundColor};`;
-      contentRawStyle += `color: ${NodeVersionParentTextColor};`;
+    if (hasBadge) {
+      badges = `<div class=${badgesDefault}>${badges}</div>`;
     }
+
+    let labelStyle = '';
+    if (ele.hasClass(HighlightClass)) {
+      labelStyle += 'font-size: ' + NodeTextFontSizeHover + ';';
+    }
+    if (ele.hasClass(DimClass)) {
+      labelStyle += 'opacity: 0.6;';
+    }
+
+    let contentStyle = '';
     if (ele.hasClass(HighlightClass)) {
       const fontSize = isBox ? NodeTextFontSizeHoverBox : NodeTextFontSizeHover;
-      contentRawStyle += 'font-size: ' + fontSize + ';';
+      contentStyle += 'font-size: ' + fontSize + ';';
     }
 
-    const label: string[] = [];
+    const content: string[] = [];
     if (
       (isMultiNamespace || isOutside) &&
       !cyGlobal.boxByNamespace &&
@@ -215,61 +230,62 @@ export class GraphStyles {
       isBox !== BoxByType.CLUSTER &&
       isBox !== BoxByType.NAMESPACE
     ) {
-      label.push(`(${namespace})`);
+      content.push(`(${namespace})`);
     }
 
     switch (nodeType) {
       case NodeType.AGGREGATE:
-        label.unshift(data.aggregateValue!);
+        content.unshift(data.aggregateValue!);
         break;
       case NodeType.APP:
         if (isBoxed && isBoxedBy === BoxByType.APP) {
           if (cyGlobal.graphType === GraphType.APP) {
-            label.unshift(app);
+            content.unshift(app);
           } else if (version && version !== UNKNOWN) {
-            label.unshift(version);
+            content.unshift(version);
           } else {
-            label.unshift(workload ? workload : app);
+            content.unshift(workload ? workload : app);
           }
         } else {
           if (cyGlobal.graphType === GraphType.APP || version === UNKNOWN) {
-            label.unshift(app);
+            content.unshift(app);
           } else {
-            label.unshift(version);
-            label.unshift(app);
+            content.unshift(version);
+            content.unshift(app);
           }
         }
         break;
       case NodeType.BOX:
         switch (isBox) {
           case BoxByType.APP:
-            label.unshift(app);
+            content.unshift(app);
             break;
           case BoxByType.CLUSTER:
-            label.unshift(data.cluster);
+            content.unshift(data.cluster);
             break;
           case BoxByType.NAMESPACE:
-            label.unshift(data.namespace);
+            content.unshift(data.namespace);
             if (!cyGlobal.boxByCluster && data.cluster !== UNKNOWN) {
-              label.push(`(${data.cluster})`);
+              content.push(`(${data.cluster})`);
             }
             break;
         }
         break;
       case NodeType.SERVICE:
-        label.unshift(service);
+        content.unshift(service);
         break;
       case NodeType.UNKNOWN:
-        label.unshift(UNKNOWN);
+        content.unshift(UNKNOWN);
         break;
       case NodeType.WORKLOAD:
-        label.unshift(workload);
+        content.unshift(workload);
         break;
       default:
-        label.unshift('error');
+        content.unshift('error');
     }
 
-    let labelHtml = label.join('<br/>');
+    const contentText = content.join('<br/>');
+    const contentClasses = hasBadge ? `${contentDefault} ${contentWithBadges}` : `${contentDefault}`;
     if (isBox) {
       let letter = '';
       switch (isBox) {
@@ -285,14 +301,13 @@ export class GraphStyles {
         default:
           console.warn(`GraphSyles: Unexpected box [${isBox}] `);
       }
-      const badge = `<span class="pf-c-badge pf-m-unread virtualitem_badge_definition" style="margin-right: 5px;">${letter}</span>`;
-      labelHtml = `<div class="${contentStyleDefault}" style="${contentRawStyle}">${badge}${labelHtml}</div>`;
-    } else {
-      labelHtml = `<div class="${contentStyleDefault} ${
-        hasBadge ? contentStyleWithBadges : ''
-      }" style="${contentRawStyle}">${labelHtml}</div>`;
+      const contentBadge = `<span class="pf-c-badge pf-m-unread ${contentBoxPfBadge}">${letter}</span>`;
+      const contentSpan = `<span class="${contentClasses} ${contentBox}" style="${contentStyle}">${contentBadge}${contentText}</span>`;
+      return `<div class="${labelDefault} ${labelBox}" style="${labelStyle}">${badges}${contentSpan}</div>`;
     }
-    return `<div class="${labelStyleDefault}" style="${labelRawStyle}">${badges}${labelHtml}</div>`;
+
+    const contentSpan = `<div class="${contentClasses}" style="${contentStyle}">${contentText}</div>`;
+    return `<div class="${labelDefault}" style="${labelStyle}">${badges}${contentSpan}</div>`;
   }
 
   static htmlNodeLabels(cy: Cy.Core) {
@@ -462,7 +477,13 @@ export class GraphStyles {
     };
 
     const getNodeBorderColor = (ele: Cy.NodeSingular): string => {
-      switch (ele.data(CyNode.healthStatus)) {
+      const isBox = ele.data(CyNode.isBox);
+      if (isBox && isBox !== BoxByType.APP) {
+        return NodeColorBorderBox;
+      }
+
+      const healthStatus = ele.data(CyNode.healthStatus);
+      switch (healthStatus) {
         case DEGRADED.name:
           return NodeColorBorderDegraded;
         case FAILURE.name:
