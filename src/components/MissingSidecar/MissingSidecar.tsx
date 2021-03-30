@@ -20,7 +20,7 @@ class MissingSidecar extends React.Component<MissingSidecarProps, {}> {
   static defaultProps = {
     text: 'Missing Sidecar',
     textTooltip:
-      "Istio container doesn't found in Pod(s). Check if the istio-injection label/annotation is correctly set on the namespace/workload.",
+      'Istio sidecar container not found in Pod(s). Check if the istio-injection label/annotation is correctly set on the namespace/workload.',
     tooltip: false,
     icon: icons.istio.missingSidecar.icon,
     color: icons.istio.missingSidecar.color
