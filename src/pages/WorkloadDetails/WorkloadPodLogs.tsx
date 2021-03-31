@@ -13,7 +13,9 @@ import {
   ToolbarItem,
   Tooltip,
   TooltipPosition,
-  Badge
+  Badge,
+  Form,
+  FormGroup
 } from '@patternfly/react-core';
 import { style } from 'typestyle';
 import { Pod, LogEntry, AccessLog } from '../../types/IstioObjects';
@@ -29,7 +31,6 @@ import { serverConfig } from 'config';
 import { KialiAppState } from '../../store/Store';
 import { connect } from 'react-redux';
 import { timeRangeSelector } from '../../store/Selectors';
-import { VictoryLegend } from 'victory';
 import { PfColors, PFColorVal } from 'components/Pf/PfColors';
 
 const appContainerColors = [PfColors.White, PfColors.LightGreen, PfColors.LightBlue, PfColors.Purple100];
@@ -134,7 +135,7 @@ const logsDiv = style({
   marginRight: '5px'
 });
 
-const logsTextBackground = (enabled: boolean) => ({ backgroundColor: enabled ? '#003145' : 'gray' });
+const logsTextBackground = (enabled: boolean) => ({ backgroundColor: enabled ? PfColors.Black1000 : 'gray' });
 const logsTextHeight = (fullscreen: boolean) => ({
   height: fullscreen ? `calc(100vh - 145px)` : `calc(var(--kiali-details-pages-tab-content-height) - 160px)`
 });
@@ -370,54 +371,48 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
   }
 
   private getContainerLegend = () => {
-    const data = this.state.containers!.map(c => {
-      return { name: c.displayName };
-    });
-    const colorScale = this.state.containers!.map(c => {
-      return c.color;
-    });
     return (
-      <VictoryLegend
-        orientation="horizontal"
-        style={{
-          data: { stroke: 'navy', strokeWidth: 2 }
-        }}
-        colorScale={colorScale}
-        height={34}
-        gutter={20}
-        data={data}
-        events={[
-          {
-            target: 'data',
-            eventHandlers: {
-              onClick: evt => {
-                evt.stopPropagation();
-                return [
-                  {
-                    target: 'data',
-                    mutation: props => {
-                      const container = this.state.containers![props.datum.column];
-                      return !container.isSelected
-                        ? null
-                        : { style: { stroke: 'navy', strokeWidth: 2, fill: PfColors.Gray } };
-                    }
-                  },
-                  {
-                    target: 'labels',
-                    mutation: props => {
-                      const container = this.state.containers![props.datum.column];
-                      container.isSelected = !container.isSelected;
-                      this.setState({ containers: [...this.state.containers!] });
-                      return container.isSelected ? null : { style: { fill: PfColors.Gray } };
-                    }
-                  }
-                ];
-              }
-            }
-          }
-        ]}
-      />
+      <Form>
+        <FormGroup fieldId="container-log-selection" isInline>
+          <Tooltip position={TooltipPosition.auto} content={<>Containers</>}>
+            <Badge className="virtualitem_badge_definition" style={{ marginRight: '10px' }}>
+              C
+            </Badge>
+          </Tooltip>
+          {this.state.containers!.map((c, i) => {
+            return (
+              <div className="pf-c-check">
+                <input
+                  id={`container-${i}`}
+                  className="pf-c-check__input"
+                  style={{ marginBottom: '3px' }}
+                  type="checkbox"
+                  checked={c.isSelected}
+                  onChange={() => this.toggleSelected(c)}
+                />
+                <label
+                  htmlFor={`container-${i}`}
+                  className="pf-c-check__label"
+                  style={{
+                    backgroundColor: PfColors.Black1000,
+                    color: c.color,
+                    paddingLeft: '5px',
+                    paddingRight: '5px'
+                  }}
+                >
+                  {c.displayName}
+                </label>
+              </div>
+            );
+          })}
+        </FormGroup>
+      </Form>
     );
+  };
+
+  private toggleSelected = (c: Container) => {
+    c.isSelected = !c.isSelected;
+    this.setState({ containers: [...this.state.containers!] });
   };
 
   private getLogsDiv = () => {
