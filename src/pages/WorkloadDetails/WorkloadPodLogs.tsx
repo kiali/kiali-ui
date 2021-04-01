@@ -6,7 +6,6 @@ import {
   CardBody,
   Grid,
   GridItem,
-  Switch,
   TextInput,
   Toolbar,
   ToolbarGroup,
@@ -15,7 +14,10 @@ import {
   TooltipPosition,
   Badge,
   Form,
-  FormGroup
+  FormGroup,
+  Dropdown,
+  DropdownItem,
+  KebabToggle
 } from '@patternfly/react-core';
 import { style } from 'typestyle';
 import { Pod, LogEntry, AccessLog } from '../../types/IstioObjects';
@@ -57,6 +59,7 @@ interface WorkloadPodLogsState {
   fullscreen: boolean;
   hideError?: string;
   hideLogValue: string;
+  kebabOpen: boolean;
   loadingLogs: boolean;
   loadingLogsError?: string;
   logWindowSelections: any[];
@@ -67,6 +70,7 @@ interface WorkloadPodLogsState {
   showError?: string;
   showLogValue: string;
   showTimestamps: boolean;
+  showToolbar: boolean;
   tailLines: number;
   useRegex: boolean;
 }
@@ -114,10 +118,6 @@ const toolbarSpace = style({
   marginLeft: '1em'
 });
 
-const toolbarSmallSpace = style({
-  marginLeft: '0.5em'
-});
-
 const toolbarRight = style({
   marginLeft: 'auto'
 });
@@ -126,8 +126,8 @@ const toolbarTail = style({
   marginTop: '2px'
 });
 
-const toolbarTitle = style({
-  height: '36px',
+const logsToolbar = style({
+  height: '40px',
   margin: '0 10px 0 0'
 });
 
@@ -136,12 +136,17 @@ const logsDiv = style({
 });
 
 const logsTextBackground = (enabled: boolean) => ({ backgroundColor: enabled ? PfColors.Black1000 : 'gray' });
-const logsTextHeight = (fullscreen: boolean) => ({
-  height: fullscreen ? `calc(100vh - 145px)` : `calc(var(--kiali-details-pages-tab-content-height) - 160px)`
-});
+const logsTextHeight = (showToolbar: boolean, fullscreen: boolean) => {
+  const toolbarHeight = showToolbar ? '0px' : '49px';
+  return {
+    height: fullscreen
+      ? `calc(100vh - 130px + ${toolbarHeight})`
+      : `calc(var(--kiali-details-pages-tab-content-height) - 155px + ${toolbarHeight})`
+  };
+};
 
-const logsText = (enabled = true, fullscreen = false) =>
-  style(logsTextBackground(enabled), logsTextHeight(fullscreen), {
+const logsText = (enabled = true, showToolbar = true, fullscreen = false) =>
+  style(logsTextBackground(enabled), logsTextHeight(showToolbar, fullscreen), {
     width: '100%',
     overflow: 'auto',
     resize: 'none',
@@ -166,6 +171,7 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
       filteredLogs: [],
       fullscreen: false,
       hideLogValue: '',
+      kebabOpen: false,
       loadingLogs: false,
       logWindowSelections: [],
       rawLogs: [],
@@ -173,6 +179,7 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
       showClearShowLogButton: false,
       showLogValue: '',
       showTimestamps: false,
+      showToolbar: true,
       tailLines: TailLinesDefault,
       useRegex: false
     };
@@ -247,117 +254,93 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
               <GridItem span={12}>
                 <Card style={{ height: '100%' }}>
                   <CardBody>
-                    <Toolbar className={toolbar}>
-                      <ToolbarGroup>
-                        <Tooltip position={TooltipPosition.top} content={<>Pod</>}>
-                          <Badge className="virtualitem_badge_definition">P</Badge>
-                        </Tooltip>
-                        <ToolbarItem className={displayFlex}>
-                          <ToolbarDropdown
-                            id={'wpl_pods'}
-                            tooltip="Display logs for the selected pod"
-                            handleSelect={key => this.setPod(key)}
-                            value={this.state.podValue}
-                            label={this.props.pods[this.state.podValue!].name}
-                            options={this.podOptions!}
-                          />
-                        </ToolbarItem>
-                      </ToolbarGroup>
-                      <ToolbarGroup>
-                        <ToolbarItem>
-                          <TextInput
-                            id="log_show"
-                            name="log_show"
-                            style={{ width: '8em' }}
-                            isValid={!this.state.showError}
-                            autoComplete="on"
-                            type="text"
-                            onKeyPress={this.checkSubmitShow}
-                            onChange={this.updateShow}
-                            defaultValue={this.state.showLogValue}
-                            aria-label="show log text"
-                            placeholder="Show..."
-                          />
-                          {this.state.showClearShowLogButton && (
-                            <Tooltip key="clear_show_log" position="top" content="Clear Show Log Entries...">
-                              <Button variant={ButtonVariant.control} onClick={this.clearShow}>
-                                <KialiIcon.Close />
-                              </Button>
-                            </Tooltip>
-                          )}
-                          <TextInput
-                            id="log_hide"
-                            name="log_hide"
-                            style={{ width: '8em' }}
-                            isValid={!this.state.hideError}
-                            autoComplete="on"
-                            type="text"
-                            onKeyPress={this.checkSubmitHide}
-                            onChange={this.updateHide}
-                            defaultValue={this.state.hideLogValue}
-                            aria-label="hide log text"
-                            placeholder="Hide..."
-                          />
-                          {this.state.showClearHideLogButton && (
-                            <Tooltip key="clear_hide_log" position="top" content="Clear Hide Log Entries...">
-                              <Button variant={ButtonVariant.control} onClick={this.clearHide}>
-                                <KialiIcon.Close />
-                              </Button>
-                            </Tooltip>
-                          )}
-                          {this.state.showError && <div style={{ color: 'red' }}>{this.state.showError}</div>}
-                          {this.state.hideError && <div style={{ color: 'red' }}>{this.state.hideError}</div>}
-                        </ToolbarItem>
-                        <ToolbarItem>
-                          <Tooltip
-                            key="show_hide_log_help"
-                            position="top"
-                            content="Show only lines containing a substring. Hide all lines containing a substring. Case sensitive."
-                          >
-                            <KialiIcon.Info className={infoIcons} />
+                    {this.state.showToolbar && (
+                      <Toolbar className={toolbar}>
+                        <ToolbarGroup>
+                          <Tooltip position={TooltipPosition.top} content={<>Pod</>}>
+                            <Badge className="virtualitem_badge_definition">P</Badge>
                           </Tooltip>
-                        </ToolbarItem>
-                        <ToolbarItem className={toolbarSmallSpace}>
-                          <Tooltip
-                            key="show_hide_regex_help"
-                            position="top"
-                            content="Use regular expression matching for Show/Hide"
-                          >
-                            <Button
-                              variant={ButtonVariant.link}
-                              isBlock={this.state.useRegex}
-                              onClick={this.handleRegexChange}
-                              isInline
+                          <ToolbarItem className={displayFlex}>
+                            <ToolbarDropdown
+                              id={'wpl_pods'}
+                              tooltip="Display logs for the selected pod"
+                              handleSelect={key => this.setPod(key)}
+                              value={this.state.podValue}
+                              label={this.props.pods[this.state.podValue!].name}
+                              options={this.podOptions!}
+                            />
+                          </ToolbarItem>
+                        </ToolbarGroup>
+                        <ToolbarGroup>
+                          <ToolbarItem>
+                            <TextInput
+                              id="log_show"
+                              name="log_show"
+                              style={{ width: '8em' }}
+                              isValid={!this.state.showError}
+                              autoComplete="on"
+                              type="text"
+                              onKeyPress={this.checkSubmitShow}
+                              onChange={this.updateShow}
+                              defaultValue={this.state.showLogValue}
+                              aria-label="show log text"
+                              placeholder="Show..."
+                            />
+                            {this.state.showClearShowLogButton && (
+                              <Tooltip key="clear_show_log" position="top" content="Clear Show Log Entries...">
+                                <Button variant={ButtonVariant.control} onClick={this.clearShow}>
+                                  <KialiIcon.Close />
+                                </Button>
+                              </Tooltip>
+                            )}
+                            <TextInput
+                              id="log_hide"
+                              name="log_hide"
+                              style={{ width: '8em' }}
+                              isValid={!this.state.hideError}
+                              autoComplete="on"
+                              type="text"
+                              onKeyPress={this.checkSubmitHide}
+                              onChange={this.updateHide}
+                              defaultValue={this.state.hideLogValue}
+                              aria-label="hide log text"
+                              placeholder="Hide..."
+                            />
+                            {this.state.showClearHideLogButton && (
+                              <Tooltip key="clear_hide_log" position="top" content="Clear Hide Log Entries...">
+                                <Button variant={ButtonVariant.control} onClick={this.clearHide}>
+                                  <KialiIcon.Close />
+                                </Button>
+                              </Tooltip>
+                            )}
+                            {this.state.showError && <div style={{ color: 'red' }}>{this.state.showError}</div>}
+                            {this.state.hideError && <div style={{ color: 'red' }}>{this.state.hideError}</div>}
+                          </ToolbarItem>
+                          <ToolbarItem>
+                            <Tooltip
+                              key="show_hide_log_help"
+                              position="top"
+                              content="Show only lines containing a substring. Hide all lines containing a substring. Case sensitive."
                             >
-                              <KialiIcon.Regex className={defaultIconStyle} />
-                            </Button>
-                          </Tooltip>
-                        </ToolbarItem>
-                      </ToolbarGroup>
-                      <ToolbarGroup>
-                        <ToolbarItem className={toolbarSpace}>
-                          <Switch
-                            id="timestamps-switch"
-                            label="Timestamps"
-                            isChecked={this.state.showTimestamps}
-                            onChange={this.handleTimestampsChange}
-                          />
-                        </ToolbarItem>
-                      </ToolbarGroup>
-                      <ToolbarGroup className={toolbarRight}>
-                        <ToolbarItem className={displayFlex}>
-                          <ToolbarDropdown
-                            id={'wpl_tailLines'}
-                            handleSelect={key => this.setTailLines(Number(key))}
-                            value={this.state.tailLines}
-                            label={TailLinesOptions[this.state.tailLines]}
-                            options={TailLinesOptions}
-                            tooltip={'Show up to last N log lines'}
-                            classNameSelect={toolbarTail}
-                          />
-                        </ToolbarItem>
-                      </ToolbarGroup>
-                    </Toolbar>
+                              <KialiIcon.Info className={infoIcons} />
+                            </Tooltip>
+                          </ToolbarItem>
+                        </ToolbarGroup>
+                        <ToolbarGroup className={toolbarRight}>
+                          <ToolbarItem className={displayFlex}>
+                            <ToolbarDropdown
+                              id={'wpl_tailLines'}
+                              handleSelect={key => this.setTailLines(Number(key))}
+                              value={this.state.tailLines}
+                              label={TailLinesOptions[this.state.tailLines]}
+                              options={TailLinesOptions}
+                              tooltip={'Show up to last N log lines'}
+                              classNameSelect={toolbarTail}
+                            />
+                          </ToolbarItem>
+                        </ToolbarGroup>
+                      </Toolbar>
+                    )}
                     {this.getLogsDiv()}
                   </CardBody>
                 </Card>
@@ -416,9 +399,21 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
   };
 
   private getLogsDiv = () => {
+    const kebabActions = [
+      <DropdownItem key="toggleToolbar" onClick={this.toggleToolbar}>
+        {`${this.state.showToolbar ? 'Collapse' : 'Restore'} Toolbar`}
+      </DropdownItem>,
+      <DropdownItem key="toggleRegex" onClick={this.toggleUseRegex}>
+        {`Show/Hide via ${this.state.useRegex ? 'Substring' : 'Regex'}`}
+      </DropdownItem>,
+      <DropdownItem key="toggleTimestamps" onClick={this.toggleShowTimestamps}>
+        {`${this.state.showTimestamps ? 'Remove' : 'Show'} Timestamps`}
+      </DropdownItem>
+    ];
+
     return (
       <div id="logsDiv" className={logsDiv}>
-        <Toolbar className={toolbarTitle}>
+        <Toolbar className={logsToolbar}>
           <ToolbarGroup>
             <ToolbarItem>{this.getContainerLegend()}</ToolbarItem>
           </ToolbarGroup>
@@ -444,12 +439,22 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
                 </Button>
               </Tooltip>
             </ToolbarItem>
+            <ToolbarItem>
+              <Dropdown
+                style={{ width: '20px' }}
+                toggle={<KebabToggle onToggle={this.setKebabOpen} />}
+                dropdownItems={kebabActions}
+                isPlain
+                isOpen={this.state.kebabOpen}
+                position={'right'}
+              />
+            </ToolbarItem>
           </ToolbarGroup>
         </Toolbar>
 
         <div
           id="logsText"
-          className={logsText(this.hasEntries(this.state.filteredLogs), this.state.fullscreen)}
+          className={logsText(this.hasEntries(this.state.filteredLogs), this.state.showToolbar, this.state.fullscreen)}
           ref={this.logsRef}
         >
           {this.hasEntries(this.state.filteredLogs)
@@ -490,14 +495,20 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
     this.setState({ tailLines: tailLines });
   };
 
-  private handleTimestampsChange = (isChecked: boolean) => {
-    this.setState({ showTimestamps: isChecked });
+  private setKebabOpen = (kebabOpen: boolean) => {
+    this.setState({ kebabOpen: kebabOpen });
   };
 
-  private handleRegexChange = () => {
-    this.setState({
-      useRegex: !this.state.useRegex
-    });
+  private toggleShowTimestamps = () => {
+    this.setState({ showTimestamps: !this.state.showTimestamps, kebabOpen: false });
+  };
+
+  private toggleToolbar = () => {
+    this.setState({ showToolbar: !this.state.showToolbar, kebabOpen: false });
+  };
+
+  private toggleUseRegex = () => {
+    this.setState({ useRegex: !this.state.useRegex, kebabOpen: false });
   };
 
   private doShowAndHide = () => {
