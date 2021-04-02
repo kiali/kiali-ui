@@ -34,6 +34,7 @@ import { KialiAppState } from '../../store/Store';
 import { connect } from 'react-redux';
 import { timeRangeSelector } from '../../store/Selectors';
 import { PfColors, PFColorVal } from 'components/Pf/PfColors';
+import AccessLogModal from 'components/Envoy/AccessLogModal';
 
 const appContainerColors = [PfColors.White, PfColors.LightGreen, PfColors.LightBlue, PfColors.Purple100];
 const proxyContainerColor = PfColors.Gold;
@@ -54,6 +55,7 @@ interface Container {
 }
 
 interface WorkloadPodLogsState {
+  accessLogModals: Map<string, AccessLog>;
   containers?: Container[];
   filteredLogs: LogEntry[];
   fullscreen: boolean;
@@ -89,11 +91,6 @@ const TailLinesOptions = {
   '1000': '1000 lines',
   '5000': '5000 lines'
 };
-
-const alFieldName = style({
-  color: PfColors.Gold,
-  display: 'inline-block'
-});
 
 const alInfoIcon = style({
   display: 'inline-block',
@@ -150,9 +147,7 @@ const logsText = (enabled = true, showToolbar = true, fullscreen = false) =>
     width: '100%',
     overflow: 'auto',
     resize: 'none',
-    color: '#fff',
     fontFamily: 'monospace',
-    fontSize: '11pt',
     margin: 0,
     padding: '10px',
     whiteSpace: 'pre'
@@ -168,6 +163,7 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
     this.logsRef = React.createRef();
 
     const defaultState = {
+      accessLogModals: new Map<string, AccessLog>(),
       filteredLogs: [],
       fullscreen: false,
       hideLogValue: '',
@@ -230,10 +226,13 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
       const pod = this.props.pods[this.state.podValue!];
       this.fetchLogs(this.props.namespace, pod.name, newContainers!, this.state.tailLines, this.props.timeRange);
     }
-    this.logsRef.current.scrollTop = this.logsRef.current.scrollHeight;
 
     if (prevState.useRegex !== this.state.useRegex) {
       this.doShowAndHide();
+    }
+
+    if (prevState.loadingLogs && !this.state.loadingLogs && this.logsRef.current.scrollTop === 0) {
+      this.logsRef.current.scrollTop = this.logsRef.current.scrollHeight;
     }
   }
 
@@ -320,7 +319,7 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
                             <Tooltip
                               key="show_hide_log_help"
                               position="top"
-                              content="Show only lines containing a substring. Hide all lines containing a substring. Case sensitive."
+                              content="Show only, or Hide all, matching log entries. Match by case-sensitive substring (default) or regular expression (as set in the kebab menu)."
                             >
                               <KialiIcon.Info className={infoIcons} />
                             </Tooltip>
@@ -342,6 +341,7 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
                       </Toolbar>
                     )}
                     {this.getLogsDiv()}
+                    {this.getAccessLogModals()}
                   </CardBody>
                 </Card>
               </GridItem>
@@ -364,7 +364,7 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
           </Tooltip>
           {this.state.containers!.map((c, i) => {
             return (
-              <div className="pf-c-check">
+              <div key={`c-${i}`} className="pf-c-check">
                 <input
                   id={`container-${i}`}
                   className="pf-c-check__input"
@@ -420,7 +420,7 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
           <ToolbarGroup className={toolbarRight}>
             <ToolbarItem>
               <Tooltip key="copy_logs" position="top" content="Copy logs to clipboard">
-                <CopyToClipboard onCopy={this.copyLogCallback} text={this.entriesToString(this.state.filteredLogs)}>
+                <CopyToClipboard text={this.entriesToString(this.state.filteredLogs)}>
                   <Button variant={ButtonVariant.link} isInline>
                     <KialiIcon.Copy className={defaultIconStyle} />
                   </Button>
@@ -453,7 +453,7 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
         </Toolbar>
 
         <div
-          id="logsText"
+          key="logsText"
           className={logsText(this.hasEntries(this.state.filteredLogs), this.state.showToolbar, this.state.fullscreen)}
           ref={this.logsRef}
         >
@@ -461,21 +461,39 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
             ? this.state.filteredLogs.map((le, i) => {
                 return !le.accessLog ? (
                   <>
-                    <p style={{ color: le.color!, fontSize: '12px' }}>{this.entryToString(le)}</p>
+                    <p key={`le-${i}`} style={{ color: le.color!, fontSize: '12px' }}>
+                      {this.entryToString(le)}
+                    </p>
                   </>
                 ) : (
-                  <div>
+                  <div key={`le-${i}`} style={{ height: '22px', lineHeight: '22px' }}>
                     {this.state.showTimestamps && (
                       <span style={{ color: le.color!, fontSize: '12px', marginRight: '5px' }}>{le.timestamp}</span>
                     )}
                     <Tooltip
                       key={`al-${i}`}
                       position={TooltipPosition.auto}
-                      content={this.accessLogContent(le.accessLog)}
+                      content="Click for Envoy Access Log details"
                     >
-                      <KialiIcon.Info className={alInfoIcon} color={PfColors.Gold} />
+                      <Button
+                        variant={ButtonVariant.plain}
+                        style={{
+                          paddingLeft: '6px',
+                          width: '10px',
+                          height: '10px',
+                          fontFamily: 'monospace',
+                          fontSize: '12px'
+                        }}
+                        onClick={() => {
+                          this.addAccessLogModal(le.message, le.accessLog!);
+                        }}
+                      >
+                        <KialiIcon.Info className={alInfoIcon} color={PfColors.Gold} />
+                      </Button>
                     </Tooltip>
-                    <p style={{ color: le.color!, fontSize: '12px', display: 'inline-block' }}>{le.message}</p>
+                    <p style={{ color: le.color!, fontSize: '12px', verticalAlign: 'center', display: 'inline-block' }}>
+                      {le.message}
+                    </p>
                   </div>
                 );
               })
@@ -483,6 +501,16 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
         </div>
       </div>
     );
+  };
+
+  private getAccessLogModals = (): React.ReactFragment[] => {
+    const modals: React.ReactFragment[] = [];
+
+    this.state.accessLogModals.forEach((v, k) => {
+      modals.push(<AccessLogModal accessLog={v} accessLogMessage={k} onClose={() => this.removeAccessLogModal(k)} />);
+    });
+
+    return modals;
   };
 
   private setPod = (podValue: string) => {
@@ -497,6 +525,18 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
 
   private setKebabOpen = (kebabOpen: boolean) => {
     this.setState({ kebabOpen: kebabOpen });
+  };
+
+  private addAccessLogModal = (k: string, v: AccessLog) => {
+    const accessLogModals = new Map<string, AccessLog>(this.state.accessLogModals);
+    accessLogModals.set(k, v);
+    this.setState({ accessLogModals: accessLogModals });
+  };
+
+  private removeAccessLogModal = (k: string) => {
+    this.state.accessLogModals.delete(k);
+    const accessLogModals = new Map<string, AccessLog>(this.state.accessLogModals);
+    this.setState({ accessLogModals: accessLogModals });
   };
 
   private toggleShowTimestamps = () => {
@@ -621,10 +661,6 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
     });
   };
 
-  private copyLogCallback = (_text: string, _result: boolean) => {
-    this.logsRef.current.select();
-  };
-
   private toggleFullscreen = () => {
     const screenFullAlias = screenfull as Screenfull; // this casting was necessary
     if (screenFullAlias.isFullscreen) {
@@ -713,7 +749,6 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
           filteredLogs: sortedFilteredLogs
         });
 
-        this.logsRef.current.scrollTop = this.logsRef.current.scrollHeight;
         return;
       })
       .catch(error => {
@@ -751,47 +786,6 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
   };
 
   private hasEntries = (entries: LogEntry[]): boolean => !!entries && entries.length > 0;
-
-  private accessLogContent = (al: AccessLog): any => {
-    return (
-      <div style={{ textAlign: 'left' }}>
-        {this.accessLogField('authority', al.authority)}
-        {this.accessLogField('bytes received', al.bytes_received)}
-        {this.accessLogField('bytes sent', al.bytes_sent)}
-        {this.accessLogField('downstream local', al.downstream_local)}
-        {this.accessLogField('downstream remote', al.downstream_remote)}
-        {this.accessLogField('duration', al.duration)}
-        {this.accessLogField('forwarded for', al.forwarded_for)}
-        {this.accessLogField('method', al.method)}
-        {this.accessLogField('protocol', al.protocol)}
-        {this.accessLogField('request id', al.request_id)}
-        {this.accessLogField('requested server', al.requested_server)}
-        {this.accessLogField('response flags', al.response_flags)}
-        {this.accessLogField('route name', al.route_name)}
-        {this.accessLogField('status code', al.status_code)}
-        {this.accessLogField('tcp service time', al.tcp_service_time)}
-        {this.accessLogField('timestamp', al.timestamp)}
-        {this.accessLogField('upstream cluster', al.upstream_cluster)}
-        {this.accessLogField('upstream failure reason', al.upstream_failure_reason)}
-        {this.accessLogField('upstream local', al.upstream_local)}
-        {this.accessLogField('upstream service', al.upstream_service)}
-        {this.accessLogField('upstream service time', al.upstream_service_time)}
-        {this.accessLogField('uri param', al.uri_param)}
-        {this.accessLogField('uri path', al.uri_path)}
-        {this.accessLogField('user agent', al.user_agent)}
-      </div>
-    );
-  };
-
-  private accessLogField = (key: string, val: string): any => {
-    return !val ? null : (
-      <>
-        <span className={alFieldName}>{key}:&nbsp;</span>
-        <span>{val}</span>
-        <br />
-      </>
-    );
-  };
 }
 
 const mapStateToProps = (state: KialiAppState) => {
