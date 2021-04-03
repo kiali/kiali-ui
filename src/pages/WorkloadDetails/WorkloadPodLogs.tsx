@@ -132,8 +132,18 @@ const logsDiv = style({
   marginRight: '5px'
 });
 
-const logsTextBackground = (enabled: boolean) => ({ backgroundColor: enabled ? PfColors.Black1000 : 'gray' });
-const logsTextHeight = (showToolbar: boolean, fullscreen: boolean) => {
+const logsDisplay = style({
+  fontFamily: 'monospace',
+  margin: 0,
+  overflow: 'auto',
+  padding: '10px',
+  resize: 'none',
+  whiteSpace: 'pre',
+  width: '100%'
+});
+
+const logsBackground = (enabled: boolean) => ({ backgroundColor: enabled ? PfColors.Black1000 : 'gray' });
+const logsHeight = (showToolbar: boolean, fullscreen: boolean) => {
   const toolbarHeight = showToolbar ? '0px' : '49px';
   return {
     height: fullscreen
@@ -141,17 +151,6 @@ const logsTextHeight = (showToolbar: boolean, fullscreen: boolean) => {
       : `calc(var(--kiali-details-pages-tab-content-height) - 155px + ${toolbarHeight})`
   };
 };
-
-const logsText = (enabled = true, showToolbar = true, fullscreen = false) =>
-  style(logsTextBackground(enabled), logsTextHeight(showToolbar, fullscreen), {
-    width: '100%',
-    overflow: 'auto',
-    resize: 'none',
-    fontFamily: 'monospace',
-    margin: 0,
-    padding: '10px',
-    whiteSpace: 'pre'
-  });
 
 class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodLogsState> {
   private promises: PromisesRegistry = new PromisesRegistry();
@@ -231,6 +230,8 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
       this.doShowAndHide();
     }
 
+    // if we just loaded log entries, and we are scrolled to the top, position the user automatically
+    // to the bottom/most recent.
     if (prevState.loadingLogs && !this.state.loadingLogs && this.logsRef.current.scrollTop === 0) {
       this.logsRef.current.scrollTop = this.logsRef.current.scrollHeight;
     }
@@ -249,7 +250,7 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
       <>
         <RenderComponentScroll>
           {this.state.containers && (
-            <Grid id="logsPage" style={{ height: '100%' }}>
+            <Grid key="logs" style={{ height: '100%' }}>
               <GridItem span={12}>
                 <Card style={{ height: '100%' }}>
                   <CardBody>
@@ -364,8 +365,9 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
           </Tooltip>
           {this.state.containers!.map((c, i) => {
             return (
-              <div key={`c-${i}`} className="pf-c-check">
+              <div key={`c-d-${i}`} className="pf-c-check">
                 <input
+                  key={`c-i-${i}`}
                   id={`container-${i}`}
                   className="pf-c-check__input"
                   style={{ marginBottom: '3px' }}
@@ -374,6 +376,7 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
                   onChange={() => this.toggleSelected(c)}
                 />
                 <label
+                  key={`c-l-${i}`}
                   htmlFor={`container-${i}`}
                   className="pf-c-check__label"
                   style={{
@@ -412,7 +415,7 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
     ];
 
     return (
-      <div id="logsDiv" className={logsDiv}>
+      <div key="logsDiv" id="logsDiv" className={logsDiv}>
         <Toolbar className={logsToolbar}>
           <ToolbarGroup>
             <ToolbarItem>{this.getContainerLegend()}</ToolbarItem>
@@ -454,7 +457,16 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
 
         <div
           key="logsText"
-          className={logsText(this.hasEntries(this.state.filteredLogs), this.state.showToolbar, this.state.fullscreen)}
+          id="logsText"
+          className={logsDisplay}
+          // note - for some reason the callable typescript needs to be applied as "style" and
+          // not as a "className".  Otherwise the initial scroillHeight is incorrectly set
+          // (to max) and when we try to assign scrollTop to scrollHeight (above),it stays at 0
+          // and we fail to set the scroll correctly. So, don't change this!
+          style={{
+            ...logsHeight(this.state.showToolbar, this.state.fullscreen),
+            ...logsBackground(this.hasEntries(this.state.filteredLogs))
+          }}
           ref={this.logsRef}
         >
           {this.hasEntries(this.state.filteredLogs)
@@ -466,16 +478,19 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
                     </p>
                   </>
                 ) : (
-                  <div key={`le-${i}`} style={{ height: '22px', lineHeight: '22px' }}>
+                  <div key={`al-${i}`} style={{ height: '22px', lineHeight: '22px' }}>
                     {this.state.showTimestamps && (
-                      <span style={{ color: le.color!, fontSize: '12px', marginRight: '5px' }}>{le.timestamp}</span>
+                      <span key={`al-s-${i}`} style={{ color: le.color!, fontSize: '12px', marginRight: '5px' }}>
+                        {le.timestamp}
+                      </span>
                     )}
                     <Tooltip
-                      key={`al-${i}`}
+                      key={`al-tt-${i}`}
                       position={TooltipPosition.auto}
                       content="Click for Envoy Access Log details"
                     >
                       <Button
+                        key={`al-b-${i}`}
                         variant={ButtonVariant.plain}
                         style={{
                           paddingLeft: '6px',
@@ -488,10 +503,13 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
                           this.addAccessLogModal(le.message, le.accessLog!);
                         }}
                       >
-                        <KialiIcon.Info className={alInfoIcon} color={PfColors.Gold} />
+                        <KialiIcon.Info key={`al-i-${i}`} className={alInfoIcon} color={PfColors.Gold} />
                       </Button>
                     </Tooltip>
-                    <p style={{ color: le.color!, fontSize: '12px', verticalAlign: 'center', display: 'inline-block' }}>
+                    <p
+                      key={`al-p-${i}`}
+                      style={{ color: le.color!, fontSize: '12px', verticalAlign: 'center', display: 'inline-block' }}
+                    >
                       {le.message}
                     </p>
                   </div>
@@ -505,9 +523,17 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
 
   private getAccessLogModals = (): React.ReactFragment[] => {
     const modals: React.ReactFragment[] = [];
+    let i = 0;
 
     this.state.accessLogModals.forEach((v, k) => {
-      modals.push(<AccessLogModal accessLog={v} accessLogMessage={k} onClose={() => this.removeAccessLogModal(k)} />);
+      modals.push(
+        <AccessLogModal
+          key={`alm-${i++}`}
+          accessLog={v}
+          accessLogMessage={k}
+          onClose={() => this.removeAccessLogModal(k)}
+        />
+      );
     });
 
     return modals;
