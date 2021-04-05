@@ -6,8 +6,6 @@ import {
   EmptyStateBody,
   EmptyStateVariant,
   EmptyStateIcon,
-  Grid,
-  GridItem,
   Text,
   TextVariants,
   Title
@@ -15,18 +13,24 @@ import {
 import { ICell, IRow, Table, TableHeader, TableBody, TableVariant, cellWidth } from '@patternfly/react-table';
 import { BundleIcon } from '@patternfly/react-icons';
 import { Link } from 'react-router-dom';
-import { ServiceDetailsInfo, WorkloadOverview } from '../../../types/ServiceInfo';
+import { WorkloadOverview } from '../../../types/ServiceInfo';
 import LocalTime from '../../../components/Time/LocalTime';
 import MissingSidecar from '../../../components/MissingSidecar/MissingSidecar';
 import Labels from '../../../components/Label/Labels';
+import { style } from 'typestyle';
 
 interface ServiceInfoWorkloadProps {
-  workloads?: WorkloadOverview[];
-  service: ServiceDetailsInfo;
   namespace: string;
+  service: string;
+  istioSidecar: boolean;
+  workloads?: WorkloadOverview[];
 }
 
-class ServiceInfoWorkload extends React.Component<ServiceInfoWorkloadProps> {
+const titleStyle = style({
+  margin: '15px 0 11px 0'
+});
+
+class ServiceWorkload extends React.Component<ServiceInfoWorkloadProps> {
   columns(): ICell[] {
     // TODO: Casting 'as ITransforms' because @patternfly/react-table@2.22.19 has a typing bug. Remove the casting when PF fixes it.
     // https://github.com/patternfly/patternfly-next/issues/2373
@@ -66,11 +70,10 @@ class ServiceInfoWorkload extends React.Component<ServiceInfoWorkloadProps> {
               <EmptyState variant={EmptyStateVariant.full}>
                 <EmptyStateIcon icon={BundleIcon} />
                 <Title headingLevel="h5" size="lg">
-                  No Workloads {!this.props.service.istioSidecar && ' and Istio Sidecar '} found
+                  No Workloads {!this.props.istioSidecar && ' and Istio Sidecar '} found
                 </Title>
                 <EmptyStateBody>
-                  No workloads {!this.props.service.istioSidecar && ' and istioSidecar '} found for service{' '}
-                  {this.props.service.service.name}
+                  No workloads {!this.props.istioSidecar && ' and istioSidecar '} found for service {this.props.service}
                 </EmptyStateBody>
               </EmptyState>
             ),
@@ -101,29 +104,55 @@ class ServiceInfoWorkload extends React.Component<ServiceInfoWorkloadProps> {
     return rows;
   }
 
+  renderOld() {
+    return (
+      <Card>
+        <CardBody>
+          <Table
+            variant={TableVariant.compact}
+            aria-label={'list_workloads'}
+            cells={this.columns()}
+            rows={this.rows()}
+            // This style is declared on _overrides.scss
+            className="table"
+          >
+            <TableHeader />
+            <TableBody />
+          </Table>
+        </CardBody>
+      </Card>
+    );
+  }
+
+  /*
+            (this.props.workloads || []).map(workload => {
+            return
+          rows.push({
+            cells: [
+              { title: this.overviewLink(workload) },
+              { title: workload.type },
+              { title: <Labels labels={workload.labels} /> },
+              { title: <LocalTime time={workload.createdAt} /> },
+              { title: workload.resourceVersion }
+            ]
+          });
+
+   */
+
   render() {
     return (
-      <Grid>
-        <GridItem span={12}>
-          <Card>
-            <CardBody>
-              <Table
-                variant={TableVariant.compact}
-                aria-label={'list_workloads'}
-                cells={this.columns()}
-                rows={this.rows()}
-                // This style is declared on _overrides.scss
-                className="table"
-              >
-                <TableHeader />
-                <TableBody />
-              </Table>
-            </CardBody>
-          </Card>
-        </GridItem>
-      </Grid>
+      <Card>
+        <CardBody>
+          <Title headingLevel="h3" size="lg" className={titleStyle}>
+            Services
+          </Title>
+          {(this.props.workloads || []).map(workload => {
+            return <div>{this.overviewLink(workload)}</div>;
+          })}
+        </CardBody>
+      </Card>
     );
   }
 }
 
-export default ServiceInfoWorkload;
+export default ServiceWorkload;

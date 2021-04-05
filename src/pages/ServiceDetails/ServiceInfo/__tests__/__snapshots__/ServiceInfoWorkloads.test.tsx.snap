@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`#ServiceInfoWorkload render correctly with data should render service pods 1`] = `
+exports[`#ServiceWorkload render correctly with data should render service pods 1`] = `
 <Grid>
   <GridItem
     span={12}
@@ -45,7 +45,7 @@ exports[`#ServiceInfoWorkload render correctly with data should render service p
                           component="p"
                         >
                           reviews-v2
-                           
+
                         </Text>
                       </Link>
                     </span>,
@@ -84,7 +84,7 @@ exports[`#ServiceInfoWorkload render correctly with data should render service p
                           component="p"
                         >
                           reviews-v3
-                           
+
                         </Text>
                       </Link>
                     </span>,
@@ -123,7 +123,7 @@ exports[`#ServiceInfoWorkload render correctly with data should render service p
                           component="p"
                         >
                           reviews-v1
-                           
+
                         </Text>
                       </Link>
                     </span>,

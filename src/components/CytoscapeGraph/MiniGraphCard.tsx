@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { style } from 'typestyle';
 import {
   Card,
   CardActions,
@@ -19,11 +18,13 @@ import { CytoscapeGraphSelectorBuilder } from './CytoscapeGraphSelector';
 import { DagreGraph } from './graphs/DagreGraph';
 import { GraphUrlParams, makeNodeGraphUrlFromParams } from 'components/Nav/NavUtils';
 import { store } from 'store/ConfigStore';
+import { style } from 'typestyle';
 
-const miniGraphContainerStyle = style({ height: '300px' });
+const initGraphContainerStyle = style({ width: '100%', height: '100%' });
 
 type MiniGraphCardProps = {
   dataSource: GraphDataSource;
+  graphContainerStyle?: string;
 };
 
 type MiniGraphCardState = {
@@ -75,7 +76,7 @@ export default class MiniGraphCard extends React.Component<MiniGraphCardProps, M
           </CardActions>
           <CardHeader>
             <Title style={{ float: 'left' }} headingLevel="h3" size="2xl">
-              Graph Overview
+              Graph
             </Title>
           </CardHeader>
         </CardHead>
@@ -83,7 +84,9 @@ export default class MiniGraphCard extends React.Component<MiniGraphCardProps, M
           <div style={{ height: '100%' }}>
             <CytoscapeGraph
               compressOnHide={true}
-              containerClassName={miniGraphContainerStyle}
+              containerClassName={
+                this.props.graphContainerStyle ? this.props.graphContainerStyle : initGraphContainerStyle
+              }
               graphData={{
                 elements: this.state.graphData,
                 errorMessage: !!this.props.dataSource.errorMessage ? this.props.dataSource.errorMessage : undefined,

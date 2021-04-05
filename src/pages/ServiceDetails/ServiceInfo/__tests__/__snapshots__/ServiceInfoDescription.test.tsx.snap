@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`#ServiceInfoDescription render correctly with data should render service description 1`] = `
+exports[`#ServiceDescription render correctly with data should render service description 1`] = `
 <Grid
   gutter="md"
 >
@@ -19,9 +19,9 @@ exports[`#ServiceInfoDescription render correctly with data should render servic
           headingLevel="h3"
           size="2xl"
         >
-           
+
           Service Info
-           
+
         </Title>
         <Component
           activeKey={0}
@@ -52,9 +52,9 @@ exports[`#ServiceInfoDescription render correctly with data should render servic
                   headingLevel="h6"
                   size="md"
                 >
-                   
+
                   Name
-                   
+
                 </Title>
                 reviews
                 <span
@@ -81,9 +81,9 @@ exports[`#ServiceInfoDescription render correctly with data should render servic
                   headingLevel="h6"
                   size="md"
                 >
-                   
+
                   Labels
-                   
+
                 </Title>
                 <Labels
                   labels={
@@ -100,9 +100,9 @@ exports[`#ServiceInfoDescription render correctly with data should render servic
                   headingLevel="h6"
                   size="md"
                 >
-                   
+
                   Resource Version
-                   
+
                 </Title>
                 1234
               </StackItem>
@@ -113,9 +113,9 @@ exports[`#ServiceInfoDescription render correctly with data should render servic
                   headingLevel="h6"
                   size="md"
                 >
-                   
+
                   Selectors
-                   
+
                 </Title>
                 <Labels
                   labels={Object {}}
@@ -128,9 +128,9 @@ exports[`#ServiceInfoDescription render correctly with data should render servic
                   headingLevel="h6"
                   size="md"
                 >
-                   
+
                   Created at
-                   
+
                 </Title>
                 <LocalTime
                   time="2018-04-04T15:11:46Z"
@@ -157,9 +157,9 @@ exports[`#ServiceInfoDescription render correctly with data should render servic
                   headingLevel="h6"
                   size="md"
                 >
-                   
+
                   Service IP
-                   
+
                 </Title>
                 172.30.78.33
               </StackItem>
@@ -170,9 +170,9 @@ exports[`#ServiceInfoDescription render correctly with data should render servic
                   headingLevel="h6"
                   size="md"
                 >
-                   
+
                   Endpoints
-                   
+
                 </Title>
                 <Stack
                   gutter="md"
@@ -222,7 +222,7 @@ exports[`#ServiceInfoDescription render correctly with data should render servic
                           size="sm"
                           title={null}
                         />
-                         
+
                         172.17.0.11
                       </span>
                     </Tooltip>
@@ -272,7 +272,7 @@ exports[`#ServiceInfoDescription render correctly with data should render servic
                           size="sm"
                           title={null}
                         />
-                         
+
                         172.17.0.14
                       </span>
                     </Tooltip>
@@ -322,7 +322,7 @@ exports[`#ServiceInfoDescription render correctly with data should render servic
                           size="sm"
                           title={null}
                         />
-                         
+
                         172.17.0.16
                       </span>
                     </Tooltip>
@@ -361,9 +361,9 @@ exports[`#ServiceInfoDescription render correctly with data should render servic
                   headingLevel="h6"
                   size="md"
                 >
-                   
+
                   Type
-                   
+
                 </Title>
                 ClusterIP
               </StackItem>
@@ -442,9 +442,9 @@ exports[`#ServiceInfoDescription render correctly with data should render servic
           headingLevel="h3"
           size="2xl"
         >
-           
+
           Health Overview
-           
+
         </Title>
         <Stack
           className="stack_service_details"

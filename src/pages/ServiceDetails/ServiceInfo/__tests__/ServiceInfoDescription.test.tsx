@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import { shallowToJson } from 'enzyme-to-json';
-import ServiceInfoDescription from '../ServiceInfoDescription';
+import ServiceDescription from '../ServiceInfoDescription';
 import GraphDataSource from '../../../../services/GraphDataSource';
 
 const labels = { app: 'reviews' };
@@ -39,7 +39,7 @@ describe('#ServiceInfoDescription render correctly with data', () => {
   it('should render service description', () => {
     const miniGraphDS = new GraphDataSource();
     const wrapper = shallow(
-      <ServiceInfoDescription
+      <ServiceDescription
         name="reviews"
         namespace="my-namespace"
         labels={labels}

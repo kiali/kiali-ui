@@ -4,24 +4,21 @@ import * as API from '../../services/Api';
 import * as AlertUtils from '../../utils/AlertUtils';
 import { ObjectCheck, Validations, ValidationTypes } from '../../types/IstioObjects';
 import WorkloadDescription from './WorkloadInfo/WorkloadDescription';
-import WorkloadPods from './WorkloadInfo/WorkloadPods';
-import WorkloadServices from './WorkloadInfo/WorkloadServices';
-import { validationToSeverity } from '../../types/ServiceInfo';
 import { WorkloadHealth } from '../../types/Health';
 import { Workload } from '../../types/Workload';
-import { Grid, GridItem, Tab } from '@patternfly/react-core';
-import ParameterizedTabs, { activeTab } from '../../components/Tab/Tabs';
+import { Grid, GridItem } from '@patternfly/react-core';
+import { activeTab } from '../../components/Tab/Tabs';
 import { RenderComponentScroll } from '../../components/Nav/Page';
-import Validation from '../../components/Validations/Validation';
-import ErrorBoundaryWithMessage from '../../components/ErrorBoundary/ErrorBoundaryWithMessage';
 import GraphDataSource from '../../services/GraphDataSource';
 import { DurationInSeconds, TimeInMilliseconds } from 'types/Common';
 import { isIstioNamespace } from '../../config/ServerConfig';
 import { IstioConfigList, toIstioItems } from '../../types/IstioConfigList';
-import IstioConfigSubList from '../../components/IstioConfigSubList/IstioConfigSubList';
 import { KialiAppState } from '../../store/Store';
 import { connect } from 'react-redux';
 import { durationSelector } from '../../store/Selectors';
+import MiniGraphCard from '../../components/CytoscapeGraph/MiniGraphCard';
+import HealthCard from '../../components/Health/HealthCard';
+import IstioConfigCard from '../../components/IstioConfigCard/IstioConfigCard';
 
 type WorkloadInfoProps = {
   namespace: string;
@@ -40,19 +37,15 @@ type WorkloadInfoState = {
   currentTab: string;
   health?: WorkloadHealth;
   workloadIstioConfig?: IstioConfigList;
+  tabHeight?: number;
 };
 
-const tabIconStyle = style({
-  fontSize: '0.9em'
+const fullHeightStyle = style({
+  height: '100%'
 });
 
 const tabName = 'list';
 const defaultTab = 'pods';
-const paramToTab: { [key: string]: number } = {
-  pods: 0,
-  services: 1,
-  istioconfig: 2
-};
 
 const workloadIstioResources = [
   'gateways',
@@ -196,24 +189,20 @@ class WorkloadInfo extends React.Component<WorkloadInfoProps, WorkloadInfoState>
     return validationChecks;
   }
 
-  private errorBoundaryMessage(resourceName: string) {
-    return `One of the ${resourceName} associated to this workload has an invalid format`;
-  }
-
   render() {
     const workload = this.props.workload;
     const pods = workload?.pods || [];
     const services = workload?.services || [];
     const validationChecks = this.validationChecks();
 
-    const getSeverityIcon: any = (severity: ValidationTypes = ValidationTypes.Error) => (
+    /*    const getSeverityIcon: any = (severity: ValidationTypes = ValidationTypes.Error) => (
       <span className={tabIconStyle}>
         {' '}
         <Validation severity={severity} />
       </span>
-    );
+    );*/
 
-    const getIstioValidationIcon = (typeNames: { [key: string]: string[] }) => {
+    /*    const getIstioValidationIcon = (typeNames: { [key: string]: string[] }) => {
       let severity = ValidationTypes.Correct;
       if (this.state.workloadIstioConfig && this.state.workloadIstioConfig.validations) {
         const istioValidations = this.state.workloadIstioConfig.validations;
@@ -234,9 +223,9 @@ class WorkloadInfo extends React.Component<WorkloadInfoProps, WorkloadInfoState>
         });
       }
       return severity !== ValidationTypes.Correct ? getSeverityIcon(severity) : undefined;
-    };
+    };*/
 
-    const getWorkloadValidationIcon = (keys: string[], type: string) => {
+    /*    const getWorkloadValidationIcon = (keys: string[], type: string) => {
       let severity = ValidationTypes.Warning;
       keys.forEach(key => {
         const validations = this.state.validations![type][key];
@@ -245,9 +234,9 @@ class WorkloadInfo extends React.Component<WorkloadInfoProps, WorkloadInfoState>
         }
       });
       return getSeverityIcon(severity);
-    };
+    };*/
 
-    const podTabTitle: any = (
+    /*    const podTabTitle: any = (
       <>
         Pods ({pods.length}){' '}
         {validationChecks.hasPodsChecks
@@ -257,11 +246,9 @@ class WorkloadInfo extends React.Component<WorkloadInfoProps, WorkloadInfoState>
             )
           : undefined}
       </>
-    );
+    );*/
 
     const istioConfigItems = this.state.workloadIstioConfig ? toIstioItems(this.state.workloadIstioConfig) : [];
-    let istioTabTitle: JSX.Element | undefined;
-    let istioConfigIcon = undefined;
     // Helper to iterate at same time on workloadIstioConfig resources and validations
     const wkIstioTypes = [
       { field: 'gateways', validation: 'gateway' },
@@ -281,26 +268,17 @@ class WorkloadInfo extends React.Component<WorkloadInfoProps, WorkloadInfoState>
           );
         }
       });
-      istioConfigIcon = getIstioValidationIcon(typeNames);
     }
-    istioTabTitle = (
-      <>
-        Istio Config ({istioConfigItems.length}){istioConfigIcon}
-      </>
-    );
-    return (
-      <>
-        <RenderComponentScroll>
-          <Grid gutter={'md'}>
-            <GridItem span={12}>
-              <WorkloadDescription
-                workload={workload}
-                namespace={this.props.namespace}
-                health={this.state.health}
-                miniGraphDataSource={this.graphDataSource}
-              />
-            </GridItem>
-            <GridItem span={12}>
+
+    // RenderComponentScroll handles height to provide an inner scroll combined with tabs
+    // This height needs to be propagated to minigraph to proper resize in height
+    // Graph resizes correctly on width
+    const height = this.state.tabHeight ? this.state.tabHeight - 115 : 300;
+    const graphContainerStyle = style({ width: '100%', height: height });
+
+    /*
+        Subtabs
+      <GridItem span={12}>
               <ParameterizedTabs
                 id="service-tabs"
                 onSelect={tabValue => {
@@ -336,6 +314,34 @@ class WorkloadInfo extends React.Component<WorkloadInfoProps, WorkloadInfoState>
                   </ErrorBoundaryWithMessage>
                 </Tab>
               </ParameterizedTabs>
+            </GridItem>
+     */
+
+    return (
+      <>
+        <RenderComponentScroll onResize={height => this.setState({ tabHeight: height })}>
+          <Grid gutter={'md'} className={fullHeightStyle}>
+            <GridItem span={6} rowSpan={2}>
+              <MiniGraphCard dataSource={this.graphDataSource} graphContainerStyle={graphContainerStyle} />
+            </GridItem>
+            <GridItem span={3}>
+              <WorkloadDescription workload={workload} namespace={this.props.namespace} />
+            </GridItem>
+            <GridItem span={3}>
+              {this.props.workload ? (
+                <HealthCard name={this.props.workload.name} health={this.state.health} />
+              ) : (
+                'Loading'
+              )}
+            </GridItem>
+            <GridItem span={3}>
+              <div>Services {services.length}</div>
+              <div>
+                Pods {pods.length} {JSON.stringify(validationChecks)}
+              </div>
+            </GridItem>
+            <GridItem span={3}>
+              <IstioConfigCard name={this.props.workload ? this.props.workload.name : ''} items={istioConfigItems} />
             </GridItem>
           </Grid>
         </RenderComponentScroll>

@@ -12,6 +12,9 @@ import { AppHealth } from 'types/Health';
 import { KialiAppState } from '../../store/Store';
 import { connect } from 'react-redux';
 import { durationSelector } from '../../store/Selectors';
+import { style } from 'typestyle';
+import MiniGraphCard from '../../components/CytoscapeGraph/MiniGraphCard';
+import HealthCard from '../../components/Health/HealthCard';
 
 type AppInfoProps = {
   app?: App;
@@ -21,7 +24,12 @@ type AppInfoProps = {
 
 type AppInfoState = {
   health?: AppHealth;
+  tabHeight?: number;
 };
+
+const fullHeightStyle = style({
+  height: '100%'
+});
 
 class AppInfo extends React.Component<AppInfoProps, AppInfoState> {
   private graphDataSource = new GraphDataSource();
@@ -53,16 +61,27 @@ class AppInfo extends React.Component<AppInfoProps, AppInfoState> {
   };
 
   render() {
+    // RenderComponentScroll handles height to provide an inner scroll combined with tabs
+    // This height needs to be propagated to minigraph to proper resize in height
+    // Graph resizes correctly on width
+    const height = this.state.tabHeight ? this.state.tabHeight - 115 : 300;
+    const graphContainerStyle = style({ width: '100%', height: height });
     return (
       <>
-        <RenderComponentScroll>
-          <Grid gutter={'md'}>
-            <GridItem span={12}>
+        <RenderComponentScroll onResize={height => this.setState({ tabHeight: height })}>
+          <Grid gutter={'md'} className={fullHeightStyle}>
+            <GridItem span={6}>
+              <MiniGraphCard dataSource={this.graphDataSource} graphContainerStyle={graphContainerStyle} />
+            </GridItem>
+            <GridItem span={3}>
               <AppDescription
                 app={this.props.app}
                 miniGraphDataSource={this.graphDataSource}
                 health={this.state.health}
               />
+            </GridItem>
+            <GridItem span={3}>
+              {this.props.app ? <HealthCard name={this.props.app.name} health={this.state.health} /> : 'Loading'}
             </GridItem>
           </Grid>
         </RenderComponentScroll>

@@ -1,39 +1,34 @@
 import * as React from 'react';
-import { dicIstioType, IstioConfigItem } from '../../types/IstioConfigList';
+import { IstioConfigItem } from '../../types/IstioConfigList';
 import { cellWidth, ICell, IRow, Table, TableBody, TableHeader, TableVariant } from '@patternfly/react-table';
 import {
+  Badge,
   Card,
+  CardActions,
   CardBody,
+  CardHead,
+  CardHeader,
   EmptyState,
   EmptyStateBody,
-  EmptyStateIcon,
   EmptyStateVariant,
-  Grid,
-  GridItem,
-  Title
+  Title,
+  Tooltip,
+  TooltipPosition
 } from '@patternfly/react-core';
 import { ValidationObjectSummary } from '../Validations/ValidationObjectSummary';
-import LocalTime from '../Time/LocalTime';
-import { CodeBranchIcon } from '@patternfly/react-icons';
 import IstioObjectLink from '../Link/IstioObjectLink';
+import { IstioTypes } from '../VirtualList/Config';
 
 interface Props {
   name: string;
   items: IstioConfigItem[];
 }
 
-class IstioConfigSubList extends React.Component<Props> {
+class IstioConfigCard extends React.Component<Props> {
   columns(): ICell[] {
     // TODO: Casting 'as any' because @patternfly/react-table@2.22.19 has a typing bug. Remove the casting when PF fixes it.
     // https://github.com/patternfly/patternfly-next/issues/2373
-    return [
-      { title: 'Status', transforms: [cellWidth(10) as any] },
-      { title: 'Name' },
-      { title: 'Type' },
-      { title: 'Created at' },
-      { title: 'Resource version' },
-      { title: 'Actions' }
-    ];
+    return [{ title: 'Name' }, { title: 'Configuration', transforms: [cellWidth(10) as any] }];
   }
 
   noIstioConfig(): IRow[] {
@@ -43,14 +38,10 @@ class IstioConfigSubList extends React.Component<Props> {
           {
             title: (
               <EmptyState variant={EmptyStateVariant.full}>
-                <EmptyStateIcon icon={CodeBranchIcon} />
-                <Title headingLevel="h5" size="lg">
-                  No Istio Config found
-                </Title>
                 <EmptyStateBody>No Istio Config found for {this.props.name}</EmptyStateBody>
               </EmptyState>
             ),
-            props: { colSpan: 6 }
+            props: { colSpan: 3 }
           }
         ]
       }
@@ -65,14 +56,6 @@ class IstioConfigSubList extends React.Component<Props> {
     );
   }
 
-  yamlLink(item: IstioConfigItem) {
-    return (
-      <IstioObjectLink name={item.name} namespace={item.namespace || ''} type={item.type} query={'list=yaml'}>
-        View YAML
-      </IstioObjectLink>
-    );
-  }
-
   rows(): IRow[] {
     if (this.props.items.length === 0) {
       return this.noIstioConfig();
@@ -83,18 +66,23 @@ class IstioConfigSubList extends React.Component<Props> {
         cells: [
           {
             title: (
+              <span>
+                <Tooltip position={TooltipPosition.top} content={<>{IstioTypes[item.type].name}</>}>
+                  <Badge className={'virtualitem_badge_definition'}>{IstioTypes[item.type].icon}</Badge>
+                </Tooltip>
+                {this.overviewLink(item)}
+              </span>
+            )
+          },
+          {
+            title: (
               <ValidationObjectSummary
                 id={itemIdx + '-config-validation'}
                 validations={item.validation ? [item.validation] : []}
                 style={{ verticalAlign: '-0.5em' }}
               />
             )
-          },
-          { title: this.overviewLink(item) },
-          { title: dicIstioType[item.type] },
-          { title: <LocalTime time={item.creationTimestamp || ''} /> },
-          { title: item.resourceVersion },
-          { title: this.yamlLink(item) }
+          }
         ]
       });
       return rows;
@@ -102,30 +90,34 @@ class IstioConfigSubList extends React.Component<Props> {
 
     return rows;
   }
-  table;
+
   render() {
     return (
-      <Grid>
-        <GridItem span={12}>
-          <Card>
-            <CardBody>
-              <Table
-                variant={TableVariant.compact}
-                aria-label={'list_istio_config'}
-                cells={this.columns()}
-                rows={this.rows()}
-                // This style is declared on _overrides.scss
-                className="table"
-              >
-                <TableHeader />
-                <TableBody />
-              </Table>
-            </CardBody>
-          </Card>
-        </GridItem>
-      </Grid>
+      <Card>
+        <CardHead>
+          <CardActions />
+          <CardHeader>
+            <Title style={{ float: 'left' }} headingLevel="h3" size="2xl">
+              Istio Config
+            </Title>
+          </CardHeader>
+        </CardHead>
+        <CardBody>
+          <Table
+            variant={TableVariant.compact}
+            aria-label={'list_istio_config'}
+            cells={this.columns()}
+            rows={this.rows()}
+            // This style is declared on _overrides.scss
+            className="table"
+          >
+            <TableHeader />
+            <TableBody />
+          </Table>
+        </CardBody>
+      </Card>
     );
   }
 }
 
-export default IstioConfigSubList;
+export default IstioConfigCard;
