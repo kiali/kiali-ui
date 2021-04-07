@@ -1,13 +1,14 @@
 import * as React from 'react';
-import { NodeContextMenuProps } from '../CytoscapeContextMenu';
-import { Paths } from '../../../config';
-import { style } from 'typestyle';
-import { KialiAppState } from '../../../store/Store';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { style } from 'typestyle';
+
+import history from 'app/History';
 import { NodeType, DecoratedGraphNodeData } from 'types/Graph';
 import { JaegerInfo } from 'types/JaegerInfo';
-import history from 'app/History';
+import { KialiAppState } from 'store/Store';
+import { Paths, serverConfig } from 'config';
+import { NodeContextMenuProps } from '../CytoscapeContextMenu';
 
 type ReduxProps = {
   jaegerInfo?: JaegerInfo;
@@ -48,11 +49,19 @@ const graphContextMenuItemLinkStyle = style({
   color: '#363636'
 });
 
+const buttonAsLink = style({
+  background: 'none!important',
+  border: 'none',
+  padding: '0!important',
+});
+
+
 type Props = NodeContextMenuProps & ReduxProps;
-type LinkParams = { namespace: string; name: string; type: string };
+type LinkParams = { cluster: string; namespace: string; name: string; type: string };
 
 export class NodeContextMenu extends React.PureComponent<Props> {
   static derivedValuesFromProps(node: DecoratedGraphNodeData): LinkParams | undefined {
+    const cluster: string = node.cluster;
     const namespace: string = node.namespace;
     let name: string | undefined = undefined;
     let type: string | undefined = undefined;
@@ -78,10 +87,10 @@ export class NodeContextMenu extends React.PureComponent<Props> {
         break;
     }
 
-    return type && name ? { namespace, type, name } : undefined;
+    return type && name ? { cluster, namespace, type, name } : undefined;
   }
 
-  createMenuItem(href: string, title: string, target: string = '_self', external: boolean = false) {
+  createMenuItem(href: string, title: string, target: string = '_self', external: boolean = false, cluster: string = "") {
     const commonLinkProps = {
       className: graphContextMenuItemLinkStyle,
       children: title,
@@ -89,13 +98,24 @@ export class NodeContextMenu extends React.PureComponent<Props> {
       target
     };
 
+    let item: any;
+    if (external) {
+      // Linter is not taking care that 'title' is passed as a property
+      // eslint-disable-next-line
+      item = (<a href={href} {...commonLinkProps} />);
+    } else {
+      if (cluster.length !== 0 && cluster !== serverConfig?.clusterInfo?.name) {
+        item = (<button className={buttonAsLink}
+                        children={commonLinkProps.children}
+                        onClick={() => { this.props.element.emit('navigate_remote_kiali', [cluster, href]) }} />);
+      } else {
+        item = (<Link to={href} {...commonLinkProps} />);
+      }
+    }
+
     return (
       <div className={graphContextMenuItemStyle}>
-        {
-          // Linter is not taking care that 'title' is passed as a property
-          // eslint-disable-next-line
-          external ? <a href={href} {...commonLinkProps} /> : <Link to={href} {...commonLinkProps} />
-        }
+        {item}
       </div>
     );
   }
@@ -117,7 +137,7 @@ export class NodeContextMenu extends React.PureComponent<Props> {
           <strong>{linkParams.name}</strong>
         </div>
         <div className={graphContextMenuSubTitleStyle}>Show</div>
-        {options.map(o => this.createMenuItem(o.url, o.text, o.target, o.external))}
+        {options.map(o => this.createMenuItem(o.url, o.text, o.target, o.external, o.cluster))}
       </div>
     );
   }
@@ -136,6 +156,7 @@ export type ContextMenuOption = {
   url: string;
   external?: boolean;
   target?: string;
+  cluster: string;
 };
 
 export const clickHandler = (o: ContextMenuOption) => {
@@ -156,31 +177,33 @@ export const getOptions = (node: DecoratedGraphNodeData, jaegerInfo?: JaegerInfo
 
 const getOptionsFromLinkParams = (linkParams: LinkParams, jaegerInfo?: JaegerInfo): ContextMenuOption[] => {
   const options: ContextMenuOption[] = [];
-  const { namespace, type, name } = linkParams;
+  const { namespace, type, name, cluster } = linkParams;
   const detailsPageUrl = `/namespaces/${namespace}/${type}/${name}`;
 
-  options.push({ text: 'Details', url: detailsPageUrl });
+  options.push({ text: 'Details', url: detailsPageUrl, cluster });
   if (type !== Paths.SERVICEENTRIES) {
-    options.push({ text: 'Traffic', url: `${detailsPageUrl}?tab=traffic` });
+    options.push({ text: 'Traffic', url: `${detailsPageUrl}?tab=traffic`, cluster });
     if (type === Paths.WORKLOADS) {
-      options.push({ text: 'Logs', url: `${detailsPageUrl}?tab=logs` });
+      options.push({ text: 'Logs', url: `${detailsPageUrl}?tab=logs`, cluster });
     }
     options.push({
       text: 'Inbound Metrics',
-      url: `${detailsPageUrl}?tab=${type === Paths.SERVICES ? 'metrics' : 'in_metrics'}`
+      url: `${detailsPageUrl}?tab=${type === Paths.SERVICES ? 'metrics' : 'in_metrics'}`,
+      cluster
     });
     if (type !== Paths.SERVICES) {
-      options.push({ text: 'Outbound Metrics', url: `${detailsPageUrl}?tab=out_metrics` });
+      options.push({ text: 'Outbound Metrics', url: `${detailsPageUrl}?tab=out_metrics`, cluster });
     }
     if (type === Paths.APPLICATIONS && jaegerInfo && jaegerInfo.enabled) {
       if (jaegerInfo.integration) {
-        options.push({ text: 'Traces', url: `${detailsPageUrl}?tab=traces` });
+        options.push({ text: 'Traces', url: `${detailsPageUrl}?tab=traces`, cluster });
       } else if (jaegerInfo.url) {
         options.push({
           text: 'Show Traces',
           url: getJaegerURL(namespace, jaegerInfo.namespaceSelector, jaegerInfo.url, name),
           external: true,
-          target: '_blank'
+          target: '_blank',
+          cluster
         });
       }
     }
