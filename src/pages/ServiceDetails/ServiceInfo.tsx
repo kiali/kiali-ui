@@ -197,7 +197,11 @@ class ServiceInfo extends React.Component<Props, ServiceInfoState> {
         <RenderComponentScroll onResize={height => this.setState({ tabHeight: height })}>
           <Grid gutter={'md'} className={fullHeightStyle}>
             <GridItem span={6} rowSpan={2}>
-              <MiniGraphCard dataSource={this.graphDataSource} graphContainerStyle={graphContainerStyle} />
+              <MiniGraphCard
+                title={this.props.service}
+                dataSource={this.graphDataSource}
+                graphContainerStyle={graphContainerStyle}
+              />
             </GridItem>
             <GridItem span={3}>
               <ServiceDescription

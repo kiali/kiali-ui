@@ -24,8 +24,7 @@ class WorkloadDescription extends React.Component<WorkloadDescriptionProps> {
       <Card style={{ height: '100%' }}>
         <CardBody>
           <Title headingLevel="h3" size="2xl">
-            {' '}
-            Workload Properties{' '}
+            Workload
           </Title>
           <Stack gutter="md" style={{ marginTop: '10px' }}>
             <StackItem id="name">

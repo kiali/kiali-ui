@@ -1,28 +1,13 @@
 import * as React from 'react';
-import MissingSidecar from '../../../components/MissingSidecar/MissingSidecar';
-import { AppHealth } from '../../../types/Health';
-import { App, AppWorkload } from '../../../types/App';
+import MissingSidecar from '../../components/MissingSidecar/MissingSidecar';
+import { App, AppWorkload } from '../../types/App';
 import { Link } from 'react-router-dom';
-import {
-  Badge,
-  Card,
-  CardBody,
-  CardHeader,
-  DataList,
-  DataListItem,
-  DataListItemCells,
-  DataListItemRow,
-  List,
-  ListItem,
-  Title
-} from '@patternfly/react-core';
-import GraphDataSource from '../../../services/GraphDataSource';
-import './AppDescription.css';
+import { Badge, Card, CardBody, CardHeader, Title, Tooltip, TooltipPosition } from '@patternfly/react-core';
 import { style } from 'typestyle';
 
 const iconStyle = style({
-  margin: '0 16px 0 0',
-  padding: '0 0 0 0',
+  margin: '0 0 0 0',
+  padding: '0 0 8px 0',
   display: 'inline-block'
 });
 
@@ -36,8 +21,6 @@ const titleStyle = style({
 
 type AppDescriptionProps = {
   app?: App;
-  health?: AppHealth;
-  miniGraphDataSource: GraphDataSource;
 };
 
 class AppDescription extends React.Component<AppDescriptionProps> {
@@ -51,30 +34,34 @@ class AppDescription extends React.Component<AppDescriptionProps> {
 
   private renderWorkloadItem(namespace: string, workload: AppWorkload) {
     return (
-      <ListItem key={`AppWorkload_${workload.workloadName}`}>
+      <li key={`AppWorkload_${workload.workloadName}`}>
         <span>
           <div key="workload-icon" className={iconStyle}>
-            <Badge>W</Badge>
+            <Tooltip position={TooltipPosition.top} content={<>Workload</>}>
+              <Badge className={'virtualitem_badge_definition'}>W</Badge>
+            </Tooltip>
           </div>
           <Link to={this.workloadLink(namespace, workload.workloadName)}>{workload.workloadName}</Link>
           {!workload.istioSidecar && (
             <MissingSidecar namespace={namespace} tooltip={true} style={{ marginLeft: '10px' }} text={''} />
           )}
         </span>
-      </ListItem>
+      </li>
     );
   }
 
   private renderServiceItem(namespace: string, _appName: string, serviceName: string) {
     return (
-      <ListItem key={`AppService_${serviceName}`}>
+      <li key={`AppService_${serviceName}`}>
         <div key="service-icon" className={iconStyle}>
-          <Badge>S</Badge>
+          <Tooltip position={TooltipPosition.top} content={<>Service</>}>
+            <Badge className={'virtualitem_badge_definition'}>S</Badge>
+          </Tooltip>
         </div>
         <span>
           <Link to={this.serviceLink(namespace, serviceName)}>{serviceName}</Link>
         </span>
-      </ListItem>
+      </li>
     );
   }
 
@@ -94,7 +81,7 @@ class AppDescription extends React.Component<AppDescriptionProps> {
         <Title headingLevel="h3" size="lg" className={titleStyle}>
           Workloads
         </Title>
-        <List>{workloadList}</List>
+        <ul style={{ listStyleType: 'none' }}>{workloadList}</ul>
       </div>
     ];
   }
@@ -112,34 +99,22 @@ class AppDescription extends React.Component<AppDescriptionProps> {
         <Title headingLevel="h3" size="lg" className={titleStyle}>
           Services
         </Title>
-        <List>{serviceList}</List>
+        <ul style={{ listStyleType: 'none' }}>{serviceList}</ul>
       </div>
     ];
   }
 
   render() {
-    const app = this.props.app;
-    return app ? (
+    return this.props.app ? (
       <Card>
         <CardHeader>
           <Title headingLevel="h3" size="2xl">
-            {' '}
             Application
           </Title>
         </CardHeader>
-        <CardBody className="noPadding">
-          <DataList aria-label="workloads and services">
-            <DataListItem aria-labelledby="Workloads">
-              <DataListItemRow>
-                <DataListItemCells dataListCells={this.workloadList()} />
-              </DataListItemRow>
-            </DataListItem>
-            <DataListItem aria-labelledby="Services">
-              <DataListItemRow>
-                <DataListItemCells dataListCells={this.serviceList()} />
-              </DataListItemRow>
-            </DataListItem>
-          </DataList>
+        <CardBody>
+          {this.workloadList()}
+          {this.serviceList()}
         </CardBody>
       </Card>
     ) : (

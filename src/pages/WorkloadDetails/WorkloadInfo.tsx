@@ -322,7 +322,11 @@ class WorkloadInfo extends React.Component<WorkloadInfoProps, WorkloadInfoState>
         <RenderComponentScroll onResize={height => this.setState({ tabHeight: height })}>
           <Grid gutter={'md'} className={fullHeightStyle}>
             <GridItem span={6} rowSpan={2}>
-              <MiniGraphCard dataSource={this.graphDataSource} graphContainerStyle={graphContainerStyle} />
+              <MiniGraphCard
+                title={this.props.workload ? this.props.workload.name : 'Graph'}
+                dataSource={this.graphDataSource}
+                graphContainerStyle={graphContainerStyle}
+              />
             </GridItem>
             <GridItem span={3}>
               <WorkloadDescription workload={workload} namespace={this.props.namespace} />

@@ -23,6 +23,7 @@ import { style } from 'typestyle';
 const initGraphContainerStyle = style({ width: '100%', height: '100%' });
 
 type MiniGraphCardProps = {
+  title: string;
   dataSource: GraphDataSource;
   graphContainerStyle?: string;
 };
@@ -76,7 +77,7 @@ export default class MiniGraphCard extends React.Component<MiniGraphCardProps, M
           </CardActions>
           <CardHeader>
             <Title style={{ float: 'left' }} headingLevel="h3" size="2xl">
-              Graph
+              {this.props.title}
             </Title>
           </CardHeader>
         </CardHead>

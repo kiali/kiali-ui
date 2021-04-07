@@ -2,10 +2,9 @@ import * as React from 'react';
 import { Grid, GridItem } from '@patternfly/react-core';
 import * as API from '../../services/Api';
 import * as AlertUtils from '../../utils/AlertUtils';
-import AppDescription from './AppInfo/AppDescription';
+import AppDescription from './AppDescription';
 import { App } from '../../types/App';
 import { RenderComponentScroll } from '../../components/Nav/Page';
-import './AppInfo.css';
 import { DurationInSeconds, TimeInMilliseconds } from 'types/Common';
 import GraphDataSource from 'services/GraphDataSource';
 import { AppHealth } from 'types/Health';
@@ -71,14 +70,14 @@ class AppInfo extends React.Component<AppInfoProps, AppInfoState> {
         <RenderComponentScroll onResize={height => this.setState({ tabHeight: height })}>
           <Grid gutter={'md'} className={fullHeightStyle}>
             <GridItem span={6}>
-              <MiniGraphCard dataSource={this.graphDataSource} graphContainerStyle={graphContainerStyle} />
+              <MiniGraphCard
+                title={this.props.app ? this.props.app.name : 'Graph'}
+                dataSource={this.graphDataSource}
+                graphContainerStyle={graphContainerStyle}
+              />
             </GridItem>
             <GridItem span={3}>
-              <AppDescription
-                app={this.props.app}
-                miniGraphDataSource={this.graphDataSource}
-                health={this.state.health}
-              />
+              <AppDescription app={this.props.app} />
             </GridItem>
             <GridItem span={3}>
               {this.props.app ? <HealthCard name={this.props.app.name} health={this.state.health} /> : 'Loading'}
