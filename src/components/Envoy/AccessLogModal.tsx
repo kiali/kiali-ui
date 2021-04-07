@@ -11,8 +11,6 @@ export interface AccessLogModalProps {
   onClose?: () => void;
 }
 
-// const preface = 'Detailed information about an Envoy Access Log Entry.  Hover over a field for more information';
-
 const fieldStyle = style({
   color: PfColors.Gold,
   display: 'inline-block'
@@ -51,7 +49,11 @@ export default class AccessLogModal extends React.Component<AccessLogModalProps,
     super(props);
 
     this.state = {
-      description: <>Click Field for Description</>
+      description: (
+        <div style={{ width: '100%', textAlign: 'center' }}>
+          <dt>Click Field Name for Description</dt>
+        </div>
+      )
     };
   }
 
@@ -138,32 +140,13 @@ export default class AccessLogModal extends React.Component<AccessLogModalProps,
               <dl className="simple">
                 <dt>HTTP</dt>
                 <dd>
-                  <p>An HTTP request header: :AUTHORITY If not present ‘-‘ symbol will be in the log.</p>
+                  <p>Authority is the request authority header %REQ(:AUTHORITY)%</p>
                 </dd>
                 <dt>TCP</dt>
                 <dd>
                   <p>Not implemented (“-“).</p>
                 </dd>
               </dl>
-            </dd>
-          </>
-        );
-      case 'bytes sent':
-        return (
-          <>
-            <dt>%BYTES_SENT%</dt>
-            <dd>
-              <dl className="simple">
-                <dt>HTTP</dt>
-                <dd>
-                  <p>Body bytes sent. For WebSocket connection it will also include response header bytes.</p>
-                </dd>
-                <dt>TCP</dt>
-                <dd>
-                  <p>Downstream bytes sent on connection.</p>
-                </dd>
-              </dl>
-              <p>Renders a numeric value in typed JSON logs.</p>
             </dd>
           </>
         );
@@ -180,6 +163,25 @@ export default class AccessLogModal extends React.Component<AccessLogModalProps,
                 <dt>TCP</dt>
                 <dd>
                   <p>Downstream bytes received on connection.</p>
+                </dd>
+              </dl>
+              <p>Renders a numeric value in typed JSON logs.</p>
+            </dd>
+          </>
+        );
+      case 'bytes sent':
+        return (
+          <>
+            <dt>%BYTES_SENT%</dt>
+            <dd>
+              <dl className="simple">
+                <dt>HTTP</dt>
+                <dd>
+                  <p>Body bytes sent. For WebSocket connection it will also include response header bytes.</p>
+                </dd>
+                <dt>TCP</dt>
+                <dd>
+                  <p>Downstream bytes sent on connection.</p>
                 </dd>
               </dl>
               <p>Renders a numeric value in typed JSON logs.</p>
@@ -267,7 +269,7 @@ export default class AccessLogModal extends React.Component<AccessLogModalProps,
               <dl className="simple">
                 <dt>HTTP</dt>
                 <dd>
-                  <p>An HTTP request header: :X-FORWARDED-FOR If not present ‘-‘ symbol will be in the log.</p>
+                  <p>ForwardedFor is the X-Forwarded-For header value %REQ(FORWARDED-FOR)%</p>
                 </dd>
                 <dt>TCP</dt>
                 <dd>
@@ -285,7 +287,7 @@ export default class AccessLogModal extends React.Component<AccessLogModalProps,
               <dl className="simple">
                 <dt>HTTP</dt>
                 <dd>
-                  <p>An HTTP request header: :METHOD If not present ‘-‘ symbol will be in the log.</p>
+                  <p>Method is the HTTP method %REQ(:METHOD)%</p>
                 </dd>
                 <dt>TCP</dt>
                 <dd>
@@ -330,7 +332,7 @@ export default class AccessLogModal extends React.Component<AccessLogModalProps,
               <dl className="simple">
                 <dt>HTTP</dt>
                 <dd>
-                  <p>An HTTP request header: X-REQUEST-ID</p>
+                  <p>RequestId is the envoy generated X-REQUEST-ID header "%REQ(X-REQUEST-ID)%"</p>
                 </dd>
                 <dt>TCP</dt>
                 <dd>
@@ -563,7 +565,7 @@ export default class AccessLogModal extends React.Component<AccessLogModalProps,
           <>
             <dt>%ROUTE_NAME%</dt>
             <dd>
-              <p>Name of the route.</p>
+              <p>RouteName is the name of the VirtualService route which matched this request %ROUTE_NAME%</p>
             </dd>
           </>
         );
@@ -603,7 +605,7 @@ export default class AccessLogModal extends React.Component<AccessLogModalProps,
                 <dt>HTTP</dt>
                 <dd>
                   <p>
-                    An HTTP request header: X-ENVOY-UPSTREAM-SERVICE-TIME If not present ‘-‘ symbol will be in the log.
+                    TCPServiceTime is the X-ENVOY-UPSTREAM-SERVICE-TIME header "%REQ(X-ENVOY-UPSTREAM-SERVICE-TIME)%"
                   </p>
                 </dd>
                 <dt>TCP</dt>
@@ -808,9 +810,7 @@ export default class AccessLogModal extends React.Component<AccessLogModalProps,
               <dl className="simple">
                 <dt>HTTP</dt>
                 <dd>
-                  <p>
-                    An HTTP request header: :X-ENVOY-ORIGINAL-PATH?:PATH If not present ‘-‘ symbol will be in the log.
-                  </p>
+                  <p>An HTTP request header: "%REQ(X-ENVOY-ORIGINAL-PATH?):PATH"</p>
                 </dd>
                 <dt>TCP</dt>
                 <dd>
@@ -828,7 +828,7 @@ export default class AccessLogModal extends React.Component<AccessLogModalProps,
               <dl className="simple">
                 <dt>HTTP</dt>
                 <dd>
-                  <p>An HTTP request header: :USER-AGENT If not present ‘-‘ symbol will be in the log.</p>
+                  <p>An HTTP request header: "%REQ(USER-AGENT)</p>
                 </dd>
                 <dt>TCP</dt>
                 <dd>

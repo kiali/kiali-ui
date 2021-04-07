@@ -250,7 +250,7 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
       <>
         <RenderComponentScroll>
           {this.state.containers && (
-            <Grid key="logs" style={{ height: '100%' }}>
+            <Grid key="logs" id="logs" style={{ height: '100%' }}>
               <GridItem span={12}>
                 <Card style={{ height: '100%' }}>
                   <CardBody>
@@ -358,7 +358,7 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
     return (
       <Form>
         <FormGroup fieldId="container-log-selection" isInline>
-          <Tooltip position={TooltipPosition.auto} content={<>Containers</>}>
+          <Tooltip position={TooltipPosition.top} content={<>Containers</>}>
             <Badge className="virtualitem_badge_definition" style={{ marginRight: '10px' }}>
               C
             </Badge>
@@ -404,10 +404,10 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
   private getLogsDiv = () => {
     const kebabActions = [
       <DropdownItem key="toggleToolbar" onClick={this.toggleToolbar}>
-        {`${this.state.showToolbar ? 'Collapse' : 'Restore'} Toolbar`}
+        {`${this.state.showToolbar ? 'Collapse' : 'Expand'} Toolbar`}
       </DropdownItem>,
       <DropdownItem key="toggleRegex" onClick={this.toggleUseRegex}>
-        {`Show/Hide via ${this.state.useRegex ? 'Substring' : 'Regex'}`}
+        {`Match via ${this.state.useRegex ? 'Substring' : 'Regex'}`}
       </DropdownItem>,
       <DropdownItem key="toggleTimestamps" onClick={this.toggleShowTimestamps}>
         {`${this.state.showTimestamps ? 'Remove' : 'Show'} Timestamps`}
@@ -487,6 +487,7 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
                     <Tooltip
                       key={`al-tt-${i}`}
                       position={TooltipPosition.auto}
+                      entryDelay={2000}
                       content="Click for Envoy Access Log details"
                     >
                       <Button
@@ -692,7 +693,7 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
     if (screenFullAlias.isFullscreen) {
       screenFullAlias.exit();
     } else {
-      const element = document.getElementById('logsPage');
+      const element = document.getElementById('logs');
       if (screenFullAlias.isEnabled) {
         if (element) {
           screenFullAlias.request(element);
