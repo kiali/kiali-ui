@@ -198,9 +198,9 @@ const GraphErrorBoundaryFallback = () => {
 
 export class GraphPage extends React.Component<GraphPageProps, GraphPageState> {
   private readonly errorBoundaryRef: any;
+  private cy?: Cy.Core;
   private cytoscapeGraphRef: any;
   private focusSelector?: string;
-  private navigationHandlerSet: boolean = false;
   private graphDataSource: GraphDataSource;
 
   static getNodeParamsFromProps(props: RouteComponentProps<Partial<GraphURLPathProps>>): NodeParamsType | undefined {
@@ -379,20 +379,6 @@ export class GraphPage extends React.Component<GraphPageProps, GraphPageState> {
 
     if (curr.showLegend && this.props.activeTour) {
       this.props.endTour();
-    }
-
-    if (!this.navigationHandlerSet && this.cytoscapeGraphRef.current) {
-      const cy = this.cytoscapeGraphRef.current.getCy();
-
-      if (cy) {
-        cy.on('navigate_remote_kiali', (_evt: Cy.EventObject, cluster, href) => {
-          this.setState({
-            externalKialiCluster: cluster,
-            externalKialiUrl: href
-          });
-        });
-        this.navigationHandlerSet = true;
-      }
     }
   }
 
@@ -711,6 +697,20 @@ export class GraphPage extends React.Component<GraphPageProps, GraphPageState> {
 
   private setCytoscapeGraph(cytoscapeGraph: any) {
     this.cytoscapeGraphRef.current = cytoscapeGraph;
+
+    if (this.cytoscapeGraphRef.current) {
+      const cy = this.cytoscapeGraphRef.current.getCy();
+
+      if (cy && cy !== this.cy) {
+        this.cy = cy; // Save a reference to the Cy instance to avoid duplicating the following callback.
+        cy.on('navigate_remote_kiali', (_evt: Cy.EventObject, cluster, href) => {
+          this.setState({
+            externalKialiCluster: cluster,
+            externalKialiUrl: href
+          });
+        });
+      }
+    }
   }
 
   private loadGraphDataFromBackend = () => {
