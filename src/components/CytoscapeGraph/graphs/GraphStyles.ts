@@ -65,7 +65,7 @@ const NodeTextFont = EdgeTextFont;
 const NodeTextFontSize = '8px';
 const NodeTextFontSizeBox = '10px';
 const NodeTextFontSizeHover = '11px';
-const NodeTextFontSizeHoverBox = '14px';
+const NodeTextFontSizeHoverBox = '13px';
 const NodeWidth = NodeHeight;
 
 const badgeMargin = style({
@@ -217,7 +217,7 @@ export class GraphStyles {
 
     let contentStyle = '';
     if (ele.hasClass(HighlightClass)) {
-      const fontSize = isBox ? NodeTextFontSizeHoverBox : NodeTextFontSizeHover;
+      const fontSize = isBox && isBox !== BoxByType.APP ? NodeTextFontSizeHoverBox : NodeTextFontSizeHover;
       contentStyle += 'font-size: ' + fontSize + ';';
     }
 
@@ -286,11 +286,13 @@ export class GraphStyles {
 
     const contentText = content.join('<br/>');
     const contentClasses = hasBadge ? `${contentDefault} ${contentWithBadges}` : `${contentDefault}`;
+    let appBoxStyle = '';
     if (isBox) {
       let letter = '';
       switch (isBox) {
         case BoxByType.APP:
           letter = 'A';
+          appBoxStyle += `font-size: ${NodeTextFontSize};`;
           break;
         case BoxByType.CLUSTER:
           letter = 'C';
@@ -301,8 +303,8 @@ export class GraphStyles {
         default:
           console.warn(`GraphSyles: Unexpected box [${isBox}] `);
       }
-      const contentBadge = `<span class="pf-c-badge pf-m-unread ${contentBoxPfBadge}">${letter}</span>`;
-      const contentSpan = `<span class="${contentClasses} ${contentBox}" style="${contentStyle}">${contentBadge}${contentText}</span>`;
+      const contentBadge = `<span class="pf-c-badge pf-m-unread ${contentBoxPfBadge}" style="${appBoxStyle}">${letter}</span>`;
+      const contentSpan = `<span class="${contentClasses} ${contentBox}" style=" ${appBoxStyle}${contentStyle}">${contentBadge}${contentText}</span>`;
       return `<div class="${labelDefault} ${labelBox}" style="${labelStyle}">${badges}${contentSpan}</div>`;
     }
 
