@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { style } from 'typestyle';
 
 import history from 'app/History';
-import { NodeType, DecoratedGraphNodeData } from 'types/Graph';
+import { NodeType, DecoratedGraphNodeData, UNKNOWN } from 'types/Graph';
 import { JaegerInfo } from 'types/JaegerInfo';
 import { KialiAppState } from 'store/Store';
 import { Paths, serverConfig } from 'config';
@@ -114,7 +114,7 @@ export class NodeContextMenu extends React.PureComponent<Props> {
     }
 
     return (
-      <div className={graphContextMenuItemStyle}>
+      <div key={title} className={graphContextMenuItemStyle}>
         {item}
       </div>
     );
@@ -129,15 +129,41 @@ export class NodeContextMenu extends React.PureComponent<Props> {
       return null;
     }
 
-    const options: ContextMenuOption[] = getOptionsFromLinkParams(linkParams, this.props.jaegerInfo);
+    let buildMenu = false;
+    let menuOptions: React.ReactNode = null;
+    if (linkParams.cluster === UNKNOWN || linkParams.cluster.length === 0 || linkParams.cluster === serverConfig.clusterInfo?.name) {
+      // Node is for "home" cluster. Build menu entries as usual.
+      buildMenu = true;
+    } else {
+      // Node represents a resource in a remote cluster.
+      // Check if there is a reachable remote Kiali. If so, build the menu; else, put a note.
+      const cluster = serverConfig.clusters[linkParams.cluster];
+      if (cluster && cluster.kialiInstances.some(instance => instance.url.length !== 0)) {
+        buildMenu = true;
+      } else {
+        menuOptions = (
+          <p>No options. This node represents a resource in <strong>{linkParams.cluster}</strong> cluster
+          where an accessible Kiali instance couldn't be found.</p>
+        );
+      }
+    }
+
+    if (buildMenu) {
+      const options: ContextMenuOption[] = getOptionsFromLinkParams(linkParams, this.props.jaegerInfo);
+      menuOptions = (
+        <>
+          <div className={graphContextMenuSubTitleStyle}>Show</div>
+          {options.map(o => this.createMenuItem(o.url, o.text, o.target, o.external, o.cluster))}
+        </>
+      );
+    }
 
     return (
       <div className={graphContextMenuContainerStyle}>
         <div className={graphContextMenuTitleStyle}>
           <strong>{linkParams.name}</strong>
         </div>
-        <div className={graphContextMenuSubTitleStyle}>Show</div>
-        {options.map(o => this.createMenuItem(o.url, o.text, o.target, o.external, o.cluster))}
+        {menuOptions}
       </div>
     );
   }

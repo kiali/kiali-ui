@@ -49,7 +49,6 @@ import { KialiAppAction } from '../../actions/KialiAppAction';
 import { GraphActions } from '../../actions/GraphActions';
 import { GraphToolbarActions } from '../../actions/GraphToolbarActions';
 import { NodeContextMenuContainer } from '../../components/CytoscapeGraph/ContextMenu/NodeContextMenu';
-import { getClusters } from '../../services/Api';
 import { PFColors } from 'components/Pf/PfColors';
 import { TourActions } from 'actions/TourActions';
 import { arrayEquals } from 'utils/Common';
@@ -64,7 +63,7 @@ import { JaegerTrace } from 'types/JaegerInfo';
 import { JaegerThunkActions } from 'actions/JaegerThunkActions';
 import GraphTour from 'pages/Graph/GraphHelpTour';
 import { getNextTourStop, TourInfo } from 'components/Tour/TourStop';
-import { MeshClusters } from '../../types/Mesh';
+import { serverConfig } from '../../config';
 
 // GraphURLPathProps holds path variable values.  Currently all path variables are relevant only to a node graph
 type GraphURLPathProps = {
@@ -201,7 +200,6 @@ export class GraphPage extends React.Component<GraphPageProps, GraphPageState> {
   private readonly errorBoundaryRef: any;
   private cytoscapeGraphRef: any;
   private focusSelector?: string;
-  private meshClusters: MeshClusters;
   private navigationHandlerSet: boolean = false;
   private graphDataSource: GraphDataSource;
 
@@ -279,7 +277,6 @@ export class GraphPage extends React.Component<GraphPageProps, GraphPageState> {
     this.errorBoundaryRef = React.createRef();
     this.cytoscapeGraphRef = React.createRef();
     this.focusSelector = getFocusSelector();
-    this.meshClusters = [];
 
     this.graphDataSource = new GraphDataSource();
 
@@ -334,10 +331,6 @@ export class GraphPage extends React.Component<GraphPageProps, GraphPageState> {
 
     // start the initial graph generation
     this.loadGraphDataFromBackend();
-
-    getClusters().then((r) => {
-      this.meshClusters = r.data;
-    });
   }
 
   componentDidUpdate(prev: GraphPageProps) {
@@ -423,7 +416,7 @@ export class GraphPage extends React.Component<GraphPageProps, GraphPageState> {
     const isReplayReady = this.props.replayActive && !!this.props.replayQueryTime;
     const cy = this.cytoscapeGraphRef && this.cytoscapeGraphRef.current ? this.cytoscapeGraphRef.current.getCy() : null;
     const externalClusterNavigating = this.state.externalKialiCluster ?
-      this.meshClusters.find(c => c.name === this.state.externalKialiCluster) : undefined;
+      serverConfig.clusters[this.state.externalKialiCluster] : undefined;
 
     return (
       <>
