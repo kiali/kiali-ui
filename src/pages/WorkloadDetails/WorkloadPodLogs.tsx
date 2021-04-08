@@ -33,11 +33,11 @@ import { serverConfig } from 'config';
 import { KialiAppState } from '../../store/Store';
 import { connect } from 'react-redux';
 import { timeRangeSelector } from '../../store/Selectors';
-import { PfColors, PFColorVal } from 'components/Pf/PfColors';
+import { PFColors, PFColorVal } from 'components/Pf/PfColors';
 import AccessLogModal from 'components/Envoy/AccessLogModal';
 
-const appContainerColors = [PfColors.White, PfColors.LightGreen, PfColors.LightBlue, PfColors.Purple100];
-const proxyContainerColor = PfColors.Gold;
+const appContainerColors = [PFColors.White, PFColors.LightGreen400, PFColors.LightBlue400, PFColors.Purple100];
+const proxyContainerColor = PFColors.Gold400;
 
 export interface WorkloadPodLogsProps {
   namespace: string;
@@ -142,7 +142,7 @@ const logsDisplay = style({
   width: '100%'
 });
 
-const logsBackground = (enabled: boolean) => ({ backgroundColor: enabled ? PfColors.Black1000 : 'gray' });
+const logsBackground = (enabled: boolean) => ({ backgroundColor: enabled ? PFColors.Black1000 : 'gray' });
 const logsHeight = (showToolbar: boolean, fullscreen: boolean) => {
   const toolbarHeight = showToolbar ? '0px' : '49px';
   return {
@@ -380,7 +380,7 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
                   htmlFor={`container-${i}`}
                   className="pf-c-check__label"
                   style={{
-                    backgroundColor: PfColors.Black1000,
+                    backgroundColor: PFColors.Black1000,
                     color: c.color,
                     paddingLeft: '5px',
                     paddingRight: '5px'
@@ -534,7 +534,7 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
                           this.addAccessLogModal(le.message, le.accessLog!);
                         }}
                       >
-                        <KialiIcon.Info key={`al-i-${i}`} className={alInfoIcon} color={PfColors.Gold} />
+                        <KialiIcon.Info key={`al-i-${i}`} className={alInfoIcon} color={PFColors.Gold400} />
                       </Button>
                     </Tooltip>
                     <p

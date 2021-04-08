@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Button, ButtonVariant, Modal, Split, SplitItem } from '@patternfly/react-core';
 import { style } from 'typestyle';
 import { AccessLog } from 'types/IstioObjects';
-import { PfColors } from 'components/Pf/PfColors';
+import { PFColors } from 'components/Pf/PfColors';
 
 export interface AccessLogModalProps {
   accessLog: AccessLog;
@@ -12,7 +12,7 @@ export interface AccessLogModalProps {
 }
 
 const fieldStyle = style({
-  color: PfColors.Gold,
+  color: PFColors.Gold400,
   display: 'inline-block'
 });
 
@@ -24,8 +24,8 @@ const modalStyle = style({
 const prefaceStyle = style({
   fontFamily: 'monospace',
   fontSize: '14px',
-  backgroundColor: PfColors.Black1000,
-  color: PfColors.Gold400,
+  backgroundColor: PFColors.Black1000,
+  color: PFColors.Gold400,
   margin: '10px 10px 15px 10px',
   overflow: 'auto',
   resize: 'none',
@@ -73,7 +73,7 @@ export default class AccessLogModal extends React.Component<AccessLogModalProps,
             <SplitItem className={splitStyle} style={{ overflow: 'auto', marginRight: '10px' }}>
               {this.accessLogContent(this.props.accessLog)}
             </SplitItem>
-            <SplitItem className={splitStyle} style={{ overflow: 'auto', backgroundColor: PfColors.GrayBackground }}>
+            <SplitItem className={splitStyle} style={{ overflow: 'auto', backgroundColor: PFColors.Black150 }}>
               {this.state.description}
             </SplitItem>
           </Split>
