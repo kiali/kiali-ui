@@ -471,6 +471,36 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
         >
           {this.hasEntries(this.state.filteredLogs)
             ? this.state.filteredLogs.map((le, i) => {
+                /*
+              if (!le.accessLog && le.message.startsWith('[2021')) {
+                le.accessLog = {
+                  authority: 'foo',
+                  bytes_received: 'foo',
+                  bytes_sent: 'foo',
+                  duration: 'foo',
+                  forwarded_for: 'foo',
+                  method: 'foo',
+                  protocol: 'foo',
+                  request_id: 'foo',
+                  response_flags: 'foo',
+                  status_code: 'foo',
+                  tcp_service_time: 'foo',
+                  timestamp: 'foo',
+                  upstream_service: 'foo',
+                  upstream_service_time: 'foo',
+                  upstream_cluster: 'foo',
+                  upstream_local: 'foo',
+                  downstream_local: 'foo',
+                  downstream_remote: 'foo',
+                  requested_server: 'foo',
+                  route_name: 'foo',
+                  upstream_failure_reason: 'foo',
+                  uri_param: 'foo',
+                  uri_path: 'foo',
+                  user_agent: 'foo'
+                };
+              }
+              */
                 return !le.accessLog ? (
                   <>
                     <p key={`le-${i}`} style={{ color: le.color!, fontSize: '12px' }}>
