@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { shallow, mount } from 'enzyme';
 import { shallowToJson } from 'enzyme-to-json';
-import WorkloadDescription from '../WorkloadDescription';
+import WorkloadDescription from '../../WorkloadDescription';
 import { emptyWorkload } from '../../../../types/Workload';
 import GraphDataSource from '../../../../services/GraphDataSource';
 

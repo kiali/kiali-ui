@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { style } from 'typestyle';
-import { Grid, GridItem } from '@patternfly/react-core';
+import { Grid, GridItem, Stack, StackItem } from '@patternfly/react-core';
 import ServiceId from '../../types/ServiceId';
-import ServiceDescription from './ServiceInfo/ServiceDescription';
+import ServiceDescription from './ServiceDescription';
 import { ServiceDetailsInfo } from '../../types/ServiceInfo';
 import { ObjectValidation, PeerAuthentication, Validations } from '../../types/IstioObjects';
 import { activeTab } from '../../components/Tab/Tabs';
@@ -15,7 +15,6 @@ import { KialiAppState } from '../../store/Store';
 import { connect } from 'react-redux';
 import { durationSelector } from '../../store/Selectors';
 import MiniGraphCard from '../../components/CytoscapeGraph/MiniGraphCard';
-import ServiceWorkload from './ServiceInfo/ServiceWorkload';
 import HealthCard from '../../components/Health/HealthCard';
 import IstioConfigCard from '../../components/IstioConfigCard/IstioConfigCard';
 
@@ -114,7 +113,6 @@ class ServiceInfo extends React.Component<Props, ServiceInfoState> {
   }
 
   render() {
-    const workloads = this.props.serviceDetails?.workloads || [];
     const validationChecks = this.validationChecks();
     /*    const getSeverityIcon: any = (severity: ValidationTypes = ValidationTypes.Error) => (
       <span className={tabIconStyle}>
@@ -160,43 +158,18 @@ class ServiceInfo extends React.Component<Props, ServiceInfoState> {
     const height = this.state.tabHeight ? this.state.tabHeight - 115 : 300;
     const graphContainerStyle = style({ width: '100%', height: height });
 
-    /*
-      this.props.serviceDetails && (
-              <GridItem span={12}>
-                <ParameterizedTabs
-                  id="service-tabs"
-                  onSelect={tabValue => {
-                    this.setState({ currentTab: tabValue });
-                  }}
-                  tabMap={paramToTab}
-                  tabName={tabName}
-                  defaultTab={defaultTab}
-                  activeTab={this.state.currentTab}
-                >
-                  <Tab eventKey={0} title={'Workloads (' + Object.keys(workloads).length + ')'}>
-                    <ErrorBoundaryWithMessage message={this.errorBoundaryMessage('Workloads')}>
-                      <ServiceInfoWorkload
-                        service={this.props.serviceDetails}
-                        workloads={workloads}
-                        namespace={this.props.namespace}
-                      />
-                    </ErrorBoundaryWithMessage>
-                  </Tab>
-                  <Tab eventKey={1} title={istioTabTitle}>
-                    <ErrorBoundaryWithMessage message={this.errorBoundaryMessage('Istio Config')}>
-                      <IstioConfigSubList name={this.props.serviceDetails.service.name} items={istioConfigItems} />
-                    </ErrorBoundaryWithMessage>
-                  </Tab>
-                </ParameterizedTabs>
-              </GridItem>
-            )}
-     */
-
     return (
       <>
         <RenderComponentScroll onResize={height => this.setState({ tabHeight: height })}>
           <Grid gutter={'md'} className={fullHeightStyle}>
-            <GridItem span={6} rowSpan={2}>
+            <GridItem span={3}>
+              <ServiceDescription
+                namespace={this.props.namespace}
+                serviceDetails={this.props.serviceDetails}
+                validations={this.getServiceValidation()}
+              />
+            </GridItem>
+            <GridItem span={6}>
               <MiniGraphCard
                 title={this.props.service}
                 dataSource={this.graphDataSource}
@@ -204,40 +177,21 @@ class ServiceInfo extends React.Component<Props, ServiceInfoState> {
               />
             </GridItem>
             <GridItem span={3}>
-              <ServiceDescription
-                name={this.props.serviceDetails?.service.name || ''}
-                namespace={this.props.namespace}
-                createdAt={this.props.serviceDetails?.service.createdAt || ''}
-                resourceVersion={this.props.serviceDetails?.service.resourceVersion || ''}
-                additionalDetails={this.props.serviceDetails?.additionalDetails || []}
-                istioEnabled={this.props.serviceDetails?.istioSidecar}
-                labels={this.props.serviceDetails?.service.labels}
-                selectors={this.props.serviceDetails?.service.selectors}
-                ports={this.props.serviceDetails?.service.ports}
-                type={this.props.serviceDetails?.service.type}
-                ip={this.props.serviceDetails?.service.ip}
-                endpoints={this.props.serviceDetails?.endpoints}
-                externalName={this.props.serviceDetails?.service.externalName}
-                validations={this.getServiceValidation()}
-              />
-            </GridItem>
-            <GridItem span={3}>
-              {this.props.serviceDetails ? (
-                <HealthCard name={this.props.serviceDetails.service.name} health={this.props.serviceDetails.health} />
-              ) : (
-                'Loading'
-              )}
-            </GridItem>
-            <GridItem span={3}>
-              <ServiceWorkload
-                namespace={this.props.namespace}
-                service={this.props.service}
-                istioSidecar={this.props.serviceDetails ? this.props.serviceDetails.istioSidecar : false}
-                workloads={workloads}
-              />
-            </GridItem>
-            <GridItem span={3}>
-              <IstioConfigCard name={this.props.service} items={istioConfigItems} />
+              <Stack gutter="md">
+                <StackItem>
+                  {this.props.serviceDetails ? (
+                    <HealthCard
+                      name={this.props.serviceDetails.service.name}
+                      health={this.props.serviceDetails.health}
+                    />
+                  ) : (
+                    'Loading'
+                  )}
+                </StackItem>
+                <StackItem>
+                  <IstioConfigCard name={this.props.service} items={istioConfigItems} />
+                </StackItem>
+              </Stack>
             </GridItem>
           </Grid>
         </RenderComponentScroll>

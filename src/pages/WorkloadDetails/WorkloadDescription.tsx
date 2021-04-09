@@ -1,44 +1,74 @@
 import * as React from 'react';
-import { Workload } from '../../../types/Workload';
-import LocalTime from '../../../components/Time/LocalTime';
-import Labels from '../../../components/Label/Labels';
-import { Card, CardBody, Stack, StackItem, Text, TextVariants, Title } from '@patternfly/react-core';
-import { TextOrLink } from 'components/TextOrLink';
-import { renderRuntimeLogo, renderAPILogo } from 'components/Logo/Logos';
-import MissingSidecar from '../../../components/MissingSidecar/MissingSidecar';
+import { Workload } from '../../types/Workload';
+import { Card, CardBody, CardHeader, Title } from '@patternfly/react-core';
+import DetailDescription from '../../components/Details/DetailDescription';
+import { serverConfig } from '../../config';
+import { style } from 'typestyle';
+import MissingSidecar from '../../components/MissingSidecar/MissingSidecar';
+import Labels from '../../components/Label/Labels';
 
 type WorkloadDescriptionProps = {
   workload?: Workload;
   namespace: string;
 };
 
+const titleStyle = style({
+  margin: '15px 0 11px 0'
+});
+
+const resourceListStyle = style({
+  margin: '0px 0 11px 0',
+  $nest: {
+    '& > ul > li > span': {
+      float: 'left',
+      width: '125px',
+      fontWeight: 700
+    }
+  }
+});
+
 class WorkloadDescription extends React.Component<WorkloadDescriptionProps> {
   render() {
     const workload = this.props.workload;
-    const isTemplateLabels =
-      workload &&
-      ['Deployment', 'ReplicaSet', 'ReplicationController', 'DeploymentConfig', 'StatefulSet'].indexOf(workload.type) >=
-        0;
-    const runtimes = (workload?.runtimes || []).map(r => r.name).filter(name => name !== '');
+    const apps: string[] = [];
+    const services: string[] = [];
+    if (workload) {
+      if (workload.labels[serverConfig.istioLabels.appLabelName]) {
+        apps.push(workload.labels[serverConfig.istioLabels.appLabelName]);
+      }
+      workload.services.forEach(s => services.push(s.name));
+    }
+    // const isTemplateLabels = workload && ['Deployment', 'ReplicaSet', 'ReplicationController', 'DeploymentConfig', 'StatefulSet'].indexOf(workload.type) >= 0;
+    // const runtimes = (workload?.runtimes || []).map(r => r.name).filter(name => name !== '');
     return workload ? (
-      <Card style={{ height: '100%' }}>
-        <CardBody>
+      <Card>
+        <CardHeader>
           <Title headingLevel="h3" size="2xl">
             Workload
           </Title>
+        </CardHeader>
+        <CardBody>
+          {workload.labels && <Labels labels={workload.labels} />}
+          <DetailDescription namespace={this.props.namespace} apps={apps} services={services} />
+          {!this.props.workload?.istioSidecar && (
+            <div>
+              <MissingSidecar namespace={this.props.namespace} />
+            </div>
+          )}
+
+          <Title headingLevel="h3" size="lg" className={titleStyle}>
+            Properties
+          </Title>
+          <div key="properties-list" className={resourceListStyle}>
+            <ul style={{ listStyleType: 'none' }}>
+              <li>
+                <span>Name</span>
+                {workload.name}
+              </li>
+            </ul>
+          </div>
+          {/*
           <Stack gutter="md" style={{ marginTop: '10px' }}>
-            <StackItem id="name">
-              <Title headingLevel="h6" size="md">
-                {' '}
-                Name{' '}
-              </Title>
-              {workload.name}
-              {!this.props.workload?.istioSidecar && (
-                <span style={{ marginLeft: '10px' }}>
-                  <MissingSidecar namespace={this.props.namespace} />
-                </span>
-              )}
-            </StackItem>
             <StackItem id="labels">
               <Title headingLevel="h6" size="md">
                 {' '}
@@ -101,6 +131,7 @@ class WorkloadDescription extends React.Component<WorkloadDescriptionProps> {
               </StackItem>
             )}
           </Stack>
+          */}
         </CardBody>
       </Card>
     ) : (

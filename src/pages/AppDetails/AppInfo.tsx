@@ -66,25 +66,23 @@ class AppInfo extends React.Component<AppInfoProps, AppInfoState> {
     const height = this.state.tabHeight ? this.state.tabHeight - 115 : 300;
     const graphContainerStyle = style({ width: '100%', height: height });
     return (
-      <>
-        <RenderComponentScroll onResize={height => this.setState({ tabHeight: height })}>
-          <Grid gutter={'md'} className={fullHeightStyle}>
-            <GridItem span={6}>
-              <MiniGraphCard
-                title={this.props.app ? this.props.app.name : 'Graph'}
-                dataSource={this.graphDataSource}
-                graphContainerStyle={graphContainerStyle}
-              />
-            </GridItem>
-            <GridItem span={3}>
-              <AppDescription app={this.props.app} />
-            </GridItem>
-            <GridItem span={3}>
-              {this.props.app ? <HealthCard name={this.props.app.name} health={this.state.health} /> : 'Loading'}
-            </GridItem>
-          </Grid>
-        </RenderComponentScroll>
-      </>
+      <RenderComponentScroll onResize={height => this.setState({ tabHeight: height })}>
+        <Grid gutter={'md'} className={fullHeightStyle}>
+          <GridItem span={3}>
+            <AppDescription app={this.props.app} />
+          </GridItem>
+          <GridItem span={6}>
+            <MiniGraphCard
+              title={this.props.app ? this.props.app.name : 'Graph'}
+              dataSource={this.graphDataSource}
+              graphContainerStyle={graphContainerStyle}
+            />
+          </GridItem>
+          <GridItem span={3}>
+            {this.props.app ? <HealthCard name={this.props.app.name} health={this.state.health} /> : 'Loading'}
+          </GridItem>
+        </Grid>
+      </RenderComponentScroll>
     );
   }
 }

@@ -1,22 +1,21 @@
 import * as React from 'react';
-import { ObjectValidation, Pod } from '../../../types/IstioObjects';
-import Labels from '../../../components/Label/Labels';
+import { ObjectValidation, Pod } from '../../types/IstioObjects';
+import Labels from '../../components/Label/Labels';
 import { cellWidth, ICell, IRow, Table, TableBody, TableHeader, TableVariant } from '@patternfly/react-table';
-import LocalTime from '../../../components/Time/LocalTime';
+import LocalTime from '../../components/Time/LocalTime';
 import {
   Card,
   CardBody,
+  CardHeader,
   EmptyState,
   EmptyStateBody,
   EmptyStateIcon,
   EmptyStateVariant,
-  Grid,
-  GridItem,
   Title,
   Tooltip
 } from '@patternfly/react-core';
 import { CogsIcon } from '@patternfly/react-icons';
-import PodStatus from './PodStatus';
+import PodStatus from './WorkloadInfo/PodStatus';
 
 type WorkloadPodsProps = {
   namespace: string;
@@ -122,25 +121,26 @@ class WorkloadPods extends React.Component<WorkloadPodsProps> {
 
   render() {
     return (
-      <Grid>
-        <GridItem span={12}>
-          <Card>
-            <CardBody>
-              <Table
-                variant={TableVariant.compact}
-                aria-label={'list_workloads_pods'}
-                cells={this.columns()}
-                rows={this.rows()}
-                // This style is declared on _overrides.scss
-                className="table"
-              >
-                <TableHeader />
-                <TableBody />
-              </Table>
-            </CardBody>
-          </Card>
-        </GridItem>
-      </Grid>
+      <Card>
+        <CardHeader>
+          <Title headingLevel="h3" size="2xl">
+            Pods
+          </Title>
+        </CardHeader>
+        <CardBody>
+          <Table
+            variant={TableVariant.compact}
+            aria-label={'list_workloads_pods'}
+            cells={this.columns()}
+            rows={this.rows()}
+            // This style is declared on _overrides.scss
+            className="table"
+          >
+            <TableHeader />
+            <TableBody />
+          </Table>
+        </CardBody>
+      </Card>
     );
   }
 }

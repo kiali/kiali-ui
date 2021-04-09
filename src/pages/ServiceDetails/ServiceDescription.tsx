@@ -1,33 +1,15 @@
 import * as React from 'react';
-import { Card, CardBody, Stack, StackItem, Tab, Tabs, Title, Tooltip } from '@patternfly/react-core';
-import { EyeIcon } from '@patternfly/react-icons';
-import { style } from 'typestyle';
-import LocalTime from '../../../components/Time/LocalTime';
-import { Endpoints, ServicePort } from '../../../types/ServiceInfo';
-import { ObjectCheck, ObjectValidation } from '../../../types/IstioObjects';
-import { ValidationObjectSummary } from '../../../components/Validations/ValidationObjectSummary';
-import ValidationList from '../../../components/Validations/ValidationList';
-import Labels from '../../../components/Label/Labels';
-import { AdditionalItem } from 'types/Workload';
-import { TextOrLink } from 'components/TextOrLink';
-import { renderAPILogo } from 'components/Logo/Logos';
-import './ServiceDescription.css';
-import MissingSidecar from '../../../components/MissingSidecar/MissingSidecar';
+import { Card, CardBody, CardHeader, Title } from '@patternfly/react-core';
+import { ServiceDetailsInfo } from '../../types/ServiceInfo';
+import { ObjectCheck, ObjectValidation } from '../../types/IstioObjects';
+import ValidationList from '../../components/Validations/ValidationList';
+import DetailDescription from '../../components/Details/DetailDescription';
+import { AppWorkload } from '../../types/App';
+import { serverConfig } from '../../config';
 
 interface ServiceInfoDescriptionProps {
-  name: string;
   namespace: string;
-  createdAt: string;
-  resourceVersion: string;
-  additionalDetails: AdditionalItem[];
-  istioEnabled?: boolean;
-  labels?: { [key: string]: string };
-  selectors?: { [key: string]: string };
-  type?: string;
-  ip?: any;
-  externalName?: string;
-  ports?: ServicePort[];
-  endpoints?: Endpoints[];
+  serviceDetails?: ServiceDetailsInfo;
   validations?: ObjectValidation;
 }
 
@@ -35,12 +17,12 @@ type State = {
   serviceInfoTabKey: number;
 };
 
-const listStyle = style({
+/*const listStyle = style({
   listStyleType: 'none',
   padding: 0
 });
 
-const ExternalNameType = 'ExternalName';
+const ExternalNameType = 'ExternalName';*/
 
 class ServiceDescription extends React.Component<ServiceInfoDescriptionProps, State> {
   constructor(props: ServiceInfoDescriptionProps) {
@@ -71,13 +53,34 @@ class ServiceDescription extends React.Component<ServiceInfoDescriptionProps, St
   }
 
   render() {
+    const apps: string[] = [];
+    const workloads: AppWorkload[] = [];
+    if (this.props.serviceDetails) {
+      if (this.props.serviceDetails.workloads) {
+        this.props.serviceDetails.workloads.forEach(wk => {
+          if (wk.labels) {
+            const appName = wk.labels[serverConfig.istioLabels.appLabelName];
+            if (!apps.includes(appName)) {
+              apps.push(appName);
+            }
+          }
+          workloads.push({
+            workloadName: wk.name,
+            istioSidecar: wk.istioSidecar
+          });
+        });
+      }
+    }
     return (
       <Card>
-        <CardBody>
+        <CardHeader>
           <Title headingLevel="h3" size="2xl">
-            {' '}
-            Service{' '}
+            Service
           </Title>
+        </CardHeader>
+        <CardBody>
+          <DetailDescription namespace={this.props.namespace} apps={apps} workloads={workloads} />
+          {/*
           <Tabs
             isFilled={true}
             activeKey={this.state.serviceInfoTabKey}
@@ -204,6 +207,7 @@ class ServiceDescription extends React.Component<ServiceInfoDescriptionProps, St
               </Stack>
             </Tab>
           </Tabs>
+          */}
         </CardBody>
       </Card>
     );

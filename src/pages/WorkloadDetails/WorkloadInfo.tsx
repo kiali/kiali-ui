@@ -3,10 +3,10 @@ import { style } from 'typestyle';
 import * as API from '../../services/Api';
 import * as AlertUtils from '../../utils/AlertUtils';
 import { ObjectCheck, Validations, ValidationTypes } from '../../types/IstioObjects';
-import WorkloadDescription from './WorkloadInfo/WorkloadDescription';
+import WorkloadDescription from './WorkloadDescription';
 import { WorkloadHealth } from '../../types/Health';
 import { Workload } from '../../types/Workload';
-import { Grid, GridItem } from '@patternfly/react-core';
+import { Grid, GridItem, Stack, StackItem } from '@patternfly/react-core';
 import { activeTab } from '../../components/Tab/Tabs';
 import { RenderComponentScroll } from '../../components/Nav/Page';
 import GraphDataSource from '../../services/GraphDataSource';
@@ -19,6 +19,7 @@ import { durationSelector } from '../../store/Selectors';
 import MiniGraphCard from '../../components/CytoscapeGraph/MiniGraphCard';
 import HealthCard from '../../components/Health/HealthCard';
 import IstioConfigCard from '../../components/IstioConfigCard/IstioConfigCard';
+import WorkloadPods from './WorkloadPods';
 
 type WorkloadInfoProps = {
   namespace: string;
@@ -27,10 +28,6 @@ type WorkloadInfoProps = {
   lastRefreshAt: TimeInMilliseconds;
   refreshWorkload: () => void;
 };
-
-interface ValidationChecks {
-  hasPodsChecks: boolean;
-}
 
 type WorkloadInfoState = {
   validations?: Validations;
@@ -172,28 +169,9 @@ class WorkloadInfo extends React.Component<WorkloadInfoProps, WorkloadInfoState>
     return validations;
   }
 
-  private validationChecks(): ValidationChecks {
-    const validationChecks = {
-      hasPodsChecks: false
-    };
-
-    const pods = this.props.workload?.pods || [];
-
-    validationChecks.hasPodsChecks = pods.some(
-      pod =>
-        this.state.validations?.pod &&
-        this.state.validations.pod[pod.name] &&
-        this.state.validations.pod[pod.name].checks.length > 0
-    );
-
-    return validationChecks;
-  }
-
   render() {
     const workload = this.props.workload;
     const pods = workload?.pods || [];
-    const services = workload?.services || [];
-    const validationChecks = this.validationChecks();
 
     /*    const getSeverityIcon: any = (severity: ValidationTypes = ValidationTypes.Error) => (
       <span className={tabIconStyle}>
@@ -276,52 +254,26 @@ class WorkloadInfo extends React.Component<WorkloadInfoProps, WorkloadInfoState>
     const height = this.state.tabHeight ? this.state.tabHeight - 115 : 300;
     const graphContainerStyle = style({ width: '100%', height: height });
 
-    /*
-        Subtabs
-      <GridItem span={12}>
-              <ParameterizedTabs
-                id="service-tabs"
-                onSelect={tabValue => {
-                  this.setState({ currentTab: tabValue });
-                }}
-                tabMap={paramToTab}
-                tabName={tabName}
-                defaultTab={defaultTab}
-                activeTab={this.state.currentTab}
-              >
-                <Tab title={podTabTitle} eventKey={0}>
-                  <ErrorBoundaryWithMessage message={this.errorBoundaryMessage('Pods')}>
-                    <WorkloadPods
-                      namespace={this.props.namespace}
-                      workload={this.props.workload?.name || ''}
-                      pods={pods}
-                      validations={this.state.validations?.pod || {}}
-                    />
-                  </ErrorBoundaryWithMessage>
-                </Tab>
-                <Tab title={`Services (${services.length})`} eventKey={1}>
-                  <ErrorBoundaryWithMessage message={this.errorBoundaryMessage('Services')}>
-                    <WorkloadServices
-                      services={services}
-                      workload={this.props.workload?.name || ''}
-                      namespace={this.props.namespace}
-                    />
-                  </ErrorBoundaryWithMessage>
-                </Tab>
-                <Tab title={istioTabTitle} eventKey={2}>
-                  <ErrorBoundaryWithMessage message={this.errorBoundaryMessage('Istio Config')}>
-                    <IstioConfigSubList name={this.props.workload?.name || ''} items={istioConfigItems} />
-                  </ErrorBoundaryWithMessage>
-                </Tab>
-              </ParameterizedTabs>
-            </GridItem>
-     */
-
     return (
       <>
         <RenderComponentScroll onResize={height => this.setState({ tabHeight: height })}>
           <Grid gutter={'md'} className={fullHeightStyle}>
-            <GridItem span={6} rowSpan={2}>
+            <GridItem span={3}>
+              <Stack gutter="md">
+                <StackItem>
+                  <WorkloadDescription workload={workload} namespace={this.props.namespace} />
+                </StackItem>
+                <StackItem>
+                  <WorkloadPods
+                    namespace={this.props.namespace}
+                    workload={this.props.workload?.name || ''}
+                    pods={pods}
+                    validations={this.state.validations?.pod || {}}
+                  />
+                </StackItem>
+              </Stack>
+            </GridItem>
+            <GridItem span={6}>
               <MiniGraphCard
                 title={this.props.workload ? this.props.workload.name : 'Graph'}
                 dataSource={this.graphDataSource}
@@ -329,23 +281,21 @@ class WorkloadInfo extends React.Component<WorkloadInfoProps, WorkloadInfoState>
               />
             </GridItem>
             <GridItem span={3}>
-              <WorkloadDescription workload={workload} namespace={this.props.namespace} />
-            </GridItem>
-            <GridItem span={3}>
-              {this.props.workload ? (
-                <HealthCard name={this.props.workload.name} health={this.state.health} />
-              ) : (
-                'Loading'
-              )}
-            </GridItem>
-            <GridItem span={3}>
-              <div>Services {services.length}</div>
-              <div>
-                Pods {pods.length} {JSON.stringify(validationChecks)}
-              </div>
-            </GridItem>
-            <GridItem span={3}>
-              <IstioConfigCard name={this.props.workload ? this.props.workload.name : ''} items={istioConfigItems} />
+              <Stack gutter="md">
+                <StackItem>
+                  {this.props.workload ? (
+                    <HealthCard name={this.props.workload.name} health={this.state.health} />
+                  ) : (
+                    'Loading'
+                  )}
+                </StackItem>
+                <StackItem>
+                  <IstioConfigCard
+                    name={this.props.workload ? this.props.workload.name : ''}
+                    items={istioConfigItems}
+                  />
+                </StackItem>
+              </Stack>
             </GridItem>
           </Grid>
         </RenderComponentScroll>
