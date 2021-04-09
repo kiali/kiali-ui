@@ -38,7 +38,10 @@ class WorkloadDescription extends React.Component<WorkloadDescriptionProps> {
       }
       workload.services.forEach(s => services.push(s.name));
     }
-    // const isTemplateLabels = workload && ['Deployment', 'ReplicaSet', 'ReplicationController', 'DeploymentConfig', 'StatefulSet'].indexOf(workload.type) >= 0;
+    const isTemplateLabels =
+      workload &&
+      ['Deployment', 'ReplicaSet', 'ReplicationController', 'DeploymentConfig', 'StatefulSet'].indexOf(workload.type) >=
+        0;
     // const runtimes = (workload?.runtimes || []).map(r => r.name).filter(name => name !== '');
     return workload ? (
       <Card>
@@ -48,14 +51,18 @@ class WorkloadDescription extends React.Component<WorkloadDescriptionProps> {
           </Title>
         </CardHeader>
         <CardBody>
-          {workload.labels && <Labels labels={workload.labels} />}
+          {workload.labels && (
+            <Labels
+              labels={workload.labels}
+              tooltipMessage={isTemplateLabels ? 'Labels defined on the Workload template' : undefined}
+            />
+          )}
           <DetailDescription namespace={this.props.namespace} apps={apps} services={services} />
           {!this.props.workload?.istioSidecar && (
             <div>
               <MissingSidecar namespace={this.props.namespace} />
             </div>
           )}
-
           <Title headingLevel="h3" size="lg" className={titleStyle}>
             Properties
           </Title>
