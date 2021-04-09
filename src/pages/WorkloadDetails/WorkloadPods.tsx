@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { ObjectValidation, Pod } from '../../types/IstioObjects';
-import Labels from '../../components/Label/Labels';
 import { cellWidth, ICell, IRow, Table, TableBody, TableHeader, TableVariant } from '@patternfly/react-table';
-import LocalTime from '../../components/Time/LocalTime';
 import {
   Card,
   CardBody,
@@ -11,11 +9,10 @@ import {
   EmptyStateBody,
   EmptyStateIcon,
   EmptyStateVariant,
-  Title,
-  Tooltip
+  Title
 } from '@patternfly/react-core';
 import { CogsIcon } from '@patternfly/react-icons';
-import PodStatus from './WorkloadInfo/PodStatus';
+import PodStatus from './PodStatus';
 
 type WorkloadPodsProps = {
   namespace: string;
@@ -28,16 +25,7 @@ class WorkloadPods extends React.Component<WorkloadPodsProps> {
   columns(): ICell[] {
     // TODO: Casting 'as any' because @patternfly/react-table@2.22.19 has a typing bug. Remove the casting when PF fixes it.
     // https://github.com/patternfly/patternfly-next/issues/2373
-    return [
-      { title: 'Status', transforms: [cellWidth(10) as any] },
-      { title: 'Name' },
-      { title: 'Created at' },
-      { title: 'Created by' },
-      { title: 'Labels' },
-      { title: 'Istio Init Containers' },
-      { title: 'Istio Containers' },
-      { title: 'Phase' }
-    ];
+    return [{ title: 'Name' }, { title: 'Status', transforms: [cellWidth(10) as any] }];
   }
 
   noPods(): IRow[] {
@@ -54,32 +42,11 @@ class WorkloadPods extends React.Component<WorkloadPodsProps> {
                 <EmptyStateBody>No Pods in workload {this.props.workload}</EmptyStateBody>
               </EmptyState>
             ),
-            props: { colSpan: 8 }
+            props: { colSpan: 2 }
           }
         ]
       }
     ];
-  }
-
-  phase(pod: Pod): React.ReactFragment {
-    const phase = !!pod.statusReason ? pod.statusReason : pod.status;
-    const tooltipPhase = !!pod.statusReason ? `${pod.status}: ${pod.statusReason}` : pod.status;
-    const tooltip = !!pod.statusMessage ? (
-      <>
-        {tooltipPhase}
-        <br></br>
-        {pod.statusMessage}
-      </>
-    ) : (
-      tooltipPhase
-    );
-    return (
-      <>
-        <Tooltip content={<>{tooltip}</>}>
-          <span style={{ whiteSpace: 'nowrap' }}>{phase}</span>
-        </Tooltip>
-      </>
-    );
   }
 
   rows(): IRow[] {
@@ -88,7 +55,7 @@ class WorkloadPods extends React.Component<WorkloadPodsProps> {
     }
 
     let rows: IRow[] = [];
-    (this.props.pods || []).map((pod, podIdx) => {
+    (this.props.pods || []).map((pod, _podIdx) => {
       let validation: ObjectValidation = {} as ObjectValidation;
       if (this.props.validations[pod.name]) {
         validation = this.props.validations[pod.name];
@@ -96,20 +63,13 @@ class WorkloadPods extends React.Component<WorkloadPodsProps> {
 
       rows.push({
         cells: [
-          { title: <PodStatus status={pod.proxyStatus} checks={validation.checks} /> },
           { title: <>{pod.name}</> },
-          { title: <LocalTime time={pod.createdAt || ''} /> },
           {
-            title:
-              pod.createdBy && pod.createdBy.length > 0
-                ? pod.createdBy.map(ref => ref.name + ' (' + ref.kind + ')').join(', ')
-                : ''
-          },
-          { title: <Labels key={'labels' + podIdx} labels={pod.labels} /> },
-          { title: pod.istioInitContainers ? pod.istioInitContainers.map(c => `${c.image}`).join(', ') : '' },
-          { title: pod.istioContainers ? pod.istioContainers.map(c => `${c.image}`).join(', ') : '' },
-          {
-            title: this.phase(pod)
+            title: (
+              <>
+                <PodStatus proxyStatus={pod.proxyStatus} checks={validation.checks} />
+              </>
+            )
           }
         ]
       });

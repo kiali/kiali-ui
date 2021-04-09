@@ -163,6 +163,14 @@ class WorkloadInfo extends React.Component<WorkloadInfoProps, WorkloadInfoState>
           default:
           // Pod healthy
         }
+        // If statusReason is present
+        if (pod.statusReason) {
+          validations.pod[pod.name].checks.push({
+            message: pod.statusReason,
+            severity: ValidationTypes.Warning,
+            path: ''
+          });
+        }
         validations.pod[pod.name].valid = validations.pod[pod.name].checks.length === 0;
       });
     }
@@ -172,60 +180,6 @@ class WorkloadInfo extends React.Component<WorkloadInfoProps, WorkloadInfoState>
   render() {
     const workload = this.props.workload;
     const pods = workload?.pods || [];
-
-    /*    const getSeverityIcon: any = (severity: ValidationTypes = ValidationTypes.Error) => (
-      <span className={tabIconStyle}>
-        {' '}
-        <Validation severity={severity} />
-      </span>
-    );*/
-
-    /*    const getIstioValidationIcon = (typeNames: { [key: string]: string[] }) => {
-      let severity = ValidationTypes.Correct;
-      if (this.state.workloadIstioConfig && this.state.workloadIstioConfig.validations) {
-        const istioValidations = this.state.workloadIstioConfig.validations;
-        Object.keys(istioValidations).forEach(type => {
-          const typeValidations = istioValidations[type];
-          Object.keys(typeValidations).forEach(name => {
-            const nameValidation = typeValidations[name];
-            if (typeNames[type] && typeNames[type].includes(name)) {
-              const itemSeverity = validationToSeverity(nameValidation);
-              if (
-                (itemSeverity === ValidationTypes.Warning && severity !== ValidationTypes.Error) ||
-                itemSeverity === ValidationTypes.Error
-              ) {
-                severity = itemSeverity;
-              }
-            }
-          });
-        });
-      }
-      return severity !== ValidationTypes.Correct ? getSeverityIcon(severity) : undefined;
-    };*/
-
-    /*    const getWorkloadValidationIcon = (keys: string[], type: string) => {
-      let severity = ValidationTypes.Warning;
-      keys.forEach(key => {
-        const validations = this.state.validations![type][key];
-        if (validationToSeverity(validations) === ValidationTypes.Error) {
-          severity = ValidationTypes.Error;
-        }
-      });
-      return getSeverityIcon(severity);
-    };*/
-
-    /*    const podTabTitle: any = (
-      <>
-        Pods ({pods.length}){' '}
-        {validationChecks.hasPodsChecks
-          ? getWorkloadValidationIcon(
-              pods.map(a => a.name),
-              'pod'
-            )
-          : undefined}
-      </>
-    );*/
-
     const istioConfigItems = this.state.workloadIstioConfig ? toIstioItems(this.state.workloadIstioConfig) : [];
     // Helper to iterate at same time on workloadIstioConfig resources and validations
     const wkIstioTypes = [
