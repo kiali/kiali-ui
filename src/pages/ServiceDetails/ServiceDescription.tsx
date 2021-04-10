@@ -1,28 +1,39 @@
 import * as React from 'react';
 import { Card, CardBody, CardHeader, Title } from '@patternfly/react-core';
 import { ServiceDetailsInfo } from '../../types/ServiceInfo';
-import { ObjectCheck, ObjectValidation } from '../../types/IstioObjects';
-import ValidationList from '../../components/Validations/ValidationList';
 import DetailDescription from '../../components/Details/DetailDescription';
 import { AppWorkload } from '../../types/App';
 import { serverConfig } from '../../config';
+import Labels from '../../components/Label/Labels';
+import MissingSidecar from '../../components/MissingSidecar/MissingSidecar';
+import { style } from 'typestyle';
+import LocalTime from '../../components/Time/LocalTime';
+import { renderAPILogo } from '../../components/Logo/Logos';
+import { TextOrLink } from '../../components/TextOrLink';
 
 interface ServiceInfoDescriptionProps {
   namespace: string;
   serviceDetails?: ServiceDetailsInfo;
-  validations?: ObjectValidation;
 }
 
 type State = {
   serviceInfoTabKey: number;
 };
 
-/*const listStyle = style({
-  listStyleType: 'none',
-  padding: 0
+const titleStyle = style({
+  margin: '15px 0 11px 0'
 });
 
-const ExternalNameType = 'ExternalName';*/
+const resourceListStyle = style({
+  margin: '0px 0 11px 0',
+  $nest: {
+    '& > ul > li > span': {
+      float: 'left',
+      width: '125px',
+      fontWeight: 700
+    }
+  }
+});
 
 class ServiceDescription extends React.Component<ServiceInfoDescriptionProps, State> {
   constructor(props: ServiceInfoDescriptionProps) {
@@ -37,20 +48,6 @@ class ServiceDescription extends React.Component<ServiceInfoDescriptionProps, St
       serviceInfoTabKey: tabIndex
     });
   };
-
-  getPortOver(portId: number) {
-    return <ValidationList checks={this.getPortChecks(portId)} />;
-  }
-
-  getPortChecks(portId: number): ObjectCheck[] {
-    return this.props.validations
-      ? this.props.validations.checks.filter(c => c.path === 'spec/ports[' + portId + ']')
-      : [];
-  }
-
-  hasIssue(portId: number): boolean {
-    return this.getPortChecks(portId).length > 0;
-  }
 
   render() {
     const apps: string[] = [];
@@ -71,6 +68,23 @@ class ServiceDescription extends React.Component<ServiceInfoDescriptionProps, St
         });
       }
     }
+    // We will show service labels only when there is some label that is not present in the selector
+    let showServiceLabels = false;
+    if (
+      this.props.serviceDetails &&
+      this.props.serviceDetails.service.labels &&
+      this.props.serviceDetails.service.selectors
+    ) {
+      const keys = Object.keys(this.props.serviceDetails.service.labels);
+      for (let i = 0; i < keys.length; i++) {
+        const key = keys[i];
+        const value = this.props.serviceDetails.service.labels[key];
+        if (this.props.serviceDetails.service.selectors[key] !== value) {
+          showServiceLabels = true;
+          break;
+        }
+      }
+    }
     return (
       <Card>
         <CardHeader>
@@ -79,135 +93,56 @@ class ServiceDescription extends React.Component<ServiceInfoDescriptionProps, St
           </Title>
         </CardHeader>
         <CardBody>
+          {this.props.serviceDetails && showServiceLabels && (
+            <Labels
+              labels={this.props.serviceDetails.service.labels}
+              tooltipMessage={'Labels defined on the Service'}
+            />
+          )}
+          {this.props.serviceDetails && (
+            <Labels
+              labels={this.props.serviceDetails.service.selectors}
+              tooltipMessage={'Labels defined on the ' + (showServiceLabels ? 'Selector' : 'Service and Selector')}
+            />
+          )}
           <DetailDescription namespace={this.props.namespace} apps={apps} workloads={workloads} />
-          {/*
-          <Tabs
-            isFilled={true}
-            activeKey={this.state.serviceInfoTabKey}
-            onSelect={this.serviceInfoHandleTabClick}
-            style={{ marginTop: '20px' }}
-          >
-            <Tab eventKey={0} title={'Properties'}>
-              <Stack gutter={'md'} style={{ marginTop: '20px' }}>
-                <StackItem id="name">
-                  <Title headingLevel="h6" size="md">
-                    {' '}
-                    Name{' '}
-                  </Title>
-                  {this.props.name}
-                  {!this.props.istioEnabled && (
-                    <span style={{ marginLeft: '10px' }}>
-                      <MissingSidecar namespace={this.props.namespace} />
-                    </span>
-                  )}
-                </StackItem>
-                <StackItem id={'labels'}>
-                  <Title headingLevel="h6" size="md">
-                    {' '}
-                    Labels{' '}
-                  </Title>
-                  <Labels labels={this.props.labels || {}} />
-                </StackItem>
-                <StackItem id={'resource_version'}>
-                  <Title headingLevel="h6" size="md">
-                    {' '}
-                    Resource Version{' '}
-                  </Title>
-                  {this.props.resourceVersion}
-                </StackItem>
-                <StackItem id={'selectors'}>
-                  <Title headingLevel="h6" size="md">
-                    {' '}
-                    Selectors{' '}
-                  </Title>
-                  <Labels labels={this.props.selectors || {}} />
-                </StackItem>
-                <StackItem id={'created_at'}>
-                  <Title headingLevel="h6" size="md">
-                    {' '}
-                    Created at{' '}
-                  </Title>
-                  <LocalTime time={this.props.createdAt} />
-                </StackItem>
-                {this.props.additionalDetails.map((additionalItem, idx) => {
+          {this.props.serviceDetails && !this.props.serviceDetails.istioSidecar && (
+            <div>
+              <MissingSidecar namespace={this.props.namespace} />
+            </div>
+          )}
+          <Title headingLevel="h3" size="lg" className={titleStyle}>
+            Properties
+          </Title>
+          <div key="properties-list" className={resourceListStyle}>
+            <ul style={{ listStyleType: 'none' }}>
+              {this.props.serviceDetails && (
+                <li>
+                  <span>Created</span>
+                  <div style={{ display: 'inline-block' }}>
+                    <LocalTime time={this.props.serviceDetails.service.createdAt} />
+                  </div>
+                </li>
+              )}
+              {this.props.serviceDetails && (
+                <li>
+                  <span>Version</span>
+                  {this.props.serviceDetails.service.resourceVersion}
+                </li>
+              )}
+              {this.props.serviceDetails &&
+                this.props.serviceDetails.additionalDetails &&
+                this.props.serviceDetails.additionalDetails.map((additionalItem, idx) => {
                   return (
-                    <StackItem key={'additional-details-' + idx} id={'additional-details-' + idx}>
-                      <Title headingLevel="h6" size="md">
-                        {' '}
-                        {additionalItem.title}{' '}
-                      </Title>
+                    <li key={'additional-details-' + idx} id={'additional-details-' + idx}>
+                      <span>{additionalItem.title}</span>
                       {additionalItem.icon && renderAPILogo(additionalItem.icon, undefined, idx)}
                       <TextOrLink text={additionalItem.value} urlTruncate={64} />
-                    </StackItem>
+                    </li>
                   );
                 })}
-              </Stack>
-            </Tab>
-            <Tab eventKey={1} title={'Network'}>
-              <Stack gutter={'md'} style={{ marginTop: '20px' }}>
-                <StackItem id={'ip'}>
-                  <Title headingLevel="h6" size="md">
-                    {' '}
-                    {this.props.type !== ExternalNameType ? 'Service IP' : 'ExternalName'}{' '}
-                  </Title>
-                  {this.props.type !== ExternalNameType
-                    ? this.props.ip
-                      ? this.props.ip
-                      : ''
-                    : this.props.externalName
-                    ? this.props.externalName
-                    : ''}
-                </StackItem>
-                <StackItem id={'endpoints'}>
-                  <Title headingLevel="h6" size="md">
-                    {' '}
-                    Endpoints{' '}
-                  </Title>
-                  <Stack gutter={'md'}>
-                    {(this.props.endpoints || []).map((endpoint, i) =>
-                      (endpoint.addresses || []).map((address, u) => (
-                        <StackItem key={'endpoint_' + i + '_address_' + u}>
-                          {address.name !== '' ? (
-                            <Tooltip content={<>{address.name}</>}>
-                              <span>
-                                <EyeIcon /> {address.ip}
-                              </span>
-                            </Tooltip>
-                          ) : (
-                            <>{address.name}</>
-                          )}
-                        </StackItem>
-                      ))
-                    )}
-                  </Stack>
-                </StackItem>
-                <StackItem id={'ports'}>
-                  <Title headingLevel="h6" size="md">
-                    <ValidationObjectSummary
-                      id={this.props.name + '-config-validation'}
-                      validations={this.props.validations ? [this.props.validations] : []}
-                    />
-                    <span style={{ marginLeft: '10px' }}>Ports</span>
-                  </Title>
-                  <ul className={listStyle}>
-                    {(this.props.ports || []).map((port, i) => (
-                      <li key={'port_' + i}>
-                        {this.hasIssue(i) ? this.getPortOver(i) : undefined} {port.protocol} {port.name} ({port.port})
-                      </li>
-                    ))}
-                  </ul>
-                </StackItem>
-                <StackItem id={'type'}>
-                  <Title headingLevel="h6" size="md">
-                    {' '}
-                    Type{' '}
-                  </Title>
-                  {this.props.type ? this.props.type : ''}
-                </StackItem>
-              </Stack>
-            </Tab>
-          </Tabs>
-          */}
+            </ul>
+          </div>
         </CardBody>
       </Card>
     );

@@ -5,7 +5,6 @@ import ServiceId from '../../types/ServiceId';
 import ServiceDescription from './ServiceDescription';
 import { ServiceDetailsInfo } from '../../types/ServiceInfo';
 import { ObjectValidation, PeerAuthentication, Validations } from '../../types/IstioObjects';
-import { activeTab } from '../../components/Tab/Tabs';
 import { RenderComponentScroll } from '../../components/Nav/Page';
 import { PromisesRegistry } from 'utils/CancelablePromises';
 import { DurationInSeconds, TimeInMilliseconds } from 'types/Common';
@@ -17,6 +16,7 @@ import { durationSelector } from '../../store/Selectors';
 import MiniGraphCard from '../../components/CytoscapeGraph/MiniGraphCard';
 import HealthCard from '../../components/Health/HealthCard';
 import IstioConfigCard from '../../components/IstioConfigCard/IstioConfigCard';
+import ServiceNetwork from './ServiceNetwork';
 
 interface Props extends ServiceId {
   duration: DurationInSeconds;
@@ -28,17 +28,8 @@ interface Props extends ServiceId {
 }
 
 type ServiceInfoState = {
-  currentTab: string;
   tabHeight?: number;
 };
-
-interface ValidationChecks {
-  hasVirtualServiceChecks: boolean;
-  hasDestinationRuleChecks: boolean;
-}
-
-const tabName = 'list';
-const defaultTab = 'workloads';
 
 const fullHeightStyle = style({
   height: '100%'
@@ -51,7 +42,7 @@ class ServiceInfo extends React.Component<Props, ServiceInfoState> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      currentTab: activeTab(tabName, defaultTab)
+      tabHeight: 300
     };
   }
 
@@ -60,10 +51,6 @@ class ServiceInfo extends React.Component<Props, ServiceInfoState> {
   }
 
   componentDidUpdate(prev: Props) {
-    const aTab = activeTab(tabName, defaultTab);
-    if (this.state.currentTab !== aTab) {
-      this.setState({ currentTab: aTab });
-    }
     if (
       prev.duration !== this.props.duration ||
       prev.lastRefreshAt !== this.props.lastRefreshAt ||
@@ -78,33 +65,6 @@ class ServiceInfo extends React.Component<Props, ServiceInfoState> {
     this.graphDataSource.fetchForService(this.props.duration, this.props.namespace, this.props.service);
   };
 
-  private validationChecks(): ValidationChecks {
-    const validationChecks = {
-      hasVirtualServiceChecks: false,
-      hasDestinationRuleChecks: false
-    };
-    const validations = this.props.validations || {};
-    if (this.props.serviceDetails) {
-      validationChecks.hasVirtualServiceChecks = this.props.serviceDetails.virtualServices.items.some(
-        virtualService =>
-          validations.virtualservice &&
-          validations.virtualservice[virtualService.metadata.name] &&
-          validations.virtualservice[virtualService.metadata.name].checks &&
-          validations.virtualservice[virtualService.metadata.name].checks.length > 0
-      );
-      validationChecks.hasDestinationRuleChecks = this.props.serviceDetails.destinationRules.items.some(
-        destinationRule =>
-          validations.destinationrule &&
-          destinationRule.metadata &&
-          validations.destinationrule[destinationRule.metadata.name] &&
-          validations.destinationrule[destinationRule.metadata.name].checks &&
-          validations.destinationrule[destinationRule.metadata.name].checks.length > 0
-      );
-    }
-
-    return validationChecks;
-  }
-
   private getServiceValidation(): ObjectValidation | undefined {
     if (this.props.validations && this.props.validations.service && this.props.serviceDetails) {
       return this.props.validations.service[this.props.serviceDetails.service.name];
@@ -113,37 +73,6 @@ class ServiceInfo extends React.Component<Props, ServiceInfoState> {
   }
 
   render() {
-    const validationChecks = this.validationChecks();
-    /*    const getSeverityIcon: any = (severity: ValidationTypes = ValidationTypes.Error) => (
-      <span className={tabIconStyle}>
-        {' '}
-        <Validation severity={severity} />
-      </span>
-    );*/
-
-    /*    const getValidationIcon = (keys: string[], types: string[]) => {
-      let severity = ValidationTypes.Warning;
-      keys.forEach(key => {
-        types.forEach(type => {
-          if (this.props.validations && this.props.validations[type]) {
-            const validationsForIcon = (this.props.validations || {})![type][key];
-            if (validationToSeverity(validationsForIcon) === ValidationTypes.Error) {
-              severity = ValidationTypes.Error;
-            }
-          }
-        });
-      });
-      return getSeverityIcon(severity);
-    };*/
-
-    if (this.props.serviceDetails) {
-      if (validationChecks.hasVirtualServiceChecks || validationChecks.hasDestinationRuleChecks) {
-        const names: string[] = [];
-        this.props.serviceDetails.virtualServices?.items.forEach(vs => names.push(vs.metadata.name));
-        this.props.serviceDetails.destinationRules?.items.forEach(dr => names.push(dr.metadata.name));
-      }
-    }
-
     const vsIstioConfigItems = this.props.serviceDetails?.virtualServices
       ? vsToIstioItems(this.props.serviceDetails.virtualServices.items, this.props.serviceDetails.validations)
       : [];
@@ -163,11 +92,17 @@ class ServiceInfo extends React.Component<Props, ServiceInfoState> {
         <RenderComponentScroll onResize={height => this.setState({ tabHeight: height })}>
           <Grid gutter={'md'} className={fullHeightStyle}>
             <GridItem span={3}>
-              <ServiceDescription
-                namespace={this.props.namespace}
-                serviceDetails={this.props.serviceDetails}
-                validations={this.getServiceValidation()}
-              />
+              <Stack gutter="md">
+                <StackItem>
+                  <ServiceDescription namespace={this.props.namespace} serviceDetails={this.props.serviceDetails} />
+                </StackItem>
+                {this.props.serviceDetails && (
+                  <ServiceNetwork
+                    serviceDetails={this.props.serviceDetails}
+                    validations={this.getServiceValidation()}
+                  />
+                )}
+              </Stack>
             </GridItem>
             <GridItem span={6}>
               <MiniGraphCard
