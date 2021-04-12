@@ -30,10 +30,12 @@ export class HealthDetails extends React.PureComponent<Props, {}> {
       : false;
     return showTraffic ? (
       <div key={idx}>
-        <Title headingLevel="h3" size="lg" className={titleStyle}>
-          {item.title + (item.text && item.text.length > 0 ? ': ' : '')}{' '}
-          {config && <InfoAltIcon color={PFColors.Black600} />}
-        </Title>
+        {!this.props.tooltip && (
+          <Title headingLevel="h3" size="lg" className={titleStyle}>
+            {item.title + (item.text && item.text.length > 0 ? ': ' : '')}{' '}
+            {config && <InfoAltIcon color={PFColors.Black600} />}
+          </Title>
+        )}
         {item.text}
         {item.children && (
           <ul style={{ listStyleType: 'none' }}>
@@ -69,9 +71,11 @@ export class HealthDetails extends React.PureComponent<Props, {}> {
       ? this.renderErrorRate(item, idx)
       : (item.status !== H.HEALTHY || !this.props.tooltip) && (
           <div key={idx}>
-            <Title headingLevel="h3" size="lg" className={titleStyle}>
-              {item.title + (item.text && item.text.length > 0 ? ': ' : '')}
-            </Title>
+            {!this.props.tooltip && (
+              <Title headingLevel="h3" size="lg" className={titleStyle}>
+                {item.title + (item.text && item.text.length > 0 ? ': ' : '')}
+              </Title>
+            )}
             {item.text}
             {item.children && (
               <ul style={{ listStyleType: 'none' }}>

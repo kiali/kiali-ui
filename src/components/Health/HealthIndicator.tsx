@@ -1,10 +1,9 @@
 import * as React from 'react';
-import { PopoverPosition, Text, TextContent, TextVariants, Tooltip } from '@patternfly/react-core';
+import { PopoverPosition, Tooltip } from '@patternfly/react-core';
 import { HealthDetails } from './HealthDetails';
 import * as H from '../../types/Health';
 import { createIcon } from './Helper';
 import './Health.css';
-import { PFColors } from '../Pf/PfColors';
 
 export enum DisplayMode {
   LARGE,
@@ -68,12 +67,13 @@ export class HealthIndicator extends React.PureComponent<Props, HealthState> {
       </>
     );
   }
+
   renderHealthTooltip(health: H.Health) {
     return (
-      <TextContent style={{ color: PFColors.White }}>
-        <Text component={TextVariants.h2}>{this.state.globalStatus.name}</Text>
+      <div>
+        <strong>{this.state.globalStatus.name}</strong>
         <HealthDetails health={health} tooltip={true} />
-      </TextContent>
+      </div>
     );
   }
 
