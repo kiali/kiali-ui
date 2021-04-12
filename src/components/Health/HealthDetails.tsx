@@ -4,11 +4,17 @@ import { createIcon } from './Helper';
 import { InfoAltIcon } from '@patternfly/react-icons';
 import './Health.css';
 import { PFColors } from '../Pf/PfColors';
+import { Title } from '@patternfly/react-core';
+import { style } from 'typestyle';
 
 interface Props {
   health: H.Health;
   tooltip?: boolean;
 }
+
+const titleStyle = style({
+  margin: '15px 0 11px 0'
+});
 
 export class HealthDetails extends React.PureComponent<Props, {}> {
   renderErrorRate = (item: H.HealthItem, idx: number) => {
@@ -24,18 +30,19 @@ export class HealthDetails extends React.PureComponent<Props, {}> {
       : false;
     return showTraffic ? (
       <div key={idx}>
-        <strong>
-          {' ' + item.title + (item.text && item.text.length > 0 ? ': ' : '')}{' '}
+        <Title headingLevel="h3" size="lg" className={titleStyle}>
+          {item.title + (item.text && item.text.length > 0 ? ': ' : '')}{' '}
           {config && <InfoAltIcon color={PFColors.Black600} />}
-        </strong>
+        </Title>
         {item.text}
         {item.children && (
-          <ul style={{ listStyleType: 'none', paddingLeft: 12 }}>
+          <ul style={{ listStyleType: 'none' }}>
             {item.children.map((sub, subIdx) => {
               const showItem = sub.value && sub.value > 0;
               return (sub.status !== H.HEALTHY && showItem) || !this.props.tooltip ? (
                 <li key={subIdx}>
-                  {createIcon(sub.status)} {sub.text}
+                  <span style={{ marginRight: '10px' }}>{createIcon(sub.status)}</span>
+                  {sub.text}
                 </li>
               ) : (
                 <React.Fragment key={subIdx} />
@@ -43,7 +50,8 @@ export class HealthDetails extends React.PureComponent<Props, {}> {
             })}
             {config && isValueInConfig && (
               <li key={'degraded_failure_config'}>
-                {createIcon(H.DEGRADED)}: {config.degraded === 0 ? '>' : '>='}
+                <span style={{ marginRight: '10px' }}>{createIcon(H.DEGRADED)}</span>:{' '}
+                {config.degraded === 0 ? '>' : '>='}
                 {config.degraded}% {createIcon(H.FAILURE)}: {config.degraded === 0 ? '>' : '>='}
                 {config.failure}%
               </li>
@@ -61,14 +69,17 @@ export class HealthDetails extends React.PureComponent<Props, {}> {
       ? this.renderErrorRate(item, idx)
       : (item.status !== H.HEALTHY || !this.props.tooltip) && (
           <div key={idx}>
-            <strong>{' ' + item.title + (item.text && item.text.length > 0 ? ': ' : '')}</strong>
+            <Title headingLevel="h3" size="lg" className={titleStyle}>
+              {item.title + (item.text && item.text.length > 0 ? ': ' : '')}
+            </Title>
             {item.text}
             {item.children && (
-              <ul style={{ listStyleType: 'none', paddingLeft: 12 }}>
+              <ul style={{ listStyleType: 'none' }}>
                 {item.children.map((sub, subIdx) => {
                   return (
                     <li key={subIdx}>
-                      {createIcon(sub.status)} {sub.text}
+                      <span style={{ marginRight: '10px' }}>{createIcon(sub.status)}</span>
+                      {sub.text}
                     </li>
                   );
                 })}

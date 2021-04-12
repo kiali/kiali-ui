@@ -52,18 +52,19 @@ export class HealthIndicator extends React.PureComponent<Props, HealthState> {
   renderLarge(health: H.Health) {
     const spanStyle: React.CSSProperties = {
       color: this.state.globalStatus.color,
-      fontWeight: 'bold',
-      position: 'relative',
-      top: -9,
-      left: 10
+      fontWeight: 'bold'
     };
     return (
       <>
-        {createIcon(this.state.globalStatus, 'lg')}
-        <span style={spanStyle}>{this.state.globalStatus.name}</span>
-        <br />
-        <br />
-        <HealthDetails health={health} />
+        <div>
+          <span style={spanStyle}>
+            <span style={{ marginRight: '10px' }}>{createIcon(this.state.globalStatus, 'sm')}</span>
+            {this.state.globalStatus.name}
+          </span>
+        </div>
+        <div>
+          <HealthDetails health={health} />
+        </div>
       </>
     );
   }

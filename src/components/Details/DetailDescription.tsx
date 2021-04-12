@@ -14,7 +14,7 @@ type Props = {
 
 const iconStyle = style({
   margin: '0 0 0 0',
-  padding: '0 0 8px 0',
+  padding: '0 0 0 0',
   display: 'inline-block'
 });
 
