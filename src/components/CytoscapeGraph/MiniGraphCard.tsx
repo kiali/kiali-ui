@@ -25,6 +25,7 @@ const initGraphContainerStyle = style({ width: '100%', height: '100%' });
 type MiniGraphCardProps = {
   title: string;
   dataSource: GraphDataSource;
+  mtlsEnabled: boolean;
   graphContainerStyle?: string;
 };
 
@@ -97,17 +98,17 @@ export default class MiniGraphCard extends React.Component<MiniGraphCardProps, M
                 timestamp: this.props.dataSource.graphTimestamp
               }}
               toggleIdleNodes={() => undefined}
-              edgeLabelMode={EdgeLabelMode.NONE}
-              isMTLSEnabled={false}
+              edgeLabelMode={EdgeLabelMode.REQUEST_RATE}
+              isMTLSEnabled={this.props.mtlsEnabled}
               isMiniGraph={true}
               layout={DagreGraph.getLayout()}
               onNodeTap={this.handleNodeTap}
               refreshInterval={0}
-              showCircuitBreakers={false}
+              showCircuitBreakers={true}
               showIdleEdges={false}
               showMissingSidecars={true}
               showOperationNodes={false}
-              showSecurity={false}
+              showSecurity={true}
               showServiceNodes={true}
               showTrafficAnimation={false}
               showIdleNodes={false}

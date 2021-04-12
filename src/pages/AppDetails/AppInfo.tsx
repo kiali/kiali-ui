@@ -10,7 +10,7 @@ import GraphDataSource from 'services/GraphDataSource';
 import { AppHealth } from 'types/Health';
 import { KialiAppState } from '../../store/Store';
 import { connect } from 'react-redux';
-import { durationSelector } from '../../store/Selectors';
+import { durationSelector, meshWideMTLSEnabledSelector } from '../../store/Selectors';
 import { style } from 'typestyle';
 import MiniGraphCard from '../../components/CytoscapeGraph/MiniGraphCard';
 import HealthCard from '../../components/Health/HealthCard';
@@ -19,6 +19,7 @@ type AppInfoProps = {
   app?: App;
   duration: DurationInSeconds;
   lastRefreshAt: TimeInMilliseconds;
+  mtlsEnabled: boolean;
 };
 
 type AppInfoState = {
@@ -75,6 +76,7 @@ class AppInfo extends React.Component<AppInfoProps, AppInfoState> {
             <MiniGraphCard
               title={this.props.app ? this.props.app.name : 'Graph'}
               dataSource={this.graphDataSource}
+              mtlsEnabled={this.props.mtlsEnabled}
               graphContainerStyle={graphContainerStyle}
             />
           </GridItem>
@@ -89,7 +91,8 @@ class AppInfo extends React.Component<AppInfoProps, AppInfoState> {
 
 const mapStateToProps = (state: KialiAppState) => ({
   duration: durationSelector(state),
-  lastRefreshAt: state.globalState.lastRefreshAt
+  lastRefreshAt: state.globalState.lastRefreshAt,
+  mtlsEnabled: meshWideMTLSEnabledSelector(state)
 });
 
 const AppInfoContainer = connect(mapStateToProps)(AppInfo);

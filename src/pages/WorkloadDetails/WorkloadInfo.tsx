@@ -15,7 +15,7 @@ import { isIstioNamespace } from '../../config/ServerConfig';
 import { IstioConfigList, toIstioItems } from '../../types/IstioConfigList';
 import { KialiAppState } from '../../store/Store';
 import { connect } from 'react-redux';
-import { durationSelector } from '../../store/Selectors';
+import { durationSelector, meshWideMTLSEnabledSelector } from '../../store/Selectors';
 import MiniGraphCard from '../../components/CytoscapeGraph/MiniGraphCard';
 import HealthCard from '../../components/Health/HealthCard';
 import IstioConfigCard from '../../components/IstioConfigCard/IstioConfigCard';
@@ -26,6 +26,7 @@ type WorkloadInfoProps = {
   workload?: Workload;
   duration: DurationInSeconds;
   lastRefreshAt: TimeInMilliseconds;
+  mtlsEnabled: boolean;
   refreshWorkload: () => void;
 };
 
@@ -231,6 +232,7 @@ class WorkloadInfo extends React.Component<WorkloadInfoProps, WorkloadInfoState>
               <MiniGraphCard
                 title={this.props.workload ? this.props.workload.name : 'Graph'}
                 dataSource={this.graphDataSource}
+                mtlsEnabled={this.props.mtlsEnabled}
                 graphContainerStyle={graphContainerStyle}
               />
             </GridItem>
@@ -260,7 +262,8 @@ class WorkloadInfo extends React.Component<WorkloadInfoProps, WorkloadInfoState>
 
 const mapStateToProps = (state: KialiAppState) => ({
   duration: durationSelector(state),
-  lastRefreshAt: state.globalState.lastRefreshAt
+  lastRefreshAt: state.globalState.lastRefreshAt,
+  mtlsEnabled: meshWideMTLSEnabledSelector(state)
 });
 
 const WorkloadInfoContainer = connect(mapStateToProps)(WorkloadInfo);

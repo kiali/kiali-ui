@@ -12,7 +12,7 @@ import GraphDataSource from 'services/GraphDataSource';
 import { drToIstioItems, vsToIstioItems } from '../../types/IstioConfigList';
 import { KialiAppState } from '../../store/Store';
 import { connect } from 'react-redux';
-import { durationSelector } from '../../store/Selectors';
+import { durationSelector, meshWideMTLSEnabledSelector } from '../../store/Selectors';
 import MiniGraphCard from '../../components/CytoscapeGraph/MiniGraphCard';
 import HealthCard from '../../components/Health/HealthCard';
 import IstioConfigCard from '../../components/IstioConfigCard/IstioConfigCard';
@@ -21,6 +21,7 @@ import ServiceNetwork from './ServiceNetwork';
 interface Props extends ServiceId {
   duration: DurationInSeconds;
   lastRefreshAt: TimeInMilliseconds;
+  mtlsEnabled: boolean;
   serviceDetails?: ServiceDetailsInfo;
   gateways: string[];
   peerAuthentications: PeerAuthentication[];
@@ -108,6 +109,7 @@ class ServiceInfo extends React.Component<Props, ServiceInfoState> {
               <MiniGraphCard
                 title={this.props.service}
                 dataSource={this.graphDataSource}
+                mtlsEnabled={this.props.mtlsEnabled}
                 graphContainerStyle={graphContainerStyle}
               />
             </GridItem>
@@ -137,7 +139,8 @@ class ServiceInfo extends React.Component<Props, ServiceInfoState> {
 
 const mapStateToProps = (state: KialiAppState) => ({
   duration: durationSelector(state),
-  lastRefreshAt: state.globalState.lastRefreshAt
+  lastRefreshAt: state.globalState.lastRefreshAt,
+  mtlsEnabled: meshWideMTLSEnabledSelector(state)
 });
 
 const ServiceInfoContainer = connect(mapStateToProps)(ServiceInfo);
