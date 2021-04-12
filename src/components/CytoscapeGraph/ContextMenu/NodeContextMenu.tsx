@@ -2,6 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { style } from 'typestyle';
+import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 
 import history from 'app/History';
 import { NodeType, DecoratedGraphNodeData, UNKNOWN } from 'types/Graph';
@@ -49,13 +50,6 @@ const graphContextMenuItemLinkStyle = style({
   color: '#363636'
 });
 
-const buttonAsLink = style({
-  background: 'none!important',
-  border: 'none',
-  padding: '0!important',
-});
-
-
 type Props = NodeContextMenuProps & ReduxProps;
 type LinkParams = { cluster: string; namespace: string; name: string; type: string };
 
@@ -90,7 +84,7 @@ export class NodeContextMenu extends React.PureComponent<Props> {
     return type && name ? { cluster, namespace, type, name } : undefined;
   }
 
-  createMenuItem(href: string, title: string, target: string = '_self', external: boolean = false, cluster: string = "") {
+  createMenuItem(href: string, title: string, target: string = '_self', external: boolean = false) {
     const commonLinkProps = {
       className: graphContextMenuItemLinkStyle,
       children: title,
@@ -102,15 +96,15 @@ export class NodeContextMenu extends React.PureComponent<Props> {
     if (external) {
       // Linter is not taking care that 'title' is passed as a property
       // eslint-disable-next-line
-      item = (<a href={href} {...commonLinkProps} />);
+      item = (
+        <>
+          <a href={href} rel="noreferrer noopener" {...commonLinkProps}>
+            {commonLinkProps.children} <ExternalLinkAltIcon/>
+          </a>
+        </>
+      );
     } else {
-      if (cluster.length !== 0 && cluster !== serverConfig?.clusterInfo?.name) {
-        item = (<button className={buttonAsLink}
-                        children={commonLinkProps.children}
-                        onClick={() => { this.props.element.emit('navigate_remote_kiali', [cluster, href]) }} />);
-      } else {
-        item = (<Link to={href} {...commonLinkProps} />);
-      }
+      item = (<Link to={href} {...commonLinkProps} />);
     }
 
     return (
@@ -153,7 +147,7 @@ export class NodeContextMenu extends React.PureComponent<Props> {
       menuOptions = (
         <>
           <div className={graphContextMenuSubTitleStyle}>Show</div>
-          {options.map(o => this.createMenuItem(o.url, o.text, o.target, o.external, o.cluster))}
+          {options.map(o => this.createMenuItem(o.url, o.text, o.target, o.external))}
         </>
       );
     }
@@ -182,7 +176,6 @@ export type ContextMenuOption = {
   url: string;
   external?: boolean;
   target?: string;
-  cluster: string;
 };
 
 export const clickHandler = (o: ContextMenuOption) => {
@@ -206,31 +199,43 @@ const getOptionsFromLinkParams = (linkParams: LinkParams, jaegerInfo?: JaegerInf
   const { namespace, type, name, cluster } = linkParams;
   const detailsPageUrl = `/namespaces/${namespace}/${type}/${name}`;
 
-  options.push({ text: 'Details', url: detailsPageUrl, cluster });
+  options.push({ text: 'Details', url: detailsPageUrl });
   if (type !== Paths.SERVICEENTRIES) {
-    options.push({ text: 'Traffic', url: `${detailsPageUrl}?tab=traffic`, cluster });
+    options.push({ text: 'Traffic', url: `${detailsPageUrl}?tab=traffic` });
     if (type === Paths.WORKLOADS) {
-      options.push({ text: 'Logs', url: `${detailsPageUrl}?tab=logs`, cluster });
+      options.push({ text: 'Logs', url: `${detailsPageUrl}?tab=logs` });
     }
     options.push({
       text: 'Inbound Metrics',
-      url: `${detailsPageUrl}?tab=${type === Paths.SERVICES ? 'metrics' : 'in_metrics'}`,
-      cluster
+      url: `${detailsPageUrl}?tab=${type === Paths.SERVICES ? 'metrics' : 'in_metrics'}`
     });
     if (type !== Paths.SERVICES) {
-      options.push({ text: 'Outbound Metrics', url: `${detailsPageUrl}?tab=out_metrics`, cluster });
+      options.push({ text: 'Outbound Metrics', url: `${detailsPageUrl}?tab=out_metrics` });
     }
     if (type === Paths.APPLICATIONS && jaegerInfo && jaegerInfo.enabled) {
       if (jaegerInfo.integration) {
-        options.push({ text: 'Traces', url: `${detailsPageUrl}?tab=traces`, cluster });
+        options.push({ text: 'Traces', url: `${detailsPageUrl}?tab=traces` });
       } else if (jaegerInfo.url) {
         options.push({
           text: 'Show Traces',
           url: getJaegerURL(namespace, jaegerInfo.namespaceSelector, jaegerInfo.url, name),
           external: true,
-          target: '_blank',
-          cluster
+          target: '_blank'
         });
+      }
+    }
+  }
+
+  if (cluster.length !== 0 && cluster !== serverConfig?.clusterInfo?.name) {
+    const externalClusterInfo = serverConfig.clusters[cluster];
+    const kialiInfo = externalClusterInfo.kialiInstances.find(instance => instance.url.length !== 0);
+    const externalKialiUrl = kialiInfo!.url.replace(/\/$/g, '') + '/console';
+
+    for (let idx = 0; idx < options.length; idx++) {
+      if (options[idx].target !== '_blank') {
+        options[idx].external = true;
+        options[idx].target = '_blank';
+        options[idx].url = externalKialiUrl + options[idx].url;
       }
     }
   }

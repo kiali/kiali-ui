@@ -53,7 +53,7 @@ import { PFColors } from 'components/Pf/PfColors';
 import { TourActions } from 'actions/TourActions';
 import { arrayEquals } from 'utils/Common';
 import { isKioskMode, getFocusSelector, unsetFocusSelector, getTraceId } from 'utils/SearchParamUtils';
-import { Badge, Button, Chip, Modal } from '@patternfly/react-core';
+import { Badge, Chip } from '@patternfly/react-core';
 import { toRangeString } from 'components/Time/Utils';
 import { replayBorder } from 'components/Time/Replay';
 import GraphDataSource, { FetchParams, EMPTY_GRAPH_DATA } from '../../services/GraphDataSource';
@@ -63,7 +63,6 @@ import { JaegerTrace } from 'types/JaegerInfo';
 import { JaegerThunkActions } from 'actions/JaegerThunkActions';
 import GraphTour from 'pages/Graph/GraphHelpTour';
 import { getNextTourStop, TourInfo } from 'components/Tour/TourStop';
-import { serverConfig } from '../../config';
 
 // GraphURLPathProps holds path variable values.  Currently all path variables are relevant only to a node graph
 type GraphURLPathProps = {
@@ -132,8 +131,6 @@ export type GraphData = {
 
 type GraphPageState = {
   graphData: GraphData;
-  externalKialiUrl?: string;
-  externalKialiCluster?: string;
 };
 
 const NUMBER_OF_DATAPOINTS = 30;
@@ -198,7 +195,6 @@ const GraphErrorBoundaryFallback = () => {
 
 export class GraphPage extends React.Component<GraphPageProps, GraphPageState> {
   private readonly errorBoundaryRef: any;
-  private cy?: Cy.Core;
   private cytoscapeGraphRef: any;
   private focusSelector?: string;
   private graphDataSource: GraphDataSource;
@@ -401,45 +397,12 @@ export class GraphPage extends React.Component<GraphPageProps, GraphPageState> {
     const isReady = !(isEmpty || this.state.graphData.isError);
     const isReplayReady = this.props.replayActive && !!this.props.replayQueryTime;
     const cy = this.cytoscapeGraphRef && this.cytoscapeGraphRef.current ? this.cytoscapeGraphRef.current.getCy() : null;
-    const externalClusterNavigating = this.state.externalKialiCluster ?
-      serverConfig.clusters[this.state.externalKialiCluster] : undefined;
-
     return (
       <>
         <FlexView className={conStyle} column={true}>
           <div>
             <GraphToolbarContainer cy={cy} disabled={this.state.graphData.isLoading} onToggleHelp={this.toggleHelp} />
           </div>
-          { this.state.externalKialiCluster && this.state.externalKialiUrl && externalClusterNavigating && (
-            <Modal
-              width={'50em'}
-              title="Confirm navigation to another Kiali"
-              isOpen={true}
-              showClose={false}
-              onClose={this.handleRemoteKialiNavigationCanceled}
-              actions={[
-                // This hidden button is here to force PatternFly to apply the right margins to the other
-                // elements.
-                <Button style={{ visibility: 'hidden' }}>&nbsp;</Button>,
-                <Button
-                  component="a"
-                  key="confirm"
-                  variant="primary"
-                  href={externalClusterNavigating.kialiInstances[0].url.replace(/\/$/g, '') + '/console' + this.state.externalKialiUrl}
-                  target="_blank"
-                  rel="noreferrer noopener"
-                  onClick={this.handleRemoteKialiNavigationCanceled}>
-                  Confirm
-                </Button>,
-                <Button variant="link" onClick={this.handleRemoteKialiNavigationCanceled}>
-                  Cancel
-                </Button>
-              ]}
-            >
-              <p>The element you selected is on the <strong>{this.state.externalKialiCluster}</strong> cluster. You will be redirected to the
-                Kiali instance of that cluster to view the requested page.</p>
-            </Modal>
-          )}
           <FlexView
             grow={true}
             className={`${cytoscapeGraphWrapperDivStyle} ${this.props.replayActive && replayBorder}`}
@@ -676,13 +639,6 @@ export class GraphPage extends React.Component<GraphPageProps, GraphPageState> {
     return;
   };
 
-  private handleRemoteKialiNavigationCanceled = () => {
-    this.setState({
-      externalKialiUrl: undefined,
-      externalKialiCluster: undefined
-    });
-  }
-
   private toggleHelp = () => {
     if (this.props.showLegend) {
       this.props.toggleLegend();
@@ -697,20 +653,6 @@ export class GraphPage extends React.Component<GraphPageProps, GraphPageState> {
 
   private setCytoscapeGraph(cytoscapeGraph: any) {
     this.cytoscapeGraphRef.current = cytoscapeGraph;
-
-    if (this.cytoscapeGraphRef.current) {
-      const cy = this.cytoscapeGraphRef.current.getCy();
-
-      if (cy && cy !== this.cy) {
-        this.cy = cy; // Save a reference to the Cy instance to avoid duplicating the following callback.
-        cy.on('navigate_remote_kiali', (_evt: Cy.EventObject, cluster, href) => {
-          this.setState({
-            externalKialiCluster: cluster,
-            externalKialiUrl: href
-          });
-        });
-      }
-    }
   }
 
   private loadGraphDataFromBackend = () => {
