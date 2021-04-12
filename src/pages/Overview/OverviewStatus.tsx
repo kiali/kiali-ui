@@ -52,7 +52,7 @@ class OverviewStatus extends React.Component<Props, {}> {
     return (
       <Tooltip
         aria-label={'Overview status'}
-        position={TooltipPosition.top}
+        position={TooltipPosition.auto}
         content={tooltipContent}
         className={'health_indicator'}
       >
