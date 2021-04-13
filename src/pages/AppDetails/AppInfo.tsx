@@ -72,16 +72,16 @@ class AppInfo extends React.Component<AppInfoProps, AppInfoState> {
           <GridItem span={3}>
             <AppDescription app={this.props.app} />
           </GridItem>
+          <GridItem span={3}>
+            {this.props.app ? <HealthCard name={this.props.app.name} health={this.state.health} /> : 'Loading'}
+          </GridItem>
           <GridItem span={6}>
             <MiniGraphCard
-              title={this.props.app ? this.props.app.name : 'Graph'}
+              title={'Graph'}
               dataSource={this.graphDataSource}
               mtlsEnabled={this.props.mtlsEnabled}
               graphContainerStyle={graphContainerStyle}
             />
-          </GridItem>
-          <GridItem span={3}>
-            {this.props.app ? <HealthCard name={this.props.app.name} health={this.state.health} /> : 'Loading'}
           </GridItem>
         </Grid>
       </RenderComponentScroll>

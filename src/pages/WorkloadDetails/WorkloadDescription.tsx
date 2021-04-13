@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Workload } from '../../types/Workload';
-import { Card, CardBody, CardHeader, Title } from '@patternfly/react-core';
+import { Badge, Card, CardBody, CardHeader, Title, Tooltip, TooltipPosition } from '@patternfly/react-core';
 import DetailDescription from '../../components/Details/DetailDescription';
 import { serverConfig } from '../../config';
 import { style } from 'typestyle';
@@ -30,6 +30,13 @@ const resourceListStyle = style({
   }
 });
 
+const iconStyle = style({
+  margin: '0 0 0 0',
+  padding: '0 0 0 0',
+  display: 'inline-block',
+  verticalAlign: '2px !important'
+});
+
 class WorkloadDescription extends React.Component<WorkloadDescriptionProps> {
   render() {
     const workload = this.props.workload;
@@ -50,7 +57,12 @@ class WorkloadDescription extends React.Component<WorkloadDescriptionProps> {
       <Card>
         <CardHeader>
           <Title headingLevel="h3" size="2xl">
-            Workload
+            <div key="service-icon" className={iconStyle}>
+              <Tooltip position={TooltipPosition.top} content={<>Workload</>}>
+                <Badge className={'virtualitem_badge_definition'}>W</Badge>
+              </Tooltip>
+            </div>
+            {this.props.workload ? this.props.workload.name : 'Workload'}
           </Title>
         </CardHeader>
         <CardBody>

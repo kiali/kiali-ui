@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Card, CardBody, CardHeader, Title } from '@patternfly/react-core';
+import { Badge, Card, CardBody, CardHeader, Title, Tooltip, TooltipPosition } from '@patternfly/react-core';
 import { ServiceDetailsInfo } from '../../types/ServiceInfo';
 import DetailDescription from '../../components/Details/DetailDescription';
 import { AppWorkload } from '../../types/App';
@@ -33,6 +33,13 @@ const resourceListStyle = style({
       fontWeight: 700
     }
   }
+});
+
+const iconStyle = style({
+  margin: '0 0 0 0',
+  padding: '0 0 0 0',
+  display: 'inline-block',
+  verticalAlign: '2px !important'
 });
 
 class ServiceDescription extends React.Component<ServiceInfoDescriptionProps, State> {
@@ -89,7 +96,12 @@ class ServiceDescription extends React.Component<ServiceInfoDescriptionProps, St
       <Card>
         <CardHeader>
           <Title headingLevel="h3" size="2xl">
-            Service
+            <div key="service-icon" className={iconStyle}>
+              <Tooltip position={TooltipPosition.top} content={<>Workload</>}>
+                <Badge className={'virtualitem_badge_definition'}>W</Badge>
+              </Tooltip>
+            </div>
+            {this.props.serviceDetails ? this.props.serviceDetails.service.name : 'Service'}
           </Title>
         </CardHeader>
         <CardBody>

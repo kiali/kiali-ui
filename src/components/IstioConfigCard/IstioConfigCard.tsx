@@ -28,7 +28,7 @@ class IstioConfigCard extends React.Component<Props> {
   columns(): ICell[] {
     // TODO: Casting 'as any' because @patternfly/react-table@2.22.19 has a typing bug. Remove the casting when PF fixes it.
     // https://github.com/patternfly/patternfly-next/issues/2373
-    return [{ title: 'Name' }, { title: 'Configuration', transforms: [cellWidth(10) as any] }];
+    return [{ title: 'Name' }, { title: 'Status', transforms: [cellWidth(10) as any] }];
   }
 
   noIstioConfig(): IRow[] {

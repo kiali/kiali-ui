@@ -228,14 +228,6 @@ class WorkloadInfo extends React.Component<WorkloadInfoProps, WorkloadInfoState>
                 </StackItem>
               </Stack>
             </GridItem>
-            <GridItem span={6}>
-              <MiniGraphCard
-                title={this.props.workload ? this.props.workload.name : 'Graph'}
-                dataSource={this.graphDataSource}
-                mtlsEnabled={this.props.mtlsEnabled}
-                graphContainerStyle={graphContainerStyle}
-              />
-            </GridItem>
             <GridItem span={3}>
               <Stack gutter="md">
                 <StackItem>
@@ -252,6 +244,14 @@ class WorkloadInfo extends React.Component<WorkloadInfoProps, WorkloadInfoState>
                   />
                 </StackItem>
               </Stack>
+            </GridItem>
+            <GridItem span={6}>
+              <MiniGraphCard
+                title={'Graph'}
+                dataSource={this.graphDataSource}
+                mtlsEnabled={this.props.mtlsEnabled}
+                graphContainerStyle={graphContainerStyle}
+              />
             </GridItem>
           </Grid>
         </RenderComponentScroll>

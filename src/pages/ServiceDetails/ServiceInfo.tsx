@@ -105,14 +105,6 @@ class ServiceInfo extends React.Component<Props, ServiceInfoState> {
                 )}
               </Stack>
             </GridItem>
-            <GridItem span={6}>
-              <MiniGraphCard
-                title={this.props.service}
-                dataSource={this.graphDataSource}
-                mtlsEnabled={this.props.mtlsEnabled}
-                graphContainerStyle={graphContainerStyle}
-              />
-            </GridItem>
             <GridItem span={3}>
               <Stack gutter="md">
                 <StackItem>
@@ -129,6 +121,14 @@ class ServiceInfo extends React.Component<Props, ServiceInfoState> {
                   <IstioConfigCard name={this.props.service} items={istioConfigItems} />
                 </StackItem>
               </Stack>
+            </GridItem>
+            <GridItem span={6}>
+              <MiniGraphCard
+                title={'Graph'}
+                dataSource={this.graphDataSource}
+                mtlsEnabled={this.props.mtlsEnabled}
+                graphContainerStyle={graphContainerStyle}
+              />
             </GridItem>
           </Grid>
         </RenderComponentScroll>
