@@ -97,11 +97,9 @@ export class NodeContextMenu extends React.PureComponent<Props> {
       // Linter is not taking care that 'title' is passed as a property
       // eslint-disable-next-line
       item = (
-        <>
-          <a href={href} rel="noreferrer noopener" {...commonLinkProps}>
-            {commonLinkProps.children} <ExternalLinkAltIcon/>
-          </a>
-        </>
+        <a href={href} rel="noreferrer noopener" {...commonLinkProps}>
+          {commonLinkProps.children} <ExternalLinkAltIcon/>
+        </a>
       );
     } else {
       item = (<Link to={href} {...commonLinkProps} />);
@@ -136,8 +134,7 @@ export class NodeContextMenu extends React.PureComponent<Props> {
         buildMenu = true;
       } else {
         menuOptions = (
-          <p>No options. This node represents a resource in <strong>{linkParams.cluster}</strong> cluster
-          where an accessible Kiali instance couldn't be found.</p>
+          <p>No remote links, Kiali is not available on the <strong>{linkParams.cluster}</strong> cluster.</p>
         );
       }
     }
@@ -195,7 +192,7 @@ export const getOptions = (node: DecoratedGraphNodeData, jaegerInfo?: JaegerInfo
 };
 
 const getOptionsFromLinkParams = (linkParams: LinkParams, jaegerInfo?: JaegerInfo): ContextMenuOption[] => {
-  const options: ContextMenuOption[] = [];
+  let options: ContextMenuOption[] = [];
   const { namespace, type, name, cluster } = linkParams;
   const detailsPageUrl = `/namespaces/${namespace}/${type}/${name}`;
 
@@ -226,16 +223,20 @@ const getOptionsFromLinkParams = (linkParams: LinkParams, jaegerInfo?: JaegerInf
     }
   }
 
-  if (cluster.length !== 0 && cluster !== serverConfig?.clusterInfo?.name) {
+  if (cluster.length !== 0 && cluster !== serverConfig.clusterInfo?.name) {
     const externalClusterInfo = serverConfig.clusters[cluster];
     const kialiInfo = externalClusterInfo.kialiInstances.find(instance => instance.url.length !== 0);
-    const externalKialiUrl = kialiInfo!.url.replace(/\/$/g, '') + '/console';
+    if (kialiInfo === undefined) {
+      options = options.filter(o => o.target === '_blank');
+    } else {
+      const externalKialiUrl = kialiInfo!.url.replace(/\/$/g, '') + '/console';
 
-    for (let idx = 0; idx < options.length; idx++) {
-      if (options[idx].target !== '_blank') {
-        options[idx].external = true;
-        options[idx].target = '_blank';
-        options[idx].url = externalKialiUrl + options[idx].url;
+      for (let idx = 0; idx < options.length; idx++) {
+        if (options[idx].target !== '_blank') {
+          options[idx].external = true;
+          options[idx].target = '_blank';
+          options[idx].url = externalKialiUrl + options[idx].url;
+        }
       }
     }
   }
