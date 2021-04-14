@@ -1,13 +1,11 @@
 import * as React from 'react';
-import { Link } from 'react-router-dom';
-import { ExternalLinkAltIcon } from '@patternfly/react-icons';
-import { NodeType, GraphNodeData, DestService, BoxByType } from '../../types/Graph';
-import { CyNode, decoratedNodeData } from '../../components/CytoscapeGraph/CytoscapeGraphUtils';
-import { serverConfig } from '../../config';
-import { KialiIcon } from 'config/KialiIcon';
 import { Tooltip, Badge, PopoverPosition, TooltipPosition } from '@patternfly/react-core';
-import { Health } from 'types/Health';
+import { CyNode, decoratedNodeData } from 'components/CytoscapeGraph/CytoscapeGraphUtils';
 import { HealthIndicator, DisplayMode } from 'components/Health/HealthIndicator';
+import KialiPageLink from 'components/Link/KialiPageLink';
+import { KialiIcon } from 'config/KialiIcon';
+import { NodeType, GraphNodeData, DestService, BoxByType } from 'types/Graph';
+import { Health } from 'types/Health';
 
 const getBadge = (nodeData: GraphNodeData, nodeType?: NodeType) => {
   switch (nodeType || nodeData.nodeType) {
@@ -137,24 +135,11 @@ const getLink = (nodeData: GraphNodeData, nodeType?: NodeType) => {
   }
 
   if (link && !nodeData.isInaccessible) {
-    if (serverConfig.clusterInfo === undefined || cluster === serverConfig.clusterInfo?.name) {
-      return (
-        <Link key={key} to={link}>
-          {displayName}
-        </Link>
-      );
-    } else {
-      const externalClusterInfo = serverConfig.clusters[cluster];
-      const kialiInfo = externalClusterInfo.kialiInstances.find(instance => instance.url.length !== 0);
-      if (kialiInfo !== undefined) {
-        const href = kialiInfo!.url.replace(/\/$/g, '') + '/console' + (link ?? '');
-        return (
-          <a href={href} rel="noreferrer noopener" target="_blank">
-            {displayName} <ExternalLinkAltIcon/>
-          </a>
-        )
-      }
-    }
+    return (
+      <KialiPageLink key={key} href={link} cluster={cluster}>
+        {displayName}
+      </KialiPageLink>
+    )
   }
 
   return <span key={key}>{displayName}</span>;
