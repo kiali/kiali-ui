@@ -130,7 +130,7 @@ export class NodeContextMenu extends React.PureComponent<Props> {
       // Node represents a resource in a remote cluster.
       // Check if there is a reachable remote Kiali. If so, build the menu; else, put a note.
       const cluster = serverConfig.clusters[linkParams.cluster];
-      if (cluster && cluster.kialiInstances.some(instance => instance.url.length !== 0)) {
+      if (cluster && cluster.kialiInstances?.some(instance => instance.url.length !== 0)) {
         buildMenu = true;
       } else {
         menuOptions = (
@@ -225,11 +225,11 @@ const getOptionsFromLinkParams = (linkParams: LinkParams, jaegerInfo?: JaegerInf
 
   if (cluster.length !== 0 && cluster !== serverConfig.clusterInfo?.name) {
     const externalClusterInfo = serverConfig.clusters[cluster];
-    const kialiInfo = externalClusterInfo.kialiInstances.find(instance => instance.url.length !== 0);
+    const kialiInfo = externalClusterInfo?.kialiInstances?.find(instance => instance.url.length !== 0);
     if (kialiInfo === undefined) {
       options = options.filter(o => o.target === '_blank');
     } else {
-      const externalKialiUrl = kialiInfo!.url.replace(/\/$/g, '') + '/console';
+      const externalKialiUrl = kialiInfo.url.replace(/\/$/g, '') + '/console';
 
       for (let idx = 0; idx < options.length; idx++) {
         if (options[idx].target !== '_blank') {
