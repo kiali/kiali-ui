@@ -89,7 +89,7 @@ class Labels extends React.Component<Props, State> {
     const tooltip = this.props.tooltipMessage ? (
       <Tooltip
         key={`tooltip_missing_sidecar`}
-        position={TooltipPosition.top}
+        position={TooltipPosition.auto}
         content={<div style={{ textAlign: 'left' }}>{this.props.tooltipMessage}</div>}
       >
         <KialiIcon.Info className={infoStyle} />

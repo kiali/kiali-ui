@@ -1,15 +1,20 @@
 import * as React from 'react';
 import { AppWorkload } from '../../types/App';
-import { Badge, Title, Tooltip, TooltipPosition } from '@patternfly/react-core';
+import { Badge, PopoverPosition, Title, Tooltip, TooltipPosition } from '@patternfly/react-core';
 import { style } from 'typestyle';
 import { Link } from 'react-router-dom';
 import MissingSidecar from '../MissingSidecar/MissingSidecar';
+import * as H from '../../types/Health';
+import { renderTrafficStatus } from '../Health/HealthDetails';
+import { createIcon } from '../Health/Helper';
+import { HealthSubItem } from '../../types/Health';
 
 type Props = {
   namespace: string;
   apps?: string[];
   workloads?: AppWorkload[];
   services?: string[];
+  health?: H.Health;
 };
 
 const iconStyle = style({
@@ -23,7 +28,7 @@ const resourceListStyle = style({
 });
 
 const titleStyle = style({
-  margin: '15px 0 11px 0'
+  margin: '15px 0 8px 0'
 });
 
 class DetailDescription extends React.PureComponent<Props> {
@@ -37,24 +42,6 @@ class DetailDescription extends React.PureComponent<Props> {
         </div>
         <span>
           <Link to={'/namespaces/' + namespace + '/applications/' + appName}>{appName}</Link>
-        </span>
-      </li>
-    );
-  }
-
-  private renderWorkloadItem(namespace: string, workload: AppWorkload) {
-    return (
-      <li key={`AppWorkload_${workload.workloadName}`}>
-        <span>
-          <div key="workload-icon" className={iconStyle}>
-            <Tooltip position={TooltipPosition.top} content={<>Workload</>}>
-              <Badge className={'virtualitem_badge_definition'}>W</Badge>
-            </Tooltip>
-          </div>
-          <Link to={'/namespaces/' + namespace + '/workloads/' + workload.workloadName}>{workload.workloadName}</Link>
-          {!workload.istioSidecar && (
-            <MissingSidecar namespace={namespace} tooltip={true} style={{ marginLeft: '10px' }} text={''} />
-          )}
         </span>
       </li>
     );
@@ -88,7 +75,7 @@ class DetailDescription extends React.PureComponent<Props> {
 
     return [
       <div key="service-list" className={resourceListStyle}>
-        <Title headingLevel="h3" size="lg" className={titleStyle}>
+        <Title headingLevel="h5" size="lg" className={titleStyle}>
           Applications
         </Title>
         <ul style={{ listStyleType: 'none' }}>{applicationList}</ul>
@@ -96,20 +83,80 @@ class DetailDescription extends React.PureComponent<Props> {
     ];
   }
 
-  private workloadList() {
-    const workloadList =
-      this.props.workloads && this.props.workloads.length > 0
-        ? this.props.workloads.map(wkd => this.renderWorkloadItem(this.props.namespace, wkd))
-        : this.renderEmptyItem('workloads');
+  private renderWorkloadItem(sub: HealthSubItem) {
+    let workload: AppWorkload | undefined = undefined;
+    if (this.props.workloads && this.props.workloads.length > 0) {
+      for (let i = 0; i < this.props.workloads.length; i++) {
+        if (sub.text.startsWith(this.props.workloads[i].workloadName)) {
+          workload = this.props.workloads[i];
+          break;
+        }
+      }
+    }
+    if (workload) {
+      return (
+        <span>
+          <div key="service-icon" className={iconStyle}>
+            <Tooltip position={TooltipPosition.top} content={<>Workload</>}>
+              <Badge className={'virtualitem_badge_definition'}>W</Badge>
+            </Tooltip>
+          </div>
+          <Link to={'/namespaces/' + this.props.namespace + '/workloads/' + workload.workloadName}>
+            {workload.workloadName}
+          </Link>
+          <Tooltip
+            aria-label={'Health indicator'}
+            content={<>{sub.text}</>}
+            position={PopoverPosition.auto}
+            className={'health_indicator'}
+          >
+            <span style={{ marginLeft: '10px' }}>{createIcon(sub.status)}</span>
+          </Tooltip>
+          {!workload.istioSidecar && (
+            <MissingSidecar namespace={this.props.namespace} tooltip={true} style={{ marginLeft: '10px' }} text={''} />
+          )}
+        </span>
+      );
+    } else {
+      return (
+        <span>
+          <span style={{ marginRight: '10px' }}>{createIcon(sub.status)}</span>
+          {sub.text}
+        </span>
+      );
+    }
+  }
 
-    return [
+  private renderWorkloadStatus() {
+    if (this.props.health) {
+      const item = this.props.health.getWorkloadStatus();
+      if (item) {
+        return (
+          <div>
+            {item.text}
+            {item.children && (
+              <ul style={{ listStyleType: 'none' }}>
+                {item.children.map((sub, subIdx) => {
+                  return <li key={subIdx}>{this.renderWorkloadItem(sub)}</li>;
+                })}
+              </ul>
+            )}
+          </div>
+        );
+      }
+    }
+    return undefined;
+  }
+
+  private workloadSummary() {
+    return (
       <div key="workload-list" className={resourceListStyle}>
-        <Title headingLevel="h3" size="lg" className={titleStyle}>
+        <Title headingLevel="h5" size="lg" className={titleStyle}>
           Workloads
         </Title>
-        <ul style={{ listStyleType: 'none' }}>{workloadList}</ul>
+        {this.renderWorkloadStatus()}
       </div>
-    ];
+    );
   }
 
   private serviceList() {
@@ -120,7 +167,7 @@ class DetailDescription extends React.PureComponent<Props> {
 
     return [
       <div key="service-list" className={resourceListStyle}>
-        <Title headingLevel="h3" size="lg" className={titleStyle}>
+        <Title headingLevel="h5" size="lg" className={titleStyle}>
           Services
         </Title>
         <ul style={{ listStyleType: 'none' }}>{serviceList}</ul>
@@ -132,8 +179,9 @@ class DetailDescription extends React.PureComponent<Props> {
     return (
       <>
         {this.props.apps !== undefined && this.appList()}
-        {this.props.workloads !== undefined && this.workloadList()}
+        {this.workloadSummary()}
         {this.props.services !== undefined && this.serviceList()}
+        {this.props.health && renderTrafficStatus(this.props.health)}
       </>
     );
   }

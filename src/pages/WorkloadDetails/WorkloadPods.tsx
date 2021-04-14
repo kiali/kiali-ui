@@ -7,12 +7,11 @@ import {
   CardHeader,
   EmptyState,
   EmptyStateBody,
-  EmptyStateIcon,
   EmptyStateVariant,
   Title
 } from '@patternfly/react-core';
-import { CogsIcon } from '@patternfly/react-icons';
 import PodStatus from './PodStatus';
+import { style } from 'typestyle';
 
 type WorkloadPodsProps = {
   namespace: string;
@@ -20,6 +19,11 @@ type WorkloadPodsProps = {
   pods: Pod[];
   validations: { [key: string]: ObjectValidation };
 };
+
+const emtpytStyle = style({
+  padding: '0 0 0 0',
+  margin: '0 0 0 0'
+});
 
 class WorkloadPods extends React.Component<WorkloadPodsProps> {
   columns(): ICell[] {
@@ -34,12 +38,8 @@ class WorkloadPods extends React.Component<WorkloadPodsProps> {
         cells: [
           {
             title: (
-              <EmptyState variant={EmptyStateVariant.full}>
-                <EmptyStateIcon icon={CogsIcon} />
-                <Title headingLevel="h5" size="lg">
-                  No Pods found
-                </Title>
-                <EmptyStateBody>No Pods in workload {this.props.workload}</EmptyStateBody>
+              <EmptyState variant={EmptyStateVariant.small} className={emtpytStyle}>
+                <EmptyStateBody className={emtpytStyle}>No Pods in workload {this.props.workload}</EmptyStateBody>
               </EmptyState>
             ),
             props: { colSpan: 2 }
@@ -81,9 +81,9 @@ class WorkloadPods extends React.Component<WorkloadPodsProps> {
 
   render() {
     return (
-      <Card>
+      <Card isCompact={true}>
         <CardHeader>
-          <Title headingLevel="h3" size="2xl">
+          <Title headingLevel="h5" size="lg">
             Pods
           </Title>
         </CardHeader>

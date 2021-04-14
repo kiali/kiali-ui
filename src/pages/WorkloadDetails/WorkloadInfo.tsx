@@ -17,9 +17,9 @@ import { KialiAppState } from '../../store/Store';
 import { connect } from 'react-redux';
 import { durationSelector, meshWideMTLSEnabledSelector } from '../../store/Selectors';
 import MiniGraphCard from '../../components/CytoscapeGraph/MiniGraphCard';
-import HealthCard from '../../components/Health/HealthCard';
 import IstioConfigCard from '../../components/IstioConfigCard/IstioConfigCard';
 import WorkloadPods from './WorkloadPods';
+import { renderHealthTitle } from '../../components/Health/HealthDetails';
 
 type WorkloadInfoProps = {
   namespace: string;
@@ -213,10 +213,14 @@ class WorkloadInfo extends React.Component<WorkloadInfoProps, WorkloadInfoState>
       <>
         <RenderComponentScroll onResize={height => this.setState({ tabHeight: height })}>
           <Grid gutter={'md'} className={fullHeightStyle}>
-            <GridItem span={3}>
+            <GridItem span={4}>
               <Stack gutter="md">
                 <StackItem>
-                  <WorkloadDescription workload={workload} namespace={this.props.namespace} />
+                  <WorkloadDescription
+                    workload={workload}
+                    health={this.state.health}
+                    namespace={this.props.namespace}
+                  />
                 </StackItem>
                 <StackItem>
                   <WorkloadPods
@@ -226,17 +230,6 @@ class WorkloadInfo extends React.Component<WorkloadInfoProps, WorkloadInfoState>
                     validations={this.state.validations?.pod || {}}
                   />
                 </StackItem>
-              </Stack>
-            </GridItem>
-            <GridItem span={3}>
-              <Stack gutter="md">
-                <StackItem>
-                  {this.props.workload ? (
-                    <HealthCard name={this.props.workload.name} health={this.state.health} />
-                  ) : (
-                    'Loading'
-                  )}
-                </StackItem>
                 <StackItem>
                   <IstioConfigCard
                     name={this.props.workload ? this.props.workload.name : ''}
@@ -245,9 +238,9 @@ class WorkloadInfo extends React.Component<WorkloadInfoProps, WorkloadInfoState>
                 </StackItem>
               </Stack>
             </GridItem>
-            <GridItem span={6}>
+            <GridItem span={8}>
               <MiniGraphCard
-                title={'Graph'}
+                title={this.state.health ? renderHealthTitle(this.state.health) : <>Graph</>}
                 dataSource={this.graphDataSource}
                 mtlsEnabled={this.props.mtlsEnabled}
                 graphContainerStyle={graphContainerStyle}

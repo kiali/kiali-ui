@@ -13,8 +13,72 @@ interface Props {
 }
 
 const titleStyle = style({
-  margin: '15px 0 11px 0'
+  margin: '15px 0 8px 0'
 });
+
+// Used in App/Workload/Service Description
+// It doesn't hide healthy lines as opposed to the HealthDetails
+// Keep it on this class for easy maintenance in future steps, duplication of code is expected.
+export const renderTrafficStatus = (health: H.Health) => {
+  const config = health.getStatusConfig();
+  const isValueInConfig = config && health.health.statusConfig ? health.health.statusConfig.value > 0 : false;
+  const item = health.getTrafficStatus();
+  if (item) {
+    const showTraffic = item.children
+      ? item.children.filter(sub => {
+          const showItem = sub.value && sub.value > 0;
+          return sub.status !== H.HEALTHY && showItem;
+        }).length > 0
+      : false;
+    if (showTraffic) {
+      return (
+        <div>
+          <Title headingLevel="h5" size="lg" className={titleStyle}>
+            Traffic
+          </Title>
+          {item.text}
+          {item.children && (
+            <ul style={{ listStyleType: 'none' }}>
+              {item.children.map((sub, subIdx) => {
+                const showItem = sub.value && sub.value > 0;
+                return sub.status !== H.HEALTHY && showItem ? (
+                  <li key={subIdx}>
+                    <span style={{ marginRight: '10px' }}>{createIcon(sub.status)}</span>
+                    {sub.text}
+                  </li>
+                ) : (
+                  <React.Fragment key={subIdx} />
+                );
+              })}
+              {config && isValueInConfig && (
+                <li key={'degraded_failure_config'}>
+                  <span style={{ marginRight: '10px' }}>{createIcon(H.DEGRADED)}</span>:{' '}
+                  {config.degraded === 0 ? '>' : '>='}
+                  {config.degraded}% {createIcon(H.FAILURE)}: {config.degraded === 0 ? '>' : '>='}
+                  {config.failure}%
+                </li>
+              )}
+            </ul>
+          )}
+        </div>
+      );
+    }
+  }
+  return undefined;
+};
+
+export const renderHealthTitle = (health: H.Health) => {
+  const globalStatus = health.getGlobalStatus();
+  const spanStyle: React.CSSProperties = {
+    color: globalStatus.color
+  };
+  return (
+    <span style={spanStyle}>
+      <span style={{ marginRight: '10px' }}>{createIcon(globalStatus, 'sm')}</span>
+      {globalStatus.name}
+    </span>
+  );
+};
 
 export class HealthDetails extends React.PureComponent<Props, {}> {
   renderErrorRate = (item: H.HealthItem, idx: number) => {

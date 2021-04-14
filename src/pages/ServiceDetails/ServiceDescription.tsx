@@ -10,6 +10,7 @@ import { style } from 'typestyle';
 import LocalTime from '../../components/Time/LocalTime';
 import { renderAPILogo } from '../../components/Logo/Logos';
 import { TextOrLink } from '../../components/TextOrLink';
+import { KialiIcon } from '../../config/KialiIcon';
 
 interface ServiceInfoDescriptionProps {
   namespace: string;
@@ -19,10 +20,6 @@ interface ServiceInfoDescriptionProps {
 type State = {
   serviceInfoTabKey: number;
 };
-
-const titleStyle = style({
-  margin: '15px 0 11px 0'
-});
 
 const resourceListStyle = style({
   margin: '0px 0 11px 0',
@@ -40,6 +37,11 @@ const iconStyle = style({
   padding: '0 0 0 0',
   display: 'inline-block',
   verticalAlign: '2px !important'
+});
+
+const infoStyle = style({
+  margin: '0px 5px 2px 10px',
+  verticalAlign: '-6px !important'
 });
 
 class ServiceDescription extends React.Component<ServiceInfoDescriptionProps, State> {
@@ -92,16 +94,54 @@ class ServiceDescription extends React.Component<ServiceInfoDescriptionProps, St
         }
       }
     }
+    const serviceProperties = (
+      <div key="properties-list" className={resourceListStyle}>
+        <ul style={{ listStyleType: 'none' }}>
+          {this.props.serviceDetails && (
+            <li>
+              <span>Created</span>
+              <div style={{ display: 'inline-block' }}>
+                <LocalTime time={this.props.serviceDetails.service.createdAt} />
+              </div>
+            </li>
+          )}
+          {this.props.serviceDetails && (
+            <li>
+              <span>Version</span>
+              {this.props.serviceDetails.service.resourceVersion}
+            </li>
+          )}
+          {this.props.serviceDetails &&
+            this.props.serviceDetails.additionalDetails &&
+            this.props.serviceDetails.additionalDetails.map((additionalItem, idx) => {
+              return (
+                <li key={'additional-details-' + idx} id={'additional-details-' + idx}>
+                  <span>{additionalItem.title}</span>
+                  {additionalItem.icon && renderAPILogo(additionalItem.icon, undefined, idx)}
+                  <TextOrLink text={additionalItem.value} urlTruncate={64} />
+                </li>
+              );
+            })}
+        </ul>
+      </div>
+    );
+
     return (
       <Card>
         <CardHeader>
-          <Title headingLevel="h3" size="2xl">
+          <Title headingLevel="h5" size="lg">
             <div key="service-icon" className={iconStyle}>
               <Tooltip position={TooltipPosition.top} content={<>Workload</>}>
                 <Badge className={'virtualitem_badge_definition'}>W</Badge>
               </Tooltip>
             </div>
             {this.props.serviceDetails ? this.props.serviceDetails.service.name : 'Service'}
+            <Tooltip
+              position={TooltipPosition.right}
+              content={<div style={{ textAlign: 'left' }}>{serviceProperties}</div>}
+            >
+              <KialiIcon.Info className={infoStyle} />
+            </Tooltip>
           </Title>
         </CardHeader>
         <CardBody>
@@ -117,44 +157,17 @@ class ServiceDescription extends React.Component<ServiceInfoDescriptionProps, St
               tooltipMessage={'Labels defined on the ' + (showServiceLabels ? 'Selector' : 'Service and Selector')}
             />
           )}
-          <DetailDescription namespace={this.props.namespace} apps={apps} workloads={workloads} />
+          <DetailDescription
+            namespace={this.props.namespace}
+            apps={apps}
+            workloads={workloads}
+            health={this.props.serviceDetails?.health}
+          />
           {this.props.serviceDetails && !this.props.serviceDetails.istioSidecar && (
             <div>
               <MissingSidecar namespace={this.props.namespace} />
             </div>
           )}
-          <Title headingLevel="h3" size="lg" className={titleStyle}>
-            Properties
-          </Title>
-          <div key="properties-list" className={resourceListStyle}>
-            <ul style={{ listStyleType: 'none' }}>
-              {this.props.serviceDetails && (
-                <li>
-                  <span>Created</span>
-                  <div style={{ display: 'inline-block' }}>
-                    <LocalTime time={this.props.serviceDetails.service.createdAt} />
-                  </div>
-                </li>
-              )}
-              {this.props.serviceDetails && (
-                <li>
-                  <span>Version</span>
-                  {this.props.serviceDetails.service.resourceVersion}
-                </li>
-              )}
-              {this.props.serviceDetails &&
-                this.props.serviceDetails.additionalDetails &&
-                this.props.serviceDetails.additionalDetails.map((additionalItem, idx) => {
-                  return (
-                    <li key={'additional-details-' + idx} id={'additional-details-' + idx}>
-                      <span>{additionalItem.title}</span>
-                      {additionalItem.icon && renderAPILogo(additionalItem.icon, undefined, idx)}
-                      <TextOrLink text={additionalItem.value} urlTruncate={64} />
-                    </li>
-                  );
-                })}
-            </ul>
-          </div>
         </CardBody>
       </Card>
     );

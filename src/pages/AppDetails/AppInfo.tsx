@@ -13,7 +13,7 @@ import { connect } from 'react-redux';
 import { durationSelector, meshWideMTLSEnabledSelector } from '../../store/Selectors';
 import { style } from 'typestyle';
 import MiniGraphCard from '../../components/CytoscapeGraph/MiniGraphCard';
-import HealthCard from '../../components/Health/HealthCard';
+import { renderHealthTitle } from '../../components/Health/HealthDetails';
 
 type AppInfoProps = {
   app?: App;
@@ -69,15 +69,12 @@ class AppInfo extends React.Component<AppInfoProps, AppInfoState> {
     return (
       <RenderComponentScroll onResize={height => this.setState({ tabHeight: height })}>
         <Grid gutter={'md'} className={fullHeightStyle}>
-          <GridItem span={3}>
-            <AppDescription app={this.props.app} />
+          <GridItem span={4}>
+            <AppDescription app={this.props.app} health={this.state.health} />
           </GridItem>
-          <GridItem span={3}>
-            {this.props.app ? <HealthCard name={this.props.app.name} health={this.state.health} /> : 'Loading'}
-          </GridItem>
-          <GridItem span={6}>
+          <GridItem span={8}>
             <MiniGraphCard
-              title={'Graph'}
+              title={this.state.health ? renderHealthTitle(this.state.health) : <>Graph</>}
               dataSource={this.graphDataSource}
               mtlsEnabled={this.props.mtlsEnabled}
               graphContainerStyle={graphContainerStyle}

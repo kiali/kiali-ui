@@ -18,16 +18,20 @@ import {
 import { ValidationObjectSummary } from '../Validations/ValidationObjectSummary';
 import IstioObjectLink from '../Link/IstioObjectLink';
 import { IstioTypes } from '../VirtualList/Config';
+import { style } from 'typestyle';
 
 interface Props {
   name: string;
   items: IstioConfigItem[];
 }
 
+const emtpytStyle = style({
+  padding: '0 0 0 0',
+  margin: '0 0 0 0'
+});
+
 class IstioConfigCard extends React.Component<Props> {
   columns(): ICell[] {
-    // TODO: Casting 'as any' because @patternfly/react-table@2.22.19 has a typing bug. Remove the casting when PF fixes it.
-    // https://github.com/patternfly/patternfly-next/issues/2373
     return [{ title: 'Name' }, { title: 'Status', transforms: [cellWidth(10) as any] }];
   }
 
@@ -37,11 +41,11 @@ class IstioConfigCard extends React.Component<Props> {
         cells: [
           {
             title: (
-              <EmptyState variant={EmptyStateVariant.full}>
-                <EmptyStateBody>No Istio Config found for {this.props.name}</EmptyStateBody>
+              <EmptyState variant={EmptyStateVariant.small} className={emtpytStyle}>
+                <EmptyStateBody className={emtpytStyle}>No Istio Config found for {this.props.name}</EmptyStateBody>
               </EmptyState>
             ),
-            props: { colSpan: 3 }
+            props: { colSpan: 2 }
           }
         ]
       }
@@ -93,11 +97,11 @@ class IstioConfigCard extends React.Component<Props> {
 
   render() {
     return (
-      <Card>
+      <Card isCompact={true}>
         <CardHead>
           <CardActions />
           <CardHeader>
-            <Title style={{ float: 'left' }} headingLevel="h3" size="2xl">
+            <Title style={{ float: 'left' }} headingLevel="h5" size="lg">
               Istio Config
             </Title>
           </CardHeader>

@@ -5,9 +5,11 @@ import DetailDescription from '../../components/Details/DetailDescription';
 import { serverConfig } from '../../config';
 import Labels from '../../components/Label/Labels';
 import { style } from 'typestyle';
+import * as H from '../../types/Health';
 
 type AppDescriptionProps = {
   app?: App;
+  health?: H.Health;
 };
 
 const iconStyle = style({
@@ -26,7 +28,7 @@ class AppDescription extends React.Component<AppDescriptionProps> {
     return this.props.app ? (
       <Card>
         <CardHeader>
-          <Title headingLevel="h3" size="2xl">
+          <Title headingLevel="h5" size="lg">
             <div key="service-icon" className={iconStyle}>
               <Tooltip position={TooltipPosition.top} content={<>Application</>}>
                 <Badge className={'virtualitem_badge_definition'}>A</Badge>
@@ -44,6 +46,7 @@ class AppDescription extends React.Component<AppDescriptionProps> {
             namespace={this.props.app ? this.props.app.namespace.name : ''}
             workloads={this.props.app ? this.props.app.workloads : []}
             services={this.props.app ? this.props.app.serviceNames : []}
+            health={this.props.health}
           />
         </CardBody>
       </Card>

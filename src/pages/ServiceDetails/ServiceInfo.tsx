@@ -17,6 +17,7 @@ import MiniGraphCard from '../../components/CytoscapeGraph/MiniGraphCard';
 import HealthCard from '../../components/Health/HealthCard';
 import IstioConfigCard from '../../components/IstioConfigCard/IstioConfigCard';
 import ServiceNetwork from './ServiceNetwork';
+import { renderHealthTitle } from '../../components/Health/HealthDetails';
 
 interface Props extends ServiceId {
   duration: DurationInSeconds;
@@ -92,7 +93,7 @@ class ServiceInfo extends React.Component<Props, ServiceInfoState> {
       <>
         <RenderComponentScroll onResize={height => this.setState({ tabHeight: height })}>
           <Grid gutter={'md'} className={fullHeightStyle}>
-            <GridItem span={3}>
+            <GridItem span={4}>
               <Stack gutter="md">
                 <StackItem>
                   <ServiceDescription namespace={this.props.namespace} serviceDetails={this.props.serviceDetails} />
@@ -104,8 +105,6 @@ class ServiceInfo extends React.Component<Props, ServiceInfoState> {
                   />
                 )}
               </Stack>
-            </GridItem>
-            <GridItem span={3}>
               <Stack gutter="md">
                 <StackItem>
                   {this.props.serviceDetails ? (
@@ -122,9 +121,15 @@ class ServiceInfo extends React.Component<Props, ServiceInfoState> {
                 </StackItem>
               </Stack>
             </GridItem>
-            <GridItem span={6}>
+            <GridItem span={8}>
               <MiniGraphCard
-                title={'Graph'}
+                title={
+                  this.props.serviceDetails && this.props.serviceDetails.health ? (
+                    renderHealthTitle(this.props.serviceDetails.health)
+                  ) : (
+                    <>Graph</>
+                  )
+                }
                 dataSource={this.graphDataSource}
                 mtlsEnabled={this.props.mtlsEnabled}
                 graphContainerStyle={graphContainerStyle}
