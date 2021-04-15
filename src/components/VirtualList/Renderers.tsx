@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
-import { Badge, Tooltip, TooltipPosition } from '@patternfly/react-core';
+import { Badge, Tooltip } from '@patternfly/react-core';
 import * as FilterHelper from '../FilterList/FilterHelper';
 import { appLabelFilter, versionLabelFilter } from '../../pages/WorkloadList/FiltersAndSorts';
 
@@ -27,6 +27,7 @@ import { labelFilter } from 'components/Filters/CommonFilters';
 import { labelFilter as NsLabelFilter } from '../../pages/Overview/Filters';
 import ValidationSummaryLink from '../Link/ValidationSummaryLink';
 import { ValidationStatus } from '../../types/IstioObjects';
+import { pfAdHocBadgeRO, pfBadge, PFBadge, PFBadges } from 'components/Pf/PfBadges';
 
 // Links
 
@@ -72,24 +73,8 @@ export const details: Renderer<AppListItem | WorkloadListItem | ServiceListItem>
             <MissingSidecar namespace={item.namespace} />
           </li>
         )}
-        {isWorkload && hasMissingApp && (
-          <li>
-            Missing{' '}
-            <Badge isRead={true} className={'virtualitem_badge_definition'}>
-              app
-            </Badge>
-            label
-          </li>
-        )}
-        {isWorkload && hasMissingVersion && (
-          <li>
-            Missing{' '}
-            <Badge isRead={true} className={'virtualitem_badge_definition'}>
-              version
-            </Badge>
-            label
-          </li>
-        )}
+        {isWorkload && hasMissingApp && <li>Missing {pfAdHocBadgeRO('app')} label</li>}
+        {isWorkload && hasMissingVersion && <li>Missing {pfAdHocBadgeRO('version')} label</li>}
         {spacer && ' '}
         {additionalDetails && additionalDetails.icon && (
           <li>{renderAPILogo(additionalDetails.icon, additionalDetails.title, 0)}</li>
@@ -155,26 +140,20 @@ export const status: Renderer<NamespaceInfo> = (ns: NamespaceInfo) => {
   return <td role="gridcell" key={'VirtuaItem_Status_' + ns.name} />;
 };
 
-export const nsItem: Renderer<NamespaceInfo> = (ns: NamespaceInfo, _config: Resource, icon: string) => {
+export const nsItem: Renderer<NamespaceInfo> = (ns: NamespaceInfo, _config: Resource, badge: PFBadge) => {
   return (
     <td role="gridcell" key={'VirtuaItem_NamespaceItem_' + ns.name} style={{ verticalAlign: 'middle' }}>
-      <Badge className={'virtualitem_badge_definition'}>{icon}</Badge>
+      {pfBadge(badge)}
       {ns.name}
     </td>
   );
 };
 
-export const item: Renderer<TResource> = (item: TResource, config: Resource, icon: string) => {
+export const item: Renderer<TResource> = (item: TResource, config: Resource, badge: PFBadge) => {
   const key = 'link_definition_' + config.name + '_' + item.namespace + '_' + item.name;
-  let itemName = config.name.charAt(0).toUpperCase() + config.name.slice(1);
-  if (config.name === 'istio') {
-    itemName = IstioTypes[item['type']].name;
-  }
   return (
     <td role="gridcell" key={'VirtuaItem_Item_' + item.namespace + '_' + item.name} style={{ verticalAlign: 'middle' }}>
-      <Tooltip position={TooltipPosition.top} content={<>{itemName}</>}>
-        <Badge className={'virtualitem_badge_definition'}>{icon}</Badge>
-      </Tooltip>
+      {pfBadge(badge)}
       <Link key={key} to={getLink(item, config)} className={'virtualitem_definition_link'}>
         {item.name}
       </Link>
@@ -189,9 +168,7 @@ export const namespace: Renderer<TResource> = (item: TResource) => {
       key={'VirtuaItem_Namespace_' + item.namespace + '_' + item.name}
       style={{ verticalAlign: 'middle' }}
     >
-      <Tooltip position={TooltipPosition.top} content={<>Namespace</>}>
-        <Badge className={'virtualitem_badge_definition'}>NS</Badge>
-      </Tooltip>
+      {pfBadge(PFBadges.Namespace)}
       {item.namespace}
     </td>
   );
@@ -220,7 +197,7 @@ const labelActivate = (filters: ActiveFilter[], key: string, value: string, id: 
 export const labels: Renderer<SortResource | NamespaceInfo> = (
   item: SortResource | NamespaceInfo,
   _: Resource,
-  __: string,
+  __: PFBadge,
   ___?: Health,
   statefulFilter?: React.RefObject<StatefulFilters>
 ) => {
@@ -285,7 +262,7 @@ export const labels: Renderer<SortResource | NamespaceInfo> = (
     </td>
   );
 };
-export const health: Renderer<TResource> = (item: TResource, __: Resource, _: string, health?: Health) => {
+export const health: Renderer<TResource> = (item: TResource, __: Resource, _: PFBadge, health?: Health) => {
   return (
     <td
       role="gridcell"
