@@ -47,7 +47,7 @@ export const PFBadges = Object.freeze({
 });
 
 export const kialiBadge = style({
-  backgroundColor: PFColors.Blue200,
+  backgroundColor: PFColors.Badge,
   borderRadius: '30em',
   marginRight: '10px'
 });
@@ -73,7 +73,7 @@ export const pfBadge = (
 
 export const pfAdHocBadge = (
   badge: string,
-  tooltip?: string,
+  tooltip?: React.ReactFragment,
   position?: TooltipPosition,
   key?: string,
   style?: CSSProperties,
@@ -85,7 +85,7 @@ export const pfAdHocBadge = (
     </Badge>
   );
   return tooltip ? (
-    <Tooltip key={key || `pfbadge-${badge}`} position={position || TooltipPosition.auto} content={<>{tooltip}</>}>
+    <Tooltip key={key || `pfbadge-${badge}`} position={position || TooltipPosition.auto} content={tooltip}>
       {badgeElem}
     </Tooltip>
   ) : (

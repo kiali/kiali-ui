@@ -7,21 +7,36 @@ import { Health } from 'types/Health';
 import { HealthIndicator, DisplayMode } from 'components/Health/HealthIndicator';
 import { pfAdHocBadge, pfBadge, PFBadges } from 'components/Pf/PfBadges';
 import KialiPageLink from 'components/Link/KialiPageLink';
+import { serverConfig } from 'config';
+
+const getTooltip = (tooltip: string, nodeData: GraphNodeData): React.ReactFragment => {
+  const addNamespace = nodeData.isBox !== BoxByType.NAMESPACE;
+  const addCluster =
+    nodeData.isBox !== BoxByType.CLUSTER &&
+    (!serverConfig.clusterInfo || serverConfig.clusterInfo.name !== nodeData.cluster);
+  return (
+    <div style={{ textAlign: 'left' }}>
+      <span>{tooltip}</span>
+      {addNamespace && <div>{`Namespace: ${nodeData.namespace}`}</div>}
+      {addCluster && <div>{`Cluster: ${nodeData.cluster}`}</div>}
+    </div>
+  );
+};
 
 const getBadge = (nodeData: GraphNodeData, nodeType?: NodeType) => {
   switch (nodeType || nodeData.nodeType) {
     case NodeType.AGGREGATE:
-      return pfAdHocBadge(PFBadges.Operation.badge, `Operation: ${nodeData.aggregate!}`);
+      return pfAdHocBadge(PFBadges.Operation.badge, getTooltip(`Operation: ${nodeData.aggregate!}`, nodeData));
     case NodeType.APP:
-      return pfBadge(PFBadges.App);
+      return pfAdHocBadge(PFBadges.App.badge, getTooltip(PFBadges.App.tt, nodeData));
     case NodeType.BOX:
       switch (nodeData.isBox) {
         case BoxByType.APP:
-          return pfBadge(PFBadges.App);
+          return pfAdHocBadge(PFBadges.App.badge, getTooltip(PFBadges.App.tt, nodeData));
         case BoxByType.CLUSTER:
-          return pfBadge(PFBadges.Cluster);
+          return pfAdHocBadge(PFBadges.Cluster.badge, getTooltip(PFBadges.Cluster.tt, nodeData));
         case BoxByType.NAMESPACE:
-          return pfBadge(PFBadges.Namespace);
+          return pfAdHocBadge(PFBadges.Namespace.badge, getTooltip(PFBadges.Namespace.tt, nodeData));
         default:
           return pfBadge(PFBadges.Unknown);
       }
@@ -29,11 +44,16 @@ const getBadge = (nodeData: GraphNodeData, nodeType?: NodeType) => {
       return !!nodeData.isServiceEntry
         ? pfAdHocBadge(
             PFBadges.ServiceEntry.badge,
-            nodeData.isServiceEntry.location === 'MESH_EXTERNAL' ? 'External Service Entry' : 'Internal Service Entry'
+            getTooltip(
+              nodeData.isServiceEntry.location === 'MESH_EXTERNAL'
+                ? 'External Service Entry'
+                : 'Internal Service Entry',
+              nodeData
+            )
           )
-        : pfBadge(PFBadges.Service);
+        : pfAdHocBadge(PFBadges.Service.badge, getTooltip(PFBadges.Service.tt, nodeData));
     case NodeType.WORKLOAD:
-      return pfBadge(PFBadges.Workload);
+      return pfAdHocBadge(PFBadges.Workload.badge, getTooltip(PFBadges.Workload.tt, nodeData));
     default:
       return pfBadge(PFBadges.Unknown);
   }
