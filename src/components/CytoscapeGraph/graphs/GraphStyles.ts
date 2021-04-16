@@ -191,18 +191,14 @@ export class GraphStyles {
     const box1Type = box1 ? box1.data().isBox : undefined;
     const box2 = box1 && box1.parent() ? box1.parent()[0] : undefined;
     const box2Type = box2 ? box2.data().isBox : undefined;
-    const box3 = box2 && box2.parent() ? box2.parent()[0] : undefined;
-    const box3Type = box3 ? box3.data().isBox : undefined;
+    // const box3 = box2 && box2.parent() ? box2.parent()[0] : undefined;
+    // const box3Type = box3 ? box3.data().isBox : undefined;
     const isAppBoxed = box1Type === BoxByType.APP;
     const isNamespaceBoxed = box1Type === BoxByType.NAMESPACE || box2Type === BoxByType.NAMESPACE;
-    const isClusterBoxed =
-      box1Type === BoxByType.CLUSTER || box2Type === BoxByType.CLUSTER || box3Type === BoxByType.CLUSTER;
+    // const isClusterBoxed = box1Type === BoxByType.CLUSTER || box2Type === BoxByType.CLUSTER || box3Type === BoxByType.CLUSTER;
     const isMultiNamespace = cyGlobal.activeNamespaces.length > 1;
     const isOutside = node.isOutside;
 
-    console.log(
-      `[app=${node.app}] isAppBoxed=${isAppBoxed}, isNSBoxed=${isNamespaceBoxed}, isCLBoxed=${isClusterBoxed}`
-    );
     let icons = '';
     if (node.isRoot) {
       icons = `<span class="${NodeIconRoot} ${iconMargin}"></span> ${icons}`;
