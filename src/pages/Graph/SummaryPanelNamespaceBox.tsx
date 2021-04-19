@@ -121,15 +121,14 @@ export default class SummaryPanelNamespaceBox extends React.Component<
     const numWorkloads = boxed.filter(`node[nodeType = "${NodeType.WORKLOAD}"]`).size();
     const { numApps, numVersions } = this.countApps(boxed);
     const numEdges = boxed.connectedEdges().size();
-    // inbound edges are from a different namespace or a different cluster, or from a local root node
-    let inboundEdges = namespaceBox
+    // inbound edges are from a different namespace or a different cluster
+    const inboundEdges = namespaceBox
       .cy()
       .nodes(`[${CyNode.namespace} != "${namespace}"],[${CyNode.cluster} != "${cluster}"]`)
       .edgesTo(boxed);
-    inboundEdges = inboundEdges.add(boxed.filter(`[?${CyNode.isRoot}]`).edgesTo('*'));
     // outbound edges are to a different namespace or a different cluster
     const outboundEdges = boxed.edgesTo(`[${CyNode.namespace} != "${namespace}"],[${CyNode.cluster} != "${cluster}"]`);
-    // total edges are inbound + edges from boxed workload/app/root nodes (i.e. not injected service nodes or box nodes)
+    // total edges are inbound + edges from boxed workload|app|root nodes (i.e. not injected service nodes or box nodes)
     const totalEdges = inboundEdges.add(boxed.filter(`[?${CyNode.workload}]`).edgesTo('*'));
     const totalRateGrpc = getAccumulatedTrafficRateGrpc(totalEdges);
     const totalRateHttp = getAccumulatedTrafficRateHttp(totalEdges);
