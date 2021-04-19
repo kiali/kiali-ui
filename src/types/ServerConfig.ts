@@ -57,6 +57,15 @@ export interface ToleranceConfig {
   direction?: RegexConfig;
 }
 
+export type LabelFilter = { [key: string]: RegExp };
+
+export interface LabelValidation {
+  namespace?: RegexConfig;
+  kind?: RegexConfig;
+  name?: RegexConfig;
+  presence: string[];
+  filterLabel: LabelFilter;
+}
 /*
  End Health Config
 */
@@ -71,7 +80,7 @@ export interface ServerConfig {
   istioIdentityDomain: string;
   istioNamespace: string;
   istioComponentNamespaces?: Map<string, string>;
-  istioLabels: { [key in IstioLabelKey]: string };
+  istioLabels: { [key in IstioLabelKey]: string } & { labelValidation: LabelValidation[] };
   kialiFeatureFlags: KialiFeatureFlags;
   prometheus: {
     globalScrapeInterval?: DurationInSeconds;

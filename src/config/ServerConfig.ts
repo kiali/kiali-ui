@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import { ServerConfig } from '../types/ServerConfig';
-import { parseHealthConfig } from './HealthConfig';
+import { parseFilterLabel, parseHealthConfig } from './HealthConfig';
 
 export type Durations = { [key: number]: string };
 
@@ -64,7 +64,8 @@ let serverConfig: ComputedServerConfig = {
   istioLabels: {
     appLabelName: 'app',
     injectionLabelName: 'istio-injection',
-    versionLabelName: 'version'
+    versionLabelName: 'version',
+    labelValidation: []
   },
   kialiFeatureFlags: {
     istioInjectionAction: true
@@ -97,7 +98,9 @@ export const setServerConfig = (cfg: ServerConfig) => {
     durations: {}
   };
   serverConfig.healthConfig = cfg.healthConfig ? parseHealthConfig(cfg.healthConfig) : serverConfig.healthConfig;
-
+  serverConfig.istioLabels.labelValidation = serverConfig.istioLabels.labelValidation
+    ? parseFilterLabel(serverConfig.istioLabels.labelValidation)
+    : serverConfig.istioLabels.labelValidation;
   computeValidDurations(serverConfig);
 };
 

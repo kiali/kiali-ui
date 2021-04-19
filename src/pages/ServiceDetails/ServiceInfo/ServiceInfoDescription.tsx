@@ -17,6 +17,7 @@ import { renderAPILogo } from 'components/Logo/Logos';
 import './ServiceInfoDescription.css';
 import MiniGraphCard from '../../../components/CytoscapeGraph/MiniGraphCard';
 import MissingSidecar from '../../../components/MissingSidecar/MissingSidecar';
+import LabelValidation from '../../../components/Label/LabelValidation';
 
 interface ServiceInfoDescriptionProps {
   name: string;
@@ -116,6 +117,15 @@ class ServiceInfoDescription extends React.Component<ServiceInfoDescriptionProps
                         Labels{' '}
                       </Title>
                       <Labels labels={this.props.labels || {}} />
+                      {this.props.labels && (
+                        <LabelValidation
+                          name={this.props.name}
+                          kind={'service'}
+                          namespace={this.props.namespace}
+                          labels={this.props.labels}
+                          smallRender={true}
+                        />
+                      )}
                     </StackItem>
                     <StackItem id={'resource_version'}>
                       <Title headingLevel="h6" size="md">

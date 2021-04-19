@@ -80,11 +80,14 @@ export class DebugInformation extends React.PureComponent<DebugInformationProps,
     }
   }
 
-  renderHealthConfig = (config: Array<any> | Object | RegExp | string) => {
+  renderWithRegex = (config: Array<any> | Object | RegExp | string) => {
+    if ((config as Object).constructor.toString().includes('String')) {
+      return config;
+    }
     if (Array.isArray(config)) {
       let arr = [];
       for (let v of config) {
-        arr.push(this.renderHealthConfig(v) as never);
+        arr.push(this.renderWithRegex(v) as never);
       }
       return arr;
     }
@@ -95,7 +98,7 @@ export class DebugInformation extends React.PureComponent<DebugInformationProps,
       } else if (typeof value !== 'object') {
         result[key] = value;
       } else {
-        result[key] = this.renderHealthConfig(value);
+        result[key] = this.renderWithRegex(value);
       }
     }
     return result;
@@ -108,7 +111,11 @@ export class DebugInformation extends React.PureComponent<DebugInformationProps,
         return null;
       }
       if ('healthConfig' === key) {
-        return this.renderHealthConfig(value);
+        return this.renderWithRegex(value);
+      }
+
+      if ('istioLabels' === key) {
+        return this.renderWithRegex(value);
       }
       return value;
     };

@@ -1,4 +1,4 @@
-import { HealthConfig, RegexConfig } from '../types/ServerConfig';
+import { HealthConfig, LabelValidation, RegexConfig } from '../types/ServerConfig';
 
 const allMatch = new RegExp('.*');
 
@@ -17,6 +17,22 @@ export const parseHealthConfig = (healthConfig: HealthConfig) => {
     }
   }
   return healthConfig;
+};
+
+/*
+ Parse configuration from backend format to regex expression for labelValidation
+*/
+
+export const parseFilterLabel = (labelValidations: LabelValidation[]) => {
+  labelValidations.forEach(lval => {
+    lval.namespace = getExpr(lval.namespace);
+    lval.name = getExpr(lval.name);
+    lval.kind = getExpr(lval.kind);
+    for (const [key, regex] of Object.entries(lval.filterLabel)) {
+      lval.filterLabel[key] = new RegExp(regex);
+    }
+  });
+  return labelValidations;
 };
 
 /*

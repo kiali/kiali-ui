@@ -22,6 +22,7 @@ import GraphDataSource from '../../../services/GraphDataSource';
 import MiniGraphCard from '../../../components/CytoscapeGraph/MiniGraphCard';
 import MissingSidecar from '../../../components/MissingSidecar/MissingSidecar';
 import { style } from 'typestyle';
+import LabelValidation from '../../../components/Label/LabelValidation';
 
 const titleStyle = style({
   margin: '15px 0 11px 0'
@@ -70,6 +71,13 @@ class WorkloadDescription extends React.Component<WorkloadDescriptionProps> {
                     {isTemplateLabels ? 'Template Labels' : 'Labels'}{' '}
                   </Title>
                   <Labels labels={workload.labels || {}} />
+                  <LabelValidation
+                    name={workload!.name}
+                    kind={'workload'}
+                    namespace={this.props.namespace}
+                    labels={workload.labels}
+                    smallRender={true}
+                  />
                 </StackItem>
                 {workload.istioInjectionAnnotation !== undefined && (
                   <StackItem>

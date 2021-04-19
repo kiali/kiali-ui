@@ -23,11 +23,11 @@ import OverviewCardContentExpanded from '../../pages/Overview/OverviewCardConten
 import { OverviewToolbar } from '../../pages/Overview/OverviewToolbar';
 import { StatefulFilters } from '../Filters/StatefulFilters';
 import { GetIstioObjectUrl } from '../Link/IstioObjectLink';
+import LabelValidation from '../../components/Label/LabelValidation';
 import { labelFilter } from 'components/Filters/CommonFilters';
 import { labelFilter as NsLabelFilter } from '../../pages/Overview/Filters';
 import ValidationSummaryLink from '../Link/ValidationSummaryLink';
 import { ValidationStatus } from '../../types/IstioObjects';
-
 // Links
 
 const getLink = (item: TResource, config: Resource, query?: string) => {
@@ -55,9 +55,6 @@ export const details: Renderer<AppListItem | WorkloadListItem | ServiceListItem>
   item: AppListItem | WorkloadListItem | ServiceListItem
 ) => {
   const hasMissingSC = hasMissingSidecar(item);
-  const isWorkload = 'appLabel' in item;
-  const hasMissingApp = isWorkload && !item['appLabel'];
-  const hasMissingVersion = isWorkload && !item['versionLabel'];
   const additionalDetails = (item as WorkloadListItem | ServiceListItem).additionalDetailSample;
   const spacer = hasMissingSC && additionalDetails && additionalDetails.icon;
   return (
@@ -72,24 +69,16 @@ export const details: Renderer<AppListItem | WorkloadListItem | ServiceListItem>
             <MissingSidecar namespace={item.namespace} />
           </li>
         )}
-        {isWorkload && hasMissingApp && (
+        {
           <li>
-            Missing{' '}
-            <Badge isRead={true} className={'virtualitem_badge_definition'}>
-              app
-            </Badge>
-            label
+            <LabelValidation
+              name={item.name}
+              namespace={item.namespace}
+              labels={item.labels}
+              kind={'appLabel' in item ? 'workload' : 'validation' in item ? 'service' : 'app'}
+            />
           </li>
-        )}
-        {isWorkload && hasMissingVersion && (
-          <li>
-            Missing{' '}
-            <Badge isRead={true} className={'virtualitem_badge_definition'}>
-              version
-            </Badge>
-            label
-          </li>
-        )}
+        }
         {spacer && ' '}
         {additionalDetails && additionalDetails.icon && (
           <li>{renderAPILogo(additionalDetails.icon, additionalDetails.title, 0)}</li>
