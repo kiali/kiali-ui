@@ -20,6 +20,7 @@ import MiniGraphCard from '../../components/CytoscapeGraph/MiniGraphCard';
 import IstioConfigCard from '../../components/IstioConfigCard/IstioConfigCard';
 import WorkloadPods from './WorkloadPods';
 import { renderHealthTitle } from '../../components/Health/HealthDetails';
+import MissingSidecar from '../../components/MissingSidecar/MissingSidecar';
 
 type WorkloadInfoProps = {
   namespace: string;
@@ -240,7 +241,19 @@ class WorkloadInfo extends React.Component<WorkloadInfoProps, WorkloadInfoState>
             </GridItem>
             <GridItem span={8}>
               <MiniGraphCard
-                title={this.state.health ? renderHealthTitle(this.state.health) : <>Graph</>}
+                title={
+                  this.state.health ? (
+                    <span>
+                      {this.props.workload && !this.props.workload.istioSidecar ? (
+                        <MissingSidecar namespace={this.props.namespace} />
+                      ) : (
+                        renderHealthTitle(this.state.health)
+                      )}
+                    </span>
+                  ) : (
+                    <>Graph</>
+                  )
+                }
                 dataSource={this.graphDataSource}
                 mtlsEnabled={this.props.mtlsEnabled}
                 graphContainerStyle={graphContainerStyle}

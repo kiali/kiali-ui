@@ -8,10 +8,15 @@ import {
   EmptyState,
   EmptyStateBody,
   EmptyStateVariant,
-  Title
+  Title,
+  Tooltip,
+  TooltipPosition
 } from '@patternfly/react-core';
 import PodStatus from './PodStatus';
 import { style } from 'typestyle';
+import { KialiIcon } from '../../config/KialiIcon';
+import LocalTime from '../../components/Time/LocalTime';
+import Labels from '../../components/Label/Labels';
 
 type WorkloadPodsProps = {
   namespace: string;
@@ -23,6 +28,22 @@ type WorkloadPodsProps = {
 const emtpytStyle = style({
   padding: '0 0 0 0',
   margin: '0 0 0 0'
+});
+
+const resourceListStyle = style({
+  margin: '0px 0 11px 0',
+  $nest: {
+    '& > ul > li > span': {
+      float: 'left',
+      width: '125px',
+      fontWeight: 700
+    }
+  }
+});
+
+const infoStyle = style({
+  margin: '0px 5px 2px 10px',
+  verticalAlign: '-4px !important'
 });
 
 class WorkloadPods extends React.Component<WorkloadPodsProps> {
@@ -60,10 +81,60 @@ class WorkloadPods extends React.Component<WorkloadPodsProps> {
       if (this.props.validations[pod.name]) {
         validation = this.props.validations[pod.name];
       }
+      const podProperties = (
+        <div key="properties-list" className={resourceListStyle}>
+          <ul style={{ listStyleType: 'none' }}>
+            <li>
+              <span>Created</span>
+              <div style={{ display: 'inline-block' }}>
+                <LocalTime time={pod.createdAt} />
+              </div>
+            </li>
+            <li>
+              <span>Created By</span>
+              <div style={{ display: 'inline-block' }}>
+                {pod.createdBy && pod.createdBy.length > 0
+                  ? pod.createdBy.map(ref => ref.name + ' (' + ref.kind + ')').join(', ')
+                  : ''}
+              </div>
+            </li>
+            <li>
+              <span>Istio Init Container</span>
+              <div style={{ display: 'inline-block' }}>
+                {pod.istioInitContainers ? pod.istioInitContainers.map(c => `${c.image}`).join(', ') : ''}
+              </div>
+            </li>
+            <li>
+              <span>Istio Container</span>
+              <div style={{ display: 'inline-block' }}>
+                {pod.istioContainers ? pod.istioContainers.map(c => `${c.image}`).join(', ') : ''}
+              </div>
+            </li>
+            <li>
+              <span>Labels</span>
+              <div style={{ display: 'inline-block' }}>
+                <Labels labels={pod.labels} expanded={true} />
+              </div>
+            </li>
+          </ul>
+        </div>
+      );
 
       rows.push({
         cells: [
-          { title: <>{pod.name}</> },
+          {
+            title: (
+              <span>
+                {pod.name}
+                <Tooltip
+                  position={TooltipPosition.right}
+                  content={<div style={{ textAlign: 'left' }}>{podProperties}</div>}
+                >
+                  <KialiIcon.Info className={infoStyle} />
+                </Tooltip>
+              </span>
+            )
+          },
           {
             title: (
               <>

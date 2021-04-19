@@ -9,6 +9,7 @@ const SHOW_MORE_TRESHOLD = 2;
 interface Props {
   labels?: { [key: string]: string };
   tooltipMessage?: string;
+  expanded?: boolean;
 }
 
 interface State {
@@ -35,7 +36,7 @@ class Labels extends React.Component<Props, State> {
   constructor(props: Props, state: State) {
     super(props, state);
     this.state = {
-      expanded: false
+      expanded: props.expanded ? props.expanded : false
     };
   }
 
