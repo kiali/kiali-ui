@@ -95,19 +95,19 @@ class WorkloadPods extends React.Component<WorkloadPodsProps> {
               <div style={{ display: 'inline-block' }}>
                 {pod.createdBy && pod.createdBy.length > 0
                   ? pod.createdBy.map(ref => ref.name + ' (' + ref.kind + ')').join(', ')
-                  : ''}
+                  : 'Not found'}
               </div>
             </li>
             <li>
               <span>Istio Init Container</span>
               <div style={{ display: 'inline-block' }}>
-                {pod.istioInitContainers ? pod.istioInitContainers.map(c => `${c.image}`).join(', ') : ''}
+                {pod.istioInitContainers ? pod.istioInitContainers.map(c => `${c.image}`).join(', ') : 'Not found'}
               </div>
             </li>
             <li>
               <span>Istio Container</span>
               <div style={{ display: 'inline-block' }}>
-                {pod.istioContainers ? pod.istioContainers.map(c => `${c.image}`).join(', ') : ''}
+                {pod.istioContainers ? pod.istioContainers.map(c => `${c.image}`).join(', ') : 'Not found'}
               </div>
             </li>
             <li>

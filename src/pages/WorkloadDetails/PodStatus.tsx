@@ -31,10 +31,10 @@ class PodStatus extends React.Component<Props> {
 
   content = () => {
     return (
-      <div className="pod-status-tooltip">
+      <>
         <ProxyStatusList status={this.props.proxyStatus} />
         <ValidationStack checks={this.props.checks} />
-      </div>
+      </>
     );
   };
 
