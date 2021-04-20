@@ -24,7 +24,7 @@ const linkStyle = style({
 });
 
 const infoStyle = style({
-  margin: '0px 5px 2px 4px',
+  margin: '0px 4px 2px 10px',
   verticalAlign: '-9px !important'
 });
 

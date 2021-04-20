@@ -14,7 +14,6 @@ import { KialiAppState } from '../../store/Store';
 import { connect } from 'react-redux';
 import { durationSelector, meshWideMTLSEnabledSelector } from '../../store/Selectors';
 import MiniGraphCard from '../../components/CytoscapeGraph/MiniGraphCard';
-import HealthCard from '../../components/Health/HealthCard';
 import IstioConfigCard from '../../components/IstioConfigCard/IstioConfigCard';
 import ServiceNetwork from './ServiceNetwork';
 import { renderHealthTitle } from '../../components/Health/HealthDetails';
@@ -104,18 +103,6 @@ class ServiceInfo extends React.Component<Props, ServiceInfoState> {
                     validations={this.getServiceValidation()}
                   />
                 )}
-              </Stack>
-              <Stack gutter="md">
-                <StackItem>
-                  {this.props.serviceDetails ? (
-                    <HealthCard
-                      name={this.props.serviceDetails.service.name}
-                      health={this.props.serviceDetails.health}
-                    />
-                  ) : (
-                    'Loading'
-                  )}
-                </StackItem>
                 <StackItem>
                   <IstioConfigCard name={this.props.service} items={istioConfigItems} />
                 </StackItem>

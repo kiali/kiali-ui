@@ -83,7 +83,25 @@ class DetailDescription extends React.PureComponent<Props> {
     ];
   }
 
-  private renderWorkloadItem(sub: HealthSubItem) {
+  private renderWorkloadItem(workload: AppWorkload) {
+    return (
+      <span>
+        <div key="service-icon" className={iconStyle}>
+          <Tooltip position={TooltipPosition.top} content={<>Workload</>}>
+            <Badge className={'virtualitem_badge_definition'}>W</Badge>
+          </Tooltip>
+        </div>
+        <Link to={'/namespaces/' + this.props.namespace + '/workloads/' + workload.workloadName}>
+          {workload.workloadName}
+        </Link>
+        {!workload.istioSidecar && (
+          <MissingSidecar namespace={this.props.namespace} tooltip={true} style={{ marginLeft: '10px' }} text={''} />
+        )}
+      </span>
+    );
+  }
+
+  private renderWorkloadHealthItem(sub: HealthSubItem) {
     let workload: AppWorkload | undefined = undefined;
     if (this.props.workloads && this.props.workloads.length > 0) {
       for (let i = 0; i < this.props.workloads.length; i++) {
@@ -137,10 +155,22 @@ class DetailDescription extends React.PureComponent<Props> {
             {item.children && (
               <ul style={{ listStyleType: 'none' }}>
                 {item.children.map((sub, subIdx) => {
-                  return <li key={subIdx}>{this.renderWorkloadItem(sub)}</li>;
+                  return <li key={subIdx}>{this.renderWorkloadHealthItem(sub)}</li>;
                 })}
               </ul>
             )}
+          </div>
+        );
+      } else {
+        return (
+          <div>
+            <ul style={{ listStyleType: 'none' }}>
+              {this.props.workloads
+                ? this.props.workloads.map((wkd, subIdx) => {
+                    return <li key={subIdx}>{this.renderWorkloadItem(wkd)}</li>;
+                  })
+                : undefined}
+            </ul>
           </div>
         );
       }
@@ -179,7 +209,7 @@ class DetailDescription extends React.PureComponent<Props> {
     return (
       <>
         {this.props.apps !== undefined && this.appList()}
-        {this.workloadSummary()}
+        {this.props.workloads !== undefined && this.workloadSummary()}
         {this.props.services !== undefined && this.serviceList()}
         {this.props.health && renderTrafficStatus(this.props.health)}
       </>

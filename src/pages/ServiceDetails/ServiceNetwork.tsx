@@ -39,7 +39,7 @@ class ServiceNetwork extends React.Component<Props> {
 
   render() {
     return (
-      <Card>
+      <Card isCompact={true}>
         <CardHeader>
           <Title headingLevel="h3" size="2xl">
             Network

@@ -6,6 +6,7 @@ import { serverConfig } from '../../config';
 import Labels from '../../components/Label/Labels';
 import { style } from 'typestyle';
 import * as H from '../../types/Health';
+import { DisplayMode, HealthIndicator } from '../../components/Health/HealthIndicator';
 
 type AppDescriptionProps = {
   app?: App;
@@ -17,6 +18,11 @@ const iconStyle = style({
   padding: '0 0 0 0',
   display: 'inline-block',
   verticalAlign: '2px !important'
+});
+
+const healthIconStyle = style({
+  marginLeft: '10px',
+  verticalAlign: '-1px !important'
 });
 
 class AppDescription extends React.Component<AppDescriptionProps> {
@@ -35,6 +41,9 @@ class AppDescription extends React.Component<AppDescriptionProps> {
               </Tooltip>
             </div>
             {this.props.app.name}
+            <span className={healthIconStyle}>
+              <HealthIndicator id={this.props.app.name} health={this.props.health} mode={DisplayMode.SMALL} />
+            </span>
           </Title>
         </CardHeader>
         <CardBody>

@@ -128,18 +128,20 @@ export default class MiniGraphCard extends React.Component<MiniGraphCardProps, M
 
     // If we are already on the details page of the double-tapped node, do nothing.
     const displayedNode = this.props.dataSource.fetchParameters.node;
+    // Minigraph will consider box nodes as app
+    const eNodeType = e.nodeType === 'box' && e.isBox ? e.isBox : e.workload ? 'workload' : e.nodeType;
     const isSameResource =
       displayedNode?.namespace.name === e.namespace &&
-      displayedNode.nodeType === e.nodeType &&
-      displayedNode[displayedNode.nodeType] === e[e.nodeType];
+      displayedNode.nodeType === eNodeType &&
+      displayedNode[displayedNode.nodeType] === e[eNodeType];
 
     if (isSameResource) {
       return;
     }
 
     // Redirect to the details page of the double-tapped node.
-    let resource = e[e.nodeType];
-    let resourceType: string = e.nodeType === NodeType.APP ? 'application' : e.nodeType;
+    let resource = e[eNodeType];
+    let resourceType: string = eNodeType === NodeType.APP ? 'application' : eNodeType;
 
     history.push(`/namespaces/${e.namespace}/${resourceType}s/${resource}`);
   };

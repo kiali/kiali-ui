@@ -5,12 +5,12 @@ import DetailDescription from '../../components/Details/DetailDescription';
 import { AppWorkload } from '../../types/App';
 import { serverConfig } from '../../config';
 import Labels from '../../components/Label/Labels';
-import MissingSidecar from '../../components/MissingSidecar/MissingSidecar';
 import { style } from 'typestyle';
 import LocalTime from '../../components/Time/LocalTime';
 import { renderAPILogo } from '../../components/Logo/Logos';
 import { TextOrLink } from '../../components/TextOrLink';
 import { KialiIcon } from '../../config/KialiIcon';
+import { DisplayMode, HealthIndicator } from '../../components/Health/HealthIndicator';
 
 interface ServiceInfoDescriptionProps {
   namespace: string;
@@ -41,7 +41,12 @@ const iconStyle = style({
 
 const infoStyle = style({
   margin: '0px 5px 2px 10px',
-  verticalAlign: '-6px !important'
+  verticalAlign: '-5px !important'
+});
+
+const healthIconStyle = style({
+  marginLeft: '10px',
+  verticalAlign: '-1px !important'
 });
 
 class ServiceDescription extends React.Component<ServiceInfoDescriptionProps, State> {
@@ -126,22 +131,30 @@ class ServiceDescription extends React.Component<ServiceInfoDescriptionProps, St
       </div>
     );
 
+    const serviceName = this.props.serviceDetails ? this.props.serviceDetails.service.name : 'Service';
     return (
       <Card>
         <CardHeader>
           <Title headingLevel="h5" size="lg">
             <div key="service-icon" className={iconStyle}>
-              <Tooltip position={TooltipPosition.top} content={<>Workload</>}>
-                <Badge className={'virtualitem_badge_definition'}>W</Badge>
+              <Tooltip position={TooltipPosition.top} content={<>Service</>}>
+                <Badge className={'virtualitem_badge_definition'}>S</Badge>
               </Tooltip>
             </div>
-            {this.props.serviceDetails ? this.props.serviceDetails.service.name : 'Service'}
+            {serviceName}
             <Tooltip
               position={TooltipPosition.right}
               content={<div style={{ textAlign: 'left' }}>{serviceProperties}</div>}
             >
               <KialiIcon.Info className={infoStyle} />
             </Tooltip>
+            <span className={healthIconStyle}>
+              <HealthIndicator
+                id={serviceName}
+                health={this.props.serviceDetails ? this.props.serviceDetails.health : undefined}
+                mode={DisplayMode.SMALL}
+              />
+            </span>
           </Title>
         </CardHeader>
         <CardBody>
@@ -163,11 +176,6 @@ class ServiceDescription extends React.Component<ServiceInfoDescriptionProps, St
             workloads={workloads}
             health={this.props.serviceDetails?.health}
           />
-          {this.props.serviceDetails && !this.props.serviceDetails.istioSidecar && (
-            <div>
-              <MissingSidecar namespace={this.props.namespace} />
-            </div>
-          )}
         </CardBody>
       </Card>
     );

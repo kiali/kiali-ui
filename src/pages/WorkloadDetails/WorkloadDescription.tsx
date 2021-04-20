@@ -2,15 +2,15 @@ import * as React from 'react';
 import { Workload } from '../../types/Workload';
 import { Badge, Card, CardBody, CardHeader, Title, Tooltip, TooltipPosition } from '@patternfly/react-core';
 import DetailDescription from '../../components/Details/DetailDescription';
-import { serverConfig } from '../../config';
 import { style } from 'typestyle';
 import Labels from '../../components/Label/Labels';
 import LocalTime from '../../components/Time/LocalTime';
 import { TextOrLink } from '../../components/TextOrLink';
 import { renderAPILogo, renderRuntimeLogo } from '../../components/Logo/Logos';
 import * as H from '../../types/Health';
-import { AppWorkload } from '../../types/App';
 import { KialiIcon } from '../../config/KialiIcon';
+import { DisplayMode, HealthIndicator } from '../../components/Health/HealthIndicator';
+import { serverConfig } from '../../config';
 
 type WorkloadDescriptionProps = {
   workload?: Workload;
@@ -36,7 +36,12 @@ const iconStyle = style({
 
 const infoStyle = style({
   margin: '0px 5px 2px 10px',
-  verticalAlign: '-6px !important'
+  verticalAlign: '-5px !important'
+});
+
+const healthIconStyle = style({
+  marginLeft: '10px',
+  verticalAlign: '-1px !important'
 });
 
 class WorkloadDescription extends React.Component<WorkloadDescriptionProps> {
@@ -44,18 +49,14 @@ class WorkloadDescription extends React.Component<WorkloadDescriptionProps> {
     const workload = this.props.workload;
     const apps: string[] = [];
     const services: string[] = [];
-    const workloads: AppWorkload[] = [];
 
     if (workload) {
       if (workload.labels[serverConfig.istioLabels.appLabelName]) {
         apps.push(workload.labels[serverConfig.istioLabels.appLabelName]);
       }
       workload.services.forEach(s => services.push(s.name));
-      workloads.push({
-        workloadName: workload.name,
-        istioSidecar: workload.istioSidecar
-      });
     }
+
     const isTemplateLabels =
       workload &&
       ['Deployment', 'ReplicaSet', 'ReplicationController', 'DeploymentConfig', 'StatefulSet'].indexOf(workload.type) >=
@@ -132,6 +133,9 @@ class WorkloadDescription extends React.Component<WorkloadDescriptionProps> {
                 <KialiIcon.Info className={infoStyle} />
               </Tooltip>
             ) : undefined}
+            <span className={healthIconStyle}>
+              <HealthIndicator id={workload.name} health={this.props.health} mode={DisplayMode.SMALL} />
+            </span>
           </Title>
         </CardHeader>
         <CardBody>
@@ -141,13 +145,7 @@ class WorkloadDescription extends React.Component<WorkloadDescriptionProps> {
               tooltipMessage={isTemplateLabels ? 'Labels defined on the Workload template' : undefined}
             />
           )}
-          <DetailDescription
-            namespace={this.props.namespace}
-            apps={apps}
-            services={services}
-            workloads={workloads}
-            health={this.props.health}
-          />
+          <DetailDescription namespace={this.props.namespace} apps={apps} services={services} />
         </CardBody>
       </Card>
     ) : (
