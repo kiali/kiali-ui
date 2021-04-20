@@ -35,7 +35,7 @@ const iconStyle = style({
 });
 
 const infoStyle = style({
-  margin: '0px 5px 2px 10px',
+  margin: '0px 0px 2px 10px',
   verticalAlign: '-5px !important'
 });
 
@@ -145,7 +145,12 @@ class WorkloadDescription extends React.Component<WorkloadDescriptionProps> {
               tooltipMessage={isTemplateLabels ? 'Labels defined on the Workload template' : undefined}
             />
           )}
-          <DetailDescription namespace={this.props.namespace} apps={apps} services={services} />
+          <DetailDescription
+            namespace={this.props.namespace}
+            apps={apps}
+            services={services}
+            health={this.props.health}
+          />
         </CardBody>
       </Card>
     ) : (
