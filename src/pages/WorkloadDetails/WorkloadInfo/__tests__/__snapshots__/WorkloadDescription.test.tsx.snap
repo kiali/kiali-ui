@@ -57,6 +57,13 @@ exports[`WorkloadDescription should render with runtimes 1`] = `
             <Labels
               labels={Object {}}
             />
+            <LabelValidation
+              kind="workload"
+              labels={Object {}}
+              name=""
+              namespace="my-namespace"
+              smallRender={true}
+            />
           </StackItem>
           <StackItem
             id="type"

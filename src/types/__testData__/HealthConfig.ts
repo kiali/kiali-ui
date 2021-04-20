@@ -42,6 +42,7 @@ export const healthConfig = {
     injectionLabelName: 'istio-injection',
     versionLabelName: 'version'
   },
+  labelValidation: [],
   prometheus: {
     globalScrapeInterval: 15,
     storageTsdbRetention: 21600

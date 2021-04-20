@@ -92,6 +92,17 @@ exports[`#ServiceInfoDescription render correctly with data should render servic
                     }
                   }
                 />
+                <LabelValidation
+                  kind="service"
+                  labels={
+                    Object {
+                      "app": "reviews",
+                    }
+                  }
+                  name="reviews"
+                  namespace="my-namespace"
+                  smallRender={true}
+                />
               </StackItem>
               <StackItem
                 id="resource_version"
