@@ -14,7 +14,7 @@ export const labelValidation = (
   labels: { [key: string]: string }
 ): LabelValidations[] => {
   const validations: LabelValidations[] = [];
-  serverConfig.istioLabels.labelValidation.forEach(labelValidation => {
+  serverConfig.labelValidation.forEach(labelValidation => {
     if (
       labelValidation.name &&
       (labelValidation.name as RegExp).test(name) &&

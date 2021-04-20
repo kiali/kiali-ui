@@ -80,7 +80,8 @@ export interface ServerConfig {
   istioIdentityDomain: string;
   istioNamespace: string;
   istioComponentNamespaces?: Map<string, string>;
-  istioLabels: { [key in IstioLabelKey]: string } & { labelValidation: LabelValidation[] };
+  istioLabels: { [key in IstioLabelKey]: string };
+  labelValidation: LabelValidation[];
   kialiFeatureFlags: KialiFeatureFlags;
   prometheus: {
     globalScrapeInterval?: DurationInSeconds;

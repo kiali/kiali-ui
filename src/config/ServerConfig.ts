@@ -64,9 +64,9 @@ let serverConfig: ComputedServerConfig = {
   istioLabels: {
     appLabelName: 'app',
     injectionLabelName: 'istio-injection',
-    versionLabelName: 'version',
-    labelValidation: []
+    versionLabelName: 'version'
   },
+  labelValidation: [],
   kialiFeatureFlags: {
     istioInjectionAction: true
   },
@@ -98,9 +98,9 @@ export const setServerConfig = (cfg: ServerConfig) => {
     durations: {}
   };
   serverConfig.healthConfig = cfg.healthConfig ? parseHealthConfig(cfg.healthConfig) : serverConfig.healthConfig;
-  serverConfig.istioLabels.labelValidation = serverConfig.istioLabels.labelValidation
-    ? parseFilterLabel(serverConfig.istioLabels.labelValidation)
-    : serverConfig.istioLabels.labelValidation;
+  serverConfig.labelValidation = serverConfig.labelValidation
+    ? parseFilterLabel(serverConfig.labelValidation)
+    : serverConfig.labelValidation;
   computeValidDurations(serverConfig);
 };
 
