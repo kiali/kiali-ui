@@ -125,7 +125,6 @@ export class NodeContextMenu extends React.PureComponent<Props> {
     let menuOptions: React.ReactNode = null;
     // use local links if this is the home cluster, or if there is no configured home cluster
     if (!serverConfig.clusterInfo?.name || linkParams.cluster === serverConfig.clusterInfo.name) {
-      linkParams.cluster = '';
       buildMenu = true;
     } else {
       // Check if the remote Kiali is configured with a url. If so, build the menu; else, put a note.
@@ -225,7 +224,7 @@ const getOptionsFromLinkParams = (linkParams: LinkParams, jaegerInfo?: JaegerInf
     }
   }
 
-  if (cluster.length !== 0 && cluster !== serverConfig.clusterInfo?.name) {
+  if (serverConfig.clusterInfo?.name && cluster !== serverConfig.clusterInfo.name) {
     const externalClusterInfo = serverConfig.clusters[cluster];
     const kialiInfo = externalClusterInfo?.kialiInstances?.find(instance => instance.url.length !== 0);
     if (kialiInfo === undefined) {
