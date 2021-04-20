@@ -26,7 +26,7 @@ import { ValidationStatus } from 'types/IstioObjects';
 import { PFColors } from '../../components/Pf/PfColors';
 import ValidationSummary from 'components/Validations/ValidationSummary';
 import ValidationSummaryLink from '../../components/Link/ValidationSummaryLink';
-import { pfBadge, PFBadges } from 'components/Pf/PfBadges';
+import { PFBadge, PFBadges } from 'components/Pf/PfBadges';
 
 type SummaryPanelNamespaceBoxMetricsState = {
   errRates: Datapoint[];
@@ -271,7 +271,7 @@ export default class SummaryPanelNamespaceBox extends React.Component<
     return (
       <React.Fragment key={ns}>
         <span>
-          {pfBadge(PFBadges.Namespace, undefined, undefined, { marginBottom: '2px' })}
+          <PFBadge badge={PFBadges.Namespace} style={{ marginBottom: '2px' }} />
           {ns}{' '}
           {!!validation && (
             <ValidationSummaryLink

@@ -43,7 +43,7 @@ import equal from 'fast-deep-equal';
 import TrafficControlInfo from './TrafficControlInfo';
 import ErrorBoundaryWithMessage from '../../../../components/ErrorBoundary/ErrorBoundaryWithMessage';
 import { PFColors } from '../../../../components/Pf/PfColors';
-import { pfAdHocBadge } from 'components/Pf/PfBadges';
+import { PFBadge } from 'components/Pf/PfBadges';
 
 interface ExperimentInfoDescriptionProps {
   target: string;
@@ -79,7 +79,7 @@ class ExperimentInfoDescription extends React.Component<ExperimentInfoDescriptio
   serviceInfo() {
     return [
       <DataListCell key="service-icon" isIcon={true}>
-        {pfAdHocBadge('S')}
+        <PFBadge badge={{ badge: 'S' }} />
       </DataListCell>,
       <DataListCell key="targetService">
         <Text component={TextVariants.h3}>Service</Text>
@@ -114,7 +114,7 @@ class ExperimentInfoDescription extends React.Component<ExperimentInfoDescriptio
     let badgeKind = kind === 'Deployment' ? 'W' : 'S';
     return [
       <DataListCell key="workload-icon" isIcon={true}>
-        {pfAdHocBadge(badgeKind)}
+        <PFBadge badge={{ badge: badgeKind }} />
       </DataListCell>,
       <DataListCell key={bname}>
         <Text component={TextVariants.h3}>{bname}</Text>
@@ -149,7 +149,7 @@ class ExperimentInfoDescription extends React.Component<ExperimentInfoDescriptio
     let linkTo = '/namespaces/' + namespace + '/istio/gateways/' + gatewayname;
     return [
       <DataListCell key="workload-icon" isIcon={true}>
-        {pfAdHocBadge(badgeKind)}
+        <PFBadge badge={{ badge: badgeKind }} />
       </DataListCell>,
       <DataListCell key="gateway">
         <Text>Gateway</Text>
@@ -213,7 +213,7 @@ class ExperimentInfoDescription extends React.Component<ExperimentInfoDescriptio
         </CardActions>
         <CardHeader>
           <Title style={{ float: 'left' }} headingLevel="h3" size="2xl">
-            {pfAdHocBadge(this.props.experimentDetails.experimentType)}
+            <PFBadge badge={{ badge: this.props.experimentDetails.experimentType }} />
             &nbsp;&nbsp;
             {this.props.experimentDetails.experimentItem.name}
           </Title>

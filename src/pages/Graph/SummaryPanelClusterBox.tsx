@@ -10,7 +10,7 @@ import { PFColors } from 'components/Pf/PfColors';
 import { KialiIcon } from 'config/KialiIcon';
 import { SummaryPanelPropType, NodeType } from 'types/Graph';
 import { getAccumulatedTrafficRateGrpc, getAccumulatedTrafficRateHttp } from 'utils/TrafficRate';
-import { pfBadge, PFBadges } from 'components/Pf/PfBadges';
+import { PFBadge, PFBadges } from 'components/Pf/PfBadges';
 
 type SummaryPanelClusterBoxState = {
   clusterBox: any;
@@ -193,7 +193,7 @@ export default class SummaryPanelClusterBox extends React.Component<SummaryPanel
     return (
       <React.Fragment key={cluster}>
         <span>
-          {pfBadge(PFBadges.Cluster, undefined, undefined, { marginBottom: '2px' })}
+          <PFBadge badge={PFBadges.Cluster} style={{ marginBottom: '2px' }} />
           <KialiPageLink href="/" cluster={cluster}>
             {cluster}
           </KialiPageLink>{' '}

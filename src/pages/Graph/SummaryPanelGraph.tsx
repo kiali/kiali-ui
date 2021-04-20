@@ -28,7 +28,7 @@ import Namespace from 'types/Namespace';
 import ValidationSummary from 'components/Validations/ValidationSummary';
 import { PFColors } from '../../components/Pf/PfColors';
 import ValidationSummaryLink from '../../components/Link/ValidationSummaryLink';
-import { pfBadge, PFBadges } from 'components/Pf/PfBadges';
+import { PFBadge, PFBadges } from 'components/Pf/PfBadges';
 
 type SummaryPanelGraphMetricsState = {
   reqRates: Datapoint[];
@@ -302,7 +302,7 @@ export default class SummaryPanelGraph extends React.Component<SummaryPanelPropT
     return (
       <React.Fragment key={ns}>
         <span>
-          {pfBadge(PFBadges.Namespace, undefined, undefined, { marginBottom: '2px' })}
+          <PFBadge badge={PFBadges.Namespace} style={{ marginBottom: '2px' }} />
           {ns} {this.renderValidations(ns)}
         </span>
         <br />

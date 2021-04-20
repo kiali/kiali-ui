@@ -13,7 +13,7 @@ import {
 } from '@patternfly/react-core';
 import { WorkloadWeight } from '../TrafficShifting';
 import { Abort, Delay, HTTPRetry } from '../../../types/IstioObjects';
-import { pfBadge, PFBadges } from 'components/Pf/PfBadges';
+import { PFBadge, PFBadges } from 'components/Pf/PfBadges';
 
 export enum MOVE_TYPE {
   UP,
@@ -138,7 +138,7 @@ class Rules extends React.Component<Props> {
                       .map((wk, i) => {
                         return (
                           <div key={'wk_' + order + '_' + wk.name + '_' + i}>
-                            {pfBadge(PFBadges.Workload, TooltipPosition.top)}
+                            <PFBadge badge={PFBadges.Workload} position={TooltipPosition.top} />
                             {wk.name} ({wk.weight}% routed traffic)
                           </div>
                         );

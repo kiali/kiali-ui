@@ -7,7 +7,7 @@ import { PFColors } from './../../../../components/Pf/PfColors';
 import { Badge, EmptyState, EmptyStateVariant, Title, Tooltip, TooltipPosition } from '@patternfly/react-core';
 import { WorkloadWeight } from './../../../../components/IstioWizards/TrafficShifting';
 import { Abort, Delay, HTTPRetry } from './../../../../types/IstioObjects';
-import { pfBadge, PFBadges } from 'components/Pf/PfBadges';
+import { PFBadge, PFBadges } from 'components/Pf/PfBadges';
 
 export enum MOVE_TYPE {
   UP,
@@ -125,7 +125,7 @@ class ExperimentRules extends React.Component<Props> {
                       .map((wk, i) => {
                         return (
                           <div key={'wk_' + order + '_' + wk.name + '_' + i}>
-                            {pfBadge(PFBadges.Workload, TooltipPosition.top)}
+                            <PFBadge badge={PFBadges.Workload} position={TooltipPosition.top} />
                             {wk.name} ({wk.weight}% routed traffic)
                           </div>
                         );

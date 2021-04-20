@@ -7,7 +7,7 @@ import { PFColors } from '../Pf/PfColors';
 import { Badge, Button, Tooltip, TooltipPosition } from '@patternfly/react-core';
 import { EqualizerIcon } from '@patternfly/react-icons';
 import { getDefaultWeights } from './WizardActions';
-import { pfBadge, PFBadges } from 'components/Pf/PfBadges';
+import { PFBadge, PFBadges } from 'components/Pf/PfBadges';
 
 type Props = {
   workloads: WorkloadOverview[];
@@ -218,7 +218,7 @@ class TrafficShifting extends React.Component<Props, State> {
           cells: [
             <>
               <div>
-                {pfBadge(PFBadges.Workload, TooltipPosition.top)}
+                <PFBadge badge={PFBadges.Workload} position={TooltipPosition.top} />
                 {workload.name}
               </div>
             </>,

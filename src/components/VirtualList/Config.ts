@@ -11,7 +11,7 @@ import { isIstioNamespace } from 'config/ServerConfig';
 import NamespaceInfo from '../../pages/Overview/NamespaceInfo';
 import * as React from 'react';
 import { StatefulFilters } from '../Filters/StatefulFilters';
-import { PFBadge, PFBadges } from '../../components/Pf/PfBadges';
+import { PFBadges, PFBadgeType } from '../../components/Pf/PfBadges';
 
 export type SortResource = AppListItem | WorkloadListItem | ServiceListItem;
 export type TResource = SortResource | IstioConfigItem;
@@ -19,7 +19,7 @@ export type RenderResource = TResource | NamespaceInfo;
 export type Renderer<R extends RenderResource> = (
   item: R,
   config: Resource,
-  badge: PFBadge,
+  badge: PFBadgeType,
   health?: Health,
   statefulFilter?: React.RefObject<StatefulFilters>
 ) => JSX.Element | undefined;
@@ -160,7 +160,7 @@ const istioType: ResourceType<IstioConfigItem> = {
 type istioConfigType = {
   name: string;
   url: string;
-  badge: PFBadge;
+  badge: PFBadgeType;
 };
 
 export const IstioTypes = {
@@ -220,7 +220,7 @@ export type Resource = {
   name: string;
   columns: ResourceType<any>[];
   caption?: string;
-  badge?: PFBadge;
+  badge?: PFBadgeType;
 };
 
 const namespaces: Resource = {

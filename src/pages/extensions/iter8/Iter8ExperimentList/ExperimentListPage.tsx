@@ -48,7 +48,7 @@ import { activeNamespacesSelector, durationSelector } from '../../../../store/Se
 import { connect } from 'react-redux';
 import DefaultSecondaryMasthead from '../../../../components/DefaultSecondaryMasthead/DefaultSecondaryMasthead';
 import RefreshContainer from '../../../../components/Refresh/Refresh';
-import { pfAdHocBadge, pfBadge, PFBadges } from 'components/Pf/PfBadges';
+import { PFBadges, PFBadge } from 'components/Pf/PfBadges';
 
 // Style constants
 const containerPadding = style({ padding: '20px 20px 20px 20px' });
@@ -432,7 +432,7 @@ class ExperimentListPageComponent extends React.Component<Props, State> {
       let linkTo = '/namespaces/' + namespace + '/workloads/' + name;
       return (
         <>
-          {pfAdHocBadge('W')}
+          <PFBadge badge={{ badge: 'W' }} />
           <Link to={linkTo}>{name}</Link>
         </>
       );
@@ -441,7 +441,7 @@ class ExperimentListPageComponent extends React.Component<Props, State> {
         let linkTo = '/namespaces/' + namespace + '/services/' + name;
         return (
           <>
-            {pfAdHocBadge('S')}
+            <PFBadge badge={{ badge: 'S' }} />
             <Link to={linkTo}>{name}</Link>
           </>
         );
@@ -462,8 +462,12 @@ class ExperimentListPageComponent extends React.Component<Props, State> {
       return {
         cells: [
           <>
-            {pfBadge(PFBadges.Iter8, TooltipPosition.top, `TooltipExtensionIter8Name_${h.name}`)}
-            {pfAdHocBadge(h.experimentKind)}
+            <PFBadge
+              key={`TooltipExtensionIter8Name_${h.name}`}
+              badge={PFBadges.Iter8}
+              position={TooltipPosition.top}
+            />
+            <PFBadge badge={{ badge: h.experimentKind }} />
             <Link
               to={`/extensions/namespaces/${h.namespace}/iter8/${h.name}?target=${h.targetService}&startTime=${h.startTime}&endTime=${h.endTime}&baseline=${h.baseline.name}&candidates=${candidates}`}
               key={'Experiment_' + h.namespace + '_' + h.namespace}
@@ -472,7 +476,11 @@ class ExperimentListPageComponent extends React.Component<Props, State> {
             </Link>
           </>,
           <>
-            {pfBadge(PFBadges.Namespace, TooltipPosition.top, `TooltipExtensionNamespace_${h.namespace}`)}
+            <PFBadge
+              key={`TooltipExtensionNamespace_${h.namespace}`}
+              badge={PFBadges.Namespace}
+              position={TooltipPosition.top}
+            />
             {h.namespace}
           </>,
           <>

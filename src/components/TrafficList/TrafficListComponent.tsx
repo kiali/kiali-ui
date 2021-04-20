@@ -12,12 +12,12 @@ import history, { URLParam } from 'app/History';
 import { createIcon } from 'components/Health/Helper';
 import { sortFields } from './FiltersAndSorts';
 import { SortField } from 'types/SortFilters';
-import { pfBadge, PFBadge, PFBadges } from 'components/Pf/PfBadges';
+import { PFBadgeType, PFBadge, PFBadges } from 'components/Pf/PfBadges';
 
 export interface TrafficListItem {
   direction: TrafficDirection;
   healthStatus: ThresholdStatus;
-  badge: PFBadge;
+  badge: PFBadgeType;
   node: TrafficNode;
   protocol: string;
   trafficRate: string;
@@ -152,7 +152,7 @@ class TrafficListComponent extends FilterComponent.Component<
 
   trafficToListItems(trafficItems: TrafficItem[]) {
     const listItems = trafficItems.map(ti => {
-      let badge: PFBadge;
+      let badge: PFBadgeType;
       switch (ti.node.type) {
         case NodeType.APP:
           badge = PFBadges.App;
@@ -232,7 +232,7 @@ class TrafficListComponent extends FilterComponent.Component<
               </Tooltip>
             </>,
             <>
-              {pfBadge(item.badge, TooltipPosition.top, `tt_badge_${i}`)}
+              <PFBadge badge={item.badge} position={TooltipPosition.top} key={`tt_badge_${i}`} />
               {!!links.detail ? (
                 <Link key={`link_d_${item.badge}_${name}`} to={links.detail} className={'virtualitem_definition_link'}>
                   {name}
