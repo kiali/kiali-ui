@@ -67,19 +67,6 @@ export const renderTrafficStatus = (health: H.Health) => {
   return undefined;
 };
 
-export const renderHealthTitle = (health: H.Health) => {
-  const globalStatus = health.getGlobalStatus();
-  const spanStyle: React.CSSProperties = {
-    color: globalStatus.color
-  };
-  return (
-    <span style={spanStyle}>
-      <span style={{ marginRight: '10px' }}>{createIcon(globalStatus, 'sm')}</span>
-      {globalStatus.name}
-    </span>
-  );
-};
-
 export class HealthDetails extends React.PureComponent<Props, {}> {
   renderErrorRate = (item: H.HealthItem, idx: number) => {
     const config = this.props.health.getStatusConfig();

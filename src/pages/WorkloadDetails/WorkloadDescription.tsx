@@ -11,6 +11,7 @@ import * as H from '../../types/Health';
 import { KialiIcon } from '../../config/KialiIcon';
 import { DisplayMode, HealthIndicator } from '../../components/Health/HealthIndicator';
 import { serverConfig } from '../../config';
+import MissingSidecar from '../../components/MissingSidecar/MissingSidecar';
 
 type WorkloadDescriptionProps = {
   workload?: Workload;
@@ -136,6 +137,14 @@ class WorkloadDescription extends React.Component<WorkloadDescriptionProps> {
             <span className={healthIconStyle}>
               <HealthIndicator id={workload.name} health={this.props.health} mode={DisplayMode.SMALL} />
             </span>
+            {this.props.workload && !this.props.workload.istioSidecar ? (
+              <MissingSidecar
+                namespace={this.props.namespace}
+                tooltip={true}
+                style={{ marginLeft: '10px' }}
+                text={''}
+              />
+            ) : undefined}
           </Title>
         </CardHeader>
         <CardBody>

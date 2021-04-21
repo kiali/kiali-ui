@@ -19,11 +19,12 @@ import { DagreGraph } from './graphs/DagreGraph';
 import { GraphUrlParams, makeNodeGraphUrlFromParams } from 'components/Nav/NavUtils';
 import { store } from 'store/ConfigStore';
 import { style } from 'typestyle';
+import { toRangeString } from '../Time/Utils';
+import { TimeInMilliseconds } from '../../types/Common';
 
 const initGraphContainerStyle = style({ width: '100%', height: '100%' });
 
 type MiniGraphCardProps = {
-  title: React.ReactFragment;
   dataSource: GraphDataSource;
   mtlsEnabled: boolean;
   graphContainerStyle?: string;
@@ -63,6 +64,10 @@ export default class MiniGraphCard extends React.Component<MiniGraphCardProps, M
         Show node graph
       </DropdownItem>
     ];
+    const rangeEnd: TimeInMilliseconds = this.props.dataSource.graphTimestamp * 1000;
+    const rangeStart: TimeInMilliseconds = rangeEnd - this.props.dataSource.graphDuration * 1000;
+    const intervalTitle =
+      rangeEnd > 0 ? toRangeString(rangeStart, rangeEnd, { second: '2-digit' }, { second: '2-digit' }) : 'Loading';
 
     return (
       <Card style={{ height: '100%' }}>
@@ -78,7 +83,7 @@ export default class MiniGraphCard extends React.Component<MiniGraphCardProps, M
           </CardActions>
           <CardHeader>
             <Title style={{ float: 'left' }} headingLevel="h5" size="lg">
-              {this.props.title}
+              {intervalTitle}
             </Title>
           </CardHeader>
         </CardHead>

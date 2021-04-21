@@ -16,7 +16,6 @@ import { durationSelector, meshWideMTLSEnabledSelector } from '../../store/Selec
 import MiniGraphCard from '../../components/CytoscapeGraph/MiniGraphCard';
 import IstioConfigCard from '../../components/IstioConfigCard/IstioConfigCard';
 import ServiceNetwork from './ServiceNetwork';
-import { renderHealthTitle } from '../../components/Health/HealthDetails';
 
 interface Props extends ServiceId {
   duration: DurationInSeconds;
@@ -52,11 +51,7 @@ class ServiceInfo extends React.Component<Props, ServiceInfoState> {
   }
 
   componentDidUpdate(prev: Props) {
-    if (
-      prev.duration !== this.props.duration ||
-      prev.lastRefreshAt !== this.props.lastRefreshAt ||
-      prev.serviceDetails !== this.props.serviceDetails
-    ) {
+    if (prev.duration !== this.props.duration || prev.lastRefreshAt !== this.props.lastRefreshAt) {
       this.fetchBackend();
     }
   }
@@ -110,13 +105,6 @@ class ServiceInfo extends React.Component<Props, ServiceInfoState> {
             </GridItem>
             <GridItem span={8}>
               <MiniGraphCard
-                title={
-                  this.props.serviceDetails && this.props.serviceDetails.health ? (
-                    renderHealthTitle(this.props.serviceDetails.health)
-                  ) : (
-                    <>Graph</>
-                  )
-                }
                 dataSource={this.graphDataSource}
                 mtlsEnabled={this.props.mtlsEnabled}
                 graphContainerStyle={graphContainerStyle}

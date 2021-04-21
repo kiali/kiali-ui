@@ -19,8 +19,6 @@ import { durationSelector, meshWideMTLSEnabledSelector } from '../../store/Selec
 import MiniGraphCard from '../../components/CytoscapeGraph/MiniGraphCard';
 import IstioConfigCard from '../../components/IstioConfigCard/IstioConfigCard';
 import WorkloadPods from './WorkloadPods';
-import { renderHealthTitle } from '../../components/Health/HealthDetails';
-import MissingSidecar from '../../components/MissingSidecar/MissingSidecar';
 
 type WorkloadInfoProps = {
   namespace: string;
@@ -71,11 +69,7 @@ class WorkloadInfo extends React.Component<WorkloadInfoProps, WorkloadInfoState>
 
   componentDidUpdate(prev: WorkloadInfoProps) {
     // Fetch WorkloadInfo backend on duration changes or WorkloadDetailsPage update
-    if (
-      prev.duration !== this.props.duration ||
-      prev.lastRefreshAt !== this.props.lastRefreshAt ||
-      prev.workload !== this.props.workload
-    ) {
+    if (prev.duration !== this.props.duration || prev.lastRefreshAt !== this.props.lastRefreshAt) {
       this.fetchBackend();
     }
   }
@@ -86,16 +80,6 @@ class WorkloadInfo extends React.Component<WorkloadInfoProps, WorkloadInfoState>
       this.setState({
         validations: this.workloadValidations(this.props.workload)
       });
-      API.getWorkloadHealth(
-        this.props.namespace,
-        this.props.workload.name,
-        this.props.workload ? this.props.workload.type : '',
-        this.props.duration,
-        this.props.workload ? this.props.workload.istioSidecar : false
-      )
-        .then(health => this.setState({ health: health }))
-        .catch(error => AlertUtils.addError('Could not fetch Health.', error));
-
       const labels = this.props.workload.labels;
       const wkLabels: string[] = [];
       Object.keys(labels).forEach(key => {
@@ -103,9 +87,24 @@ class WorkloadInfo extends React.Component<WorkloadInfoProps, WorkloadInfoState>
         wkLabels.push(label);
       });
       const workloadSelector = wkLabels.join(',');
-      API.getIstioConfig(this.props.namespace, workloadIstioResources, true, '', workloadSelector)
-        .then(response => this.setState({ workloadIstioConfig: response.data }))
-        .catch(error => AlertUtils.addError('Could not fetch Istio Config.', error));
+
+      Promise.all([
+        API.getWorkloadHealth(
+          this.props.namespace,
+          this.props.workload.name,
+          this.props.workload ? this.props.workload.type : '',
+          this.props.duration,
+          this.props.workload ? this.props.workload.istioSidecar : false
+        ),
+        API.getIstioConfig(this.props.namespace, workloadIstioResources, true, '', workloadSelector)
+      ])
+        .then(results => {
+          this.setState({
+            health: results[0],
+            workloadIstioConfig: results[1].data
+          });
+        })
+        .catch(error => AlertUtils.addError('Could not fetch Health/IstioConfig.', error));
     }
   };
 
@@ -180,6 +179,7 @@ class WorkloadInfo extends React.Component<WorkloadInfoProps, WorkloadInfoState>
   }
 
   render() {
+    console.log('TODELETE WorkloadInfo render() ' + new Date().getMilliseconds());
     const workload = this.props.workload;
     const pods = workload?.pods || [];
     const istioConfigItems = this.state.workloadIstioConfig ? toIstioItems(this.state.workloadIstioConfig) : [];
@@ -241,19 +241,6 @@ class WorkloadInfo extends React.Component<WorkloadInfoProps, WorkloadInfoState>
             </GridItem>
             <GridItem span={8}>
               <MiniGraphCard
-                title={
-                  this.state.health ? (
-                    <span>
-                      {this.props.workload && !this.props.workload.istioSidecar ? (
-                        <MissingSidecar namespace={this.props.namespace} />
-                      ) : (
-                        renderHealthTitle(this.state.health)
-                      )}
-                    </span>
-                  ) : (
-                    <>Graph</>
-                  )
-                }
                 dataSource={this.graphDataSource}
                 mtlsEnabled={this.props.mtlsEnabled}
                 graphContainerStyle={graphContainerStyle}
