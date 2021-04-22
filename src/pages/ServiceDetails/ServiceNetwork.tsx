@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { Card, CardBody, CardHeader, Title, Tooltip } from '@patternfly/react-core';
 import { ServiceDetailsInfo } from '../../types/ServiceInfo';
-import { EyeIcon } from '@patternfly/react-icons';
 import { style } from 'typestyle';
 import { ObjectCheck, ObjectValidation } from '../../types/IstioObjects';
 import ValidationList from '../../components/Validations/ValidationList';
+import { KialiIcon } from '../../config/KialiIcon';
 
 type Props = {
   serviceDetails: ServiceDetailsInfo;
@@ -20,6 +20,11 @@ const resourceListStyle = style({
       fontWeight: 700
     }
   }
+});
+
+const infoStyle = style({
+  margin: '0px 0px 2px 10px',
+  verticalAlign: '-3px !important'
 });
 
 class ServiceNetwork extends React.Component<Props> {
@@ -39,7 +44,7 @@ class ServiceNetwork extends React.Component<Props> {
 
   render() {
     return (
-      <Card isCompact={true}>
+      <Card isCompact={true} id={'ServiceNetworkCard'}>
         <CardHeader>
           <Title headingLevel="h3" size="2xl">
             Network
@@ -77,7 +82,7 @@ class ServiceNetwork extends React.Component<Props> {
                             }
                           >
                             <span>
-                              <EyeIcon /> {address.ip}
+                              {address.ip} <KialiIcon.Info className={infoStyle} />
                             </span>
                           </Tooltip>
                         ) : (
@@ -94,7 +99,10 @@ class ServiceNetwork extends React.Component<Props> {
                   {(this.props.serviceDetails.service.ports || []).map((port, i) => {
                     return (
                       <div key={'port_' + i}>
-                        {this.hasIssue(i) ? this.getPortOver(i) : undefined} {port.name} {port.port}/{port.protocol}
+                        <span style={{ marginRight: '10px' }}>
+                          {port.name} {port.port}/{port.protocol}
+                        </span>
+                        {this.hasIssue(i) ? this.getPortOver(i) : undefined}
                       </div>
                     );
                   })}

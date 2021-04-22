@@ -48,8 +48,6 @@ const infoStyle = style({
 
 class WorkloadPods extends React.Component<WorkloadPodsProps> {
   columns(): ICell[] {
-    // TODO: Casting 'as any' because @patternfly/react-table@2.22.19 has a typing bug. Remove the casting when PF fixes it.
-    // https://github.com/patternfly/patternfly-next/issues/2373
     return [{ title: 'Name' }, { title: 'Status', transforms: [cellWidth(10) as any] }];
   }
 
@@ -152,7 +150,7 @@ class WorkloadPods extends React.Component<WorkloadPodsProps> {
 
   render() {
     return (
-      <Card isCompact={true}>
+      <Card isCompact={true} id={'WorkloadPodsCard'}>
         <CardHeader>
           <Title headingLevel="h5" size="lg">
             Pods

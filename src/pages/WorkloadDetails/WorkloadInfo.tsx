@@ -179,7 +179,6 @@ class WorkloadInfo extends React.Component<WorkloadInfoProps, WorkloadInfoState>
   }
 
   render() {
-    console.log('TODELETE WorkloadInfo render() ' + new Date().getMilliseconds());
     const workload = this.props.workload;
     const pods = workload?.pods || [];
     const istioConfigItems = this.state.workloadIstioConfig ? toIstioItems(this.state.workloadIstioConfig) : [];

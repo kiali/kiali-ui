@@ -97,7 +97,7 @@ class IstioConfigCard extends React.Component<Props> {
 
   render() {
     return (
-      <Card isCompact={true}>
+      <Card isCompact={true} id={'IstioConfigCard'}>
         <CardHead>
           <CardActions />
           <CardHeader>

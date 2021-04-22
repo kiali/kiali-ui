@@ -133,7 +133,7 @@ class ServiceDescription extends React.Component<ServiceInfoDescriptionProps, St
 
     const serviceName = this.props.serviceDetails ? this.props.serviceDetails.service.name : 'Service';
     return (
-      <Card>
+      <Card id={'ServiceDescriptionCard'}>
         <CardHeader>
           <Title headingLevel="h5" size="lg">
             <div key="service-icon" className={iconStyle}>

@@ -117,7 +117,7 @@ class WorkloadDescription extends React.Component<WorkloadDescriptionProps> {
     ) : undefined;
 
     return workload ? (
-      <Card>
+      <Card id={'WorkloadDescriptionCard'}>
         <CardHeader>
           <Title headingLevel="h5" size="lg">
             <div key="service-icon" className={iconStyle}>

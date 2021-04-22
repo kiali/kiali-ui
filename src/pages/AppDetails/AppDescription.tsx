@@ -32,7 +32,7 @@ class AppDescription extends React.Component<AppDescriptionProps> {
       appLabels[serverConfig.istioLabels.appLabelName] = this.props.app.name;
     }
     return this.props.app ? (
-      <Card>
+      <Card id={'AppDescriptionCard'}>
         <CardHeader>
           <Title headingLevel="h5" size="lg">
             <div key="service-icon" className={iconStyle}>
