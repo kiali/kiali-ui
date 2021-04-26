@@ -1,12 +1,13 @@
 import * as React from 'react';
 import { App } from '../../types/App';
-import { Badge, Card, CardBody, CardHeader, Title, Tooltip, TooltipPosition } from '@patternfly/react-core';
+import { Card, CardBody, CardHeader, Title, TooltipPosition } from '@patternfly/react-core';
 import DetailDescription from '../../components/Details/DetailDescription';
 import { serverConfig } from '../../config';
 import Labels from '../../components/Label/Labels';
 import { style } from 'typestyle';
 import * as H from '../../types/Health';
-import { DisplayMode, HealthIndicator } from '../../components/Health/HealthIndicator';
+import { HealthIndicator } from '../../components/Health/HealthIndicator';
+import { PFBadge, PFBadges } from '../../components/Pf/PfBadges';
 
 type AppDescriptionProps = {
   app?: App;
@@ -36,13 +37,11 @@ class AppDescription extends React.Component<AppDescriptionProps> {
         <CardHeader>
           <Title headingLevel="h5" size="lg">
             <div key="service-icon" className={iconStyle}>
-              <Tooltip position={TooltipPosition.top} content={<>Application</>}>
-                <Badge className={'virtualitem_badge_definition'}>A</Badge>
-              </Tooltip>
+              <PFBadge badge={PFBadges.App} position={TooltipPosition.top} />
             </div>
             {this.props.app.name}
             <span className={healthIconStyle}>
-              <HealthIndicator id={this.props.app.name} health={this.props.health} mode={DisplayMode.SMALL} />
+              <HealthIndicator id={this.props.app.name} health={this.props.health} />
             </span>
           </Title>
         </CardHeader>

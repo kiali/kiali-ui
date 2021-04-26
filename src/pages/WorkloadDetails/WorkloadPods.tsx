@@ -17,6 +17,7 @@ import { style } from 'typestyle';
 import { KialiIcon } from '../../config/KialiIcon';
 import LocalTime from '../../components/Time/LocalTime';
 import Labels from '../../components/Label/Labels';
+import { PFBadge, PFBadges } from '../../components/Pf/PfBadges';
 
 type WorkloadPodsProps = {
   namespace: string;
@@ -44,6 +45,11 @@ const resourceListStyle = style({
 const infoStyle = style({
   margin: '0px 5px 2px 10px',
   verticalAlign: '-4px !important'
+});
+
+const iconStyle = style({
+  display: 'inline-block',
+  verticalAlign: '2px !important'
 });
 
 class WorkloadPods extends React.Component<WorkloadPodsProps> {
@@ -123,6 +129,9 @@ class WorkloadPods extends React.Component<WorkloadPodsProps> {
           {
             title: (
               <span>
+                <div key="service-icon" className={iconStyle}>
+                  <PFBadge badge={PFBadges.Pod} position={TooltipPosition.top} />
+                </div>
                 {pod.name}
                 <Tooltip
                   position={TooltipPosition.right}

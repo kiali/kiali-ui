@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { AppWorkload } from '../../types/App';
-import { Badge, PopoverPosition, Title, Tooltip, TooltipPosition } from '@patternfly/react-core';
+import { PopoverPosition, Title, Tooltip, TooltipPosition } from '@patternfly/react-core';
 import { style } from 'typestyle';
 import { Link } from 'react-router-dom';
 import MissingSidecar from '../MissingSidecar/MissingSidecar';
@@ -8,6 +8,7 @@ import * as H from '../../types/Health';
 import { renderTrafficStatus } from '../Health/HealthDetails';
 import { createIcon } from '../Health/Helper';
 import { HealthSubItem } from '../../types/Health';
+import { PFBadge, PFBadges } from '../Pf/PfBadges';
 
 type Props = {
   namespace: string;
@@ -36,9 +37,7 @@ class DetailDescription extends React.PureComponent<Props> {
     return (
       <li key={`App_${appName}`}>
         <div key="service-icon" className={iconStyle}>
-          <Tooltip position={TooltipPosition.top} content={<>Application</>}>
-            <Badge className={'virtualitem_badge_definition'}>A</Badge>
-          </Tooltip>
+          <PFBadge badge={PFBadges.App} position={TooltipPosition.top} />
         </div>
         <span>
           <Link to={'/namespaces/' + namespace + '/applications/' + appName}>{appName}</Link>
@@ -51,9 +50,7 @@ class DetailDescription extends React.PureComponent<Props> {
     return (
       <li key={`Service_${serviceName}`}>
         <div key="service-icon" className={iconStyle}>
-          <Tooltip position={TooltipPosition.top} content={<>Service</>}>
-            <Badge className={'virtualitem_badge_definition'}>S</Badge>
-          </Tooltip>
+          <PFBadge badge={PFBadges.Service} position={TooltipPosition.top} />
         </div>
         <span>
           <Link to={'/namespaces/' + namespace + '/services/' + serviceName}>{serviceName}</Link>
@@ -87,9 +84,7 @@ class DetailDescription extends React.PureComponent<Props> {
     return (
       <span>
         <div key="service-icon" className={iconStyle}>
-          <Tooltip position={TooltipPosition.top} content={<>Workload</>}>
-            <Badge className={'virtualitem_badge_definition'}>W</Badge>
-          </Tooltip>
+          <PFBadge badge={PFBadges.Workload} position={TooltipPosition.top} />
         </div>
         <Link to={'/namespaces/' + this.props.namespace + '/workloads/' + workload.workloadName}>
           {workload.workloadName}
@@ -115,9 +110,7 @@ class DetailDescription extends React.PureComponent<Props> {
       return (
         <span>
           <div key="service-icon" className={iconStyle}>
-            <Tooltip position={TooltipPosition.top} content={<>Workload</>}>
-              <Badge className={'virtualitem_badge_definition'}>W</Badge>
-            </Tooltip>
+            <PFBadge badge={PFBadges.Workload} position={TooltipPosition.top} />
           </div>
           <Link to={'/namespaces/' + this.props.namespace + '/workloads/' + workload.workloadName}>
             {workload.workloadName}

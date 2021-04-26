@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Workload } from '../../types/Workload';
-import { Badge, Card, CardBody, CardHeader, Title, Tooltip, TooltipPosition } from '@patternfly/react-core';
+import { Card, CardBody, CardHeader, Title, Tooltip, TooltipPosition } from '@patternfly/react-core';
 import DetailDescription from '../../components/Details/DetailDescription';
 import { style } from 'typestyle';
 import Labels from '../../components/Label/Labels';
@@ -9,9 +9,10 @@ import { TextOrLink } from '../../components/TextOrLink';
 import { renderAPILogo, renderRuntimeLogo } from '../../components/Logo/Logos';
 import * as H from '../../types/Health';
 import { KialiIcon } from '../../config/KialiIcon';
-import { DisplayMode, HealthIndicator } from '../../components/Health/HealthIndicator';
+import { HealthIndicator } from '../../components/Health/HealthIndicator';
 import { serverConfig } from '../../config';
 import MissingSidecar from '../../components/MissingSidecar/MissingSidecar';
+import { PFBadge, PFBadges } from '../../components/Pf/PfBadges';
 
 type WorkloadDescriptionProps = {
   workload?: Workload;
@@ -121,9 +122,7 @@ class WorkloadDescription extends React.Component<WorkloadDescriptionProps> {
         <CardHeader>
           <Title headingLevel="h5" size="lg">
             <div key="service-icon" className={iconStyle}>
-              <Tooltip position={TooltipPosition.top} content={<>Workload</>}>
-                <Badge className={'virtualitem_badge_definition'}>W</Badge>
-              </Tooltip>
+              <PFBadge badge={PFBadges.Workload} position={TooltipPosition.top} />
             </div>
             {this.props.workload ? this.props.workload.name : 'Workload'}
             {workloadProperties ? (
@@ -135,7 +134,7 @@ class WorkloadDescription extends React.Component<WorkloadDescriptionProps> {
               </Tooltip>
             ) : undefined}
             <span className={healthIconStyle}>
-              <HealthIndicator id={workload.name} health={this.props.health} mode={DisplayMode.SMALL} />
+              <HealthIndicator id={workload.name} health={this.props.health} />
             </span>
             {this.props.workload && !this.props.workload.istioSidecar ? (
               <MissingSidecar

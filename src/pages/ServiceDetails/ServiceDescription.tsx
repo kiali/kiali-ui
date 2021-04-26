@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Badge, Card, CardBody, CardHeader, Title, Tooltip, TooltipPosition } from '@patternfly/react-core';
+import { Card, CardBody, CardHeader, Title, Tooltip, TooltipPosition } from '@patternfly/react-core';
 import { ServiceDetailsInfo } from '../../types/ServiceInfo';
 import DetailDescription from '../../components/Details/DetailDescription';
 import { AppWorkload } from '../../types/App';
@@ -10,7 +10,8 @@ import LocalTime from '../../components/Time/LocalTime';
 import { renderAPILogo } from '../../components/Logo/Logos';
 import { TextOrLink } from '../../components/TextOrLink';
 import { KialiIcon } from '../../config/KialiIcon';
-import { DisplayMode, HealthIndicator } from '../../components/Health/HealthIndicator';
+import { HealthIndicator } from '../../components/Health/HealthIndicator';
+import { PFBadge, PFBadges } from '../../components/Pf/PfBadges';
 
 interface ServiceInfoDescriptionProps {
   namespace: string;
@@ -137,9 +138,7 @@ class ServiceDescription extends React.Component<ServiceInfoDescriptionProps, St
         <CardHeader>
           <Title headingLevel="h5" size="lg">
             <div key="service-icon" className={iconStyle}>
-              <Tooltip position={TooltipPosition.top} content={<>Service</>}>
-                <Badge className={'virtualitem_badge_definition'}>S</Badge>
-              </Tooltip>
+              <PFBadge badge={PFBadges.Service} position={TooltipPosition.top} />
             </div>
             {serviceName}
             <Tooltip
@@ -152,7 +151,6 @@ class ServiceDescription extends React.Component<ServiceInfoDescriptionProps, St
               <HealthIndicator
                 id={serviceName}
                 health={this.props.serviceDetails ? this.props.serviceDetails.health : undefined}
-                mode={DisplayMode.SMALL}
               />
             </span>
           </Title>

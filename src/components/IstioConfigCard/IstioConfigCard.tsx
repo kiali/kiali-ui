@@ -2,7 +2,6 @@ import * as React from 'react';
 import { IstioConfigItem } from '../../types/IstioConfigList';
 import { cellWidth, ICell, IRow, Table, TableBody, TableHeader, TableVariant } from '@patternfly/react-table';
 import {
-  Badge,
   Card,
   CardActions,
   CardBody,
@@ -12,13 +11,13 @@ import {
   EmptyStateBody,
   EmptyStateVariant,
   Title,
-  Tooltip,
   TooltipPosition
 } from '@patternfly/react-core';
 import { ValidationObjectSummary } from '../Validations/ValidationObjectSummary';
 import IstioObjectLink from '../Link/IstioObjectLink';
 import { IstioTypes } from '../VirtualList/Config';
 import { style } from 'typestyle';
+import { PFBadge } from '../Pf/PfBadges';
 
 interface Props {
   name: string;
@@ -71,9 +70,7 @@ class IstioConfigCard extends React.Component<Props> {
           {
             title: (
               <span>
-                <Tooltip position={TooltipPosition.top} content={<>{IstioTypes[item.type].name}</>}>
-                  <Badge className={'virtualitem_badge_definition'}>{IstioTypes[item.type].icon}</Badge>
-                </Tooltip>
+                <PFBadge badge={IstioTypes[item.type].badge} position={TooltipPosition.top} />
                 {this.overviewLink(item)}
               </span>
             )

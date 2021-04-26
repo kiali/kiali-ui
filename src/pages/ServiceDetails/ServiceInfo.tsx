@@ -98,7 +98,7 @@ class ServiceInfo extends React.Component<Props, ServiceInfoState> {
                     validations={this.getServiceValidation()}
                   />
                 )}
-                <StackItem>
+                <StackItem style={{ paddingBottom: '20px' }}>
                   <IstioConfigCard name={this.props.service} items={istioConfigItems} />
                 </StackItem>
               </Stack>

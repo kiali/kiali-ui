@@ -230,7 +230,7 @@ class WorkloadInfo extends React.Component<WorkloadInfoProps, WorkloadInfoState>
                     validations={this.state.validations?.pod || {}}
                   />
                 </StackItem>
-                <StackItem>
+                <StackItem style={{ paddingBottom: '20px' }}>
                   <IstioConfigCard
                     name={this.props.workload ? this.props.workload.name : ''}
                     items={istioConfigItems}

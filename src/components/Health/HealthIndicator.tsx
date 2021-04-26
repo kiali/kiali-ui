@@ -5,15 +5,9 @@ import * as H from '../../types/Health';
 import { createIcon } from './Helper';
 import './Health.css';
 
-export enum DisplayMode {
-  LARGE,
-  SMALL
-}
-
 interface Props {
   id: string;
   health?: H.Health;
-  mode: DisplayMode;
   tooltipPlacement?: PopoverPosition;
 }
 
@@ -35,60 +29,24 @@ export class HealthIndicator extends React.PureComponent<Props, HealthState> {
 
   render() {
     if (this.props.health) {
-      if (this.props.mode === DisplayMode.SMALL) {
-        return this.renderSmall(this.props.health);
-      } else {
-        return this.renderLarge(this.props.health);
-      }
+      // HealthIndicator will render always in SMALL mode
+      const icon = createIcon(this.state.globalStatus, 'sm');
+      return (
+        <Tooltip
+          aria-label={'Health indicator'}
+          content={
+            <div>
+              <strong>{this.state.globalStatus.name}</strong>
+              <HealthDetails health={this.props.health} />
+            </div>
+          }
+          position={PopoverPosition.auto}
+          className={'health_indicator'}
+        >
+          <>{icon}</>
+        </Tooltip>
+      );
     }
     return <span />;
-  }
-
-  renderSmall(health: H.Health) {
-    return this.renderPopover(health, createIcon(this.state.globalStatus, 'sm'));
-  }
-
-  renderLarge(health: H.Health) {
-    const spanStyle: React.CSSProperties = {
-      color: this.state.globalStatus.color,
-      fontWeight: 'bold'
-    };
-    return (
-      <>
-        <div>
-          <span style={spanStyle}>
-            <span style={{ marginRight: '10px' }}>{createIcon(this.state.globalStatus, 'sm')}</span>
-            {this.state.globalStatus.name}
-          </span>
-        </div>
-        <div>
-          <HealthDetails health={health} />
-        </div>
-      </>
-    );
-  }
-
-  renderHealthTooltip(health: H.Health) {
-    return (
-      <div>
-        <strong>{this.state.globalStatus.name}</strong>
-        <HealthDetails health={health} tooltip={true} />
-      </div>
-    );
-  }
-
-  renderPopover(health: H.Health, icon: JSX.Element) {
-    return health.getGlobalStatus() === H.HEALTHY ? (
-      icon
-    ) : (
-      <Tooltip
-        aria-label={'Health indicator'}
-        content={this.renderHealthTooltip(health)}
-        position={PopoverPosition.auto}
-        className={'health_indicator'}
-      >
-        <>{icon}</>
-      </Tooltip>
-    );
   }
 }
