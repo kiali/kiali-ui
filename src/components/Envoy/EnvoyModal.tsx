@@ -7,17 +7,12 @@ import {
   EmptyState,
   EmptyStateIcon,
   EmptyStateVariant,
-  GutterSize,
   Modal,
   Spinner,
-  Stack,
-  StackItem,
   Tab,
   Tabs,
   Title,
-  Toolbar,
-  ToolbarGroup,
-  ToolbarItem
+  TooltipPosition
 } from '@patternfly/react-core';
 import { Workload } from '../../types/Workload';
 import { EnvoyProxyDump, Pod } from '../../types/IstioObjects';
@@ -33,15 +28,12 @@ import Namespace from '../../types/Namespace';
 import { KialiAppState } from '../../store/Store';
 import { namespaceItemsSelector } from '../../store/Selectors';
 import { connect } from 'react-redux';
+import { PFBadge, PFBadges } from '../Pf/PfBadges';
 
 // Enables the search box for the ACEeditor
 require('ace-builds/src-noconflict/ext-searchbox');
 
 const resources: string[] = ['clusters', 'listeners', 'routes', 'bootstrap', 'all'];
-
-const displayFlex = style({
-  display: 'flex'
-});
 
 type ReduxProps = {
   namespaces: Namespace[];
@@ -73,6 +65,11 @@ export const Loading = () => (
     </Title>
   </EmptyState>
 );
+
+const iconStyle = style({
+  display: 'inline-block',
+  paddingTop: '5px'
+});
 
 class EnvoyDetailsModal extends React.Component<EnvoyDetailProps, EnvoyDetailState> {
   aceEditorRef: React.RefObject<AceEditor>;
@@ -223,28 +220,63 @@ class EnvoyDetailsModal extends React.Component<EnvoyDetailProps, EnvoyDetailSta
     const SummaryWriterComp = builder[0];
     const summaryWriter = builder[1];
 
-    const tabContent = this.isLoadingConfig() ? (
+    const innerTabContent = this.isLoadingConfig() ? (
       <Loading />
     ) : this.showEditor() ? (
-      <AceEditor
-        ref={this.aceEditorRef}
-        mode="yaml"
-        theme="eclipse"
-        height={'600px'}
-        width={'100%'}
-        className={'istio-ace-editor'}
-        wrapEnabled={true}
-        readOnly={true}
-        setOptions={aceOptions || { foldStyle: 'markbegin' }}
-        value={this.editorContent()}
-      />
+      <div>
+        <div style={{ marginBottom: '20px' }}>
+          <div key="service-icon" className={iconStyle}>
+            <PFBadge badge={PFBadges.Pod} position={TooltipPosition.top} />
+          </div>
+          <ToolbarDropdown
+            id="envoy_pods_list"
+            tooltip="Display envoy config for the selected pod"
+            handleSelect={key => this.setPod(key)}
+            value={this.state.pod.name}
+            label={this.state.pod.name}
+            options={this.props.workload.pods.map((pod: Pod) => pod.name).sort()}
+          />
+          <span style={{ float: 'right' }}>
+            <CopyToClipboard onCopy={this.onCopyToClipboard} text={this.editorContent()}>
+              <Button variant={ButtonVariant.link} isInline>
+                <KialiIcon.Copy className={defaultIconStyle} />
+              </Button>
+            </CopyToClipboard>
+          </span>
+        </div>
+        <AceEditor
+          ref={this.aceEditorRef}
+          mode="yaml"
+          theme="eclipse"
+          width={'100%'}
+          className={'istio-ace-editor'}
+          wrapEnabled={true}
+          readOnly={true}
+          setOptions={aceOptions || { foldStyle: 'markbegin' }}
+          value={this.editorContent()}
+        />
+      </div>
     ) : (
       <SummaryWriterComp
         writer={summaryWriter}
         sortBy={this.state.tableSortBy[this.state.resource]}
         onSort={this.onSort}
+        pod={this.state.pod.name}
+        pods={this.props.workload.pods.map(pod => pod.name)}
+        setPod={this.setPod}
       />
     );
+    const tabContent = <div style={{ marginTop: '20px' }}>{innerTabContent}</div>;
+
+    const tabs = resources.map((value, index) => {
+      const title = value === 'all' ? 'Full Config Dump' : value.charAt(0).toUpperCase() + value.slice(1);
+      return (
+        <Tab key={'tab_' + title} eventKey={index} title={title}>
+          {tabContent}
+        </Tab>
+      );
+    });
+
     return (
       <Modal
         width={'75%'}
@@ -257,55 +289,9 @@ class EnvoyDetailsModal extends React.Component<EnvoyDetailProps, EnvoyDetailSta
           </Button>
         ]}
       >
-        <Stack gutter={GutterSize.sm}>
-          <StackItem>
-            <Toolbar key="envoy-toolbar">
-              <ToolbarGroup>
-                <ToolbarItem className={displayFlex}>
-                  <ToolbarDropdown
-                    id="envoy_pods_list"
-                    nameDropdown={'Pod'}
-                    tooltip="Display envoy config for the selected pod"
-                    handleSelect={key => this.setPod(key)}
-                    value={this.state.pod.name}
-                    label={this.state.pod.name}
-                    options={this.props.workload.pods.map((pod: Pod) => pod.name).sort()}
-                  />
-                </ToolbarItem>
-              </ToolbarGroup>
-              <ToolbarGroup style={{ marginLeft: 'auto' }}>
-                <ToolbarItem>
-                  {this.showEditor() ? (
-                    <CopyToClipboard onCopy={this.onCopyToClipboard} text={this.editorContent()}>
-                      <Button variant={ButtonVariant.link} isInline>
-                        <KialiIcon.Copy className={defaultIconStyle} />
-                      </Button>
-                    </CopyToClipboard>
-                  ) : undefined}
-                </ToolbarItem>
-              </ToolbarGroup>
-            </Toolbar>
-          </StackItem>
-          <StackItem>
-            <Tabs isFilled={true} activeKey={this.state.envoyTabKey} onSelect={this.envoyHandleTabClick}>
-              <Tab eventKey={0} title={'Clusters'}>
-                {tabContent}
-              </Tab>
-              <Tab eventKey={1} title={'Listeners'}>
-                {tabContent}
-              </Tab>
-              <Tab eventKey={2} title={'Routes'}>
-                {tabContent}
-              </Tab>
-              <Tab eventKey={3} title={'Bootstrap'}>
-                {tabContent}
-              </Tab>
-              <Tab eventKey={4} title={'All'}>
-                {tabContent}
-              </Tab>
-            </Tabs>
-          </StackItem>
-        </Stack>
+        <Tabs isFilled={true} activeKey={this.state.envoyTabKey} onSelect={this.envoyHandleTabClick}>
+          {tabs}
+        </Tabs>
       </Modal>
     );
   }
