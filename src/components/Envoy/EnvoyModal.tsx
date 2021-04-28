@@ -4,7 +4,6 @@ import * as React from 'react';
 import {
   Button,
   ButtonVariant,
-  Card,
   EmptyState,
   EmptyStateIcon,
   EmptyStateVariant,
@@ -13,6 +12,8 @@ import {
   Spinner,
   Stack,
   StackItem,
+  Tab,
+  Tabs,
   Title,
   Toolbar,
   ToolbarGroup,
@@ -36,14 +37,10 @@ import { connect } from 'react-redux';
 // Enables the search box for the ACEeditor
 require('ace-builds/src-noconflict/ext-searchbox');
 
-const resources: string[] = ['all', 'bootstrap', 'clusters', 'listeners', 'routes'];
+const resources: string[] = ['clusters', 'listeners', 'routes', 'bootstrap', 'all'];
 
 const displayFlex = style({
   display: 'flex'
-});
-
-const toolbarSpace = style({
-  marginLeft: '1em'
 });
 
 type ReduxProps = {
@@ -63,6 +60,7 @@ type EnvoyDetailState = {
   pod: Pod;
   resource: string;
   tableSortBy: ResourceSorts;
+  envoyTabKey: number;
 };
 
 export type ResourceSorts = { [resource: string]: ISortBy };
@@ -86,7 +84,7 @@ class EnvoyDetailsModal extends React.Component<EnvoyDetailProps, EnvoyDetailSta
       config: {},
       fetch: false,
       pod: this.sortedPods()[0],
-      resource: 'all',
+      resource: 'clusters',
       tableSortBy: {
         clusters: {
           index: 0,
@@ -100,7 +98,8 @@ class EnvoyDetailsModal extends React.Component<EnvoyDetailProps, EnvoyDetailSta
           index: 0,
           direction: 'asc'
         }
-      }
+      },
+      envoyTabKey: 0
     };
   }
 
@@ -117,6 +116,19 @@ class EnvoyDetailsModal extends React.Component<EnvoyDetailProps, EnvoyDetailSta
     }
   }
 
+  envoyHandleTabClick = (_event, tabIndex) => {
+    const resourceIdx: number = +tabIndex;
+    const targetResource: string = resources[resourceIdx];
+    if (targetResource !== this.state.resource) {
+      this.setState({
+        config: {},
+        fetch: true,
+        resource: targetResource,
+        envoyTabKey: tabIndex
+      });
+    }
+  };
+
   sortedPods = (): Pod[] => {
     return this.props.workload.pods.sort((p1: Pod, p2: Pod) => (p1.name >= p2.name ? 1 : -1));
   };
@@ -129,18 +141,6 @@ class EnvoyDetailsModal extends React.Component<EnvoyDetailProps, EnvoyDetailSta
         config: {},
         fetch: true,
         pod: targetPod
-      });
-    }
-  };
-
-  setResource = (resource: string) => {
-    const resourceIdx: number = +resource;
-    const targetResource: string = resources[resourceIdx];
-    if (targetResource !== this.state.resource) {
-      this.setState({
-        config: {},
-        fetch: true,
-        resource: targetResource
       });
     }
   };
@@ -223,6 +223,28 @@ class EnvoyDetailsModal extends React.Component<EnvoyDetailProps, EnvoyDetailSta
     const SummaryWriterComp = builder[0];
     const summaryWriter = builder[1];
 
+    const tabContent = this.isLoadingConfig() ? (
+      <Loading />
+    ) : this.showEditor() ? (
+      <AceEditor
+        ref={this.aceEditorRef}
+        mode="yaml"
+        theme="eclipse"
+        height={'600px'}
+        width={'100%'}
+        className={'istio-ace-editor'}
+        wrapEnabled={true}
+        readOnly={true}
+        setOptions={aceOptions || { foldStyle: 'markbegin' }}
+        value={this.editorContent()}
+      />
+    ) : (
+      <SummaryWriterComp
+        writer={summaryWriter}
+        sortBy={this.state.tableSortBy[this.state.resource]}
+        onSort={this.onSort}
+      />
+    );
     return (
       <Modal
         width={'75%'}
@@ -250,17 +272,6 @@ class EnvoyDetailsModal extends React.Component<EnvoyDetailProps, EnvoyDetailSta
                     options={this.props.workload.pods.map((pod: Pod) => pod.name).sort()}
                   />
                 </ToolbarItem>
-                <ToolbarItem className={[displayFlex, toolbarSpace].join(' ')}>
-                  <ToolbarDropdown
-                    id="envoy_xds_list"
-                    nameDropdown={'Resources'}
-                    tooltip="Display the selected resources from the Envoy config"
-                    handleSelect={key => this.setResource(key)}
-                    value={this.state.resource}
-                    label={this.state.resource}
-                    options={resources}
-                  />
-                </ToolbarItem>
               </ToolbarGroup>
               <ToolbarGroup style={{ marginLeft: 'auto' }}>
                 <ToolbarItem>
@@ -276,30 +287,23 @@ class EnvoyDetailsModal extends React.Component<EnvoyDetailProps, EnvoyDetailSta
             </Toolbar>
           </StackItem>
           <StackItem>
-            <Card style={{ height: '600px' }}>
-              {this.isLoadingConfig() ? (
-                <Loading />
-              ) : this.showEditor() ? (
-                <AceEditor
-                  ref={this.aceEditorRef}
-                  mode="yaml"
-                  theme="eclipse"
-                  height={'600px'}
-                  width={'100%'}
-                  className={'istio-ace-editor'}
-                  wrapEnabled={true}
-                  readOnly={true}
-                  setOptions={aceOptions || { foldStyle: 'markbegin' }}
-                  value={this.editorContent()}
-                />
-              ) : (
-                <SummaryWriterComp
-                  writer={summaryWriter}
-                  sortBy={this.state.tableSortBy[this.state.resource]}
-                  onSort={this.onSort}
-                />
-              )}
-            </Card>
+            <Tabs isFilled={true} activeKey={this.state.envoyTabKey} onSelect={this.envoyHandleTabClick}>
+              <Tab eventKey={0} title={'Clusters'}>
+                {tabContent}
+              </Tab>
+              <Tab eventKey={1} title={'Listeners'}>
+                {tabContent}
+              </Tab>
+              <Tab eventKey={2} title={'Routes'}>
+                {tabContent}
+              </Tab>
+              <Tab eventKey={3} title={'Bootstrap'}>
+                {tabContent}
+              </Tab>
+              <Tab eventKey={4} title={'All'}>
+                {tabContent}
+              </Tab>
+            </Tabs>
           </StackItem>
         </Stack>
       </Modal>
