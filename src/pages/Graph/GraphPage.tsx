@@ -59,7 +59,6 @@ import { replayBorder } from 'components/Time/Replay';
 import GraphDataSource, { FetchParams, EMPTY_GRAPH_DATA } from '../../services/GraphDataSource';
 import { NamespaceActions } from '../../actions/NamespaceAction';
 import GraphThunkActions from '../../actions/GraphThunkActions';
-import { serverConfig } from '../../config';
 import { JaegerTrace } from 'types/JaegerInfo';
 import { JaegerThunkActions } from 'actions/JaegerThunkActions';
 import GraphTour from 'pages/Graph/GraphHelpTour';
@@ -328,28 +327,6 @@ export class GraphPage extends React.Component<GraphPageProps, GraphPageState> {
 
     // start the initial graph generation
     this.loadGraphDataFromBackend();
-
-    // Check which clusters does not have an accessible Kiali instance.
-    // Emit a warning telling that for those clusters, no cross-links will be available.
-    if (serverConfig.clusters) {
-      const clustersWithoutKialis = [] as string[];
-      for (let cluster in serverConfig.clusters) {
-        if (serverConfig.clusters.hasOwnProperty(cluster)) {
-          const kialiInstance = serverConfig.clusters[cluster].kialiInstances?.find(instance => instance.url.length !== 0);
-          if (!kialiInstance) {
-            clustersWithoutKialis.push(cluster);
-          }
-        }
-      }
-
-      if (clustersWithoutKialis.length > 0) {
-        if (clustersWithoutKialis.length === 1) {
-          AlertUtils.addWarning(`Cannot find a reachable Kiali instance in cluster ${clustersWithoutKialis[0]}. Turning off links for objects living in this cluster.`);
-        } else {
-          AlertUtils.addWarning(`Cannot find a reachable Kiali instance in the following clusters: ${clustersWithoutKialis.join(', ')}. Turning off links for objects living in these clusters.`);
-        }
-      }
-    }
   }
 
   componentDidUpdate(prev: GraphPageProps) {
