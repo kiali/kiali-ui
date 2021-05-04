@@ -71,16 +71,18 @@ class DetailDescription extends React.PureComponent<Props> {
         : this.renderEmptyItem('applications');
 
     return [
-      <div key="service-list" className={resourceListStyle}>
-        <ul style={{ listStyleType: 'none' }}>{applicationList}</ul>
+      <div className={resourceListStyle}>
+        <ul key="service-list" style={{ listStyleType: 'none' }}>
+          {applicationList}
+        </ul>
       </div>
     ];
   }
 
   private renderWorkloadItem(workload: AppWorkload) {
     return (
-      <span>
-        <div key="service-icon" className={iconStyle}>
+      <span key={'WorkloadItem_' + workload.workloadName}>
+        <div className={iconStyle}>
           <PFBadge badge={PFBadges.Workload} position={TooltipPosition.top} />
         </div>
         <Link to={'/namespaces/' + this.props.namespace + '/workloads/' + workload.workloadName}>
@@ -106,7 +108,7 @@ class DetailDescription extends React.PureComponent<Props> {
     }
     if (workload) {
       return (
-        <span>
+        <span key={'WorkloadItem_' + workload.workloadName}>
           <div key="service-icon" className={iconStyle}>
             <PFBadge badge={PFBadges.Workload} position={TooltipPosition.top} />
           </div>
@@ -128,7 +130,7 @@ class DetailDescription extends React.PureComponent<Props> {
       );
     } else {
       return (
-        <span>
+        <span key={'WorkloadItem_' + sub.text}>
           <span style={{ marginRight: '10px' }}>{createIcon(sub.status)}</span>
           {sub.text}
         </span>
@@ -144,7 +146,7 @@ class DetailDescription extends React.PureComponent<Props> {
           <div>
             {item.text}
             {item.children && (
-              <ul style={{ listStyleType: 'none' }}>
+              <ul key="workload-list" style={{ listStyleType: 'none' }}>
                 {item.children.map((sub, subIdx) => {
                   return <li key={subIdx}>{this.renderWorkloadHealthItem(sub)}</li>;
                 })}
@@ -155,7 +157,7 @@ class DetailDescription extends React.PureComponent<Props> {
       } else {
         return (
           <div>
-            <ul style={{ listStyleType: 'none' }}>
+            <ul key="workload-list" style={{ listStyleType: 'none' }}>
               {this.props.workloads
                 ? this.props.workloads.map((wkd, subIdx) => {
                     return <li key={subIdx}>{this.renderWorkloadItem(wkd)}</li>;
@@ -170,11 +172,7 @@ class DetailDescription extends React.PureComponent<Props> {
   }
 
   private workloadSummary() {
-    return (
-      <div key="workload-list" className={resourceListStyle}>
-        {this.renderWorkloadStatus()}
-      </div>
-    );
+    return <div className={resourceListStyle}>{this.renderWorkloadStatus()}</div>;
   }
 
   private serviceList() {
@@ -184,8 +182,10 @@ class DetailDescription extends React.PureComponent<Props> {
         : this.renderEmptyItem('services');
 
     return [
-      <div key="service-list" className={resourceListStyle}>
-        <ul style={{ listStyleType: 'none' }}>{serviceList}</ul>
+      <div className={resourceListStyle}>
+        <ul key="service-list" style={{ listStyleType: 'none' }}>
+          {serviceList}
+        </ul>
       </div>
     ];
   }
@@ -193,11 +193,6 @@ class DetailDescription extends React.PureComponent<Props> {
   render() {
     return (
       <>
-        {/*
-        <Title headingLevel="h5" size="lg" className={titleStyle}>
-          Structure
-        </Title>
-           */}
         <div className={titleStyle}></div>
         {this.props.apps !== undefined && this.appList()}
         {this.props.workloads !== undefined && this.workloadSummary()}
