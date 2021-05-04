@@ -188,7 +188,6 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
             break;
           case NodeType.APP:
           case NodeType.BOX: // we only support app box node graphs, treat like an app node
-            console.log(`preselect nodeType=${node.nodeType}, version=${node.version}`);
             selector = selector + "[app = '" + node.app + "']";
             if (node.version && node.version !== UNKNOWN) {
               selector = selector + "[version = '" + node.version + "']";
