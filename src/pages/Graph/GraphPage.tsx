@@ -279,23 +279,8 @@ export class GraphPage extends React.Component<GraphPageProps, GraphPageState> {
     this.state = {
       graphData: {
         elements: { edges: [], nodes: [] },
+        fetchParams: this.graphDataSource.fetchParameters,
         isLoading: true,
-        fetchParams: {
-          namespaces: props.node ? [props.node.namespace] : props.activeNamespaces,
-          boxByCluster: props.boxByCluster,
-          boxByNamespace: props.boxByNamespace,
-          duration: props.duration,
-          edgeLabelMode: props.edgeLabelMode,
-          graphType: props.graphType,
-          includeHealth: true,
-          injectServiceNodes: props.showServiceNodes,
-          node: props.node,
-          queryTime: 0,
-          showIdleEdges: props.showIdleEdges,
-          showIdleNodes: props.showIdleNodes,
-          showOperationNodes: props.showOperationNodes,
-          showSecurity: props.showSecurity
-        },
         timestamp: 0
       }
     };
@@ -320,18 +305,20 @@ export class GraphPage extends React.Component<GraphPageProps, GraphPageState> {
       }
       this.props.setNode(urlNode);
     }
+
     const urlTrace = getTraceId();
     if (urlTrace !== this.props.trace?.traceID) {
       this.props.setTraceId(urlTrace);
     }
-
-    // start the initial graph generation
-    this.loadGraphDataFromBackend();
   }
 
   componentDidUpdate(prev: GraphPageProps) {
-    // schedule an immediate graph fetch if needed
     const curr = this.props;
+
+    // Ensure we initialize the graph. We wait for the first update so that
+    // the toolbar can render and ensure all redux props are updated with URL
+    // settings. That in turn ensures the initial fetchParams are correct.
+    const isInitialLoad = !this.state.graphData.timestamp;
 
     const activeNamespacesChanged = !arrayEquals(
       prev.activeNamespaces,
@@ -343,8 +330,8 @@ export class GraphPage extends React.Component<GraphPageProps, GraphPageState> {
     if (activeNamespacesChanged) {
       this.props.onNamespaceChange();
     }
-
     if (
+      isInitialLoad ||
       activeNamespacesChanged ||
       prev.boxByCluster !== curr.boxByCluster ||
       prev.boxByNamespace !== curr.boxByNamespace ||
@@ -361,6 +348,7 @@ export class GraphPage extends React.Component<GraphPageProps, GraphPageState> {
       prev.showIdleNodes !== curr.showIdleNodes ||
       GraphPage.isNodeChanged(prev.node, curr.node)
     ) {
+      console.log(`load@update isInitialLoad=${isInitialLoad}`);
       this.loadGraphDataFromBackend();
     }
 
@@ -472,6 +460,7 @@ export class GraphPage extends React.Component<GraphPageProps, GraphPageState> {
   }
 
   private handleEmptyGraphAction = () => {
+    console.log('load@empty');
     this.loadGraphDataFromBackend();
   };
 
@@ -595,11 +584,12 @@ export class GraphPage extends React.Component<GraphPageProps, GraphPageState> {
     // Instead, assume that the user wants more details for the node and do a
     // redirect to the details page.
     if (sameNode) {
+      console.log('HandleDoubleTap: sameNode');
       this.handleDoubleTapSameNode(targetNode);
       return;
     }
 
-    // In case user didn't double-tapped the same node, or if graph is in
+    // In case user didn't double-tap the same node, or if graph is in
     // full graph mode, redirect to the drilled-down graph of the chosen node.
     const urlParams: GraphUrlParams = {
       activeNamespaces: this.state.graphData.fetchParams.namespaces,
@@ -616,6 +606,7 @@ export class GraphPage extends React.Component<GraphPageProps, GraphPageState> {
     };
 
     // To ensure updated components get the updated URL, update the URL first and then the state
+    console.log(`HandleDoubleTap: ${targetNode.nodeType}:${targetNode.app}`);
     history.push(makeNodeGraphUrlFromParams(urlParams));
   };
 
