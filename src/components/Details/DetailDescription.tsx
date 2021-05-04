@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { AppWorkload } from '../../types/App';
-import { PopoverPosition, Title, Tooltip, TooltipPosition } from '@patternfly/react-core';
+import { PopoverPosition, Tooltip, TooltipPosition } from '@patternfly/react-core';
 import { style } from 'typestyle';
 import { Link } from 'react-router-dom';
 import MissingSidecar from '../MissingSidecar/MissingSidecar';
@@ -72,9 +72,6 @@ class DetailDescription extends React.PureComponent<Props> {
 
     return [
       <div key="service-list" className={resourceListStyle}>
-        <Title headingLevel="h5" size="lg" className={titleStyle}>
-          Applications
-        </Title>
         <ul style={{ listStyleType: 'none' }}>{applicationList}</ul>
       </div>
     ];
@@ -175,9 +172,6 @@ class DetailDescription extends React.PureComponent<Props> {
   private workloadSummary() {
     return (
       <div key="workload-list" className={resourceListStyle}>
-        <Title headingLevel="h5" size="lg" className={titleStyle}>
-          Workloads
-        </Title>
         {this.renderWorkloadStatus()}
       </div>
     );
@@ -191,9 +185,6 @@ class DetailDescription extends React.PureComponent<Props> {
 
     return [
       <div key="service-list" className={resourceListStyle}>
-        <Title headingLevel="h5" size="lg" className={titleStyle}>
-          Services
-        </Title>
         <ul style={{ listStyleType: 'none' }}>{serviceList}</ul>
       </div>
     ];
@@ -202,6 +193,12 @@ class DetailDescription extends React.PureComponent<Props> {
   render() {
     return (
       <>
+        {/*
+        <Title headingLevel="h5" size="lg" className={titleStyle}>
+          Structure
+        </Title>
+           */}
+        <div className={titleStyle}></div>
         {this.props.apps !== undefined && this.appList()}
         {this.props.workloads !== undefined && this.workloadSummary()}
         {this.props.services !== undefined && this.serviceList()}
