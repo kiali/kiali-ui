@@ -72,7 +72,7 @@ class DetailDescription extends React.PureComponent<Props> {
 
     return [
       <div className={resourceListStyle}>
-        <ul key="service-list" style={{ listStyleType: 'none' }}>
+        <ul id="app-list" style={{ listStyleType: 'none' }}>
           {applicationList}
         </ul>
       </div>
@@ -146,7 +146,7 @@ class DetailDescription extends React.PureComponent<Props> {
           <div>
             {item.text}
             {item.children && (
-              <ul key="workload-list" style={{ listStyleType: 'none' }}>
+              <ul id="workload-list" style={{ listStyleType: 'none' }}>
                 {item.children.map((sub, subIdx) => {
                   return <li key={subIdx}>{this.renderWorkloadHealthItem(sub)}</li>;
                 })}
@@ -157,7 +157,7 @@ class DetailDescription extends React.PureComponent<Props> {
       } else {
         return (
           <div>
-            <ul key="workload-list" style={{ listStyleType: 'none' }}>
+            <ul id="workload-list" style={{ listStyleType: 'none' }}>
               {this.props.workloads
                 ? this.props.workloads.map((wkd, subIdx) => {
                     return <li key={subIdx}>{this.renderWorkloadItem(wkd)}</li>;
@@ -183,7 +183,7 @@ class DetailDescription extends React.PureComponent<Props> {
 
     return [
       <div className={resourceListStyle}>
-        <ul key="service-list" style={{ listStyleType: 'none' }}>
+        <ul id="service-list" style={{ listStyleType: 'none' }}>
           {serviceList}
         </ul>
       </div>
