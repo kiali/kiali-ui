@@ -577,7 +577,7 @@ export class GraphPage extends React.Component<GraphPageProps, GraphPageState> {
       }
     }
 
-    const targetNode = { ...event, namespace: { name: event.namespace } };
+    const targetNode: NodeParamsType = { ...event, namespace: { name: event.namespace } };
 
     // If, while in the drilled-down graph, the user double clicked the same
     // node as in the main graph, it doesn't make sense to re-load the same view.

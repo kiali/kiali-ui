@@ -7,6 +7,7 @@ import ReactResizeDetector from 'react-resize-detector';
 import { GraphData } from 'pages/Graph/GraphPage';
 import { IntervalInMilliseconds, TimeInMilliseconds } from '../../types/Common';
 import {
+  BoxByType,
   CLUSTER_DEFAULT,
   CytoscapeBaseEvent,
   CytoscapeClickEvent,
@@ -187,6 +188,7 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
             break;
           case NodeType.APP:
           case NodeType.BOX: // we only support app box node graphs, treat like an app node
+            console.log(`preselect nodeType=${node.nodeType}, version=${node.version}`);
             selector = selector + "[app = '" + node.app + "']";
             if (node.version && node.version !== UNKNOWN) {
               selector = selector + "[version = '" + node.version + "']";
@@ -201,7 +203,18 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
 
         const eles = cy.nodes(selector);
         if (eles.length > 0) {
-          this.selectTargetAndUpdateSummary(eles[0]);
+          let target = eles[0];
+          // default app to the whole app box, when appropriate
+          if (
+            (node.nodeType === NodeType.APP || node.nodeType === NodeType.BOX) &&
+            !node.version &&
+            target.isChild() &&
+            target.parent()[0].data(CyNode.isBox) === BoxByType.APP
+          ) {
+            target = target.parent()[0];
+          }
+
+          this.selectTargetAndUpdateSummary(target);
         }
       }
 
