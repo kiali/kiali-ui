@@ -36,8 +36,11 @@ type MiniGraphCardState = {
 };
 
 export default class MiniGraphCard extends React.Component<MiniGraphCardProps, MiniGraphCardState> {
+  private cytoscapeGraphRef: any;
+
   constructor(props) {
     super(props);
+    this.cytoscapeGraphRef = React.createRef();
     this.state = { isKebabOpen: false, graphData: props.dataSource.graphData };
   }
 
@@ -108,6 +111,7 @@ export default class MiniGraphCard extends React.Component<MiniGraphCardProps, M
               isMiniGraph={true}
               layout={DagreGraph.getLayout()}
               onNodeTap={this.handleNodeTap}
+              ref={refInstance => this.setCytoscapeGraph(refInstance)}
               refreshInterval={0}
               showCircuitBreakers={true}
               showIdleEdges={false}
@@ -123,6 +127,10 @@ export default class MiniGraphCard extends React.Component<MiniGraphCardProps, M
         </CardBody>
       </Card>
     );
+  }
+
+  private setCytoscapeGraph(cytoscapeGraph: any) {
+    this.cytoscapeGraphRef.current = cytoscapeGraph;
   }
 
   private handleNodeTap = (e: GraphNodeTapEvent) => {
@@ -144,7 +152,13 @@ export default class MiniGraphCard extends React.Component<MiniGraphCardProps, M
       return;
     }
 
-    // Redirect to the details page of the double-tapped node.
+    // unselect the currently selected node
+    const cy = this.cytoscapeGraphRef.current.getCy();
+    if (cy) {
+      cy.$(':selected').selectify().unselect().unselectify();
+    }
+
+    // Redirect to the details page of the tapped node.
     let resource = e[eNodeType];
     let resourceType: string = eNodeType === NodeType.APP ? 'application' : eNodeType;
 
