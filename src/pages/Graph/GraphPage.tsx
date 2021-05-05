@@ -348,7 +348,6 @@ export class GraphPage extends React.Component<GraphPageProps, GraphPageState> {
       prev.showIdleNodes !== curr.showIdleNodes ||
       GraphPage.isNodeChanged(prev.node, curr.node)
     ) {
-      console.log(`load@update isInitialLoad=${isInitialLoad}`);
       this.loadGraphDataFromBackend();
     }
 
@@ -460,7 +459,6 @@ export class GraphPage extends React.Component<GraphPageProps, GraphPageState> {
   }
 
   private handleEmptyGraphAction = () => {
-    console.log('load@empty');
     this.loadGraphDataFromBackend();
   };
 
@@ -584,7 +582,6 @@ export class GraphPage extends React.Component<GraphPageProps, GraphPageState> {
     // Instead, assume that the user wants more details for the node and do a
     // redirect to the details page.
     if (sameNode) {
-      console.log('HandleDoubleTap: sameNode');
       this.handleDoubleTapSameNode(targetNode);
       return;
     }
@@ -606,7 +603,6 @@ export class GraphPage extends React.Component<GraphPageProps, GraphPageState> {
     };
 
     // To ensure updated components get the updated URL, update the URL first and then the state
-    console.log(`HandleDoubleTap: ${targetNode.nodeType}:${targetNode.app}`);
     history.push(makeNodeGraphUrlFromParams(urlParams));
   };
 
