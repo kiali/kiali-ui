@@ -180,7 +180,7 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
       // pre-select node if provided
       const node = this.props.graphData.fetchParams.node;
       if (node && cy && cy.$(':selected').length === 0) {
-        let selector = "[nodeType = '" + node.nodeType + "']";
+        let selector = `[namespace = "${node.namespace.name}"][nodeType = "${node.nodeType}"]`;
         switch (node.nodeType) {
           case NodeType.AGGREGATE:
             selector =
