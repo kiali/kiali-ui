@@ -13,7 +13,7 @@ import {
 import history from '../../app/History';
 import GraphDataSource from '../../services/GraphDataSource';
 import { DecoratedGraphElements, EdgeLabelMode, GraphType, NodeType } from '../../types/Graph';
-import CytoscapeGraph, { GraphNodeDoubleTapEvent } from './CytoscapeGraph';
+import CytoscapeGraph, { GraphNodeTapEvent } from './CytoscapeGraph';
 import { CytoscapeGraphSelectorBuilder } from './CytoscapeGraphSelector';
 import { DagreGraph } from './graphs/DagreGraph';
 import { GraphUrlParams, makeNodeGraphUrlFromParams } from 'components/Nav/NavUtils';
@@ -125,13 +125,13 @@ export default class MiniGraphCard extends React.Component<MiniGraphCardProps, M
     );
   }
 
-  private handleNodeTap = (e: GraphNodeDoubleTapEvent) => {
+  private handleNodeTap = (e: GraphNodeTapEvent) => {
     // Do nothing on inaccessible nodes or service entry nodes
     if (e.isInaccessible || e.isServiceEntry) {
       return;
     }
 
-    // If we are already on the details page of the double-tapped node, do nothing.
+    // If we are already on the details page of the tapped node, do nothing.
     const displayedNode = this.props.dataSource.fetchParameters.node;
     // Minigraph will consider box nodes as app
     const eNodeType = e.nodeType === 'box' && e.isBox ? e.isBox : e.workload ? 'workload' : e.nodeType;
