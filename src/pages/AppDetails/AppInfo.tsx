@@ -46,7 +46,7 @@ class AppInfo extends React.Component<AppInfoProps, AppInfoState> {
     if (
       this.props.duration !== prev.duration ||
       this.props.lastRefreshAt !== prev.lastRefreshAt ||
-      this.props.app?.name !== prev.app?.name
+      this.props.app !== prev.app
     ) {
       this.fetchBackend();
     }
