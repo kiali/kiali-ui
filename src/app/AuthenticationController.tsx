@@ -277,7 +277,7 @@ class AuthenticationController extends React.Component<AuthenticationControllerP
         AlertUtils.addWarning(
           "Not all remote clusters have reachable Kiali instances.",
           undefined, undefined,
-          "Context menus are diasabled for remote cluster nodes without a discovered Kiali or if it is not configured for remote links."
+          "Context menus are disabled for remote cluster nodes if a Kiali instance is not discovered, or if the remote Kiali is not configured with an external URL."
         );
       }
     }
