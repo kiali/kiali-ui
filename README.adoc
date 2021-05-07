@@ -8,10 +8,6 @@ toc::[]
 
 A UI for the Kiali Istio Observability Project
 
-== Technologies
-* React.js
-* Redux
-
 == Quick Start
 [source,shell]
 ----
@@ -50,6 +46,8 @@ reloads any changes to the browser for rapid development.
 * `src/utils`: Various Utilities
 
 == Developing
+
+The Kiali UI is a React application written in Typescript.
 
 We use `yarn` as the package manager, if adding dependencies to `package.json`
 make sure you install them with `yarn` and commit the `yarn.lock` file.
@@ -106,21 +104,6 @@ yarn build-css
 
 Note:
 Only static assets which are `import` 'ed into your application will be included in your resulting build output.
-
-=== RCUE Styling
-To use the https://redhat-rcue.github.io/[RCUE] styled css instead of normal Patternfly
-
-For development run:
-[source,shell]
-----
-env REACT_APP_RCUE=true yarn start
-----
-
-For production build run:
-[source,shell]
-----
-env REACT_APP_RCUE=true yarn build
-----
 
 === Style Code Guide
 
