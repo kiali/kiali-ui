@@ -4,27 +4,6 @@ Kiali is released using a Jenkins Pipeline. The main document covering
 the release process can be found
 link:https://github.com/kiali/kiali/blob/master/RELEASING.adoc[here].
 
-== Versioning scheme
-
-The versioning scheme that we are following is similar to
-link:http://semver.org[semver], but not as strict, given both that we are not
-1.0 yet and that we are the end product, in the sense that nothing should
-depend on us to do anything. For now, and that might change in the future, our
-API is private and we make no guarantees that compatibility is going to be
-maintaned.
-
-For our versioning scheme, the `major` part means a major release, and that's
-decided in advance by the team. The `minor` means new features are included
-with the release, and the `patch` version covers only bugfixes.
-
-The UI and the core might be out of sync in `patch` versions, but they should
-be in sync for `minor`. That means that, if the UI is 0.5.10, then any core
-version on 0.5.X should work with it, but that are no guarantees that it will
-work with core 0.4.X or core 0.6.X.
-
-Of course, that's a soft limitation, and your mileage may vary. Sometimes it
-might work just fine, we just don't give any guarantees that it will.
-
 == Running the release process locally
 
 If you don't have access to the Jenkins instance or the release process
@@ -36,8 +15,7 @@ This guide covers releasing only kiali-ui.
 === Requirements
 
 You must have write permissions to the kiali-ui public GitHub repository in
-order to be able to push the tags. You will also need an NPM account that
-is able to publish to the NPM @kiali organization.
+order to be able to push the tags.
 
 You will need a working dev environment for kiali-ui (git, npm, yarn, etc).
 You will also need the following tools available in your $PATH:
@@ -57,8 +35,6 @@ kiali-ui repository.
 
 === Making the release
 
-. Login to NPM using the user with write access to the NPM @kiali organization:
-** `npm login`
 . Checkout the code that you want to release:
 ** `git checkout branch_to_release` (usually, you should release "master")
 ** Be advised that the release process will commit changes locally.
@@ -96,6 +72,3 @@ don't change the version in `package.json`).
   name of the branch is _prepare_next_version_. If you want to customize the
   name of the branch:
 ** `BUMP_BRANCH_ID={branch_name} make -f Makefile.jenkins release`
-* If your NPM account don't have write privileges to the @kiali organization but
-  you have a token with the required privileges, you can use that token:
-** `NPM_TOKEN="{your_token}" make -f Makefile.jenkins release`
