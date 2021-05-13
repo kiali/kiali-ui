@@ -19,6 +19,7 @@ import { GraphTourStops } from 'pages/Graph/GraphHelpTour';
 import { TimeInMilliseconds } from 'types/Common';
 import { AutoComplete } from 'utils/AutoComplete';
 import { HEALTHY } from 'types/Health';
+import { GraphFindOptions } from './GraphFindOptions';
 
 type ReduxProps = {
   compressOnHide: boolean;
@@ -195,9 +196,10 @@ export class GraphFind extends React.Component<GraphFindProps, GraphFindState> {
               onKeyDownCapture={this.checkSpecialKeyFind}
               placeholder="Find..."
             />
+            <GraphFindOptions onSelect={this.updateFindOption} />
             {this.props.findValue && (
               <Tooltip key="ot_clear_find" position="top" content="Clear Find...">
-                <Button variant={ButtonVariant.control} onClick={this.clearFind}>
+                <Button style={{ bottom: '1px' }} variant={ButtonVariant.control} onClick={() => this.setFind('')}>
                   <KialiIcon.Close />
                 </Button>
               </Tooltip>
@@ -249,34 +251,6 @@ export class GraphFind extends React.Component<GraphFindProps, GraphFindState> {
     this.props.toggleFindHelp();
   };
 
-  private updateFind = val => {
-    if ('' === val) {
-      this.clearFind();
-    } else {
-      const diff = Math.abs(val.length - this.state.findInputValue.length);
-      this.findAutoComplete.setInput(val, [' ', '!']);
-      this.setState({ findInputValue: val, findError: undefined });
-      // submit if length change is greater than a single key, assume browser suggestion clicked or user paste
-      if (diff > 1) {
-        this.props.setFindValue(val);
-      }
-    }
-  };
-
-  private updateHide = val => {
-    if ('' === val) {
-      this.clearHide();
-    } else {
-      const diff = Math.abs(val.length - this.state.hideInputValue.length);
-      this.hideAutoComplete.setInput(val, [' ', '!']);
-      this.setState({ hideInputValue: val, hideError: undefined });
-      // submit if length change is greater than a single key, assume browser suggestion clicked or user paste
-      if (diff > 1) {
-        this.props.setHideValue(val);
-      }
-    }
-  };
-
   private checkSpecialKeyFind = event => {
     const keyCode = event.keyCode ? event.keyCode : event.which;
     switch (keyCode) {
@@ -295,6 +269,43 @@ export class GraphFind extends React.Component<GraphFindProps, GraphFindState> {
         break;
       default:
         break;
+    }
+  };
+
+  private updateFindOption = key => {
+    console.log(`Option=${key}`);
+    this.setFind(key);
+  };
+
+  private updateFind = val => {
+    if ('' === val) {
+      this.setFind('');
+    } else {
+      const diff = Math.abs(val.length - this.state.findInputValue.length);
+      this.findAutoComplete.setInput(val, [' ', '!']);
+      this.setState({ findInputValue: val, findError: undefined });
+      // submit if length change is greater than a single key, assume browser suggestion clicked or user paste
+      if (diff > 1) {
+        this.props.setFindValue(val);
+      }
+    }
+  };
+
+  private setFind = val => {
+    // TODO: when TextInput refs are fixed in PF4 then use the ref and remove the direct HTMLElement usage
+    this.findInputRef.value = val;
+    const htmlInputElement: HTMLInputElement = document.getElementById('graph_find') as HTMLInputElement;
+    if (htmlInputElement !== null) {
+      htmlInputElement.value = val;
+    }
+    this.findAutoComplete.setInput(val);
+    this.setState({ findInputValue: val, findError: undefined });
+    this.props.setFindValue(val);
+  };
+
+  private submitFind = () => {
+    if (this.props.findValue !== this.state.findInputValue) {
+      this.props.setFindValue(this.state.findInputValue);
     }
   };
 
@@ -319,9 +330,17 @@ export class GraphFind extends React.Component<GraphFindProps, GraphFindState> {
     }
   };
 
-  private submitFind = () => {
-    if (this.props.findValue !== this.state.findInputValue) {
-      this.props.setFindValue(this.state.findInputValue);
+  private updateHide = val => {
+    if ('' === val) {
+      this.clearHide();
+    } else {
+      const diff = Math.abs(val.length - this.state.hideInputValue.length);
+      this.hideAutoComplete.setInput(val, [' ', '!']);
+      this.setState({ hideInputValue: val, hideError: undefined });
+      // submit if length change is greater than a single key, assume browser suggestion clicked or user paste
+      if (diff > 1) {
+        this.props.setHideValue(val);
+      }
     }
   };
 
@@ -329,18 +348,6 @@ export class GraphFind extends React.Component<GraphFindProps, GraphFindState> {
     if (this.props.hideValue !== this.state.hideInputValue) {
       this.props.setHideValue(this.state.hideInputValue);
     }
-  };
-
-  private clearFind = () => {
-    // TODO: when TextInput refs are fixed in PF4 then use the ref and remove the direct HTMLElement usage
-    this.findInputRef.value = '';
-    const htmlInputElement: HTMLInputElement = document.getElementById('graph_find') as HTMLInputElement;
-    if (htmlInputElement !== null) {
-      htmlInputElement.value = '';
-    }
-    this.findAutoComplete.setInput('');
-    this.setState({ findInputValue: '', findError: undefined });
-    this.props.setFindValue('');
   };
 
   private clearHide = () => {
