@@ -5,6 +5,7 @@ import { KialiIcon } from 'config/KialiIcon';
 type ReduxProps = {};
 
 type GraphFindOptionsProps = ReduxProps & {
+  kind: 'find' | 'hide';
   onSelect: (expression) => void;
 };
 
