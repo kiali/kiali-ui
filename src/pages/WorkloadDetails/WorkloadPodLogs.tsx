@@ -28,7 +28,6 @@ import { RenderComponentScroll } from '../../components/Nav/Page';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { KialiIcon, defaultIconStyle } from '../../config/KialiIcon';
 import screenfull, { Screenfull } from 'screenfull';
-import { serverConfig } from 'config';
 import { KialiAppState } from '../../store/Store';
 import { connect } from 'react-redux';
 import { timeRangeSelector } from '../../store/Selectors';
@@ -716,11 +715,9 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
       if (c.isProxy) {
         return { color: proxyContainerColor, displayName: name, isProxy: true, isSelected: true, name: name };
       }
-      const version = pod.appLabel && pod.labels ? pod.labels[serverConfig.istioLabels.versionLabelName] : undefined;
-      const displayName = !version ? name : `${name}-${version}`;
-      const color = appContainerColors[appContainers++ % appContainerColors.length];
 
-      return { color: color, displayName: displayName, isProxy: false, isSelected: true, name: name };
+      const color = appContainerColors[appContainers++ % appContainerColors.length];
+      return { color: color, displayName: name, isProxy: false, isSelected: true, name: name };
     });
 
     return containers;
