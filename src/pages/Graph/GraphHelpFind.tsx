@@ -188,6 +188,7 @@ export default class GraphHelpFind extends React.Component<GraphHelpFindProps> {
       ['httpin <op> <number>', 'unit: requests per second'],
       ['httpout <op> <number>', 'unit: requests per second'],
       ['app <op> <appName>'],
+      ['cluster <op> <clusterName>'],
       ['name <op> <string>', 'tests against app label, operation, service and workload names'],
       ['namespace <op> <namespaceName>'],
       ['node <op> <nodeType>', 'nodeType: app | operation | service | workload | unknown'],

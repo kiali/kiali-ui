@@ -73,6 +73,7 @@ const operands: string[] = [
   '%httptraffic',
   'app',
   'circuitbreaker',
+  'cluster',
   'destprincipal',
   'grpc',
   'grpcerr',
@@ -572,6 +573,8 @@ export class GraphFind extends React.Component<GraphFindProps, GraphFindState> {
       //
       case 'app':
         return { target: 'node', selector: `[${CyNode.app} ${op} "${val}"]` };
+      case 'cluster':
+        return { target: 'node', selector: `[${CyNode.cluster} ${op} "${val}"]` };
       case 'grpcin': {
         const s = this.getNumericSelector(CyNode.grpcIn, op, val, expression, isFind);
         return s ? { target: 'node', selector: s } : undefined;
