@@ -18,7 +18,7 @@ import TourStopContainer from 'components/Tour/TourStop';
 import { GraphTourStops } from 'pages/Graph/GraphHelpTour';
 import { TimeInMilliseconds } from 'types/Common';
 import { AutoComplete } from 'utils/AutoComplete';
-import { HEALTHY } from 'types/Health';
+import { DEGRADED, FAILURE, HEALTHY } from 'types/Health';
 import { GraphFindOptions } from './GraphFindOptions';
 
 type ReduxProps = {
@@ -763,7 +763,7 @@ export class GraphFind extends React.Component<GraphFindProps, GraphFindState> {
         return {
           target: 'node',
           selector: isNegation
-            ? `[${CyNode.healthStatus} != "${HEALTHY.name}"]`
+            ? `[${CyNode.healthStatus} = "${FAILURE.name}"],[${CyNode.healthStatus} = "${DEGRADED.name}"]`
             : `[${CyNode.healthStatus} = "${HEALTHY.name}"]`
         };
       case 'idle':
