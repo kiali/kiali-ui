@@ -1,44 +1,46 @@
 import { Dropdown, DropdownToggle, DropdownItem } from '@patternfly/react-core';
 import * as React from 'react';
 import { KialiIcon } from 'config/KialiIcon';
+import { serverConfig } from 'config';
+import { style } from 'typestyle';
 
-type ReduxProps = {};
+type FindKind = 'find' | 'hide';
 
-type GraphFindOptionsProps = ReduxProps & {
-  kind: 'find' | 'hide';
+type GraphFindOptionsProps = {
+  kind: FindKind;
   onSelect: (expression) => void;
 };
 
 type GraphFindOptionsState = { isOpen: boolean };
 
+const dropdown = style({
+  minWidth: '20px',
+  width: '20px',
+  paddingLeft: '5px',
+  paddingRight: 0,
+  bottom: '1px'
+});
+
 export class GraphFindOptions extends React.PureComponent<GraphFindOptionsProps, GraphFindOptionsState> {
+  options: React.ReactFragment[];
+
   constructor(props: GraphFindOptionsProps) {
     super(props);
+
+    this.options = this.getOptionItems(props.kind);
+
     this.state = {
       isOpen: false
     };
   }
 
-  private onToggle = isOpen => {
-    this.setState({
-      isOpen
-    });
-  };
-
-  componentDidUpdate(_prevProps: GraphFindOptionsProps) {}
-
   render() {
-    const options = [
-      <DropdownItem key="protocol=http" onClick={() => this.props.onSelect('protocol=http')}>
-        HTTP Traffic
-      </DropdownItem>
-    ];
     return (
       <Dropdown
         toggle={
           <DropdownToggle
-            style={{ minWidth: '20px', width: '20px', paddingLeft: '5px', paddingRight: 0, bottom: '1px' }}
-            id="graphfind-options"
+            className={dropdown}
+            id={`graph${this.props.kind}-options`}
             iconComponent={null}
             onToggle={this.onToggle}
           >
@@ -46,7 +48,7 @@ export class GraphFindOptions extends React.PureComponent<GraphFindOptionsProps,
           </DropdownToggle>
         }
         isOpen={this.state.isOpen}
-        dropdownItems={options}
+        dropdownItems={this.options}
         onSelect={this.close}
       ></Dropdown>
     );
@@ -55,6 +57,26 @@ export class GraphFindOptions extends React.PureComponent<GraphFindOptionsProps,
   private close = () => {
     this.setState({
       isOpen: false
+    });
+  };
+
+  private getOptionItems = (kind: FindKind): React.ReactFragment[] => {
+    const options =
+      kind === 'find'
+        ? serverConfig.kialiFeatureFlags.uiDefaults!.graph.findOptions
+        : serverConfig.kialiFeatureFlags.uiDefaults!.graph.hideOptions;
+    return options.map(o => {
+      return (
+        <DropdownItem key="protocol=http" onClick={() => this.props.onSelect(o.expression)}>
+          {o.description}
+        </DropdownItem>
+      );
+    });
+  };
+
+  private onToggle = isOpen => {
+    this.setState({
+      isOpen
     });
   };
 }

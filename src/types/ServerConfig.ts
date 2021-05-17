@@ -21,7 +21,18 @@ interface IstioAnnotations {
   istioInjectionAnnotation: string;
 }
 
+interface GraphFindOption {
+  expression: string;
+  description: string;
+}
+
+interface GraphUIDefaults {
+  findOptions: GraphFindOption[];
+  hideOptions: GraphFindOption[];
+}
+
 interface UIDefaults {
+  graph: GraphUIDefaults;
   metricsPerRefresh?: string;
   namespaces?: string[];
   refreshInterval?: string;

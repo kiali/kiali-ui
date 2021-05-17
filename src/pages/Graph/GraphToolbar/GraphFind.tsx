@@ -223,13 +223,13 @@ export class GraphFind extends React.Component<GraphFindProps, GraphFindState> {
               onKeyDownCapture={this.checkSpecialKeyHide}
               placeholder="Hide..."
             />
-            <GraphFindOptions kind="hide" onSelect={this.updateFindOption} />
+            <GraphFindOptions kind="hide" onSelect={this.updateHideOption} />
             {this.props.hideValue && (
               <Tooltip key="ot_clear_hide" position="top" content="Clear Hide...">
                 <Button
                   style={{ minWidth: '20px', width: '20px', paddingLeft: '5px', paddingRight: '5px', bottom: '1px' }}
                   variant={ButtonVariant.control}
-                  onClick={this.clearHide}
+                  onClick={() => this.setHide('')}
                 >
                   <KialiIcon.Close />
                 </Button>
@@ -282,7 +282,6 @@ export class GraphFind extends React.Component<GraphFindProps, GraphFindState> {
   };
 
   private updateFindOption = key => {
-    console.log(`Option=${key}`);
     this.setFind(key);
   };
 
@@ -339,9 +338,13 @@ export class GraphFind extends React.Component<GraphFindProps, GraphFindState> {
     }
   };
 
+  private updateHideOption = key => {
+    this.setHide(key);
+  };
+
   private updateHide = val => {
     if ('' === val) {
-      this.clearHide();
+      this.setHide('');
     } else {
       const diff = Math.abs(val.length - this.state.hideInputValue.length);
       this.hideAutoComplete.setInput(val, [' ', '!']);
@@ -359,16 +362,16 @@ export class GraphFind extends React.Component<GraphFindProps, GraphFindState> {
     }
   };
 
-  private clearHide = () => {
+  private setHide = val => {
     // TODO: when TextInput refs are fixed in PF4 then use the ref and remove the direct HTMLElement usage
-    this.hideInputRef.value = '';
+    this.hideInputRef.value = val;
     const htmlInputElement: HTMLInputElement = document.getElementById('graph_hide') as HTMLInputElement;
     if (htmlInputElement !== null) {
-      htmlInputElement.value = '';
+      htmlInputElement.value = val;
     }
-    this.hideAutoComplete.setInput('');
-    this.setState({ hideInputValue: '', hideError: undefined });
-    this.props.setHideValue('');
+    this.hideAutoComplete.setInput(val);
+    this.setState({ hideInputValue: val, hideError: undefined });
+    this.props.setHideValue(val);
   };
 
   private handleHide = (cy: any, hideChanged: boolean, graphChanged: boolean, compressOnHideChanged: boolean) => {
