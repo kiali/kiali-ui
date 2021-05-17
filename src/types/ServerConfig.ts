@@ -22,8 +22,8 @@ interface IstioAnnotations {
 }
 
 interface GraphFindOption {
-  expression: string;
   description: string;
+  expression: string;
 }
 
 interface GraphUIDefaults {
