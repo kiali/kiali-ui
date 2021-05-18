@@ -33,6 +33,7 @@ export interface IstioConfigItem {
   peerAuthentication?: PeerAuthentication;
   requestAuthentication?: RequestAuthentication;
   workloadEntry?: WorkloadEntry;
+  workloadGroup?: WorkloadGroup;
   envoyFilter?: EnvoyFilter;
   validation?: ObjectValidation;
 }
