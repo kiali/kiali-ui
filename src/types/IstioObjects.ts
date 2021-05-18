@@ -876,7 +876,13 @@ export interface WorkloadEntrySpec {
   serviceAccount?: string;
 }
 
-export interface WorkloadEntrySelector {
+export interface WorkloadGroup extends IstioObject {
+  spec: WorkloadGroupSpec;
+}
+
+export interface WorkloadGroupSpec {}
+
+export interface WorkloadMatchSelector {
   matchLabels: { [key: string]: string };
 }
 
@@ -903,7 +909,7 @@ export interface RequestAuthentication extends IstioObject {
 
 // 1.6
 export interface RequestAuthenticationSpec {
-  selector?: WorkloadEntrySelector;
+  selector?: WorkloadMatchSelector;
   jwtRules: JWTRule[];
 }
 
