@@ -140,7 +140,7 @@ class ExperimentListPageComponent extends React.Component<Props, State> {
               AlertUtils.addError(
                 'Iter8 v' +
                   iter8Info.analyticsImgVersion +
-                  ' support will be available in July 2021 release, please use the supported version  (v1.x).'
+                  ' is not supported, please use the supported version (v1.x).'
               );
               return;
             }
