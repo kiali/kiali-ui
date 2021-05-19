@@ -81,7 +81,7 @@ export class CytoscapeContextMenuWrapper extends React.PureComponent<Props> {
       if (event.target) {
         const currentContextMenu = this.getCurrentContextMenu();
         if (currentContextMenu) {
-          currentContextMenu.hide(0); // hide it in 0ms
+          currentContextMenu.unmount();
         }
 
         let contextMenuComponentType: EdgeContextMenuType | NodeContextMenuType | undefined;
@@ -150,14 +150,12 @@ export class CytoscapeContextMenuWrapper extends React.PureComponent<Props> {
         arrow: true,
         placement: 'bottom',
         hideOnClick: false,
-        multiple: false,
         sticky: true,
         interactive: true,
         theme: 'light-border',
-        size: 'large',
-        distance: this.tippyDistance(target)
+        offset: [0, this.tippyDistance(target)]
       }
-    ).instances[0];
+    )[0];
 
     const result = (
       <Provider store={store}>

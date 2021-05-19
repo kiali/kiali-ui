@@ -17479,19 +17479,19 @@ tiny-warning@^1.0.0, tiny-warning@^1.0.3:
   resolved "https://registry.yarnpkg.com/tiny-warning/-/tiny-warning-1.0.3.tgz#94a30db453df4c643d0fd566060d60a875d84754"
   integrity sha512-lBN9zLN/oAf68o3zNXYrdCt1kP8WsiGW8Oo2ka41b2IM5JL/S1CTyX1rW0mb/zSuJun0ZUrDxx4sqvYS2FWzPA==
 
-tippy.js@3.4.1:
-  version "3.4.1"
-  resolved "https://registry.yarnpkg.com/tippy.js/-/tippy.js-3.4.1.tgz#f0eb3081824ad6c5d364336451ad77ae2f543da8"
-  integrity sha512-ZiyGP9WZyCCcjxKM4G88cm4U1r1ytjeMDGa5FSKPaPzwc/3yZJVZsb1ffcmqUMCpryRp5LNxRNGKLzbs11sb/Q==
-  dependencies:
-    popper.js "^1.14.6"
-
 tippy.js@5.1.2:
   version "5.1.2"
   resolved "https://registry.yarnpkg.com/tippy.js/-/tippy.js-5.1.2.tgz#5ac91233c59ab482ef5988cffe6e08bd26528e66"
   integrity sha512-Qtrv2wqbRbaKMUb6bWWBQWPayvcDKNrGlvihxtsyowhT7RLGEh1STWuy6EMXC6QLkfKPB2MLnf8W2mzql9VDAw==
   dependencies:
     popper.js "^1.16.0"
+
+tippy.js@6.3.1:
+  version "6.3.1"
+  resolved "https://registry.yarnpkg.com/tippy.js/-/tippy.js-6.3.1.tgz#3788a007be7015eee0fd589a66b98fb3f8f10181"
+  integrity sha512-JnFncCq+rF1dTURupoJ4yPie5Cof978inW6/4S6kmWV7LL9YOSEVMifED3KdrVPEG+Z/TFH2CDNJcQEfaeuQww==
+  dependencies:
+    "@popperjs/core" "^2.8.3"
 
 tmp@0.0.33, tmp@^0.0.33:
   version "0.0.33"
