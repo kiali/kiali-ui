@@ -57,7 +57,7 @@ type ParsedExpression = {
 };
 
 const inputWidth = {
-  width: '10em'
+  width: 'var(--graph-find-input--width)'
 };
 
 // reduce toolbar padding from 20px to 10px to save space

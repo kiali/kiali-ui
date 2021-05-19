@@ -37,13 +37,10 @@ export class GraphFindOptions extends React.PureComponent<GraphFindOptionsProps,
   render() {
     return (
       <Dropdown
+        key={`graph-${this.props.kind}-presets`}
+        id="graph-findhide-presets"
         toggle={
-          <DropdownToggle
-            className={dropdown}
-            id={`graph${this.props.kind}-options`}
-            iconComponent={null}
-            onToggle={this.onToggle}
-          >
+          <DropdownToggle className={dropdown} iconComponent={null} onToggle={this.onToggle}>
             <KialiIcon.AngleDown />
           </DropdownToggle>
         }
@@ -67,7 +64,7 @@ export class GraphFindOptions extends React.PureComponent<GraphFindOptionsProps,
         : serverConfig.kialiFeatureFlags.uiDefaults!.graph.hideOptions;
     return options.map(o => {
       return (
-        <DropdownItem key="protocol=http" onClick={() => this.props.onSelect(o.expression)}>
+        <DropdownItem key={o.description} onClick={() => this.props.onSelect(o.expression)}>
           {o.description}
         </DropdownItem>
       );
