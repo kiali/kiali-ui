@@ -2,10 +2,21 @@ import * as React from 'react';
 import { checkForPath, highestSeverity } from '../../../types/ServiceInfo';
 import { Host, HTTPRoute, ObjectValidation, TCPRoute, TLSRoute, VirtualService } from '../../../types/IstioObjects';
 import VirtualServiceRoute from './VirtualServiceRoute';
-import { Stack, StackItem, Text, TextVariants, Title, TitleLevel, TitleSize } from '@patternfly/react-core';
+import {
+  Stack,
+  StackItem,
+  Text,
+  TextVariants,
+  Title,
+  TitleLevel,
+  TitleSize,
+  Tooltip,
+  TooltipPosition
+} from '@patternfly/react-core';
 import GlobalValidation from '../../../components/Validations/GlobalValidation';
 import IstioObjectLink from '../../../components/Link/IstioObjectLink';
 import ServiceLink from './ServiceLink';
+import { PFColors } from '../../../components/Pf/PfColors';
 
 interface VirtualServiceProps {
   namespace: string;
@@ -66,7 +77,21 @@ class VirtualServiceOverview extends React.Component<VirtualServiceProps> {
       childrenList.push(
         <li key={'gateway_' + host.service + '_' + j}>
           {host.service === 'mesh' || !isValid ? (
-            host.service
+            <div style={{ color: PFColors.Blue400, textAlign: 'left', cursor: 'pointer' }}>
+              <Tooltip
+                aria-label={host.service}
+                position={TooltipPosition.left}
+                enableFlip={true}
+                distance={5}
+                content={
+                  <p>
+                    The special value <b>mesh</b> allows internal calls from other services in the mesh
+                  </p>
+                }
+              >
+                <p>{host.service}</p>
+              </Tooltip>
+            </div>
           ) : (
             <IstioObjectLink name={host.service} namespace={host.namespace} type={'gateway'}>
               {gateways[key]}
