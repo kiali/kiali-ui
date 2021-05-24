@@ -11,20 +11,24 @@ import {
   TitleLevel,
   TitleSize,
   Tooltip,
-  TooltipPosition,
-  Button,
-  ButtonVariant
+  TooltipPosition
 } from '@patternfly/react-core';
 import GlobalValidation from '../../../components/Validations/GlobalValidation';
 import IstioObjectLink from '../../../components/Link/IstioObjectLink';
 import ServiceLink from './ServiceLink';
-import { KialiIcon, defaultIconStyle } from 'config/KialiIcon';
+import { KialiIcon } from 'config/KialiIcon';
+import { style } from 'typestyle';
 
 interface VirtualServiceProps {
   namespace: string;
   virtualService: VirtualService;
   validation?: ObjectValidation;
 }
+
+const infoStyle = style({
+  margin: '0px 0px 2px 10px',
+  verticalAlign: '-5px !important'
+});
 
 class VirtualServiceOverview extends React.Component<VirtualServiceProps> {
   validation(): ObjectValidation | undefined {
@@ -82,12 +86,10 @@ class VirtualServiceOverview extends React.Component<VirtualServiceProps> {
             <div>
               {host.service}
               <Tooltip
-                position={TooltipPosition.top}
+                position={TooltipPosition.right}
                 content="The special value mesh allows internal calls from other services in the mesh"
               >
-                <Button variant={ButtonVariant.link} style={{ paddingLeft: '6px' }}>
-                  <KialiIcon.Info className={defaultIconStyle} />
-                </Button>
+                <KialiIcon.Info className={infoStyle} />
               </Tooltip>
             </div>
           ) : (
