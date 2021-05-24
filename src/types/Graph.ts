@@ -187,9 +187,14 @@ export interface GraphNodeData {
   destServices?: DestService[];
   traffic?: ProtocolTraffic[];
   hasCB?: boolean;
-  hasMissingSC?: boolean;
-  hasVS?: boolean;
+  hasFaultInjection?: boolean;
   hasHealthConfig?: HealthAnnotationType;
+  hasMissingSC?: boolean;
+  hasRequestRouting?: boolean;
+  hasRequestTimeout?: boolean;
+  hasTCPTrafficShifting?: boolean;
+  hasTrafficShifting?: boolean;
+  hasVS?: boolean;
   isBox?: string;
   isDead?: boolean;
   isIdle?: boolean;
