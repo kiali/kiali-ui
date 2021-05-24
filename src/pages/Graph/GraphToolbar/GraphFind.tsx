@@ -729,7 +729,7 @@ export class GraphFind extends React.Component<GraphFindProps, GraphFindState> {
       case '>=':
       case '<=':
         if (isNaN(val)) {
-          return this.setError(`Invalid value [${val}]. Expected a numeric value (use . for decimals)`, isFind);
+          return this.setError(`Invalid value [${val}]. Expected a numeric value (use '.' for decimals)`, isFind);
         }
         return `[${field} ${op} ${val}]`;
       case '=':
