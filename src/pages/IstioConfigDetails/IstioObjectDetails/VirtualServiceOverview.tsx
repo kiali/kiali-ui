@@ -11,12 +11,14 @@ import {
   TitleLevel,
   TitleSize,
   Tooltip,
-  TooltipPosition
+  TooltipPosition,
+  Button,
+  ButtonVariant
 } from '@patternfly/react-core';
 import GlobalValidation from '../../../components/Validations/GlobalValidation';
 import IstioObjectLink from '../../../components/Link/IstioObjectLink';
 import ServiceLink from './ServiceLink';
-import { PFColors } from '../../../components/Pf/PfColors';
+import { KialiIcon, defaultIconStyle } from 'config/KialiIcon';
 
 interface VirtualServiceProps {
   namespace: string;
@@ -77,19 +79,15 @@ class VirtualServiceOverview extends React.Component<VirtualServiceProps> {
       childrenList.push(
         <li key={'gateway_' + host.service + '_' + j}>
           {host.service === 'mesh' || !isValid ? (
-            <div style={{ color: PFColors.Blue400, textAlign: 'left', cursor: 'pointer' }}>
+            <div>
+              {host.service}
               <Tooltip
-                aria-label={host.service}
-                position={TooltipPosition.left}
-                enableFlip={true}
-                distance={5}
-                content={
-                  <p>
-                    The special value <b>mesh</b> allows internal calls from other services in the mesh
-                  </p>
-                }
+                position={TooltipPosition.top}
+                content="The special value mesh allows internal calls from other services in the mesh"
               >
-                <p>{host.service}</p>
+                <Button variant={ButtonVariant.link} style={{ paddingLeft: '6px' }}>
+                  <KialiIcon.Info className={defaultIconStyle} />
+                </Button>
               </Tooltip>
             </div>
           ) : (
