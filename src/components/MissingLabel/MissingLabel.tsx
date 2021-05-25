@@ -60,7 +60,7 @@ class MissingLabel extends React.Component<MissingLabelProps, {}> {
       </span>
     );
     return this.props.tooltip ? (
-      <Tooltip key={`tooltip_missing_label`} position={TooltipPosition.top} content={tooltipContent}>
+      <Tooltip key={`tooltip_missing_label`} position={TooltipPosition.right} content={tooltipContent}>
         {iconComponent}
       </Tooltip>
     ) : (
