@@ -13,6 +13,7 @@ import { HealthIndicator } from '../../components/Health/HealthIndicator';
 import { serverConfig } from '../../config';
 import MissingSidecar from '../../components/MissingSidecar/MissingSidecar';
 import { PFBadge, PFBadges } from '../../components/Pf/PfBadges';
+import MissingLabel from '../../components/MissingLabel/MissingLabel';
 
 type WorkloadDescriptionProps = {
   workload?: Workload;
@@ -142,6 +143,14 @@ class WorkloadDescription extends React.Component<WorkloadDescriptionProps> {
                 tooltip={true}
                 style={{ marginLeft: '10px' }}
                 text={''}
+              />
+            ) : undefined}
+            {this.props.workload && (!this.props.workload.appLabel || !this.props.workload.versionLabel) ? (
+              <MissingLabel
+                missingApp={!this.props.workload.appLabel}
+                missingVersion={!this.props.workload.versionLabel}
+                style={{ marginLeft: '10px' }}
+                tooltip={true}
               />
             ) : undefined}
           </Title>
