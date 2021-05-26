@@ -694,7 +694,6 @@ const mapStateToProps = (state: KialiAppState) => ({
   refreshInterval: refreshIntervalSelector(state),
   replayActive: replayActiveSelector(state),
   replayQueryTime: replayQueryTimeSelector(state),
-  showCircuitBreakers: state.graph.toolbarState.showCircuitBreakers,
   showIdleEdges: state.graph.toolbarState.showIdleEdges,
   showIdleNodes: state.graph.toolbarState.showIdleNodes,
   showLegend: state.graph.toolbarState.showLegend,

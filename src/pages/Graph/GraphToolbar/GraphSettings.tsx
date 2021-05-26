@@ -30,7 +30,6 @@ type ReduxProps = {
   toggleBoxByCluster(): void;
   toggleBoxByNamespace(): void;
   toggleCompressOnHide(): void;
-  toggleGraphCircuitBreakers(): void;
   toggleGraphMissingSidecars(): void;
   toggleGraphSecurity(): void;
   toggleGraphVirtualServices(): void;
@@ -126,7 +125,6 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
       boxByNamespace,
       compressOnHide,
       edgeLabelMode,
-      showCircuitBreakers,
       showIdleEdges,
       showIdleNodes,
       showMissingSidecars,
@@ -142,7 +140,6 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
       toggleBoxByCluster,
       toggleBoxByNamespace,
       toggleCompressOnHide,
-      toggleGraphCircuitBreakers,
       toggleGraphMissingSidecars,
       toggleGraphSecurity,
       toggleGraphVirtualServices,
@@ -315,12 +312,6 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
 
     const badgeOptions: DisplayOptionType[] = [
       {
-        id: 'filterCB',
-        labelText: 'Circuit Breakers',
-        isChecked: showCircuitBreakers,
-        onChange: toggleGraphCircuitBreakers
-      },
-      {
         id: 'filterSidecars',
         labelText: 'Missing Sidecars',
         isChecked: showMissingSidecars,
@@ -427,7 +418,6 @@ const mapStateToProps = (state: KialiAppState) => ({
   boxByNamespace: state.graph.toolbarState.boxByNamespace,
   compressOnHide: state.graph.toolbarState.compressOnHide,
   edgeLabelMode: edgeLabelModeSelector(state),
-  showCircuitBreakers: state.graph.toolbarState.showCircuitBreakers,
   showIdleEdges: state.graph.toolbarState.showIdleEdges,
   showIdleNodes: state.graph.toolbarState.showIdleNodes,
   showMissingSidecars: state.graph.toolbarState.showMissingSidecars,
@@ -445,7 +435,6 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<KialiAppState, void, KialiAp
     toggleBoxByCluster: bindActionCreators(GraphToolbarActions.toggleBoxByCluster, dispatch),
     toggleBoxByNamespace: bindActionCreators(GraphToolbarActions.toggleBoxByNamespace, dispatch),
     toggleCompressOnHide: bindActionCreators(GraphToolbarActions.toggleCompressOnHide, dispatch),
-    toggleGraphCircuitBreakers: bindActionCreators(GraphToolbarActions.toggleGraphCircuitBreakers, dispatch),
     toggleGraphMissingSidecars: bindActionCreators(GraphToolbarActions.toggleGraphMissingSidecars, dispatch),
     toggleGraphSecurity: bindActionCreators(GraphToolbarActions.toggleGraphSecurity, dispatch),
     toggleGraphVirtualServices: bindActionCreators(GraphToolbarActions.toggleGraphVirtualServices, dispatch),

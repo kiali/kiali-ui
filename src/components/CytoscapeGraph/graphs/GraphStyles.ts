@@ -213,18 +213,16 @@ export class GraphStyles {
     if (cyGlobal.showMissingSidecars && node.hasMissingSC) {
       icons = `<span class="${NodeIconMS} ${iconMargin()}"></span> ${icons}`;
     }
-    if (cyGlobal.showCircuitBreakers && node.hasCB) {
-      icons = `<span class="${NodeIconCB} ${iconMargin()}"></span> ${icons}`;
-    }
     if (cyGlobal.showVirtualServices && node.hasVS) {
       // If there's an additional traffic scenario present then it's assumed
       // that there is a VS present so the VS badge is omitted.
       const hasKialiScenario =
-        node.hasRequestRouting ||
+        node.hasCB ||
         node.hasFaultInjection ||
-        node.hasTrafficShifting ||
+        node.hasRequestRouting ||
+        node.hasRequestTimeout ||
         node.hasTCPTrafficShifting ||
-        node.hasRequestTimeout;
+        node.hasTrafficShifting;
       if (!hasKialiScenario) {
         icons = `<span class="${NodeIconVS} ${iconMargin()}"></span> ${icons}`;
       } else {
@@ -242,6 +240,9 @@ export class GraphStyles {
         }
         if (node.hasRequestTimeout) {
           icons = `<span class="${NodeIconRequestTimeout} ${iconMargin()}"></span> ${icons}`;
+        }
+        if (node.hasCB) {
+          icons = `<span class="${NodeIconCB} ${iconMargin()}"></span> ${icons}`;
         }
       }
     }

@@ -618,7 +618,6 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
       edgeLabelMode: this.props.edgeLabelMode,
       homeCluster: serverConfig?.clusterInfo?.name || CLUSTER_DEFAULT,
       graphType: this.props.graphData.fetchParams.graphType,
-      showCircuitBreakers: this.props.showCircuitBreakers,
       showMissingSidecars: this.props.showMissingSidecars,
       showSecurity: this.props.showSecurity,
       showVirtualServices: this.props.showVirtualServices
