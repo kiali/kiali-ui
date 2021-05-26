@@ -82,7 +82,9 @@ class VirtualServiceOverview extends React.Component<VirtualServiceProps> {
       const host = this.parseHost(gateways[key]);
       childrenList.push(
         <li key={'gateway_' + host.service + '_' + j}>
-          {host.service === 'mesh' || !isValid ? (
+          {!isValid ? (
+            host.service
+          ) : host.service === 'mesh' ? (
             <div>
               {host.service}
               <Tooltip
