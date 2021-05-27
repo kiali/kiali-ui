@@ -72,6 +72,10 @@ const spanSelectStyle = style({
       paddingTop: 3,
       paddingBottom: 3
     },
+    '& > ul': {
+      maxWidth: '100%',
+      overflowY: 'hidden'
+    },
     '& > ul > li > button': {
       fontSize: 'var(--graph-side-panel--font-size)',
       paddingTop: 3,
