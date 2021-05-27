@@ -235,7 +235,8 @@ export class GraphStyles {
         if (node.hasTrafficShifting) {
           icons = `<span class="${NodeIconTrafficShifting} ${iconMargin()}"></span> ${icons}`;
         }
-        if (node.hasTCPTrafficShifting) {
+        // Don't show icon twice since the same for both http and tcp traffic shifting
+        if (node.hasTCPTrafficShifting && !node.hasTrafficShifting) {
           icons = `<span class="${NodeIconTCPTrafficShifting} ${iconMargin()}"></span> ${icons}`;
         }
         if (node.hasRequestTimeout) {
