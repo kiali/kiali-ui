@@ -89,7 +89,7 @@ class VirtualServiceOverview extends React.Component<VirtualServiceProps> {
               {host.service}
               <Tooltip
                 position={TooltipPosition.right}
-                content="The special value mesh allows internal calls from other services in the mesh"
+                content="The reserved word mesh is used to imply all the sidecars in the mesh"
               >
                 <KialiIcon.Info className={infoStyle} />
               </Tooltip>
