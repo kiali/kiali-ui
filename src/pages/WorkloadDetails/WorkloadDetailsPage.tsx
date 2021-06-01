@@ -21,7 +21,7 @@ import { JaegerInfo } from 'types/JaegerInfo';
 import TrafficDetails from 'components/TrafficList/TrafficDetails';
 import WorkloadWizardDropdown from '../../components/IstioWizards/WorkloadWizardDropdown';
 import TimeControl from '../../components/Time/TimeControl';
-import EnvoyResource from 'components/Envoy/EnvoyResource';
+import EnvoyDetailsContainer from 'components/Envoy/EnvoyDetails';
 
 type WorkloadDetailsState = {
   workload?: Workload;
@@ -45,9 +45,10 @@ const paramToTab: { [key: string]: number } = {
   traces: 5,
   envoy_listeners: 6,
   envoy_clusters: 7,
-  envoy_routes: 8
+  envoy_routes: 8,
+  envoy_config: 9
 };
-const nextTabIndex = 9;
+const nextTabIndex = 10;
 
 class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, WorkloadDetailsState> {
   constructor(props: WorkloadDetailsPageProps) {
@@ -67,7 +68,7 @@ class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, Workload
       this.props.lastRefreshAt !== prevProps.lastRefreshAt ||
       currentTab !== this.state.currentTab
     ) {
-      if (currentTab === 'info' || currentTab === 'logs') {
+      if (currentTab === 'info' || currentTab === 'logs' || currentTab.includes('envoy_')) {
         this.fetchWorkload();
       }
       if (currentTab !== this.state.currentTab) {
@@ -147,7 +148,7 @@ class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, Workload
     const envoyListenersTab = (
       <Tab title="Envoy Listeners" eventKey={6} key={'Envoy Listeners'}>
         {this.state.workload && (
-          <EnvoyResource
+          <EnvoyDetailsContainer
             namespace={this.props.match.params.namespace}
             workload={this.state.workload}
             resource="listeners"
@@ -159,7 +160,7 @@ class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, Workload
     const envoyClustersTab = (
       <Tab title="Envoy Clusters" eventKey={7} key={'Envoy Clusters'}>
         {this.state.workload && (
-          <EnvoyResource
+          <EnvoyDetailsContainer
             namespace={this.props.match.params.namespace}
             workload={this.state.workload}
             resource="clusters"
@@ -171,10 +172,22 @@ class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, Workload
     const envoyRoutesTab = (
       <Tab title="Envoy Routes" eventKey={8} key={'Envoy Routes'}>
         {this.state.workload && (
-          <EnvoyResource
+          <EnvoyDetailsContainer
             namespace={this.props.match.params.namespace}
             workload={this.state.workload}
             resource="routes"
+          />
+        )}
+      </Tab>
+    );
+
+    const envoyConfigTab = (
+      <Tab title="Envoy Config" eventKey={9} key={'Envoy Config'}>
+        {this.state.workload && (
+          <EnvoyDetailsContainer
+            namespace={this.props.match.params.namespace}
+            workload={this.state.workload}
+            resource="all"
           />
         )}
       </Tab>
@@ -188,7 +201,8 @@ class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, Workload
       outTab,
       envoyListenersTab,
       envoyClustersTab,
-      envoyRoutesTab
+      envoyRoutesTab,
+      envoyConfigTab
     ];
 
     if (this.props.jaegerInfo && this.props.jaegerInfo.enabled && this.props.jaegerInfo.integration) {
