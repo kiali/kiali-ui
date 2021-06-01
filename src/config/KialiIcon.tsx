@@ -102,7 +102,6 @@ export const KialiIcon: { [name: string]: React.FunctionComponent<IconProps> } =
   Services: (props: IconProps) => <ServiceIcon className={props.className} />,
   Stop: (props: IconProps) => <StopIcon className={props.className} />,
   Topology: (props: IconProps) => <TopologyIcon className={props.className} />,
-  TCPTrafficShifting: (props: IconProps) => <ShareAltIcon className={props.className} />,
   TrafficShifting: (props: IconProps) => <ShareAltIcon className={props.className} />,
   Unknown: (props: IconProps) => <UnknownIcon className={props.className} />,
   UserClock: (props: IconProps) => <UserClockIcon className={props.className} />,

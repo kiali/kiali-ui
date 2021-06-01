@@ -58,7 +58,6 @@ const NodeIconRoot = icons.istio.root.className; // alt-arrow-circle-right
 const NodeIconVS = icons.istio.virtualService.className; // code-branch
 const NodeIconRequestRouting = icons.istio.requestRouting.className; // code-branch
 const NodeIconRequestTimeout = icons.istio.requestTimeout.className; // clock
-const NodeIconTCPTrafficShifting = icons.istio.tcpTrafficShifting.className; // share-alt
 const NodeIconTrafficShifting = icons.istio.trafficShifting.className; // share-alt
 const NodeTextColor = PFColors.Black1000;
 const NodeTextColorBox = PFColors.White;
@@ -74,9 +73,9 @@ const NodeTextFontSizeHover = '11px';
 const NodeTextFontSizeHoverBox = '13px';
 const NodeWidth = NodeHeight;
 
-const defaultIconMargin = {
-  marginLeft: '1px'
-};
+// Puts a little more space between icons when a badge has multiple icons
+const iconMargin = (existingIcons: string) =>
+  existingIcons === '' ? style({ marginLeft: '1px' }) : style({ marginRight: '2px' });
 
 const iconsDefault = style({
   alignItems: 'center',
@@ -205,13 +204,8 @@ export class GraphStyles {
     const isOutside = node.isOutside;
 
     let icons = '';
-    // Put a little more space between icons when a badge has multiple icons
-    const iconMargin = () => (icons === '' ? style(defaultIconMargin) : style({ marginRight: '2px' }));
-    if (node.isRoot) {
-      icons = `<span class="${NodeIconRoot} ${iconMargin()}"></span> ${icons}`;
-    }
     if (cyGlobal.showMissingSidecars && node.hasMissingSC) {
-      icons = `<span class="${NodeIconMS} ${iconMargin()}"></span> ${icons}`;
+      icons = `<span class="${NodeIconMS} ${iconMargin(icons)}"></span> ${icons}`;
     }
     if (cyGlobal.showVirtualServices && node.hasVS) {
       // If there's an additional traffic scenario present then it's assumed
@@ -224,29 +218,29 @@ export class GraphStyles {
         node.hasTCPTrafficShifting ||
         node.hasTrafficShifting;
       if (!hasKialiScenario) {
-        icons = `<span class="${NodeIconVS} ${iconMargin()}"></span> ${icons}`;
+        icons = `<span class="${NodeIconVS} ${iconMargin(icons)}"></span> ${icons}`;
       } else {
         if (node.hasRequestRouting) {
-          icons = `<span class="${NodeIconRequestRouting} ${iconMargin()}"></span> ${icons}`;
+          icons = `<span class="${NodeIconRequestRouting} ${iconMargin(icons)}"></span> ${icons}`;
         }
         if (node.hasFaultInjection) {
-          icons = `<span class="${NodeIconFaultInjection} ${iconMargin()}"></span> ${icons}`;
+          icons = `<span class="${NodeIconFaultInjection} ${iconMargin(icons)}"></span> ${icons}`;
         }
-        if (node.hasTrafficShifting) {
-          icons = `<span class="${NodeIconTrafficShifting} ${iconMargin()}"></span> ${icons}`;
-        }
-        // Don't show icon twice since the same for both http and tcp traffic shifting
-        if (node.hasTCPTrafficShifting && !node.hasTrafficShifting) {
-          icons = `<span class="${NodeIconTCPTrafficShifting} ${iconMargin()}"></span> ${icons}`;
+        if (node.hasTrafficShifting || node.hasTCPTrafficShifting) {
+          icons = `<span class="${NodeIconTrafficShifting} ${iconMargin(icons)}"></span> ${icons}`;
         }
         if (node.hasRequestTimeout) {
-          icons = `<span class="${NodeIconRequestTimeout} ${iconMargin()}"></span> ${icons}`;
+          icons = `<span class="${NodeIconRequestTimeout} ${iconMargin(icons)}"></span> ${icons}`;
         }
         if (node.hasCB) {
-          icons = `<span class="${NodeIconCB} ${iconMargin()}"></span> ${icons}`;
+          icons = `<span class="${NodeIconCB} ${iconMargin(icons)}"></span> ${icons}`;
         }
       }
     }
+    if (node.isRoot) {
+      icons = `<span class="${NodeIconRoot} ${iconMargin(icons)}"></span> ${icons}`;
+    }
+
     const hasIcon = icons.length > 0;
     if (hasIcon) {
       icons = `<div class=${iconsDefault}>${icons}</div>`;

@@ -321,7 +321,15 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
         id: 'filterVS',
         labelText: 'Virtual Services',
         isChecked: showVirtualServices,
-        onChange: toggleGraphVirtualServices
+        onChange: toggleGraphVirtualServices,
+        tooltip: (
+          <div style={{ textAlign: 'left' }}>
+            <div>
+              Show virtual service related icons. Additional icons are displayed if a circuit breaker is present on the
+              virtual service or if the virtual service was created through one of the Kiali service wizards.
+            </div>
+          </div>
+        )
       },
       {
         id: 'filterSecurity',
