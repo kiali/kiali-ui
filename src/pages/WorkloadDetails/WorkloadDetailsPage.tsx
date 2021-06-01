@@ -21,6 +21,7 @@ import { JaegerInfo } from 'types/JaegerInfo';
 import TrafficDetails from 'components/TrafficList/TrafficDetails';
 import WorkloadWizardDropdown from '../../components/IstioWizards/WorkloadWizardDropdown';
 import TimeControl from '../../components/Time/TimeControl';
+import EnvoyResource from 'components/Envoy/EnvoyResource';
 
 type WorkloadDetailsState = {
   workload?: Workload;
@@ -41,9 +42,12 @@ const paramToTab: { [key: string]: number } = {
   logs: 2,
   in_metrics: 3,
   out_metrics: 4,
-  traces: 5
+  traces: 5,
+  envoy_listeners: 6,
+  envoy_clusters: 7,
+  envoy_routes: 8
 };
-const nextTabIndex = 6;
+const nextTabIndex = 9;
 
 class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, WorkloadDetailsState> {
   constructor(props: WorkloadDetailsPageProps) {
@@ -140,7 +144,52 @@ class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, Workload
       </Tab>
     );
 
-    const tabsArray: JSX.Element[] = [overTab, trafficTab, logTab, inTab, outTab];
+    const envoyListenersTab = (
+      <Tab title="Envoy Listeners" eventKey={6} key={'Envoy Listeners'}>
+        {this.state.workload && (
+          <EnvoyResource
+            namespace={this.props.match.params.namespace}
+            workload={this.state.workload}
+            resource="listeners"
+          />
+        )}
+      </Tab>
+    );
+
+    const envoyClustersTab = (
+      <Tab title="Envoy Clusters" eventKey={7} key={'Envoy Clusters'}>
+        {this.state.workload && (
+          <EnvoyResource
+            namespace={this.props.match.params.namespace}
+            workload={this.state.workload}
+            resource="clusters"
+          />
+        )}
+      </Tab>
+    );
+
+    const envoyRoutesTab = (
+      <Tab title="Envoy Routes" eventKey={8} key={'Envoy Routes'}>
+        {this.state.workload && (
+          <EnvoyResource
+            namespace={this.props.match.params.namespace}
+            workload={this.state.workload}
+            resource="routes"
+          />
+        )}
+      </Tab>
+    );
+
+    const tabsArray: JSX.Element[] = [
+      overTab,
+      trafficTab,
+      logTab,
+      inTab,
+      outTab,
+      envoyListenersTab,
+      envoyClustersTab,
+      envoyRoutesTab
+    ];
 
     if (this.props.jaegerInfo && this.props.jaegerInfo.enabled && this.props.jaegerInfo.integration) {
       tabsArray.push(
