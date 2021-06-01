@@ -134,11 +134,11 @@ class SummaryPanelTraceDetails extends React.Component<Props, State> {
         </span>
         <div>
           {tracesDetailsURL ? (
-            <Tooltip content={'View trace details'}>
+            <Tooltip content={`View trace details for: ${info.name()}`}>
               <Link to={tracesDetailsURL}>{title}</Link>
             </Tooltip>
           ) : (
-            title
+            <Tooltip content={`${info.name()}`}>{title}</Tooltip>
           )}
           <div>
             {info.numErrors !== 0 && (
