@@ -167,72 +167,70 @@ export class SummaryPanelNode extends React.Component<SummaryPanelNodeProps, Sum
     hasTrafficShifting?: boolean;
     hasVS?: boolean;
     isDead?: boolean;
-  }) =>
-    // hasRequestTimeout?: boolean
-    {
-      const hasTrafficScenario =
-        hasRequestRouting || hasFaultInjection || hasTrafficShifting || hasTCPTrafficShifting || hasRequestTimeout;
-      return (
-        <div style={{ marginTop: '10px', marginBottom: '10px' }}>
-          {hasCB && (
-            <div>
-              <KialiIcon.CircuitBreaker />
-              <span style={{ paddingLeft: '4px' }}>Has Circuit Breaker</span>
-            </div>
-          )}
-          {hasVS && !hasTrafficScenario && (
-            <div>
-              <KialiIcon.VirtualService />
-              <span style={{ paddingLeft: '4px' }}>Has Virtual Service</span>
-            </div>
-          )}
-          {hasMissingSC && (
-            <div>
-              <KialiIcon.MissingSidecar />
-              <span style={{ paddingLeft: '4px' }}>Has Missing Sidecar</span>
-            </div>
-          )}
-          {isDead && (
-            <div>
-              <span style={{ marginRight: '5px' }}>
-                <KialiIcon.Info />
-              </span>
-              <span style={{ paddingLeft: '4px' }}>Has No Running Pods</span>
-            </div>
-          )}
-          {hasRequestRouting && (
-            <div>
-              <KialiIcon.RequestRouting />
-              <span style={{ paddingLeft: '4px' }}>Has Request Routing</span>
-            </div>
-          )}
-          {hasFaultInjection && (
-            <div>
-              <KialiIcon.FaultInjection />
-              <span style={{ paddingLeft: '4px' }}>Has Fault Injection</span>
-            </div>
-          )}
-          {hasTrafficShifting && (
-            <div>
-              <KialiIcon.TrafficShifting />
-              <span style={{ paddingLeft: '4px' }}>Has Traffic Shifting</span>
-            </div>
-          )}
-          {hasTCPTrafficShifting && (
-            <div>
-              <KialiIcon.TrafficShifting />
-              <span style={{ paddingLeft: '4px' }}>Has TCP Traffic Shifting</span>
-            </div>
-          )}
-          {hasRequestTimeout && (
-            <div>
-              <KialiIcon.RequestTimeout />
-              <span style={{ paddingLeft: '4px' }}>Has Request Timeout</span>
-            </div>
-          )}
-        </div>
-      );
-    };
+  }) => {
+    const hasTrafficScenario =
+      hasRequestRouting || hasFaultInjection || hasTrafficShifting || hasTCPTrafficShifting || hasRequestTimeout;
+    return (
+      <div style={{ marginTop: '10px', marginBottom: '10px' }}>
+        {hasCB && (
+          <div>
+            <KialiIcon.CircuitBreaker />
+            <span style={{ paddingLeft: '4px' }}>Has Circuit Breaker</span>
+          </div>
+        )}
+        {hasVS && !hasTrafficScenario && (
+          <div>
+            <KialiIcon.VirtualService />
+            <span style={{ paddingLeft: '4px' }}>Has Virtual Service</span>
+          </div>
+        )}
+        {hasMissingSC && (
+          <div>
+            <KialiIcon.MissingSidecar />
+            <span style={{ paddingLeft: '4px' }}>Has Missing Sidecar</span>
+          </div>
+        )}
+        {isDead && (
+          <div>
+            <span style={{ marginRight: '5px' }}>
+              <KialiIcon.Info />
+            </span>
+            <span style={{ paddingLeft: '4px' }}>Has No Running Pods</span>
+          </div>
+        )}
+        {hasRequestRouting && (
+          <div>
+            <KialiIcon.RequestRouting />
+            <span style={{ paddingLeft: '4px' }}>Has Request Routing</span>
+          </div>
+        )}
+        {hasFaultInjection && (
+          <div>
+            <KialiIcon.FaultInjection />
+            <span style={{ paddingLeft: '4px' }}>Has Fault Injection</span>
+          </div>
+        )}
+        {hasTrafficShifting && (
+          <div>
+            <KialiIcon.TrafficShifting />
+            <span style={{ paddingLeft: '4px' }}>Has Traffic Shifting</span>
+          </div>
+        )}
+        {hasTCPTrafficShifting && (
+          <div>
+            <KialiIcon.TrafficShifting />
+            <span style={{ paddingLeft: '4px' }}>Has TCP Traffic Shifting</span>
+          </div>
+        )}
+        {hasRequestTimeout && (
+          <div>
+            <KialiIcon.RequestTimeout />
+            <span style={{ paddingLeft: '4px' }}>Has Request Timeout</span>
+          </div>
+        )}
+      </div>
+    );
+  };
 
   private renderDestServices = (data: DecoratedGraphNodeData) => {
     const destServices: DestService[] | undefined = data.destServices;
