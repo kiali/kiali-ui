@@ -10,7 +10,7 @@ import KChart from './KChart';
 import { LineInfo, RawOrBucket } from 'types/VictoryChartInfo';
 import { BrushHandlers } from './Container';
 
-type Props<T extends LineInfo> = {
+export type Props<T extends LineInfo> = {
   colors?: string[];
   dashboard: DashboardModel;
   maximizedChart?: string;
@@ -102,15 +102,9 @@ export class Dashboard<T extends LineInfo> extends React.Component<Props<T>, Sta
       this.renderCustom()
     ) : (
       <Grid>
-        <GridItem span={12}>
-          {this.renderCharts(requestCharts, ~~(12/requestCharts.length) as SpanValue)}
-        </GridItem>
-        <GridItem span={6}>
-          {this.renderCharts(responseCharts, ~~(12/responseCharts.length) as SpanValue)}
-        </GridItem>
-        <GridItem span={6}>
-          {this.renderCharts(tcpCharts, ~~(12/tcpCharts.length) as SpanValue)}
-        </GridItem>
+        <GridItem span={12}>{this.renderCharts(requestCharts, ~~(12 / requestCharts.length) as SpanValue)}</GridItem>
+        <GridItem span={6}>{this.renderCharts(responseCharts, ~~(12 / responseCharts.length) as SpanValue)}</GridItem>
+        <GridItem span={6}>{this.renderCharts(tcpCharts, ~~(12 / tcpCharts.length) as SpanValue)}</GridItem>
       </Grid>
     );
   }
