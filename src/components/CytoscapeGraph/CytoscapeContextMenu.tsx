@@ -81,7 +81,7 @@ export class CytoscapeContextMenuWrapper extends React.PureComponent<Props> {
       if (event.target) {
         const currentContextMenu = this.getCurrentContextMenu();
         if (currentContextMenu) {
-          currentContextMenu.unmount();
+          currentContextMenu.hide(0); // hide it in 0ms
         }
 
         let contextMenuComponentType: EdgeContextMenuType | NodeContextMenuType | undefined;
@@ -141,21 +141,28 @@ export class CytoscapeContextMenuWrapper extends React.PureComponent<Props> {
   ) {
     // Prevent the tippy content from picking up the right-click when we are moving it over to the edge/node
     this.addContextMenuEventListener();
+
+    // Creates a dummy element to pass into tippy.
+    // Inspired by: https://github.com/cytoscape/cytoscape.js-popper/blob/v1.0.7/demo-tippy.html#L89
+    const dummyDomElement = document.createElement('div');
     const content = this.contextMenuRef.current;
-    const tippyInstance = tippy(
-      (target as any).popperRef(), // Using an extension, popperRef is not in base definition
-      {
-        content: content as HTMLDivElement,
-        trigger: 'manual',
-        arrow: true,
-        placement: 'bottom',
-        hideOnClick: false,
-        sticky: true,
-        interactive: true,
-        theme: 'light-border',
-        offset: [0, this.tippyDistance(target)]
-      }
-    )[0];
+    const tippyInstance = tippy(dummyDomElement, {
+      content: content as HTMLDivElement,
+      onCreate: function (instance) {
+        instance.popperInstance!.reference = (target as any).popperRef();
+      },
+      lazy: false,
+      trigger: 'manual',
+      arrow: true,
+      placement: 'bottom',
+      hideOnClick: false,
+      multiple: false,
+      sticky: true,
+      interactive: true,
+      theme: 'light-border',
+      distance: this.tippyDistance(target),
+      appendTo: document.body
+    });
 
     const result = (
       <Provider store={store}>
