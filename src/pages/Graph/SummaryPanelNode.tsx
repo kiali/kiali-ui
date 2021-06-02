@@ -94,17 +94,7 @@ export class SummaryPanelNode extends React.Component<SummaryPanelNodeProps, Sum
           </div>
           <div>{renderHealth(nodeData.health)}</div>
           <div>
-            {this.renderBadgeSummary({
-              hasCB: nodeData.hasCB,
-              hasFaultInjection: nodeData.hasFaultInjection,
-              hasMissingSC: nodeData.hasMissingSC,
-              hasRequestRouting: nodeData.hasRequestRouting,
-              hasRequestTimeout: nodeData.hasRequestTimeout,
-              hasTCPTrafficShifting: nodeData.hasTCPTrafficShifting,
-              hasTrafficShifting: nodeData.hasTrafficShifting,
-              hasVS: nodeData.hasVS,
-              isDead: nodeData.isDead
-            })}
+            {this.renderBadgeSummary(nodeData)}
             {shouldRenderDestsList && <div>{destsList}</div>}
             {shouldRenderSvcList && <div>{servicesList}</div>}
             {shouldRenderService && <div>{renderBadgedLink(nodeData, NodeType.SERVICE)}</div>}
@@ -147,27 +137,18 @@ export class SummaryPanelNode extends React.Component<SummaryPanelNodeProps, Sum
   };
 
   // TODO:(see https://github.com/kiali/kiali-design/issues/63) If we want to show an icon for SE uncomment below
-  private renderBadgeSummary = ({
-    hasCB,
-    hasFaultInjection,
-    hasMissingSC,
-    hasRequestRouting,
-    hasRequestTimeout,
-    hasTCPTrafficShifting,
-    hasTrafficShifting,
-    hasVS,
-    isDead
-  }: {
-    hasCB?: boolean;
-    hasFaultInjection?: boolean;
-    hasMissingSC?: boolean;
-    hasRequestRouting?: boolean;
-    hasRequestTimeout?: boolean;
-    hasTCPTrafficShifting?: boolean;
-    hasTrafficShifting?: boolean;
-    hasVS?: boolean;
-    isDead?: boolean;
-  }) => {
+  private renderBadgeSummary = (nodeData: DecoratedGraphNodeData) => {
+    const {
+      hasCB,
+      hasFaultInjection,
+      hasMissingSC,
+      hasRequestRouting,
+      hasRequestTimeout,
+      hasTCPTrafficShifting,
+      hasTrafficShifting,
+      hasVS,
+      isDead
+    } = nodeData;
     const hasTrafficScenario =
       hasRequestRouting || hasFaultInjection || hasTrafficShifting || hasTCPTrafficShifting || hasRequestTimeout;
     return (
