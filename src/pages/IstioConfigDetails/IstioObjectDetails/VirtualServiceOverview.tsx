@@ -89,7 +89,11 @@ class VirtualServiceOverview extends React.Component<VirtualServiceProps> {
               {host.service}
               <Tooltip
                 position={TooltipPosition.right}
-                content="The reserved word mesh is used to imply all the sidecars in the mesh"
+                content={
+                  <div style={{ textAlign: 'left' }}>
+                    The reserved word, "mesh", implies all of the sidecars in the mesh
+                  </div>
+                }
               >
                 <KialiIcon.Info className={infoStyle} />
               </Tooltip>
