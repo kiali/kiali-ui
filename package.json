@@ -135,6 +135,7 @@
   },
   "resolutions": {
     "ajv": "6.12.3",
+    "babel-loader": "8.1.0",
     "dot-prop": "4.2.1",
     "elliptic": "6.5.4",
     "handlebars": "4.7.7",
