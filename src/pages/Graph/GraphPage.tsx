@@ -100,7 +100,6 @@ type ReduxProps = {
   setNode: (node?: NodeParamsType) => void;
   setTraceId: (traceId?: string) => void;
   setUpdateTime: (val: TimeInMilliseconds) => void;
-  showCircuitBreakers: boolean;
   showIdleEdges: boolean;
   showIdleNodes: boolean;
   showLegend: boolean;
