@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import * as Cy from 'cytoscape';
 import { Router } from 'react-router';
-import tippy, { Instance } from 'tippy.js';
+import tippy, { Instance, sticky } from 'tippy.js';
 import { DecoratedGraphEdgeData, DecoratedGraphNodeData } from '../../types/Graph';
 import { Provider } from 'react-redux';
 import { store } from '../../store/ConfigStore';
@@ -81,7 +81,7 @@ export class CytoscapeContextMenuWrapper extends React.PureComponent<Props> {
       if (event.target) {
         const currentContextMenu = this.getCurrentContextMenu();
         if (currentContextMenu) {
-          currentContextMenu.hide(0); // hide it in 0ms
+          currentContextMenu.unmount();
         }
 
         let contextMenuComponentType: EdgeContextMenuType | NodeContextMenuType | undefined;
@@ -143,25 +143,21 @@ export class CytoscapeContextMenuWrapper extends React.PureComponent<Props> {
     this.addContextMenuEventListener();
 
     // Creates a dummy element to pass into tippy.
-    // Inspired by: https://github.com/cytoscape/cytoscape.js-popper/blob/v1.0.7/demo-tippy.html#L89
     const dummyDomElement = document.createElement('div');
     const content = this.contextMenuRef.current;
     const tippyInstance = tippy(dummyDomElement, {
       content: content as HTMLDivElement,
-      onCreate: function (instance) {
-        instance.popperInstance!.reference = (target as any).popperRef();
-      },
-      lazy: false,
       trigger: 'manual',
+      getReferenceClientRect: (target as any).popperRef().getBoundingClientRect,
       arrow: true,
       placement: 'bottom',
       hideOnClick: false,
-      multiple: false,
       sticky: true,
       interactive: true,
       theme: 'light-border',
-      distance: this.tippyDistance(target),
-      appendTo: document.body
+      offset: [0, this.tippyDistance(target)],
+      appendTo: document.body,
+      plugins: [sticky]
     });
 
     const result = (
