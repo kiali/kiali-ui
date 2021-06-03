@@ -90,13 +90,13 @@ export const buildLegendInfo = (items: LegendItem[], chartWidth: number): Legend
   let boxSize = 110;
   const longest = items.map(it => it.name).reduce((a, b) => (a.length > b.length ? a : b), '').length;
   if (longest >= 30) {
-    boxSize = 350;
+    boxSize = 400;
   } else if (longest >= 20) {
-    boxSize = 250;
+    boxSize = 300;
   } else if (longest >= 10) {
-    boxSize = 150;
+    boxSize = 200;
   }
-  const itemsPerRow = Math.max(3, Math.floor(chartWidth / boxSize));
+  const itemsPerRow = Math.max(1, Math.floor(chartWidth / boxSize));
   const nbRows = Math.ceil(items.length / itemsPerRow);
 
   return {

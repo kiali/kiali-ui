@@ -153,6 +153,7 @@ class ChartWithLegend<T extends RichDataPoint, O extends LineInfo> extends React
     const paddingLegend = 20;
     const legendHeight = legend.height > chartHeight ? (legend.height * 2) / 3 : legend.height;
     const legendYPos = chartHeight - legendHeight + paddingLegend;
+    console.log(this.state.width);
     return (
       <div ref={this.containerRef} style={{ marginTop: '10px', height: chartHeight }}>
         <Chart
