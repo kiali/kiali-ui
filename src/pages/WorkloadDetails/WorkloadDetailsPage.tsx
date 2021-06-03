@@ -42,13 +42,9 @@ const paramToTab: { [key: string]: number } = {
   logs: 2,
   in_metrics: 3,
   out_metrics: 4,
-  traces: 5,
-  envoy_listeners: 6,
-  envoy_clusters: 7,
-  envoy_routes: 8,
-  envoy_config: 9
+  traces: 5
 };
-const nextTabIndex = 10;
+var nextTabIndex = 6;
 
 class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, WorkloadDetailsState> {
   constructor(props: WorkloadDetailsPageProps) {
@@ -89,6 +85,7 @@ class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, Workload
 
   private staticTabs() {
     const hasPods = this.state.workload?.pods.length;
+    const tabsArray: JSX.Element[] = [];
 
     const overTab = (
       <Tab title="Overview" eventKey={0} key={'Overview'}>
@@ -99,6 +96,8 @@ class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, Workload
         />
       </Tab>
     );
+    tabsArray.push(overTab);
+
     const trafficTab = (
       <Tab title="Traffic" eventKey={1} key={'Traffic'}>
         <TrafficDetails
@@ -108,6 +107,8 @@ class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, Workload
         />
       </Tab>
     );
+    tabsArray.push(trafficTab);
+
     const logTab = (
       <Tab title="Logs" eventKey={2} key={'Logs'}>
         {hasPods ? (
@@ -122,6 +123,7 @@ class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, Workload
         )}
       </Tab>
     );
+    tabsArray.push(logTab);
 
     const inTab = (
       <Tab title="Inbound Metrics" eventKey={3} key={'Inbound Metrics'}>
@@ -133,6 +135,7 @@ class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, Workload
         />
       </Tab>
     );
+    tabsArray.push(inTab);
 
     const outTab = (
       <Tab title="Outbound Metrics" eventKey={4} key={'Outbound Metrics'}>
@@ -144,66 +147,7 @@ class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, Workload
         />
       </Tab>
     );
-
-    const envoyListenersTab = (
-      <Tab title="Envoy Listeners" eventKey={6} key={'Envoy Listeners'}>
-        {this.state.workload && (
-          <EnvoyDetailsContainer
-            namespace={this.props.match.params.namespace}
-            workload={this.state.workload}
-            resource="listeners"
-          />
-        )}
-      </Tab>
-    );
-
-    const envoyClustersTab = (
-      <Tab title="Envoy Clusters" eventKey={7} key={'Envoy Clusters'}>
-        {this.state.workload && (
-          <EnvoyDetailsContainer
-            namespace={this.props.match.params.namespace}
-            workload={this.state.workload}
-            resource="clusters"
-          />
-        )}
-      </Tab>
-    );
-
-    const envoyRoutesTab = (
-      <Tab title="Envoy Routes" eventKey={8} key={'Envoy Routes'}>
-        {this.state.workload && (
-          <EnvoyDetailsContainer
-            namespace={this.props.match.params.namespace}
-            workload={this.state.workload}
-            resource="routes"
-          />
-        )}
-      </Tab>
-    );
-
-    const envoyConfigTab = (
-      <Tab title="Envoy Config" eventKey={9} key={'Envoy Config'}>
-        {this.state.workload && (
-          <EnvoyDetailsContainer
-            namespace={this.props.match.params.namespace}
-            workload={this.state.workload}
-            resource="all"
-          />
-        )}
-      </Tab>
-    );
-
-    const tabsArray: JSX.Element[] = [
-      overTab,
-      trafficTab,
-      logTab,
-      inTab,
-      outTab,
-      envoyListenersTab,
-      envoyClustersTab,
-      envoyRoutesTab,
-      envoyConfigTab
-    ];
+    tabsArray.push(outTab);
 
     if (this.props.jaegerInfo && this.props.jaegerInfo.enabled && this.props.jaegerInfo.integration) {
       tabsArray.push(
@@ -217,7 +161,82 @@ class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, Workload
       );
     }
 
+    if (this.state.workload && this.hasIstioSidecars(this.state.workload)) {
+      const envoyClustersTab = (
+        <Tab title="Envoy Clusters" eventKey={6} key={'Envoy Clusters'}>
+          {this.state.workload && (
+            <EnvoyDetailsContainer
+              namespace={this.props.match.params.namespace}
+              workload={this.state.workload}
+              resource="clusters"
+            />
+          )}
+        </Tab>
+      );
+      tabsArray.push(envoyClustersTab);
+      paramToTab['envoy_clusters'] = 6;
+
+      const envoyListenersTab = (
+        <Tab title="Envoy Listeners" eventKey={7} key={'Envoy Listeners'}>
+          {this.state.workload && (
+            <EnvoyDetailsContainer
+              namespace={this.props.match.params.namespace}
+              workload={this.state.workload}
+              resource="listeners"
+            />
+          )}
+        </Tab>
+      );
+      tabsArray.push(envoyListenersTab);
+      paramToTab['envoy_listeners'] = 7;
+
+      const envoyRoutesTab = (
+        <Tab title="Envoy Routes" eventKey={8} key={'Envoy Routes'}>
+          {this.state.workload && (
+            <EnvoyDetailsContainer
+              namespace={this.props.match.params.namespace}
+              workload={this.state.workload}
+              resource="routes"
+            />
+          )}
+        </Tab>
+      );
+      tabsArray.push(envoyRoutesTab);
+      paramToTab['envoy_routes'] = 8;
+
+      const envoyConfigTab = (
+        <Tab title="Envoy Config" eventKey={9} key={'Envoy Config'}>
+          {this.state.workload && (
+            <EnvoyDetailsContainer
+              namespace={this.props.match.params.namespace}
+              workload={this.state.workload}
+              resource="all"
+            />
+          )}
+        </Tab>
+      );
+      tabsArray.push(envoyConfigTab);
+      paramToTab['envoy_config'] = 9;
+    }
+
+    // Used by the runtimes tabs
+    nextTabIndex = tabsArray.length + 1;
+
     return tabsArray;
+  }
+
+  private hasIstioSidecars(workload: Workload): boolean {
+    var hasIstioSidecars: boolean = false;
+
+    if (workload.pods.length > 0) {
+      workload.pods.forEach(pod => {
+        if (pod.istioContainers && pod.istioContainers.length > 0) {
+          hasIstioSidecars = true;
+        }
+      });
+    }
+
+    return hasIstioSidecars;
   }
 
   private runtimeTabs() {
