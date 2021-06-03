@@ -150,9 +150,6 @@ class ChartWithLegend<T extends RichDataPoint, O extends LineInfo> extends React
       <CustomTooltip showTime={true} {...tooltipHooks} />
     );
     const filteredData = this.props.data.filter(s => !this.state.hiddenSeries.has(s.legendItem.name));
-    const paddingLegend = 10;
-    const legendHeight = legend.height > chartHeight ? (legend.height * 2) / 3 : legend.height;
-    const legendYPos = chartHeight - legendHeight + paddingLegend;
 
     return (
       <div ref={this.containerRef} style={{ marginTop: '10px', height: chartHeight }}>
@@ -218,7 +215,7 @@ class ChartWithLegend<T extends RichDataPoint, O extends LineInfo> extends React
               }
             />
           )}
-          {this.props.xAxis === 'series' ? this.renderCategories() : this.renderTimeSeries()}
+          {this.props.xAxis === 'series' ? this.renderCategories() : this.renderTimeSeries(chartHeight - legend.height)}
           {showOverlay &&
             (this.props.overlay!.info.buckets ? (
               <VictoryBoxPlot
@@ -246,8 +243,8 @@ class ChartWithLegend<T extends RichDataPoint, O extends LineInfo> extends React
             name={'serie-legend'}
             data={legendData}
             x={10}
-            y={legendYPos}
-            height={legendHeight - paddingLegend}
+            y={chartHeight - legend.height}
+            height={legend.height}
             width={this.state.width}
             itemsPerRow={legend.itemsPerRow}
             style={{
@@ -262,10 +259,10 @@ class ChartWithLegend<T extends RichDataPoint, O extends LineInfo> extends React
     );
   }
 
-  private renderTimeSeries = () => {
+  private renderTimeSeries = (height: number) => {
     const groupOffset = this.props.groupOffset || 0;
     return (
-      <ChartGroup offset={groupOffset}>
+      <ChartGroup offset={groupOffset} height={height}>
         {this.props.data.map((serie, idx) => {
           if (this.state.hiddenSeries.has(serie.legendItem.name)) {
             return undefined;
