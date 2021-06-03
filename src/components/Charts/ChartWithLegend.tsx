@@ -150,10 +150,10 @@ class ChartWithLegend<T extends RichDataPoint, O extends LineInfo> extends React
       <CustomTooltip showTime={true} {...tooltipHooks} />
     );
     const filteredData = this.props.data.filter(s => !this.state.hiddenSeries.has(s.legendItem.name));
-    const paddingLegend = 20;
+    const paddingLegend = 10;
     const legendHeight = legend.height > chartHeight ? (legend.height * 2) / 3 : legend.height;
     const legendYPos = chartHeight - legendHeight + paddingLegend;
-    console.log(this.state.width);
+
     return (
       <div ref={this.containerRef} style={{ marginTop: '10px', height: chartHeight }}>
         <Chart
@@ -254,7 +254,7 @@ class ChartWithLegend<T extends RichDataPoint, O extends LineInfo> extends React
               data: { cursor: 'pointer' },
               labels: { cursor: 'pointer', fontSize: legend.fontSizeLabels }
             }}
-            borderPadding={{ top: 10 }}
+            borderPadding={{ top: 5 }}
             symbolSpacer={5}
           />
         </Chart>
