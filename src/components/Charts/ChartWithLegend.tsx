@@ -91,7 +91,8 @@ class ChartWithLegend<T extends RichDataPoint, O extends LineInfo> extends React
   render() {
     const scaleInfo = this.scaledAxisInfo(this.props.data);
     const legendData = this.buildLegendData();
-    const legend = buildLegendInfo(legendData, this.state.width);
+    const chartHeight = this.props.chartHeight || 300;
+    const legend = buildLegendInfo(legendData, this.state.width, chartHeight);
     const overlayIdx = this.props.data.length;
     const showOverlay = (this.props.overlay && this.props.showSpans) || false;
     const overlayRightPadding = showOverlay ? 15 : 0;
@@ -149,7 +150,6 @@ class ChartWithLegend<T extends RichDataPoint, O extends LineInfo> extends React
       <CustomTooltip showTime={true} {...tooltipHooks} />
     );
     const filteredData = this.props.data.filter(s => !this.state.hiddenSeries.has(s.legendItem.name));
-    const chartHeight = this.props.chartHeight || 300;
     const paddingLegend = 20;
     const legendHeight = legend.height > chartHeight ? (legend.height * 2) / 3 : legend.height;
     const legendYPos = chartHeight - legendHeight + paddingLegend;
@@ -252,7 +252,7 @@ class ChartWithLegend<T extends RichDataPoint, O extends LineInfo> extends React
             itemsPerRow={legend.itemsPerRow}
             style={{
               data: { cursor: 'pointer' },
-              labels: { cursor: 'pointer' }
+              labels: { cursor: 'pointer', fontSize: legend.fontSizeLabels }
             }}
             borderPadding={{ top: 10 }}
             symbolSpacer={5}
