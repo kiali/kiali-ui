@@ -41,11 +41,7 @@ const paramToTab: { [key: string]: number } = {
   logs: 2,
   in_metrics: 3,
   out_metrics: 4,
-  traces: 5,
-  envoy_listeners: 6,
-  envoy_clusters: 7,
-  envoy_routes: 8,
-  envoy_config: 9
+  traces: 5
 };
 var nextTabIndex = 6;
 
