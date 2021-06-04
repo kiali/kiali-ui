@@ -325,17 +325,13 @@ class ChartWithLegend<T extends RichDataPoint, O extends LineInfo> extends React
 
   private buildLegendData(): LegendItem[] {
     const truncate = this.props.data.length > 4;
-    const items = this.props.data.map(s => {
-      var item = s.legendItem;
+    return this.props.data.map(s => {
+      const name = truncate ? s.legendItem.name.slice(0, 8) : s.legendItem.name;
       if (this.state.hiddenSeries.has(s.legendItem.name)) {
-        item.symbol = { ...s.legendItem.symbol, fill: '#72767b' };
+        return { name, symbol: { ...s.legendItem.symbol, fill: '#72767b' } };
       }
-      if (truncate) {
-        item.name = item.name.slice(0, 8);
-      }
-      return item;
+      return { ...s.legendItem, name };
     });
-    return items;
   }
 
   private registerEvents(events: VCEvent[], idx: number, serieID: string, serieName: string) {
