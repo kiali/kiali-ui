@@ -13,7 +13,6 @@ import InitializingScreen from './InitializingScreen';
 import StartupInitializer from './StartupInitializer';
 import LoginPageContainer from '../pages/Login/LoginPage';
 import { LoginActions } from '../actions/LoginActions';
-import 'tippy.js/dist/tippy.css';
 import 'tippy.js/themes/light-border.css';
 import 'react-datepicker/dist/react-datepicker.css';
 
