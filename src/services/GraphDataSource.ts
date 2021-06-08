@@ -193,12 +193,20 @@ export default class GraphDataSource {
     }
 
     switch (fetchParams.edgeLabelMode) {
+      case EdgeLabelMode.REQUEST_THROUGHPUT:
+        appenders += ',throughput';
+        restParams.throughputType = 'request';
+        break;
+      case EdgeLabelMode.RESPONSE_THROUGHPUT:
+        appenders += ',throughput';
+        restParams.throughputType = 'response';
+        break;
       case EdgeLabelMode.RESPONSE_TIME_95TH_PERCENTILE:
         appenders += ',responseTime';
         break;
 
-      case EdgeLabelMode.REQUEST_RATE:
       case EdgeLabelMode.REQUEST_DISTRIBUTION:
+      case EdgeLabelMode.REQUEST_RATE:
       case EdgeLabelMode.NONE:
       default:
         break;

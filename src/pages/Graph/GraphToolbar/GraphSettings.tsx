@@ -180,6 +180,18 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
         )
       },
       {
+        id: EdgeLabelMode.REQUEST_THROUGHPUT,
+        labelText: _.startCase(EdgeLabelMode.REQUEST_THROUGHPUT),
+        isChecked: edgeLabelMode === EdgeLabelMode.REQUEST_THROUGHPUT,
+        tooltip: <div style={{ textAlign: 'left' }}>TBD</div>
+      },
+      {
+        id: EdgeLabelMode.RESPONSE_THROUGHPUT,
+        labelText: _.startCase(EdgeLabelMode.RESPONSE_THROUGHPUT),
+        isChecked: edgeLabelMode === EdgeLabelMode.RESPONSE_THROUGHPUT,
+        tooltip: <div style={{ textAlign: 'left' }}>TBD</div>
+      },
+      {
         id: EdgeLabelMode.RESPONSE_TIME_95TH_PERCENTILE,
         labelText: _.startCase(EdgeLabelMode.RESPONSE_TIME_95TH_PERCENTILE),
         isChecked: edgeLabelMode === EdgeLabelMode.RESPONSE_TIME_95TH_PERCENTILE,

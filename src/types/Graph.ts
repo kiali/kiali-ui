@@ -33,8 +33,10 @@ export interface SummaryPanelPropType {
 
 export enum EdgeLabelMode {
   NONE = 'noLabel',
-  REQUEST_RATE = 'requestRate',
   REQUEST_DISTRIBUTION = 'requestDistribution',
+  REQUEST_RATE = 'requestRate',
+  REQUEST_THROUGHPUT = 'requestThroughput',
+  RESPONSE_THROUGHPUT = 'responseThroughput',
   RESPONSE_TIME_95TH_PERCENTILE = 'responseTime'
 }
 
@@ -273,19 +275,19 @@ export interface DecoratedGraphEdgeData extends GraphEdgeData {
   httpNoResponse: number;
   httpPercentErr: number;
   httpPercentReq: number;
+  protocol: ValidProtocols;
   responses: Responses;
   tcp: number;
-  protocol: ValidProtocols;
 
   // During the decoration process, we make non-optional some number attributes (giving them a default value)
-  // Default value NaN
-  responseTime: number;
-
-  // Default value -1
-  isMTLS: number;
-
   // computed, true if traffic rate > 0
   hasTraffic?: boolean;
+  // Default value -1
+  isMTLS: number;
+  // Default value NaN
+  responseTime: number;
+  // Default value NaN
+  throughput: number;
 }
 
 export interface DecoratedGraphNodeWrapper {

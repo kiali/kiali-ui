@@ -463,6 +463,15 @@ export class GraphStyles {
           }
           break;
         }
+        case EdgeLabelMode.REQUEST_THROUGHPUT:
+        case EdgeLabelMode.RESPONSE_THROUGHPUT: {
+          let rate = edgeData.throughput;
+
+          if (rate > 0) {
+            content = rate.toFixed(2);
+          }
+          break;
+        }
         default:
           content = '';
       }
