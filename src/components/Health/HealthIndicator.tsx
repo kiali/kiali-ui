@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { PopoverPosition } from '@patternfly/react-core';
+import { PopoverPosition, Tooltip } from '@patternfly/react-core';
 import { HealthDetails } from './HealthDetails';
 import * as H from '../../types/Health';
 import { createIcon } from './Helper';
+import { createTooltipIcon } from '../../config/KialiIcon';
 import './Health.css';
-import { IconTooltip } from '../Tooltip/IconTooltip';
 
 interface Props {
   id: string;
@@ -33,7 +33,7 @@ export class HealthIndicator extends React.PureComponent<Props, HealthState> {
       // HealthIndicator will render always in SMALL mode
       const icon = createIcon(this.state.globalStatus, 'sm');
       return (
-        <IconTooltip
+        <Tooltip
           aria-label={'Health indicator'}
           content={
             <div>
@@ -44,8 +44,8 @@ export class HealthIndicator extends React.PureComponent<Props, HealthState> {
           position={PopoverPosition.auto}
           className={'health_indicator'}
         >
-          <>{icon}</>
-        </IconTooltip>
+          {createTooltipIcon(icon)}
+        </Tooltip>
       );
     }
     return <span />;
