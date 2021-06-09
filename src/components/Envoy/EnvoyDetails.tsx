@@ -2,7 +2,6 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { KialiAppState } from 'store/Store';
 import { namespaceItemsSelector } from 'store/Selectors';
-import { RenderComponentScroll } from 'components/Nav/Page';
 import { ISortBy, SortByDirection } from '@patternfly/react-table';
 import { Workload } from 'types/Workload';
 import { EnvoyProxyDump, Pod } from 'types/IstioObjects';
@@ -16,6 +15,8 @@ import {
   Checkbox,
   Grid,
   GridItem,
+  Tab,
+  Tabs,
   TooltipPosition
 } from '@patternfly/react-core';
 import { SummaryTableBuilder } from './tables/BaseTable';
@@ -27,6 +28,10 @@ import ToolbarDropdown from 'components/ToolbarDropdown/ToolbarDropdown';
 import { KialiIcon, defaultIconStyle } from 'config/KialiIcon';
 import { aceOptions } from 'types/IstioConfigDetails';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
+import { RenderComponentScroll } from 'components/Nav/Page';
+import { DashboardRef } from 'types/Runtimes';
+import CustomMetricsContainer from 'components/Metrics/CustomMetrics';
+import { serverConfig } from 'config';
 
 // Enables the search box for the ACEeditor
 require('ace-builds/src-noconflict/ext-searchbox');
@@ -45,7 +50,6 @@ type ReduxProps = {
 type EnvoyDetailsProps = ReduxProps & {
   namespace: string;
   workload: Workload;
-  resource: string;
 };
 
 type EnvoyDetailsState = {
@@ -53,7 +57,17 @@ type EnvoyDetailsState = {
   pod: Pod;
   tableSortBy: ResourceSorts;
   onlyBootstrap: boolean;
+  resource: string;
+  fetch: boolean;
+  activeKey: number;
+  tabHeight: number;
 };
+
+const resources: string[] = ['clusters', 'listeners', 'routes', 'config', 'metrics'];
+
+const fullHeightStyle = style({
+  height: '100%'
+});
 
 class EnvoyDetails extends React.Component<EnvoyDetailsProps, EnvoyDetailsState> {
   aceEditorRef: React.RefObject<AceEditor>;
@@ -67,6 +81,10 @@ class EnvoyDetails extends React.Component<EnvoyDetailsProps, EnvoyDetailsState>
       pod: this.sortedPods()[0],
       config: {},
       onlyBootstrap: false,
+      resource: 'clusters',
+      activeKey: 0,
+      tabHeight: 300,
+      fetch: true,
       tableSortBy: {
         clusters: {
           index: 0,
@@ -88,15 +106,28 @@ class EnvoyDetails extends React.Component<EnvoyDetailsProps, EnvoyDetailsState>
     this.fetchContent();
   }
 
-  componentDidUpdate(prevProps: EnvoyDetailsProps, prevState: EnvoyDetailsState) {
+  componentDidUpdate(_prevProps: EnvoyDetailsProps, prevState: EnvoyDetailsState) {
     if (
       this.state.pod.name !== prevState.pod.name ||
-      this.props.resource !== prevProps.resource ||
+      this.state.resource !== prevState.resource ||
       this.state.onlyBootstrap !== prevState.onlyBootstrap
     ) {
       this.fetchContent();
     }
   }
+
+  envoyHandleTabClick = (_event, tabIndex) => {
+    const resourceIdx: number = +tabIndex;
+    const targetResource: string = resources[resourceIdx];
+    if (targetResource !== this.state.resource) {
+      this.setState({
+        config: {},
+        fetch: true,
+        resource: targetResource,
+        activeKey: tabIndex
+      });
+    }
+  };
 
   fetchEnvoyProxyResourceEntries = (resource: string) => {
     API.getPodEnvoyProxyResourceEntries(this.props.namespace, this.state.pod.name, resource)
@@ -123,14 +154,16 @@ class EnvoyDetails extends React.Component<EnvoyDetailsProps, EnvoyDetailsState>
   };
 
   fetchContent = () => {
-    if (this.props.resource === 'all') {
-      if (this.state.onlyBootstrap) {
-        this.fetchEnvoyProxyResourceEntries('bootstrap');
+    if (this.state.fetch === true) {
+      if (this.state.resource === 'config') {
+        if (this.state.onlyBootstrap) {
+          this.fetchEnvoyProxyResourceEntries('bootstrap');
+        } else {
+          this.fetchEnvoyProxy();
+        }
       } else {
-        this.fetchEnvoyProxy();
+        this.fetchEnvoyProxyResourceEntries(this.state.resource);
       }
-    } else {
-      this.fetchEnvoyProxyResourceEntries(this.props.resource);
     }
   };
 
@@ -165,7 +198,7 @@ class EnvoyDetails extends React.Component<EnvoyDetailsProps, EnvoyDetailsState>
   onCopyToClipboard = (_text: string, _result: boolean) => {
     const editor = this.aceEditorRef.current!['editor'];
     if (editor) {
-      editor.selectAll();
+      editor.selectconfig();
     }
   };
 
@@ -174,12 +207,36 @@ class EnvoyDetails extends React.Component<EnvoyDetailsProps, EnvoyDetailsState>
   };
 
   showEditor = () => {
-    return this.props.resource === 'all' || this.props.resource === 'bootstrap';
+    return this.state.resource === 'config' || this.state.resource === 'bootstrap';
+  };
+
+  showMetrics = () => {
+    return this.state.resource === 'metrics';
+  };
+
+  getEnvoyMetricsDashboardRef = (): DashboardRef | undefined => {
+    var envoyDashboardRef: DashboardRef | undefined = undefined;
+    this.props.workload.runtimes.forEach(runtime => {
+      runtime.dashboardRefs.forEach(dashboardRef => {
+        if (dashboardRef.template === 'envoy') {
+          envoyDashboardRef = dashboardRef;
+        }
+      });
+    });
+    return envoyDashboardRef;
+  };
+
+  onResize = height => {
+    this.setState({ tabHeight: height });
+  };
+
+  isLoadingConfig = () => {
+    return Object.keys(this.state.config).length < 1;
   };
 
   render() {
     const builder = SummaryTableBuilder(
-      this.props.resource,
+      this.state.resource,
       this.state.config,
       this.state.tableSortBy,
       this.props.namespaces,
@@ -187,67 +244,96 @@ class EnvoyDetails extends React.Component<EnvoyDetailsProps, EnvoyDetailsState>
     );
     const SummaryWriterComp = builder[0];
     const summaryWriter = builder[1];
-    return (
-      <RenderComponentScroll>
-        <Grid>
-          <GridItem span={12}>
-            <Card>
-              <CardBody>
-                {this.showEditor() ? (
-                  <div>
-                    <div style={{ marginBottom: '20px' }}>
-                      <div key="service-icon" className={iconStyle}>
-                        <PFBadge badge={PFBadges.Pod} position={TooltipPosition.top} />
-                      </div>
-                      <ToolbarDropdown
-                        id="envoy_pods_list"
-                        tooltip="Display envoy config for the selected pod"
-                        handleSelect={key => this.setPod(key)}
-                        value={this.state.pod.name}
-                        label={this.state.pod.name}
-                        options={this.props.workload.pods.map((pod: Pod) => pod.name).sort()}
-                      />
-                      <span style={{ float: 'right' }}>
-                        <CopyToClipboard onCopy={this.onCopyToClipboard} text={this.editorContent()}>
-                          <Button variant={ButtonVariant.link} isInline>
-                            <KialiIcon.Copy className={defaultIconStyle} />
-                          </Button>
-                        </CopyToClipboard>
-                      </span>
+    const height = this.state.tabHeight - 226;
+    const app = this.props.workload.labels[serverConfig.istioLabels.appLabelName];
+    const version = this.props.workload.labels[serverConfig.istioLabels.versionLabelName];
+
+    const envoyMetricsDashboardRef = this.getEnvoyMetricsDashboardRef();
+
+    const tabs = resources.map((value, index) => {
+      const title = value.charAt(0).toUpperCase() + value.slice(1);
+      return (
+        <Tab style={{ backgroundColor: 'white' }} key={'tab_' + title} eventKey={index} title={title}>
+          <Card className={fullHeightStyle}>
+            <CardBody>
+              {this.showEditor() ? (
+                <div className={fullHeightStyle}>
+                  <div style={{ marginBottom: '20px' }}>
+                    <div key="service-icon" className={iconStyle}>
+                      <PFBadge badge={PFBadges.Pod} position={TooltipPosition.top} />
                     </div>
-                    <div style={{ marginBottom: '20px' }}>
-                      <Checkbox
-                        onChange={this.onOnlyBootstrap}
-                        label="Show only bootstrap configuration"
-                        aria-label="show only boostrap configuration"
-                        isChecked={this.state.onlyBootstrap}
-                        id="only-bootstrap"
-                      />
-                    </div>
-                    <AceEditor
-                      ref={this.aceEditorRef}
-                      mode="yaml"
-                      theme="eclipse"
-                      width={'100%'}
-                      className={'istio-ace-editor'}
-                      wrapEnabled={true}
-                      readOnly={true}
-                      setOptions={aceOptions || { foldStyle: 'markbegin' }}
-                      value={this.editorContent()}
+                    <ToolbarDropdown
+                      id="envoy_pods_list"
+                      tooltip="Display envoy config for the selected pod"
+                      handleSelect={key => this.setPod(key)}
+                      value={this.state.pod.name}
+                      label={this.state.pod.name}
+                      options={this.props.workload.pods.map((pod: Pod) => pod.name).sort()}
+                    />
+                    <span style={{ float: 'right' }}>
+                      <CopyToClipboard onCopy={this.onCopyToClipboard} text={this.editorContent()}>
+                        <Button variant={ButtonVariant.link} isInline>
+                          <KialiIcon.Copy className={defaultIconStyle} />
+                        </Button>
+                      </CopyToClipboard>
+                    </span>
+                  </div>
+                  <div style={{ marginBottom: '20px' }}>
+                    <Checkbox
+                      onChange={this.onOnlyBootstrap}
+                      style={{ marginBottom: '5px' }}
+                      label="Bootstrap"
+                      aria-label="show only boostrap configuration"
+                      isChecked={this.state.onlyBootstrap}
+                      id="only-bootstrap"
                     />
                   </div>
-                ) : (
-                  <SummaryWriterComp
-                    writer={summaryWriter}
-                    sortBy={this.state.tableSortBy}
-                    onSort={this.onSort}
-                    pod={this.state.pod.name}
-                    pods={this.props.workload.pods.map(pod => pod.name)}
-                    setPod={this.setPod}
+                  <AceEditor
+                    ref={this.aceEditorRef}
+                    mode="yaml"
+                    theme="eclipse"
+                    width={'100%'}
+                    height={height.toString() + 'px'}
+                    className={'istio-ace-editor'}
+                    wrapEnabled={true}
+                    readOnly={true}
+                    setOptions={aceOptions || { foldStyle: 'markbegin' }}
+                    value={this.editorContent()}
                   />
-                )}
-              </CardBody>
-            </Card>
+                </div>
+              ) : this.showMetrics() && envoyMetricsDashboardRef ? (
+                <CustomMetricsContainer
+                  namespace={this.props.namespace}
+                  app={app}
+                  version={version}
+                  workload={this.props.workload!.name}
+                  template={envoyMetricsDashboardRef.template}
+                  embedded={true}
+                  height={this.state.tabHeight - 40 - 24 + 13}
+                />
+              ) : (
+                <SummaryWriterComp
+                  writer={summaryWriter}
+                  sortBy={this.state.tableSortBy}
+                  onSort={this.onSort}
+                  pod={this.state.pod.name}
+                  pods={this.props.workload.pods.map(pod => pod.name)}
+                  setPod={this.setPod}
+                />
+              )}
+            </CardBody>
+          </Card>
+        </Tab>
+      );
+    });
+
+    return (
+      <RenderComponentScroll onResize={height => this.setState({ tabHeight: height })}>
+        <Grid>
+          <GridItem span={12}>
+            <Tabs id="envoy-details" activeKey={this.state.activeKey} onSelect={this.envoyHandleTabClick}>
+              {tabs}
+            </Tabs>
           </GridItem>
         </Grid>
       </RenderComponentScroll>

@@ -2,7 +2,6 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { RouteComponentProps } from 'react-router-dom';
 import { EmptyState, EmptyStateBody, EmptyStateVariant, Tab, Title } from '@patternfly/react-core';
-
 import * as API from '../../services/Api';
 import { Workload, WorkloadId } from '../../types/Workload';
 import WorkloadInfo from './WorkloadInfo';
@@ -162,61 +161,15 @@ class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, Workload
     }
 
     if (this.state.workload && this.hasIstioSidecars(this.state.workload)) {
-      const envoyClustersTab = (
-        <Tab title="Envoy Clusters" eventKey={6} key={'Envoy Clusters'}>
+      const envoyTab = (
+        <Tab title="Envoy" eventKey={10} key={'Envoy'}>
           {this.state.workload && (
-            <EnvoyDetailsContainer
-              namespace={this.props.match.params.namespace}
-              workload={this.state.workload}
-              resource="clusters"
-            />
+            <EnvoyDetailsContainer namespace={this.props.match.params.namespace} workload={this.state.workload} />
           )}
         </Tab>
       );
-      tabsArray.push(envoyClustersTab);
-      paramToTab['envoy_clusters'] = 6;
-
-      const envoyListenersTab = (
-        <Tab title="Envoy Listeners" eventKey={7} key={'Envoy Listeners'}>
-          {this.state.workload && (
-            <EnvoyDetailsContainer
-              namespace={this.props.match.params.namespace}
-              workload={this.state.workload}
-              resource="listeners"
-            />
-          )}
-        </Tab>
-      );
-      tabsArray.push(envoyListenersTab);
-      paramToTab['envoy_listeners'] = 7;
-
-      const envoyRoutesTab = (
-        <Tab title="Envoy Routes" eventKey={8} key={'Envoy Routes'}>
-          {this.state.workload && (
-            <EnvoyDetailsContainer
-              namespace={this.props.match.params.namespace}
-              workload={this.state.workload}
-              resource="routes"
-            />
-          )}
-        </Tab>
-      );
-      tabsArray.push(envoyRoutesTab);
-      paramToTab['envoy_routes'] = 8;
-
-      const envoyConfigTab = (
-        <Tab title="Envoy Config" eventKey={9} key={'Envoy Config'}>
-          {this.state.workload && (
-            <EnvoyDetailsContainer
-              namespace={this.props.match.params.namespace}
-              workload={this.state.workload}
-              resource="all"
-            />
-          )}
-        </Tab>
-      );
-      tabsArray.push(envoyConfigTab);
-      paramToTab['envoy_config'] = 9;
+      tabsArray.push(envoyTab);
+      paramToTab['envoy'] = 10;
     }
 
     // Used by the runtimes tabs
@@ -250,21 +203,23 @@ class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, Workload
         let tabOffset = 0;
         this.state.workload.runtimes.forEach(runtime => {
           runtime.dashboardRefs.forEach(dashboard => {
-            const tabKey = tabOffset + nextTabIndex;
-            paramToTab[dashboard.template] = tabKey;
-            const tab = (
-              <Tab key={dashboard.template} title={dashboard.title} eventKey={tabKey}>
-                <CustomMetricsContainer
-                  namespace={this.props.match.params.namespace}
-                  app={app}
-                  version={version}
-                  workload={this.state.workload!.name}
-                  template={dashboard.template}
-                />
-              </Tab>
-            );
-            tabs.push(tab);
-            tabOffset++;
+            if (dashboard.template !== 'envoy') {
+              const tabKey = tabOffset + nextTabIndex;
+              paramToTab[dashboard.template] = tabKey;
+              const tab = (
+                <Tab key={dashboard.template} title={dashboard.title} eventKey={tabKey}>
+                  <CustomMetricsContainer
+                    namespace={this.props.match.params.namespace}
+                    app={app}
+                    version={version}
+                    workload={this.state.workload!.name}
+                    template={dashboard.template}
+                  />
+                </Tab>
+              );
+              tabs.push(tab);
+              tabOffset++;
+            }
           });
         });
       }
