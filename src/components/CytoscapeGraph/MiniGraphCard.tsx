@@ -107,7 +107,7 @@ export default class MiniGraphCard extends React.Component<MiniGraphCardProps, M
                 timestamp: this.props.dataSource.graphTimestamp
               }}
               toggleIdleNodes={() => undefined}
-              edgeLabelMode={EdgeLabelMode.REQUEST_RATE}
+              edgeLabels={[EdgeLabelMode.REQUEST_RATE]}
               isMTLSEnabled={this.props.mtlsEnabled}
               isMiniGraph={true}
               onEdgeTap={this.props.onEdgeTap}
@@ -226,7 +226,7 @@ export default class MiniGraphCard extends React.Component<MiniGraphCardProps, M
     const urlParams: GraphUrlParams = {
       activeNamespaces: this.props.dataSource.fetchParameters.namespaces,
       duration: this.props.dataSource.fetchParameters.duration,
-      edgeLabelMode: this.props.dataSource.fetchParameters.edgeLabelMode,
+      edgeLabels: this.props.dataSource.fetchParameters.edgeLabels,
       graphLayout: store.getState().graph.layout,
       graphType: graphType,
       node: this.props.dataSource.fetchParameters.node!,

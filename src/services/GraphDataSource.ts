@@ -64,7 +64,7 @@ export interface FetchParams {
   boxByCluster?: boolean;
   boxByNamespace?: boolean;
   duration: DurationInSeconds;
-  edgeLabelMode: EdgeLabelMode;
+  edgeLabels: EdgeLabelMode[];
   graphType: GraphType;
   includeHealth: boolean;
   injectServiceNodes: boolean;
@@ -122,7 +122,7 @@ export default class GraphDataSource {
     this._errorMessage = null;
     this._fetchParams = {
       duration: 0,
-      edgeLabelMode: EdgeLabelMode.NONE,
+      edgeLabels: [],
       graphType: GraphType.VERSIONED_APP,
       includeHealth: true,
       injectServiceNodes: true,
@@ -192,25 +192,25 @@ export default class GraphDataSource {
       appenders += ',securityPolicy';
     }
 
-    switch (fetchParams.edgeLabelMode) {
-      case EdgeLabelMode.REQUEST_THROUGHPUT:
-        appenders += ',throughput';
-        restParams.throughputType = 'request';
-        break;
-      case EdgeLabelMode.RESPONSE_THROUGHPUT:
-        appenders += ',throughput';
-        restParams.throughputType = 'response';
-        break;
-      case EdgeLabelMode.RESPONSE_TIME_95TH_PERCENTILE:
-        appenders += ',responseTime';
-        break;
-
-      case EdgeLabelMode.REQUEST_DISTRIBUTION:
-      case EdgeLabelMode.REQUEST_RATE:
-      case EdgeLabelMode.NONE:
-      default:
-        break;
-    }
+    fetchParams.edgeLabels.forEach(edgeLabel => {
+      switch (edgeLabel) {
+        case EdgeLabelMode.THROUGHPUT_REQUEST:
+          appenders += ',throughput';
+          restParams.throughputType = 'request';
+          break;
+        case EdgeLabelMode.THROUGHPUT_RESPONSE:
+          appenders += ',throughput';
+          restParams.throughputType = 'response';
+          break;
+        case EdgeLabelMode.RESPONSE_TIME_95TH_PERCENTILE:
+          appenders += ',responseTime';
+          break;
+        case EdgeLabelMode.REQUEST_DISTRIBUTION:
+        case EdgeLabelMode.REQUEST_RATE:
+        default:
+          break;
+      }
+    });
     restParams.appenders = appenders;
 
     this._isLoading = true;
@@ -327,7 +327,7 @@ export default class GraphDataSource {
       boxByCluster: false,
       boxByNamespace: false,
       duration: duration,
-      edgeLabelMode: EdgeLabelMode.NONE,
+      edgeLabels: [],
       graphType: GraphType.WORKLOAD,
       includeHealth: true,
       injectServiceNodes: true,

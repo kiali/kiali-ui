@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { bindActionCreators } from 'redux';
 import { KialiAppState } from '../../../store/Store';
-import { findValueSelector, hideValueSelector, edgeLabelModeSelector } from '../../../store/Selectors';
+import { findValueSelector, hideValueSelector, edgeLabelsSelector } from '../../../store/Selectors';
 import { GraphToolbarActions } from '../../../actions/GraphToolbarActions';
 import { KialiAppAction } from '../../../actions/KialiAppAction';
 import GraphHelpFind from '../../../pages/Graph/GraphHelpFind';
@@ -23,7 +23,7 @@ import { GraphFindOptions } from './GraphFindOptions';
 
 type ReduxProps = {
   compressOnHide: boolean;
-  edgeLabelMode: EdgeLabelMode;
+  edgeLabels: EdgeLabelMode[];
   findValue: string;
   hideValue: string;
   layout: Layout;
@@ -32,7 +32,7 @@ type ReduxProps = {
   showSecurity: boolean;
   updateTime: TimeInMilliseconds;
 
-  setEdgeLabelMode: (val: EdgeLabelMode) => void;
+  setEdgeLabels: (vals: EdgeLabelMode[]) => void;
   setFindValue: (val: string) => void;
   setHideValue: (val: string) => void;
   toggleFindHelp: () => void;
@@ -700,9 +700,9 @@ export class GraphFind extends React.Component<GraphFindProps, GraphFindState> {
       }
       case 'rt':
       case 'responsetime': {
-        if (this.props.edgeLabelMode !== EdgeLabelMode.RESPONSE_TIME_95TH_PERCENTILE) {
+        if (!this.props.edgeLabels.includes(EdgeLabelMode.RESPONSE_TIME_95TH_PERCENTILE)) {
           AlertUtils.addSuccess('Enabling "response time" edge labels for graph find/hide expression');
-          this.props.setEdgeLabelMode(EdgeLabelMode.RESPONSE_TIME_95TH_PERCENTILE);
+          this.props.setEdgeLabels([...this.props.edgeLabels, EdgeLabelMode.RESPONSE_TIME_95TH_PERCENTILE]);
         }
         const s = this.getNumericSelector(CyEdge.responseTime, op, val, expression, isFind);
         return s ? { target: 'edge', selector: s } : undefined;
@@ -857,7 +857,7 @@ export class GraphFind extends React.Component<GraphFindProps, GraphFindState> {
 
 const mapStateToProps = (state: KialiAppState) => ({
   compressOnHide: state.graph.toolbarState.compressOnHide,
-  edgeLabelMode: edgeLabelModeSelector(state),
+  edgeLabels: edgeLabelsSelector(state),
   findValue: findValueSelector(state),
   hideValue: hideValueSelector(state),
   layout: state.graph.layout,
@@ -869,7 +869,7 @@ const mapStateToProps = (state: KialiAppState) => ({
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<KialiAppState, void, KialiAppAction>) => {
   return {
-    setEdgeLabelMode: bindActionCreators(GraphToolbarActions.setEdgelLabelMode, dispatch),
+    setEdgeLabels: bindActionCreators(GraphToolbarActions.setEdgeLabels, dispatch),
     setFindValue: bindActionCreators(GraphToolbarActions.setFindValue, dispatch),
     setHideValue: bindActionCreators(GraphToolbarActions.setHideValue, dispatch),
     toggleFindHelp: bindActionCreators(GraphToolbarActions.toggleFindHelp, dispatch),

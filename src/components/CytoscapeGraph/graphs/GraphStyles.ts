@@ -407,84 +407,82 @@ export class GraphStyles {
 
     const getEdgeLabel = (ele: Cy.EdgeSingular, includeProtocol?: boolean): string => {
       const cyGlobal = getCyGlobalData(ele);
-      const edgeLabelMode = cyGlobal.edgeLabelMode;
-      let content = '';
+      const edgeLabels = cyGlobal.edgeLabels;
+      let labels = [] as string[];
       const edgeData = decoratedEdgeData(ele);
 
-      switch (edgeLabelMode) {
-        case EdgeLabelMode.REQUEST_RATE: {
-          let rate = 0;
-          let pErr = 0;
-          if (edgeData.http > 0) {
-            rate = edgeData.http;
-            pErr = edgeData.httpPercentErr > 0 ? edgeData.httpPercentErr : 0;
-          } else if (edgeData.grpc > 0) {
-            rate = edgeData.grpc;
-            pErr = edgeData.grpcPercentErr > 0 ? edgeData.grpcPercentErr : 0;
-          } else if (edgeData.tcp > 0) {
-            rate = edgeData.tcp;
-          }
+      if (edgeLabels.includes(EdgeLabelMode.REQUEST_RATE)) {
+        let rate = 0;
+        let pErr = 0;
+        if (edgeData.http > 0) {
+          rate = edgeData.http;
+          pErr = edgeData.httpPercentErr > 0 ? edgeData.httpPercentErr : 0;
+        } else if (edgeData.grpc > 0) {
+          rate = edgeData.grpc;
+          pErr = edgeData.grpcPercentErr > 0 ? edgeData.grpcPercentErr : 0;
+        } else if (edgeData.tcp > 0) {
+          rate = edgeData.tcp;
+        }
 
-          if (rate > 0) {
-            if (pErr > 0) {
-              let sErr = pErr.toFixed(1);
-              sErr = `${sErr.endsWith('.0') ? pErr.toFixed(0) : sErr}`;
-              content = `${rate.toFixed(2)}\n${sErr}%`;
-            } else {
-              content = rate.toFixed(2);
-            }
+        if (rate > 0) {
+          if (pErr > 0) {
+            let sErr = pErr.toFixed(1);
+            sErr = `${sErr.endsWith('.0') ? pErr.toFixed(0) : sErr}`;
+            labels.push(`${rate.toFixed(2)}\n(${sErr}%)`);
+          } else {
+            labels.push(rate.toFixed(2));
           }
-          break;
         }
-        case EdgeLabelMode.RESPONSE_TIME_95TH_PERCENTILE: {
-          // todo: remove this logging once we figure out the strangeness going on with responseTime
-          let logResponseTime = edgeData.responseTime;
-          if (!isNaN(logResponseTime) && !Number.isInteger(logResponseTime)) {
-            console.log(`Unexpected string responseTime=|${logResponseTime}|`);
-          }
-          // hack to fix responseTime is sometimes a string during runtime even though its type is number
-          const responseTimeNumber = parseInt(String(edgeData.responseTime));
-          const responseTime = responseTimeNumber > 0 ? responseTimeNumber : 0;
-          if (responseTime && responseTime > 0) {
-            content = responseTime < 1000.0 ? `${responseTime.toFixed(0)}ms` : `${(responseTime / 1000.0).toFixed(2)}s`;
-          }
-          break;
-        }
-        case EdgeLabelMode.REQUEST_DISTRIBUTION: {
-          let pReq;
-          if (edgeData.httpPercentReq > 0) {
-            pReq = edgeData.httpPercentReq;
-          } else if (edgeData.grpcPercentReq > 0) {
-            pReq = edgeData.grpcPercentReq;
-          }
-          if (pReq > 0) {
-            const sReq = pReq.toFixed(1);
-            content = `${sReq.endsWith('.0') ? pReq.toFixed(0) : sReq}%`;
-          }
-          break;
-        }
-        case EdgeLabelMode.REQUEST_THROUGHPUT:
-        case EdgeLabelMode.RESPONSE_THROUGHPUT: {
-          let rate = edgeData.throughput;
-
-          if (rate > 0) {
-            content = rate.toFixed(2);
-          }
-          break;
-        }
-        default:
-          content = '';
       }
+      if (edgeLabels.includes(EdgeLabelMode.REQUEST_DISTRIBUTION)) {
+        let pReq;
+        if (edgeData.httpPercentReq > 0) {
+          pReq = edgeData.httpPercentReq;
+        } else if (edgeData.grpcPercentReq > 0) {
+          pReq = edgeData.grpcPercentReq;
+        }
+        if (pReq > 0) {
+          const sReq = pReq.toFixed(1);
+          labels.push(`${sReq.endsWith('.0') ? pReq.toFixed(0) : sReq}%`);
+        }
+      }
+      if (edgeLabels.includes(EdgeLabelMode.RESPONSE_TIME_95TH_PERCENTILE)) {
+        // todo: remove this logging once we figure out the strangeness going on with responseTime
+        let logResponseTime = edgeData.responseTime;
+        if (!isNaN(logResponseTime) && !Number.isInteger(logResponseTime)) {
+          console.log(`Unexpected string responseTime=|${logResponseTime}|`);
+        }
+        // hack to fix responseTime is sometimes a string during runtime even though its type is number
+        const responseTimeNumber = parseInt(String(edgeData.responseTime));
+        const responseTime = responseTimeNumber > 0 ? responseTimeNumber : 0;
+        if (responseTime && responseTime > 0) {
+          labels.push(
+            responseTime < 1000.0 ? `${responseTime.toFixed(0)}ms` : `${(responseTime / 1000.0).toFixed(2)}s`
+          );
+        }
+      }
+      if (
+        edgeLabels.includes(EdgeLabelMode.THROUGHPUT_REQUEST) ||
+        edgeLabels.includes(EdgeLabelMode.THROUGHPUT_RESPONSE)
+      ) {
+        let rate = edgeData.throughput;
+
+        if (rate > 0) {
+          labels.push(rate.toFixed(2));
+        }
+      }
+
+      let label = labels.join('\n');
 
       if (includeProtocol) {
         const protocol = edgeData.protocol;
-        content = protocol ? `${protocol} ${content}` : content;
+        label = protocol ? `${protocol} ${label}` : label;
       }
 
       const mtlsPercentage = edgeData.isMTLS;
       if (cyGlobal.showSecurity && edgeData.hasTraffic) {
         if (mtlsPercentage && mtlsPercentage > 0) {
-          content = `${EdgeIconMTLS} ${content}`;
+          label = `${EdgeIconMTLS} ${label}`;
         }
       }
 
@@ -497,14 +495,14 @@ export class GraphStyles {
             // seen this code returned and not "UO". "UO" is returned only when the circuit breaker is caught open.
             // But if open CB is responsible for removing possible destinations the "UH" code seems preferred.
             if (responses[code]['UO'] || responses[code]['UH']) {
-              content = `${NodeIconCB} ${content}`;
+              label = `${NodeIconCB} ${label}`;
               break;
             }
           }
         }
       }
 
-      return content;
+      return label;
     };
 
     const getNodeBackgroundImage = (ele: Cy.NodeSingular): string => {

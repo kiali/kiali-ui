@@ -12,13 +12,13 @@ describe('Parse find value test', () => {
     const wrapper = shallow(
       <GraphFind
         cy={undefined}
-        edgeLabelMode={EdgeLabelMode.NONE}
+        edgeLabels={EdgeLabelMode.NONE}
         findValue="testFind"
         hideValue="testHide"
         showFindHelp={false}
         showSecurity={false}
         showIdleNodes={false}
-        setEdgeLabelMode={testSetter}
+        setEdgeLabels={testSetter}
         setFindValue={testSetter}
         setHideValue={testSetter}
         toggleFindHelp={testHandler}

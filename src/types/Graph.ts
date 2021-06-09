@@ -32,12 +32,12 @@ export interface SummaryPanelPropType {
 }
 
 export enum EdgeLabelMode {
-  NONE = 'noLabel',
   REQUEST_DISTRIBUTION = 'requestDistribution',
   REQUEST_RATE = 'requestRate',
-  REQUEST_THROUGHPUT = 'requestThroughput',
-  RESPONSE_THROUGHPUT = 'responseThroughput',
-  RESPONSE_TIME_95TH_PERCENTILE = 'responseTime'
+  RESPONSE_TIME_95TH_PERCENTILE = 'responseTime',
+  THROUGHPUT_GROUP = 'throughput',
+  THROUGHPUT_REQUEST = 'throughputRequest',
+  THROUGHPUT_RESPONSE = 'throughputResponse'
 }
 
 export enum GraphType {
@@ -83,7 +83,7 @@ export const CytoscapeGlobalScratchNamespace = '_global';
 export type CytoscapeGlobalScratchData = {
   activeNamespaces: Namespace[];
   homeCluster: string;
-  edgeLabelMode: EdgeLabelMode;
+  edgeLabels: EdgeLabelMode[];
   graphType: GraphType;
   showMissingSidecars: boolean;
   showSecurity: boolean;

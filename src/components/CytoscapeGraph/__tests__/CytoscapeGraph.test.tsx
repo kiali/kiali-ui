@@ -36,7 +36,7 @@ describe('CytoscapeGraph component test', () => {
       graphType: GraphType.VERSIONED_APP,
       namespaces: [{ name: testNamespace }],
       duration: 60,
-      edgeLabelMode: myEdgeLabelMode,
+      edgeLabels: myEdgeLabelMode,
       queryTime: 0,
       showIdleEdges: false,
       showIdleNodes: false,
@@ -48,7 +48,7 @@ describe('CytoscapeGraph component test', () => {
       const wrapper = shallow(
         <CytoscapeGraph
           compressOnHide={true}
-          edgeLabelMode={myEdgeLabelMode}
+          edgeLabels={myEdgeLabelMode}
           graphData={{
             elements: dataSource.graphData,
             isLoading: false,
@@ -58,7 +58,7 @@ describe('CytoscapeGraph component test', () => {
               graphType: GraphType.VERSIONED_APP,
               namespaces: [{ name: testNamespace }],
               duration: 60,
-              edgeLabelMode: myEdgeLabelMode,
+              edgeLabels: myEdgeLabelMode,
               queryTime: 0,
               showIdleEdges: false,
               showIdleNodes: false,
