@@ -1,5 +1,12 @@
 import * as React from 'react';
-import { Button, EmptyState, EmptyStateIcon, EmptyStateBody, ButtonVariant } from '@patternfly/react-core';
+import {
+  Button,
+  EmptyState,
+  EmptyStateIcon,
+  EmptyStateBody,
+  ButtonVariant,
+  EmptyStateVariant
+} from '@patternfly/react-core';
 import { ChartArea, ChartBar, ChartScatter, ChartLine } from '@patternfly/react-charts';
 import { CubesIcon, ErrorCircleOIcon } from '@patternfly/react-icons';
 
@@ -9,6 +16,7 @@ import { Overlay } from 'types/Overlay';
 import ChartWithLegend from './ChartWithLegend';
 import { BrushHandlers } from './Container';
 import { defaultIconStyle, KialiIcon } from '../../config/KialiIcon';
+import { style } from 'typestyle';
 
 type KChartProps<T extends LineInfo> = {
   chart: ChartModel;
@@ -24,10 +32,14 @@ type KChartProps<T extends LineInfo> = {
 };
 
 export const maximizeButtonStyle: React.CSSProperties = {
-  marginRight: '0.8em',
   position: 'relative',
   float: 'right'
 };
+
+const emptyStyle = style({
+  padding: '0 0 0 0',
+  margin: '0 0 0 0'
+});
 
 type State = {
   collapsed: boolean;
@@ -163,10 +175,21 @@ class KChart<T extends LineInfo> extends React.Component<KChartProps<T>, State> 
 
   private renderEmpty() {
     return (
-      <EmptyState variant="full">
-        <EmptyStateIcon icon={CubesIcon} />
-        <EmptyStateBody>No data available</EmptyStateBody>
-      </EmptyState>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: this.props.chartHeight,
+          overflow: 'hidden',
+          textAlign: 'center'
+        }}
+      >
+        <EmptyState variant={EmptyStateVariant.small} className={emptyStyle}>
+          {this.props.isMaximized && <EmptyStateIcon icon={CubesIcon} />}
+          <EmptyStateBody className={emptyStyle}>No data available</EmptyStateBody>
+        </EmptyState>
+      </div>
     );
   }
 

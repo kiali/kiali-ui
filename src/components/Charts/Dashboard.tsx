@@ -95,16 +95,18 @@ export class Dashboard<T extends LineInfo> extends React.Component<Props<T>, Sta
       }
     }
     const requestCharts = this.props.dashboard.charts.filter(c => c.name.includes('Request'));
-    const responseCharts = this.props.dashboard.charts.filter(c => c.name.includes('Response'));
-    const tcpCharts = this.props.dashboard.charts.filter(c => c.name.includes('TCP'));
+    const responseTcpCharts = this.props.dashboard.charts.filter(
+      c => c.name.includes('Response') || c.name.includes('TCP')
+    );
 
     return this.props.customMetric ? (
       this.renderCustom()
     ) : (
       <Grid>
         <GridItem span={12}>{this.renderCharts(requestCharts, ~~(12 / requestCharts.length) as SpanValue)}</GridItem>
-        <GridItem span={6}>{this.renderCharts(responseCharts, ~~(12 / responseCharts.length) as SpanValue)}</GridItem>
-        <GridItem span={6}>{this.renderCharts(tcpCharts, ~~(12 / tcpCharts.length) as SpanValue)}</GridItem>
+        <GridItem span={12}>
+          {this.renderCharts(responseTcpCharts, ~~(12 / responseTcpCharts.length) as SpanValue)}
+        </GridItem>
       </Grid>
     );
   }
