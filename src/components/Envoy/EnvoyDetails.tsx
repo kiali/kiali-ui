@@ -12,7 +12,6 @@ import {
   ButtonVariant,
   Card,
   CardBody,
-  Checkbox,
   Grid,
   GridItem,
   Tab,
@@ -56,14 +55,13 @@ type EnvoyDetailsState = {
   config: EnvoyProxyDump;
   pod: Pod;
   tableSortBy: ResourceSorts;
-  onlyBootstrap: boolean;
   resource: string;
   fetch: boolean;
   activeKey: number;
   tabHeight: number;
 };
 
-const resources: string[] = ['clusters', 'listeners', 'routes', 'config', 'metrics'];
+const resources: string[] = ['clusters', 'listeners', 'routes', 'bootstrap', 'config', 'metrics'];
 
 const fullHeightStyle = style({
   height: '100%'
@@ -80,7 +78,6 @@ class EnvoyDetails extends React.Component<EnvoyDetailsProps, EnvoyDetailsState>
     this.state = {
       pod: this.sortedPods()[0],
       config: {},
-      onlyBootstrap: false,
       resource: 'clusters',
       activeKey: 0,
       tabHeight: 300,
@@ -107,11 +104,7 @@ class EnvoyDetails extends React.Component<EnvoyDetailsProps, EnvoyDetailsState>
   }
 
   componentDidUpdate(_prevProps: EnvoyDetailsProps, prevState: EnvoyDetailsState) {
-    if (
-      this.state.pod.name !== prevState.pod.name ||
-      this.state.resource !== prevState.resource ||
-      this.state.onlyBootstrap !== prevState.onlyBootstrap
-    ) {
+    if (this.state.pod.name !== prevState.pod.name || this.state.resource !== prevState.resource) {
       this.fetchContent();
     }
   }
@@ -158,11 +151,7 @@ class EnvoyDetails extends React.Component<EnvoyDetailsProps, EnvoyDetailsState>
   fetchContent = () => {
     if (this.state.fetch === true) {
       if (this.state.resource === 'config') {
-        if (this.state.onlyBootstrap) {
-          this.fetchEnvoyProxyResourceEntries('bootstrap');
-        } else {
-          this.fetchEnvoyProxy();
-        }
+        this.fetchEnvoyProxy();
       } else {
         this.fetchEnvoyProxyResourceEntries(this.state.resource);
       }
@@ -175,7 +164,8 @@ class EnvoyDetails extends React.Component<EnvoyDetailsProps, EnvoyDetailsState>
     if (targetPod.name !== this.state.pod.name) {
       this.setState({
         config: {},
-        pod: targetPod
+        pod: targetPod,
+        fetch: true
       });
     }
   };
@@ -202,10 +192,6 @@ class EnvoyDetails extends React.Component<EnvoyDetailsProps, EnvoyDetailsState>
     if (editor) {
       editor.selectconfig();
     }
-  };
-
-  onOnlyBootstrap = () => {
-    this.setState({ onlyBootstrap: !this.state.onlyBootstrap, fetch: true });
   };
 
   showEditor = () => {
@@ -245,7 +231,6 @@ class EnvoyDetails extends React.Component<EnvoyDetailsProps, EnvoyDetailsState>
     const height = this.state.tabHeight - 226;
     const app = this.props.workload.labels[serverConfig.istioLabels.appLabelName];
     const version = this.props.workload.labels[serverConfig.istioLabels.versionLabelName];
-
     const envoyMetricsDashboardRef = this.getEnvoyMetricsDashboardRef();
 
     const tabs = resources.map((value, index) => {
@@ -275,16 +260,6 @@ class EnvoyDetails extends React.Component<EnvoyDetailsProps, EnvoyDetailsState>
                         </Button>
                       </CopyToClipboard>
                     </span>
-                  </div>
-                  <div style={{ marginBottom: '20px' }}>
-                    <Checkbox
-                      onChange={this.onOnlyBootstrap}
-                      style={{ marginBottom: '5px' }}
-                      label="Bootstrap"
-                      aria-label="show only boostrap configuration"
-                      isChecked={this.state.onlyBootstrap}
-                      id="only-bootstrap"
-                    />
                   </div>
                   <AceEditor
                     ref={this.aceEditorRef}
