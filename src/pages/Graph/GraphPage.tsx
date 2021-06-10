@@ -335,10 +335,9 @@ export class GraphPage extends React.Component<GraphPageProps, GraphPageState> {
       prev.boxByCluster !== curr.boxByCluster ||
       prev.boxByNamespace !== curr.boxByNamespace ||
       prev.duration !== curr.duration ||
-      (prev.edgeLabels !== curr.edgeLabels &&
-        (curr.edgeLabels.includes(EdgeLabelMode.RESPONSE_TIME_95TH_PERCENTILE) || // test for labels running appenders
-          curr.edgeLabels.includes(EdgeLabelMode.THROUGHPUT_REQUEST) ||
-          curr.edgeLabels.includes(EdgeLabelMode.THROUGHPUT_RESPONSE))) ||
+      (prev.edgeLabels !== curr.edgeLabels && // test for edge labels that invoke graph gen appenders
+        (curr.edgeLabels.includes(EdgeLabelMode.RESPONSE_TIME_GROUP) ||
+          curr.edgeLabels.includes(EdgeLabelMode.THROUGHPUT_GROUP))) ||
       prev.graphType !== curr.graphType ||
       (prev.lastRefreshAt !== curr.lastRefreshAt && curr.replayQueryTime === 0) ||
       prev.replayQueryTime !== curr.replayQueryTime ||

@@ -194,6 +194,22 @@ export default class GraphDataSource {
 
     fetchParams.edgeLabels.forEach(edgeLabel => {
       switch (edgeLabel) {
+        case EdgeLabelMode.RESPONSE_TIME_AVERAGE:
+          appenders += ',responseTime';
+          restParams.responseTime = 'avg';
+          break;
+        case EdgeLabelMode.RESPONSE_TIME_P50:
+          appenders += ',responseTime';
+          restParams.responseTime = '50';
+          break;
+        case EdgeLabelMode.RESPONSE_TIME_P95:
+          appenders += ',responseTime';
+          restParams.responseTime = '95';
+          break;
+        case EdgeLabelMode.RESPONSE_TIME_P99:
+          appenders += ',responseTime';
+          restParams.responseTime = '99';
+          break;
         case EdgeLabelMode.THROUGHPUT_REQUEST:
           appenders += ',throughput';
           restParams.throughputType = 'request';
@@ -201,9 +217,6 @@ export default class GraphDataSource {
         case EdgeLabelMode.THROUGHPUT_RESPONSE:
           appenders += ',throughput';
           restParams.throughputType = 'response';
-          break;
-        case EdgeLabelMode.RESPONSE_TIME_95TH_PERCENTILE:
-          appenders += ',responseTime';
           break;
         case EdgeLabelMode.REQUEST_DISTRIBUTION:
         case EdgeLabelMode.REQUEST_RATE:

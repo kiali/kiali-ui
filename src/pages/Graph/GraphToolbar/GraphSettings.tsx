@@ -6,7 +6,7 @@ import { bindActionCreators } from 'redux';
 import { HistoryManager, URLParam } from '../../../app/History';
 import { GraphToolbarState, KialiAppState } from '../../../store/Store';
 import { GraphToolbarActions } from '../../../actions/GraphToolbarActions';
-import { GraphType, EdgeLabelMode } from '../../../types/Graph';
+import { GraphType, EdgeLabelMode, isResponseTimeMode, isThroughputMode } from '../../../types/Graph';
 import { KialiAppAction } from 'actions/KialiAppAction';
 import * as _ from 'lodash';
 import { edgeLabelsSelector } from 'store/Selectors';
@@ -178,15 +178,15 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
         )
       },
       {
-        id: EdgeLabelMode.RESPONSE_TIME_95TH_PERCENTILE,
-        labelText: _.startCase(EdgeLabelMode.RESPONSE_TIME_95TH_PERCENTILE),
-        isChecked: edgeLabels.includes(EdgeLabelMode.RESPONSE_TIME_95TH_PERCENTILE),
+        id: EdgeLabelMode.RESPONSE_TIME_GROUP,
+        labelText: _.startCase(EdgeLabelMode.RESPONSE_TIME_GROUP),
+        isChecked: edgeLabels.includes(EdgeLabelMode.RESPONSE_TIME_GROUP),
         tooltip: (
           <div style={{ textAlign: 'left' }}>
-            <div>Displays the 95th Percentile.</div>
+            <div>Displays the requested response time. Default: 95th Percentile.</div>
             <div>
-              To see other response time percentiles select the desired edge and see the side panel. The following edges
-              do not offer a response time label but the information is availabe in the side panel:
+              The following edges do not offer a response time label but the information is available in the side panel
+              by selecting the edge:
             </div>
             <div>- edges into service nodes</div>
             <div>- edges into or out of operation nodes.</div>
@@ -196,10 +196,15 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
       {
         id: EdgeLabelMode.THROUGHPUT_GROUP,
         labelText: _.startCase(EdgeLabelMode.THROUGHPUT_GROUP),
-        isChecked:
-          edgeLabels.includes(EdgeLabelMode.THROUGHPUT_REQUEST) ||
-          edgeLabels.includes(EdgeLabelMode.THROUGHPUT_RESPONSE),
-        tooltip: <div style={{ textAlign: 'left' }}>HTTP Throughput in bytes per second</div>
+        isChecked: edgeLabels.includes(EdgeLabelMode.THROUGHPUT_GROUP),
+        tooltip: (
+          <div style={{ textAlign: 'left' }}>
+            <div>Displays HTTP Throughput in bytes per second. Default: Request</div>
+            <div>The following edges do not offer a throughput label:</div>
+            <div>- edges into service nodes</div>
+            <div>- edges into or out of operation nodes.</div>
+          </div>
+        )
       }
     ];
 
@@ -208,13 +213,40 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
         id: EdgeLabelMode.THROUGHPUT_REQUEST,
         labelText: 'Request',
         isChecked: edgeLabels.includes(EdgeLabelMode.THROUGHPUT_REQUEST),
-        tooltip: <div style={{ textAlign: 'left' }}>HTTP header data in bytes per second</div>
+        tooltip: <div style={{ textAlign: 'left' }}>HTTP request data in bytes per second</div>
       },
       {
         id: EdgeLabelMode.THROUGHPUT_RESPONSE,
         labelText: 'Response',
         isChecked: edgeLabels.includes(EdgeLabelMode.THROUGHPUT_RESPONSE),
         tooltip: <div style={{ textAlign: 'left' }}>HTTP response data in bytes per second</div>
+      }
+    ];
+
+    const responseTimeOptions: DisplayOptionType[] = [
+      {
+        id: EdgeLabelMode.RESPONSE_TIME_AVERAGE,
+        labelText: 'Average',
+        isChecked: edgeLabels.includes(EdgeLabelMode.RESPONSE_TIME_AVERAGE),
+        tooltip: <div style={{ textAlign: 'left' }}>Average request response time</div>
+      },
+      {
+        id: EdgeLabelMode.RESPONSE_TIME_P50,
+        labelText: 'Median',
+        isChecked: edgeLabels.includes(EdgeLabelMode.RESPONSE_TIME_P50),
+        tooltip: <div style={{ textAlign: 'left' }}>Median request response time (50th Percentile)</div>
+      },
+      {
+        id: EdgeLabelMode.RESPONSE_TIME_P95,
+        labelText: '95th Percentile',
+        isChecked: edgeLabels.includes(EdgeLabelMode.RESPONSE_TIME_P95),
+        tooltip: <div style={{ textAlign: 'left' }}>Max response time for 95% of requests (95th Percentile)</div>
+      },
+      {
+        id: EdgeLabelMode.RESPONSE_TIME_P99,
+        labelText: '99th Percentile',
+        isChecked: edgeLabels.includes(EdgeLabelMode.RESPONSE_TIME_P99),
+        tooltip: <div style={{ textAlign: 'left' }}>Max response time for 99% of requests (99th Percentile)</div>
       }
     ];
 
@@ -377,44 +409,87 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
       >
         <div id="graph-display-menu" className={menuStyle}>
           <div className={titleStyle}>Show Edge Labels</div>
-          {edgeLabelOptions.map((item: DisplayOptionType) => (
-            <div key={item.id} className={menuEntryStyle}>
-              <label key={item.id} className={!!item.tooltip ? itemStyleWithInfo : itemStyleWithoutInfo}>
+          {edgeLabelOptions.map((edgeLabelOption: DisplayOptionType) => (
+            <div key={edgeLabelOption.id} className={menuEntryStyle}>
+              <label
+                key={edgeLabelOption.id}
+                className={!!edgeLabelOption.tooltip ? itemStyleWithInfo : itemStyleWithoutInfo}
+              >
                 <Checkbox
-                  id={item.id}
-                  name="edgeLabels"
-                  isChecked={item.isChecked}
-                  label={item.labelText}
+                  id={edgeLabelOption.id}
+                  name="edgeLabelOptions"
+                  isChecked={edgeLabelOption.isChecked}
+                  label={edgeLabelOption.labelText}
                   onChange={this.toggleEdgeLabelMode}
-                  value={item.id}
+                  value={edgeLabelOption.id}
                 />
               </label>
-              {!!item.tooltip && (
-                <Tooltip key={`tooltip_${item.id}`} position={TooltipPosition.top} content={item.tooltip}>
+              {!!edgeLabelOption.tooltip && (
+                <Tooltip
+                  key={`tooltip_${edgeLabelOption.id}`}
+                  position={TooltipPosition.top}
+                  content={edgeLabelOption.tooltip}
+                >
                   <KialiIcon.Info className={infoStyle} />
                 </Tooltip>
               )}
-              {item.id === EdgeLabelMode.THROUGHPUT_GROUP && throughputOptions.some(o => o.isChecked) && (
+              {edgeLabelOption.id === EdgeLabelMode.RESPONSE_TIME_GROUP && responseTimeOptions.some(o => o.isChecked) && (
                 <div>
-                  {throughputOptions.map((item: DisplayOptionType) => (
-                    <div key={item.id} className={menuEntryStyle}>
+                  {responseTimeOptions.map((rtOption: DisplayOptionType) => (
+                    <div key={rtOption.id} className={menuEntryStyle}>
                       <label
-                        key={item.id}
-                        className={!!item.tooltip ? itemStyleWithInfo : itemStyleWithoutInfo}
+                        key={rtOption.id}
+                        className={!!rtOption.tooltip ? itemStyleWithInfo : itemStyleWithoutInfo}
                         style={{ paddingLeft: '35px' }}
                       >
                         <Radio
-                          id={item.id}
+                          id={rtOption.id}
                           style={{ paddingLeft: '5px' }}
-                          name="edgeLabels"
-                          isChecked={item.isChecked}
-                          label={item.labelText}
-                          onChange={this.toggleEdgeLabelThroughputMode}
-                          value={item.id}
+                          name="rtOptions"
+                          isChecked={rtOption.isChecked}
+                          label={rtOption.labelText}
+                          onChange={this.toggleEdgeLabelResponseTimeMode}
+                          value={rtOption.id}
                         />
                       </label>
-                      {!!item.tooltip && (
-                        <Tooltip key={`tooltip_${item.id}`} position={TooltipPosition.top} content={item.tooltip}>
+                      {!!rtOption.tooltip && (
+                        <Tooltip
+                          key={`tooltip_${rtOption.id}`}
+                          position={TooltipPosition.top}
+                          content={rtOption.tooltip}
+                        >
+                          <KialiIcon.Info className={infoStyle} />
+                        </Tooltip>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+              {edgeLabelOption.id === EdgeLabelMode.THROUGHPUT_GROUP && throughputOptions.some(o => o.isChecked) && (
+                <div>
+                  {throughputOptions.map((throughputOption: DisplayOptionType) => (
+                    <div key={throughputOption.id} className={menuEntryStyle}>
+                      <label
+                        key={throughputOption.id}
+                        className={!!throughputOption.tooltip ? itemStyleWithInfo : itemStyleWithoutInfo}
+                        style={{ paddingLeft: '35px' }}
+                      >
+                        <Radio
+                          id={throughputOption.id}
+                          style={{ paddingLeft: '5px' }}
+                          name="throughputOptions"
+                          isChecked={throughputOption.isChecked}
+                          label={throughputOption.labelText}
+                          onChange={this.toggleEdgeLabelThroughputMode}
+                          value={throughputOption.id}
+                        />
+                      </label>
+                      {!!throughputOption.tooltip && (
+                        <Tooltip
+                          key={`tooltip_${throughputOption.id}`}
+                          position={TooltipPosition.top}
+                          content={throughputOption.tooltip}
+                        >
                           <KialiIcon.Info className={infoStyle} />
                         </Tooltip>
                       )}
@@ -464,32 +539,42 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
   private toggleEdgeLabelMode = (_, event) => {
     const mode = event.target.value as EdgeLabelMode;
     if (this.props.edgeLabels.includes(mode)) {
-      const newEdgeLabels =
-        mode === EdgeLabelMode.THROUGHPUT_GROUP
-          ? this.props.edgeLabels.filter(l => !this.isThroughputMode(l))
-          : this.props.edgeLabels.filter(l => l !== mode);
+      let newEdgeLabels;
+      switch (mode) {
+        case EdgeLabelMode.RESPONSE_TIME_GROUP:
+          newEdgeLabels = this.props.edgeLabels.filter(l => !isResponseTimeMode(l));
+          break;
+        case EdgeLabelMode.THROUGHPUT_GROUP:
+          newEdgeLabels = this.props.edgeLabels.filter(l => !isThroughputMode(l));
+          break;
+        default:
+          newEdgeLabels = this.props.edgeLabels.filter(l => l !== mode);
+      }
       this.props.setEdgeLabels(newEdgeLabels);
     } else {
-      if (mode === EdgeLabelMode.THROUGHPUT_GROUP) {
-        this.props.setEdgeLabels([...this.props.edgeLabels, mode, EdgeLabelMode.THROUGHPUT_REQUEST]);
-      } else {
-        this.props.setEdgeLabels([...this.props.edgeLabels, mode]);
+      switch (mode) {
+        case EdgeLabelMode.RESPONSE_TIME_GROUP:
+          this.props.setEdgeLabels([...this.props.edgeLabels, mode, EdgeLabelMode.RESPONSE_TIME_P95]);
+          break;
+        case EdgeLabelMode.THROUGHPUT_GROUP:
+          this.props.setEdgeLabels([...this.props.edgeLabels, mode, EdgeLabelMode.THROUGHPUT_REQUEST]);
+          break;
+        default:
+          this.props.setEdgeLabels([...this.props.edgeLabels, mode]);
       }
     }
   };
 
-  private toggleEdgeLabelThroughputMode = (_, event) => {
+  private toggleEdgeLabelResponseTimeMode = (_, event) => {
     const mode = event.target.value as EdgeLabelMode;
-    const newEdgeLabels = this.props.edgeLabels.filter(l => !this.isThroughputMode(l));
-    this.props.setEdgeLabels([...newEdgeLabels, EdgeLabelMode.THROUGHPUT_GROUP, mode]);
+    const newEdgeLabels = this.props.edgeLabels.filter(l => !isResponseTimeMode(l));
+    this.props.setEdgeLabels([...newEdgeLabels, EdgeLabelMode.RESPONSE_TIME_GROUP, mode]);
   };
 
-  private isThroughputMode = (mode: EdgeLabelMode): boolean => {
-    return (
-      mode === EdgeLabelMode.THROUGHPUT_GROUP ||
-      mode === EdgeLabelMode.THROUGHPUT_REQUEST ||
-      mode === EdgeLabelMode.THROUGHPUT_RESPONSE
-    );
+  private toggleEdgeLabelThroughputMode = (_, event) => {
+    const mode = event.target.value as EdgeLabelMode;
+    const newEdgeLabels = this.props.edgeLabels.filter(l => !isThroughputMode(l));
+    this.props.setEdgeLabels([...newEdgeLabels, EdgeLabelMode.THROUGHPUT_GROUP, mode]);
   };
 }
 

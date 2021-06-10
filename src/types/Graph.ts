@@ -34,11 +34,33 @@ export interface SummaryPanelPropType {
 export enum EdgeLabelMode {
   REQUEST_DISTRIBUTION = 'requestDistribution',
   REQUEST_RATE = 'requestRate',
-  RESPONSE_TIME_95TH_PERCENTILE = 'responseTime',
+  RESPONSE_TIME_GROUP = 'responseTime',
+  RESPONSE_TIME_AVERAGE = 'avg',
+  RESPONSE_TIME_P50 = 'rt50',
+  RESPONSE_TIME_P95 = 'rt95',
+  RESPONSE_TIME_P99 = 'rt99',
   THROUGHPUT_GROUP = 'throughput',
   THROUGHPUT_REQUEST = 'throughputRequest',
   THROUGHPUT_RESPONSE = 'throughputResponse'
 }
+
+export const isResponseTimeMode = (mode: EdgeLabelMode): boolean => {
+  return (
+    mode === EdgeLabelMode.RESPONSE_TIME_GROUP ||
+    mode === EdgeLabelMode.RESPONSE_TIME_AVERAGE ||
+    mode === EdgeLabelMode.RESPONSE_TIME_P50 ||
+    mode === EdgeLabelMode.RESPONSE_TIME_P95 ||
+    mode === EdgeLabelMode.RESPONSE_TIME_P99
+  );
+};
+
+export const isThroughputMode = (mode: EdgeLabelMode): boolean => {
+  return (
+    mode === EdgeLabelMode.THROUGHPUT_GROUP ||
+    mode === EdgeLabelMode.THROUGHPUT_REQUEST ||
+    mode === EdgeLabelMode.THROUGHPUT_RESPONSE
+  );
+};
 
 export enum GraphType {
   APP = 'app',

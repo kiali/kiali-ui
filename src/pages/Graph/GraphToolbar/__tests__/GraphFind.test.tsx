@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import { GraphFind } from '../GraphFind';
-import { EdgeLabelMode } from 'types/Graph';
 
 const testHandler = () => undefined;
 const testSetter = _val => undefined;
@@ -12,7 +11,7 @@ describe('Parse find value test', () => {
     const wrapper = shallow(
       <GraphFind
         cy={undefined}
-        edgeLabels={EdgeLabelMode.NONE}
+        edgeLabels={[]}
         findValue="testFind"
         hideValue="testHide"
         showFindHelp={false}
@@ -148,6 +147,8 @@ describe('Parse find value test', () => {
     expect(instance.parseValue('sourceprincipal contains spiffe')).toEqual('edge[sourcePrincipal *= "spiffe"]');
     // @ts-ignore
     expect(instance.parseValue('tcp > 5.0')).toEqual('edge[tcp > 5.0]');
+    // @ts-ignore
+    expect(instance.parseValue('throughput > 5.0')).toEqual('edge[throughput > 5.0]');
 
     // @ts-ignore
     expect(instance.parseValue('mtls')).toEqual('edge[isMTLS > 0]');

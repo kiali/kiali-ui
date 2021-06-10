@@ -446,7 +446,7 @@ export class GraphStyles {
           labels.push(`${sReq.endsWith('.0') ? pReq.toFixed(0) : sReq}%`);
         }
       }
-      if (edgeLabels.includes(EdgeLabelMode.RESPONSE_TIME_95TH_PERCENTILE)) {
+      if (edgeLabels.includes(EdgeLabelMode.RESPONSE_TIME_GROUP)) {
         // todo: remove this logging once we figure out the strangeness going on with responseTime
         let logResponseTime = edgeData.responseTime;
         if (!isNaN(logResponseTime) && !Number.isInteger(logResponseTime)) {
@@ -461,10 +461,7 @@ export class GraphStyles {
           );
         }
       }
-      if (
-        edgeLabels.includes(EdgeLabelMode.THROUGHPUT_REQUEST) ||
-        edgeLabels.includes(EdgeLabelMode.THROUGHPUT_RESPONSE)
-      ) {
+      if (edgeLabels.includes(EdgeLabelMode.THROUGHPUT_GROUP)) {
         let rate = edgeData.throughput;
 
         if (rate > 0) {

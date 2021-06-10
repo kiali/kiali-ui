@@ -101,6 +101,7 @@ const operands: string[] = [
   'sourceprincipal',
   'tcp',
   'tcptrafficshifting',
+  'throughput',
   'traffic',
   'trafficshifting',
   'trafficsource',
@@ -700,21 +701,37 @@ export class GraphFind extends React.Component<GraphFindProps, GraphFindState> {
       }
       case 'rt':
       case 'responsetime': {
-        if (!this.props.edgeLabels.includes(EdgeLabelMode.RESPONSE_TIME_95TH_PERCENTILE)) {
-          AlertUtils.addSuccess('Enabling "response time" edge labels for graph find/hide expression');
-          this.props.setEdgeLabels([...this.props.edgeLabels, EdgeLabelMode.RESPONSE_TIME_95TH_PERCENTILE]);
+        if (!this.props.edgeLabels.includes(EdgeLabelMode.RESPONSE_TIME_GROUP)) {
+          AlertUtils.addSuccess('Enabling [P95] "Response Time" edge labels for this graph find/hide expression');
+          this.props.setEdgeLabels([
+            ...this.props.edgeLabels,
+            EdgeLabelMode.RESPONSE_TIME_GROUP,
+            EdgeLabelMode.RESPONSE_TIME_P95
+          ]);
         }
         const s = this.getNumericSelector(CyEdge.responseTime, op, val, expression, isFind);
         return s ? { target: 'edge', selector: s } : undefined;
       }
       case 'sourceprincipal':
         if (!this.props.showSecurity) {
-          AlertUtils.addSuccess('Enabling "security" display option for graph find/hide expression');
+          AlertUtils.addSuccess('Enabling "security" display option for this graph find/hide expression');
           this.props.toggleGraphSecurity();
         }
         return { target: 'edge', selector: `[${CyEdge.sourcePrincipal} ${op} "${val}"]` };
       case 'tcp': {
         const s = this.getNumericSelector(CyEdge.tcp, op, val, expression, isFind);
+        return s ? { target: 'edge', selector: s } : undefined;
+      }
+      case 'throughput': {
+        if (!this.props.edgeLabels.includes(EdgeLabelMode.THROUGHPUT_GROUP)) {
+          AlertUtils.addSuccess('Enabling [Request] "Throughput" edge labels for this graph find/hide expression');
+          this.props.setEdgeLabels([
+            ...this.props.edgeLabels,
+            EdgeLabelMode.THROUGHPUT_GROUP,
+            EdgeLabelMode.THROUGHPUT_REQUEST
+          ]);
+        }
+        const s = this.getNumericSelector(CyEdge.throughput, op, val, expression, isFind);
         return s ? { target: 'edge', selector: s } : undefined;
       }
       default:
