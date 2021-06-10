@@ -133,7 +133,8 @@ class EnvoyDetails extends React.Component<EnvoyDetailsProps, EnvoyDetailsState>
     API.getPodEnvoyProxyResourceEntries(this.props.namespace, this.state.pod.name, resource)
       .then(resultEnvoyProxy => {
         this.setState({
-          config: resultEnvoyProxy.data
+          config: resultEnvoyProxy.data,
+          fetch: false
         });
       })
       .catch(error => {
@@ -145,7 +146,8 @@ class EnvoyDetails extends React.Component<EnvoyDetailsProps, EnvoyDetailsState>
     API.getPodEnvoyProxy(this.props.namespace, this.state.pod.name)
       .then(resultEnvoyProxy => {
         this.setState({
-          config: resultEnvoyProxy.data
+          config: resultEnvoyProxy.data,
+          fetch: false
         });
       })
       .catch(error => {
@@ -203,7 +205,7 @@ class EnvoyDetails extends React.Component<EnvoyDetailsProps, EnvoyDetailsState>
   };
 
   onOnlyBootstrap = () => {
-    this.setState({ onlyBootstrap: !this.state.onlyBootstrap });
+    this.setState({ onlyBootstrap: !this.state.onlyBootstrap, fetch: true });
   };
 
   showEditor = () => {
@@ -224,10 +226,6 @@ class EnvoyDetails extends React.Component<EnvoyDetailsProps, EnvoyDetailsState>
       });
     });
     return envoyDashboardRef;
-  };
-
-  onResize = height => {
-    this.setState({ tabHeight: height });
   };
 
   isLoadingConfig = () => {
