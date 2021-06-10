@@ -2,7 +2,6 @@ import * as React from 'react';
 import { Chart, ChartGroup, ChartScatter, ChartProps, ChartTooltipProps } from '@patternfly/react-charts';
 import { VictoryAxis, VictoryBoxPlot, VictoryLabel, VictoryLegend, VictoryPortal, VictoryTheme } from 'victory';
 import { format as d3Format } from 'd3-format';
-import './Charts.css';
 import { getFormatter, getUnit } from 'utils/Formatter';
 import { VCLines, LegendItem, LineInfo, RichDataPoint, RawOrBucket, VCDataPoint } from 'types/VictoryChartInfo';
 import { Overlay } from 'types/Overlay';
