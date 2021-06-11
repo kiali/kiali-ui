@@ -8,7 +8,8 @@ import {
   CytoscapeGlobalScratchNamespace,
   CytoscapeGlobalScratchData,
   UNKNOWN,
-  BoxByType
+  BoxByType,
+  Protocol
 } from '../../../types/Graph';
 import { icons } from '../../../config';
 import NodeImageTopology from '../../../assets/img/node-background-topology.png';
@@ -426,11 +427,13 @@ export class GraphStyles {
 
         if (rate > 0) {
           if (pErr > 0) {
-            let sErr = pErr.toFixed(1);
-            sErr = `${sErr.endsWith('.0') ? pErr.toFixed(0) : sErr}`;
-            labels.push(`${rate.toFixed(2)}\n(${sErr}%)`);
+            labels.push(`${toFixed(rate)}\n(${toFixedPct(pErr)})`);
           } else {
-            labels.push(rate.toFixed(2));
+            if (edgeData.protocol === Protocol.TCP) {
+              labels.push(toFixedBytes(rate));
+            } else {
+              labels.push(toFixed(rate));
+            }
           }
         }
       }
@@ -442,8 +445,7 @@ export class GraphStyles {
           pReq = edgeData.grpcPercentReq;
         }
         if (pReq > 0) {
-          const sReq = pReq.toFixed(1);
-          labels.push(`${sReq.endsWith('.0') ? pReq.toFixed(0) : sReq}%`);
+          labels.push(toFixedPct(pReq));
         }
       }
       if (edgeLabels.includes(EdgeLabelMode.RESPONSE_TIME_GROUP)) {
@@ -456,16 +458,14 @@ export class GraphStyles {
         const responseTimeNumber = parseInt(String(edgeData.responseTime));
         const responseTime = responseTimeNumber > 0 ? responseTimeNumber : 0;
         if (responseTime && responseTime > 0) {
-          labels.push(
-            responseTime < 1000.0 ? `${responseTime.toFixed(0)}ms` : `${(responseTime / 1000.0).toFixed(2)}s`
-          );
+          labels.push(toFixedMs(responseTime));
         }
       }
       if (edgeLabels.includes(EdgeLabelMode.THROUGHPUT_GROUP)) {
         let rate = edgeData.throughput;
 
         if (rate > 0) {
-          labels.push(rate.toFixed(2));
+          labels.push(toFixedBytes(rate));
         }
       }
 
@@ -500,6 +500,35 @@ export class GraphStyles {
       }
 
       return label;
+    };
+
+    const trimFixed = (fixed: string): string => {
+      while (fixed.endsWith('0')) {
+        fixed = fixed.slice(0, -1);
+      }
+      return fixed.endsWith('.') ? (fixed = fixed.slice(0, -1)) : fixed;
+    };
+
+    const toFixed = (num: number): string => {
+      return trimFixed(num.toFixed(2));
+    };
+
+    const toFixedBytes = (num: number): string => {
+      if (num < 1024.0) {
+        return `${num < 1.0 ? trimFixed(num.toFixed(2)) : num.toFixed(0)}bps`;
+      }
+      return `${trimFixed((num / 1024.0).toFixed(2))}kps`;
+    };
+
+    const toFixedPct = (num: number): string => {
+      return `${trimFixed(num.toFixed(1))}%`;
+    };
+
+    const toFixedMs = (num: number): string => {
+      if (num < 1000) {
+        return `${num.toFixed(0)}ms`;
+      }
+      return `${trimFixed((num / 1000.0).toFixed(2))}s`;
     };
 
     const getNodeBackgroundImage = (ele: Cy.NodeSingular): string => {

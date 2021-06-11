@@ -160,8 +160,8 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
         tooltip: (
           <div style={{ textAlign: 'left' }}>
             HTTP and GRPC rates are in requests-per-second. When The percentage of error responses is shown below the
-            rate, when non-zero, in parentheses. TCP rates are in bytes-sent-per-second. Rates are rounded to 2
-            significant digits.
+            rate, when non-zero, in parentheses. TCP rates are sent bytes in bps (bytes-per-sec) or kps
+            (kilobytes-per-sec). Rates are rounded to 2 significant digits.
           </div>
         )
       },
@@ -199,7 +199,7 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
         isChecked: edgeLabels.includes(EdgeLabelMode.THROUGHPUT_GROUP),
         tooltip: (
           <div style={{ textAlign: 'left' }}>
-            <div>Displays HTTP Throughput in bytes per second. Default: Request</div>
+            <div>Displays HTTP Throughput in bps (bytes-per-sec) or kps (kilobytes-per-sec). Default: Request</div>
             <div>The following edges do not offer a throughput label:</div>
             <div>- edges into service nodes</div>
             <div>- edges into or out of operation nodes.</div>
@@ -408,7 +408,18 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
         maxHeight={{ type: PropertyType.VIEWPORT_HEIGHT_MINUS_TOP, margin: marginBottom }}
       >
         <div id="graph-display-menu" className={menuStyle}>
-          <div className={titleStyle}>Show Edge Labels</div>
+          <div style={{ marginTop: '10px' }}>
+            <span className={titleStyle} style={{ position: 'relative', bottom: '3px', paddingRight: 0 }}>
+              Show Edge Labels
+            </span>
+            <Tooltip
+              key="tooltip_show_edge_labels"
+              position={TooltipPosition.right}
+              content="Values for multiple label selections are stacked in the same order as the options below."
+            >
+              <KialiIcon.Info className={infoStyle} />
+            </Tooltip>
+          </div>
           {edgeLabelOptions.map((edgeLabelOption: DisplayOptionType) => (
             <div key={edgeLabelOption.id} className={menuEntryStyle}>
               <label
@@ -427,7 +438,7 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
               {!!edgeLabelOption.tooltip && (
                 <Tooltip
                   key={`tooltip_${edgeLabelOption.id}`}
-                  position={TooltipPosition.top}
+                  position={TooltipPosition.right}
                   content={edgeLabelOption.tooltip}
                 >
                   <KialiIcon.Info className={infoStyle} />
@@ -455,7 +466,7 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
                       {!!rtOption.tooltip && (
                         <Tooltip
                           key={`tooltip_${rtOption.id}`}
-                          position={TooltipPosition.top}
+                          position={TooltipPosition.right}
                           content={rtOption.tooltip}
                         >
                           <KialiIcon.Info className={infoStyle} />
@@ -487,7 +498,7 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
                       {!!throughputOption.tooltip && (
                         <Tooltip
                           key={`tooltip_${throughputOption.id}`}
-                          position={TooltipPosition.top}
+                          position={TooltipPosition.right}
                           content={throughputOption.tooltip}
                         >
                           <KialiIcon.Info className={infoStyle} />
@@ -512,7 +523,7 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
                 />
               </label>
               {!!item.tooltip && (
-                <Tooltip key={`tooltip_${item.id}`} position={TooltipPosition.top} content={item.tooltip}>
+                <Tooltip key={`tooltip_${item.id}`} position={TooltipPosition.right} content={item.tooltip}>
                   <KialiIcon.Info className={infoStyle} />
                 </Tooltip>
               )}
@@ -525,7 +536,7 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
                 <Checkbox id={item.id} isChecked={item.isChecked} label={item.labelText} onChange={item.onChange} />
               </label>
               {!!item.tooltip && (
-                <Tooltip key={`tooltip_${item.id}`} position={TooltipPosition.top} content={item.tooltip}>
+                <Tooltip key={`tooltip_${item.id}`} position={TooltipPosition.right} content={item.tooltip}>
                   <KialiIcon.Info className={infoStyle} />
                 </Tooltip>
               )}
