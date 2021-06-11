@@ -314,14 +314,36 @@ class ChartWithLegend<T extends RichDataPoint, O extends LineInfo> extends React
         {this.state.showMoreLegend && (
           <div
             style={{
+              display: 'flex',
+              flexWrap: 'wrap',
               position: 'relative',
               width: this.state.width,
               height: chartHeight,
               top: -(chartHeight + LEGEND_HEIGHT),
-              background: 'rgba(244, 193, 69, 0.6)'
+              background: 'var(--pf-global--BackgroundColor--dark-100)',
+              opacity: 0.7,
+              overflow: 'auto'
             }}
           >
-            Hello extra legend
+            {legendData.map(ld => (
+              <div
+                style={{
+                  color: 'white',
+                  margin: 'auto'
+                }}
+              >
+                <div
+                  style={{
+                    display: 'inline-block',
+                    backgroundColor: ld.symbol.fill,
+                    marginRight: '5px',
+                    width: '9px',
+                    height: '9px'
+                  }}
+                ></div>
+                {ld.name}
+              </div>
+            ))}
           </div>
         )}
       </div>
