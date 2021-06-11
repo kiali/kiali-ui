@@ -7,17 +7,7 @@ import { Workload } from 'types/Workload';
 import { EnvoyProxyDump, Pod } from 'types/IstioObjects';
 import * as API from '../../services/Api';
 import * as AlertUtils from '../../utils/AlertUtils';
-import {
-  Button,
-  ButtonVariant,
-  Card,
-  CardBody,
-  Grid,
-  GridItem,
-  Tab,
-  Tabs,
-  TooltipPosition
-} from '@patternfly/react-core';
+import { Button, ButtonVariant, Card, CardBody, Grid, GridItem, Tab, TooltipPosition } from '@patternfly/react-core';
 import { SummaryTableBuilder } from './tables/BaseTable';
 import Namespace from 'types/Namespace';
 import { style } from 'typestyle';
@@ -31,6 +21,7 @@ import { RenderComponentScroll } from 'components/Nav/Page';
 import { DashboardRef } from 'types/Runtimes';
 import CustomMetricsContainer from 'components/Metrics/CustomMetrics';
 import { serverConfig } from 'config';
+import ParameterizedTabs, { activeTab } from 'components/Tab/Tabs';
 
 // Enables the search box for the ACEeditor
 require('ace-builds/src-noconflict/ext-searchbox');
@@ -39,6 +30,15 @@ const iconStyle = style({
   display: 'inline-block',
   paddingTop: '5px'
 });
+
+const paramToTab: { [key: string]: number } = {
+  clusters: 0,
+  listeners: 1,
+  routes: 2,
+  bootstrap: 3,
+  config: 4,
+  metrics: 5
+};
 
 export type ResourceSorts = { [resource: string]: ISortBy };
 
@@ -57,7 +57,7 @@ type EnvoyDetailsState = {
   tableSortBy: ResourceSorts;
   resource: string;
   fetch: boolean;
-  activeKey: number;
+  activeTab: string;
   tabHeight: number;
 };
 
@@ -79,7 +79,7 @@ class EnvoyDetails extends React.Component<EnvoyDetailsProps, EnvoyDetailsState>
       pod: this.sortedPods()[0],
       config: {},
       resource: 'clusters',
-      activeKey: 0,
+      activeTab: activeTab('envoy_tab', 'clusters'),
       tabHeight: 300,
       fetch: true,
       tableSortBy: {
@@ -109,15 +109,13 @@ class EnvoyDetails extends React.Component<EnvoyDetailsProps, EnvoyDetailsState>
     }
   }
 
-  envoyHandleTabClick = (_event, tabIndex) => {
-    const resourceIdx: number = +tabIndex;
-    const targetResource: string = resources[resourceIdx];
-    if (targetResource !== this.state.resource) {
+  envoyHandleTabClick = resource => {
+    if (resource !== this.state.resource) {
       this.setState({
         config: {},
         fetch: true,
-        resource: targetResource,
-        activeKey: tabIndex
+        resource: resource,
+        activeTab: resource
       });
     }
   };
@@ -304,9 +302,16 @@ class EnvoyDetails extends React.Component<EnvoyDetailsProps, EnvoyDetailsState>
       <RenderComponentScroll onResize={height => this.setState({ tabHeight: height })}>
         <Grid>
           <GridItem span={12}>
-            <Tabs id="envoy-details" activeKey={this.state.activeKey} onSelect={this.envoyHandleTabClick}>
+            <ParameterizedTabs
+              id="envoy-details"
+              activeTab={this.state.activeTab}
+              onSelect={this.envoyHandleTabClick}
+              tabMap={paramToTab}
+              tabName="envoy_tab"
+              defaultTab="clusters"
+            >
               {tabs}
-            </Tabs>
+            </ParameterizedTabs>
           </GridItem>
         </Grid>
       </RenderComponentScroll>
