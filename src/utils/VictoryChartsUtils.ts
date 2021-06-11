@@ -88,7 +88,7 @@ export const buildLegendInfo = (items: LegendItem[], chartWidth: number, chartHe
   // Box size in pixels per item
   // Note that it is based on longest string in characters, not pixels
   let boxSize = 70;
-  let fontSizeLabels = 12;
+  let fontSizeLabels = 14;
   const longest = items.map(it => it.name).reduce((a, b) => (a.length > b.length ? a : b), '').length;
   if (longest >= 30) {
     boxSize = 200;

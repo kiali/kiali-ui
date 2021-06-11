@@ -11,6 +11,9 @@ import { VCEvent, addLegendEvent } from 'utils/VictoryEvents';
 import { XAxisType } from 'types/Dashboards';
 import { CustomTooltip } from './CustomTooltip';
 import { INTERPOTALION_STRATEGY } from './SparklineChart';
+import { KialiIcon } from '../../config/KialiIcon';
+import { Button, ButtonVariant, Tooltip, TooltipPosition } from '@patternfly/react-core';
+import { style } from 'typestyle';
 
 type Props<T extends RichDataPoint, O extends LineInfo> = {
   chartHeight?: number;
@@ -36,6 +39,8 @@ type Props<T extends RichDataPoint, O extends LineInfo> = {
 type State = {
   width: number;
   hiddenSeries: Set<string>;
+  isMoreLegend: boolean;
+  showMoreLegend: boolean;
 };
 
 type Padding = { top: number; left: number; right: number; bottom: number };
@@ -55,6 +60,12 @@ const AxisStyle = {
 };
 
 const MIN_WIDTH = 275;
+const LEGEND_HEIGHT = 25;
+
+const moreLegendIconStyle = style({
+  margin: '0px 5px 2px 10px',
+  verticalAlign: '-4px !important'
+});
 
 class ChartWithLegend<T extends RichDataPoint, O extends LineInfo> extends React.Component<Props<T, O>, State> {
   containerRef: React.RefObject<HTMLDivElement>;
@@ -64,7 +75,12 @@ class ChartWithLegend<T extends RichDataPoint, O extends LineInfo> extends React
   constructor(props: Props<T, O>) {
     super(props);
     this.containerRef = React.createRef<HTMLDivElement>();
-    this.state = { width: 0, hiddenSeries: new Set([overlayName]) };
+    this.state = {
+      width: 0,
+      hiddenSeries: new Set([overlayName]),
+      isMoreLegend: true,
+      showMoreLegend: false
+    };
   }
 
   componentDidMount() {
@@ -90,6 +106,14 @@ class ChartWithLegend<T extends RichDataPoint, O extends LineInfo> extends React
     this.hoveredItem = undefined;
   };
 
+  private onShowMoreLegend = () => {
+    this.setState(prevState => {
+      return {
+        showMoreLegend: !prevState.showMoreLegend
+      };
+    });
+  };
+
   render() {
     const scaleInfo = this.scaledAxisInfo(this.props.data);
     const legendData = this.buildLegendData();
@@ -98,8 +122,7 @@ class ChartWithLegend<T extends RichDataPoint, O extends LineInfo> extends React
     const overlayIdx = this.props.data.length;
     const showOverlay = (this.props.overlay && this.props.showSpans) || false;
     const overlayRightPadding = showOverlay ? 15 : 0;
-    const padding: Padding = { top: 0, bottom: 0, left: 0, right: 10 + overlayRightPadding };
-    padding.bottom += legend.height;
+    const padding: Padding = { top: 0, bottom: LEGEND_HEIGHT, left: 0, right: 10 + overlayRightPadding };
 
     const events: VCEvent[] = [];
     if (this.props.onClick) {
@@ -171,7 +194,7 @@ class ChartWithLegend<T extends RichDataPoint, O extends LineInfo> extends React
           {...this.props.moreChartProps}
         >
           {
-            // Hide xAxis below min width
+            // Use width to change style of the x series supporting narrow scenarios
             this.props.xAxis === 'series' ? (
               <VictoryAxis
                 domain={[0, filteredData.length + 1]}
@@ -255,19 +278,52 @@ class ChartWithLegend<T extends RichDataPoint, O extends LineInfo> extends React
           <VictoryLegend
             name={'serie-legend'}
             data={legendData}
-            x={10}
-            y={chartHeight - legend.height}
-            height={legend.height}
+            x={0}
+            y={this.props.chartHeight}
+            height={LEGEND_HEIGHT}
             width={this.state.width}
-            itemsPerRow={legend.itemsPerRow}
             style={{
               data: { cursor: 'pointer' },
-              labels: { cursor: 'pointer', fontSize: legend.fontSizeLabels }
+              labels: { cursor: 'pointer', fontSize: legend.fontSizeLabels },
+              border: { overflow: 'hidden' }
             }}
             borderPadding={{ top: 5 }}
             symbolSpacer={5}
+            gutter={0}
           />
         </Chart>
+        {this.state.isMoreLegend && (
+          <div
+            style={{
+              position: 'relative',
+              left: this.state.width - 31,
+              width: 16,
+              height: 16
+            }}
+          >
+            <Tooltip
+              position={TooltipPosition.left}
+              content={<div style={{ textAlign: 'left' }}>Show full legend</div>}
+            >
+              <Button variant={ButtonVariant.link} isInline onClick={() => this.onShowMoreLegend()}>
+                <KialiIcon.MoreLegend className={moreLegendIconStyle} />
+              </Button>
+            </Tooltip>
+          </div>
+        )}
+        {this.state.showMoreLegend && (
+          <div
+            style={{
+              position: 'relative',
+              width: this.state.width,
+              height: chartHeight,
+              top: -(chartHeight + LEGEND_HEIGHT),
+              background: 'rgba(244, 193, 69, 0.6)'
+            }}
+          >
+            Hello extra legend
+          </div>
+        )}
       </div>
     );
   }
