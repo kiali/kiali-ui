@@ -53,6 +53,9 @@ const AxisStyle = {
     pointerEvents: 'painted'
   }
 };
+
+const MIN_WIDTH = 275;
+
 class ChartWithLegend<T extends RichDataPoint, O extends LineInfo> extends React.Component<Props<T, O>, State> {
   containerRef: React.RefObject<HTMLDivElement>;
   hoveredItem?: VCDataPoint;
@@ -95,7 +98,7 @@ class ChartWithLegend<T extends RichDataPoint, O extends LineInfo> extends React
     const overlayIdx = this.props.data.length;
     const showOverlay = (this.props.overlay && this.props.showSpans) || false;
     const overlayRightPadding = showOverlay ? 15 : 0;
-    const padding: Padding = { top: 10, bottom: 20, left: 40, right: 10 + overlayRightPadding };
+    const padding: Padding = { top: 0, bottom: 0, left: 0, right: 10 + overlayRightPadding };
     padding.bottom += legend.height;
 
     const events: VCEvent[] = [];
@@ -151,7 +154,7 @@ class ChartWithLegend<T extends RichDataPoint, O extends LineInfo> extends React
     const filteredData = this.props.data.filter(s => !this.state.hiddenSeries.has(s.legendItem.name));
 
     return (
-      <div ref={this.containerRef} style={{ marginTop: '10px', height: chartHeight }}>
+      <div ref={this.containerRef} style={{ marginTop: '0px', height: chartHeight }}>
         <Chart
           width={this.state.width}
           padding={padding}
@@ -167,22 +170,35 @@ class ChartWithLegend<T extends RichDataPoint, O extends LineInfo> extends React
           domainPadding={{ y: 1, x: this.props.xAxis === 'series' ? 50 : undefined }}
           {...this.props.moreChartProps}
         >
-          {this.props.xAxis === 'series' ? (
-            <VictoryAxis
-              domain={[0, filteredData.length + 1]}
-              style={AxisStyle}
-              tickValues={filteredData.map(s => s.legendItem.name)}
-              theme={VictoryTheme.material}
-              tickFormat={() => ''}
-            />
-          ) : (
-            <VictoryAxis
-              tickCount={scaleInfo.count}
-              style={AxisStyle}
-              theme={VictoryTheme.material}
-              domain={this.props.timeWindow}
-            />
-          )}
+          {
+            // Hide xAxis below min width
+            this.props.xAxis === 'series' ? (
+              <VictoryAxis
+                domain={[0, filteredData.length + 1]}
+                style={AxisStyle}
+                tickValues={filteredData.map(s => s.legendItem.name)}
+                theme={VictoryTheme.material}
+                tickFormat={() => ''}
+              />
+            ) : this.state.width <= MIN_WIDTH ? (
+              <VictoryAxis
+                tickCount={scaleInfo.count}
+                style={AxisStyle}
+                theme={VictoryTheme.material}
+                domain={this.props.timeWindow}
+                tickFormat={t => {
+                  return `:${t.getMinutes()}`;
+                }}
+              />
+            ) : (
+              <VictoryAxis
+                tickCount={scaleInfo.count}
+                style={AxisStyle}
+                theme={VictoryTheme.material}
+                domain={this.props.timeWindow}
+              />
+            )
+          }
           <VictoryAxis
             tickLabelComponent={
               <VictoryPortal>
@@ -192,7 +208,7 @@ class ChartWithLegend<T extends RichDataPoint, O extends LineInfo> extends React
             dependentAxis={true}
             tickFormat={getFormatter(d3Format, this.props.unit)}
             label={getUnit(d3Format, this.props.unit, mainMax)}
-            axisLabelComponent={<VictoryLabel y={5} x={20} angle={0} renderInPortal={true} />}
+            axisLabelComponent={<VictoryLabel y={-10} x={-15} angle={0} renderInPortal={true} />}
             theme={VictoryTheme.material}
             style={AxisStyle}
           />
@@ -209,9 +225,7 @@ class ChartWithLegend<T extends RichDataPoint, O extends LineInfo> extends React
                 this.props.overlay?.info.lineInfo.unit || '',
                 Math.max(...this.props.overlay.vcLine.datapoints.map(d => d.y))
               )}
-              axisLabelComponent={
-                <VictoryLabel y={5} x={this.state.width - overlayRightPadding} angle={0} renderInPortal={true} />
-              }
+              axisLabelComponent={<VictoryLabel y={-10} x={this.state.width} angle={0} renderInPortal={true} />}
             />
           )}
           {this.props.xAxis === 'series' ? this.renderCategories() : this.renderTimeSeries(chartHeight - legend.height)}

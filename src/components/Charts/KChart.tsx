@@ -41,6 +41,16 @@ const emptyStyle = style({
   margin: '0 0 0 0'
 });
 
+const kchartStyle = style({
+  paddingTop: 15,
+  paddingLeft: 25,
+  paddingRight: 25,
+  paddingBottom: 15
+});
+
+// 24px (title + toolbar) + 20px (margin) + 15px (padding) + 15px (padding)
+const titlePadding = 64;
+
 type State = {
   collapsed: boolean;
 };
@@ -102,9 +112,15 @@ class KChart<T extends LineInfo> extends React.Component<KChartProps<T>, State> 
     }
   }
 
+  private getInnerChartHeight = (): number => {
+    const chartHeight: number = this.props.chartHeight || 300;
+    const innerChartHeight = chartHeight - titlePadding;
+    return innerChartHeight;
+  };
+
   render() {
     return (
-      <>
+      <div className={kchartStyle}>
         <span>
           {this.props.chart.name}
           {this.props.onToggleMaximized && (
@@ -115,10 +131,10 @@ class KChart<T extends LineInfo> extends React.Component<KChartProps<T>, State> 
             </div>
           )}
         </span>
-        <div>
+        <div style={{ marginTop: 20 }}>
           {this.props.chart.error ? this.renderError() : this.isEmpty() ? this.renderEmpty() : this.renderChart()}
         </div>
-      </>
+      </div>
     );
   }
 
@@ -149,7 +165,7 @@ class KChart<T extends LineInfo> extends React.Component<KChartProps<T>, State> 
     const maxDomain = this.props.chart.max === undefined ? undefined : { y: this.props.chart.max };
     return (
       <ChartWithLegend
-        chartHeight={this.props.chartHeight}
+        chartHeight={this.getInnerChartHeight()}
         data={this.props.data}
         seriesComponent={typeData.seriesComponent}
         fill={typeData.fill}
@@ -180,8 +196,8 @@ class KChart<T extends LineInfo> extends React.Component<KChartProps<T>, State> 
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          height: this.props.chartHeight,
           overflow: 'hidden',
+          height: this.getInnerChartHeight(),
           textAlign: 'center'
         }}
       >
@@ -195,15 +211,28 @@ class KChart<T extends LineInfo> extends React.Component<KChartProps<T>, State> 
 
   private renderError() {
     return (
-      <EmptyState variant="full">
-        <EmptyStateIcon icon={() => <ErrorCircleOIcon style={{ color: '#cc0000' }} width={32} height={32} />} />
-        <EmptyStateBody>
-          An error occured while fetching this metric:
-          <p>
-            <i>{this.props.chart.error}</i>
-          </p>
-        </EmptyStateBody>
-      </EmptyState>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          overflow: 'hidden',
+          height: this.getInnerChartHeight(),
+          textAlign: 'center'
+        }}
+      >
+        <EmptyState variant={EmptyStateVariant.small} className={emptyStyle}>
+          {this.props.isMaximized && (
+            <EmptyStateIcon icon={() => <ErrorCircleOIcon style={{ color: '#cc0000' }} width={32} height={32} />} />
+          )}
+          <EmptyStateBody className={emptyStyle}>
+            An error occured while fetching this metric:
+            <p>
+              <i>{this.props.chart.error}</i>
+            </p>
+          </EmptyStateBody>
+        </EmptyState>
+      </div>
     );
   }
 }

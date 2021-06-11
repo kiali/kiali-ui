@@ -200,7 +200,7 @@ class CustomMetrics extends React.Component<Props, MetricsState> {
         expandHandler={this.expandHandler}
         onClick={this.onClickDataPoint}
         showSpans={this.state.showSpans}
-        chartHeight={dashboardHeight}
+        dashboardHeight={dashboardHeight}
         overlay={this.state.spanOverlay}
         timeWindow={evalTimeRange(this.props.timeRange)}
         brushHandlers={{ onDomainChangeEnd: (_, props) => this.onDomainChange(props.currentDomain.x) }}

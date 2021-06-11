@@ -240,8 +240,8 @@ class IstioMetrics extends React.Component<Props, MetricsState> {
     const urlParams = new URLSearchParams(history.location.search);
     const expandedChart = urlParams.get('expand') || undefined;
 
-    // SPACE : Padding article (40 bottom and top) , 51 toolbar more 15 padding
-    const toolbarSpace = 40 + 51 + 40;
+    // 20px (card margin) + 24px (card padding) + 51px (toolbar) + 15px (toolbar padding) + 24px (card padding) + 20px (card margin)
+    const toolbarSpace = 20 + 24 + 51 + 15 + 24 + 20;
     const dashboardHeight = this.state.tabHeight - toolbarSpace;
     return (
       <RenderComponentScroll onResize={height => this.setState({ tabHeight: height })}>
@@ -258,7 +258,7 @@ class IstioMetrics extends React.Component<Props, MetricsState> {
                 labelPrettifier={MetricsHelper.prettyLabelValues}
                 overlay={this.state.spanOverlay}
                 showSpans={this.state.showSpans}
-                chartHeight={dashboardHeight}
+                dashboardHeight={dashboardHeight}
                 timeWindow={evalTimeRange(this.props.timeRange)}
                 brushHandlers={{ onDomainChangeEnd: (_, props) => this.onDomainChange(props.currentDomain.x) }}
               />
