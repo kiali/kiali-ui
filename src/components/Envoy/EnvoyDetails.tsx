@@ -57,7 +57,7 @@ type EnvoyDetailsState = {
   tableSortBy: ResourceSorts;
   resource: string;
   fetch: boolean;
-  activeTab: string;
+  currentTab: string;
   tabHeight: number;
 };
 
@@ -79,7 +79,7 @@ class EnvoyDetails extends React.Component<EnvoyDetailsProps, EnvoyDetailsState>
       pod: this.sortedPods()[0],
       config: {},
       resource: 'clusters',
-      activeTab: activeTab('envoy_tab', 'clusters'),
+      currentTab: activeTab('envoy_tab', 'clusters'),
       tabHeight: 300,
       fetch: true,
       tableSortBy: {
@@ -104,8 +104,12 @@ class EnvoyDetails extends React.Component<EnvoyDetailsProps, EnvoyDetailsState>
   }
 
   componentDidUpdate(_prevProps: EnvoyDetailsProps, prevState: EnvoyDetailsState) {
+    const currentTab = activeTab('envoy_tab', 'clusters');
     if (this.state.pod.name !== prevState.pod.name || this.state.resource !== prevState.resource) {
       this.fetchContent();
+    }
+    if (currentTab !== this.state.currentTab) {
+      this.setState({ currentTab: currentTab });
     }
   }
 
@@ -115,7 +119,7 @@ class EnvoyDetails extends React.Component<EnvoyDetailsProps, EnvoyDetailsState>
         config: {},
         fetch: true,
         resource: resource,
-        activeTab: resource
+        currentTab: resource
       });
     }
   };
@@ -304,7 +308,7 @@ class EnvoyDetails extends React.Component<EnvoyDetailsProps, EnvoyDetailsState>
           <GridItem span={12}>
             <ParameterizedTabs
               id="envoy-details"
-              activeTab={this.state.activeTab}
+              activeTab={this.state.currentTab}
               onSelect={this.envoyHandleTabClick}
               tabMap={paramToTab}
               tabName="envoy_tab"
