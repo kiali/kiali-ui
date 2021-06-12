@@ -6,7 +6,7 @@ import { getFormatter, getUnit } from 'utils/Formatter';
 import { VCLines, LegendItem, LineInfo, RichDataPoint, RawOrBucket, VCDataPoint } from 'types/VictoryChartInfo';
 import { Overlay } from 'types/Overlay';
 import { newBrushVoronoiContainer, BrushHandlers } from './Container';
-import { buildLegendInfo, toBuckets } from 'utils/VictoryChartsUtils';
+import { toBuckets } from 'utils/VictoryChartsUtils';
 import { VCEvent, addLegendEvent } from 'utils/VictoryEvents';
 import { XAxisType } from 'types/Dashboards';
 import { CustomTooltip } from './CustomTooltip';
@@ -39,7 +39,6 @@ type Props<T extends RichDataPoint, O extends LineInfo> = {
 type State = {
   width: number;
   hiddenSeries: Set<string>;
-  isMoreLegend: boolean;
   showMoreLegend: boolean;
 };
 
@@ -61,6 +60,7 @@ const AxisStyle = {
 
 const MIN_WIDTH = 275;
 const LEGEND_HEIGHT = 25;
+const FONT_SIZE_LEGEND = 14;
 
 const moreLegendIconStyle = style({
   margin: '0px 5px 2px 10px',
@@ -78,7 +78,6 @@ class ChartWithLegend<T extends RichDataPoint, O extends LineInfo> extends React
     this.state = {
       width: 0,
       hiddenSeries: new Set([overlayName]),
-      isMoreLegend: true,
       showMoreLegend: false
     };
   }
@@ -116,9 +115,10 @@ class ChartWithLegend<T extends RichDataPoint, O extends LineInfo> extends React
 
   render() {
     const scaleInfo = this.scaledAxisInfo(this.props.data);
-    const legendData = this.buildLegendData();
+    const fullLegendData = this.buildFullLegendData();
+    const filteredLegendData = this.buildFilteredLegendData(fullLegendData);
+    const showMoreLegend = fullLegendData.length > filteredLegendData.length;
     const chartHeight = this.props.chartHeight || 300;
-    const legend = buildLegendInfo(legendData, this.state.width, chartHeight);
     const overlayIdx = this.props.data.length;
     const showOverlay = (this.props.overlay && this.props.showSpans) || false;
     const overlayRightPadding = showOverlay ? 15 : 0;
@@ -251,7 +251,7 @@ class ChartWithLegend<T extends RichDataPoint, O extends LineInfo> extends React
               axisLabelComponent={<VictoryLabel y={-10} x={this.state.width} angle={0} renderInPortal={true} />}
             />
           )}
-          {this.props.xAxis === 'series' ? this.renderCategories() : this.renderTimeSeries(chartHeight - legend.height)}
+          {this.props.xAxis === 'series' ? this.renderCategories() : this.renderTimeSeries(chartHeight - LEGEND_HEIGHT)}
           {showOverlay &&
             (this.props.overlay!.info.buckets ? (
               <VictoryBoxPlot
@@ -277,22 +277,29 @@ class ChartWithLegend<T extends RichDataPoint, O extends LineInfo> extends React
             ))}
           <VictoryLegend
             name={'serie-legend'}
-            data={legendData}
+            data={filteredLegendData}
             x={0}
             y={this.props.chartHeight}
             height={LEGEND_HEIGHT}
             width={this.state.width}
             style={{
-              data: { cursor: 'pointer' },
-              labels: { cursor: 'pointer', fontSize: legend.fontSizeLabels },
-              border: { overflow: 'hidden' }
+              data: { cursor: 'pointer', padding: 0 },
+              labels: { cursor: 'pointer', fontSize: FONT_SIZE_LEGEND }
             }}
-            borderPadding={{ top: 5 }}
+            borderPadding={{
+              top: 5,
+              left: 0,
+              right: 0,
+              bottom: 0
+            }}
             symbolSpacer={5}
-            gutter={0}
+            gutter={{
+              left: 0,
+              right: 0
+            }}
           />
         </Chart>
-        {this.state.isMoreLegend && (
+        {showMoreLegend && (
           <div
             style={{
               position: 'relative',
@@ -316,6 +323,7 @@ class ChartWithLegend<T extends RichDataPoint, O extends LineInfo> extends React
             style={{
               display: 'flex',
               flexWrap: 'wrap',
+              flexDirection: 'column',
               position: 'relative',
               width: this.state.width,
               height: chartHeight,
@@ -325,7 +333,7 @@ class ChartWithLegend<T extends RichDataPoint, O extends LineInfo> extends React
               overflow: 'auto'
             }}
           >
-            {legendData.map(ld => (
+            {fullLegendData.map(ld => (
               <div
                 style={{
                   color: 'white',
@@ -414,15 +422,33 @@ class ChartWithLegend<T extends RichDataPoint, O extends LineInfo> extends React
     }
   };
 
-  private buildLegendData(): LegendItem[] {
-    const truncate = this.props.data.length > 4;
+  private buildFullLegendData(): LegendItem[] {
     return this.props.data.map(s => {
-      const name = truncate ? s.legendItem.name.slice(0, 8) : s.legendItem.name;
+      const name = s.legendItem.name;
       if (this.state.hiddenSeries.has(s.legendItem.name)) {
         return { name, symbol: { ...s.legendItem.symbol, fill: '#72767b' } };
       }
       return { ...s.legendItem, name };
     });
+  }
+
+  private buildFilteredLegendData(fullLegendData: LegendItem[]): LegendItem[] {
+    // 31px == "more legend" left button width
+    const maxWidth = this.state.width - 30;
+    const filtered: LegendItem[] = [];
+    let currentWidth = 0;
+    for (let i = 0; i < fullLegendData.length; i++) {
+      const item = fullLegendData[i];
+      // 12px == legend icon + space
+      // 7px == char size
+      // 15px == right padding
+      currentWidth += 12 + item.name.length * 7 + 15;
+      if (currentWidth >= maxWidth) {
+        break;
+      }
+      filtered.push(item);
+    }
+    return filtered;
   }
 
   private registerEvents(events: VCEvent[], idx: number, serieID: string, serieName: string) {

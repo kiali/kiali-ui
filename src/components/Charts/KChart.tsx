@@ -121,8 +121,23 @@ class KChart<T extends LineInfo> extends React.Component<KChartProps<T>, State> 
   render() {
     return (
       <div className={kchartStyle}>
-        <span>
-          {this.props.chart.name}
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between'
+          }}
+        >
+          <div
+            style={{
+              minWidth: '0px',
+              display: 'inline-block',
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis'
+            }}
+          >
+            {this.props.chart.name}
+          </div>
           {this.props.onToggleMaximized && (
             <div style={maximizeButtonStyle}>
               <Button variant={ButtonVariant.link} onClick={this.props.onToggleMaximized} isInline>
@@ -130,7 +145,7 @@ class KChart<T extends LineInfo> extends React.Component<KChartProps<T>, State> 
               </Button>
             </div>
           )}
-        </span>
+        </div>
         <div style={{ marginTop: 20 }}>
           {this.props.chart.error ? this.renderError() : this.isEmpty() ? this.renderEmpty() : this.renderChart()}
         </div>
