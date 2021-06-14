@@ -476,15 +476,17 @@ export class GraphStyles {
 
       let label = labels.join('\n');
 
-      // if (isVerbose) {
-      //  const protocol = edgeData.protocol;
-      //  label = protocol ? `${protocol}\n${label}` : label;
-      // }
+      if (isVerbose) {
+        const protocol = edgeData.protocol;
+        label = protocol ? `${protocol}\n${label}` : label;
+      }
 
       const mtlsPercentage = edgeData.isMTLS;
+      let lockIcon = false;
       if (cyGlobal.showSecurity && edgeData.hasTraffic) {
         if (mtlsPercentage && mtlsPercentage > 0) {
-          label = `${EdgeIconMTLS} ${label}`;
+          lockIcon = true;
+          label = `${EdgeIconMTLS}\n${label}`;
         }
       }
 
@@ -497,7 +499,7 @@ export class GraphStyles {
             // seen this code returned and not "UO". "UO" is returned only when the circuit breaker is caught open.
             // But if open CB is responsible for removing possible destinations the "UH" code seems preferred.
             if (responses[code]['UO'] || responses[code]['UH']) {
-              label = `${NodeIconCB} ${label}`;
+              label = lockIcon ? `${NodeIconCB} ${label}` : `${NodeIconCB}\n${label}`;
               break;
             }
           }
