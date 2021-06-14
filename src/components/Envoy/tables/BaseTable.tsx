@@ -102,7 +102,8 @@ export const SummaryTableBuilder = (
   config: EnvoyProxyDump,
   sortBy: ResourceSorts,
   namespaces: Namespace[],
-  namespace: string
+  namespace: string,
+  workload?: string
 ) => {
   let writerComp, writerProps;
 
@@ -113,7 +114,7 @@ export const SummaryTableBuilder = (
       break;
     case 'listeners':
       writerComp = ListenerSummaryTable;
-      writerProps = new ListenerTable(config.listeners || [], sortBy['listeners'], namespaces);
+      writerProps = new ListenerTable(config.listeners || [], sortBy['listeners'], namespaces, namespace, workload);
       break;
     case 'routes':
       writerComp = RouteSummaryTable;

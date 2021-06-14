@@ -11,12 +11,22 @@ export class ListenerTable implements SummaryTable {
   sortingIndex: number;
   sortingDirection: 'asc' | 'desc';
   namespaces: Namespace[];
+  namespace: string;
+  workload: string | undefined;
 
-  constructor(summaries: ListenerSummary[], sortBy: ISortBy, namespaces: Namespace[]) {
+  constructor(
+    summaries: ListenerSummary[],
+    sortBy: ISortBy,
+    namespaces: Namespace[],
+    namespace: string,
+    workload: string | undefined
+  ) {
     this.summaries = summaries;
     this.sortingIndex = sortBy.index || 0;
     this.sortingDirection = sortBy.direction || 'asc';
     this.namespaces = namespaces;
+    this.namespace = namespace;
+    this.workload = workload;
   }
 
   availableFilters = (): FilterType[] => {
@@ -149,7 +159,12 @@ export class ListenerTable implements SummaryTable {
         return this.sortingDirection === 'asc' ? sortField!.compare(a, b) : sortField!.compare(b, a);
       })
       .map((summary: ListenerSummary) => {
-        return [summary.address, summary.port, summary.match, routeLink(summary.destination)];
+        return [
+          summary.address,
+          summary.port,
+          summary.match,
+          routeLink(summary.destination, this.namespace, this.workload)
+        ];
       });
   }
 }

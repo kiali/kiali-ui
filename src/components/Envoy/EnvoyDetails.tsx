@@ -55,13 +55,10 @@ type EnvoyDetailsState = {
   config: EnvoyProxyDump;
   pod: Pod;
   tableSortBy: ResourceSorts;
-  resource: string;
   fetch: boolean;
   currentTab: string;
   tabHeight: number;
 };
-
-const resources: string[] = ['clusters', 'listeners', 'routes', 'bootstrap', 'config', 'metrics'];
 
 const fullHeightStyle = style({
   height: '100%'
@@ -78,7 +75,6 @@ class EnvoyDetails extends React.Component<EnvoyDetailsProps, EnvoyDetailsState>
     this.state = {
       pod: this.sortedPods()[0],
       config: {},
-      resource: 'clusters',
       currentTab: activeTab('envoy_tab', 'clusters'),
       tabHeight: 300,
       fetch: true,
@@ -105,21 +101,20 @@ class EnvoyDetails extends React.Component<EnvoyDetailsProps, EnvoyDetailsState>
 
   componentDidUpdate(_prevProps: EnvoyDetailsProps, prevState: EnvoyDetailsState) {
     const currentTab = activeTab('envoy_tab', 'clusters');
-    if (this.state.pod.name !== prevState.pod.name || this.state.resource !== prevState.resource) {
+    if (this.state.pod.name !== prevState.pod.name || this.state.currentTab !== prevState.currentTab) {
       this.fetchContent();
     }
-    if (currentTab !== this.state.currentTab) {
+    if (currentTab !== prevState.currentTab) {
       this.setState({ currentTab: currentTab });
     }
   }
 
   envoyHandleTabClick = resource => {
-    if (resource !== this.state.resource) {
+    if (resource !== this.state.currentTab) {
       this.setState({
         config: {},
         fetch: true,
-        resource: resource,
-        currentTab: resource
+        currentTab: activeTab('envoy_tab', resource)
       });
     }
   };
@@ -152,10 +147,10 @@ class EnvoyDetails extends React.Component<EnvoyDetailsProps, EnvoyDetailsState>
 
   fetchContent = () => {
     if (this.state.fetch === true) {
-      if (this.state.resource === 'config') {
+      if (this.state.currentTab === 'config') {
         this.fetchEnvoyProxy();
       } else {
-        this.fetchEnvoyProxyResourceEntries(this.state.resource);
+        this.fetchEnvoyProxyResourceEntries(this.state.currentTab);
       }
     }
   };
@@ -197,11 +192,11 @@ class EnvoyDetails extends React.Component<EnvoyDetailsProps, EnvoyDetailsState>
   };
 
   showEditor = () => {
-    return this.state.resource === 'config' || this.state.resource === 'bootstrap';
+    return this.state.currentTab === 'config' || this.state.currentTab === 'bootstrap';
   };
 
   showMetrics = () => {
-    return this.state.resource === 'metrics';
+    return this.state.currentTab === 'metrics';
   };
 
   getEnvoyMetricsDashboardRef = (): DashboardRef | undefined => {
@@ -222,11 +217,12 @@ class EnvoyDetails extends React.Component<EnvoyDetailsProps, EnvoyDetailsState>
 
   render() {
     const builder = SummaryTableBuilder(
-      this.state.resource,
+      this.state.currentTab,
       this.state.config,
       this.state.tableSortBy,
       this.props.namespaces,
-      this.props.namespace
+      this.props.namespace,
+      this.props.workload.name
     );
     const SummaryWriterComp = builder[0];
     const summaryWriter = builder[1];
@@ -235,7 +231,7 @@ class EnvoyDetails extends React.Component<EnvoyDetailsProps, EnvoyDetailsState>
     const version = this.props.workload.labels[serverConfig.istioLabels.versionLabelName];
     const envoyMetricsDashboardRef = this.getEnvoyMetricsDashboardRef();
 
-    const tabs = resources.map((value, index) => {
+    const tabs = Object.keys(paramToTab).map((value, index) => {
       const title = value.charAt(0).toUpperCase() + value.slice(1);
       return (
         <Tab style={{ backgroundColor: 'white' }} key={'tab_' + title} eventKey={index} title={title}>
