@@ -166,18 +166,6 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
         )
       },
       {
-        id: EdgeLabelMode.REQUEST_DISTRIBUTION,
-        labelText: _.startCase(EdgeLabelMode.REQUEST_DISTRIBUTION),
-        isChecked: edgeLabels.includes(EdgeLabelMode.REQUEST_DISTRIBUTION),
-        tooltip: (
-          <div style={{ textAlign: 'left' }}>
-            HTTP and GRPC Edges display the percentage of outbound requests for that edge. For a source node, the sum
-            for outbound edges should be equal to or near 100%, given rounding. TCP edges are not included in the
-            distribution because their rates reflect bytes sent, not requests sent.
-          </div>
-        )
-      },
-      {
         id: EdgeLabelMode.RESPONSE_TIME_GROUP,
         labelText: _.startCase(EdgeLabelMode.RESPONSE_TIME_GROUP),
         isChecked: edgeLabels.includes(EdgeLabelMode.RESPONSE_TIME_GROUP),
@@ -203,6 +191,18 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
             <div>The following edges do not offer a throughput label:</div>
             <div>- edges into service nodes</div>
             <div>- edges into or out of operation nodes.</div>
+          </div>
+        )
+      },
+      {
+        id: EdgeLabelMode.REQUEST_DISTRIBUTION,
+        labelText: _.startCase(EdgeLabelMode.REQUEST_DISTRIBUTION),
+        isChecked: edgeLabels.includes(EdgeLabelMode.REQUEST_DISTRIBUTION),
+        tooltip: (
+          <div style={{ textAlign: 'left' }}>
+            HTTP and GRPC Edges display the percentage of outbound requests for that edge. For a source node, the sum
+            for outbound edges should be equal to or near 100%, given rounding. TCP edges are not included in the
+            distribution because their rates reflect bytes sent, not requests sent.
           </div>
         )
       }

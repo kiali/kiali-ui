@@ -62,6 +62,10 @@ export const isThroughputMode = (mode: EdgeLabelMode): boolean => {
   );
 };
 
+export const numLabels = (modes: EdgeLabelMode[]): number => {
+  return modes.filter(m => m !== EdgeLabelMode.RESPONSE_TIME_GROUP && m !== EdgeLabelMode.THROUGHPUT_GROUP).length;
+};
+
 export enum GraphType {
   APP = 'app',
   SERVICE = 'service',

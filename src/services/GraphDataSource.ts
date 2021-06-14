@@ -286,6 +286,14 @@ export default class GraphDataSource {
 
   public fetchForVersionedAppParams = (duration: DurationInSeconds, namespace: string, app: string): FetchParams => {
     const params = GraphDataSource.defaultFetchParams(duration, namespace);
+    params.edgeLabels = [
+      EdgeLabelMode.REQUEST_RATE,
+      EdgeLabelMode.REQUEST_DISTRIBUTION,
+      EdgeLabelMode.RESPONSE_TIME_GROUP,
+      EdgeLabelMode.RESPONSE_TIME_P95,
+      EdgeLabelMode.THROUGHPUT_GROUP,
+      EdgeLabelMode.THROUGHPUT_REQUEST
+    ];
     params.graphType = GraphType.VERSIONED_APP;
     params.node!.nodeType = NodeType.APP;
     params.node!.app = app;
@@ -300,6 +308,14 @@ export default class GraphDataSource {
 
   public fetchForWorkloadParams = (duration: DurationInSeconds, namespace: string, workload: string): FetchParams => {
     const params = GraphDataSource.defaultFetchParams(duration, namespace);
+    params.edgeLabels = [
+      EdgeLabelMode.REQUEST_RATE,
+      EdgeLabelMode.REQUEST_DISTRIBUTION,
+      EdgeLabelMode.RESPONSE_TIME_GROUP,
+      EdgeLabelMode.RESPONSE_TIME_P95,
+      EdgeLabelMode.THROUGHPUT_GROUP,
+      EdgeLabelMode.THROUGHPUT_REQUEST
+    ];
     params.graphType = GraphType.WORKLOAD;
     params.node!.nodeType = NodeType.WORKLOAD;
     params.node!.workload = workload;
@@ -314,6 +330,14 @@ export default class GraphDataSource {
 
   public fetchForServiceParams = (duration: DurationInSeconds, namespace: string, service: string): FetchParams => {
     const params = GraphDataSource.defaultFetchParams(duration, namespace);
+    params.edgeLabels = [
+      EdgeLabelMode.REQUEST_RATE,
+      EdgeLabelMode.REQUEST_DISTRIBUTION,
+      EdgeLabelMode.RESPONSE_TIME_GROUP,
+      EdgeLabelMode.RESPONSE_TIME_P95,
+      EdgeLabelMode.THROUGHPUT_GROUP,
+      EdgeLabelMode.THROUGHPUT_REQUEST
+    ];
     params.graphType = GraphType.WORKLOAD;
     params.node!.nodeType = NodeType.SERVICE;
     params.node!.service = service;

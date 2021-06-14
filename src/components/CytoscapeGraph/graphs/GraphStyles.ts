@@ -9,7 +9,8 @@ import {
   CytoscapeGlobalScratchData,
   UNKNOWN,
   BoxByType,
-  Protocol
+  Protocol,
+  numLabels
 } from '../../../types/Graph';
 import { icons } from '../../../config';
 import NodeImageTopology from '../../../assets/img/node-background-topology.png';
@@ -406,11 +407,12 @@ export class GraphStyles {
       }
     };
 
-    const getEdgeLabel = (ele: Cy.EdgeSingular, includeProtocol?: boolean): string => {
+    const getEdgeLabel = (ele: Cy.EdgeSingular, isVerbose?: boolean): string => {
       const cyGlobal = getCyGlobalData(ele);
       const edgeLabels = cyGlobal.edgeLabels;
-      let labels = [] as string[];
       const edgeData = decoratedEdgeData(ele);
+      const includeUnits = isVerbose || numLabels(edgeLabels) > 1;
+      let labels = [] as string[];
 
       if (edgeLabels.includes(EdgeLabelMode.REQUEST_RATE)) {
         let rate = 0;
@@ -426,28 +428,18 @@ export class GraphStyles {
         }
 
         if (rate > 0) {
-          if (pErr > 0) {
-            labels.push(`${toFixed(rate)}\n(${toFixedPct(pErr)})`);
+          if (pErr > 0 && isVerbose) {
+            labels.push(`${toFixedRequestRate(rate, includeUnits)}\n${toFixedErrRate(pErr)}`);
           } else {
             if (edgeData.protocol === Protocol.TCP) {
-              labels.push(toFixedBytes(rate));
+              labels.push(toFixedByteRate(rate, includeUnits));
             } else {
-              labels.push(toFixed(rate));
+              labels.push(toFixedRequestRate(rate, includeUnits));
             }
           }
         }
       }
-      if (edgeLabels.includes(EdgeLabelMode.REQUEST_DISTRIBUTION)) {
-        let pReq;
-        if (edgeData.httpPercentReq > 0) {
-          pReq = edgeData.httpPercentReq;
-        } else if (edgeData.grpcPercentReq > 0) {
-          pReq = edgeData.grpcPercentReq;
-        }
-        if (pReq > 0) {
-          labels.push(toFixedPct(pReq));
-        }
-      }
+
       if (edgeLabels.includes(EdgeLabelMode.RESPONSE_TIME_GROUP)) {
         // todo: remove this logging once we figure out the strangeness going on with responseTime
         let logResponseTime = edgeData.responseTime;
@@ -458,23 +450,36 @@ export class GraphStyles {
         const responseTimeNumber = parseInt(String(edgeData.responseTime));
         const responseTime = responseTimeNumber > 0 ? responseTimeNumber : 0;
         if (responseTime && responseTime > 0) {
-          labels.push(toFixedMs(responseTime));
+          labels.push(toFixedDuration(responseTime));
         }
       }
+
       if (edgeLabels.includes(EdgeLabelMode.THROUGHPUT_GROUP)) {
         let rate = edgeData.throughput;
 
         if (rate > 0) {
-          labels.push(toFixedBytes(rate));
+          labels.push(toFixedByteRate(rate, includeUnits));
+        }
+      }
+
+      if (edgeLabels.includes(EdgeLabelMode.REQUEST_DISTRIBUTION)) {
+        let pReq;
+        if (edgeData.httpPercentReq > 0) {
+          pReq = edgeData.httpPercentReq;
+        } else if (edgeData.grpcPercentReq > 0) {
+          pReq = edgeData.grpcPercentReq;
+        }
+        if (pReq > 0) {
+          labels.push(toFixedPercent(pReq));
         }
       }
 
       let label = labels.join('\n');
 
-      if (includeProtocol) {
-        const protocol = edgeData.protocol;
-        label = protocol ? `${protocol} ${label}` : label;
-      }
+      // if (isVerbose) {
+      //  const protocol = edgeData.protocol;
+      //  label = protocol ? `${protocol}\n${label}` : label;
+      // }
 
       const mtlsPercentage = edgeData.isMTLS;
       if (cyGlobal.showSecurity && edgeData.hasTraffic) {
@@ -509,22 +514,29 @@ export class GraphStyles {
       return fixed.endsWith('.') ? (fixed = fixed.slice(0, -1)) : fixed;
     };
 
-    const toFixed = (num: number): string => {
-      return trimFixed(num.toFixed(2));
+    const toFixedRequestRate = (num: number, includeUnits: boolean): string => {
+      const rate = trimFixed(num.toFixed(2));
+      return includeUnits ? `${rate} rps` : rate;
     };
 
-    const toFixedBytes = (num: number): string => {
+    const toFixedErrRate = (num: number): string => {
+      return `${trimFixed(num.toFixed(num < 1 ? 1 : 0))}% err`;
+    };
+
+    const toFixedByteRate = (num: number, includeUnits: boolean): string => {
       if (num < 1024.0) {
-        return `${num < 1.0 ? trimFixed(num.toFixed(2)) : num.toFixed(0)}bps`;
+        const rate = num < 1.0 ? trimFixed(num.toFixed(2)) : num.toFixed(0);
+        return includeUnits ? `${rate} bps` : rate;
       }
-      return `${trimFixed((num / 1024.0).toFixed(2))}kps`;
+      const rate = trimFixed((num / 1024.0).toFixed(2));
+      return includeUnits ? `${rate} kps` : rate;
     };
 
-    const toFixedPct = (num: number): string => {
+    const toFixedPercent = (num: number): string => {
       return `${trimFixed(num.toFixed(1))}%`;
     };
 
-    const toFixedMs = (num: number): string => {
+    const toFixedDuration = (num: number): string => {
       if (num < 1000) {
         return `${num.toFixed(0)}ms`;
       }
