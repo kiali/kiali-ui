@@ -279,7 +279,7 @@ class ChartWithLegend<T extends RichDataPoint, O extends LineInfo> extends React
             name={'serie-legend'}
             data={filteredLegendData}
             x={0}
-            y={this.props.chartHeight}
+            y={chartHeight}
             height={LEGEND_HEIGHT}
             width={this.state.width}
             style={{
