@@ -39,6 +39,7 @@ export const routeLink = (
         <React.Fragment>
           <a
             onClick={() => {
+              // Changing to history API because first we need to change the URL for the handler to pick the correct params
               history.push(
                 `/namespaces/${namespace}/workloads/${workload}?envoy_tab=routes&tab=envoy&name=${result[1]}`
               );

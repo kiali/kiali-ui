@@ -22,7 +22,6 @@ import { DashboardRef } from 'types/Runtimes';
 import CustomMetricsContainer from 'components/Metrics/CustomMetrics';
 import { serverConfig } from 'config';
 import ParameterizedTabs, { activeTab } from 'components/Tab/Tabs';
-import history from '../../app/History';
 
 // Enables the search box for the ACEeditor
 require('ace-builds/src-noconflict/ext-searchbox');
@@ -59,7 +58,7 @@ type EnvoyDetailsState = {
   fetch: boolean;
   currentTab: string;
   tabHeight: number;
-  urlParams: URLSearchParams;
+  filterChange: boolean;
 };
 
 const fullHeightStyle = style({
@@ -80,7 +79,7 @@ class EnvoyDetails extends React.Component<EnvoyDetailsProps, EnvoyDetailsState>
       currentTab: activeTab('envoy_tab', 'clusters'),
       tabHeight: 300,
       fetch: true,
-      urlParams: new URLSearchParams(history.location.search),
+      filterChange: false,
       tableSortBy: {
         clusters: {
           index: 0,
@@ -106,7 +105,6 @@ class EnvoyDetails extends React.Component<EnvoyDetailsProps, EnvoyDetailsState>
     if (this.state.pod.name !== prevState.pod.name || this.state.currentTab !== prevState.currentTab) {
       this.fetchContent();
     }
-    console.log(this.state.urlParams.get('name'));
   }
 
   envoyHandleTabClick = resource => {
