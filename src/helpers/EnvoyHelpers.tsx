@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import { EnvoySummary, Host } from '../types/IstioObjects';
 import { ActiveFilter, ActiveFiltersInfo } from '../types/Filters';
 import { FilterSelected } from '../components/Filters/StatefulFilters';
+import history from '../app/History';
 
 export type FilterMethodMap = { [id: string]: (value, filter) => boolean };
 
@@ -23,7 +24,12 @@ export const istioConfigLink = (halfQDN: string, objectType: string): JSX.Elemen
   return halfQDN;
 };
 
-export const routeLink = (route: string, namespace: string, workload: string | undefined): JSX.Element | string => {
+export const routeLink = (
+  route: string,
+  namespace: string,
+  workload: string | undefined,
+  handler: () => void
+): JSX.Element | string => {
   let re = /Route: (\d*)/;
 
   if (workload !== undefined) {
@@ -31,9 +37,16 @@ export const routeLink = (route: string, namespace: string, workload: string | u
     if (result && result[1]) {
       return (
         <React.Fragment>
-          <Link to={`/namespaces/${namespace}/workloads/${workload}?envoy_tab=routes&tab=envoy&name=${result[1]}`}>
+          <a
+            onClick={() => {
+              history.push(
+                `/namespaces/${namespace}/workloads/${workload}?envoy_tab=routes&tab=envoy&name=${result[1]}`
+              );
+              handler();
+            }}
+          >
             {route}
-          </Link>
+          </a>
         </React.Fragment>
       );
     }

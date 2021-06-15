@@ -103,6 +103,7 @@ export const SummaryTableBuilder = (
   sortBy: ResourceSorts,
   namespaces: Namespace[],
   namespace: string,
+  handler: () => void,
   workload?: string
 ) => {
   let writerComp, writerProps;
@@ -114,7 +115,14 @@ export const SummaryTableBuilder = (
       break;
     case 'listeners':
       writerComp = ListenerSummaryTable;
-      writerProps = new ListenerTable(config.listeners || [], sortBy['listeners'], namespaces, namespace, workload);
+      writerProps = new ListenerTable(
+        config.listeners || [],
+        sortBy['listeners'],
+        namespaces,
+        namespace,
+        workload,
+        handler
+      );
       break;
     case 'routes':
       writerComp = RouteSummaryTable;

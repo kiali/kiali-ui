@@ -22,6 +22,7 @@ import { DashboardRef } from 'types/Runtimes';
 import CustomMetricsContainer from 'components/Metrics/CustomMetrics';
 import { serverConfig } from 'config';
 import ParameterizedTabs, { activeTab } from 'components/Tab/Tabs';
+import history from '../../app/History';
 
 // Enables the search box for the ACEeditor
 require('ace-builds/src-noconflict/ext-searchbox');
@@ -58,6 +59,7 @@ type EnvoyDetailsState = {
   fetch: boolean;
   currentTab: string;
   tabHeight: number;
+  urlParams: URLSearchParams;
 };
 
 const fullHeightStyle = style({
@@ -78,6 +80,7 @@ class EnvoyDetails extends React.Component<EnvoyDetailsProps, EnvoyDetailsState>
       currentTab: activeTab('envoy_tab', 'clusters'),
       tabHeight: 300,
       fetch: true,
+      urlParams: new URLSearchParams(history.location.search),
       tableSortBy: {
         clusters: {
           index: 0,
@@ -100,13 +103,10 @@ class EnvoyDetails extends React.Component<EnvoyDetailsProps, EnvoyDetailsState>
   }
 
   componentDidUpdate(_prevProps: EnvoyDetailsProps, prevState: EnvoyDetailsState) {
-    const currentTab = activeTab('envoy_tab', 'clusters');
     if (this.state.pod.name !== prevState.pod.name || this.state.currentTab !== prevState.currentTab) {
       this.fetchContent();
     }
-    if (currentTab !== prevState.currentTab) {
-      this.setState({ currentTab: currentTab });
-    }
+    console.log(this.state.urlParams.get('name'));
   }
 
   envoyHandleTabClick = resource => {
@@ -114,7 +114,7 @@ class EnvoyDetails extends React.Component<EnvoyDetailsProps, EnvoyDetailsState>
       this.setState({
         config: {},
         fetch: true,
-        currentTab: activeTab('envoy_tab', resource)
+        currentTab: activeTab('envoy_tab', 'clusters')
       });
     }
   };
@@ -215,6 +215,14 @@ class EnvoyDetails extends React.Component<EnvoyDetailsProps, EnvoyDetailsState>
     return Object.keys(this.state.config).length < 1;
   };
 
+  onRouteLinkEvent = () => {
+    this.setState({
+      config: {},
+      fetch: true,
+      currentTab: activeTab('envoy_tab', 'clusters')
+    });
+  };
+
   render() {
     const builder = SummaryTableBuilder(
       this.state.currentTab,
@@ -222,6 +230,7 @@ class EnvoyDetails extends React.Component<EnvoyDetailsProps, EnvoyDetailsState>
       this.state.tableSortBy,
       this.props.namespaces,
       this.props.namespace,
+      this.onRouteLinkEvent,
       this.props.workload.name
     );
     const SummaryWriterComp = builder[0];
