@@ -187,7 +187,8 @@ class CustomMetrics extends React.Component<Props, MetricsState> {
   render() {
     const urlParams = new URLSearchParams(history.location.search);
     const expandedChart = urlParams.get('expand') || undefined;
-    const toolbarSpace = 40 + 51 + 15;
+    // 20px (card margin) + 24px (card padding) + 51px (toolbar) + 15px (toolbar padding) + 24px (card padding) + 20px (card margin)
+    const toolbarSpace = 20 + 24 + 51 + 15 + 24 + 20;
     const dashboardHeight = (this.props.height ? this.props.height : this.state.tabHeight) - toolbarSpace;
 
     const dashboard = this.state.dashboard && (
@@ -239,18 +240,21 @@ class CustomMetrics extends React.Component<Props, MetricsState> {
   private renderOptionsBar() {
     const hasHistograms =
       this.state.dashboard !== undefined && this.state.dashboard.charts.some(chart => chart.metrics.some(m => m.stat));
+    const hasLabels = this.state.labelsSettings.size > 0;
     return (
       <Toolbar style={{ paddingBottom: 15 }}>
-        <ToolbarGroup>
-          <ToolbarItem>
-            <MetricsSettingsDropdown
-              onChanged={this.onMetricsSettingsChanged}
-              onLabelsFiltersChanged={this.onLabelsFiltersChanged}
-              labelsSettings={this.state.labelsSettings}
-              hasHistograms={hasHistograms}
-            />
-          </ToolbarItem>
-        </ToolbarGroup>
+        {(hasHistograms || hasLabels) && (
+          <ToolbarGroup>
+            <ToolbarItem>
+              <MetricsSettingsDropdown
+                onChanged={this.onMetricsSettingsChanged}
+                onLabelsFiltersChanged={this.onLabelsFiltersChanged}
+                labelsSettings={this.state.labelsSettings}
+                hasHistograms={hasHistograms}
+              />
+            </ToolbarItem>
+          </ToolbarGroup>
+        )}
         <ToolbarGroup>
           <ToolbarItem className={displayFlex}>
             <MetricsRawAggregation onChanged={this.onRawAggregationChanged} />
