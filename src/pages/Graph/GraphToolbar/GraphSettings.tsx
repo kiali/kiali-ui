@@ -159,9 +159,9 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
         isChecked: edgeLabels.includes(EdgeLabelMode.REQUEST_RATE),
         tooltip: (
           <div style={{ textAlign: 'left' }}>
-            HTTP and GRPC rates are in requests-per-second. When The percentage of error responses is shown below the
-            rate, when non-zero, in parentheses. TCP rates are sent bytes in bps (bytes-per-sec) or kps
-            (kilobytes-per-sec). Rates are rounded to 2 significant digits.
+            HTTP and gRPC rates are in requests-per-second (rps). When non-zero, the percentage of error responses is
+            shown below the rate. TCP rates are sent-bytes. The unit is bytes-per-second (bps) when less than 1024,
+            otherwise kilobytes-per-second (kps). Rates are rounded to 2 significant digits.
           </div>
         )
       },
@@ -171,10 +171,13 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
         isChecked: edgeLabels.includes(EdgeLabelMode.RESPONSE_TIME_GROUP),
         tooltip: (
           <div style={{ textAlign: 'left' }}>
-            <div>Displays the requested response time. Default: 95th Percentile.</div>
+            <div>
+              Displays the requested response time. The unit is milliseconds (ms) when less than 1000, otherwise seconds
+              (s). Default: 95th Percentile.
+            </div>
             <div>
               The following edges do not offer a response time label but the information is available in the side panel
-              by selecting the edge:
+              when selecting the edge:
             </div>
             <div>- edges into service nodes</div>
             <div>- edges into or out of operation nodes.</div>
@@ -187,7 +190,10 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
         isChecked: edgeLabels.includes(EdgeLabelMode.THROUGHPUT_GROUP),
         tooltip: (
           <div style={{ textAlign: 'left' }}>
-            <div>Displays HTTP Throughput in bps (bytes-per-sec) or kps (kilobytes-per-sec). Default: Request</div>
+            <div>
+              Displays the requested HTTP Throughput. The unit is bytes-per-second (bps) when less than 1024, otherwise
+              kilobytes-per-second (kps). Default: Request Throughput
+            </div>
             <div>The following edges do not offer a throughput label:</div>
             <div>- edges into service nodes</div>
             <div>- edges into or out of operation nodes.</div>
@@ -200,9 +206,9 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
         isChecked: edgeLabels.includes(EdgeLabelMode.REQUEST_DISTRIBUTION),
         tooltip: (
           <div style={{ textAlign: 'left' }}>
-            HTTP and GRPC Edges display the percentage of outbound requests for that edge. For a source node, the sum
-            for outbound edges should be equal to or near 100%, given rounding. TCP edges are not included in the
-            distribution because their rates reflect bytes sent, not requests sent.
+            HTTP and gRPC Edges display the percentage of outbound requests for that edge, when less than 100%. For a
+            source node, the sum for outbound edges (per protocol) should be equal to or near 100%, given rounding. TCP
+            edges are not included in the distribution because their rates reflect bytes sent, not requests sent.
           </div>
         )
       }
@@ -213,13 +219,21 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
         id: EdgeLabelMode.THROUGHPUT_REQUEST,
         labelText: 'Request',
         isChecked: edgeLabels.includes(EdgeLabelMode.THROUGHPUT_REQUEST),
-        tooltip: <div style={{ textAlign: 'left' }}>HTTP request data in bytes per second</div>
+        tooltip: (
+          <div style={{ textAlign: 'left' }}>
+            HTTP request data in bytes-per-second (bps) or kilobytes-per-second (kps)
+          </div>
+        )
       },
       {
         id: EdgeLabelMode.THROUGHPUT_RESPONSE,
         labelText: 'Response',
         isChecked: edgeLabels.includes(EdgeLabelMode.THROUGHPUT_RESPONSE),
-        tooltip: <div style={{ textAlign: 'left' }}>HTTP response data in bytes per second</div>
+        tooltip: (
+          <div style={{ textAlign: 'left' }}>
+            HTTP response data in bytes per second (bps) or kilobytes-per-second (kps)
+          </div>
+        )
       }
     ];
 
@@ -256,11 +270,7 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
         labelText: 'Cluster Boxes',
         isChecked: boxByCluster,
         onChange: toggleBoxByCluster,
-        tooltip: (
-          <div style={{ textAlign: 'left' }}>
-            <strong>Experimental:</strong> When enabled the graph will box nodes in the same cluster.
-          </div>
-        )
+        tooltip: <div style={{ textAlign: 'left' }}>When enabled the graph will box nodes in the same cluster.</div>
       },
       {
         id: 'boxByNamespace',
@@ -371,20 +381,6 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
         onChange: toggleGraphMissingSidecars
       },
       {
-        id: 'filterVS',
-        labelText: 'Virtual Services',
-        isChecked: showVirtualServices,
-        onChange: toggleGraphVirtualServices,
-        tooltip: (
-          <div style={{ textAlign: 'left' }}>
-            <div>
-              Show virtual service related icons. Additional icons are displayed if a circuit breaker is present on the
-              virtual service or if the virtual service was created through one of the Kiali service wizards.
-            </div>
-          </div>
-        )
-      },
-      {
         id: 'filterSecurity',
         labelText: 'Security',
         isChecked: showSecurity,
@@ -396,6 +392,20 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
               percentage of mTLS traffic can be seen in the side-panel when selecting the edge. Note that the global
               masthead will show a lock icon when global mTLS is enabled. The side-panel will also display source and
               destination principals, if available.
+            </div>
+          </div>
+        )
+      },
+      {
+        id: 'filterVS',
+        labelText: 'Virtual Services',
+        isChecked: showVirtualServices,
+        onChange: toggleGraphVirtualServices,
+        tooltip: (
+          <div style={{ textAlign: 'left' }}>
+            <div>
+              Show virtual service related icons. Additional icons are displayed if a circuit breaker is present on the
+              virtual service or if the virtual service was created through one of the Kiali service wizards.
             </div>
           </div>
         )
@@ -415,7 +425,14 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
             <Tooltip
               key="tooltip_show_edge_labels"
               position={TooltipPosition.right}
-              content="Values for multiple label selections are stacked in the same order as the options below."
+              content={
+                <div style={{ textAlign: 'left' }}>
+                  <div>
+                    Values for multiple label selections are stacked in the same order as the options below. Hover or
+                    selection will always show units, an additionally show protocol.
+                  </div>
+                </div>
+              }
             >
               <KialiIcon.Info className={infoStyle} />
             </Tooltip>

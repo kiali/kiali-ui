@@ -428,7 +428,7 @@ export class GraphStyles {
         }
 
         if (rate > 0) {
-          if (pErr > 0 && isVerbose) {
+          if (pErr > 0) {
             labels.push(`${toFixedRequestRate(rate, includeUnits)}\n${toFixedErrRate(pErr)}`);
           } else {
             if (edgeData.protocol === Protocol.TCP) {
@@ -469,7 +469,7 @@ export class GraphStyles {
         } else if (edgeData.grpcPercentReq > 0) {
           pReq = edgeData.grpcPercentReq;
         }
-        if (pReq > 0) {
+        if (pReq > 0 && pReq < 100) {
           labels.push(toFixedPercent(pReq));
         }
       }
@@ -510,6 +510,9 @@ export class GraphStyles {
     };
 
     const trimFixed = (fixed: string): string => {
+      if (!fixed.includes('.')) {
+        return fixed;
+      }
       while (fixed.endsWith('0')) {
         fixed = fixed.slice(0, -1);
       }
