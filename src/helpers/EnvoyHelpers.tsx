@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import { EnvoySummary, Host } from '../types/IstioObjects';
 import { ActiveFilter, ActiveFiltersInfo } from '../types/Filters';
 import { FilterSelected } from '../components/Filters/StatefulFilters';
-import history from '../app/History';
+import { HistoryManager, URLParam } from '../app/History';
 
 export type FilterMethodMap = { [id: string]: (value, filter) => boolean };
 
@@ -31,7 +31,7 @@ export const routeLink = (
   handler: () => void
 ): JSX.Element | string => {
   let re = /Route: (\d*)/;
-
+  console.log(namespace);
   if (workload !== undefined) {
     const result = route.match(re);
     if (result && result[1]) {
@@ -39,10 +39,8 @@ export const routeLink = (
         <React.Fragment>
           <a
             onClick={() => {
-              // Changing to history API because first we need to change the URL for the handler to pick the correct params
-              history.push(
-                `/namespaces/${namespace}/workloads/${workload}?envoy_tab=routes&tab=envoy&name=${result[1]}`
-              );
+              HistoryManager.setParam(URLParam.NAME, result[1]);
+              HistoryManager.setParam(URLParam.ENVOY_TAB, 'routes');
               handler();
             }}
           >

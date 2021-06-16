@@ -22,9 +22,14 @@ import { DashboardRef } from 'types/Runtimes';
 import CustomMetricsContainer from 'components/Metrics/CustomMetrics';
 import { serverConfig } from 'config';
 import ParameterizedTabs, { activeTab } from 'components/Tab/Tabs';
+import { FilterSelected } from 'components/Filters/StatefulFilters';
 
 // Enables the search box for the ACEeditor
 require('ace-builds/src-noconflict/ext-searchbox');
+
+const tabName = 'envoy_tab';
+const parentTabName = 'tab';
+const defaultTab = 'clusters';
 
 const iconStyle = style({
   display: 'inline-block',
@@ -76,7 +81,7 @@ class EnvoyDetails extends React.Component<EnvoyDetailsProps, EnvoyDetailsState>
     this.state = {
       pod: this.sortedPods()[0],
       config: {},
-      currentTab: activeTab('envoy_tab', 'clusters'),
+      currentTab: activeTab(tabName, defaultTab),
       tabHeight: 300,
       fetch: true,
       filterChange: false,
@@ -112,7 +117,7 @@ class EnvoyDetails extends React.Component<EnvoyDetailsProps, EnvoyDetailsState>
       this.setState({
         config: {},
         fetch: true,
-        currentTab: activeTab('envoy_tab', 'clusters')
+        currentTab: activeTab(tabName, defaultTab)
       });
     }
   };
@@ -213,12 +218,15 @@ class EnvoyDetails extends React.Component<EnvoyDetailsProps, EnvoyDetailsState>
     return Object.keys(this.state.config).length < 1;
   };
 
-  onRouteLinkEvent = () => {
+  onRouteLinkClick = () => {
     this.setState({
       config: {},
       fetch: true,
-      currentTab: activeTab('envoy_tab', 'clusters')
+      currentTab: activeTab(tabName, defaultTab)
     });
+
+    // Forcing to regenerate the active filters
+    FilterSelected.resetFilters();
   };
 
   render() {
@@ -228,7 +236,7 @@ class EnvoyDetails extends React.Component<EnvoyDetailsProps, EnvoyDetailsState>
       this.state.tableSortBy,
       this.props.namespaces,
       this.props.namespace,
-      this.onRouteLinkEvent,
+      this.onRouteLinkClick,
       this.props.workload.name
     );
     const SummaryWriterComp = builder[0];
@@ -314,8 +322,11 @@ class EnvoyDetails extends React.Component<EnvoyDetailsProps, EnvoyDetailsState>
               activeTab={this.state.currentTab}
               onSelect={this.envoyHandleTabClick}
               tabMap={paramToTab}
-              tabName="envoy_tab"
-              defaultTab="clusters"
+              tabName={tabName}
+              defaultTab={defaultTab}
+              parentTabName={parentTabName}
+              mountOnEnter={true}
+              unmountOnExit={true}
             >
               {tabs}
             </ParameterizedTabs>

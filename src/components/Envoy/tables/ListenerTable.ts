@@ -13,14 +13,15 @@ export class ListenerTable implements SummaryTable {
   namespaces: Namespace[];
   namespace: string;
   workload: string | undefined;
-  handler: () => void;
+  routeLinkHandler: () => void;
+
   constructor(
     summaries: ListenerSummary[],
     sortBy: ISortBy,
     namespaces: Namespace[],
     namespace: string,
     workload: string | undefined,
-    handler: () => void
+    routeLinkHandler: () => void
   ) {
     this.summaries = summaries;
     this.sortingIndex = sortBy.index || 0;
@@ -28,7 +29,7 @@ export class ListenerTable implements SummaryTable {
     this.namespaces = namespaces;
     this.namespace = namespace;
     this.workload = workload;
-    this.handler = handler;
+    this.routeLinkHandler = routeLinkHandler;
   }
 
   availableFilters = (): FilterType[] => {
@@ -165,7 +166,7 @@ export class ListenerTable implements SummaryTable {
           summary.address,
           summary.port,
           summary.match,
-          routeLink(summary.destination, this.namespace, this.workload, this.handler)
+          routeLink(summary.destination, this.namespace, this.workload, this.routeLinkHandler)
         ];
       });
   }
