@@ -222,7 +222,7 @@ class EnvoyDetails extends React.Component<EnvoyDetailsProps, EnvoyDetailsState>
     this.setState({
       config: {},
       fetch: true,
-      currentTab: activeTab(tabName, defaultTab)
+      currentTab: 'routes'
     });
 
     // Forcing to regenerate the active filters

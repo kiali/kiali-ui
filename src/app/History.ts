@@ -44,9 +44,7 @@ export enum URLParam {
   SHOW_SPANS = 'spans',
   SORT = 'sort',
   TO = 'to',
-  EXPERIMENTAL_FLAGS = 'xflags',
-  NAME = 'name',
-  ENVOY_TAB = 'envoy_tab'
+  EXPERIMENTAL_FLAGS = 'xflags'
 }
 
 export interface URLParamValue {
