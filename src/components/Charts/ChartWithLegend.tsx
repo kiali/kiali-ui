@@ -58,12 +58,18 @@ const AxisStyle = {
   }
 };
 
+const MIN_HEIGHT = 30;
 const MIN_WIDTH = 275;
 const LEGEND_HEIGHT = 25;
 const FONT_SIZE_LEGEND = 14;
 
 const moreLegendIconStyle = style({
   margin: '0px 5px 2px 10px',
+  verticalAlign: '-4px !important'
+});
+
+const noEnoughHeightStyle = style({
+  margin: '0px 0px 0px 0px',
   verticalAlign: '-4px !important'
 });
 
@@ -176,7 +182,7 @@ class ChartWithLegend<T extends RichDataPoint, O extends LineInfo> extends React
     );
     const filteredData = this.props.data.filter(s => !this.state.hiddenSeries.has(s.legendItem.name));
 
-    return (
+    const chart = (
       <div ref={this.containerRef} style={{ marginTop: '0px', height: chartHeight }}>
         <Chart
           width={this.state.width}
@@ -354,6 +360,21 @@ class ChartWithLegend<T extends RichDataPoint, O extends LineInfo> extends React
             ))}
           </div>
         )}
+      </div>
+    );
+
+    return chartHeight > MIN_HEIGHT ? (
+      chart
+    ) : (
+      <div>
+        <Tooltip
+          position={TooltipPosition.right}
+          content={<div style={{ textAlign: 'left' }}>Increase height of the chart</div>}
+        >
+          <Button variant={ButtonVariant.link} isInline>
+            <KialiIcon.MoreLegend className={noEnoughHeightStyle} />
+          </Button>
+        </Tooltip>
       </div>
     );
   }
