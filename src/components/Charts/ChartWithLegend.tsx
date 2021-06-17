@@ -301,7 +301,7 @@ class ChartWithLegend<T extends RichDataPoint, O extends LineInfo> extends React
             symbolSpacer={5}
             gutter={{
               left: 0,
-              right: 0
+              right: 15
             }}
           />
         </Chart>
@@ -454,8 +454,9 @@ class ChartWithLegend<T extends RichDataPoint, O extends LineInfo> extends React
   }
 
   private buildFilteredLegendData(fullLegendData: LegendItem[]): LegendItem[] {
-    // 31px == "more legend" left button width
-    const maxWidth = this.state.width - 30;
+    // 30px == "more legend" left button width
+    // 10px == "more legend" left padding
+    const maxWidth = this.state.width - 30 - 10;
     const filtered: LegendItem[] = [];
     let currentWidth = 0;
     for (let i = 0; i < fullLegendData.length; i++) {
