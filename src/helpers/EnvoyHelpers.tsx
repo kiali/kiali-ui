@@ -29,7 +29,7 @@ export const routeLink = (
   workload: string | undefined,
   handler: () => void
 ): JSX.Element | string => {
-  let re = /Route: (\d*)/;
+  let re = /Route: ([a-z-.:\d]*)/;
 
   if (workload !== undefined) {
     const result = route.match(re);
