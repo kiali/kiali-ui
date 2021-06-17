@@ -7,7 +7,17 @@ import { Workload } from 'types/Workload';
 import { EnvoyProxyDump, Pod } from 'types/IstioObjects';
 import * as API from '../../services/Api';
 import * as AlertUtils from '../../utils/AlertUtils';
-import { Button, ButtonVariant, Card, CardBody, Grid, GridItem, Tab, TooltipPosition } from '@patternfly/react-core';
+import {
+  Button,
+  ButtonVariant,
+  Card,
+  CardBody,
+  Grid,
+  GridItem,
+  Tab,
+  Tabs,
+  TooltipPosition
+} from '@patternfly/react-core';
 import { SummaryTableBuilder } from './tables/BaseTable';
 import Namespace from 'types/Namespace';
 import { style } from 'typestyle';
@@ -21,15 +31,12 @@ import { RenderComponentScroll } from 'components/Nav/Page';
 import { DashboardRef } from 'types/Runtimes';
 import CustomMetricsContainer from 'components/Metrics/CustomMetrics';
 import { serverConfig } from 'config';
-import ParameterizedTabs, { activeTab } from 'components/Tab/Tabs';
 import { FilterSelected } from 'components/Filters/StatefulFilters';
 
 // Enables the search box for the ACEeditor
 require('ace-builds/src-noconflict/ext-searchbox');
 
-const tabName = 'envoy_tab';
-const parentTabName = 'tab';
-const defaultTab = 'clusters';
+const resources: string[] = ['clusters', 'listeners', 'routes', 'bootstrap', 'config', 'metrics'];
 
 const iconStyle = style({
   display: 'inline-block',
@@ -61,9 +68,9 @@ type EnvoyDetailsState = {
   pod: Pod;
   tableSortBy: ResourceSorts;
   fetch: boolean;
-  currentTab: string;
   tabHeight: number;
-  filterChange: boolean;
+  activeKey: number;
+  resource: string;
 };
 
 const fullHeightStyle = style({
@@ -81,10 +88,10 @@ class EnvoyDetails extends React.Component<EnvoyDetailsProps, EnvoyDetailsState>
     this.state = {
       pod: this.sortedPods()[0],
       config: {},
-      currentTab: activeTab(tabName, defaultTab),
       tabHeight: 300,
       fetch: true,
-      filterChange: false,
+      activeKey: 0,
+      resource: 'clusters',
       tableSortBy: {
         clusters: {
           index: 0,
@@ -107,17 +114,20 @@ class EnvoyDetails extends React.Component<EnvoyDetailsProps, EnvoyDetailsState>
   }
 
   componentDidUpdate(_prevProps: EnvoyDetailsProps, prevState: EnvoyDetailsState) {
-    if (this.state.pod.name !== prevState.pod.name || this.state.currentTab !== prevState.currentTab) {
+    if (this.state.pod.name !== prevState.pod.name || this.state.resource !== prevState.resource) {
       this.fetchContent();
     }
   }
 
-  envoyHandleTabClick = resource => {
-    if (resource !== this.state.currentTab) {
+  envoyHandleTabClick = (_event, tabIndex) => {
+    const resourceIdx: number = +tabIndex;
+    const targetResource: string = resources[resourceIdx];
+    if (targetResource !== this.state.resource) {
       this.setState({
         config: {},
         fetch: true,
-        currentTab: activeTab(tabName, defaultTab)
+        resource: targetResource,
+        activeKey: tabIndex
       });
     }
   };
@@ -150,10 +160,10 @@ class EnvoyDetails extends React.Component<EnvoyDetailsProps, EnvoyDetailsState>
 
   fetchContent = () => {
     if (this.state.fetch === true) {
-      if (this.state.currentTab === 'config') {
+      if (this.state.resource === 'config') {
         this.fetchEnvoyProxy();
       } else {
-        this.fetchEnvoyProxyResourceEntries(this.state.currentTab);
+        this.fetchEnvoyProxyResourceEntries(this.state.resource);
       }
     }
   };
@@ -195,11 +205,11 @@ class EnvoyDetails extends React.Component<EnvoyDetailsProps, EnvoyDetailsState>
   };
 
   showEditor = () => {
-    return this.state.currentTab === 'config' || this.state.currentTab === 'bootstrap';
+    return this.state.resource === 'config' || this.state.resource === 'bootstrap';
   };
 
   showMetrics = () => {
-    return this.state.currentTab === 'metrics';
+    return this.state.resource === 'metrics';
   };
 
   getEnvoyMetricsDashboardRef = (): DashboardRef | undefined => {
@@ -222,7 +232,8 @@ class EnvoyDetails extends React.Component<EnvoyDetailsProps, EnvoyDetailsState>
     this.setState({
       config: {},
       fetch: true,
-      currentTab: 'routes'
+      resource: 'routes',
+      activeKey: 2 // Routes index
     });
 
     // Forcing to regenerate the active filters
@@ -231,7 +242,7 @@ class EnvoyDetails extends React.Component<EnvoyDetailsProps, EnvoyDetailsState>
 
   render() {
     const builder = SummaryTableBuilder(
-      this.state.currentTab,
+      this.state.resource,
       this.state.config,
       this.state.tableSortBy,
       this.props.namespaces,
@@ -317,19 +328,9 @@ class EnvoyDetails extends React.Component<EnvoyDetailsProps, EnvoyDetailsState>
       <RenderComponentScroll onResize={height => this.setState({ tabHeight: height })}>
         <Grid>
           <GridItem span={12}>
-            <ParameterizedTabs
-              id="envoy-details"
-              activeTab={this.state.currentTab}
-              onSelect={this.envoyHandleTabClick}
-              tabMap={paramToTab}
-              tabName={tabName}
-              defaultTab={defaultTab}
-              parentTabName={parentTabName}
-              mountOnEnter={true}
-              unmountOnExit={true}
-            >
+            <Tabs id="envoy-details" activeKey={this.state.activeKey} onSelect={this.envoyHandleTabClick}>
               {tabs}
-            </ParameterizedTabs>
+            </Tabs>
           </GridItem>
         </Grid>
       </RenderComponentScroll>
