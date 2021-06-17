@@ -14,6 +14,7 @@ import {
 import { WorkloadWeight } from '../TrafficShifting';
 import { Abort, Delay, HTTPRetry } from '../../../types/IstioObjects';
 import { PFBadge, PFBadges } from 'components/Pf/PfBadges';
+import { RULES_DEFINED_TOOLTIP, wizardTooltip } from '../WizardHelp';
 
 export enum MOVE_TYPE {
   UP,
@@ -219,7 +220,8 @@ class Rules extends React.Component<Props> {
 
     return (
       <>
-        Rules defined:
+        Rules defined
+        {wizardTooltip(RULES_DEFINED_TOOLTIP)}
         <Table
           aria-label="Rules Created"
           cells={headerCells}

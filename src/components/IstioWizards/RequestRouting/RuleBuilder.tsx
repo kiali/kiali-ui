@@ -8,6 +8,7 @@ import TrafficShifting, { WorkloadWeight } from '../TrafficShifting';
 import FaultInjection, { FaultInjectionRoute } from '../FaultInjection';
 import { PFColors } from '../../Pf/PfColors';
 import RequestTimeouts, { TimeoutRetryRoute } from '../RequestTimeouts';
+import { RULE_BUILDER_TOOLTIP, wizardTooltip } from '../WizardHelp';
 
 type Props = {
   // MatchBuilder props
@@ -81,6 +82,14 @@ class RuleBuilder extends React.Component<Props, State> {
   render() {
     return (
       <>
+        <div
+          style={{
+            marginBottom: 10
+          }}
+        >
+          Rule builder
+          {wizardTooltip(RULE_BUILDER_TOOLTIP)}
+        </div>
         <Tabs isFilled={true} activeKey={this.state.ruleTabKey} onSelect={this.ruleHandleTabClick}>
           <Tab eventKey={0} title={'Request Matching'}>
             <div style={{ marginTop: '20px' }}>

@@ -466,7 +466,7 @@ class ServiceWizard extends React.Component<ServiceWizardProps, ServiceWizardSta
     const [gatewaySelected, isMesh] = getInitGateway(this.props.virtualServices);
     return (
       <Modal
-        width={'50%'}
+        width={'75%'}
         title={
           this.props.type.length > 0
             ? this.props.update
