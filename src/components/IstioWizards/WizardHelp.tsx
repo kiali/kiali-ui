@@ -29,3 +29,24 @@ export const RULES_DEFINED_TOOLTIP = (
     <div>Another paragraph</div>
   </>
 );
+
+export const REQUEST_MATCHING_TOOLTIP = (
+  <>
+    Request matching tooltip
+    <div>Another paragraph</div>
+  </>
+);
+
+export const FAULT_INJECTION_TOOLTIP = (
+  <>
+    Fault injection tooltip
+    <div>Another paragraph</div>
+  </>
+);
+
+export const REQUEST_TIMEOUTS_TOOLTIP = (
+  <>
+    Request Timeouts tooltip
+    <div>Another paragraph</div>
+  </>
+);

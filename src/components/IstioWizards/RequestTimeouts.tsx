@@ -5,6 +5,7 @@ import { isValidDuration } from '../../utils/IstioConfigUtils';
 import { WorkloadWeight } from './TrafficShifting';
 import RouteTimeout from './RequestTimeouts/RouteTimeout';
 import RouteRetry from './RequestTimeouts/RouteRetry';
+import { REQUEST_TIMEOUTS_TOOLTIP, wizardTooltip } from './WizardHelp';
 
 type Props = {
   initTimeoutRetry: TimeoutRetryRoute;
@@ -124,26 +125,30 @@ class RequestTimeouts extends React.Component<Props, State> {
 
   render() {
     return (
-      <Form
-        isHorizontal={true}
-        style={{
-          paddingTop: 10,
-          paddingBottom: 10
-        }}
-      >
-        <RouteTimeout
-          isTimeout={this.state.timeoutRetryRoute.isTimeout}
-          timeout={this.state.timeoutRetryRoute.timeout}
-          isValid={this.state.timeoutRetryRoute.isValidTimeout}
-          onTimeout={(isTimeout, timeout) => this.updateTimeout(isTimeout, timeout)}
-        />
-        <RouteRetry
-          isRetry={this.state.timeoutRetryRoute.isRetry}
-          retries={this.state.timeoutRetryRoute.retries}
-          isValidRetry={this.state.timeoutRetryRoute.isValidRetry}
-          onRetry={(isRetry, retries) => this.updateRetry(isRetry, retries)}
-        />
-      </Form>
+      <>
+        Timeout and Retry policy
+        {wizardTooltip(REQUEST_TIMEOUTS_TOOLTIP)}
+        <Form
+          isHorizontal={true}
+          style={{
+            paddingTop: 10,
+            paddingBottom: 10
+          }}
+        >
+          <RouteTimeout
+            isTimeout={this.state.timeoutRetryRoute.isTimeout}
+            timeout={this.state.timeoutRetryRoute.timeout}
+            isValid={this.state.timeoutRetryRoute.isValidTimeout}
+            onTimeout={(isTimeout, timeout) => this.updateTimeout(isTimeout, timeout)}
+          />
+          <RouteRetry
+            isRetry={this.state.timeoutRetryRoute.isRetry}
+            retries={this.state.timeoutRetryRoute.retries}
+            isValidRetry={this.state.timeoutRetryRoute.isValidRetry}
+            onRetry={(isRetry, retries) => this.updateRetry(isRetry, retries)}
+          />
+        </Form>
+      </>
     );
   }
 }

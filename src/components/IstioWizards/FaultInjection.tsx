@@ -5,6 +5,7 @@ import { Abort, Delay } from '../../types/IstioObjects';
 import { Form } from '@patternfly/react-core';
 import { isValidAbortStatusCode, isValidDuration } from '../../utils/IstioConfigUtils';
 import { WorkloadWeight } from './TrafficShifting';
+import { FAULT_INJECTION_TOOLTIP, wizardTooltip } from './WizardHelp';
 
 type Props = {
   initFaultInjectionRoute: FaultInjectionRoute;
@@ -123,26 +124,30 @@ class FaultInjection extends React.Component<Props, State> {
 
   render() {
     return (
-      <Form
-        isHorizontal={true}
-        style={{
-          paddingTop: 10,
-          paddingBottom: 10
-        }}
-      >
-        <DelayFault
-          delayed={this.state.faultInjectionRoute.delayed}
-          delay={this.state.faultInjectionRoute.delay}
-          isValid={this.state.faultInjectionRoute.isValidDelay}
-          onDelay={(delayed, delay) => this.updateDelay(delayed, delay)}
-        />
-        <AbortFault
-          aborted={this.state.faultInjectionRoute.aborted}
-          abort={this.state.faultInjectionRoute.abort}
-          isValid={this.state.faultInjectionRoute.isValidAbort}
-          onAbort={(aborted, abort) => this.updateAbort(aborted, abort)}
-        />
-      </Form>
+      <>
+        Fault injection policy
+        {wizardTooltip(FAULT_INJECTION_TOOLTIP)}
+        <Form
+          isHorizontal={true}
+          style={{
+            paddingTop: 10,
+            paddingBottom: 10
+          }}
+        >
+          <DelayFault
+            delayed={this.state.faultInjectionRoute.delayed}
+            delay={this.state.faultInjectionRoute.delay}
+            isValid={this.state.faultInjectionRoute.isValidDelay}
+            onDelay={(delayed, delay) => this.updateDelay(delayed, delay)}
+          />
+          <AbortFault
+            aborted={this.state.faultInjectionRoute.aborted}
+            abort={this.state.faultInjectionRoute.abort}
+            isValid={this.state.faultInjectionRoute.isValidAbort}
+            onAbort={(aborted, abort) => this.updateAbort(aborted, abort)}
+          />
+        </Form>
+      </>
     );
   }
 }
