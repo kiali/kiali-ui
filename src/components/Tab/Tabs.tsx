@@ -12,7 +12,6 @@ type TabsProps = {
   tabMap: { [key: string]: number };
   tabName: string;
   unmountOnExit?: boolean;
-  parentTabName?: string;
 };
 
 export const activeTab = (tabName: string, defaultTab: string): string => {
@@ -70,17 +69,7 @@ export default class ParameterizedTabs extends React.Component<TabsProps> {
   };
 
   tabSelectHandler = (tabKey: string) => {
-    let urlParams = new URLSearchParams('');
-
-    if (this.props.parentTabName) {
-      const currentUrlParams = new URLSearchParams(history.location.search);
-      const parentTabNameValue = currentUrlParams.get(this.props.parentTabName);
-
-      if (parentTabNameValue) {
-        urlParams.set(this.props.parentTabName, parentTabNameValue);
-      }
-    }
-
+    const urlParams = new URLSearchParams('');
     urlParams.set(this.props.tabName, tabKey);
 
     history.push(history.location.pathname + '?' + urlParams.toString());
