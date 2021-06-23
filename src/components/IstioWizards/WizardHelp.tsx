@@ -16,37 +16,79 @@ export const wizardTooltip = (tooltipContent: React.ReactFragment) => {
   );
 };
 
-export const RULE_BUILDER_TOOLTIP = (
+export const CONNECTION_POOL_TOOLTIP = (
   <>
-    Rule builder tooltip
+    Connection Pool tooltip
     <div>Another paragraph</div>
   </>
 );
 
-export const RULES_DEFINED_TOOLTIP = (
+export const GATEWAY_TOOLTIP = (
   <>
-    Rules defined tooltip
+    Gateway tooltip
     <div>Another paragraph</div>
   </>
 );
 
-export const REQUEST_MATCHING_TOOLTIP = (
+export const HTTP_ABORT_TOOLTIP = (
   <>
-    Request matching tooltip
+    Http Abort tooltip
     <div>Another paragraph</div>
   </>
 );
 
-export const FAULT_INJECTION_TOOLTIP = (
+export const HTTP_DELAY_TOOLTIP = (
   <>
-    Fault injection tooltip
+    Http Delay tooltip
     <div>Another paragraph</div>
   </>
 );
 
-export const REQUEST_TIMEOUTS_TOOLTIP = (
+export const HTTP_RETRY_TOOLTIP = (
   <>
-    Request Timeouts tooltip
+    HTTP Retru tooltip
+    <div>Another paragraph</div>
+  </>
+);
+
+export const HTTP_TIMEOUT_TOOLTIP = (
+  <>
+    Http Timeout tooltip
+    <div>Another paragraph</div>
+  </>
+);
+
+export const LOAD_BALANCER_TOOLTIP = (
+  <>
+    Load Balancer tooltip
+    <div>Another paragraph</div>
+  </>
+);
+
+export const MATCHING_SELECTED_TOOLTIP = (
+  <>
+    Matching selected tooltip
+    <div>Another paragraph</div>
+  </>
+);
+
+export const OUTLIER_DETECTION_TOOLTIP = (
+  <>
+    Connection Pool tooltip
+    <div>Another paragraph</div>
+  </>
+);
+
+export const PEER_AUTHENTICATION_TOOLTIP = (
+  <>
+    Peer Authentication tooltip
+    <div>Another paragraph</div>
+  </>
+);
+
+export const ROUTE_RULES_TOOLTIP = (
+  <>
+    Route rules tooltip
     <div>Another paragraph</div>
   </>
 );

@@ -11,6 +11,7 @@ import {
   OutlierDetection as OutlierDetectionProps,
   PeerAuthenticationMutualTLSMode
 } from '../../types/IstioObjects';
+import { LOAD_BALANCER_TOOLTIP, PEER_AUTHENTICATION_TOOLTIP, wizardTooltip } from './WizardHelp';
 
 export const UNSET = 'UNSET';
 export const DISABLE = 'DISABLE';
@@ -476,6 +477,7 @@ class TrafficPolicy extends React.Component<Props, TrafficPolicyState> {
             isChecked={this.state.peerAuthnSelector.addPeerAuthentication}
             onChange={() => this.onFormChange(TrafficPolicyForm.PA_SWITCH, '')}
           />
+          <span>{wizardTooltip(PEER_AUTHENTICATION_TOOLTIP)}</span>
         </FormGroup>
         {this.state.peerAuthnSelector.addPeerAuthentication && (
           <FormGroup fieldId="advanced-pa-mode" label="Mode">
@@ -499,6 +501,7 @@ class TrafficPolicy extends React.Component<Props, TrafficPolicyState> {
             isChecked={this.state.addLoadBalancer}
             onChange={() => this.onFormChange(TrafficPolicyForm.LB_SWITCH, '')}
           />
+          {wizardTooltip(LOAD_BALANCER_TOOLTIP)}
         </FormGroup>
         {this.state.addLoadBalancer && (
           <>

@@ -8,7 +8,6 @@ import TrafficShifting, { WorkloadWeight } from '../TrafficShifting';
 import FaultInjection, { FaultInjectionRoute } from '../FaultInjection';
 import { PFColors } from '../../Pf/PfColors';
 import RequestTimeouts, { TimeoutRetryRoute } from '../RequestTimeouts';
-import { RULE_BUILDER_TOOLTIP, wizardTooltip } from '../WizardHelp';
 
 type Props = {
   // MatchBuilder props
@@ -82,14 +81,6 @@ class RuleBuilder extends React.Component<Props, State> {
   render() {
     return (
       <>
-        <div
-          style={{
-            marginBottom: 10
-          }}
-        >
-          Rule builder
-          {wizardTooltip(RULE_BUILDER_TOOLTIP)}
-        </div>
         <Tabs isFilled={true} activeKey={this.state.ruleTabKey} onSelect={this.ruleHandleTabClick}>
           <Tab eventKey={0} title={'Request Matching'}>
             <div style={{ marginTop: '20px' }}>
@@ -98,13 +89,19 @@ class RuleBuilder extends React.Component<Props, State> {
             </div>
           </Tab>
           <Tab eventKey={1} title={'Route To'}>
-            <TrafficShifting
-              showValid={false}
-              workloads={this.props.workloads}
-              initWeights={this.props.weights}
-              showMirror={true}
-              onChange={this.props.onSelectWeights}
-            />
+            <div
+              style={{
+                marginBottom: '10px'
+              }}
+            >
+              <TrafficShifting
+                showValid={false}
+                workloads={this.props.workloads}
+                initWeights={this.props.weights}
+                showMirror={true}
+                onChange={this.props.onSelectWeights}
+              />
+            </div>
           </Tab>
           <Tab eventKey={2} title={'Fault Injection'}>
             <div style={{ marginTop: '10px' }}>
@@ -127,7 +124,7 @@ class RuleBuilder extends React.Component<Props, State> {
           <span>
             {this.props.validationMsg.length > 0 && <div className={validationStyle}>{this.props.validationMsg}</div>}
             <Button variant="secondary" isDisabled={!this.props.isValid} onClick={this.props.onAddRule}>
-              Add Rule
+              Add Route Rule
             </Button>
           </span>
         </div>

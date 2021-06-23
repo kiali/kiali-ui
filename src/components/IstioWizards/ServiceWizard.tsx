@@ -543,7 +543,7 @@ class ServiceWizard extends React.Component<ServiceWizardProps, ServiceWizardSta
             }}
           >
             <Tabs isFilled={true} activeKey={this.state.advancedTabKey} onSelect={this.advancedHandleTabClick}>
-              <Tab eventKey={0} title={'Hosts'}>
+              <Tab eventKey={0} title={'Destination Hosts'}>
                 <div style={{ marginTop: '20px' }}>
                   <VirtualServiceHosts vsHosts={this.state.vsHosts} onVsHostsChange={this.onVsHosts} />
                 </div>

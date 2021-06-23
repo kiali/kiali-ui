@@ -5,7 +5,6 @@ import { Abort, Delay } from '../../types/IstioObjects';
 import { Form } from '@patternfly/react-core';
 import { isValidAbortStatusCode, isValidDuration } from '../../utils/IstioConfigUtils';
 import { WorkloadWeight } from './TrafficShifting';
-import { FAULT_INJECTION_TOOLTIP, wizardTooltip } from './WizardHelp';
 
 type Props = {
   initFaultInjectionRoute: FaultInjectionRoute;
@@ -125,8 +124,6 @@ class FaultInjection extends React.Component<Props, State> {
   render() {
     return (
       <>
-        Fault injection policy
-        {wizardTooltip(FAULT_INJECTION_TOOLTIP)}
         <Form
           isHorizontal={true}
           style={{

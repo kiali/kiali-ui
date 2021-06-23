@@ -5,7 +5,6 @@ import { isValidDuration } from '../../utils/IstioConfigUtils';
 import { WorkloadWeight } from './TrafficShifting';
 import RouteTimeout from './RequestTimeouts/RouteTimeout';
 import RouteRetry from './RequestTimeouts/RouteRetry';
-import { REQUEST_TIMEOUTS_TOOLTIP, wizardTooltip } from './WizardHelp';
 
 type Props = {
   initTimeoutRetry: TimeoutRetryRoute;
@@ -126,8 +125,6 @@ class RequestTimeouts extends React.Component<Props, State> {
   render() {
     return (
       <>
-        Timeout and Retry policy
-        {wizardTooltip(REQUEST_TIMEOUTS_TOOLTIP)}
         <Form
           isHorizontal={true}
           style={{
