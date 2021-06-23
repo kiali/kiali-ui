@@ -65,7 +65,15 @@ class IstioConfigCard extends React.Component<Props> {
     }
     let rows: IRow[] = [];
     this.props.items
-      .sort((a: IstioConfigItem, b: IstioConfigItem) => (a.type < b.type ? -1 : a.name < b.name ? -1 : 1))
+      .sort((a: IstioConfigItem, b: IstioConfigItem) => {
+        if (a.type < b.type) {
+          return -1;
+        } else if (a.type > b.type) {
+          return 1;
+        } else {
+          return a.name < b.name ? -1 : 1;
+        }
+      })
       .map((item, itemIdx) => {
         rows.push({
           cells: [

@@ -70,7 +70,7 @@ class ServiceDescription extends React.Component<ServiceInfoDescriptionProps, St
     if (this.props.serviceDetails) {
       if (this.props.serviceDetails.workloads) {
         this.props.serviceDetails.workloads
-          .sort((w1: WorkloadOverview, w2: WorkloadOverview) => (w1.name > w2.name ? -1 : 1))
+          .sort((w1: WorkloadOverview, w2: WorkloadOverview) => (w1.name < w2.name ? -1 : 1))
           .forEach(wk => {
             if (wk.labels) {
               const appName = wk.labels[serverConfig.istioLabels.appLabelName];
