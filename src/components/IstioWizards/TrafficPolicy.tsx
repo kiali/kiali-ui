@@ -419,7 +419,11 @@ class TrafficPolicy extends React.Component<Props, TrafficPolicyState> {
     const isValidLB = this.isValidLB(this.state);
     return (
       <Form isHorizontal={true}>
-        <FormGroup label="TLS" fieldId="advanced-tls">
+        <FormGroup
+          label="TLS"
+          fieldId="advanced-tls"
+          helperText="TLS related settings for connections to the upstream service."
+        >
           <FormSelect
             value={this.state.mtlsMode}
             onChange={(mtlsMode: string) => this.onFormChange(TrafficPolicyForm.TLS, mtlsMode)}
