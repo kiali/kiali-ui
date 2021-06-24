@@ -46,7 +46,7 @@ export const GATEWAY_TOOLTIP = (
 
 export const HTTP_ABORT_TOOLTIP = (
   <>
-    Abort Http request attempts and return error codes back to <span className={importantTooltip}>DOWNSTREAM</span>{' '}
+    Abort HTTP request attempts and return error codes back to <span className={importantTooltip}>DOWNSTREAM</span>{' '}
     service, giving the impression that the <span className={importantTooltip}>UPSTREAM</span> service is faulty.
   </>
 );
