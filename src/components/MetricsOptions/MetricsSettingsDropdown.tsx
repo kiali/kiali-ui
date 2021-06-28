@@ -17,6 +17,7 @@ import { PromLabel } from 'types/Metrics';
 interface Props {
   onChanged: (state: MetricsSettings) => void;
   onLabelsFiltersChanged: (labelsFilters: LabelsSettings) => void;
+  direction: string;
   hasHistograms: boolean;
   labelsSettings: LabelsSettings;
 }
@@ -37,10 +38,19 @@ export class MetricsSettingsDropdown extends React.Component<Props, State> {
     this.state = { ...settings, isOpen: false };
   }
 
-  componentDidUpdate() {
-    const labelsSettings = combineLabelsSettings(this.props.labelsSettings, this.state.labelsSettings);
-    if (!isEqual(this.state.labelsSettings, labelsSettings)) {
-      this.setState({ labelsSettings: labelsSettings });
+  componentDidUpdate(prevProps: Props) {
+    const changeDirection = prevProps.direction !== this.props.direction;
+    const stateLabelsSettings = changeDirection ? new Map() : this.state.labelsSettings;
+    const labelsSettings = combineLabelsSettings(this.props.labelsSettings, stateLabelsSettings);
+    if (!isEqual(stateLabelsSettings, labelsSettings) || changeDirection) {
+      this.setState(prevState => {
+        return {
+          labelsSettings: labelsSettings,
+          showQuantiles: changeDirection ? [] : prevState.showQuantiles,
+          showAverage: changeDirection ? true : prevState.showAverage,
+          showSpans: changeDirection ? false : prevState.showSpans
+        };
+      });
     }
   }
 
