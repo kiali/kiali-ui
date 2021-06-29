@@ -2,12 +2,13 @@ import * as React from 'react';
 import { Card, CardBody, CardHeader, Title, Tooltip } from '@patternfly/react-core';
 import { ServiceDetailsInfo } from '../../types/ServiceInfo';
 import { style } from 'typestyle';
-import { ObjectCheck, ObjectValidation } from '../../types/IstioObjects';
+import { Gateway, ObjectCheck, ObjectValidation, VirtualService } from '../../types/IstioObjects';
 import ValidationList from '../../components/Validations/ValidationList';
 import { KialiIcon } from '../../config/KialiIcon';
 
 type Props = {
   serviceDetails: ServiceDetailsInfo;
+  gateways: Gateway[];
   validations?: ObjectValidation;
 };
 
@@ -40,6 +41,39 @@ class ServiceNetwork extends React.Component<Props> {
 
   hasIssue(portId: number): boolean {
     return this.getPortChecks(portId).length > 0;
+  }
+
+  getHostnames(virtualServices: VirtualService[]): string[] {
+    var hostnames: string[] = [];
+
+    virtualServices.forEach(vs => {
+      vs.spec.hosts?.forEach(host => {
+        if (host === '*') {
+          vs.spec.gateways?.forEach(vsGatewayName => {
+            const vsGateways = this.props.gateways.filter(gateway => {
+              return gateway.metadata.name === vsGatewayName;
+            });
+
+            vsGateways.forEach(vsGateway => {
+              vsGateway.spec.servers?.forEach(servers => {
+                servers.hosts.forEach(host => {
+                  hostnames.push(host);
+                });
+              });
+            });
+          });
+        } else {
+          hostnames.push(host);
+        }
+      });
+    });
+
+    // Finally, if even the gateways has *, just show 1 entry
+    if (hostnames.includes('*')) {
+      return ['*'];
+    }
+
+    return hostnames;
   }
 
   render() {
@@ -108,6 +142,20 @@ class ServiceNetwork extends React.Component<Props> {
                   })}
                 </div>
               </li>
+              {this.props.serviceDetails.virtualServices.items.length > 0 && (
+                <li>
+                  <span>Hostnames</span>
+                  <div style={{ display: 'inline-block' }}>
+                    {this.getHostnames(this.props.serviceDetails.virtualServices.items).map((hostname, i) => {
+                      return (
+                        <div key={'hostname_' + i}>
+                          <span style={{ marginRight: '10px' }}>{hostname}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </li>
+              )}
             </ul>
           </div>
         </CardBody>

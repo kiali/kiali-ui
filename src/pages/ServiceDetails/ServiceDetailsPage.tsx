@@ -19,13 +19,13 @@ import Namespace from '../../types/Namespace';
 import * as AlertUtils from '../../utils/AlertUtils';
 import { PromisesRegistry } from '../../utils/CancelablePromises';
 import { ServiceDetailsInfo } from '../../types/ServiceInfo';
-import { PeerAuthentication, Validations } from '../../types/IstioObjects';
+import { Gateway, PeerAuthentication, Validations } from '../../types/IstioObjects';
 import ServiceWizardDropdown from '../../components/IstioWizards/ServiceWizardDropdown';
 import TimeControl from '../../components/Time/TimeControl';
 
 type ServiceDetailsState = {
   currentTab: string;
-  gateways: string[];
+  gateways: Gateway[];
   serviceDetails?: ServiceDetailsInfo;
   peerAuthentications: PeerAuthentication[];
   validations: Validations;
@@ -93,14 +93,13 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
             namespaces.map(ns => API.getIstioConfig(ns.name, ['gateways'], false, '', ''))
           )
           .then(responses => {
-            let gatewayList: string[] = [];
+            let gateways: Gateway[] = [];
             responses.forEach(response => {
-              const ns = response.data.namespace;
               response.data.gateways.forEach(gw => {
-                gatewayList = gatewayList.concat(ns.name + '/' + gw.metadata.name);
+                gateways.push(gw);
               });
             });
-            this.setState({ gateways: gatewayList });
+            this.setState({ gateways: gateways });
           })
           .catch(gwError => {
             AlertUtils.addError('Could not fetch Gateways list.', gwError);
@@ -131,6 +130,16 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
         AlertUtils.addError('Could not fetch PeerAuthentications.', error);
       });
   };
+
+  private getGatewaysAsList(): string[] {
+    let gatewayList: string[] = [];
+
+    this.state.gateways.forEach(gateway => {
+      gatewayList.push(gateway.metadata.namespace + '/' + gateway.metadata.name);
+    });
+
+    return gatewayList;
+  }
 
   private renderTabs() {
     const overTab = (
@@ -203,7 +212,7 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
         workloads={this.state.serviceDetails.workloads || []}
         virtualServices={this.state.serviceDetails.virtualServices}
         destinationRules={this.state.serviceDetails.destinationRules}
-        gateways={this.state.gateways}
+        gateways={this.getGatewaysAsList()}
         peerAuthentications={this.state.peerAuthentications}
         tlsStatus={this.state.serviceDetails.namespaceMTLS}
         onChange={this.fetchService}
