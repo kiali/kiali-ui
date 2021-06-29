@@ -27,7 +27,7 @@ type State = MetricsSettings & {
   allSelected: boolean;
 };
 
-const checkboxLabelStyle = style({ marginLeft: '0.5em' });
+const checkboxSelectAllStyle = style({ marginLeft: 10, fontWeight: 700 });
 const checkboxStyle = style({ marginLeft: 10 });
 const secondLevelStyle = style({ marginLeft: 18 });
 const spacerStyle = style({ height: '1em' });
@@ -42,7 +42,7 @@ export class MetricsSettingsDropdown extends React.Component<Props, State> {
 
   checkSelected = () => {
     let allSelected = true;
-    this.props.labelsSettings.forEach(lblSetting => {
+    this.state.labelsSettings.forEach(lblSetting => {
       if (lblSetting.checked === false) {
         allSelected = false;
       } else {
@@ -74,6 +74,7 @@ export class MetricsSettingsDropdown extends React.Component<Props, State> {
         };
       }, this.checkSelected);
     }
+    console.log(this.state.allSelected);
   }
 
   private onToggle = isOpen => {
@@ -206,7 +207,7 @@ export class MetricsSettingsDropdown extends React.Component<Props, State> {
         <DropdownToggleCheckbox
           id="bulk-select-id"
           key="bulk-select-key"
-          aria-label="Select all metrics"
+          aria-label="Select all metrics and labels"
           isChecked={this.state.allSelected}
           onClick={() => {
             if (this.state.allSelected) {
@@ -216,7 +217,7 @@ export class MetricsSettingsDropdown extends React.Component<Props, State> {
             }
           }}
         ></DropdownToggleCheckbox>
-        <span className={checkboxLabelStyle}>Select all metrics</span>
+        <span className={checkboxSelectAllStyle}>Select all metrics and labels</span>
         <Divider style={{ paddingTop: '5px' }} />
       </div>
     );
