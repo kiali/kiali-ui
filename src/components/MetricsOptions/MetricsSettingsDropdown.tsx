@@ -39,16 +39,19 @@ export class MetricsSettingsDropdown extends React.Component<Props, State> {
   }
 
   componentDidUpdate(prevProps: Props) {
+    // TODO Move the sync of URL and state to a global place
     const changeDirection = prevProps.direction !== this.props.direction;
-    const stateLabelsSettings = changeDirection ? new Map() : this.state.labelsSettings;
+    const settings = retrieveMetricsSettings();
+    let initLabelSettings = changeDirection ? settings.labelsSettings : new Map();
+    const stateLabelsSettings = changeDirection ? initLabelSettings : this.state.labelsSettings;
     const labelsSettings = combineLabelsSettings(this.props.labelsSettings, stateLabelsSettings);
     if (!isEqual(stateLabelsSettings, labelsSettings) || changeDirection) {
       this.setState(prevState => {
         return {
           labelsSettings: labelsSettings,
-          showQuantiles: changeDirection ? [] : prevState.showQuantiles,
-          showAverage: changeDirection ? true : prevState.showAverage,
-          showSpans: changeDirection ? false : prevState.showSpans
+          showQuantiles: changeDirection ? settings.showQuantiles : prevState.showQuantiles,
+          showAverage: changeDirection ? settings.showAverage : prevState.showAverage,
+          showSpans: changeDirection ? settings.showSpans : prevState.showSpans
         };
       });
     }
@@ -125,7 +128,6 @@ export class MetricsSettingsDropdown extends React.Component<Props, State> {
     if (!hasHistograms && !hasLabels) {
       return null;
     }
-
     return (
       <Dropdown
         toggle={<DropdownToggle onToggle={this.onToggle}>Metrics Settings</DropdownToggle>}
