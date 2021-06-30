@@ -207,7 +207,7 @@ export class MetricsSettingsDropdown extends React.Component<Props, State> {
         <DropdownToggleCheckbox
           id="bulk-select-id"
           key="bulk-select-key"
-          aria-label="Select all metrics and labels"
+          aria-label="Select all metric/label filters"
           isChecked={this.state.allSelected}
           onClick={() => {
             if (this.state.allSelected) {
@@ -217,7 +217,7 @@ export class MetricsSettingsDropdown extends React.Component<Props, State> {
             }
           }}
         ></DropdownToggleCheckbox>
-        <span className={checkboxSelectAllStyle}>Select all metrics and labels</span>
+        <span className={checkboxSelectAllStyle}>Select all metric/label filters</span>
         <Divider style={{ paddingTop: '5px' }} />
       </div>
     );
