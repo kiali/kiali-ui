@@ -62,6 +62,9 @@ export const details: Renderer<AppListItem | WorkloadListItem | ServiceListItem>
   const hasMissingVersion = isWorkload && !item['versionLabel'];
   const additionalDetails = (item as WorkloadListItem | ServiceListItem).additionalDetailSample;
   const spacer = hasMissingSC && additionalDetails && additionalDetails.icon;
+  const hasVirtualService = (item as ServiceListItem).virtualService;
+  const hasDestinationRule = (item as ServiceListItem).destinationRule;
+  const kialiWizard = (item as ServiceListItem).kialiWizard;
   return (
     <td
       role="gridcell"
@@ -80,6 +83,12 @@ export const details: Renderer<AppListItem | WorkloadListItem | ServiceListItem>
         {spacer && ' '}
         {additionalDetails && additionalDetails.icon && (
           <li>{renderAPILogo(additionalDetails.icon, additionalDetails.title, 0)}</li>
+        )}
+        {(hasVirtualService || hasDestinationRule || kialiWizard) && (
+          <li>
+            {hasVirtualService && <PFBadge badge={PFBadges.VirtualService} position={TooltipPosition.top} />}
+            {hasDestinationRule && <PFBadge badge={PFBadges.DestinationRule} position={TooltipPosition.top} />}
+          </li>
         )}
       </ul>
     </td>

@@ -14,6 +14,9 @@ export interface ServiceOverview {
   istioSidecar: boolean;
   additionalDetailSample?: AdditionalItem;
   labels: { [key: string]: string };
+  virtualService: boolean;
+  destinationRule: boolean;
+  kialiWizard: boolean;
 }
 
 export interface ServiceListItem extends ServiceOverview {
