@@ -12,6 +12,12 @@ type Props = {
   validations?: ObjectValidation;
 };
 
+type HostnameInfo = {
+  hostname: string;
+  fromType: string | undefined;
+  fromName: string | undefined;
+};
+
 const resourceListStyle = style({
   margin: '0px 0 11px 0',
   $nest: {
@@ -43,8 +49,8 @@ class ServiceNetwork extends React.Component<Props> {
     return this.getPortChecks(portId).length > 0;
   }
 
-  getHostnames(virtualServices: VirtualService[]): string[] {
-    var hostnames: string[] = [];
+  getHostnames(virtualServices: VirtualService[]): HostnameInfo[] {
+    var hostnames: HostnameInfo[] = [];
 
     virtualServices.forEach(vs => {
       vs.spec.hosts?.forEach(host => {
@@ -57,20 +63,22 @@ class ServiceNetwork extends React.Component<Props> {
             vsGateways.forEach(vsGateway => {
               vsGateway.spec.servers?.forEach(servers => {
                 servers.hosts.forEach(host => {
-                  hostnames.push(host);
+                  hostnames.push({ hostname: host, fromType: vsGateway.kind, fromName: vsGateway.metadata.name });
                 });
               });
             });
           });
         } else {
-          hostnames.push(host);
+          hostnames.push({ hostname: host, fromType: vs.kind, fromName: vs.metadata.name });
         }
       });
     });
 
-    // Finally, if even the gateways has *, just show 1 entry
-    if (hostnames.includes('*')) {
-      return ['*'];
+    // If there is a wildcard, then it will display only one, the first match
+    for (var hostnameInfo of hostnames) {
+      if (hostnameInfo.hostname === '*') {
+        return [hostnameInfo];
+      }
     }
 
     return hostnames;
@@ -149,7 +157,17 @@ class ServiceNetwork extends React.Component<Props> {
                     {this.getHostnames(this.props.serviceDetails.virtualServices.items).map((hostname, i) => {
                       return (
                         <div key={'hostname_' + i}>
-                          <span style={{ marginRight: '10px' }}>{hostname}</span>
+                          <Tooltip
+                            content={
+                              <>
+                                From {hostname.fromType}: {hostname.fromName}
+                              </>
+                            }
+                          >
+                            <span>
+                              {hostname.hostname} <KialiIcon.Info className={infoStyle} />
+                            </span>
+                          </Tooltip>
                         </div>
                       );
                     })}

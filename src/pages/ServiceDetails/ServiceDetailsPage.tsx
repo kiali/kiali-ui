@@ -93,13 +93,7 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
             namespaces.map(ns => API.getIstioConfig(ns.name, ['gateways'], false, '', ''))
           )
           .then(responses => {
-            let gateways: Gateway[] = [];
-            responses.forEach(response => {
-              response.data.gateways.forEach(gw => {
-                gateways.push(gw);
-              });
-            });
-            this.setState({ gateways: gateways });
+            this.setState({ gateways: responses.map(response => response.data.gateways).flat() });
           })
           .catch(gwError => {
             AlertUtils.addError('Could not fetch Gateways list.', gwError);
@@ -132,13 +126,7 @@ class ServiceDetails extends React.Component<ServiceDetailsProps, ServiceDetails
   };
 
   private getGatewaysAsList(): string[] {
-    let gatewayList: string[] = [];
-
-    this.state.gateways.forEach(gateway => {
-      gatewayList.push(gateway.metadata.namespace + '/' + gateway.metadata.name);
-    });
-
-    return gatewayList;
+    return this.state.gateways.map(gateway => gateway.metadata.namespace + '/' + gateway.metadata.name);
   }
 
   private renderTabs() {
