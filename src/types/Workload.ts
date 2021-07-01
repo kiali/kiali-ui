@@ -62,6 +62,12 @@ export interface WorkloadOverview {
   appLabel: boolean;
   versionLabel: boolean;
   labels: { [key: string]: string };
+  gateways: string[];
+  authorizationPolicies: string[];
+  peerAuthentications: string[];
+  sidecars: string[];
+  requestAuthentications: string[];
+  envoyFilters: string[];
 }
 
 export interface WorkloadListItem extends WorkloadOverview {

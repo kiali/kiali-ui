@@ -107,7 +107,13 @@ class WorkloadListPageComponent extends FilterComponent.Component<
           this.props.duration,
           deployment.istioSidecar
         ),
-        labels: deployment.labels
+        labels: deployment.labels,
+        gateways: deployment.gateways,
+        authorizationPolicies: deployment.authorizationPolicies,
+        peerAuthentications: deployment.peerAuthentications,
+        sidecars: deployment.sidecars,
+        requestAuthentications: deployment.requestAuthentications,
+        envoyFilters: deployment.envoyFilters
       }));
     }
     return [];

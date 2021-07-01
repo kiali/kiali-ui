@@ -8,14 +8,13 @@ import {
   labelFilter,
   getPresenceFilterValue,
   getFilterSelectedValues,
-  filterByHealth,
-  virtualServicesFilter,
-  destinationRulesFilter
+  filterByHealth
 } from '../../components/Filters/CommonFilters';
-import { hasMissingSidecar } from '../../components/VirtualList/Config';
+import { hasMissingSidecar, IstioTypes } from '../../components/VirtualList/Config';
 import { TextInputTypes } from '@patternfly/react-core';
 import { filterByLabel } from '../../helpers/LabelFilterHelper';
 import { calculateErrorRate } from '../../types/ErrorRate';
+import { istioTypeFilter } from '../IstioConfigList/FiltersAndSorts';
 
 export const sortFields: SortField<ServiceListItem>[] = [
   {
@@ -50,18 +49,16 @@ export const sortFields: SortField<ServiceListItem>[] = [
       if (aSC !== bSC) {
         return aSC - bSC;
       }
+
       // Second by VS/DR
-      const vsA = a.virtualServices.join('.');
-      const vsB = b.virtualServices.join('.');
-      const vsCmp = vsA.localeCompare(vsB);
-      if (vsCmp !== 0) {
-        return vsCmp;
-      }
-      const drA = a.destinationRules.join('.');
-      const drB = b.destinationRules.join('.');
-      const drCmp = drA.localeCompare(drB);
-      if (drCmp !== 0) {
-        return drCmp;
+      const fieldsToSort = ['virtualServices', 'destinationRules'];
+      for (let i = 0; i < fieldsToSort.length; i++) {
+        const vsA = a[fieldsToSort[i]].join('.');
+        const vsB = b[fieldsToSort[i]].join('.');
+        const vsCmp = vsA.localeCompare(vsB);
+        if (vsCmp !== 0) {
+          return vsCmp;
+        }
       }
 
       // Then by additional details
@@ -149,10 +146,9 @@ const serviceNameFilter: FilterType = {
 export const availableFilters: FilterType[] = [
   serviceNameFilter,
   istioSidecarFilter,
+  istioTypeFilter,
   healthFilter,
-  labelFilter,
-  virtualServicesFilter,
-  destinationRulesFilter
+  labelFilter
 ];
 
 const filterByIstioSidecar = (items: ServiceListItem[], istioSidecar: boolean): ServiceListItem[] => {
@@ -175,17 +171,18 @@ const filterByName = (items: ServiceListItem[], names: string[]): ServiceListIte
   });
 };
 
-const filterByVirtualService = (items: ServiceListItem[], vsPresent: boolean): ServiceListItem[] => {
+const filterByIstioType = (items: ServiceListItem[], istioTypes: string[]): ServiceListItem[] => {
   return items.filter(item => {
-    const vsLen = item.virtualServices.length;
-    return vsPresent ? vsLen > 0 : vsLen === 0;
-  });
-};
-
-const filterByDestinationRule = (items: ServiceListItem[], drPresent: boolean): ServiceListItem[] => {
-  return items.filter(item => {
-    const drLen = item.destinationRules.length;
-    return drPresent ? drLen > 0 : drLen === 0;
+    if (istioTypes.length > 0) {
+      if (istioTypes.includes(IstioTypes.virtualservice.name) && item.virtualServices.length > 0) {
+        return true;
+      }
+      if (istioTypes.includes(IstioTypes.destinationrule.name) && item.destinationRules.length > 0) {
+        return true;
+      }
+      return false;
+    }
+    return true;
   });
 };
 
@@ -215,14 +212,9 @@ export const filterBy = (
     return filterByHealth(ret, healthSelected);
   }
 
-  const vsPresent = getPresenceFilterValue(virtualServicesFilter, filters);
-  if (vsPresent !== undefined) {
-    return filterByVirtualService(ret, vsPresent);
-  }
-
-  const drPresent = getPresenceFilterValue(destinationRulesFilter, filters);
-  if (drPresent !== undefined) {
-    return filterByDestinationRule(ret, drPresent);
+  const istioTypeSelected = getFilterSelectedValues(istioTypeFilter, filters);
+  if (istioTypeSelected.length > 0) {
+    return filterByIstioType(ret, istioTypeSelected);
   }
   return ret;
 };
