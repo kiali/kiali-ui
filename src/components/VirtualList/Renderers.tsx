@@ -22,7 +22,7 @@ import ValidationSummary from '../Validations/ValidationSummary';
 import OverviewCardContentExpanded from '../../pages/Overview/OverviewCardContentExpanded';
 import { OverviewToolbar } from '../../pages/Overview/OverviewToolbar';
 import { StatefulFilters } from '../Filters/StatefulFilters';
-import { GetIstioObjectUrl } from '../Link/IstioObjectLink';
+import IstioObjectLink, { GetIstioObjectUrl } from '../Link/IstioObjectLink';
 import { labelFilter } from 'components/Filters/CommonFilters';
 import { labelFilter as NsLabelFilter } from '../../pages/Overview/Filters';
 import ValidationSummaryLink from '../Link/ValidationSummaryLink';
@@ -62,9 +62,8 @@ export const details: Renderer<AppListItem | WorkloadListItem | ServiceListItem>
   const hasMissingVersion = isWorkload && !item['versionLabel'];
   const additionalDetails = (item as WorkloadListItem | ServiceListItem).additionalDetailSample;
   const spacer = hasMissingSC && additionalDetails && additionalDetails.icon;
-  const hasVirtualService = (item as ServiceListItem).virtualService;
-  const hasDestinationRule = (item as ServiceListItem).destinationRule;
-  const kialiWizard = (item as ServiceListItem).kialiWizard;
+  const virtualServices = (item as ServiceListItem).virtualServices;
+  const destinationRules = (item as ServiceListItem).destinationRules;
   return (
     <td
       role="gridcell"
@@ -84,12 +83,26 @@ export const details: Renderer<AppListItem | WorkloadListItem | ServiceListItem>
         {additionalDetails && additionalDetails.icon && (
           <li>{renderAPILogo(additionalDetails.icon, additionalDetails.title, 0)}</li>
         )}
-        {(hasVirtualService || hasDestinationRule || kialiWizard) && (
-          <li>
-            {hasVirtualService && <PFBadge badge={PFBadges.VirtualService} position={TooltipPosition.top} />}
-            {hasDestinationRule && <PFBadge badge={PFBadges.DestinationRule} position={TooltipPosition.top} />}
-          </li>
-        )}
+        {virtualServices &&
+          virtualServices.length > 0 &&
+          virtualServices.map(vs => (
+            <li>
+              <PFBadge badge={PFBadges.VirtualService} position={TooltipPosition.top} />
+              <IstioObjectLink name={vs} namespace={item.namespace || ''} type={'virtualservice'}>
+                {vs}
+              </IstioObjectLink>
+            </li>
+          ))}
+        {destinationRules &&
+          destinationRules.length > 0 &&
+          destinationRules.map(dr => (
+            <li>
+              <PFBadge badge={PFBadges.DestinationRule} position={TooltipPosition.top} />
+              <IstioObjectLink name={dr} namespace={item.namespace || ''} type={'destinationrule'}>
+                {dr}
+              </IstioObjectLink>
+            </li>
+          ))}
       </ul>
     </td>
   );

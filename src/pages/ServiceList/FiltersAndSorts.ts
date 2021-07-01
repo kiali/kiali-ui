@@ -8,7 +8,9 @@ import {
   labelFilter,
   getPresenceFilterValue,
   getFilterSelectedValues,
-  filterByHealth
+  filterByHealth,
+  virtualServicesFilter,
+  destinationRulesFilter
 } from '../../components/Filters/CommonFilters';
 import { hasMissingSidecar } from '../../components/VirtualList/Config';
 import { TextInputTypes } from '@patternfly/react-core';
@@ -48,6 +50,20 @@ export const sortFields: SortField<ServiceListItem>[] = [
       if (aSC !== bSC) {
         return aSC - bSC;
       }
+      // Second by VS/DR
+      const vsA = a.virtualServices.join('.');
+      const vsB = b.virtualServices.join('.');
+      const vsCmp = vsA.localeCompare(vsB);
+      if (vsCmp !== 0) {
+        return vsCmp;
+      }
+      const drA = a.destinationRules.join('.');
+      const drB = b.destinationRules.join('.');
+      const drCmp = drA.localeCompare(drB);
+      if (drCmp !== 0) {
+        return drCmp;
+      }
+
       // Then by additional details
       const iconA = a.additionalDetailSample && a.additionalDetailSample.icon;
       const iconB = b.additionalDetailSample && b.additionalDetailSample.icon;
@@ -130,7 +146,14 @@ const serviceNameFilter: FilterType = {
   filterValues: []
 };
 
-export const availableFilters: FilterType[] = [serviceNameFilter, istioSidecarFilter, healthFilter, labelFilter];
+export const availableFilters: FilterType[] = [
+  serviceNameFilter,
+  istioSidecarFilter,
+  healthFilter,
+  labelFilter,
+  virtualServicesFilter,
+  destinationRulesFilter
+];
 
 const filterByIstioSidecar = (items: ServiceListItem[], istioSidecar: boolean): ServiceListItem[] => {
   return items.filter(item => item.istioSidecar === istioSidecar);
@@ -149,6 +172,20 @@ const filterByName = (items: ServiceListItem[], names: string[]): ServiceListIte
       }
     }
     return serviceNameFiltered;
+  });
+};
+
+const filterByVirtualService = (items: ServiceListItem[], vsPresent: boolean): ServiceListItem[] => {
+  return items.filter(item => {
+    const vsLen = item.virtualServices.length;
+    return vsPresent ? vsLen > 0 : vsLen === 0;
+  });
+};
+
+const filterByDestinationRule = (items: ServiceListItem[], drPresent: boolean): ServiceListItem[] => {
+  return items.filter(item => {
+    const drLen = item.destinationRules.length;
+    return drPresent ? drLen > 0 : drLen === 0;
   });
 };
 
@@ -176,6 +213,16 @@ export const filterBy = (
   const healthSelected = getFilterSelectedValues(healthFilter, filters);
   if (healthSelected.length > 0) {
     return filterByHealth(ret, healthSelected);
+  }
+
+  const vsPresent = getPresenceFilterValue(virtualServicesFilter, filters);
+  if (vsPresent !== undefined) {
+    return filterByVirtualService(ret, vsPresent);
+  }
+
+  const drPresent = getPresenceFilterValue(destinationRulesFilter, filters);
+  if (drPresent !== undefined) {
+    return filterByDestinationRule(ret, drPresent);
   }
   return ret;
 };

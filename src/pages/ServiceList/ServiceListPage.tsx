@@ -103,8 +103,8 @@ class ServiceListPageComponent extends FilterComponent.Component<
         validation: this.getServiceValidation(service.name, data.validations),
         additionalDetailSample: service.additionalDetailSample,
         labels: service.labels || {},
-        virtualService: service.virtualService,
-        destinationRule: service.destinationRule,
+        virtualServices: service.virtualServices,
+        destinationRules: service.destinationRules,
         kialiWizard: service.kialiWizard
       }));
     }

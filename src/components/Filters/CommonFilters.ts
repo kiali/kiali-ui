@@ -68,6 +68,24 @@ export const labelFilter: FilterType = {
   filterValues: []
 };
 
+export const virtualServicesFilter: FilterType = {
+  id: 'virtualServices',
+  title: 'Virtual Services',
+  placeholder: 'Has VirtualService',
+  filterType: FilterTypes.select,
+  action: FILTER_ACTION_APPEND,
+  filterValues: presenceValues
+};
+
+export const destinationRulesFilter: FilterType = {
+  id: 'destinationRules',
+  title: 'Destination Rules',
+  placeholder: 'Has DestinationRule',
+  filterType: FilterTypes.select,
+  action: FILTER_ACTION_APPEND,
+  filterValues: presenceValues
+};
+
 export const getFilterSelectedValues = (filter: FilterType, activeFilters: ActiveFiltersInfo): string[] => {
   const selected: string[] = activeFilters.filters
     .filter(activeFilter => activeFilter.id === filter.id)
