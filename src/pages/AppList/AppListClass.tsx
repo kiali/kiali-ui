@@ -8,7 +8,15 @@ export const getAppItems = (data: AppList, rateInterval: number): AppListItem[] 
       name: app.name,
       istioSidecar: app.istioSidecar,
       healthPromise: API.getAppHealth(data.namespace.name, app.name, rateInterval, app.istioSidecar),
-      labels: app.labels
+      labels: app.labels,
+      virtualServices: app.virtualServices,
+      destinationRules: app.destinationRules,
+      gateways: app.gateways,
+      authorizationPolicies: app.authorizationPolicies,
+      peerAuthentications: app.peerAuthentications,
+      sidecars: app.sidecars,
+      requestAuthentications: app.requestAuthentications,
+      envoyFilters: app.envoyFilters
     }));
   }
   return [];

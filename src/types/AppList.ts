@@ -10,6 +10,14 @@ export interface AppOverview {
   name: string;
   istioSidecar: boolean;
   labels: { [key: string]: string };
+  virtualServices: string[];
+  destinationRules: string[];
+  gateways: string[];
+  authorizationPolicies: string[];
+  peerAuthentications: string[];
+  sidecars: string[];
+  requestAuthentications: string[];
+  envoyFilters: string[];
 }
 
 export interface AppListItem extends AppOverview {

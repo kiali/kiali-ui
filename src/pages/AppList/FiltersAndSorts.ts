@@ -11,9 +11,10 @@ import {
   filterByHealth,
   labelFilter
 } from '../../components/Filters/CommonFilters';
-import { hasMissingSidecar } from '../../components/VirtualList/Config';
+import { hasMissingSidecar, IstioTypes } from '../../components/VirtualList/Config';
 import { TextInputTypes } from '@patternfly/react-core';
 import { filterByLabel } from '../../helpers/LabelFilterHelper';
+import { istioTypeFilter } from '../IstioConfigList/FiltersAndSorts';
 
 export const sortFields: SortField<AppListItem>[] = [
   {
@@ -48,6 +49,27 @@ export const sortFields: SortField<AppListItem>[] = [
       if (aSC !== bSC) {
         return aSC - bSC;
       }
+
+      // Second by VS/DR
+      const fieldsToSort = [
+        'authorizationPolicies',
+        'destinationRules',
+        'gateways',
+        'envoyFilters',
+        'peerAuthentications',
+        'requestAuthentications',
+        'sidecars',
+        'virtualServices'
+      ];
+      for (let i = 0; i < fieldsToSort.length; i++) {
+        const vsA = a[fieldsToSort[i]].join('.');
+        const vsB = b[fieldsToSort[i]].join('.');
+        const vsCmp = vsA.localeCompare(vsB);
+        if (vsCmp !== 0) {
+          return vsCmp;
+        }
+      }
+
       // Finally by name
       return a.name.localeCompare(b.name);
     }
@@ -88,7 +110,13 @@ const appNameFilter: FilterType = {
   filterValues: []
 };
 
-export const availableFilters: FilterType[] = [appNameFilter, istioSidecarFilter, healthFilter, labelFilter];
+export const availableFilters: FilterType[] = [
+  appNameFilter,
+  istioSidecarFilter,
+  istioTypeFilter,
+  healthFilter,
+  labelFilter
+];
 
 /** Filter Method */
 
@@ -110,6 +138,39 @@ const filterByName = (items: AppListItem[], names: string[]): AppListItem[] => {
 
 const filterByIstioSidecar = (items: AppListItem[], istioSidecar: boolean): AppListItem[] => {
   return items.filter(item => item.istioSidecar === istioSidecar);
+};
+
+const filterByIstioType = (items: AppListItem[], istioTypes: string[]): AppListItem[] => {
+  return items.filter(item => {
+    if (istioTypes.length > 0) {
+      if (istioTypes.includes(IstioTypes.virtualservice.name) && item.virtualServices.length > 0) {
+        return true;
+      }
+      if (istioTypes.includes(IstioTypes.destinationrule.name) && item.destinationRules.length > 0) {
+        return true;
+      }
+      if (istioTypes.includes(IstioTypes.gateway.name) && item.gateways.length > 0) {
+        return true;
+      }
+      if (istioTypes.includes(IstioTypes.authorizationpolicy.name) && item.authorizationPolicies.length > 0) {
+        return true;
+      }
+      if (istioTypes.includes(IstioTypes.peerauthentication.name) && item.peerAuthentications.length > 0) {
+        return true;
+      }
+      if (istioTypes.includes(IstioTypes.sidecar.name) && item.sidecars.length > 0) {
+        return true;
+      }
+      if (istioTypes.includes(IstioTypes.requestauthentication.name) && item.requestAuthentications.length > 0) {
+        return true;
+      }
+      if (istioTypes.includes(IstioTypes.envoyfilter.name) && item.envoyFilters.length > 0) {
+        return true;
+      }
+      return false;
+    }
+    return true;
+  });
 };
 
 export const filterBy = (
@@ -137,6 +198,11 @@ export const filterBy = (
   const healthSelected = getFilterSelectedValues(healthFilter, filters);
   if (healthSelected.length > 0) {
     return filterByHealth(ret, healthSelected);
+  }
+
+  const istioTypeSelected = getFilterSelectedValues(istioTypeFilter, filters);
+  if (istioTypeSelected.length > 0) {
+    return filterByIstioType(ret, istioTypeSelected);
   }
   return ret;
 };
