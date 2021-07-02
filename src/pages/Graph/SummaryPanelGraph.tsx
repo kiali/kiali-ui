@@ -4,7 +4,7 @@ import { style } from 'typestyle';
 import _ from 'lodash';
 import { RateTableGrpc, RateTableHttp } from '../../components/SummaryPanel/RateTable';
 import { RpsChart, TcpChart } from '../../components/SummaryPanel/RpsChart';
-import { NodeType, SummaryPanelPropType } from '../../types/Graph';
+import { NodeType, SummaryPanelPropType, TrafficRate } from '../../types/Graph';
 import { getAccumulatedTrafficRateGrpc, getAccumulatedTrafficRateHttp } from '../../utils/TrafficRate';
 import * as API from '../../services/Api';
 import { Response } from '../../services/Api';
@@ -138,6 +138,7 @@ export default class SummaryPanelGraph extends React.Component<SummaryPanelPropT
     const outboundEdges = cy.nodes().leaves(`node[?${CyNode.isOutside}],[?${CyNode.isServiceEntry}]`).connectedEdges();
     const outboundRateGrpc = getAccumulatedTrafficRateGrpc(outboundEdges);
     const outboundRateHttp = getAccumulatedTrafficRateHttp(outboundEdges);
+    const isGrpcRequests = this.props.trafficRates.includes(TrafficRate.GRPC_REQUEST);
 
     return (
       <div className="panel panel-default" style={SummaryPanelGraph.panelStyle}>
@@ -160,7 +161,7 @@ export default class SummaryPanelGraph extends React.Component<SummaryPanelPropT
                 )}
                 {inboundRateGrpc.rate > 0 && (
                   <RateTableGrpc
-                    title="GRPC Traffic (requests per second):"
+                    isRequests={isGrpcRequests}
                     rate={inboundRateGrpc.rate}
                     rateGrpcErr={inboundRateGrpc.rateGrpcErr}
                     rateNR={inboundRateGrpc.rateNoResponse}
@@ -191,7 +192,7 @@ export default class SummaryPanelGraph extends React.Component<SummaryPanelPropT
                 )}
                 {outboundRateGrpc.rate > 0 && (
                   <RateTableGrpc
-                    title="GRPC Traffic (requests per second):"
+                    isRequests={isGrpcRequests}
                     rate={outboundRateGrpc.rate}
                     rateGrpcErr={outboundRateGrpc.rateGrpcErr}
                     rateNR={outboundRateGrpc.rateNoResponse}
@@ -222,7 +223,7 @@ export default class SummaryPanelGraph extends React.Component<SummaryPanelPropT
                 )}
                 {totalRateGrpc.rate > 0 && (
                   <RateTableGrpc
-                    title="GRPC Traffic (requests per second):"
+                    isRequests={isGrpcRequests}
                     rate={totalRateGrpc.rate}
                     rateGrpcErr={totalRateGrpc.rateGrpcErr}
                     rateNR={totalRateGrpc.rateNoResponse}

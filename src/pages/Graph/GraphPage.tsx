@@ -447,12 +447,13 @@ export class GraphPage extends React.Component<GraphPageProps, GraphPageState> {
             {this.props.summaryData && (
               <SummaryPanel
                 data={this.props.summaryData}
-                namespaces={this.props.activeNamespaces}
+                duration={this.state.graphData.fetchParams.duration}
                 graphType={this.props.graphType}
                 injectServiceNodes={this.props.showServiceNodes}
-                queryTime={this.state.graphData.timestamp / 1000}
-                duration={this.state.graphData.fetchParams.duration}
                 isPageVisible={this.props.isPageVisible}
+                namespaces={this.props.activeNamespaces}
+                queryTime={this.state.graphData.timestamp / 1000}
+                trafficRates={this.props.trafficRates}
                 {...computePrometheusRateParams(this.props.duration, NUMBER_OF_DATAPOINTS)}
               />
             )}

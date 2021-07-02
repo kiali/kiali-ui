@@ -22,13 +22,14 @@ export enum Protocol {
 
 export interface SummaryPanelPropType {
   data: SummaryData;
-  namespaces: Namespace[];
+  duration: DurationInSeconds;
   graphType: GraphType;
   injectServiceNodes: boolean;
+  namespaces: Namespace[];
   queryTime: TimeInSeconds;
-  duration: DurationInSeconds;
-  step: number;
   rateInterval: string;
+  step: number;
+  trafficRates: TrafficRate[];
 }
 
 export enum EdgeLabelMode {

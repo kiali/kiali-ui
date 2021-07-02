@@ -8,7 +8,8 @@ import {
   Protocol,
   SummaryPanelPropType,
   DecoratedGraphNodeData,
-  UNKNOWN
+  UNKNOWN,
+  TrafficRate
 } from '../../types/Graph';
 import { renderBadgedLink } from './SummaryLink';
 import {
@@ -37,7 +38,7 @@ import { Direction } from 'types/MetricsOptions';
 import { style } from 'typestyle';
 
 type SummaryPanelEdgeMetricsState = {
-  reqRates: Datapoint[];
+  rates: Datapoint[];
   errRates: Datapoint[];
   rtAvg: Datapoint[];
   rtMed: Datapoint[];
@@ -55,7 +56,7 @@ type SummaryPanelEdgeState = SummaryPanelEdgeMetricsState & {
 };
 
 const defaultMetricsState: SummaryPanelEdgeMetricsState = {
-  reqRates: [],
+  rates: [],
   errRates: [],
   rtAvg: [],
   rtMed: [],
@@ -133,6 +134,7 @@ export default class SummaryPanelEdge extends React.Component<SummaryPanelPropTy
     const protocol = edge.protocol;
     const isGrpc = protocol === Protocol.GRPC;
     const isHttp = protocol === Protocol.HTTP;
+    const isRequests = isHttp || (isGrpc && this.props.trafficRates.includes(TrafficRate.GRPC_REQUEST));
     const isTcp = protocol === Protocol.TCP;
 
     const SecurityBlock = () => {
@@ -163,7 +165,7 @@ export default class SummaryPanelEdge extends React.Component<SummaryPanelPropTy
           {renderBadgedLink(dest, undefined, 'To:        ')}
         </div>
         {hasSecurity && <SecurityBlock />}
-        {(isGrpc || isHttp) && (
+        {(isHttp || isGrpc) && (
           <div className={summaryBodyTabs}>
             <SimpleTabs id="edge_summary_rate_tabs" defaultTab={0} style={{ paddingBottom: '10px' }}>
               <Tab style={summaryFont} title="Traffic" eventKey={0}>
@@ -171,7 +173,7 @@ export default class SummaryPanelEdge extends React.Component<SummaryPanelPropTy
                   {isGrpc && (
                     <>
                       <RateTableGrpc
-                        title="GRPC requests per second:"
+                        isRequests={isRequests}
                         rate={this.safeRate(edge.grpc)}
                         rateGrpcErr={this.safeRate(edge.grpcErr)}
                         rateNR={this.safeRate(edge.grpcNoResponse)}
@@ -192,14 +194,16 @@ export default class SummaryPanelEdge extends React.Component<SummaryPanelPropTy
                   )}
                 </div>
               </Tab>
-              <Tab style={summaryFont} title="Flags" eventKey={1}>
-                <div style={summaryFont}>
-                  <ResponseFlagsTable
-                    title={'Response flags by ' + (isGrpc ? 'GRPC code:' : 'HTTP code:')}
-                    responses={edge.responses}
-                  />
-                </div>
-              </Tab>
+              {isRequests && (
+                <Tab style={summaryFont} title="Flags" eventKey={1}>
+                  <div style={summaryFont}>
+                    <ResponseFlagsTable
+                      title={'Response flags by ' + (isGrpc ? 'GRPC code:' : 'HTTP code:')}
+                      responses={edge.responses}
+                    />
+                  </div>
+                </Tab>
+              )}
               <Tab style={summaryFont} title="Hosts" eventKey={2}>
                 <div style={summaryFont}>
                   <ResponseHostsTable
@@ -416,7 +420,7 @@ export default class SummaryPanelEdge extends React.Component<SummaryPanelPropTy
     this.metricsPromise.promise
       .then(response => {
         const metrics = response.data;
-        let { reqRates, errRates, rtAvg, rtMed, rt95, rt99, tcpSent, tcpReceived, unit } = defaultMetricsState;
+        let { rates: reqRates, errRates, rtAvg, rtMed, rt95, rt99, tcpSent, tcpReceived, unit } = defaultMetricsState;
         if (isGrpc || isHttp) {
           reqRates = this.getNodeDataPoints(
             metrics.request_count,
@@ -481,7 +485,7 @@ export default class SummaryPanelEdge extends React.Component<SummaryPanelPropTy
 
         this.setState({
           loading: false,
-          reqRates: reqRates,
+          rates: reqRates,
           errRates: errRates,
           rtAvg: rtAvg,
           rtMed: rtMed,
@@ -556,7 +560,7 @@ export default class SummaryPanelEdge extends React.Component<SummaryPanelPropTy
       const labelRt = isGrpc ? 'GRPC Request Response Time (ms)' : 'HTTP Request Response Time (ms)';
       rpsChart = (
         <>
-          <RpsChart label={labelRps} dataRps={this.state.reqRates!} dataErrors={this.state.errRates} />
+          <RpsChart label={labelRps} dataRps={this.state.rates!} dataErrors={this.state.errRates} />
           {hr()}
           <ResponseTimeChart
             label={labelRt}

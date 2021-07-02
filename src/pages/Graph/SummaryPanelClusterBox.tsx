@@ -8,7 +8,7 @@ import { RateTableGrpc, RateTableHttp } from 'components/SummaryPanel/RateTable'
 import SimpleTabs from 'components/Tab/SimpleTabs';
 import { PFColors } from 'components/Pf/PfColors';
 import { KialiIcon } from 'config/KialiIcon';
-import { SummaryPanelPropType, NodeType } from 'types/Graph';
+import { SummaryPanelPropType, NodeType, TrafficRate } from 'types/Graph';
 import { getAccumulatedTrafficRateGrpc, getAccumulatedTrafficRateHttp } from 'utils/TrafficRate';
 import { PFBadge, PFBadges } from 'components/Pf/PfBadges';
 
@@ -66,6 +66,8 @@ export default class SummaryPanelClusterBox extends React.Component<SummaryPanel
     const inboundRateHttp = getAccumulatedTrafficRateHttp(inboundEdges);
     const outboundRateGrpc = getAccumulatedTrafficRateGrpc(outboundEdges);
     const outboundRateHttp = getAccumulatedTrafficRateHttp(outboundEdges);
+    const isGrpcRequests = this.props.trafficRates.includes(TrafficRate.GRPC_REQUEST);
+
     return (
       <div className="panel panel-default" style={SummaryPanelClusterBox.panelStyle}>
         <div className="panel-heading" style={summaryHeader}>
@@ -83,7 +85,7 @@ export default class SummaryPanelClusterBox extends React.Component<SummaryPanel
                 )}
                 {inboundRateGrpc.rate > 0 && (
                   <RateTableGrpc
-                    title="GRPC Traffic (requests per second):"
+                    isRequests={isGrpcRequests}
                     rate={inboundRateGrpc.rate}
                     rateGrpcErr={inboundRateGrpc.rateGrpcErr}
                     rateNR={inboundRateGrpc.rateNoResponse}
@@ -114,7 +116,7 @@ export default class SummaryPanelClusterBox extends React.Component<SummaryPanel
                 )}
                 {outboundRateGrpc.rate > 0 && (
                   <RateTableGrpc
-                    title="GRPC Traffic (requests per second):"
+                    isRequests={isGrpcRequests}
                     rate={outboundRateGrpc.rate}
                     rateGrpcErr={outboundRateGrpc.rateGrpcErr}
                     rateNR={outboundRateGrpc.rateNoResponse}
@@ -145,7 +147,7 @@ export default class SummaryPanelClusterBox extends React.Component<SummaryPanel
                 )}
                 {totalRateGrpc.rate > 0 && (
                   <RateTableGrpc
-                    title="GRPC Traffic (requests per second):"
+                    isRequests={isGrpcRequests}
                     rate={totalRateGrpc.rate}
                     rateGrpcErr={totalRateGrpc.rateGrpcErr}
                     rateNR={totalRateGrpc.rateNoResponse}

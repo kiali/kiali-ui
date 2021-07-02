@@ -2,7 +2,7 @@ import * as React from 'react';
 import { renderRateChartHttp, renderRateChartGrpc } from './RateChart';
 
 type RateTableGrpcPropType = {
-  title: string;
+  isRequests: boolean;
   rate: number;
   rateGrpcErr: number;
   rateNR: number;
@@ -11,13 +11,14 @@ type RateTableGrpcPropType = {
 export class RateTableGrpc extends React.Component<RateTableGrpcPropType, {}> {
   render() {
     // for the table and graph
+    const title = `gRPC Traffic (${this.props.isRequests ? 'requests' : 'messages'} per second)`;
     const errRate: number = this.props.rateGrpcErr + this.props.rateNR;
     const percentErr: number = this.props.rate === 0 ? 0 : (errRate / this.props.rate) * 100;
     const percentOK: number = 100 - percentErr;
 
     return (
       <div>
-        <strong>{this.props.title}</strong>
+        <strong>{title}</strong>
         <table className="table">
           <thead>
             <tr>
@@ -29,12 +30,12 @@ export class RateTableGrpc extends React.Component<RateTableGrpcPropType, {}> {
           <tbody>
             <tr>
               <td>{this.props.rate.toFixed(2)}</td>
-              <td>{percentOK.toFixed(2)}</td>
-              <td>{percentErr.toFixed(2)}</td>
+              <td>{this.props.isRequests ? percentOK.toFixed(2) : '-'}</td>
+              <td>{this.props.isRequests ? percentErr.toFixed(2) : '-'}</td>
             </tr>
           </tbody>
         </table>
-        {renderRateChartGrpc(percentOK, percentErr)}
+        {this.props.isRequests && renderRateChartGrpc(percentOK, percentErr)}
       </div>
     );
   }

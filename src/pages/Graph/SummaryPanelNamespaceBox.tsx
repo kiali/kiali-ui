@@ -3,7 +3,7 @@ import { Tab } from '@patternfly/react-core';
 import { style } from 'typestyle';
 import { RateTableGrpc, RateTableHttp } from '../../components/SummaryPanel/RateTable';
 import { RpsChart, TcpChart } from '../../components/SummaryPanel/RpsChart';
-import { SummaryPanelPropType, NodeType } from '../../types/Graph';
+import { SummaryPanelPropType, NodeType, TrafficRate } from '../../types/Graph';
 import { getAccumulatedTrafficRateGrpc, getAccumulatedTrafficRateHttp } from '../../utils/TrafficRate';
 import * as API from '../../services/Api';
 import {
@@ -137,6 +137,7 @@ export default class SummaryPanelNamespaceBox extends React.Component<
     const inboundRateHttp = getAccumulatedTrafficRateHttp(inboundEdges);
     const outboundRateGrpc = getAccumulatedTrafficRateGrpc(outboundEdges);
     const outboundRateHttp = getAccumulatedTrafficRateHttp(outboundEdges);
+    const isGrpcRequests = this.props.trafficRates.includes(TrafficRate.GRPC_REQUEST);
 
     return (
       <div className="panel panel-default" style={SummaryPanelNamespaceBox.panelStyle}>
@@ -156,7 +157,7 @@ export default class SummaryPanelNamespaceBox extends React.Component<
                 )}
                 {inboundRateGrpc.rate > 0 && (
                   <RateTableGrpc
-                    title="GRPC Traffic (requests per second):"
+                    isRequests={isGrpcRequests}
                     rate={inboundRateGrpc.rate}
                     rateGrpcErr={inboundRateGrpc.rateGrpcErr}
                     rateNR={inboundRateGrpc.rateNoResponse}
@@ -187,7 +188,7 @@ export default class SummaryPanelNamespaceBox extends React.Component<
                 )}
                 {outboundRateGrpc.rate > 0 && (
                   <RateTableGrpc
-                    title="GRPC Traffic (requests per second):"
+                    isRequests={isGrpcRequests}
                     rate={outboundRateGrpc.rate}
                     rateGrpcErr={outboundRateGrpc.rateGrpcErr}
                     rateNR={outboundRateGrpc.rateNoResponse}
@@ -218,7 +219,7 @@ export default class SummaryPanelNamespaceBox extends React.Component<
                 )}
                 {totalRateGrpc.rate > 0 && (
                   <RateTableGrpc
-                    title="GRPC Traffic (requests per second):"
+                    isRequests={isGrpcRequests}
                     rate={totalRateGrpc.rate}
                     rateGrpcErr={totalRateGrpc.rateGrpcErr}
                     rateNR={totalRateGrpc.rateNoResponse}
