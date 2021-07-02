@@ -16,7 +16,7 @@ export interface ServiceOverview {
   labels: { [key: string]: string };
   virtualServices: string[];
   destinationRules: string[];
-  kialiWizard: boolean;
+  kialiWizard: string;
 }
 
 export interface ServiceListItem extends ServiceOverview {
