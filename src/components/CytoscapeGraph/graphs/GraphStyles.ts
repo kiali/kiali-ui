@@ -55,6 +55,7 @@ let NodeColorFillHoverFailure: PFColorVal;
 const NodeHeight = '25px';
 const NodeIconCB = icons.istio.circuitBreaker.className; // bolt
 const NodeIconFaultInjection = icons.istio.faultInjection.className; // ban
+const NodeIconGateway = icons.istio.gateway.className; // globe
 const NodeIconMS = icons.istio.missingSidecar.className; // exclamation
 const NodeIconRoot = icons.istio.root.className; // alt-arrow-circle-right
 const NodeIconVS = icons.istio.virtualService.className; // code-branch
@@ -241,7 +242,11 @@ export class GraphStyles {
       }
     }
     if (node.isRoot) {
-      icons = `<span class="${NodeIconRoot} ${iconMargin(icons)}"></span> ${icons}`;
+      if (node.isGateway?.ingressInfo?.hostnames?.length !== undefined) {
+        icons = `<span class='${NodeIconGateway} ${iconMargin(icons)}'></span> ${icons}`;
+      } else {
+        icons = `<span class='${NodeIconRoot} ${iconMargin(icons)}'></span> ${icons}`;
+      }
     }
 
     const hasIcon = icons.length > 0;

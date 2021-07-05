@@ -54,6 +54,7 @@ export class SummaryPanelNode extends React.Component<SummaryPanelNodeProps, Sum
     const destsList = nodeType === NodeType.SERVICE && isServiceEntry && this.renderDestServices(nodeData);
 
     const shouldRenderDestsList = destsList && destsList.length > 0;
+    const shouldRenderGatewayHostnames = nodeData.isGateway?.ingressInfo?.hostnames !== undefined && nodeData.isGateway.ingressInfo.hostnames.length !== 0;
     const shouldRenderSvcList = servicesList && servicesList.length > 0;
     const shouldRenderService = service && ![NodeType.SERVICE, NodeType.UNKNOWN].includes(nodeType);
     const shouldRenderApp = app && ![NodeType.APP, NodeType.UNKNOWN].includes(nodeType);
@@ -100,12 +101,25 @@ export class SummaryPanelNode extends React.Component<SummaryPanelNodeProps, Sum
             {shouldRenderService && <div>{renderBadgedLink(nodeData, NodeType.SERVICE)}</div>}
             {shouldRenderApp && <div>{renderBadgedLink(nodeData, NodeType.APP)}</div>}
             {shouldRenderWorkload && <div>{renderBadgedLink(nodeData, NodeType.WORKLOAD)}</div>}
+            {shouldRenderGatewayHostnames && this.renderGatewayHostnames(nodeData)}
           </div>
         </div>
         {shouldRenderTraces ? this.renderWithTabs(nodeData) : this.renderTrafficOnly()}
       </div>
     );
   }
+
+  private renderGatewayHostnames = (nodeData:  DecoratedGraphNodeData) => {
+    return (
+      <div>
+        <hr style={{ margin: 'revert' }} />
+        <strong>Configured hostnames:</strong>
+        <ul style={{ marginLeft: 'revert', paddingLeft: 'revert', listStyle: 'initial' }}>
+          {nodeData.isGateway?.ingressInfo?.hostnames?.map(hostname => (<li key={hostname}>{hostname}</li>))}
+        </ul>
+      </div>
+    );
+  };
 
   private renderTrafficOnly() {
     return (

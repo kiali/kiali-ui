@@ -226,6 +226,11 @@ export interface GraphNodeData {
   isDead?: boolean;
   isIdle?: boolean;
   isInaccessible?: boolean;
+  isGateway?: {
+    ingressInfo?: {
+      hostnames?: string[];
+    };
+  };
   isMisconfigured?: string;
   isOutside?: boolean;
   isRoot?: boolean;
