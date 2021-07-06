@@ -112,11 +112,7 @@ export class SummaryPanelNode extends React.Component<SummaryPanelNodeProps, Sum
   private renderGatewayHostnames = (nodeData:  DecoratedGraphNodeData) => {
     return (
       <div>
-        <hr style={{ margin: 'revert' }} />
-        <strong>Configured hostnames:</strong>
-        <ul style={{ marginLeft: 'revert', paddingLeft: 'revert', listStyle: 'initial' }}>
-          {nodeData.isGateway?.ingressInfo?.hostnames?.map(hostname => (<li key={hostname}>{hostname}</li>))}
-        </ul>
+        {nodeData.isGateway?.ingressInfo?.hostnames?.map(hostname => renderBadgedHost(hostname))}
       </div>
     );
   };
