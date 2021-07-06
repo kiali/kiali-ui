@@ -161,24 +161,29 @@ class ServiceNetwork extends React.Component<Props> {
                   >
                     {this.getHostnames(this.props.serviceDetails.virtualServices.items).map((hostname, i) => {
                       return (
-                        <div key={'hostname_' + i} style={{ overflow: 'hidden' }}>
+                        <div key={'hostname_' + i}>
                           <Tooltip
                             content={
                               <>
-                                From {hostname.fromType}: {hostname.fromName}
+                                Hostname <b>{hostname.hostname}</b> found in {hostname.fromType}{' '}
+                                <b>{hostname.fromName}</b>
                               </>
                             }
                           >
-                            <span
-                              style={{
-                                whiteSpace: 'nowrap',
-                                overflow: 'hidden',
-                                textOverflow: 'ellipsis',
-                                display: 'block'
-                              }}
-                            >
-                              {hostname.hostname} <KialiIcon.Info className={infoStyle} />
-                            </span>
+                            <div style={{ display: 'flex' }}>
+                              <span
+                                style={{
+                                  whiteSpace: 'nowrap',
+                                  overflow: 'hidden',
+                                  textOverflow: 'ellipsis'
+                                }}
+                              >
+                                {hostname.hostname}
+                              </span>
+                              <span>
+                                <KialiIcon.Info className={infoStyle} />
+                              </span>
+                            </div>
                           </Tooltip>
                         </div>
                       );
