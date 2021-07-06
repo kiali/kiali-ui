@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Card, CardBody, CardHeader, Title, Tooltip } from '@patternfly/react-core';
+import { Card, CardBody, CardHeader, Title, Tooltip, TooltipPosition } from '@patternfly/react-core';
 import { ServiceDetailsInfo } from '../../types/ServiceInfo';
 import { style } from 'typestyle';
 import { Gateway, ObjectCheck, ObjectValidation, VirtualService } from '../../types/IstioObjects';
@@ -117,10 +117,11 @@ class ServiceNetwork extends React.Component<Props> {
                       <div key={'endpoint_' + i + '_address_' + u}>
                         {address.name !== '' ? (
                           <Tooltip
+                            position={TooltipPosition.right}
                             content={
-                              <>
+                              <div style={{ textAlign: 'left' }}>
                                 {address.kind}: {address.name}
-                              </>
+                              </div>
                             }
                           >
                             <span>
@@ -163,11 +164,12 @@ class ServiceNetwork extends React.Component<Props> {
                       return (
                         <div key={'hostname_' + i}>
                           <Tooltip
+                            position={TooltipPosition.right}
                             content={
-                              <>
+                              <div style={{ textAlign: 'left' }}>
                                 Hostname <b>{hostname.hostname}</b> found in {hostname.fromType}{' '}
                                 <b>{hostname.fromName}</b>
-                              </>
+                              </div>
                             }
                           >
                             <div style={{ display: 'flex' }}>
