@@ -153,10 +153,15 @@ class ServiceNetwork extends React.Component<Props> {
               {this.props.serviceDetails.virtualServices.items.length > 0 && (
                 <li>
                   <span>Hostnames</span>
-                  <div style={{ display: 'inline-block' }}>
+                  <div
+                    style={{
+                      display: 'inline-block',
+                      width: '75%'
+                    }}
+                  >
                     {this.getHostnames(this.props.serviceDetails.virtualServices.items).map((hostname, i) => {
                       return (
-                        <div key={'hostname_' + i}>
+                        <div key={'hostname_' + i} style={{ overflow: 'hidden' }}>
                           <Tooltip
                             content={
                               <>
@@ -164,7 +169,14 @@ class ServiceNetwork extends React.Component<Props> {
                               </>
                             }
                           >
-                            <span>
+                            <span
+                              style={{
+                                whiteSpace: 'nowrap',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                display: 'block'
+                              }}
+                            >
                               {hostname.hostname} <KialiIcon.Info className={infoStyle} />
                             </span>
                           </Tooltip>
