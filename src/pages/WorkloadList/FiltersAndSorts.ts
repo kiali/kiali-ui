@@ -17,11 +17,13 @@ import {
   getPresenceFilterValue,
   filterByHealth
 } from '../../components/Filters/CommonFilters';
-import { hasMissingSidecar, IstioTypes } from '../../components/VirtualList/Config';
+import { hasMissingSidecar } from '../../components/VirtualList/Config';
 import { TextInputTypes } from '@patternfly/react-core';
 import { filterByLabel } from '../../helpers/LabelFilterHelper';
 import { calculateErrorRate } from '../../types/ErrorRate';
 import { istioTypeFilter } from '../IstioConfigList/FiltersAndSorts';
+import { dicIstioType } from '../../types/IstioConfigList';
+import { compareObjectReferences } from '../AppList/FiltersAndSorts';
 
 const missingLabels = (r: WorkloadListItem): number => {
   return r.appLabel && r.versionLabel ? 0 : r.appLabel || r.versionLabel ? 1 : 2;
@@ -68,22 +70,12 @@ export const sortFields: SortField<WorkloadListItem>[] = [
         return aSC - bSC;
       }
 
-      // Second by VS/DR
-      const fieldsToSort = [
-        'authorizationPolicies',
-        'gateways',
-        'envoyFilters',
-        'peerAuthentications',
-        'requestAuthentications',
-        'sidecars'
-      ];
-      for (let i = 0; i < fieldsToSort.length; i++) {
-        const vsA = a[fieldsToSort[i]].join('.');
-        const vsB = b[fieldsToSort[i]].join('.');
-        const vsCmp = vsA.localeCompare(vsB);
-        if (vsCmp !== 0) {
-          return vsCmp;
-        }
+      // Second by Details
+      const iRefA = a.istioReferences;
+      const iRefB = b.istioReferences;
+      const cmpRefs = compareObjectReferences(iRefA, iRefB);
+      if (cmpRefs !== 0) {
+        return cmpRefs;
       }
 
       // Then by additional details
@@ -322,30 +314,9 @@ const filterByName = (items: WorkloadListItem[], names: string[]): WorkloadListI
 };
 
 const filterByIstioType = (items: WorkloadListItem[], istioTypes: string[]): WorkloadListItem[] => {
-  return items.filter(item => {
-    if (istioTypes.length > 0) {
-      if (istioTypes.includes(IstioTypes.gateway.name) && item.gateways.length > 0) {
-        return true;
-      }
-      if (istioTypes.includes(IstioTypes.authorizationpolicy.name) && item.authorizationPolicies.length > 0) {
-        return true;
-      }
-      if (istioTypes.includes(IstioTypes.peerauthentication.name) && item.peerAuthentications.length > 0) {
-        return true;
-      }
-      if (istioTypes.includes(IstioTypes.sidecar.name) && item.sidecars.length > 0) {
-        return true;
-      }
-      if (istioTypes.includes(IstioTypes.requestauthentication.name) && item.requestAuthentications.length > 0) {
-        return true;
-      }
-      if (istioTypes.includes(IstioTypes.envoyfilter.name) && item.envoyFilters.length > 0) {
-        return true;
-      }
-      return false;
-    }
-    return true;
-  });
+  return items.filter(
+    item => item.istioReferences.filter(ref => istioTypes.includes(dicIstioType[ref.objectType])).length !== 0
+  );
 };
 
 export const filterBy = (

@@ -1,6 +1,6 @@
 import Namespace from './Namespace';
 import { ServiceHealth } from './Health';
-import { Validations, ObjectValidation } from './IstioObjects';
+import { Validations, ObjectValidation, ObjectReference } from './IstioObjects';
 import { AdditionalItem } from './Workload';
 
 export interface ServiceList {
@@ -14,8 +14,7 @@ export interface ServiceOverview {
   istioSidecar: boolean;
   additionalDetailSample?: AdditionalItem;
   labels: { [key: string]: string };
-  virtualServices: string[];
-  destinationRules: string[];
+  istioReferences: ObjectReference[];
   kialiWizard: string;
 }
 

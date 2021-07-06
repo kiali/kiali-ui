@@ -10,11 +10,13 @@ import {
   getFilterSelectedValues,
   filterByHealth
 } from '../../components/Filters/CommonFilters';
-import { hasMissingSidecar, IstioTypes } from '../../components/VirtualList/Config';
+import { hasMissingSidecar } from '../../components/VirtualList/Config';
 import { TextInputTypes } from '@patternfly/react-core';
 import { filterByLabel } from '../../helpers/LabelFilterHelper';
 import { calculateErrorRate } from '../../types/ErrorRate';
 import { istioTypeFilter } from '../IstioConfigList/FiltersAndSorts';
+import { dicIstioType } from '../../types/IstioConfigList';
+import { compareObjectReferences } from '../AppList/FiltersAndSorts';
 
 export const sortFields: SortField<ServiceListItem>[] = [
   {
@@ -50,15 +52,12 @@ export const sortFields: SortField<ServiceListItem>[] = [
         return aSC - bSC;
       }
 
-      // Second by VS/DR
-      const fieldsToSort = ['virtualServices', 'destinationRules'];
-      for (let i = 0; i < fieldsToSort.length; i++) {
-        const vsA = a[fieldsToSort[i]].join('.');
-        const vsB = b[fieldsToSort[i]].join('.');
-        const vsCmp = vsA.localeCompare(vsB);
-        if (vsCmp !== 0) {
-          return vsCmp;
-        }
+      // Second by Details
+      const iRefA = a.istioReferences;
+      const iRefB = b.istioReferences;
+      const cmpRefs = compareObjectReferences(iRefA, iRefB);
+      if (cmpRefs !== 0) {
+        return cmpRefs;
       }
 
       // Then by additional details
@@ -172,18 +171,9 @@ const filterByName = (items: ServiceListItem[], names: string[]): ServiceListIte
 };
 
 const filterByIstioType = (items: ServiceListItem[], istioTypes: string[]): ServiceListItem[] => {
-  return items.filter(item => {
-    if (istioTypes.length > 0) {
-      if (istioTypes.includes(IstioTypes.virtualservice.name) && item.virtualServices.length > 0) {
-        return true;
-      }
-      if (istioTypes.includes(IstioTypes.destinationrule.name) && item.destinationRules.length > 0) {
-        return true;
-      }
-      return false;
-    }
-    return true;
-  });
+  return items.filter(
+    item => item.istioReferences.filter(ref => istioTypes.includes(dicIstioType[ref.objectType])).length !== 0
+  );
 };
 
 export const filterBy = (

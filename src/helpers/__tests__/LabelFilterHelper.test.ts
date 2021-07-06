@@ -10,14 +10,7 @@ const appList: AppListItem[] = [
     name: 'ratings',
     istioSidecar: false,
     labels: { app: 'ratings', service: 'ratings', version: 'v1' },
-    virtualServices: [],
-    destinationRules: [],
-    gateways: [],
-    authorizationPolicies: [],
-    peerAuthentications: [],
-    sidecars: [],
-    requestAuthentications: [],
-    envoyFilters: []
+    istioReferences: []
   },
   {
     namespace: 'bookinfo',
@@ -25,14 +18,7 @@ const appList: AppListItem[] = [
     name: 'productpage',
     istioSidecar: false,
     labels: { app: 'productpage', service: 'productpage', version: 'v1' },
-    virtualServices: [],
-    destinationRules: [],
-    gateways: [],
-    authorizationPolicies: [],
-    peerAuthentications: [],
-    sidecars: [],
-    requestAuthentications: [],
-    envoyFilters: []
+    istioReferences: []
   },
   {
     namespace: 'bookinfo',
@@ -40,14 +26,7 @@ const appList: AppListItem[] = [
     name: 'details',
     istioSidecar: false,
     labels: { app: 'details', service: 'details', version: 'v1' },
-    virtualServices: [],
-    destinationRules: [],
-    gateways: [],
-    authorizationPolicies: [],
-    peerAuthentications: [],
-    sidecars: [],
-    requestAuthentications: [],
-    envoyFilters: []
+    istioReferences: []
   },
   {
     namespace: 'bookinfo',
@@ -55,14 +34,7 @@ const appList: AppListItem[] = [
     name: 'reviews',
     istioSidecar: false,
     labels: { app: 'reviews', service: 'reviews', version: 'v1,v2,v3' },
-    virtualServices: [],
-    destinationRules: [],
-    gateways: [],
-    authorizationPolicies: [],
-    peerAuthentications: [],
-    sidecars: [],
-    requestAuthentications: [],
-    envoyFilters: []
+    istioReferences: []
   }
 ];
 
@@ -76,12 +48,7 @@ const workloadList: WorkloadListItem[] = [
     labels: { app: 'details', version: 'v1' },
     appLabel: true,
     versionLabel: true,
-    gateways: [],
-    authorizationPolicies: [],
-    peerAuthentications: [],
-    sidecars: [],
-    requestAuthentications: [],
-    envoyFilters: []
+    istioReferences: []
   },
   {
     namespace: 'bookinfo',
@@ -92,12 +59,7 @@ const workloadList: WorkloadListItem[] = [
     labels: { app: 'productpage', version: 'v1' },
     appLabel: true,
     versionLabel: true,
-    gateways: [],
-    authorizationPolicies: [],
-    peerAuthentications: [],
-    sidecars: [],
-    requestAuthentications: [],
-    envoyFilters: []
+    istioReferences: []
   },
   {
     namespace: 'bookinfo',
@@ -108,12 +70,7 @@ const workloadList: WorkloadListItem[] = [
     labels: { app: 'ratings', version: 'v1' },
     appLabel: true,
     versionLabel: true,
-    gateways: [],
-    authorizationPolicies: [],
-    peerAuthentications: [],
-    sidecars: [],
-    requestAuthentications: [],
-    envoyFilters: []
+    istioReferences: []
   },
   {
     namespace: 'bookinfo',
@@ -124,12 +81,7 @@ const workloadList: WorkloadListItem[] = [
     labels: { app: 'reviews', version: 'v1' },
     appLabel: true,
     versionLabel: true,
-    gateways: [],
-    authorizationPolicies: [],
-    peerAuthentications: [],
-    sidecars: [],
-    requestAuthentications: [],
-    envoyFilters: []
+    istioReferences: []
   },
   {
     namespace: 'bookinfo',
@@ -140,12 +92,7 @@ const workloadList: WorkloadListItem[] = [
     labels: { app: 'reviews', version: 'v2' },
     appLabel: true,
     versionLabel: true,
-    gateways: [],
-    authorizationPolicies: [],
-    peerAuthentications: [],
-    sidecars: [],
-    requestAuthentications: [],
-    envoyFilters: []
+    istioReferences: []
   },
   {
     namespace: 'bookinfo',
@@ -156,12 +103,7 @@ const workloadList: WorkloadListItem[] = [
     labels: { app: 'reviews', version: 'v3' },
     appLabel: true,
     versionLabel: true,
-    gateways: [],
-    authorizationPolicies: [],
-    peerAuthentications: [],
-    sidecars: [],
-    requestAuthentications: [],
-    envoyFilters: []
+    istioReferences: []
   }
 ];
 
@@ -173,8 +115,7 @@ const serviceList: ServiceListItem[] = [
     istioSidecar: false,
     labels: { app: 'details', service: 'details' },
     validation: { name: 'details', objectType: 'service', valid: true, checks: [] },
-    virtualServices: [],
-    destinationRules: [],
+    istioReferences: [],
     kialiWizard: ''
   },
   {
@@ -184,8 +125,7 @@ const serviceList: ServiceListItem[] = [
     istioSidecar: false,
     labels: { app: 'reviews', service: 'reviews' },
     validation: { name: 'reviews', objectType: 'service', valid: true, checks: [] },
-    virtualServices: [],
-    destinationRules: [],
+    istioReferences: [],
     kialiWizard: ''
   },
   {
@@ -195,8 +135,7 @@ const serviceList: ServiceListItem[] = [
     istioSidecar: false,
     labels: { app: 'ratings', service: 'ratings' },
     validation: { name: 'ratings', objectType: 'service', valid: true, checks: [] },
-    virtualServices: [],
-    destinationRules: [],
+    istioReferences: [],
     kialiWizard: ''
   },
   {
@@ -206,8 +145,7 @@ const serviceList: ServiceListItem[] = [
     istioSidecar: false,
     labels: { app: 'productpage', service: 'productpage' },
     validation: { name: 'productpage', objectType: 'service', valid: true, checks: [] },
-    virtualServices: [],
-    destinationRules: [],
+    istioReferences: [],
     kialiWizard: ''
   }
 ];
@@ -227,14 +165,7 @@ describe('LabelFilter', () => {
         name: 'details',
         istioSidecar: false,
         labels: { app: 'details', service: 'details', version: 'v1' },
-        virtualServices: [],
-        destinationRules: [],
-        gateways: [],
-        authorizationPolicies: [],
-        peerAuthentications: [],
-        sidecars: [],
-        requestAuthentications: [],
-        envoyFilters: []
+        istioReferences: []
       }
     ]);
   });
@@ -248,14 +179,7 @@ describe('LabelFilter', () => {
         name: 'reviews',
         istioSidecar: false,
         labels: { app: 'reviews', service: 'reviews', version: 'v1,v2,v3' },
-        virtualServices: [],
-        destinationRules: [],
-        gateways: [],
-        authorizationPolicies: [],
-        peerAuthentications: [],
-        sidecars: [],
-        requestAuthentications: [],
-        envoyFilters: []
+        istioReferences: []
       }
     ]);
   });
@@ -277,12 +201,7 @@ describe('LabelFilter', () => {
         labels: { app: 'reviews', version: 'v1' },
         appLabel: true,
         versionLabel: true,
-        gateways: [],
-        authorizationPolicies: [],
-        peerAuthentications: [],
-        sidecars: [],
-        requestAuthentications: [],
-        envoyFilters: []
+        istioReferences: []
       },
       {
         namespace: 'bookinfo',
@@ -293,12 +212,7 @@ describe('LabelFilter', () => {
         labels: { app: 'reviews', version: 'v2' },
         appLabel: true,
         versionLabel: true,
-        gateways: [],
-        authorizationPolicies: [],
-        peerAuthentications: [],
-        sidecars: [],
-        requestAuthentications: [],
-        envoyFilters: []
+        istioReferences: []
       },
       {
         namespace: 'bookinfo',
@@ -309,12 +223,7 @@ describe('LabelFilter', () => {
         labels: { app: 'reviews', version: 'v3' },
         appLabel: true,
         versionLabel: true,
-        gateways: [],
-        authorizationPolicies: [],
-        peerAuthentications: [],
-        sidecars: [],
-        requestAuthentications: [],
-        envoyFilters: []
+        istioReferences: []
       }
     ]);
   });
@@ -334,8 +243,7 @@ describe('LabelFilter', () => {
         istioSidecar: false,
         labels: { app: 'details', service: 'details' },
         validation: { name: 'details', objectType: 'service', valid: true, checks: [] },
-        virtualServices: [],
-        destinationRules: [],
+        istioReferences: [],
         kialiWizard: ''
       }
     ]);

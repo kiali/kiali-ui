@@ -1,5 +1,6 @@
 import Namespace from './Namespace';
 import { AppHealth } from './Health';
+import { ObjectReference } from './IstioObjects';
 
 export interface AppList {
   namespace: Namespace;
@@ -10,14 +11,7 @@ export interface AppOverview {
   name: string;
   istioSidecar: boolean;
   labels: { [key: string]: string };
-  virtualServices: string[];
-  destinationRules: string[];
-  gateways: string[];
-  authorizationPolicies: string[];
-  peerAuthentications: string[];
-  sidecars: string[];
-  requestAuthentications: string[];
-  envoyFilters: string[];
+  istioReferences: ObjectReference[];
 }
 
 export interface AppListItem extends AppOverview {

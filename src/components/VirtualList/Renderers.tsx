@@ -62,14 +62,6 @@ export const details: Renderer<AppListItem | WorkloadListItem | ServiceListItem>
   const hasMissingVersion = isWorkload && !item['versionLabel'];
   const additionalDetails = (item as WorkloadListItem | ServiceListItem).additionalDetailSample;
   const spacer = hasMissingSC && additionalDetails && additionalDetails.icon;
-  const virtualServices = (item as ServiceListItem).virtualServices;
-  const destinationRules = (item as ServiceListItem).destinationRules;
-  const gateways = (item as WorkloadListItem).gateways;
-  const authorizationPolicies = (item as WorkloadListItem).authorizationPolicies;
-  const peerAuthentications = (item as WorkloadListItem).peerAuthentications;
-  const sidecars = (item as WorkloadListItem).sidecars;
-  const requestAuthentications = (item as WorkloadListItem).requestAuthentications;
-  const envoyFilters = (item as WorkloadListItem).envoyFilters;
 
   return (
     <td
@@ -90,83 +82,13 @@ export const details: Renderer<AppListItem | WorkloadListItem | ServiceListItem>
         {additionalDetails && additionalDetails.icon && (
           <li>{renderAPILogo(additionalDetails.icon, additionalDetails.title, 0)}</li>
         )}
-        {virtualServices &&
-          virtualServices.length > 0 &&
-          virtualServices.map(vs => (
+        {item.istioReferences &&
+          item.istioReferences.length > 0 &&
+          item.istioReferences.map(ir => (
             <li>
-              <PFBadge badge={PFBadges.VirtualService} position={TooltipPosition.top} />
-              <IstioObjectLink name={vs} namespace={item.namespace || ''} type={'virtualservice'}>
-                {vs}
-              </IstioObjectLink>
-            </li>
-          ))}
-        {destinationRules &&
-          destinationRules.length > 0 &&
-          destinationRules.map(dr => (
-            <li>
-              <PFBadge badge={PFBadges.DestinationRule} position={TooltipPosition.top} />
-              <IstioObjectLink name={dr} namespace={item.namespace || ''} type={'destinationrule'}>
-                {dr}
-              </IstioObjectLink>
-            </li>
-          ))}
-        {gateways &&
-          gateways.length > 0 &&
-          gateways.map(dr => (
-            <li>
-              <PFBadge badge={PFBadges.DestinationRule} position={TooltipPosition.top} />
-              <IstioObjectLink name={dr} namespace={item.namespace || ''} type={'destinationrule'}>
-                {dr}
-              </IstioObjectLink>
-            </li>
-          ))}
-        {authorizationPolicies &&
-          authorizationPolicies.length > 0 &&
-          authorizationPolicies.map(ap => (
-            <li>
-              <PFBadge badge={PFBadges.AuthorizationPolicy} position={TooltipPosition.top} />
-              <IstioObjectLink name={ap} namespace={item.namespace || ''} type={'authorizationpolicy'}>
-                {ap}
-              </IstioObjectLink>
-            </li>
-          ))}
-        {peerAuthentications &&
-          peerAuthentications.length > 0 &&
-          peerAuthentications.map(pa => (
-            <li>
-              <PFBadge badge={PFBadges.PeerAuthentication} position={TooltipPosition.top} />
-              <IstioObjectLink name={pa} namespace={item.namespace || ''} type={'peerauthentication'}>
-                {pa}
-              </IstioObjectLink>
-            </li>
-          ))}
-        {sidecars &&
-          sidecars.length > 0 &&
-          sidecars.map(sc => (
-            <li>
-              <PFBadge badge={PFBadges.Sidecar} position={TooltipPosition.top} />
-              <IstioObjectLink name={sc} namespace={item.namespace || ''} type={'sidecar'}>
-                {sc}
-              </IstioObjectLink>
-            </li>
-          ))}
-        {requestAuthentications &&
-          requestAuthentications.length > 0 &&
-          requestAuthentications.map(ra => (
-            <li>
-              <PFBadge badge={PFBadges.RequestAuthentication} position={TooltipPosition.top} />
-              <IstioObjectLink name={ra} namespace={item.namespace || ''} type={'requestauthentication'}>
-                {ra}
-              </IstioObjectLink>
-            </li>
-          ))}
-        {envoyFilters &&
-          envoyFilters.length > 0 &&
-          envoyFilters.map(ef => (
-            <li>
-              <PFBadge badge={PFBadges.EnvoyFilter} position={TooltipPosition.top} />
-              <IstioObjectLink name={ef} namespace={item.namespace || ''} type={'envoyfilter'}>
-                {ef}
+              <PFBadge badge={PFBadges[ir.objectType]} position={TooltipPosition.top} />
+              <IstioObjectLink name={ir.name} namespace={item.namespace || ''} type={ir.objectType.toLowerCase()}>
+                {ir.name}
               </IstioObjectLink>
             </li>
           ))}

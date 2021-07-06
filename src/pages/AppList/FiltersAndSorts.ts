@@ -11,10 +11,12 @@ import {
   filterByHealth,
   labelFilter
 } from '../../components/Filters/CommonFilters';
-import { hasMissingSidecar, IstioTypes } from '../../components/VirtualList/Config';
+import { hasMissingSidecar } from '../../components/VirtualList/Config';
 import { TextInputTypes } from '@patternfly/react-core';
 import { filterByLabel } from '../../helpers/LabelFilterHelper';
 import { istioTypeFilter } from '../IstioConfigList/FiltersAndSorts';
+import { dicIstioType } from '../../types/IstioConfigList';
+import { ObjectReference } from '../../types/IstioObjects';
 
 export const sortFields: SortField<AppListItem>[] = [
   {
@@ -50,24 +52,12 @@ export const sortFields: SortField<AppListItem>[] = [
         return aSC - bSC;
       }
 
-      // Second by VS/DR
-      const fieldsToSort = [
-        'authorizationPolicies',
-        'destinationRules',
-        'gateways',
-        'envoyFilters',
-        'peerAuthentications',
-        'requestAuthentications',
-        'sidecars',
-        'virtualServices'
-      ];
-      for (let i = 0; i < fieldsToSort.length; i++) {
-        const vsA = a[fieldsToSort[i]].join('.');
-        const vsB = b[fieldsToSort[i]].join('.');
-        const vsCmp = vsA.localeCompare(vsB);
-        if (vsCmp !== 0) {
-          return vsCmp;
-        }
+      // Second by Details
+      const iRefA = a.istioReferences;
+      const iRefB = b.istioReferences;
+      const cmpRefs = compareObjectReferences(iRefA, iRefB);
+      if (cmpRefs !== 0) {
+        return cmpRefs;
       }
 
       // Finally by name
@@ -141,36 +131,9 @@ const filterByIstioSidecar = (items: AppListItem[], istioSidecar: boolean): AppL
 };
 
 const filterByIstioType = (items: AppListItem[], istioTypes: string[]): AppListItem[] => {
-  return items.filter(item => {
-    if (istioTypes.length > 0) {
-      if (istioTypes.includes(IstioTypes.virtualservice.name) && item.virtualServices.length > 0) {
-        return true;
-      }
-      if (istioTypes.includes(IstioTypes.destinationrule.name) && item.destinationRules.length > 0) {
-        return true;
-      }
-      if (istioTypes.includes(IstioTypes.gateway.name) && item.gateways.length > 0) {
-        return true;
-      }
-      if (istioTypes.includes(IstioTypes.authorizationpolicy.name) && item.authorizationPolicies.length > 0) {
-        return true;
-      }
-      if (istioTypes.includes(IstioTypes.peerauthentication.name) && item.peerAuthentications.length > 0) {
-        return true;
-      }
-      if (istioTypes.includes(IstioTypes.sidecar.name) && item.sidecars.length > 0) {
-        return true;
-      }
-      if (istioTypes.includes(IstioTypes.requestauthentication.name) && item.requestAuthentications.length > 0) {
-        return true;
-      }
-      if (istioTypes.includes(IstioTypes.envoyfilter.name) && item.envoyFilters.length > 0) {
-        return true;
-      }
-      return false;
-    }
-    return true;
-  });
+  return items.filter(
+    item => item.istioReferences.filter(ref => istioTypes.includes(dicIstioType[ref.objectType])).length !== 0
+  );
 };
 
 export const filterBy = (
@@ -226,4 +189,48 @@ export const sortAppsItems = (
   }
   const sorted = unsorted.sort(isAscending ? sortField.compare : (a, b) => sortField.compare(b, a));
   return Promise.resolve(sorted);
+};
+
+export const compareObjectReference = (a: ObjectReference, b: ObjectReference): number => {
+  const cmpObjectType = a.objectType.localeCompare(b.objectType);
+  if (cmpObjectType !== 0) {
+    return cmpObjectType;
+  }
+  const cmpName = a.name.localeCompare(b.name);
+  if (cmpName !== 0) {
+    return cmpName;
+  }
+
+  return a.namespace.localeCompare(b.namespace);
+};
+
+// It assumes that is sorted
+export const compareObjectReferences = (a: ObjectReference[], b: ObjectReference[]): number => {
+  if (a.length === 0 && b.length === 0) {
+    return 0;
+  }
+  if (a.length === 0 && b.length > 0) {
+    return -1;
+  }
+  if (a.length > 0 && b.length === 0) {
+    return 1;
+  }
+  if (a.length !== b.length) {
+    return a.length - b.length;
+  }
+  for (let i = 0; i < a.length; i++) {
+    const cmp = compareObjectReference(a[i], b[i]);
+    if (cmp !== 0) {
+      return cmp;
+    }
+  }
+  return 0;
+};
+
+// Remove duplicates and sort references
+export const sortIstioReferences = (unsorted: ObjectReference[], isAscending: boolean): ObjectReference[] => {
+  const unique = unsorted.filter((item, index) => unsorted.indexOf(item) === index);
+  return unique.sort((a, b) => {
+    return isAscending ? compareObjectReference(a, b) : compareObjectReference(b, a);
+  });
 };
