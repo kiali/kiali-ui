@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { InOutRateTableGrpc, InOutRateTableHttp } from '../../components/SummaryPanel/InOutRateTable';
-import { RpsChart, TcpChart } from '../../components/SummaryPanel/RpsChart';
+import { RequestChart, StreamChart } from '../../components/SummaryPanel/RpsChart';
 import { NodeType, SummaryPanelPropType } from '../../types/Graph';
 import { getAccumulatedTrafficRateGrpc, getAccumulatedTrafficRateHttp } from '../../utils/TrafficRate';
 import { renderBadgedLink, renderHealth } from './SummaryLink';
@@ -110,7 +110,7 @@ export default class SummaryPanelAppBox extends React.Component<SummaryPanelProp
     const options = getOptions(nodeData).map(o => {
       return (
         <DropdownItem key={o.text} onClick={() => clickHandler(o)}>
-          {o.text} {o.target === '_blank' && <ExternalLinkAltIcon/>}
+          {o.text} {o.target === '_blank' && <ExternalLinkAltIcon />}
         </DropdownItem>
       );
     });
@@ -319,17 +319,17 @@ export default class SummaryPanelAppBox extends React.Component<SummaryPanelProp
       );
     }
 
-    let tcpCharts, httpCharts;
+    let streamCharts, httpCharts;
     if (this.hasHttpTraffic(appBox)) {
       httpCharts = (
         <>
-          <RpsChart
+          <RequestChart
             key="http-inbound-request"
             label="HTTP - Inbound Request Traffic"
             dataRps={this.state.requestCountIn!}
             dataErrors={this.state.errorCountIn}
           />
-          <RpsChart
+          <RequestChart
             key="http-outbound-request"
             label="HTTP - Outbound Request Traffic"
             dataRps={this.state.requestCountOut}
@@ -340,19 +340,21 @@ export default class SummaryPanelAppBox extends React.Component<SummaryPanelProp
     }
 
     if (this.hasTcpTraffic(appBox)) {
-      tcpCharts = (
+      streamCharts = (
         <>
-          <TcpChart
+          <StreamChart
             key="tcp-inbound-request"
             label="TCP - Inbound Traffic"
             receivedRates={this.state.tcpReceivedIn}
             sentRates={this.state.tcpSentIn}
+            unit="bytes"
           />
-          <TcpChart
+          <StreamChart
             key="tcp-outbound-request"
             label="TCP - Outbound Traffic"
             receivedRates={this.state.tcpReceivedOut}
             sentRates={this.state.tcpSentOut}
+            unit="bytes"
           />
         </>
       );
@@ -361,7 +363,7 @@ export default class SummaryPanelAppBox extends React.Component<SummaryPanelProp
     return (
       <>
         {httpCharts}
-        {tcpCharts}
+        {streamCharts}
       </>
     );
   };

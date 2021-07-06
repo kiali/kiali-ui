@@ -6,7 +6,7 @@ import {
   getTrafficRateHttp
 } from '../../utils/TrafficRate';
 import { InOutRateTableGrpc, InOutRateTableHttp } from '../../components/SummaryPanel/InOutRateTable';
-import { RpsChart, TcpChart } from '../../components/SummaryPanel/RpsChart';
+import { RequestChart, StreamChart } from '../../components/SummaryPanel/RpsChart';
 import {
   GraphType,
   NodeType,
@@ -423,7 +423,7 @@ export class SummaryPanelNodeTraffic extends React.Component<SummaryPanelNodePro
     if (this.hasGrpcTraffic(nodeData)) {
       grpcCharts = (
         <>
-          <RpsChart
+          <RequestChart
             label={isInOutSameNode ? 'GRPC - Request Traffic' : 'GRPC - Inbound Request Traffic'}
             dataRps={this.state.grpcRequestCountIn!}
             dataErrors={this.state.grpcErrorCountIn}
@@ -435,7 +435,7 @@ export class SummaryPanelNodeTraffic extends React.Component<SummaryPanelNodePro
               </div>
             </>
           )}
-          <RpsChart
+          <RequestChart
             label="GRPC - Outbound Request Traffic"
             dataRps={this.state.grpcRequestCountOut}
             dataErrors={this.state.grpcErrorCountOut}
@@ -455,7 +455,7 @@ export class SummaryPanelNodeTraffic extends React.Component<SummaryPanelNodePro
     if (this.hasHttpTraffic(nodeData)) {
       httpCharts = (
         <>
-          <RpsChart
+          <RequestChart
             label={isInOutSameNode ? 'HTTP - Request Traffic' : 'HTTP - Inbound Request Traffic'}
             dataRps={this.state.httpRequestCountIn!}
             dataErrors={this.state.httpErrorCountIn}
@@ -467,7 +467,7 @@ export class SummaryPanelNodeTraffic extends React.Component<SummaryPanelNodePro
               </div>
             </>
           )}
-          <RpsChart
+          <RequestChart
             label="HTTP - Outbound Request Traffic"
             dataRps={this.state.httpRequestCountOut}
             dataErrors={this.state.httpErrorCountOut}
@@ -487,16 +487,18 @@ export class SummaryPanelNodeTraffic extends React.Component<SummaryPanelNodePro
     if (this.hasTcpTraffic(nodeData)) {
       tcpCharts = (
         <>
-          <TcpChart
+          <StreamChart
             label={isInOutSameNode ? 'TCP - Traffic' : 'TCP - Inbound Traffic'}
             receivedRates={this.state.tcpReceivedIn}
             sentRates={this.state.tcpSentIn}
+            unit="bytes"
           />
-          <TcpChart
+          <StreamChart
             label="TCP - Outbound Traffic"
             receivedRates={this.state.tcpReceivedOut}
             sentRates={this.state.tcpSentOut}
             hide={isInOutSameNode}
+            unit="bytes"
           />
         </>
       );

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Tab } from '@patternfly/react-core';
 import { style } from 'typestyle';
 import { RateTableGrpc, RateTableHttp } from '../../components/SummaryPanel/RateTable';
-import { RpsChart, TcpChart } from '../../components/SummaryPanel/RpsChart';
+import { RequestChart, StreamChart } from '../../components/SummaryPanel/RpsChart';
 import { SummaryPanelPropType, NodeType, TrafficRate } from '../../types/Graph';
 import { getAccumulatedTrafficRateGrpc, getAccumulatedTrafficRateHttp } from '../../utils/TrafficRate';
 import * as API from '../../services/Api';
@@ -348,8 +348,17 @@ export default class SummaryPanelNamespaceBox extends React.Component<
 
     return (
       <>
-        <RpsChart label="HTTP - Total Request Traffic" dataRps={this.state.reqRates} dataErrors={this.state.errRates} />
-        <TcpChart label="TCP - Total Traffic" receivedRates={this.state.tcpReceived} sentRates={this.state.tcpSent} />
+        <RequestChart
+          label="HTTP - Total Request Traffic"
+          dataRps={this.state.reqRates}
+          dataErrors={this.state.errRates}
+        />
+        <StreamChart
+          label="TCP - Total Traffic"
+          receivedRates={this.state.tcpReceived}
+          sentRates={this.state.tcpSent}
+          unit="bytes"
+        />
       </>
     );
   };
