@@ -13,7 +13,8 @@ import {
   SummaryPanelPropType,
   Protocol,
   DecoratedGraphNodeData,
-  UNKNOWN
+  UNKNOWN,
+  TrafficRate
 } from '../../types/Graph';
 import { IstioMetricsMap, Datapoint, Labels } from '../../types/Metrics';
 import {
@@ -37,6 +38,10 @@ type SummaryPanelNodeMetricsState = {
   grpcRequestCountOut: Datapoint[];
   grpcErrorCountIn: Datapoint[];
   grpcErrorCountOut: Datapoint[];
+  grpcSentIn: Datapoint[];
+  grpcSentOut: Datapoint[];
+  grpcReceivedIn: Datapoint[];
+  grpcReceivedOut: Datapoint[];
   httpRequestCountIn: Datapoint[] | null;
   httpRequestCountOut: Datapoint[];
   httpErrorCountIn: Datapoint[];
@@ -58,6 +63,10 @@ const defaultMetricsState: SummaryPanelNodeMetricsState = {
   grpcRequestCountOut: [],
   grpcErrorCountIn: [],
   grpcErrorCountOut: [],
+  grpcSentIn: [],
+  grpcSentOut: [],
+  grpcReceivedIn: [],
+  grpcReceivedOut: [],
   httpRequestCountIn: [],
   httpRequestCountOut: [],
   httpErrorCountIn: [],
@@ -82,7 +91,7 @@ export class SummaryPanelNodeTraffic extends React.Component<SummaryPanelNodePro
 
   constructor(props: SummaryPanelNodeProps) {
     super(props);
-    this.showRequestCountMetrics = this.showRequestCountMetrics.bind(this);
+    this.showTrafficMetrics = this.showTrafficMetrics.bind(this);
 
     this.state = { ...defaultState };
   }
@@ -115,6 +124,7 @@ export class SummaryPanelNodeTraffic extends React.Component<SummaryPanelNodePro
     const target = props.data.summaryTarget;
     const nodeData = decoratedNodeData(target);
     const nodeMetricType = getNodeMetricType(nodeData);
+    const isGrpcRequests = this.isGrpcRequests();
 
     if (this.metricsPromise) {
       this.metricsPromise.cancel();
@@ -140,79 +150,109 @@ export class SummaryPanelNodeTraffic extends React.Component<SummaryPanelNodePro
     if (
       !([NodeType.SERVICE, NodeType.AGGREGATE].includes(nodeData.nodeType) || (nodeData.isOutside && !nodeData.isRoot))
     ) {
-      const filters = ['request_count', 'request_error_count', 'tcp_sent', 'tcp_received'];
-      // use source metrics for outbound, except for:
-      // - unknown nodes (no source telemetry)
-      // - istio namespace nodes (no source telemetry)
-      const reporter: Reporter = nodeData.nodeType === NodeType.UNKNOWN || nodeData.isIstio ? 'destination' : 'source';
-      // note: request_protocol is not a valid byLabel for tcp filters but it is ignored by prometheus
-      const byLabels = nodeData.isOutside
-        ? ['destination_service_namespace', 'request_protocol']
-        : ['request_protocol'];
-      promiseOut = getNodeMetrics(
-        nodeMetricType,
-        target,
-        props,
-        filters,
-        'outbound',
-        reporter,
-        undefined,
-        undefined,
-        byLabels
-      );
+      const filters = [] as string[];
+      if (this.hasHttpOut(nodeData) || (this.hasGrpcOut(nodeData) && isGrpcRequests)) {
+        filters.push('request_count', 'request_error_count');
+      }
+      if (this.hasGrpcOut(nodeData) && !isGrpcRequests) {
+        filters.push('grpc_sent', 'grpc_received');
+      }
+      if (this.hasTcpOut(nodeData)) {
+        filters.push('tcp_sent', 'tcp_received');
+      }
+
+      if (filters.length > 0) {
+        // use source metrics for outbound, except for:
+        // - unknown nodes (no source telemetry)
+        // - istio namespace nodes (no source telemetry)
+        const reporter: Reporter =
+          nodeData.nodeType === NodeType.UNKNOWN || nodeData.isIstio ? 'destination' : 'source';
+        // note: request_protocol is not a valid byLabel for tcp filters but it is ignored by prometheus
+        const byLabels = nodeData.isOutside
+          ? ['destination_service_namespace', 'request_protocol']
+          : ['request_protocol'];
+        promiseOut = getNodeMetrics(
+          nodeMetricType,
+          target,
+          props,
+          filters,
+          'outbound',
+          reporter,
+          undefined,
+          undefined,
+          byLabels
+        );
+      }
     }
 
     // set inbound unless it is a root (because they have no inbound edges)
     if (!nodeData.isRoot) {
-      const filtersRps = ['request_count', 'request_error_count'];
-      // use dest metrics for inbound, except for service nodes which need source metrics to capture source errors
-      const reporter: Reporter = nodeData.nodeType === NodeType.SERVICE && nodeData.isIstio ? 'source' : 'destination';
-      // For special service dest nodes we want to narrow the data to only TS with 'unknown' workloads (see the related
-      // comparator in getNodeDatapoints).
       const isServiceDestCornerCase = this.isServiceDestCornerCase(nodeMetricType);
-      const byLabelsRps = isServiceDestCornerCase ? ['destination_workload', 'request_protocol'] : ['request_protocol'];
-      if (nodeData.isOutside) {
-        byLabelsRps.push('source_workload_namespace');
-      }
-      const promiseRps = getNodeMetrics(
-        nodeMetricType,
-        target,
-        props,
-        filtersRps,
-        'inbound',
-        reporter,
-        undefined,
-        undefined,
-        byLabelsRps
-      );
-      if (nodeData.nodeType === NodeType.AGGREGATE) {
-        // Aggregate nodes don't currently deal with TCP
-        promiseIn = promiseRps;
-      } else {
-        const filtersTCP = ['tcp_sent', 'tcp_received'];
-        const byLabelsTCP = isServiceDestCornerCase ? ['destination_workload'] : [];
+      let promiseRps: Promise<Response<IstioMetricsMap>> = Promise.resolve({ data: {} });
+      let promiseStream: Promise<Response<IstioMetricsMap>> = Promise.resolve({ data: {} });
+
+      if (this.hasHttpIn(nodeData) || (this.hasGrpcIn(nodeData) && isGrpcRequests)) {
+        const filtersRps = ['request_count', 'request_error_count'];
+        // use dest metrics for inbound, except for service nodes which need source metrics to capture source errors
+        const reporter: Reporter =
+          nodeData.nodeType === NodeType.SERVICE && nodeData.isIstio ? 'source' : 'destination';
+        // For special service dest nodes we want to narrow the data to only TS with 'unknown' workloads (see the related
+        // comparator in getNodeDatapoints).
+
+        const byLabelsRps = isServiceDestCornerCase
+          ? ['destination_workload', 'request_protocol']
+          : ['request_protocol'];
         if (nodeData.isOutside) {
-          byLabelsTCP.push('source_workload_namespace');
+          byLabelsRps.push('source_workload_namespace');
         }
-        const promiseTCP = getNodeMetrics(
+        promiseRps = getNodeMetrics(
           nodeMetricType,
           target,
           props,
-          filtersTCP,
+          filtersRps,
           'inbound',
-          'source',
+          reporter,
           undefined,
           undefined,
-          byLabelsTCP
+          byLabelsRps
         );
-        promiseIn = mergeMetricsResponses([promiseRps, promiseTCP]);
       }
+
+      // Aggregate nodes currently only deal with request traffic
+      if (nodeData.nodeType !== NodeType.AGGREGATE) {
+        const filtersStream = [] as string[];
+        if (this.hasGrpcIn(nodeData)) {
+          filtersStream.push('grpc_sent', 'grpc_received');
+        }
+        if (this.hasTcpIn(nodeData)) {
+          filtersStream.push('tcp_sent', 'tcp_received');
+        }
+        if (filtersStream.length > 0) {
+          const byLabelsStream = isServiceDestCornerCase ? ['destination_workload'] : [];
+          if (nodeData.isOutside) {
+            byLabelsStream.push('source_workload_namespace');
+          }
+          promiseStream = getNodeMetrics(
+            nodeMetricType,
+            target,
+            props,
+            filtersStream,
+            'inbound',
+            'source',
+            undefined,
+            undefined,
+            byLabelsStream
+          );
+        }
+      }
+
+      promiseIn = mergeMetricsResponses([promiseRps, promiseStream]);
     }
 
     this.metricsPromise = makeCancelablePromise(Promise.all([promiseOut, promiseIn]));
     this.metricsPromise.promise
       .then(responses => {
-        this.showRequestCountMetrics(responses[0].data, responses[1].data, nodeData, nodeMetricType);
+        this.showTrafficMetrics(responses[0].data, responses[1].data, nodeData, nodeMetricType);
       })
       .catch(error => {
         if (error.isCanceled) {
@@ -230,7 +270,7 @@ export class SummaryPanelNodeTraffic extends React.Component<SummaryPanelNodePro
     this.setState({ loading: true, metricsLoadError: null });
   }
 
-  showRequestCountMetrics(
+  showTrafficMetrics(
     outbound: IstioMetricsMap,
     inbound: IstioMetricsMap,
     data: DecoratedGraphNodeData,
@@ -260,10 +300,14 @@ export class SummaryPanelNodeTraffic extends React.Component<SummaryPanelNodePro
     }
     const rcOut = outbound.request_count;
     const ecOut = outbound.request_error_count;
+    const grpcSentOut = outbound.grpc_sent;
+    const grpcReceivedOut = outbound.grpc_received;
     const tcpSentOut = outbound.tcp_sent;
     const tcpReceivedOut = outbound.tcp_received;
     const rcIn = inbound.request_count;
     const ecIn = inbound.request_error_count;
+    const grpcSentIn = inbound.grpc_sent;
+    const grpcReceivedIn = inbound.grpc_received;
     const tcpSentIn = inbound.tcp_sent;
     const tcpReceivedIn = inbound.tcp_received;
     this.setState({
@@ -272,6 +316,10 @@ export class SummaryPanelNodeTraffic extends React.Component<SummaryPanelNodePro
       grpcErrorCountOut: getDatapoints(ecOut, comparator, Protocol.GRPC),
       grpcRequestCountIn: getDatapoints(rcIn, comparator, Protocol.GRPC),
       grpcErrorCountIn: getDatapoints(ecIn, comparator, Protocol.GRPC),
+      grpcSentOut: getDatapoints(grpcSentOut, comparator),
+      grpcReceivedOut: getDatapoints(grpcReceivedOut, comparator),
+      grpcSentIn: getDatapoints(grpcSentIn, comparator),
+      grpcReceivedIn: getDatapoints(grpcReceivedIn, comparator),
       httpRequestCountOut: getDatapoints(rcOut, comparator, Protocol.HTTP),
       httpErrorCountOut: getDatapoints(ecOut, comparator, Protocol.HTTP),
       httpRequestCountIn: getDatapoints(rcIn, comparator, Protocol.HTTP),
@@ -301,7 +349,7 @@ export class SummaryPanelNodeTraffic extends React.Component<SummaryPanelNodePro
 
     return (
       <>
-        {this.hasGrpcTraffic(nodeData) && (
+        {this.hasGrpcTraffic(nodeData) && this.isGrpcRequests() && (
           <>
             {this.renderGrpcRates(node)}
             {hr()}
@@ -314,11 +362,12 @@ export class SummaryPanelNodeTraffic extends React.Component<SummaryPanelNodePro
           </>
         )}
         <div>
-          {this.renderCharts(node)}
+          {this.renderSparklines(node)}
           {hr()}
         </div>
-        {!this.hasGrpcTraffic(nodeData) && renderNoTraffic('GRPC')}
+        {!this.hasGrpcTraffic(nodeData) && renderNoTraffic('gRPC')}
         {!this.hasHttpTraffic(nodeData) && renderNoTraffic('HTTP')}
+        {!this.hasTcpTraffic(nodeData) && renderNoTraffic('TCP')}
       </>
     );
   }
@@ -330,7 +379,7 @@ export class SummaryPanelNodeTraffic extends React.Component<SummaryPanelNodePro
     return (
       <>
         <InOutRateTableGrpc
-          title="GRPC Traffic (requests per second):"
+          title="gRPC Traffic (requests per second):"
           inRate={inbound.rate}
           inRateGrpcErr={inbound.rateGrpcErr}
           inRateNR={inbound.rateNoResponse}
@@ -365,7 +414,7 @@ export class SummaryPanelNodeTraffic extends React.Component<SummaryPanelNodePro
     );
   };
 
-  private renderCharts = node => {
+  private renderSparklines = node => {
     const nodeData = decoratedNodeData(node);
 
     if (NodeType.UNKNOWN === nodeData.nodeType) {
@@ -421,10 +470,10 @@ export class SummaryPanelNodeTraffic extends React.Component<SummaryPanelNodePro
     let grpcCharts, httpCharts, tcpCharts;
 
     if (this.hasGrpcTraffic(nodeData)) {
-      grpcCharts = (
+      grpcCharts = this.isGrpcRequests() ? (
         <>
           <RequestChart
-            label={isInOutSameNode ? 'GRPC - Request Traffic' : 'GRPC - Inbound Request Traffic'}
+            label={isInOutSameNode ? 'gRPC - Request Traffic' : 'gRPC - Inbound Request Traffic'}
             dataRps={this.state.grpcRequestCountIn!}
             dataErrors={this.state.grpcErrorCountIn}
           />
@@ -436,7 +485,7 @@ export class SummaryPanelNodeTraffic extends React.Component<SummaryPanelNodePro
             </>
           )}
           <RequestChart
-            label="GRPC - Outbound Request Traffic"
+            label="gRPC - Outbound Request Traffic"
             dataRps={this.state.grpcRequestCountOut}
             dataErrors={this.state.grpcErrorCountOut}
             hide={isInOutSameNode}
@@ -448,6 +497,22 @@ export class SummaryPanelNodeTraffic extends React.Component<SummaryPanelNodePro
               </div>
             </>
           )}
+        </>
+      ) : (
+        <>
+          <StreamChart
+            label={isInOutSameNode ? 'gRPC - Traffic' : 'gRPC - Inbound Traffic'}
+            receivedRates={this.state.grpcReceivedIn}
+            sentRates={this.state.grpcSentIn}
+            unit="messages"
+          />
+          <StreamChart
+            label="gRPC - Outbound Traffic"
+            receivedRates={this.state.grpcReceivedOut}
+            sentRates={this.state.grpcSentOut}
+            hide={isInOutSameNode}
+            unit="messages"
+          />
         </>
       );
     }
@@ -534,14 +599,42 @@ export class SummaryPanelNodeTraffic extends React.Component<SummaryPanelNodePro
   };
 
   private hasGrpcTraffic = (data: DecoratedGraphNodeData): boolean => {
-    return data.grpcIn > 0 || data.grpcOut > 0;
+    return this.hasGrpcIn(data) || this.hasGrpcOut(data);
+  };
+
+  private isGrpcRequests = (): boolean => {
+    return this.props.trafficRates.includes(TrafficRate.GRPC_REQUEST);
   };
 
   private hasHttpTraffic = (data: DecoratedGraphNodeData): boolean => {
-    return data.httpIn > 0 || data.httpOut > 0;
+    return this.hasHttpIn(data) || this.hasHttpOut(data);
   };
 
   private hasTcpTraffic = (data: DecoratedGraphNodeData): boolean => {
-    return data.tcpIn > 0 || data.tcpOut > 0;
+    return this.hasTcpIn(data) || this.hasTcpOut(data);
+  };
+
+  private hasGrpcIn = (data: DecoratedGraphNodeData): boolean => {
+    return data.grpcIn > 0;
+  };
+
+  private hasHttpIn = (data: DecoratedGraphNodeData): boolean => {
+    return data.httpIn > 0;
+  };
+
+  private hasTcpIn = (data: DecoratedGraphNodeData): boolean => {
+    return data.tcpIn > 0;
+  };
+
+  private hasGrpcOut = (data: DecoratedGraphNodeData): boolean => {
+    return data.grpcOut > 0;
+  };
+
+  private hasHttpOut = (data: DecoratedGraphNodeData): boolean => {
+    return data.httpOut > 0;
+  };
+
+  private hasTcpOut = (data: DecoratedGraphNodeData): boolean => {
+    return data.tcpOut > 0;
   };
 }
