@@ -167,8 +167,7 @@ class ServiceNetwork extends React.Component<Props> {
                             position={TooltipPosition.right}
                             content={
                               <div style={{ textAlign: 'left' }}>
-                                Hostname <b>{hostname.hostname}</b> found in {hostname.fromType}{' '}
-                                <b>{hostname.fromName}</b>
+                                {hostname.fromType} {hostname.fromName}: {hostname.hostname}
                               </div>
                             }
                           >
