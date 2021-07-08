@@ -57,6 +57,7 @@ export class SummaryPanelNode extends React.Component<SummaryPanelNodeProps, Sum
     const shouldRenderGatewayHostnames = nodeData.isGateway?.ingressInfo?.hostnames !== undefined && nodeData.isGateway.ingressInfo.hostnames.length !== 0;
     const shouldRenderSvcList = servicesList && servicesList.length > 0;
     const shouldRenderService = service && ![NodeType.SERVICE, NodeType.UNKNOWN].includes(nodeType);
+    const shouldRenderVsHostnames = nodeData.hasVS?.hostnames !== undefined && nodeData.hasVS?.hostnames.length !== 0;
     const shouldRenderApp = app && ![NodeType.APP, NodeType.UNKNOWN].includes(nodeType);
     const shouldRenderWorkload = workload && ![NodeType.WORKLOAD, NodeType.UNKNOWN].includes(nodeType);
     const shouldRenderTraces =
@@ -102,6 +103,7 @@ export class SummaryPanelNode extends React.Component<SummaryPanelNodeProps, Sum
             {shouldRenderApp && <div>{renderBadgedLink(nodeData, NodeType.APP)}</div>}
             {shouldRenderWorkload && <div>{renderBadgedLink(nodeData, NodeType.WORKLOAD)}</div>}
             {shouldRenderGatewayHostnames && this.renderGatewayHostnames(nodeData)}
+            {shouldRenderVsHostnames && this.renderVsHostnames(nodeData)}
           </div>
         </div>
         {shouldRenderTraces ? this.renderWithTabs(nodeData) : this.renderTrafficOnly()}
@@ -113,6 +115,14 @@ export class SummaryPanelNode extends React.Component<SummaryPanelNodeProps, Sum
     return (
       <div>
         {nodeData.isGateway?.ingressInfo?.hostnames?.map(hostname => renderBadgedHost(hostname))}
+      </div>
+    );
+  };
+
+  private renderVsHostnames = (nodeData:  DecoratedGraphNodeData) => {
+    return (
+      <div>
+        {nodeData.hasVS?.hostnames?.map(hostname => renderBadgedHost(hostname))}
       </div>
     );
   };
