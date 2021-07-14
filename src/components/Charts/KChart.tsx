@@ -45,7 +45,7 @@ const kchartStyle = style({
   paddingTop: 15,
   paddingLeft: 25,
   paddingRight: 25,
-  paddingBottom: 15
+  paddingBottom: 12
 });
 
 // 24px (title + toolbar) + 20px (margin) + 15px (padding) + 15px (padding)
