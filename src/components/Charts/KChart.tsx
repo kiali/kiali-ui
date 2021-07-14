@@ -213,7 +213,9 @@ class KChart<T extends LineInfo> extends React.Component<KChartProps<T>, State> 
           alignItems: 'center',
           overflow: 'hidden',
           height: this.getInnerChartHeight(),
-          textAlign: 'center'
+          textAlign: 'center',
+          borderLeft: '2px solid #ECEFF1',
+          borderBottom: '2px solid #ECEFF1'
         }}
       >
         <EmptyState variant={EmptyStateVariant.small} className={emptyStyle}>
