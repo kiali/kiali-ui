@@ -142,48 +142,8 @@ export class SummaryPanelNodeTraffic extends React.Component<SummaryPanelNodePro
       return;
     }
 
-    let promiseOut: Promise<Response<IstioMetricsMap>> = Promise.resolve({ data: {} });
     let promiseIn: Promise<Response<IstioMetricsMap>> = Promise.resolve({ data: {} });
-
-    // Ignore outbound traffic if it is a non-root outsider (because they have no outbound edges) or a
-    // service node or aggregate node (because they don't have "real" outbound edges).
-    if (
-      !([NodeType.SERVICE, NodeType.AGGREGATE].includes(nodeData.nodeType) || (nodeData.isOutside && !nodeData.isRoot))
-    ) {
-      const filters = [] as string[];
-      if (this.hasHttpOut(nodeData) || (this.hasGrpcOut(nodeData) && isGrpcRequests)) {
-        filters.push('request_count', 'request_error_count');
-      }
-      if (this.hasGrpcOut(nodeData) && !isGrpcRequests) {
-        filters.push('grpc_sent', 'grpc_received');
-      }
-      if (this.hasTcpOut(nodeData)) {
-        filters.push('tcp_sent', 'tcp_received');
-      }
-
-      if (filters.length > 0) {
-        // use source metrics for outbound, except for:
-        // - unknown nodes (no source telemetry)
-        // - istio namespace nodes (no source telemetry)
-        const reporter: Reporter =
-          nodeData.nodeType === NodeType.UNKNOWN || nodeData.isIstio ? 'destination' : 'source';
-        // note: request_protocol is not a valid byLabel for tcp filters but it is ignored by prometheus
-        const byLabels = nodeData.isOutside
-          ? ['destination_service_namespace', 'request_protocol']
-          : ['request_protocol'];
-        promiseOut = getNodeMetrics(
-          nodeMetricType,
-          target,
-          props,
-          filters,
-          'outbound',
-          reporter,
-          undefined,
-          undefined,
-          byLabels
-        );
-      }
-    }
+    let promiseOut: Promise<Response<IstioMetricsMap>> = Promise.resolve({ data: {} });
 
     // set inbound unless it is a root (because they have no inbound edges)
     if (!nodeData.isRoot) {
@@ -249,6 +209,46 @@ export class SummaryPanelNodeTraffic extends React.Component<SummaryPanelNodePro
       promiseIn = mergeMetricsResponses([promiseRps, promiseStream]);
     }
 
+    // Ignore outbound traffic if it is a non-root outsider (because they have no outbound edges) or a
+    // service node or aggregate node (because they don't have "real" outbound edges).
+    if (
+      !([NodeType.SERVICE, NodeType.AGGREGATE].includes(nodeData.nodeType) || (nodeData.isOutside && !nodeData.isRoot))
+    ) {
+      const filters = [] as string[];
+      if (this.hasHttpOut(nodeData) || (this.hasGrpcOut(nodeData) && isGrpcRequests)) {
+        filters.push('request_count', 'request_error_count');
+      }
+      if (this.hasGrpcOut(nodeData) && !isGrpcRequests) {
+        filters.push('grpc_sent', 'grpc_received');
+      }
+      if (this.hasTcpOut(nodeData)) {
+        filters.push('tcp_sent', 'tcp_received');
+      }
+
+      if (filters.length > 0) {
+        // use source metrics for outbound, except for:
+        // - unknown nodes (no source telemetry)
+        // - istio namespace nodes (no source telemetry)
+        const reporter: Reporter =
+          nodeData.nodeType === NodeType.UNKNOWN || nodeData.isIstio ? 'destination' : 'source';
+        // note: request_protocol is not a valid byLabel for tcp filters but it is ignored by prometheus
+        const byLabels = nodeData.isOutside
+          ? ['destination_service_namespace', 'request_protocol']
+          : ['request_protocol'];
+        promiseOut = getNodeMetrics(
+          nodeMetricType,
+          target,
+          props,
+          filters,
+          'outbound',
+          reporter,
+          undefined,
+          undefined,
+          byLabels
+        );
+      }
+    }
+
     this.metricsPromise = makeCancelablePromise(Promise.all([promiseOut, promiseIn]));
     this.metricsPromise.promise
       .then(responses => {
@@ -312,22 +312,22 @@ export class SummaryPanelNodeTraffic extends React.Component<SummaryPanelNodePro
     const tcpReceivedIn = inbound.tcp_received;
     this.setState({
       loading: false,
-      grpcRequestCountOut: getDatapoints(rcOut, comparator, Protocol.GRPC),
-      grpcErrorCountOut: getDatapoints(ecOut, comparator, Protocol.GRPC),
-      grpcRequestCountIn: getDatapoints(rcIn, comparator, Protocol.GRPC),
       grpcErrorCountIn: getDatapoints(ecIn, comparator, Protocol.GRPC),
-      grpcSentOut: getDatapoints(grpcSentOut, comparator),
-      grpcReceivedOut: getDatapoints(grpcReceivedOut, comparator),
-      grpcSentIn: getDatapoints(grpcSentIn, comparator),
+      grpcErrorCountOut: getDatapoints(ecOut, comparator, Protocol.GRPC),
       grpcReceivedIn: getDatapoints(grpcReceivedIn, comparator),
-      httpRequestCountOut: getDatapoints(rcOut, comparator, Protocol.HTTP),
+      grpcReceivedOut: getDatapoints(grpcReceivedOut, comparator),
+      grpcRequestCountIn: getDatapoints(rcIn, comparator, Protocol.GRPC),
+      grpcRequestCountOut: getDatapoints(rcOut, comparator, Protocol.GRPC),
+      grpcSentIn: getDatapoints(grpcSentIn, comparator),
+      grpcSentOut: getDatapoints(grpcSentOut, comparator),
+      httpErrorCountIn: getDatapoints(ecIn, comparator, Protocol.HTTP),
       httpErrorCountOut: getDatapoints(ecOut, comparator, Protocol.HTTP),
       httpRequestCountIn: getDatapoints(rcIn, comparator, Protocol.HTTP),
-      httpErrorCountIn: getDatapoints(ecIn, comparator, Protocol.HTTP),
-      tcpSentOut: getDatapoints(tcpSentOut, comparator),
+      httpRequestCountOut: getDatapoints(rcOut, comparator, Protocol.HTTP),
+      tcpReceivedIn: getDatapoints(tcpReceivedIn, comparator),
       tcpReceivedOut: getDatapoints(tcpReceivedOut, comparator),
       tcpSentIn: getDatapoints(tcpSentIn, comparator),
-      tcpReceivedIn: getDatapoints(tcpReceivedIn, comparator)
+      tcpSentOut: getDatapoints(tcpSentOut, comparator)
     });
   }
 
@@ -346,16 +346,25 @@ export class SummaryPanelNodeTraffic extends React.Component<SummaryPanelNodePro
   render() {
     const node = this.props.data.summaryTarget;
     const nodeData = decoratedNodeData(node);
+    const hasGrpc = this.hasGrpcTraffic(nodeData);
+    const hasGrpcIn = hasGrpc && this.hasGrpcIn(nodeData);
+    const hasGrpcOut = hasGrpc && this.hasGrpcOut(nodeData);
+    const hasHttp = this.hasHttpTraffic(nodeData);
+    const hasHttpIn = hasHttp && this.hasHttpIn(nodeData);
+    const hasHttpOut = hasHttp && this.hasHttpOut(nodeData);
+    const hasTcp = this.hasTcpTraffic(nodeData);
+    const hasTcpIn = hasTcp && this.hasTcpIn(nodeData);
+    const hasTcpOut = hasTcp && this.hasTcpOut(nodeData);
 
     return (
       <>
-        {this.hasGrpcTraffic(nodeData) && this.isGrpcRequests() && (
+        {hasGrpc && this.isGrpcRequests() && (
           <>
             {this.renderGrpcRates(node)}
             {hr()}
           </>
         )}
-        {this.hasHttpTraffic(nodeData) && (
+        {hasHttp && (
           <>
             {this.renderHttpRates(node)}
             {hr()}
@@ -365,9 +374,15 @@ export class SummaryPanelNodeTraffic extends React.Component<SummaryPanelNodePro
           {this.renderSparklines(node)}
           {hr()}
         </div>
-        {!this.hasGrpcTraffic(nodeData) && renderNoTraffic('gRPC')}
-        {!this.hasHttpTraffic(nodeData) && renderNoTraffic('HTTP')}
-        {!this.hasTcpTraffic(nodeData) && renderNoTraffic('TCP')}
+        {hasGrpc && !hasGrpcIn && renderNoTraffic('gRPC inbound')}
+        {hasGrpc && !hasGrpcOut && renderNoTraffic('gRPC outbound')}
+        {!hasGrpc && renderNoTraffic('gRPC')}
+        {hasHttp && !hasHttpIn && renderNoTraffic('HTTP inbound')}
+        {hasHttp && !hasHttpOut && renderNoTraffic('HTTP outbound')}
+        {!hasHttp && renderNoTraffic('HTTP')}
+        {hasTcp && !hasTcpIn && renderNoTraffic('TCP inbound')}
+        {hasTcp && !hasTcpOut && renderNoTraffic('TCP outbound')}
+        {!hasTcp && renderNoTraffic('TCP')}
       </>
     );
   }
@@ -472,47 +487,59 @@ export class SummaryPanelNodeTraffic extends React.Component<SummaryPanelNodePro
     if (this.hasGrpcTraffic(nodeData)) {
       grpcCharts = this.isGrpcRequests() ? (
         <>
-          <RequestChart
-            label={isInOutSameNode ? 'gRPC - Request Traffic' : 'gRPC - Inbound Request Traffic'}
-            dataRps={this.state.grpcRequestCountIn!}
-            dataErrors={this.state.grpcErrorCountIn}
-          />
-          {serviceWithUnknownSource && (
+          {this.hasGrpcIn(nodeData) && (
             <>
-              <div>
-                <KialiIcon.Info /> Traffic from unknown not included. Use edge for details.
-              </div>
+              <RequestChart
+                label={isInOutSameNode ? 'gRPC - Request Traffic' : 'gRPC - Inbound Request Traffic'}
+                dataRps={this.state.grpcRequestCountIn!}
+                dataErrors={this.state.grpcErrorCountIn}
+              />
+              {serviceWithUnknownSource && (
+                <>
+                  <div>
+                    <KialiIcon.Info /> Traffic from unknown not included. Use edge for details.
+                  </div>
+                </>
+              )}
             </>
           )}
-          <RequestChart
-            label="gRPC - Outbound Request Traffic"
-            dataRps={this.state.grpcRequestCountOut}
-            dataErrors={this.state.grpcErrorCountOut}
-            hide={isInOutSameNode}
-          />
-          {this.isIstioOutboundCornerCase(node) && (
+          {this.hasGrpcIn(nodeData) && (
             <>
-              <div>
-                <KialiIcon.Info /> Traffic to Istio namespaces not included. Use edge for details.
-              </div>
+              <RequestChart
+                label="gRPC - Outbound Request Traffic"
+                dataRps={this.state.grpcRequestCountOut}
+                dataErrors={this.state.grpcErrorCountOut}
+                hide={isInOutSameNode}
+              />
+              {this.isIstioOutboundCornerCase(node) && (
+                <>
+                  <div>
+                    <KialiIcon.Info /> Traffic to Istio namespaces not included. Use edge for details.
+                  </div>
+                </>
+              )}
             </>
           )}
         </>
       ) : (
         <>
-          <StreamChart
-            label={isInOutSameNode ? 'gRPC - Traffic' : 'gRPC - Inbound Traffic'}
-            receivedRates={this.state.grpcReceivedIn}
-            sentRates={this.state.grpcSentIn}
-            unit="messages"
-          />
-          <StreamChart
-            label="gRPC - Outbound Traffic"
-            receivedRates={this.state.grpcReceivedOut}
-            sentRates={this.state.grpcSentOut}
-            hide={isInOutSameNode}
-            unit="messages"
-          />
+          {this.hasGrpcIn(nodeData) && (
+            <StreamChart
+              label={isInOutSameNode ? 'gRPC - Traffic' : 'gRPC - Inbound Traffic'}
+              receivedRates={this.state.grpcReceivedIn}
+              sentRates={this.state.grpcSentIn}
+              unit="messages"
+            />
+          )}
+          {this.hasGrpcOut(nodeData) && (
+            <StreamChart
+              label="gRPC - Outbound Traffic"
+              receivedRates={this.state.grpcReceivedOut}
+              sentRates={this.state.grpcSentOut}
+              hide={isInOutSameNode}
+              unit="messages"
+            />
+          )}
         </>
       );
     }
@@ -520,29 +547,37 @@ export class SummaryPanelNodeTraffic extends React.Component<SummaryPanelNodePro
     if (this.hasHttpTraffic(nodeData)) {
       httpCharts = (
         <>
-          <RequestChart
-            label={isInOutSameNode ? 'HTTP - Request Traffic' : 'HTTP - Inbound Request Traffic'}
-            dataRps={this.state.httpRequestCountIn!}
-            dataErrors={this.state.httpErrorCountIn}
-          />
-          {serviceWithUnknownSource && (
+          {this.hasHttpIn(nodeData) && (
             <>
-              <div>
-                <KialiIcon.Info /> Traffic from unknown not included. Use edge for details.
-              </div>
+              <RequestChart
+                label={isInOutSameNode ? 'HTTP - Request Traffic' : 'HTTP - Inbound Request Traffic'}
+                dataRps={this.state.httpRequestCountIn!}
+                dataErrors={this.state.httpErrorCountIn}
+              />
+              {serviceWithUnknownSource && (
+                <>
+                  <div>
+                    <KialiIcon.Info /> Traffic from unknown not included. Use edge for details.
+                  </div>
+                </>
+              )}
             </>
           )}
-          <RequestChart
-            label="HTTP - Outbound Request Traffic"
-            dataRps={this.state.httpRequestCountOut}
-            dataErrors={this.state.httpErrorCountOut}
-            hide={isInOutSameNode}
-          />
-          {this.isIstioOutboundCornerCase(node) && (
+          {this.hasHttpOut(nodeData) && (
             <>
-              <div>
-                <KialiIcon.Info />" Traffic to Istio namespaces not included. Use edge for details.
-              </div>
+              <RequestChart
+                label="HTTP - Outbound Request Traffic"
+                dataRps={this.state.httpRequestCountOut}
+                dataErrors={this.state.httpErrorCountOut}
+                hide={isInOutSameNode}
+              />
+              {this.isIstioOutboundCornerCase(node) && (
+                <>
+                  <div>
+                    <KialiIcon.Info />" Traffic to Istio namespaces not included. Use edge for details.
+                  </div>
+                </>
+              )}
             </>
           )}
         </>
@@ -552,19 +587,23 @@ export class SummaryPanelNodeTraffic extends React.Component<SummaryPanelNodePro
     if (this.hasTcpTraffic(nodeData)) {
       tcpCharts = (
         <>
-          <StreamChart
-            label={isInOutSameNode ? 'TCP - Traffic' : 'TCP - Inbound Traffic'}
-            receivedRates={this.state.tcpReceivedIn}
-            sentRates={this.state.tcpSentIn}
-            unit="bytes"
-          />
-          <StreamChart
-            label="TCP - Outbound Traffic"
-            receivedRates={this.state.tcpReceivedOut}
-            sentRates={this.state.tcpSentOut}
-            hide={isInOutSameNode}
-            unit="bytes"
-          />
+          {this.hasTcpIn(nodeData) && (
+            <StreamChart
+              label={isInOutSameNode ? 'TCP - Traffic' : 'TCP - Inbound Traffic'}
+              receivedRates={this.state.tcpReceivedIn}
+              sentRates={this.state.tcpSentIn}
+              unit="bytes"
+            />
+          )}
+          {this.hasTcpOut(nodeData) && (
+            <StreamChart
+              label="TCP - Outbound Traffic"
+              receivedRates={this.state.tcpReceivedOut}
+              sentRates={this.state.tcpSentOut}
+              hide={isInOutSameNode}
+              unit="bytes"
+            />
+          )}
         </>
       );
     }

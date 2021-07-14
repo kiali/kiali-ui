@@ -576,8 +576,8 @@ export default class SummaryPanelEdge extends React.Component<SummaryPanelPropTy
     let requestChart, streamChart;
     if (isGrpc || isHttp) {
       if (isRequests) {
-        const labelRps = isGrpc ? 'GRPC Request Traffic' : 'HTTP Request Traffic';
-        const labelRt = isGrpc ? 'GRPC Request Response Time (ms)' : 'HTTP Request Response Time (ms)';
+        const labelRps = isGrpc ? 'gRPC Request Traffic' : 'HTTP Request Traffic';
+        const labelRt = isGrpc ? 'gRPC Request Response Time (ms)' : 'HTTP Request Response Time (ms)';
         requestChart = (
           <>
             <RequestChart label={labelRps} dataRps={this.state.rates!} dataErrors={this.state.errRates} />
