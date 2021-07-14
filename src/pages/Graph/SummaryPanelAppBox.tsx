@@ -26,18 +26,18 @@ import { Dropdown, DropdownPosition, DropdownItem, KebabToggle, DropdownGroup } 
 import { getOptions, clickHandler } from 'components/CytoscapeGraph/ContextMenu/NodeContextMenu';
 
 type SummaryPanelAppBoxMetricsState = {
-  grpcRequestCountIn: Datapoint[];
-  grpcRequestCountOut: Datapoint[];
-  grpcErrorCountIn: Datapoint[];
-  grpcErrorCountOut: Datapoint[];
+  grpcRequestIn: Datapoint[];
+  grpcRequestOut: Datapoint[];
+  grpcRequestErrIn: Datapoint[];
+  grpcRequestErrOut: Datapoint[];
   grpcSentIn: Datapoint[];
   grpcSentOut: Datapoint[];
   grpcReceivedIn: Datapoint[];
   grpcReceivedOut: Datapoint[];
-  httpRequestCountIn: Datapoint[];
-  httpRequestCountOut: Datapoint[];
-  httpErrorCountIn: Datapoint[];
-  httpErrorCountOut: Datapoint[];
+  httpRequestIn: Datapoint[];
+  httpRequestOut: Datapoint[];
+  httpRequestErrIn: Datapoint[];
+  httpRequestErrOut: Datapoint[];
   tcpSentIn: Datapoint[];
   tcpSentOut: Datapoint[];
   tcpReceivedIn: Datapoint[];
@@ -52,18 +52,18 @@ type SummaryPanelAppBoxState = SummaryPanelAppBoxMetricsState & {
 };
 
 const defaultMetricsState: SummaryPanelAppBoxMetricsState = {
-  grpcRequestCountIn: [],
-  grpcRequestCountOut: [],
-  grpcErrorCountIn: [],
-  grpcErrorCountOut: [],
+  grpcRequestIn: [],
+  grpcRequestOut: [],
+  grpcRequestErrIn: [],
+  grpcRequestErrOut: [],
   grpcSentIn: [],
   grpcSentOut: [],
   grpcReceivedIn: [],
   grpcReceivedOut: [],
-  httpRequestCountIn: [],
-  httpRequestCountOut: [],
-  httpErrorCountIn: [],
-  httpErrorCountOut: [],
+  httpRequestIn: [],
+  httpRequestOut: [],
+  httpRequestErrIn: [],
+  httpRequestErrOut: [],
   tcpSentIn: [],
   tcpSentOut: [],
   tcpReceivedIn: [],
@@ -335,18 +335,18 @@ export default class SummaryPanelAppBox extends React.Component<SummaryPanelProp
         const metricsIn = responses[1].data;
         this.setState({
           loading: false,
-          grpcErrorCountIn: getDatapoints(metricsIn.request_error_count, comparator, Protocol.GRPC),
-          grpcErrorCountOut: getDatapoints(metricsOut.request_error_count, comparator, Protocol.GRPC),
+          grpcRequestErrIn: getDatapoints(metricsIn.request_error_count, comparator, Protocol.GRPC),
+          grpcRequestErrOut: getDatapoints(metricsOut.request_error_count, comparator, Protocol.GRPC),
           grpcReceivedIn: getDatapoints(metricsIn.grpc_received, comparator),
           grpcReceivedOut: getDatapoints(metricsOut.grpc_received, comparator),
-          grpcRequestCountIn: getDatapoints(metricsIn.request_count, comparator, Protocol.GRPC),
-          grpcRequestCountOut: getDatapoints(metricsOut.request_count, comparator, Protocol.GRPC),
+          grpcRequestIn: getDatapoints(metricsIn.request_count, comparator, Protocol.GRPC),
+          grpcRequestOut: getDatapoints(metricsOut.request_count, comparator, Protocol.GRPC),
           grpcSentIn: getDatapoints(metricsIn.grpc_sent, comparator),
           grpcSentOut: getDatapoints(metricsOut.grpc_sent, comparator),
-          httpErrorCountIn: getDatapoints(metricsIn.request_error_count, comparator, Protocol.HTTP),
-          httpErrorCountOut: getDatapoints(metricsOut.request_error_count, comparator, Protocol.HTTP),
-          httpRequestCountIn: getDatapoints(metricsIn.request_count, comparator, Protocol.HTTP),
-          httpRequestCountOut: getDatapoints(metricsOut.request_count, comparator, Protocol.HTTP),
+          httpRequestErrIn: getDatapoints(metricsIn.request_error_count, comparator, Protocol.HTTP),
+          httpRequestErrOut: getDatapoints(metricsOut.request_error_count, comparator, Protocol.HTTP),
+          httpRequestIn: getDatapoints(metricsIn.request_count, comparator, Protocol.HTTP),
+          httpRequestOut: getDatapoints(metricsOut.request_count, comparator, Protocol.HTTP),
           tcpReceivedOut: getDatapoints(metricsOut.tcp_received, comparator),
           tcpReceivedIn: getDatapoints(metricsIn.tcp_received, comparator),
           tcpSentIn: getDatapoints(metricsIn.tcp_sent, comparator),
@@ -492,16 +492,16 @@ export default class SummaryPanelAppBox extends React.Component<SummaryPanelProp
             <RequestChart
               key="grpc-inbound-request"
               label="gRPC - Inbound Request Traffic"
-              dataRps={this.state.grpcRequestCountIn!}
-              dataErrors={this.state.grpcErrorCountIn}
+              dataRps={this.state.grpcRequestIn!}
+              dataErrors={this.state.grpcRequestErrIn}
             />
           )}
           {hasGrpcOut && (
             <RequestChart
               key="grpc-outbound-request"
               label="gRPC - Outbound Request Traffic"
-              dataRps={this.state.grpcRequestCountOut}
-              dataErrors={this.state.grpcErrorCountOut}
+              dataRps={this.state.grpcRequestOut}
+              dataErrors={this.state.grpcRequestErrOut}
             />
           )}
         </>
@@ -534,16 +534,16 @@ export default class SummaryPanelAppBox extends React.Component<SummaryPanelProp
             <RequestChart
               key="http-inbound-request"
               label="HTTP - Inbound Request Traffic"
-              dataRps={this.state.httpRequestCountIn}
-              dataErrors={this.state.httpErrorCountIn}
+              dataRps={this.state.httpRequestIn}
+              dataErrors={this.state.httpRequestErrIn}
             />
           )}
           {hasHttpOut && (
             <RequestChart
               key="http-outbound-request"
               label="HTTP - Outbound Request Traffic"
-              dataRps={this.state.httpRequestCountOut}
-              dataErrors={this.state.httpErrorCountOut}
+              dataRps={this.state.httpRequestOut}
+              dataErrors={this.state.httpRequestErrOut}
             />
           )}
         </>

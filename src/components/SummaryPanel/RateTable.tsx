@@ -8,6 +8,10 @@ type RateTableGrpcPropType = {
   rateNR: number;
 };
 
+type RateTableTcpPropType = {
+  rate: number;
+};
+
 export class RateTableGrpc extends React.Component<RateTableGrpcPropType, {}> {
   render() {
     // for the table and graph
@@ -88,6 +92,34 @@ export class RateTableHttp extends React.Component<RateTableHttpPropType, {}> {
           </tbody>
         </table>
         {renderRateChartHttp(percent2xx, percent3xx, percent4xx, percent5xx, percentNR)}
+      </div>
+    );
+  }
+}
+
+export class RateTableTcp extends React.Component<RateTableTcpPropType, {}> {
+  render() {
+    const title = 'TCP Traffic (bytes per second)';
+
+    return (
+      <div>
+        <strong>{title}</strong>
+        <table className="table">
+          <thead>
+            <tr>
+              <th>Total</th>
+              <th>%Success</th>
+              <th>%Error</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>{this.props.rate.toFixed(2)}</td>
+              <td>{'-'}</td>
+              <td>{'-'}</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     );
   }
