@@ -3,7 +3,7 @@ import { Tab } from '@patternfly/react-core';
 import { style } from 'typestyle';
 import { RateTableGrpc, RateTableHttp, RateTableTcp } from '../../components/SummaryPanel/RateTable';
 import { RequestChart, StreamChart } from '../../components/SummaryPanel/RpsChart';
-import { SummaryPanelPropType, NodeType, TrafficRate, Protocol } from '../../types/Graph';
+import { SummaryPanelPropType, NodeType, TrafficRate, Protocol, UNKNOWN } from '../../types/Graph';
 import {
   getAccumulatedTrafficRateGrpc,
   getAccumulatedTrafficRateHttp,
@@ -401,6 +401,9 @@ export default class SummaryPanelNamespaceBox extends React.Component<
   );
 
   private renderCharts = () => {
+    const props: SummaryPanelPropType = this.props;
+    const namespace = props.data.summaryTarget.data(CyNode.namespace);
+
     if (this.state.loading) {
       return <strong>Loading chart...</strong>;
     } else if (this.state.metricsLoadError) {
@@ -410,6 +413,8 @@ export default class SummaryPanelNamespaceBox extends React.Component<
           {this.state.metricsLoadError}
         </div>
       );
+    } else if (namespace === UNKNOWN) {
+      return <></>;
     }
 
     const { grpcIn, grpcOut, grpcTotal, httpIn, httpOut, isGrpcRequests, tcpIn, tcpOut } = this.boxTraffic!;
@@ -491,6 +496,14 @@ export default class SummaryPanelNamespaceBox extends React.Component<
   private updateCharts = () => {
     const props: SummaryPanelPropType = this.props;
     const namespace = props.data.summaryTarget.data(CyNode.namespace);
+
+    if (namespace === UNKNOWN) {
+      this.setState({
+        loading: false
+      });
+      return;
+    }
+
     const { grpcIn, grpcOut, httpIn, httpOut, isGrpcRequests, tcpIn, tcpOut } = this.boxTraffic!;
 
     if (this.metricsPromise) {
@@ -523,6 +536,7 @@ export default class SummaryPanelNamespaceBox extends React.Component<
     }
     if (filtersIn.length > 0) {
       promiseIn = API.getNamespaceMetrics(namespace, {
+        byLabels: ['request_protocol'], // ignored by prom if it doesn't exist
         direction: 'inbound',
         duration: props.duration,
         filters: filtersIn,
@@ -534,12 +548,13 @@ export default class SummaryPanelNamespaceBox extends React.Component<
     }
     if (filtersOut.length > 0) {
       promiseOut = API.getNamespaceMetrics(namespace, {
+        byLabels: ['request_protocol'], // ignored by prom if it doesn't exist
         direction: 'outbound',
         duration: props.duration,
         filters: filtersOut,
         queryTime: props.queryTime,
         rateInterval: props.rateInterval,
-        reporter: 'destination',
+        reporter: 'source',
         step: props.step
       } as IstioMetricsOptions);
     }
@@ -551,8 +566,8 @@ export default class SummaryPanelNamespaceBox extends React.Component<
         const comparator = (labels: Labels, protocol?: Protocol) => {
           return protocol ? labels.request_protocol === protocol : true;
         };
-        const metricsOut = responses[0].data;
-        const metricsIn = responses[1].data;
+        const metricsIn = responses[0].data;
+        const metricsOut = responses[1].data;
 
         this.setState({
           loading: false,
