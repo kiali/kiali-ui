@@ -417,77 +417,73 @@ export default class SummaryPanelNamespaceBox extends React.Component<
       return <></>;
     }
 
-    const { grpcIn, grpcOut, grpcTotal, httpIn, httpOut, isGrpcRequests, tcpIn, tcpOut } = this.boxTraffic!;
+    // When there is any traffic for the protocol, show both inbound and outbound charts. It's a little
+    // confusing because for the tabs inbound is limited to just traffic entering the namespace, and outbound
+    // is limited to just traffic exitingt the namespace.  But in the charts inbound ad outbound also
+    // includes traffic within the namespace.
+    const { grpcTotal, httpTotal, isGrpcRequests, tcpTotal } = this.boxTraffic!;
 
     return (
       <>
         {grpcTotal.rate > 0 && isGrpcRequests && (
           <>
-            {grpcIn.rate > 0 && (
-              <RequestChart
-                label="gRPC - Inbound Request Traffic"
-                dataRps={this.state.grpcRequestIn}
-                dataErrors={this.state.grpcRequestErrIn}
-              />
-            )}
-            {grpcOut.rate > 0 && (
-              <RequestChart
-                label="gRPC - Outbound Request Traffic"
-                dataRps={this.state.grpcRequestOut}
-                dataErrors={this.state.grpcRequestErrOut}
-              />
-            )}
+            <RequestChart
+              label="gRPC - Inbound Request Traffic"
+              dataRps={this.state.grpcRequestIn}
+              dataErrors={this.state.grpcRequestErrIn}
+            />
+            <RequestChart
+              label="gRPC - Outbound Request Traffic"
+              dataRps={this.state.grpcRequestOut}
+              dataErrors={this.state.grpcRequestErrOut}
+            />
           </>
         )}
         {grpcTotal.rate > 0 && !isGrpcRequests && (
           <>
-            {grpcIn.rate > 0 && (
-              <StreamChart
-                label="gRPC - Inbound Traffic"
-                receivedRates={this.state.grpcReceivedIn}
-                sentRates={this.state.grpcSentIn}
-                unit="messages"
-              />
-            )}
-            {grpcOut.rate > 0 && (
-              <StreamChart
-                label="gRPC - Outbound Traffic"
-                receivedRates={this.state.grpcReceivedOut}
-                sentRates={this.state.grpcSentOut}
-                unit="messages"
-              />
-            )}
+            <StreamChart
+              label="gRPC - Inbound Traffic"
+              receivedRates={this.state.grpcReceivedIn}
+              sentRates={this.state.grpcSentIn}
+              unit="messages"
+            />
+            <StreamChart
+              label="gRPC - Outbound Traffic"
+              receivedRates={this.state.grpcReceivedOut}
+              sentRates={this.state.grpcSentOut}
+              unit="messages"
+            />
           </>
         )}
-        {httpIn.rate > 0 && (
-          <RequestChart
-            label="HTTP - Inbound Request Traffic"
-            dataRps={this.state.httpRequestIn}
-            dataErrors={this.state.httpRequestErrIn}
-          />
+        {httpTotal.rate > 0 && (
+          <>
+            <RequestChart
+              label="HTTP - Inbound Request Traffic"
+              dataRps={this.state.httpRequestIn}
+              dataErrors={this.state.httpRequestErrIn}
+            />
+            <RequestChart
+              label="HTTP - Outbound Request Traffic"
+              dataRps={this.state.httpRequestOut}
+              dataErrors={this.state.httpRequestErrOut}
+            />
+          </>
         )}
-        {httpOut.rate > 0 && (
-          <RequestChart
-            label="HTTP - Outbound Request Traffic"
-            dataRps={this.state.httpRequestOut}
-            dataErrors={this.state.httpRequestErrOut}
-          />
-        )}
-        {tcpIn.rate > 0 && (
-          <StreamChart
-            label="TCP - Inbound Traffic"
-            receivedRates={this.state.tcpReceivedIn}
-            sentRates={this.state.tcpSentIn}
-            unit="bytes"
-          />
-        )}
-        {tcpOut.rate > 0 && (
-          <StreamChart
-            label="TCP - Outbound Traffic"
-            receivedRates={this.state.tcpReceivedOut}
-            sentRates={this.state.tcpSentOut}
-            unit="bytes"
-          />
+        {tcpTotal.rate > 0 && (
+          <>
+            <StreamChart
+              label="TCP - Inbound Traffic"
+              receivedRates={this.state.tcpReceivedIn}
+              sentRates={this.state.tcpSentIn}
+              unit="bytes"
+            />
+            <StreamChart
+              label="TCP - Outbound Traffic"
+              receivedRates={this.state.tcpReceivedOut}
+              sentRates={this.state.tcpSentOut}
+              unit="bytes"
+            />
+          </>
         )}
       </>
     );
@@ -504,7 +500,11 @@ export default class SummaryPanelNamespaceBox extends React.Component<
       return;
     }
 
-    const { grpcIn, grpcOut, httpIn, httpOut, isGrpcRequests, tcpIn, tcpOut } = this.boxTraffic!;
+    // When there is any traffic for the protocol, show both inbound and outbound charts. It's a little
+    // confusing because for the tabs inbound is limited to just traffic entering the namespace, and outbound
+    // is limited to just traffic exitingt the namespace.  But in the charts inbound ad outbound also
+    // includes traffic within the namespace.
+    const { grpcTotal, httpTotal, isGrpcRequests, tcpTotal } = this.boxTraffic!;
 
     if (this.metricsPromise) {
       this.metricsPromise.cancel();
@@ -514,44 +514,33 @@ export default class SummaryPanelNamespaceBox extends React.Component<
     let promiseIn: Promise<Response<IstioMetricsMap>> = Promise.resolve({ data: {} });
     let promiseOut: Promise<Response<IstioMetricsMap>> = Promise.resolve({ data: {} });
 
-    let filtersIn: string[] = [];
-    let filtersOut: string[] = [];
-    if (grpcIn.rate > 0 && !isGrpcRequests) {
-      filtersIn.push('grpc_sent', 'grpc_received');
+    let filters: string[] = [];
+    if (grpcTotal.rate > 0 && !isGrpcRequests) {
+      filters.push('grpc_sent', 'grpc_received');
     }
-    if (grpcOut.rate > 0 && !isGrpcRequests) {
-      filtersOut.push('grpc_sent', 'grpc_received');
+    if (httpTotal.rate > 0 || (grpcTotal.rate > 0 && isGrpcRequests)) {
+      filters.push('request_count', 'request_error_count');
     }
-    if (httpIn.rate > 0 || (grpcIn.rate > 0 && isGrpcRequests)) {
-      filtersIn.push('request_count', 'request_error_count');
+    if (tcpTotal.rate > 0) {
+      filters.push('tcp_sent', 'tcp_received');
     }
-    if (httpOut.rate > 0 || (grpcOut.rate > 0 && isGrpcRequests)) {
-      filtersOut.push('request_count', 'request_error_count');
-    }
-    if (tcpIn.rate > 0) {
-      filtersIn.push('tcp_sent', 'tcp_received');
-    }
-    if (tcpOut.rate > 0) {
-      filtersOut.push('tcp_sent', 'tcp_received');
-    }
-    if (filtersIn.length > 0) {
+
+    if (filters.length > 0) {
       promiseIn = API.getNamespaceMetrics(namespace, {
         byLabels: ['request_protocol'], // ignored by prom if it doesn't exist
         direction: 'inbound',
         duration: props.duration,
-        filters: filtersIn,
+        filters: filters,
         queryTime: props.queryTime,
         rateInterval: props.rateInterval,
         reporter: 'destination',
         step: props.step
       } as IstioMetricsOptions);
-    }
-    if (filtersOut.length > 0) {
       promiseOut = API.getNamespaceMetrics(namespace, {
         byLabels: ['request_protocol'], // ignored by prom if it doesn't exist
         direction: 'outbound',
         duration: props.duration,
-        filters: filtersOut,
+        filters: filters,
         queryTime: props.queryTime,
         rateInterval: props.rateInterval,
         reporter: 'source',
