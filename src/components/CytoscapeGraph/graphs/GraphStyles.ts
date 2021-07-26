@@ -20,6 +20,7 @@ import _ from 'lodash';
 import * as Cy from 'cytoscape';
 import { getEdgeHealth } from '../../../types/ErrorRate';
 import { PFBadges } from 'components/Pf/PfBadges';
+import { config } from 'config/Config';
 export const DimClass = 'mousedim';
 export const HighlightClass = 'mousehighlight';
 export const HoveredClass = 'mousehover';
@@ -126,12 +127,22 @@ const contentWithBadges = style({
 });
 
 const hostsClass = style({
-  color: PFColors.Black600,
-  fontFamily: NodeTextFont,
-  fontSize: '7px',
-  fontWeight: 'normal',
-  marginLeft: '2em',
-  marginTop: '0.5em'
+  borderTop: `1px solid ${PFColors.Black600}`,
+  textAlign: 'initial',
+  fontSize: NodeTextFontSize,
+  marginTop: '0.5em',
+  paddingTop: '0.5em',
+  $nest: {
+    '& div:last-child': {
+      display: 'none'
+    },
+    '&:hover div:last-child': {
+      display: 'block'
+    },
+    '&:hover div:first-child': {
+      display: 'none'
+    }
+  }
 });
 
 const labelDefault = style({
@@ -377,12 +388,18 @@ export class GraphStyles {
     node.hasVS?.hostnames?.forEach(h => hosts.push(h === '*' ? '(All hosts)' : h));
     node.isGateway?.ingressInfo?.hostnames?.forEach(h => hosts.push(h === '*' ? '(All hosts)' : h));
 
-    const contentSpan = `<div class="${contentClasses}" style="${contentStyle}">${contentText}</div>`;
-    let htmlLabel = `<div class="${labelDefault}" style="${labelStyle}">${icons}${contentSpan}</div>`;
-
+    let htmlHosts = '';
     if (hosts.length !== 0) {
-      htmlLabel += `<div class="${hostsClass}">${hosts.join("<br/>")}</div>`;
+      let hostsToShow = hosts;
+      if (hostsToShow.length > config.graph.maxHosts) {
+        hostsToShow = hosts.slice(0, config.graph.maxHosts);
+        hostsToShow.push((hosts.length - config.graph.maxHosts) === 1 ? "(and one more host)" : `(and ${hosts.length - config.graph.maxHosts} more hosts)`);
+      }
+      htmlHosts = `<div class='${hostsClass}'><div>${hosts.length} hosts</div><div>${hostsToShow.join("<br/>")}</div></div>`;
     }
+
+    const contentSpan = `<div class="${contentClasses}" style="display: block; ${contentStyle}"><div>${contentText}</div><div></div>${htmlHosts}</div></div>`;
+    let htmlLabel = `<div class="${labelDefault}" style="${labelStyle}">${icons}${contentSpan}</div>`;
 
     return htmlLabel;
   }
