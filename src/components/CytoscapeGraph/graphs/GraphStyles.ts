@@ -10,7 +10,8 @@ import {
   UNKNOWN,
   BoxByType,
   Protocol,
-  numLabels
+  numLabels,
+  TrafficRate
 } from '../../../types/Graph';
 import { icons } from '../../../config';
 import NodeImageTopology from '../../../assets/img/node-background-topology.png';
@@ -246,9 +247,6 @@ export class GraphStyles {
         if (!hasKialiScenario) {
           icons = `<span class="${NodeIconVS} ${iconMargin(icons)}"></span> ${icons}`;
         } else {
-          if (node.hasRequestRouting) {
-            icons = `<span class="${NodeIconRequestRouting} ${iconMargin(icons)}"></span> ${icons}`;
-          }
           if (node.hasFaultInjection) {
             icons = `<span class="${NodeIconFaultInjection} ${iconMargin(icons)}"></span> ${icons}`;
           }
@@ -257,6 +255,9 @@ export class GraphStyles {
           }
           if (node.hasRequestTimeout) {
             icons = `<span class="${NodeIconRequestTimeout} ${iconMargin(icons)}"></span> ${icons}`;
+          }
+          if (node.hasRequestRouting) {
+            icons = `<span class="${NodeIconRequestRouting} ${iconMargin(icons)}"></span> ${icons}`;
           }
         }
       }
@@ -426,12 +427,16 @@ export class GraphStyles {
 
     const getEdgeColor = (ele: Cy.EdgeSingular): string => {
       const edgeData = decoratedEdgeData(ele);
+      const cyGlobal = getCyGlobalData(ele);
 
       if (!edgeData.hasTraffic) {
         return EdgeColorDead;
       }
       if (edgeData.protocol === 'tcp') {
         return EdgeColorTCPWithTraffic;
+      }
+      if (edgeData.protocol === 'grpc' && !cyGlobal.trafficRates.includes(TrafficRate.GRPC_REQUEST)) {
+        return EdgeColor;
       }
 
       const sourceNodeData = decoratedNodeData(ele.source());
@@ -455,7 +460,7 @@ export class GraphStyles {
       const includeUnits = isVerbose || numLabels(edgeLabels) > 1;
       let labels = [] as string[];
 
-      if (edgeLabels.includes(EdgeLabelMode.REQUEST_RATE)) {
+      if (edgeLabels.includes(EdgeLabelMode.TRAFFIC_RATE)) {
         let rate = 0;
         let pErr = 0;
         if (edgeData.http > 0) {
@@ -472,10 +477,20 @@ export class GraphStyles {
           if (pErr > 0) {
             labels.push(`${toFixedRequestRate(rate, includeUnits)}\n${toFixedErrRate(pErr)}`);
           } else {
-            if (edgeData.protocol === Protocol.TCP) {
-              labels.push(toFixedByteRate(rate, includeUnits));
-            } else {
-              labels.push(toFixedRequestRate(rate, includeUnits));
+            switch (edgeData.protocol) {
+              case Protocol.GRPC:
+                if (cyGlobal.trafficRates.includes(TrafficRate.GRPC_REQUEST)) {
+                  labels.push(toFixedRequestRate(rate, includeUnits));
+                } else {
+                  labels.push(toFixedRequestRate(rate, includeUnits, 'mps'));
+                }
+                break;
+              case Protocol.TCP:
+                labels.push(toFixedByteRate(rate, includeUnits));
+                break;
+              default:
+                labels.push(toFixedRequestRate(rate, includeUnits));
+                break;
             }
           }
         }
@@ -503,7 +518,7 @@ export class GraphStyles {
         }
       }
 
-      if (edgeLabels.includes(EdgeLabelMode.REQUEST_DISTRIBUTION)) {
+      if (edgeLabels.includes(EdgeLabelMode.TRAFFIC_DISTRIBUTION)) {
         let pReq;
         if (edgeData.httpPercentReq > 0) {
           pReq = edgeData.httpPercentReq;
@@ -560,9 +575,9 @@ export class GraphStyles {
       return fixed.endsWith('.') ? (fixed = fixed.slice(0, -1)) : fixed;
     };
 
-    const toFixedRequestRate = (num: number, includeUnits: boolean): string => {
+    const toFixedRequestRate = (num: number, includeUnits: boolean, units?: string): string => {
       const rate = trimFixed(num.toFixed(2));
-      return includeUnits ? `${rate} rps` : rate;
+      return includeUnits ? `${rate} ${units || 'rps'}` : rate;
     };
 
     const toFixedErrRate = (num: number): string => {
