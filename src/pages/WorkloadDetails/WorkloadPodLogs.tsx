@@ -37,6 +37,8 @@ import { PFBadge, PFBadges } from 'components/Pf/PfBadges';
 import history, { URLParam } from 'app/History';
 import { TracingQuery, Span } from 'types/Tracing';
 import { AxiosResponse } from 'axios';
+import moment from 'moment';
+import { formatDuration } from 'utils/tracing/TracingHelper';
 
 const appContainerColors = [PFColors.White, PFColors.LightGreen400, PFColors.Purple100, PFColors.LightBlue400];
 const proxyContainerColor = PFColors.Gold400;
@@ -62,6 +64,7 @@ type Entry = {
   isHidden?: boolean;
   logEntry?: LogEntry;
   span?: Span;
+  timestamp: string;
   timestampUnix: TimeInSeconds;
 };
 
@@ -534,11 +537,47 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
                 .map((e, i) => {
                   if (e.span) {
                     return (
-                      <>
-                        <p key={`e-${i}`} style={{ color: spanColor, fontSize: '12px' }}>
+                      <div key={`s-${i}`} style={{ height: '22px', lineHeight: '22px' }}>
+                        {this.state.showTimestamps && (
+                          <span key={`al-s-${i}`} style={{ color: spanColor, fontSize: '12px', marginRight: '5px' }}>
+                            {e.timestamp}
+                          </span>
+                        )}
+                        <Tooltip
+                          key={`al-tt-${i}`}
+                          position={TooltipPosition.auto}
+                          entryDelay={1000}
+                          content="Click to navigate to span detail"
+                        >
+                          <Button
+                            key={`s-b-${i}`}
+                            variant={ButtonVariant.plain}
+                            style={{
+                              paddingLeft: '6px',
+                              width: '10px',
+                              height: '10px',
+                              fontFamily: 'monospace',
+                              fontSize: '12px'
+                            }}
+                            onClick={() => {
+                              this.gotoSpan(e.span!);
+                            }}
+                          >
+                            <KialiIcon.Info key={`al-i-${i}`} className={alInfoIcon} color={spanColor} />
+                          </Button>
+                        </Tooltip>
+                        <p
+                          key={`al-p-${i}`}
+                          style={{
+                            color: spanColor,
+                            fontSize: '12px',
+                            verticalAlign: 'center',
+                            display: 'inline-block'
+                          }}
+                        >
                           {this.entryToString(e)}
                         </p>
-                      </>
+                      </div>
                     );
                   }
                   const le = e.logEntry!;
@@ -552,13 +591,13 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
                     <div key={`al-${i}`} style={{ height: '22px', lineHeight: '22px' }}>
                       {this.state.showTimestamps && (
                         <span key={`al-s-${i}`} style={{ color: le.color!, fontSize: '12px', marginRight: '5px' }}>
-                          {le.timestamp}
+                          {e.timestamp}
                         </span>
                       )}
                       <Tooltip
                         key={`al-tt-${i}`}
                         position={TooltipPosition.auto}
-                        entryDelay={2000}
+                        entryDelay={1000}
                         content="Click for Envoy Access Log details"
                       >
                         <Button
@@ -575,7 +614,7 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
                             this.addAccessLogModal(le.message, le.accessLog!);
                           }}
                         >
-                          <KialiIcon.Info key={`al-i-${i}`} className={alInfoIcon} color={PFColors.Gold400} />
+                          <KialiIcon.Info key={`al-i-${i}`} className={alInfoIcon} color={le.color!} />
                         </Button>
                       </Tooltip>
                       <p
@@ -623,6 +662,13 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
 
   private setKebabOpen = (kebabOpen: boolean) => {
     this.setState({ kebabOpen: kebabOpen });
+  };
+
+  private gotoSpan = (span: Span) => {
+    const link =
+      `/namespaces/${this.props.namespace}/workloads/${this.props.workload}` +
+      `?tab=traces&${URLParam.JAEGER_TRACE_ID}=${span.traceID}&${URLParam.JAEGER_SPAN_ID}=${span.spanID}`;
+    history.push(link);
   };
 
   private addAccessLogModal = (k: string, v: AccessLog) => {
@@ -837,7 +883,13 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
           const spans = showSpans ? (responses[0].data as Span[]) : ([] as Span[]);
           entries = spans.map(span => {
             span.startTime = Math.floor(span.startTime / 1000000);
-            return { timestampUnix: span.startTime, span: span } as Entry;
+            return {
+              timestamp: moment(span.startTime * 1000)
+                .utc()
+                .format('YYYY-MM-DD HH:mm:ss'),
+              timestampUnix: span.startTime,
+              span: span
+            } as Entry;
           });
           responses.shift();
         }
@@ -851,7 +903,7 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
           const color = selectedContainers[i].color;
           containerLogEntries.forEach(le => {
             le.color = color;
-            entries.push({ timestampUnix: le.timestampUnix, logEntry: le } as Entry);
+            entries.push({ timestamp: le.timestamp, timestampUnix: le.timestampUnix, logEntry: le } as Entry);
           });
         }
 
@@ -874,15 +926,17 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
           return;
         }
         const errorMsg = error.response && error.response.data.error ? error.response.data.error : error.message;
+        const now = Date.now();
         this.setState({
           loadingLogs: false,
           entries: [
             {
-              timestampUnix: Date.now(),
+              timestamp: now.toString(),
+              timestampUnix: now,
               logEntry: {
                 severity: 'Error',
-                timestamp: Date.toString(),
-                timestampUnix: Date.now(),
+                timestamp: now.toString(),
+                timestampUnix: now,
                 message: `Failed to fetch workload logs: ${errorMsg}`
               }
             }
@@ -903,11 +957,11 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
   private entryToString = (entry: Entry): string => {
     if (entry.logEntry) {
       const le = entry.logEntry;
-      return this.state.showTimestamps ? `${le.timestamp} ${le.message}` : le.message;
+      return this.state.showTimestamps ? `${entry.timestamp} ${le.message}` : le.message;
     }
 
-    const span = entry.span!;
-    return this.state.showTimestamps ? `${span.startTime} ${span.operationName}` : span.operationName;
+    const { duration, operationName } = entry.span!;
+    return `duration: ${formatDuration(duration)}, operationName: ${operationName}`;
   };
 
   private hasEntries = (entries: Entry[]): boolean => !!entries && entries.length > 0;
