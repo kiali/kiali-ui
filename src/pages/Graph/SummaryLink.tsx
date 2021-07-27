@@ -129,7 +129,7 @@ export const renderBadgedHost = (host: string) => {
   return (
     <div>
       <PFBadge badge={PFBadges.Host} />
-      {host === "*" ? "(All hosts)" : host}
+      {host === "*" ? "* (all hosts)" : host}
     </div>
   );
 };

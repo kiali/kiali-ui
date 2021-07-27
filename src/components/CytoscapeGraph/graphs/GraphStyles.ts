@@ -386,15 +386,15 @@ export class GraphStyles {
     }
 
     let hosts: string[] = [];
-    node.hasVS?.hostnames?.forEach(h => hosts.push(h === '*' ? '(All hosts)' : h));
-    node.isGateway?.ingressInfo?.hostnames?.forEach(h => hosts.push(h === '*' ? '(All hosts)' : h));
+    node.hasVS?.hostnames?.forEach(h => hosts.push(h === '*' ? '* (all hosts)' : h));
+    node.isGateway?.ingressInfo?.hostnames?.forEach(h => hosts.push(h === '*' ? '* (all hosts)' : h));
 
     let htmlHosts = '';
     if (hosts.length !== 0) {
       let hostsToShow = hosts;
       if (hostsToShow.length > config.graph.maxHosts) {
         hostsToShow = hosts.slice(0, config.graph.maxHosts);
-        hostsToShow.push((hosts.length - config.graph.maxHosts) === 1 ? "(and one more host)" : `(and ${hosts.length - config.graph.maxHosts} more hosts)`);
+        hostsToShow.push((hosts.length - config.graph.maxHosts) === 1 ? "1 more host..." : `${hosts.length - config.graph.maxHosts} more hosts...`);
       }
       htmlHosts = `<div class='${hostsClass}'><div>${hosts.length} hosts</div><div>${hostsToShow.join("<br/>")}</div></div>`;
     }
