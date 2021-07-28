@@ -1,27 +1,28 @@
 import { style } from 'typestyle';
-import { PFColorVals, PFColorVal, PFColors } from '../../../components/Pf/PfColors';
-import { FAILURE, DEGRADED } from '../../../types/Health';
+import { PFColors, PFColorVal, PFColorVals } from '../../../components/Pf/PfColors';
+import { DEGRADED, FAILURE } from '../../../types/Health';
 import {
+  BoxByType,
+  CytoscapeGlobalScratchData,
+  CytoscapeGlobalScratchNamespace,
   EdgeLabelMode,
   GraphType,
   NodeType,
-  CytoscapeGlobalScratchNamespace,
-  CytoscapeGlobalScratchData,
-  UNKNOWN,
-  BoxByType,
-  Protocol,
   numLabels,
-  TrafficRate
+  Protocol,
+  TrafficRate,
+  UNKNOWN
 } from '../../../types/Graph';
 import { icons } from '../../../config';
 import NodeImageTopology from '../../../assets/img/node-background-topology.png';
 import NodeImageKey from '../../../assets/img/node-background-key.png';
-import { decoratedEdgeData, decoratedNodeData, CyNode } from '../CytoscapeGraphUtils';
+import { CyNode, decoratedEdgeData, decoratedNodeData } from '../CytoscapeGraphUtils';
 import _ from 'lodash';
 import * as Cy from 'cytoscape';
 import { getEdgeHealth } from '../../../types/ErrorRate';
 import { PFBadges } from 'components/Pf/PfBadges';
 import { config } from 'config/Config';
+
 export const DimClass = 'mousedim';
 export const HighlightClass = 'mousehighlight';
 export const HoveredClass = 'mousehover';
@@ -396,13 +397,11 @@ export class GraphStyles {
         hostsToShow = hosts.slice(0, config.graph.maxHosts);
         hostsToShow.push((hosts.length - config.graph.maxHosts) === 1 ? "1 more host..." : `${hosts.length - config.graph.maxHosts} more hosts...`);
       }
-      htmlHosts = `<div class='${hostsClass}'><div>${hosts.length} hosts</div><div>${hostsToShow.join("<br/>")}</div></div>`;
+      htmlHosts = `<div class='${hostsClass}'><div>${hosts.length} ${hosts.length === 1 ? 'host' : 'hosts'}</div><div>${hostsToShow.join("<br/>")}</div></div>`;
     }
 
     const contentSpan = `<div class="${contentClasses}" style="display: block; ${contentStyle}"><div>${contentText}</div><div></div>${htmlHosts}</div></div>`;
-    let htmlLabel = `<div class="${labelDefault}" style="${labelStyle}">${icons}${contentSpan}</div>`;
-
-    return htmlLabel;
+    return `<div class="${labelDefault}" style="${labelStyle}">${icons}${contentSpan}</div>`;
   }
 
   static htmlNodeLabels(cy: Cy.Core) {

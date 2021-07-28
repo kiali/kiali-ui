@@ -7,12 +7,13 @@ import { summaryHeader, summaryPanel, summaryBodyTabs, summaryFont } from './Sum
 import { decoratedNodeData } from '../../components/CytoscapeGraph/CytoscapeGraphUtils';
 import { KialiIcon } from 'config/KialiIcon';
 import { getOptions, clickHandler } from 'components/CytoscapeGraph/ContextMenu/NodeContextMenu';
-import { Dropdown, DropdownGroup, DropdownItem, DropdownPosition, KebabToggle, Tab } from '@patternfly/react-core';
+import { Dropdown, DropdownGroup, DropdownItem, DropdownPosition, Expandable, KebabToggle, Tab } from '@patternfly/react-core';
 import { KialiAppState } from 'store/Store';
 import { SummaryPanelNodeTraffic } from './SummaryPanelNodeTraffic';
 import SummaryPanelNodeTraces from './SummaryPanelNodeTraces';
 import SimpleTabs from 'components/Tab/SimpleTabs';
 import { JaegerState } from 'reducers/JaegerState';
+import { style } from 'typestyle';
 
 type SummaryPanelNodeState = {
   isActionOpen: boolean;
@@ -27,6 +28,16 @@ type ReduxProps = {
 };
 
 type SummaryPanelNodeProps = ReduxProps & SummaryPanelPropType;
+
+const expandableSectionStyle = style({
+  fontSize: 'var(--graph-side-panel--font-size)',
+  $nest: {
+    '& > div': {
+      marginLeft: '2em',
+      marginTop: '0 !important'
+    }
+  }
+});
 
 export class SummaryPanelNode extends React.Component<SummaryPanelNodeProps, SummaryPanelNodeState> {
   private readonly mainDivRef: React.RefObject<HTMLDivElement>;
@@ -112,20 +123,27 @@ export class SummaryPanelNode extends React.Component<SummaryPanelNodeProps, Sum
   }
 
   private renderGatewayHostnames = (nodeData:  DecoratedGraphNodeData) => {
-    return (
-      <div>
-        {nodeData.isGateway?.ingressInfo?.hostnames?.map(hostname => renderBadgedHost(hostname))}
-      </div>
-    );
+    return this.renderHostnamesSection(nodeData.isGateway?.ingressInfo?.hostnames!);
   };
 
   private renderVsHostnames = (nodeData:  DecoratedGraphNodeData) => {
-    return (
-      <div>
-        {nodeData.hasVS?.hostnames?.map(hostname => renderBadgedHost(hostname))}
-      </div>
-    );
+    return this.renderHostnamesSection(nodeData.hasVS?.hostnames!);
   };
+
+  private renderHostnamesSection = (hostnames: string[]) => {
+    const numberOfHostnames = hostnames.length;
+    let toggleText = `${numberOfHostnames} hosts`;
+
+    if (numberOfHostnames === 1) {
+      toggleText = '1 host';
+    }
+
+    return (
+      <Expandable toggleText={toggleText} className={expandableSectionStyle}>
+        {hostnames.map(hostname => (<div key={hostname}>{hostname === '*' ? '* (all hosts)' : hostname}</div>))}
+      </Expandable>
+    );
+  }
 
   private renderTrafficOnly() {
     return (
@@ -167,7 +185,8 @@ export class SummaryPanelNode extends React.Component<SummaryPanelNodeProps, Sum
       hasTCPTrafficShifting,
       hasTrafficShifting,
       hasVS,
-      isDead
+      isDead,
+      isGateway
     } = nodeData;
     const hasTrafficScenario =
       hasRequestRouting || hasFaultInjection || hasTrafficShifting || hasTCPTrafficShifting || hasRequestTimeout;
@@ -227,6 +246,12 @@ export class SummaryPanelNode extends React.Component<SummaryPanelNodeProps, Sum
           <div>
             <KialiIcon.RequestTimeout />
             <span style={{ paddingLeft: '4px' }}>Has Request Timeout</span>
+          </div>
+        )}
+        {isGateway && (
+          <div>
+            <KialiIcon.Gateway />
+            <span style={{ paddingLeft: '4px' }}>Is Gateway</span>
           </div>
         )}
       </div>
