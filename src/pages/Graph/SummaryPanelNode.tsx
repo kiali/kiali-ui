@@ -34,7 +34,14 @@ const expandableSectionStyle = style({
   $nest: {
     '& > div': {
       marginLeft: '2em',
-      marginTop: '0 !important'
+      marginTop: '0 !important',
+      $nest: {
+        '& div': {
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap'
+        }
+      }
     }
   }
 });
@@ -136,7 +143,7 @@ export class SummaryPanelNode extends React.Component<SummaryPanelNodeProps, Sum
 
     return (
       <Expandable toggleText={toggleText} className={expandableSectionStyle}>
-        {hostnames.map(hostname => (<div key={hostname}>{hostname === '*' ? '* (all hosts)' : hostname}</div>))}
+        {hostnames.map(hostname => (<div key={hostname} title={hostname}>{hostname === '*' ? '* (all hosts)' : hostname}</div>))}
       </Expandable>
     );
   }
