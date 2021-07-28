@@ -65,10 +65,8 @@ export class SummaryPanelNode extends React.Component<SummaryPanelNodeProps, Sum
     const destsList = nodeType === NodeType.SERVICE && isServiceEntry && this.renderDestServices(nodeData);
 
     const shouldRenderDestsList = destsList && destsList.length > 0;
-    const shouldRenderGatewayHostnames = nodeData.isGateway?.ingressInfo?.hostnames !== undefined && nodeData.isGateway.ingressInfo.hostnames.length !== 0;
     const shouldRenderSvcList = servicesList && servicesList.length > 0;
     const shouldRenderService = service && ![NodeType.SERVICE, NodeType.UNKNOWN].includes(nodeType);
-    const shouldRenderVsHostnames = nodeData.hasVS?.hostnames !== undefined && nodeData.hasVS?.hostnames.length !== 0;
     const shouldRenderApp = app && ![NodeType.APP, NodeType.UNKNOWN].includes(nodeType);
     const shouldRenderWorkload = workload && ![NodeType.WORKLOAD, NodeType.UNKNOWN].includes(nodeType);
     const shouldRenderTraces =
@@ -113,8 +111,6 @@ export class SummaryPanelNode extends React.Component<SummaryPanelNodeProps, Sum
             {shouldRenderService && <div>{renderBadgedLink(nodeData, NodeType.SERVICE)}</div>}
             {shouldRenderApp && <div>{renderBadgedLink(nodeData, NodeType.APP)}</div>}
             {shouldRenderWorkload && <div>{renderBadgedLink(nodeData, NodeType.WORKLOAD)}</div>}
-            {shouldRenderGatewayHostnames && this.renderGatewayHostnames(nodeData)}
-            {shouldRenderVsHostnames && this.renderVsHostnames(nodeData)}
           </div>
         </div>
         {shouldRenderTraces ? this.renderWithTabs(nodeData) : this.renderTrafficOnly()}
@@ -190,6 +186,8 @@ export class SummaryPanelNode extends React.Component<SummaryPanelNodeProps, Sum
     } = nodeData;
     const hasTrafficScenario =
       hasRequestRouting || hasFaultInjection || hasTrafficShifting || hasTCPTrafficShifting || hasRequestTimeout;
+    const shouldRenderGatewayHostnames = nodeData.isGateway?.ingressInfo?.hostnames !== undefined && nodeData.isGateway.ingressInfo.hostnames.length !== 0;
+    const shouldRenderVsHostnames = nodeData.hasVS?.hostnames !== undefined && nodeData.hasVS?.hostnames.length !== 0;
     return (
       <div style={{ marginTop: '10px', marginBottom: '10px' }}>
         {hasCB && (
@@ -199,10 +197,13 @@ export class SummaryPanelNode extends React.Component<SummaryPanelNodeProps, Sum
           </div>
         )}
         {hasVS && !hasTrafficScenario && (
-          <div>
-            <KialiIcon.VirtualService />
-            <span style={{ paddingLeft: '4px' }}>Has Virtual Service</span>
-          </div>
+          <>
+            <div>
+              <KialiIcon.VirtualService />
+              <span style={{ paddingLeft: '4px' }}>Has Virtual Service</span>
+            </div>
+            {shouldRenderVsHostnames && this.renderVsHostnames(nodeData)}
+          </>
         )}
         {hasMissingSC && (
           <div>
@@ -219,10 +220,13 @@ export class SummaryPanelNode extends React.Component<SummaryPanelNodeProps, Sum
           </div>
         )}
         {hasRequestRouting && (
-          <div>
-            <KialiIcon.RequestRouting />
-            <span style={{ paddingLeft: '4px' }}>Has Request Routing</span>
-          </div>
+          <>
+            <div>
+              <KialiIcon.RequestRouting />
+              <span style={{ paddingLeft: '4px' }}>Has Request Routing</span>
+            </div>
+            {shouldRenderVsHostnames && this.renderVsHostnames(nodeData)}
+          </>
         )}
         {hasFaultInjection && (
           <div>
@@ -249,10 +253,13 @@ export class SummaryPanelNode extends React.Component<SummaryPanelNodeProps, Sum
           </div>
         )}
         {isGateway && (
-          <div>
-            <KialiIcon.Gateway />
-            <span style={{ paddingLeft: '4px' }}>Is Gateway</span>
-          </div>
+          <>
+            <div>
+              <KialiIcon.Gateway />
+              <span style={{ paddingLeft: '4px' }}>Is Gateway</span>
+            </div>
+            {shouldRenderGatewayHostnames && this.renderGatewayHostnames(nodeData)}
+          </>
         )}
       </div>
     );
