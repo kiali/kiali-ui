@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 import { isUpstream } from '../../UpstreamDetector/UpstreamDetector';
 import { Status, Component, StatusKey } from '../../../types/StatusState';
 import { config } from '../../../config';
+import IstioCertsInfoConnected from 'components/IstioCertsInfo/IstioCertsInfo';
 
 type HelpDropdownProps = {
   status: Status;
@@ -22,12 +23,14 @@ interface HelpDropdownState {
 class HelpDropdownContainer extends React.Component<HelpDropdownProps, HelpDropdownState> {
   about: React.RefObject<AboutUIModal>;
   debugInformation: React.RefObject<any>;
+  certsInformation: React.RefObject<any>;
 
   constructor(props: HelpDropdownProps) {
     super(props);
     this.state = { isDropdownOpen: false };
     this.about = React.createRef<AboutUIModal>();
     this.debugInformation = React.createRef();
+    this.certsInformation = React.createRef();
   }
 
   openAbout = () => {
@@ -37,6 +40,10 @@ class HelpDropdownContainer extends React.Component<HelpDropdownProps, HelpDropd
   openDebugInformation = () => {
     // Using wrapped component, so we have to get the wrappedInstance
     this.debugInformation.current!.open();
+  };
+
+  openCertsInformation = () => {
+    this.certsInformation.current!.open();
   };
 
   onDropdownToggle = isDropdownOpen => {
@@ -80,6 +87,9 @@ class HelpDropdownContainer extends React.Component<HelpDropdownProps, HelpDropd
       <DropdownItem component={'span'} key={'view_debug_info'} onClick={this.openDebugInformation}>
         View Debug Info
       </DropdownItem>,
+      <DropdownItem component={'span'} key={'view_certs_info'} onClick={this.openCertsInformation}>
+        View Certificates Info
+      </DropdownItem>,
       <DropdownItem component={'span'} key={'view_about_info'} onClick={this.openAbout}>
         About
       </DropdownItem>
@@ -89,6 +99,7 @@ class HelpDropdownContainer extends React.Component<HelpDropdownProps, HelpDropd
       <>
         <AboutUIModal ref={this.about} status={this.props.status} components={this.props.components} />
         <DebugInformationContainer ref={this.debugInformation} />
+        <IstioCertsInfoConnected ref={this.certsInformation} />
         <Dropdown
           isPlain={true}
           position="right"
