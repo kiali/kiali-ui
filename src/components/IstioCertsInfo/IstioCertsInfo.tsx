@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as API from '../../services/Api';
-import { Alert, Button, Card, CardBody, CardHeader, Grid, GridItem, Modal, Title } from '@patternfly/react-core';
+import { Button, Card, CardBody, CardHeader, Grid, GridItem, Modal, Title } from '@patternfly/react-core';
 import { KialiAppState } from 'store/Store';
 import { istioCertsInfoSelector, lastRefreshAtSelector } from 'store/Selectors';
 import { ThunkDispatch } from 'redux-thunk';
@@ -10,6 +10,7 @@ import { IstioCertsInfoActions } from 'actions/IstioCertsInfoActions';
 import { connect } from 'react-redux';
 import { TimeInMilliseconds } from 'types/Common';
 import { CertsInfo } from 'types/CertsInfo';
+import { PFColors } from 'components/Pf/PfColors';
 
 type IstioCertsInfoState = {
   showModal: boolean;
@@ -80,12 +81,16 @@ class IstioCertsInfo extends React.Component<IstioCertsInfoProps, IstioCertsInfo
             </li>
           </ul>
         </GridItem>
-        <GridItem span={3}>
-          <b>DNS Names</b>
-        </GridItem>
-        <GridItem span={9}>
-          {certInfo.dnsNames && certInfo.dnsNames.map((dnsName, index) => <li key={index}>{dnsName}</li>)}
-        </GridItem>
+        {certInfo.dnsNames && (
+          <>
+            <GridItem span={3}>
+              <b>DNS Names</b>
+            </GridItem>
+            <GridItem span={9}>
+              {certInfo.dnsNames && certInfo.dnsNames.map((dnsName, index) => <li key={index}>{dnsName}</li>)}
+            </GridItem>
+          </>
+        )}
       </Grid>
     );
   };
@@ -115,9 +120,13 @@ class IstioCertsInfo extends React.Component<IstioCertsInfoProps, IstioCertsInfo
                         <b>Secret</b>
                       </GridItem>
                       <GridItem span={9}>{certInfo.secretName}</GridItem>
+                      {certInfo.error && (
+                        <GridItem span={12}>
+                          <p style={{ color: PFColors.Danger }}>The certificate has errors</p>
+                        </GridItem>
+                      )}
                     </Grid>
-                    {certInfo.error && this.showCertInfo(certInfo)}
-                    {!certInfo.error && <Alert variant="danger" title="The certificate has errors" />}
+                    {!certInfo.error && this.showCertInfo(certInfo)}
                   </CardBody>
                 </Card>
               </li>
