@@ -36,6 +36,7 @@ interface AuthenticationControllerReduxProps {
   checkCredentials: () => void;
   isLoginError: boolean;
   landingRoute?: string;
+  logout: () => void;
   setActiveNamespaces: (namespaces: Namespace[]) => void;
   setDuration: (duration: DurationInSeconds) => void;
   setJaegerInfo: (jaegerInfo: JaegerInfo | null) => void;
@@ -61,10 +62,13 @@ enum LoginStage {
 
 interface AuthenticationControllerState {
   stage: LoginStage;
-  isPostLoginError: boolean;
+  postLoginError?: string;
 }
 
-class AuthenticationController extends React.Component<AuthenticationControllerProps, AuthenticationControllerState> {
+export class AuthenticationController extends React.Component<
+  AuthenticationControllerProps,
+  AuthenticationControllerState
+> {
   static readonly PostLoginErrorMsg =
     'You are logged in, but there was a problem when fetching some required server ' +
     'configurations. Please, try refreshing the page.';
@@ -73,7 +77,7 @@ class AuthenticationController extends React.Component<AuthenticationControllerP
     super(props);
     this.state = {
       stage: this.props.authenticated ? LoginStage.LOGGED_IN_AT_LOAD : LoginStage.LOGIN,
-      isPostLoginError: false
+      postLoginError: undefined
     };
   }
 
@@ -139,7 +143,7 @@ class AuthenticationController extends React.Component<AuthenticationControllerP
     if (this.state.stage === LoginStage.LOGGED_IN) {
       return this.props.protectedAreaComponent;
     } else if (this.state.stage === LoginStage.LOGGED_IN_AT_LOAD) {
-      return !this.state.isPostLoginError ? (
+      return !this.state.postLoginError ? (
         <InitializingScreen />
       ) : (
         <InitializingScreen errorMsg={AuthenticationController.PostLoginErrorMsg} />
@@ -147,15 +151,15 @@ class AuthenticationController extends React.Component<AuthenticationControllerP
     } else if (this.state.stage === LoginStage.POST_LOGIN) {
       // For OAuth/OpenID auth strategies, show/keep the initializing screen unless there
       // is an error.
-      if (!this.state.isPostLoginError && isAuthStrategyOAuth()) {
+      if (!this.state.postLoginError && isAuthStrategyOAuth()) {
         return <InitializingScreen />;
       }
 
-      return !this.state.isPostLoginError
+      return !this.state.postLoginError
         ? this.props.publicAreaComponent(true)
-        : this.props.publicAreaComponent(false, AuthenticationController.PostLoginErrorMsg);
+        : this.props.publicAreaComponent(false, this.state.postLoginError!);
     } else {
-      return this.props.publicAreaComponent(false);
+      return this.props.publicAreaComponent(false, this.state.postLoginError);
     }
   }
 
@@ -193,12 +197,26 @@ class AuthenticationController extends React.Component<AuthenticationControllerP
         history.replace(this.props.landingRoute);
         this.props.setLandingRoute(undefined);
       }
-      this.setState({ stage: LoginStage.LOGGED_IN });
+      // Setting postLoginError to 'undefined' here ensures that when the user logs out
+      // after logging in successfully, they do not see the previous postLoginError message.
+      this.setState({ stage: LoginStage.LOGGED_IN, postLoginError: undefined });
     } catch (err) {
       console.error('Error on post-login actions.', err);
-      this.setState({ isPostLoginError: true });
+      this.setState({ postLoginError: this.generatePostLoginErrorMessage(err) });
+      // Logging the user out immediately since they will need to log in again
+      // in order to retry the 'post-login' actions. The post-login actions
+      // must succeed before the user can proceed.
+      //
+      // When logout happens a re-render happens so need to track if the user has been previously
+      // logged out from this error message and display the message then.
+      this.props.logout();
     }
   };
+
+  private generatePostLoginErrorMessage(err: any): string {
+    return `Kiali failed to initialize due to '${API.getErrorString(err)}'. Please ensure that services 
+    Kiali depends on such as Prometheus are healthy and reachable by Kiali then login again.`;
+  }
 
   private applyUIDefaults() {
     const uiDefaults = serverConfig.kialiFeatureFlags.uiDefaults;
@@ -334,6 +352,7 @@ const mapStateToProps = (state: KialiAppState) => ({
 
 const mapDispatchToProps = (dispatch: KialiDispatch) => ({
   checkCredentials: () => dispatch(LoginThunkActions.checkCredentials()),
+  logout: () => dispatch(LoginThunkActions.logout()),
   setActiveNamespaces: bindActionCreators(NamespaceActions.setActiveNamespaces, dispatch),
   setDuration: bindActionCreators(UserSettingsActions.setDuration, dispatch),
   setJaegerInfo: bindActionCreators(JaegerActions.setInfo, dispatch),
