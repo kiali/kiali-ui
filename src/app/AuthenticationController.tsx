@@ -69,9 +69,8 @@ export class AuthenticationController extends React.Component<
   AuthenticationControllerProps,
   AuthenticationControllerState
 > {
-  static readonly PostLoginErrorMsg =
-    'You are logged in, but there was a problem when fetching some required server ' +
-    'configurations. Please, try refreshing the page.';
+  static readonly PostLoginErrorMsg = `Kiali failed to initialize. Please ensure that services 
+    Kiali depends on, such as Prometheus, are healthy and reachable by Kiali then log in again.`;
 
   constructor(props: AuthenticationControllerProps) {
     super(props);
@@ -202,7 +201,7 @@ export class AuthenticationController extends React.Component<
       this.setState({ stage: LoginStage.LOGGED_IN, postLoginError: undefined });
     } catch (err) {
       console.error('Error on post-login actions.', err);
-      this.setState({ postLoginError: this.generatePostLoginErrorMessage(err) });
+      this.setState({ postLoginError: AuthenticationController.PostLoginErrorMsg });
       // Logging the user out immediately since they will need to log in again
       // in order to retry the 'post-login' actions. The post-login actions
       // must succeed before the user can proceed.
@@ -212,11 +211,6 @@ export class AuthenticationController extends React.Component<
       this.props.logout();
     }
   };
-
-  private generatePostLoginErrorMessage(err: any): string {
-    return `Kiali failed to initialize due to '${API.getErrorString(err)}'. Please ensure that services 
-    Kiali depends on such as Prometheus are healthy and reachable by Kiali then login again.`;
-  }
 
   private applyUIDefaults() {
     const uiDefaults = serverConfig.kialiFeatureFlags.uiDefaults;
