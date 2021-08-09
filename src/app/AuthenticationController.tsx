@@ -36,7 +36,6 @@ interface AuthenticationControllerReduxProps {
   checkCredentials: () => void;
   isLoginError: boolean;
   landingRoute?: string;
-  logout: () => void;
   setActiveNamespaces: (namespaces: Namespace[]) => void;
   setDuration: (duration: DurationInSeconds) => void;
   setJaegerInfo: (jaegerInfo: JaegerInfo | null) => void;
@@ -62,7 +61,7 @@ enum LoginStage {
 
 interface AuthenticationControllerState {
   stage: LoginStage;
-  postLoginError?: string;
+  isPostLoginError: boolean;
 }
 
 export class AuthenticationController extends React.Component<
@@ -72,11 +71,15 @@ export class AuthenticationController extends React.Component<
   static readonly PostLoginErrorMsg = `Kiali failed to initialize. Please ensure that services 
     Kiali depends on, such as Prometheus, are healthy and reachable by Kiali then log in again.`;
 
+  // How long to wait for the post-login actions to complete
+  // before transitioning to the "Loading" page.
+  private readonly postLoginMSTillTransition = 3000;
+
   constructor(props: AuthenticationControllerProps) {
     super(props);
     this.state = {
       stage: this.props.authenticated ? LoginStage.LOGGED_IN_AT_LOAD : LoginStage.LOGIN,
-      postLoginError: undefined
+      isPostLoginError: false
     };
   }
 
@@ -142,7 +145,7 @@ export class AuthenticationController extends React.Component<
     if (this.state.stage === LoginStage.LOGGED_IN) {
       return this.props.protectedAreaComponent;
     } else if (this.state.stage === LoginStage.LOGGED_IN_AT_LOAD) {
-      return !this.state.postLoginError ? (
+      return !this.state.isPostLoginError ? (
         <InitializingScreen />
       ) : (
         <InitializingScreen errorMsg={AuthenticationController.PostLoginErrorMsg} />
@@ -150,19 +153,23 @@ export class AuthenticationController extends React.Component<
     } else if (this.state.stage === LoginStage.POST_LOGIN) {
       // For OAuth/OpenID auth strategies, show/keep the initializing screen unless there
       // is an error.
-      if (!this.state.postLoginError && isAuthStrategyOAuth()) {
+      if (!this.state.isPostLoginError && isAuthStrategyOAuth()) {
         return <InitializingScreen />;
       }
 
-      return !this.state.postLoginError
+      return !this.state.isPostLoginError
         ? this.props.publicAreaComponent(true)
-        : this.props.publicAreaComponent(false, this.state.postLoginError!);
+        : this.props.publicAreaComponent(false, AuthenticationController.PostLoginErrorMsg);
     } else {
-      return this.props.publicAreaComponent(false, this.state.postLoginError);
+      return this.props.publicAreaComponent(false);
     }
   }
 
   private doPostLoginActions = async () => {
+    const postLoginTimer = setTimeout(() => {
+      this.setState({ stage: LoginStage.LOGGED_IN_AT_LOAD });
+    }, this.postLoginMSTillTransition);
+
     try {
       const getStatusPromise = API.getStatus()
         .then(response => this.props.setServerStatus(response.data))
@@ -196,19 +203,12 @@ export class AuthenticationController extends React.Component<
         history.replace(this.props.landingRoute);
         this.props.setLandingRoute(undefined);
       }
-      // Setting postLoginError to 'undefined' here ensures that when the user logs out
-      // after logging in successfully, they do not see the previous postLoginError message.
-      this.setState({ stage: LoginStage.LOGGED_IN, postLoginError: undefined });
+      this.setState({ stage: LoginStage.LOGGED_IN });
     } catch (err) {
       console.error('Error on post-login actions.', err);
-      this.setState({ postLoginError: AuthenticationController.PostLoginErrorMsg });
-      // Logging the user out immediately since they will need to log in again
-      // in order to retry the 'post-login' actions. The post-login actions
-      // must succeed before the user can proceed.
-      //
-      // When logout happens a re-render happens so need to track if the user has been previously
-      // logged out from this error message and display the message then.
-      this.props.logout();
+      this.setState({ isPostLoginError: true });
+    } finally {
+      clearTimeout(postLoginTimer);
     }
   };
 
@@ -346,7 +346,6 @@ const mapStateToProps = (state: KialiAppState) => ({
 
 const mapDispatchToProps = (dispatch: KialiDispatch) => ({
   checkCredentials: () => dispatch(LoginThunkActions.checkCredentials()),
-  logout: () => dispatch(LoginThunkActions.logout()),
   setActiveNamespaces: bindActionCreators(NamespaceActions.setActiveNamespaces, dispatch),
   setDuration: bindActionCreators(UserSettingsActions.setDuration, dispatch),
   setJaegerInfo: bindActionCreators(JaegerActions.setInfo, dispatch),
