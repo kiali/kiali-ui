@@ -14,6 +14,7 @@ import { PFColors } from 'components/Pf/PfColors';
 
 type IstioCertsInfoState = {
   showModal: boolean;
+  certsError: Boolean;
 };
 
 type IstioCertsInfoProps = {
@@ -26,7 +27,7 @@ type IstioCertsInfoProps = {
 class IstioCertsInfo extends React.Component<IstioCertsInfoProps, IstioCertsInfoState> {
   constructor(props: IstioCertsInfoProps) {
     super(props);
-    this.state = { showModal: false };
+    this.state = { showModal: false, certsError: false };
   }
 
   open = () => {
@@ -50,9 +51,12 @@ class IstioCertsInfo extends React.Component<IstioCertsInfoProps, IstioCertsInfo
   fetchStatus = () => {
     API.getIstioCertsInfo()
       .then(response => {
-        return this.props.setIstioCertsInfo(response.data);
+        this.props.setIstioCertsInfo(response.data);
+        this.setState({ certsError: false });
       })
-      .catch(_error => {});
+      .catch(_error => {
+        this.setState({ certsError: true });
+      });
   };
 
   showCertInfo = (certInfo: CertsInfo): JSX.Element => {
@@ -63,24 +67,13 @@ class IstioCertsInfo extends React.Component<IstioCertsInfoProps, IstioCertsInfo
         </GridItem>
         <GridItem span={9}>{certInfo.issuer}</GridItem>
         <GridItem span={3}>
-          <b>Validity</b>
+          <b>Valid from</b>
         </GridItem>
-        <GridItem span={9}>
-          <ul>
-            <li>
-              <Grid>
-                <GridItem span={2}>From:</GridItem>
-                <GridItem span={10}>{certInfo.notBefore}</GridItem>
-              </Grid>
-            </li>
-            <li>
-              <Grid>
-                <GridItem span={2}>To:</GridItem>
-                <GridItem span={10}>{certInfo.notAfter}</GridItem>
-              </Grid>
-            </li>
-          </ul>
+        <GridItem span={9}>{certInfo.notBefore}</GridItem>
+        <GridItem span={3}>
+          <b>Valid until</b>
         </GridItem>
+        <GridItem span={9}>{certInfo.notAfter}</GridItem>
         {certInfo.dnsNames && (
           <>
             <GridItem span={3}>
@@ -104,25 +97,25 @@ class IstioCertsInfo extends React.Component<IstioCertsInfoProps, IstioCertsInfo
         title="Certicates information"
         actions={[<Button onClick={this.close}>Close</Button>]}
       >
+        {this.state.certsError && (
+          <p style={{ color: PFColors.Danger }}>An error occurred getting certificates information</p>
+        )}
         <ul>
           {this.props.certsInfo &&
+            !this.state.certsError &&
             this.props.certsInfo.map((certInfo, index) => (
               <li key={index}>
                 <Card>
                   <CardHeader>
                     <Title headingLevel="h3" size="lg">
-                      Certificate #{index + 1}
+                      From {certInfo.secretName} secret
                     </Title>
                   </CardHeader>
                   <CardBody>
                     <Grid>
-                      <GridItem span={3}>
-                        <b>Secret</b>
-                      </GridItem>
-                      <GridItem span={9}>{certInfo.secretName}</GridItem>
                       {certInfo.error && (
                         <GridItem span={12}>
-                          <p style={{ color: PFColors.Danger }}>The certificate has errors</p>
+                          <p style={{ color: PFColors.Danger }}>An error occurred, {certInfo.error}</p>
                         </GridItem>
                       )}
                     </Grid>
