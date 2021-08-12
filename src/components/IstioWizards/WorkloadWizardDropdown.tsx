@@ -1,5 +1,12 @@
 import * as React from 'react';
-import { Dropdown, DropdownItem, DropdownPosition, DropdownToggle } from '@patternfly/react-core';
+import {
+  Dropdown,
+  DropdownItem,
+  DropdownPosition,
+  DropdownToggle,
+  Tooltip,
+  TooltipPosition
+} from '@patternfly/react-core';
 import { CaretDownIcon } from '@patternfly/react-icons';
 import { serverConfig } from '../../config';
 import { Workload } from '../../types/Workload';
@@ -93,6 +100,14 @@ class WorkloadWizardDropdown extends React.Component<Props, State> {
     }
   };
 
+  renderTooltip = (key, position, msg, child): any => {
+    return (
+      <Tooltip key={'tooltip_' + key} position={position} content={<>{msg}</>}>
+        <div style={{ display: 'inline-block', cursor: 'not-allowed', textAlign: 'left' }}>{child}</div>
+      </Tooltip>
+    );
+  };
+
   renderDropdownItems = (): JSX.Element[] => {
     const items: JSX.Element[] = [];
     if (serverConfig.kialiFeatureFlags.istioInjectionAction) {
@@ -143,7 +158,7 @@ class WorkloadWizardDropdown extends React.Component<Props, State> {
 
   render() {
     const renderDropdownItems = this.renderDropdownItems();
-    const validActions = renderDropdownItems.length > 0;
+    const validActions = renderDropdownItems.length > 0 && !serverConfig.deployment.viewOnlyMode;
     const dropdown = (
       <Dropdown
         position={DropdownPosition.right}
@@ -160,7 +175,18 @@ class WorkloadWizardDropdown extends React.Component<Props, State> {
       />
     );
     // TODO WorkloadWizard component contains only 3scale actions but in the future we may need to bring it back
-    return <>{dropdown}</>;
+    return (
+      <>
+        {!validActions
+          ? this.renderTooltip(
+              'tooltip_wizard_actions',
+              TooltipPosition.top,
+              'User has not permissions on this Workload',
+              dropdown
+            )
+          : dropdown}
+      </>
+    );
   }
 }
 
