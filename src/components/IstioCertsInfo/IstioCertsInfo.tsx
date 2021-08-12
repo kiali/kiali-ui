@@ -118,8 +118,19 @@ class IstioCertsInfo extends React.Component<IstioCertsInfoProps, IstioCertsInfo
                           <p style={{ color: PFColors.Danger }}>An error occurred, {certInfo.error}</p>
                         </GridItem>
                       )}
+                      {!certInfo.accessible && (
+                        <GridItem span={12}>
+                          <p style={{ color: PFColors.Blue500 }}>
+                            For security purposes, Kiali has not been granted permission to view this certificate. If
+                            you want Kiali to provide details about this certificate then you must grant the Kiali
+                            service account permission to read the secret {certInfo.secretName} found in namespace{' '}
+                            {certInfo.secretNamespace}. Refer to the Kiali documentation for details on how you can add
+                            this permission.
+                          </p>
+                        </GridItem>
+                      )}
                     </Grid>
-                    {!certInfo.error && this.showCertInfo(certInfo)}
+                    {!certInfo.error && certInfo.accessible && this.showCertInfo(certInfo)}
                   </CardBody>
                 </Card>
               </li>
