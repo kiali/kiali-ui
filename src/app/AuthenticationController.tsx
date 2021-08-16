@@ -69,7 +69,7 @@ export class AuthenticationController extends React.Component<
   AuthenticationControllerState
 > {
   static readonly PostLoginErrorMsg = `Kiali failed to initialize. Please ensure that services 
-    Kiali depends on, such as Prometheus, are healthy and reachable by Kiali then log in again.`;
+    Kiali depends on, such as Prometheus, are healthy and reachable by Kiali then refresh your browser.`;
 
   // How long to wait for the post-login actions to complete
   // before transitioning to the "Loading" page.
@@ -194,6 +194,7 @@ export class AuthenticationController extends React.Component<
         getStatusPromise,
         getJaegerInfoPromise
       ]);
+
       this.props.setNamespaces(configs[0].data, new Date());
       setServerConfig(configs[1].data);
       this.applyUIDefaults();
@@ -206,7 +207,9 @@ export class AuthenticationController extends React.Component<
       this.setState({ stage: LoginStage.LOGGED_IN });
     } catch (err) {
       console.error('Error on post-login actions.', err);
-      this.setState({ isPostLoginError: true });
+      // Transitioning to LOGGED_IN_AT_LOAD so that the user will see the "Loading..."
+      // screen instead of being stuck at the "login" page after a post-login error.
+      this.setState({ isPostLoginError: true, stage: LoginStage.LOGGED_IN_AT_LOAD });
     } finally {
       clearTimeout(postLoginTimer);
     }
