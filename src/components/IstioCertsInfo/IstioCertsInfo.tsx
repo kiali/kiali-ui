@@ -1,6 +1,17 @@
 import * as React from 'react';
 import * as API from '../../services/Api';
-import { Button, Card, CardBody, CardHeader, Grid, GridItem, Modal, Title } from '@patternfly/react-core';
+import {
+  Button,
+  Card,
+  CardBody,
+  CardHeader,
+  Grid,
+  GridItem,
+  Modal,
+  Title,
+  Tooltip,
+  TooltipPosition
+} from '@patternfly/react-core';
 import { KialiAppState } from 'store/Store';
 import { istioCertsInfoSelector, lastRefreshAtSelector } from 'store/Selectors';
 import { ThunkDispatch } from 'redux-thunk';
@@ -11,6 +22,8 @@ import { connect } from 'react-redux';
 import { TimeInMilliseconds } from 'types/Common';
 import { CertsInfo } from 'types/CertsInfo';
 import { PFColors } from 'components/Pf/PfColors';
+import { KialiIcon } from 'config/KialiIcon';
+import { infoStyle } from 'styles/DropdownStyles';
 
 type IstioCertsInfoState = {
   showModal: boolean;
@@ -113,22 +126,33 @@ class IstioCertsInfo extends React.Component<IstioCertsInfoProps, IstioCertsInfo
                   </CardHeader>
                   <CardBody>
                     <Grid>
-                      {certInfo.error && (
-                        <GridItem span={12}>
+                      <GridItem span={12}>
+                        {certInfo.error && (
                           <p style={{ color: PFColors.Danger }}>An error occurred, {certInfo.error}</p>
-                        </GridItem>
-                      )}
-                      {!certInfo.accessible && (
-                        <GridItem span={12}>
-                          <p style={{ color: PFColors.Blue500 }}>
-                            For security purposes, Kiali has not been granted permission to view this certificate. If
-                            you want Kiali to provide details about this certificate then you must grant the Kiali
-                            service account permission to read the secret {certInfo.secretName} found in namespace{' '}
-                            {certInfo.secretNamespace}. Refer to the Kiali documentation for details on how you can add
-                            this permission.
-                          </p>
-                        </GridItem>
-                      )}
+                        )}
+                        {!certInfo.accessible && (
+                          <Tooltip
+                            position={TooltipPosition.right}
+                            content={
+                              <div style={{ textAlign: 'left' }}>
+                                <p>
+                                  For security purposes, Kiali has not been granted permission to view this certificate.
+                                  If you want Kiali to provide details about this certificate then you must grant the
+                                  Kiali service account permission to read the secret {certInfo.secretName} found in
+                                  namespace {certInfo.secretNamespace}.
+                                </p>
+                                <p style={{ marginTop: '20px' }}>
+                                  Refer to the Kiali documentation for details on how you can add this permission.
+                                </p>
+                              </div>
+                            }
+                          >
+                            <span>
+                              Access denied <KialiIcon.Warning className={infoStyle} />
+                            </span>
+                          </Tooltip>
+                        )}
+                      </GridItem>
                     </Grid>
                     {!certInfo.error && certInfo.accessible && this.showCertInfo(certInfo)}
                   </CardBody>
