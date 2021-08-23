@@ -107,7 +107,7 @@ class IstioCertsInfo extends React.Component<IstioCertsInfoProps, IstioCertsInfo
         isSmall={true}
         isOpen={this.state.showModal}
         onClose={this.close}
-        title="Certicates information"
+        title="Certificates information"
         actions={[<Button onClick={this.close}>Close</Button>]}
       >
         {this.state.certsError && (
