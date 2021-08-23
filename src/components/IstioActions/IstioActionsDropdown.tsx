@@ -82,7 +82,6 @@ class IstioActionDropdown extends React.Component<Props, State> {
       <>
         <Dropdown
           id="actions"
-          title="Actions"
           toggle={<DropdownToggle onToggle={this.onToggle}>Actions</DropdownToggle>}
           onSelect={this.onSelect}
           position={DropdownPosition.right}
