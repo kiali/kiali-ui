@@ -74,14 +74,14 @@ export class GraphToolbar extends React.PureComponent<GraphToolbarProps> {
     super(props);
     // Let URL override current redux state at construction time. Update URL with unset params.
     const urlParams = new URLSearchParams(history.location.search);
-    const urlEdgeLabels = HistoryManager.getParam(URLParam.GRAPH_EDGES, urlParams);
+    const urlEdgeLabels = HistoryManager.getParam(URLParam.GRAPH_EDGE_LABEL, urlParams);
     if (urlEdgeLabels) {
       if (urlEdgeLabels !== props.edgeLabels.join(',')) {
         props.setEdgeLabels(urlEdgeLabels.split(',') as EdgeLabelMode[]);
       }
     } else {
       const edgeLabelsString = props.edgeLabels.join(',');
-      HistoryManager.setParam(URLParam.GRAPH_EDGES, edgeLabelsString);
+      HistoryManager.setParam(URLParam.GRAPH_EDGE_LABEL, edgeLabelsString);
     }
 
     const urlGraphTraffic = HistoryManager.getParam(URLParam.GRAPH_TRAFFIC, urlParams);
@@ -131,7 +131,7 @@ export class GraphToolbar extends React.PureComponent<GraphToolbarProps> {
     } else {
       HistoryManager.setParam(URLParam.NAMESPACES, activeNamespacesString);
     }
-    HistoryManager.setParam(URLParam.GRAPH_EDGES, String(this.props.edgeLabels));
+    HistoryManager.setParam(URLParam.GRAPH_EDGE_LABEL, String(this.props.edgeLabels));
     HistoryManager.setParam(URLParam.GRAPH_IDLE_NODES, String(this.props.showIdleNodes));
     HistoryManager.setParam(URLParam.GRAPH_TRAFFIC, String(this.props.trafficRates));
     HistoryManager.setParam(URLParam.GRAPH_TYPE, String(this.props.graphType));
