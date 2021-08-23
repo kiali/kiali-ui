@@ -7,8 +7,11 @@ import {
   DropdownToggle,
   Modal,
   Text,
-  TextVariants
+  TextVariants,
+  Tooltip,
+  TooltipPosition
 } from '@patternfly/react-core';
+import { serverConfig } from '../../config';
 
 type Props = {
   objectKind?: string;
@@ -56,8 +59,24 @@ class IstioActionDropdown extends React.Component<Props, State> {
     this.props.onDelete();
   };
 
+  renderTooltip = (key, position, msg, child): any => {
+    return (
+      <Tooltip key={'tooltip_' + key} position={position} content={<>{msg}</>}>
+        <div style={{ display: 'inline-block', cursor: 'not-allowed', textAlign: 'left' }}>{child}</div>
+      </Tooltip>
+    );
+  };
+
   render() {
     const objectName = this.props.objectKind ? this.props.objectKind : 'Istio object';
+    const deleteAction = (
+      <DropdownItem key="delete" onClick={this.onClickDelete} isDisabled={!this.props.canDelete}>
+        Delete
+      </DropdownItem>
+    );
+    const deleteActionWrapper = serverConfig.deployment.viewOnlyMode
+      ? this.renderTooltip('delete', TooltipPosition.left, 'User has not permissions', deleteAction)
+      : deleteAction;
 
     return (
       <>
@@ -68,11 +87,7 @@ class IstioActionDropdown extends React.Component<Props, State> {
           onSelect={this.onSelect}
           position={DropdownPosition.right}
           isOpen={this.state.dropdownOpen}
-          dropdownItems={[
-            <DropdownItem key="delete" onClick={this.onClickDelete} isDisabled={!this.props.canDelete}>
-              Delete
-            </DropdownItem>
-          ]}
+          dropdownItems={[deleteActionWrapper]}
         />
         <Modal
           title="Confirm Delete"

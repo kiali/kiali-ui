@@ -116,41 +116,55 @@ class WorkloadWizardDropdown extends React.Component<Props, State> {
           key={WIZARD_ENABLE_AUTO_INJECTION}
           component="button"
           onClick={() => this.onAction(WIZARD_ENABLE_AUTO_INJECTION)}
+          isDisabled={serverConfig.deployment.viewOnlyMode}
         >
           Enable Auto Injection
         </DropdownItem>
       );
+      const enableActionWrapper = serverConfig.deployment.viewOnlyMode
+        ? this.renderTooltip('enable_auto_injection', TooltipPosition.left, 'User has not permissions', enableAction)
+        : enableAction;
+
       const disableAction = (
         <DropdownItem
           key={WIZARD_DISABLE_AUTO_INJECTION}
           component="button"
           onClick={() => this.onAction(WIZARD_DISABLE_AUTO_INJECTION)}
+          isDisabled={serverConfig.deployment.viewOnlyMode}
         >
           Disable Auto Injection
         </DropdownItem>
       );
+      const disableActionWrapper = serverConfig.deployment.viewOnlyMode
+        ? this.renderTooltip('disable_auto_injection', TooltipPosition.left, 'User has not permissions', disableAction)
+        : disableAction;
+
       const removeAction = (
         <DropdownItem
           key={WIZARD_REMOVE_AUTO_INJECTION}
           component="button"
           onClick={() => this.onAction(WIZARD_REMOVE_AUTO_INJECTION)}
+          isDisabled={serverConfig.deployment.viewOnlyMode}
         >
           Remove Auto Injection
         </DropdownItem>
       );
+      const removeActionWrapper = serverConfig.deployment.viewOnlyMode
+        ? this.renderTooltip('remove_auto_injection', TooltipPosition.left, 'User has not permissions', removeAction)
+        : removeAction;
 
       if (this.props.workload.istioInjectionAnnotation !== undefined && this.props.workload.istioInjectionAnnotation) {
-        items.push(disableAction);
-        items.push(removeAction);
+        items.push(disableActionWrapper);
+        items.push(removeActionWrapper);
       } else if (
         this.props.workload.istioInjectionAnnotation !== undefined &&
         !this.props.workload.istioInjectionAnnotation
       ) {
-        items.push(enableAction);
-        items.push(removeAction);
+        items.push(enableActionWrapper);
+        items.push(removeActionWrapper);
       } else {
         // If sidecar is present, we offer first the disable action
-        items.push(this.props.workload.istioSidecar ? disableAction : enableAction);
+        items.push(this.props.workload.istioSidecar ? disableActionWrapper : enableActionWrapper);
       }
     }
     return items;
@@ -158,7 +172,7 @@ class WorkloadWizardDropdown extends React.Component<Props, State> {
 
   render() {
     const renderDropdownItems = this.renderDropdownItems();
-    const validActions = renderDropdownItems.length > 0 && !serverConfig.deployment.viewOnlyMode;
+    const validActions = renderDropdownItems.length > 0;
     const dropdown = (
       <Dropdown
         position={DropdownPosition.right}
