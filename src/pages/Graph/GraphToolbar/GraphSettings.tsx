@@ -27,8 +27,19 @@ import {
 import { INITIAL_GRAPH_STATE } from 'reducers/GraphDataState';
 
 type ReduxProps = {
+  boxByCluster: boolean;
+  boxByNamespace: boolean;
+  compressOnHide: boolean;
   edgeLabels: EdgeLabelMode[];
   setEdgeLabels: (edgeLabels: EdgeLabelMode[]) => void;
+  showIdleEdges: boolean;
+  showIdleNodes: boolean;
+  showMissingSidecars: boolean;
+  showOperationNodes: boolean;
+  showSecurity: boolean;
+  showServiceNodes: boolean;
+  showTrafficAnimation: boolean;
+  showVirtualServices: boolean;
   toggleBoxByCluster(): void;
   toggleBoxByNamespace(): void;
   toggleCompressOnHide(): void;
@@ -128,28 +139,6 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
     );
   }
 
-  private handleURLBool = (param: URLParam, paramDefault: boolean, reduxValue: boolean, reduxToggle: () => void) => {
-    const urlValue = HistoryManager.getBooleanParam(param);
-    if (urlValue !== undefined) {
-      if (urlValue !== reduxValue) {
-        reduxToggle();
-      }
-    } else if (reduxValue !== paramDefault) {
-      HistoryManager.setParam(param, String(reduxValue));
-    }
-  };
-
-  private alignURLBool = (param: URLParam, paramDefault: boolean, prev: boolean, curr: boolean) => {
-    if (prev === curr) {
-      return;
-    }
-    if (curr === paramDefault) {
-      HistoryManager.deleteParam(param);
-    } else {
-      HistoryManager.setParam(param, String(curr));
-    }
-  };
-
   componentDidUpdate(prev: GraphSettingsProps) {
     // ensure redux state and URL are aligned
     this.alignURLBool(
@@ -204,7 +193,7 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
       URLParam.GRAPH_OPERATION_NODES,
       INITIAL_GRAPH_STATE.toolbarState.showOperationNodes,
       prev.showOperationNodes,
-      this.props.showIdleNodes
+      this.props.showOperationNodes
     );
     this.alignURLBool(
       URLParam.GRAPH_SERVICE_NODES,
@@ -213,6 +202,28 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
       this.props.showServiceNodes
     );
   }
+
+  private handleURLBool = (param: URLParam, paramDefault: boolean, reduxValue: boolean, reduxToggle: () => void) => {
+    const urlValue = HistoryManager.getBooleanParam(param);
+    if (urlValue !== undefined) {
+      if (urlValue !== reduxValue) {
+        reduxToggle();
+      }
+    } else if (reduxValue !== paramDefault) {
+      HistoryManager.setParam(param, String(reduxValue));
+    }
+  };
+
+  private alignURLBool = (param: URLParam, paramDefault: boolean, prev: boolean, curr: boolean) => {
+    if (prev === curr) {
+      return;
+    }
+    if (curr === paramDefault) {
+      HistoryManager.deleteParam(param, true);
+    } else {
+      HistoryManager.setParam(param, String(curr));
+    }
+  };
 
   render() {
     return (

@@ -72,16 +72,16 @@ export class GraphToolbar extends React.PureComponent<GraphToolbarProps> {
 
   constructor(props: GraphToolbarProps) {
     super(props);
-    // Let URL override current redux state at construction time. Update URL with unset params.
+    // Let URL override current redux state at construction time. Update URL as needed.
     const urlParams = new URLSearchParams(history.location.search);
+
     const urlEdgeLabels = HistoryManager.getParam(URLParam.GRAPH_EDGE_LABEL, urlParams);
     if (urlEdgeLabels) {
       if (urlEdgeLabels !== props.edgeLabels.join(',')) {
         props.setEdgeLabels(urlEdgeLabels.split(',') as EdgeLabelMode[]);
       }
-    } else {
-      const edgeLabelsString = props.edgeLabels.join(',');
-      HistoryManager.setParam(URLParam.GRAPH_EDGE_LABEL, edgeLabelsString);
+    } else if (props.setEdgeLabels.length > 0) {
+      HistoryManager.setParam(URLParam.GRAPH_EDGE_LABEL, props.edgeLabels.join(','));
     }
 
     const urlGraphTraffic = HistoryManager.getParam(URLParam.GRAPH_TRAFFIC, urlParams);
@@ -89,9 +89,8 @@ export class GraphToolbar extends React.PureComponent<GraphToolbarProps> {
       if (urlGraphTraffic !== props.trafficRates.join(',')) {
         props.setTrafficRates(urlGraphTraffic.split(',') as TrafficRate[]);
       }
-    } else {
-      const trafficRatesString = props.trafficRates.join(',');
-      HistoryManager.setParam(URLParam.GRAPH_TRAFFIC, trafficRatesString);
+    } else if (props.trafficRates.length > 0) {
+      HistoryManager.setParam(URLParam.GRAPH_TRAFFIC, props.trafficRates.join(','));
     }
 
     const urlGraphType = HistoryManager.getParam(URLParam.GRAPH_TYPE, urlParams) as GraphType;
@@ -108,32 +107,28 @@ export class GraphToolbar extends React.PureComponent<GraphToolbarProps> {
       if (urlNamespaces !== namespacesToString(props.activeNamespaces)) {
         props.setActiveNamespaces(namespacesFromString(urlNamespaces));
       }
-    } else {
-      const activeNamespacesString = namespacesToString(props.activeNamespaces);
-      HistoryManager.setParam(URLParam.NAMESPACES, activeNamespacesString);
-    }
-
-    const idleNodes = HistoryManager.getBooleanParam(URLParam.GRAPH_IDLE_NODES);
-    if (idleNodes !== undefined) {
-      if (props.showIdleNodes !== idleNodes) {
-        props.setIdleNodes(idleNodes);
-      }
-    } else {
-      HistoryManager.setParam(URLParam.GRAPH_IDLE_NODES, String(this.props.showIdleNodes));
+    } else if (props.activeNamespaces.length > 0) {
+      HistoryManager.setParam(URLParam.NAMESPACES, namespacesToString(props.activeNamespaces));
     }
   }
 
   componentDidUpdate() {
     // ensure redux state and URL are aligned
-    const activeNamespacesString = namespacesToString(this.props.activeNamespaces);
+    if (this.props.edgeLabels.length === 0) {
+      HistoryManager.deleteParam(URLParam.GRAPH_EDGE_LABEL, true);
+    } else {
+      HistoryManager.setParam(URLParam.GRAPH_EDGE_LABEL, String(this.props.edgeLabels));
+    }
     if (this.props.activeNamespaces.length === 0) {
       HistoryManager.deleteParam(URLParam.NAMESPACES, true);
     } else {
-      HistoryManager.setParam(URLParam.NAMESPACES, activeNamespacesString);
+      HistoryManager.setParam(URLParam.NAMESPACES, namespacesToString(this.props.activeNamespaces));
     }
-    HistoryManager.setParam(URLParam.GRAPH_EDGE_LABEL, String(this.props.edgeLabels));
-    HistoryManager.setParam(URLParam.GRAPH_IDLE_NODES, String(this.props.showIdleNodes));
-    HistoryManager.setParam(URLParam.GRAPH_TRAFFIC, String(this.props.trafficRates));
+    if (this.props.trafficRates.length === 0) {
+      HistoryManager.deleteParam(URLParam.GRAPH_TRAFFIC, true);
+    } else {
+      HistoryManager.setParam(URLParam.GRAPH_TRAFFIC, String(this.props.trafficRates));
+    }
     HistoryManager.setParam(URLParam.GRAPH_TYPE, String(this.props.graphType));
   }
 
@@ -143,26 +138,6 @@ export class GraphToolbar extends React.PureComponent<GraphToolbarProps> {
       this.props.toggleReplayActive();
     }
   }
-
-  handleRefresh = () => {
-    if (this.props.onRefresh) {
-      this.props.onRefresh();
-    }
-  };
-
-  handleNamespaceReturn = () => {
-    if (
-      !this.props.summaryData ||
-      (this.props.summaryData.summaryType !== 'node' && this.props.summaryData.summaryType !== 'box')
-    ) {
-      history.push(`/graph/namespaces`);
-      return;
-    }
-
-    const selector = `node[id = "${this.props.summaryData!.summaryTarget.data(CyNode.id)}"]`;
-    this.props.setNode(undefined);
-    history.push(`/graph/namespaces?focusSelector=${encodeURI(selector)}`);
-  };
 
   render() {
     return (
@@ -207,6 +182,26 @@ export class GraphToolbar extends React.PureComponent<GraphToolbarProps> {
       </>
     );
   }
+
+  private handleRefresh = () => {
+    if (this.props.onRefresh) {
+      this.props.onRefresh();
+    }
+  };
+
+  private handleNamespaceReturn = () => {
+    if (
+      !this.props.summaryData ||
+      (this.props.summaryData.summaryType !== 'node' && this.props.summaryData.summaryType !== 'box')
+    ) {
+      history.push(`/graph/namespaces`);
+      return;
+    }
+
+    const selector = `node[id = "${this.props.summaryData!.summaryTarget.data(CyNode.id)}"]`;
+    this.props.setNode(undefined);
+    history.push(`/graph/namespaces?focusSelector=${encodeURI(selector)}`);
+  };
 }
 
 const mapStateToProps = (state: KialiAppState) => ({
