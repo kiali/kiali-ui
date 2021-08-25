@@ -30,10 +30,13 @@ type IstioCertsInfoState = {
   certsError: Boolean;
 };
 
-type IstioCertsInfoProps = {
+type ReduxProps = {
   lastRefreshAt: TimeInMilliseconds;
   setIstioCertsInfo: (istioCertsInfo: CertsInfo[]) => void;
   certsInfo: CertsInfo[];
+};
+
+type IstioCertsInfoProps = ReduxProps & {
   ref: React.RefObject<any>;
 };
 
