@@ -137,21 +137,21 @@ export class GraphFind extends React.Component<GraphFindProps, GraphFindState> {
     // Let URL override current redux state at construction time. Update URL as needed.
     const urlParams = new URLSearchParams(history.location.search);
     const urlFind = HistoryManager.getParam(URLParam.GRAPH_FIND, urlParams);
-    if (urlFind) {
+    if (!!urlFind) {
       if (urlFind !== findValue) {
         findValue = urlFind;
         props.setFindValue(urlFind);
       }
-    } else if (findValue) {
+    } else if (!!findValue) {
       HistoryManager.setParam(URLParam.GRAPH_FIND, findValue);
     }
     const urlHide = HistoryManager.getParam(URLParam.GRAPH_HIDE, urlParams);
-    if (urlHide) {
+    if (!!urlHide) {
       if (urlHide !== hideValue) {
         hideValue = urlHide;
         props.setHideValue(urlHide);
       }
-    } else if (hideValue) {
+    } else if (!!hideValue) {
       HistoryManager.setParam(URLParam.GRAPH_HIDE, hideValue);
     }
 

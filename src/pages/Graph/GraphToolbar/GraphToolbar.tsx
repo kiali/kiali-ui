@@ -29,6 +29,7 @@ import ReplayContainer from 'components/Time/Replay';
 import { UserSettingsActions } from 'actions/UserSettingsActions';
 import GraphSecondaryMasthead from './GraphSecondaryMasthead';
 import { CyNode } from 'components/CytoscapeGraph/CytoscapeGraphUtils';
+import { INITIAL_USER_SETTINGS_STATE } from 'reducers/UserSettingsState';
 
 type ReduxProps = {
   activeNamespaces: Namespace[];
@@ -76,7 +77,7 @@ export class GraphToolbar extends React.PureComponent<GraphToolbarProps> {
     const urlParams = new URLSearchParams(history.location.search);
 
     const urlEdgeLabels = HistoryManager.getParam(URLParam.GRAPH_EDGE_LABEL, urlParams);
-    if (urlEdgeLabels) {
+    if (!!urlEdgeLabels) {
       if (urlEdgeLabels !== props.edgeLabels.join(',')) {
         props.setEdgeLabels(urlEdgeLabels.split(',') as EdgeLabelMode[]);
       }
@@ -84,8 +85,17 @@ export class GraphToolbar extends React.PureComponent<GraphToolbarProps> {
       HistoryManager.setParam(URLParam.GRAPH_EDGE_LABEL, props.edgeLabels.join(','));
     }
 
+    const urlReplayActive = HistoryManager.getBooleanParam(URLParam.GRAPH_REPLAY_ACTIVE);
+    if (urlReplayActive !== undefined) {
+      if (urlReplayActive !== this.props.replayActive) {
+        this.props.toggleReplayActive();
+      }
+    } else if (this.props.replayActive !== INITIAL_USER_SETTINGS_STATE.replayActive) {
+      HistoryManager.setParam(URLParam.GRAPH_REPLAY_ACTIVE, String(this.props.replayActive));
+    }
+
     const urlGraphTraffic = HistoryManager.getParam(URLParam.GRAPH_TRAFFIC, urlParams);
-    if (urlGraphTraffic) {
+    if (!!urlGraphTraffic) {
       if (urlGraphTraffic !== props.trafficRates.join(',')) {
         props.setTrafficRates(urlGraphTraffic.split(',') as TrafficRate[]);
       }
@@ -94,7 +104,7 @@ export class GraphToolbar extends React.PureComponent<GraphToolbarProps> {
     }
 
     const urlGraphType = HistoryManager.getParam(URLParam.GRAPH_TYPE, urlParams) as GraphType;
-    if (urlGraphType) {
+    if (!!urlGraphType) {
       if (urlGraphType !== props.graphType) {
         props.setGraphType(urlGraphType);
       }
@@ -103,7 +113,7 @@ export class GraphToolbar extends React.PureComponent<GraphToolbarProps> {
     }
 
     const urlNamespaces = HistoryManager.getParam(URLParam.NAMESPACES, urlParams);
-    if (urlNamespaces) {
+    if (!!urlNamespaces) {
       if (urlNamespaces !== namespacesToString(props.activeNamespaces)) {
         props.setActiveNamespaces(namespacesFromString(urlNamespaces));
       }
@@ -114,21 +124,30 @@ export class GraphToolbar extends React.PureComponent<GraphToolbarProps> {
 
   componentDidUpdate() {
     // ensure redux state and URL are aligned
-    if (this.props.edgeLabels.length === 0) {
+    if (this.props.edgeLabels?.length === 0) {
       HistoryManager.deleteParam(URLParam.GRAPH_EDGE_LABEL, true);
     } else {
       HistoryManager.setParam(URLParam.GRAPH_EDGE_LABEL, String(this.props.edgeLabels));
     }
-    if (this.props.activeNamespaces.length === 0) {
+
+    if (this.props.activeNamespaces?.length === 0) {
       HistoryManager.deleteParam(URLParam.NAMESPACES, true);
     } else {
       HistoryManager.setParam(URLParam.NAMESPACES, namespacesToString(this.props.activeNamespaces));
     }
-    if (this.props.trafficRates.length === 0) {
+
+    if (this.props.replayActive === INITIAL_USER_SETTINGS_STATE.replayActive) {
+      HistoryManager.deleteParam(URLParam.GRAPH_REPLAY_ACTIVE, true);
+    } else {
+      HistoryManager.setParam(URLParam.GRAPH_REPLAY_ACTIVE, String(this.props.replayActive));
+    }
+
+    if (this.props.trafficRates?.length === 0) {
       HistoryManager.deleteParam(URLParam.GRAPH_TRAFFIC, true);
     } else {
       HistoryManager.setParam(URLParam.GRAPH_TRAFFIC, String(this.props.trafficRates));
     }
+
     HistoryManager.setParam(URLParam.GRAPH_TYPE, String(this.props.graphType));
   }
 
@@ -178,7 +197,7 @@ export class GraphToolbar extends React.PureComponent<GraphToolbarProps> {
             </Tooltip>
           </ToolbarGroup>
         </Toolbar>
-        {this.props.replayActive && <ReplayContainer id={'time-range-replay'} />}
+        {this.props.replayActive && <ReplayContainer id="time-range-replay" />}
       </>
     );
   }
