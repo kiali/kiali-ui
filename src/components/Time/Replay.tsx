@@ -148,8 +148,6 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
     return replayWindow.startTime + frame * frameInterval;
   };
 
-  private pickerTime: TimeInMilliseconds = 0; // Time currently chosen via Datepicker
-
   constructor(props: ReplayProps) {
     super(props);
 
@@ -239,8 +237,6 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
               maxTime={maxTime}
               minDate={minTime}
               minTime={minTime}
-              onCalendarClose={() => this.onPickerClose()}
-              onCalendarOpen={() => this.onPickerOpen()}
               onChange={date => this.onPickerChange(date)}
               selected={selectedTime}
             />
@@ -336,17 +332,7 @@ export class Replay extends React.PureComponent<ReplayProps, ReplayState> {
   };
 
   private onPickerChange = (date: Date) => {
-    this.pickerTime = date.getTime();
-  };
-
-  private onPickerClose = () => {
-    if (this.pickerTime !== this.state.replayWindow.startTime) {
-      this.setReplayStartTime(this.pickerTime);
-    }
-  };
-
-  private onPickerOpen = () => {
-    this.pickerTime = this.state.replayWindow.startTime;
+    this.setReplayStartTime(date.getTime());
   };
 
   private initReplay = () => {
