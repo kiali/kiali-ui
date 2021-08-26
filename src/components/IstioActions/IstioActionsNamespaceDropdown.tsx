@@ -47,7 +47,7 @@ class IstioActionsNamespaceDropdown extends React.Component<Props, State> {
     history.push('/istio/new/' + type);
   };
 
-  renderTooltip = (key, position, msg, child): any => {
+  renderTooltip = (key, position, msg, child): JSX.Element => {
     return (
       <Tooltip key={'tooltip_' + key} position={position} content={<>{msg}</>}>
         <div style={{ display: 'inline-block', cursor: 'not-allowed', textAlign: 'left' }}>{child}</div>
