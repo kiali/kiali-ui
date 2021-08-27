@@ -114,6 +114,12 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
       props.toggleBoxByNamespace
     );
     this.handleURLBool(
+      URLParam.GRAPH_COMPRESS_ON_HIDE,
+      INITIAL_GRAPH_STATE.toolbarState.compressOnHide,
+      props.compressOnHide,
+      props.toggleCompressOnHide
+    );
+    this.handleURLBool(
       URLParam.GRAPH_IDLE_EDGES,
       INITIAL_GRAPH_STATE.toolbarState.showIdleEdges,
       props.showIdleEdges,
@@ -176,6 +182,12 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
       INITIAL_GRAPH_STATE.toolbarState.boxByNamespace,
       prev.boxByNamespace,
       this.props.boxByNamespace
+    );
+    this.alignURLBool(
+      URLParam.GRAPH_COMPRESS_ON_HIDE,
+      INITIAL_GRAPH_STATE.toolbarState.compressOnHide,
+      prev.compressOnHide,
+      this.props.compressOnHide
     );
     this.alignURLBool(
       URLParam.GRAPH_IDLE_EDGES,
