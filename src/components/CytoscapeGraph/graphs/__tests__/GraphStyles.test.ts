@@ -25,7 +25,6 @@ function setupNode(nodeData: any, cyData?: any) {
   node.cy().scratch(CytoscapeGlobalScratchNamespace, {
     activeNamespaces: ['TEST'],
     showVirtualServices: true,
-    showMissingSidecars: true,
     ...cyData
   });
   return node;

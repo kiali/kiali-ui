@@ -311,6 +311,7 @@ export interface GraphNodeData {
   hasVS?: {
     hostnames?: string[];
   };
+  hasWorkloadEntry?: boolean;
   isBox?: string;
   isDead?: boolean;
   isIdle?: boolean;
@@ -324,7 +325,6 @@ export interface GraphNodeData {
   isOutside?: boolean;
   isRoot?: boolean;
   isServiceEntry?: SEInfo;
-  hasWorkloadEntry?: boolean;
 }
 
 // Edge data expected from server
