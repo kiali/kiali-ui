@@ -16,11 +16,14 @@ import {
   FormGroup,
   Dropdown,
   DropdownItem,
-  KebabToggle
+  KebabToggle,
+  DropdownGroup,
+  DropdownSeparator
 } from '@patternfly/react-core';
 import { style } from 'typestyle';
+import { addError } from 'utils/AlertUtils';
 import { Pod, LogEntry, AccessLog, PodLogs } from '../../types/IstioObjects';
-import { getPodLogs, getWorkloadSpans } from '../../services/Api';
+import { getPodLogs, getWorkloadSpans, setPodEnvoyProxyLogLevel } from '../../services/Api';
 import { PromisesRegistry } from '../../utils/CancelablePromises';
 import { ToolbarDropdown } from '../../components/ToolbarDropdown/ToolbarDropdown';
 import { TimeRange, evalTimeRange, TimeInMilliseconds, isEqualTimeRange, TimeInSeconds } from '../../types/Common';
@@ -92,6 +95,17 @@ interface WorkloadPodLogsState {
   showToolbar: boolean;
   tailLines: number;
   useRegex: boolean;
+}
+
+// LogLevel are the log levels supported by the proxy.
+enum LogLevel {
+  Off = 'off',
+  Trace = 'trace',
+  Debug = 'debug',
+  Info = 'info',
+  Warning = 'warning',
+  Error = 'error',
+  Critical = 'critical'
 }
 
 const RETURN_KEY_CODE = 13;
@@ -169,7 +183,7 @@ const logsHeight = (showToolbar: boolean, fullscreen: boolean) => {
   };
 };
 
-class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodLogsState> {
+export class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodLogsState> {
   private promises: PromisesRegistry = new PromisesRegistry();
   private podOptions: string[] = [];
   private readonly logsRef: React.RefObject<any>;
@@ -467,6 +481,19 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
   };
 
   private getLogsDiv = () => {
+    const logDropDowns = Object.keys(LogLevel).map(level => {
+      return (
+        <DropdownItem
+          key={`setLogLevel${level}`}
+          onClick={() => {
+            this.setLogLevel(LogLevel[level]);
+          }}
+        >
+          {level}
+        </DropdownItem>
+      );
+    });
+
     const kebabActions = [
       <DropdownItem key="toggleToolbar" onClick={this.toggleToolbar}>
         {`${this.state.showToolbar ? 'Collapse' : 'Expand'} Toolbar`}
@@ -476,7 +503,11 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
       </DropdownItem>,
       <DropdownItem key="toggleTimestamps" onClick={this.toggleShowTimestamps}>
         {`${this.state.showTimestamps ? 'Remove' : 'Show'} Timestamps`}
-      </DropdownItem>
+      </DropdownItem>,
+      <DropdownSeparator key="logLevelSeparator" />,
+      <DropdownGroup label="Set Proxy Log Level" key="setLogLevels">
+        {logDropDowns}
+      </DropdownGroup>
     ];
 
     return (
@@ -696,6 +727,15 @@ class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, WorkloadPodL
 
   private toggleUseRegex = () => {
     this.setState({ useRegex: !this.state.useRegex, kebabOpen: false });
+  };
+
+  private setLogLevel = (level: LogLevel) => {
+    this.setState({ kebabOpen: false });
+    const pod = this.props.pods[this.state.podValue!];
+
+    setPodEnvoyProxyLogLevel(this.props.namespace, pod.name, level).catch(error => {
+      addError('Unable to set proxy pod level', error);
+    });
   };
 
   private doShowAndHide = () => {
