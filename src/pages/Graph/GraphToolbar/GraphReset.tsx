@@ -23,13 +23,13 @@ class GraphReset extends React.Component<GraphResetProps, GraphResetState> {
 
   render() {
     return (
-      <Tooltip key="factory_reset_settings" position="bottom" content="Factory reset all settings">
+      <Tooltip key="factory_reset_settings" position="bottom" content="Reset to factory settings">
         <Button
-          style={{ paddingLeft: '6px', paddingRight: '0px' }}
+          style={{ paddingLeft: '0px', paddingRight: '0px' }}
           variant={ButtonVariant.link}
           onClick={() => this.onReset()}
         >
-          <KialiIcon.Settings className={defaultIconStyle} /> Reset to factory settings
+          <KialiIcon.ResetSettings className={defaultIconStyle} /> Reset
         </Button>
       </Tooltip>
     );

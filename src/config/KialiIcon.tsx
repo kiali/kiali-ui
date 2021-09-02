@@ -48,7 +48,7 @@ import {
   UnknownIcon,
   UserClockIcon,
   WarningTriangleIcon,
-  CogIcon
+  UndoIcon
 } from '@patternfly/react-icons';
 import { style } from 'typestyle';
 
@@ -118,7 +118,7 @@ export const KialiIcon: { [name: string]: React.FunctionComponent<IconProps> } =
   Workloads: (props: IconProps) => <BundleIcon className={props.className} />,
   OnRunningIcon: (props: IconProps) => <OnRunningIcon className={props.className} />,
   InProgressIcon: (props: IconProps) => <InProgressIcon className={props.className} />,
-  Settings: (props: IconProps) => <CogIcon className={props.className} />
+  ResetSettings: (props: IconProps) => <UndoIcon className={props.className} />
 };
 
 Object.keys(KialiIcon).forEach(key => {
