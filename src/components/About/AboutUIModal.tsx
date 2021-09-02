@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { AboutModal, TextContent, TextList, TextListItem, Title, Button } from '@patternfly/react-core';
-import { Component, Status, StatusKey } from '../../types/StatusState';
+import { ExternalServiceInfo, Status, StatusKey } from '../../types/StatusState';
 import { config, kialiLogo } from '../../config';
 import { style } from 'typestyle';
 import { KialiIcon } from 'config/KialiIcon';
@@ -11,7 +11,7 @@ type AboutUIModalState = {
 
 type AboutUIModalProps = {
   status: Status;
-  components: Component[];
+  components: ExternalServiceInfo[];
 };
 
 const iconStyle = style({
@@ -84,7 +84,7 @@ class AboutUIModal extends React.Component<AboutUIModalProps, AboutUIModalState>
     );
   }
 
-  private renderComponent = (component: Component) => {
+  private renderComponent = (component: ExternalServiceInfo) => {
     const name = component.version ? component.name : `${component.name} URL`;
     const additionalInfo = this.additionalComponentInfoContent(component);
     return (
@@ -95,7 +95,7 @@ class AboutUIModal extends React.Component<AboutUIModalProps, AboutUIModalState>
     );
   };
 
-  private additionalComponentInfoContent = (component: Component) => {
+  private additionalComponentInfoContent = (component: ExternalServiceInfo) => {
     if (!component.version && !component.url) {
       return 'N/A';
     }

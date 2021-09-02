@@ -1,4 +1,4 @@
-import { ServerStatus } from '../../types/ServerStatus';
+import { StatusState } from '../../types/StatusState';
 import { TLSStatus } from '../../types/TLSStatus';
 import { WorkloadOverview } from '../../types/ServiceInfo';
 import { WorkloadWeight } from './TrafficShifting';
@@ -1405,13 +1405,15 @@ export const buildNamespaceInjectionPatch = (enable: boolean, remove: boolean, r
   return JSON.stringify(patch);
 };
 
-export const buildWorkloadInjectionPatch = (workloadType: string, enable: boolean, remove: boolean): string => {
+export const buildWorkloadInjectionPatch = (
+  workloadType: string,
+  enable: boolean,
+  remove: boolean,
+  statusState: StatusState
+): string => {
   const patch = {};
-  var serverStatus: ServerStatus;
 
-  // TODO How do I get the current value of serverStatus??? That needs to be done here.
-
-  if (serverStatus.istioEnvironment.isMaistra) {
+  if (statusState.istioEnvironment.isMaistra) {
     // Maistra only supports pod annotations
     const annotations = {};
     annotations[serverConfig.istioAnnotations.istioInjectionAnnotation] = remove ? null : enable ? 'true' : 'false';
