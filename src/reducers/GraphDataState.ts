@@ -115,7 +115,36 @@ const graphDataState = (state: GraphState = INITIAL_GRAPH_STATE, action: KialiAp
           trafficRates: action.payload
         })
       });
-
+    case getType(GraphToolbarActions.resetSettings):
+      return updateState(state, {
+        toolbarState: {
+          boxByCluster: false,
+          boxByNamespace: false,
+          compressOnHide: true,
+          edgeLabels: [],
+          findValue: '',
+          graphType: GraphType.VERSIONED_APP,
+          hideValue: '',
+          showFindHelp: false,
+          showIdleEdges: false,
+          showIdleNodes: false,
+          showLegend: false,
+          showMissingSidecars: true,
+          showOperationNodes: false,
+          showSecurity: false,
+          showServiceNodes: true,
+          showTrafficAnimation: false,
+          showVirtualServices: true,
+          trafficRates: [
+            TrafficRate.GRPC_GROUP,
+            TrafficRate.GRPC_REQUEST,
+            TrafficRate.HTTP_GROUP,
+            TrafficRate.HTTP_REQUEST,
+            TrafficRate.TCP_GROUP,
+            TrafficRate.TCP_SENT
+          ]
+        }
+      });
     case getType(GraphToolbarActions.toggleBoxByCluster):
       return updateState(state, {
         toolbarState: updateState(state.toolbarState, {

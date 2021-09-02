@@ -10,6 +10,7 @@ export const GraphToolbarActions = {
   setHideValue: createStandardAction(ActionKeys.GRAPH_TOOLBAR_SET_HIDE_VALUE)<string>(),
   setIdleNodes: createStandardAction(ActionKeys.GRAPH_TOOLBAR_SET_IDLE_NODES)<boolean>(),
   setTrafficRates: createStandardAction(ActionKeys.GRAPH_TOOLBAR_SET_TRAFFIC_RATES)<TrafficRate[]>(),
+  resetSettings: createAction(ActionKeys.GRAPH_TOOLBAR_RESET_SETTINGS),
   // Toggle actions
   toggleBoxByCluster: createAction(ActionKeys.GRAPH_TOOLBAR_TOGGLE_BOX_BY_CLUSTER),
   toggleBoxByNamespace: createAction(ActionKeys.GRAPH_TOOLBAR_TOGGLE_BOX_BY_NAMESPACE),

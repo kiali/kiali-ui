@@ -30,6 +30,7 @@ import { UserSettingsActions } from 'actions/UserSettingsActions';
 import GraphSecondaryMasthead from './GraphSecondaryMasthead';
 import { CyNode } from 'components/CytoscapeGraph/CytoscapeGraphUtils';
 import { INITIAL_USER_SETTINGS_STATE } from 'reducers/UserSettingsState';
+import GraphResetContainer from './GraphReset';
 
 type ReduxProps = {
   activeNamespaces: Namespace[];
@@ -183,6 +184,7 @@ export class GraphToolbar extends React.PureComponent<GraphToolbarProps> {
             </TourStopContainer>
           </div>
           <GraphFindContainer cy={this.props.cy} />
+          <GraphResetContainer />
           <ToolbarGroup className={rightToolbarStyle} aria-label="graph_refresh_toolbar">
             <Tooltip key={'graph-tour-help-ot'} position={TooltipPosition.right} content="Graph help tour...">
               <Button
