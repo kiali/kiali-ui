@@ -25,7 +25,7 @@ class GraphReset extends React.Component<GraphResetProps, GraphResetState> {
     return (
       <Tooltip key="factory_reset_settings" position="bottom" content="Reset to factory settings">
         <Button
-          style={{ paddingLeft: '0px', paddingRight: '5px' }}
+          style={{ paddingLeft: '10px', paddingRight: '0px' }}
           variant={ButtonVariant.link}
           onClick={() => this.onReset()}
         >

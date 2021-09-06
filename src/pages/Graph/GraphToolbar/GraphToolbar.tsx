@@ -186,7 +186,6 @@ export class GraphToolbar extends React.PureComponent<GraphToolbarProps> {
           <GraphFindContainer cy={this.props.cy} />
 
           <ToolbarGroup className={rightToolbarStyle} aria-label="graph_refresh_toolbar">
-            <GraphResetContainer />
             <Tooltip key={'graph-tour-help-ot'} position={TooltipPosition.right} content="Graph help tour...">
               <Button
                 className={rightToolbarStyle}
@@ -198,6 +197,7 @@ export class GraphToolbar extends React.PureComponent<GraphToolbarProps> {
                 {' Graph tour'}
               </Button>
             </Tooltip>
+            <GraphResetContainer />
           </ToolbarGroup>
         </Toolbar>
         {this.props.replayActive && <ReplayContainer id="time-range-replay" />}
