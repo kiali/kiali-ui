@@ -17,6 +17,10 @@ interface Extensions {
   iter8: iter8Config;
 }
 
+interface DeploymentConfig {
+  viewOnlyMode: boolean;
+}
+
 interface IstioAnnotations {
   istioInjectionAnnotation: string;
 }
@@ -76,6 +80,7 @@ export interface ServerConfig {
   clusterInfo?: ClusterInfo;
   clusters: { [key: string]: MeshCluster };
   extensions?: Extensions;
+  deployment: DeploymentConfig;
   healthConfig: HealthConfig;
   installationTag?: string;
   istioAnnotations: IstioAnnotations;
