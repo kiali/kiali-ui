@@ -18,7 +18,7 @@ const HelpDropdownState = (state: StatusState = INITIAL_STATUS_STATE, action: Ki
       return {
         ...INITIAL_STATUS_STATE,
         status: action.payload.status,
-        externalServices: action.payload.components,
+        externalServices: action.payload.externalServices,
         warningMessages: action.payload.warningMessages
       };
     default:

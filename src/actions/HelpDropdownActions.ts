@@ -6,7 +6,7 @@ export const HelpDropdownActions = {
   statusRefresh: createAction(ActionKeys.HELP_STATUS_REFRESH, resolve => (status: StatusState) =>
     resolve({
       status: status.status,
-      components: status.externalServices,
+      externalServices: status.externalServices,
       warningMessages: status.warningMessages
     })
   )
