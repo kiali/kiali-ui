@@ -84,7 +84,7 @@ const gridStyleList = style({
   marginTop: '0px'
 });
 
-const cardGridStyle = style({ borderTop: '2px solid #39a5dc', textAlign: 'center', marginTop: '0px' });
+const cardGridStyle = style({ borderTop: '2px solid #39a5dc', textAlign: 'center', marginTop: '10px' });
 
 const emptyStateStyle = style({
   height: '300px',
@@ -365,7 +365,7 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
   fetchMetricsChunk(chunk: NamespaceInfo[], duration: number) {
     const rateParams = computePrometheusRateParams(duration, 10);
     const optionsIn: IstioMetricsOptions = {
-      filters: ['request_count'],
+      filters: ['request_count', 'request_error_count'],
       duration: duration,
       step: rateParams.step,
       rateInterval: rateParams.rateInterval,
@@ -376,6 +376,7 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
       chunk.map(nsInfo => {
         return API.getNamespaceMetrics(nsInfo.name, optionsIn).then(rs => {
           nsInfo.metrics = rs.data.request_count;
+          nsInfo.errorMetrics = rs.data.request_error_count;
           return nsInfo;
         });
       })
@@ -1023,6 +1024,7 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
           status={ns.status}
           type={this.state.type}
           metrics={ns.metrics}
+          errorMetrics={ns.errorMetrics}
         />
       );
     }

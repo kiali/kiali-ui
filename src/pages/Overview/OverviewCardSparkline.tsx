@@ -5,20 +5,26 @@ import { Metric } from '../../types/Metrics';
 import { getName } from '../../utils/RateIntervals';
 import { PFColors } from 'components/Pf/PfColors';
 import { SparklineChart } from 'components/Charts/SparklineChart';
-import { toVCLines } from 'utils/VictoryChartsUtils';
+import { toVCLine } from 'utils/VictoryChartsUtils';
 
 import 'components/Charts/Charts.css';
 
 type Props = {
   metrics?: Metric[];
+  errorMetrics?: Metric[];
   duration: DurationInSeconds;
 };
 
 class OverviewCardSparkline extends React.Component<Props, {}> {
   render() {
-    if (this.props.metrics && this.props.metrics.length > 0) {
-      const data = toVCLines(this.props.metrics, 'rps', [PFColors.Blue400], 'time');
-
+    if (
+      this.props.metrics &&
+      this.props.metrics.length > 0 &&
+      this.props.errorMetrics &&
+      this.props.metrics.length > 0
+    ) {
+      const data = toVCLine(this.props.metrics[0].datapoints, 'RPS', PFColors.Blue400);
+      const dataErrors = toVCLine(this.props.errorMetrics[0].datapoints, 'Errors', PFColors.Danger);
       return (
         <>
           {'Traffic, ' + getName(this.props.duration).toLowerCase()}
@@ -26,9 +32,9 @@ class OverviewCardSparkline extends React.Component<Props, {}> {
             name={'traffic'}
             height={60}
             showLegend={false}
-            padding={{ top: 5 }}
+            padding={{ top: 5, left: 30 }}
             tooltipFormat={dp => `${(dp.x as Date).toLocaleTimeString()}\n${dp.y} RPS`}
-            series={data}
+            series={[data, dataErrors]}
           />
         </>
       );

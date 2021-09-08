@@ -114,7 +114,7 @@ export class SparklineChart extends React.Component<Props, State> {
         domainPadding={{ y: 1 }}
       >
         <ChartAxis tickCount={15} style={hiddenAxisStyle} />
-        <ChartAxis dependentAxis={true} style={hiddenAxisStyle} />
+        <ChartAxis tickCount={2} dependentAxis={true} />
         {this.props.series.map((serie, idx) => {
           if (this.state.hiddenSeries.has(idx)) {
             return undefined;
