@@ -29,7 +29,7 @@ class GraphReset extends React.Component<GraphResetProps, GraphResetState> {
           variant={ButtonVariant.link}
           onClick={() => this.onReset()}
         >
-          <KialiIcon.ResetSettings className={defaultIconStyle} /> Reset settings
+          <KialiIcon.ResetSettings className={defaultIconStyle} />
         </Button>
       </Tooltip>
     );

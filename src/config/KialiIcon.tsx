@@ -48,7 +48,7 @@ import {
   UnknownIcon,
   UserClockIcon,
   WarningTriangleIcon,
-  UndoIcon
+  ProcessAutomationIcon
 } from '@patternfly/react-icons';
 import { style } from 'typestyle';
 
@@ -105,7 +105,7 @@ export const KialiIcon: { [name: string]: React.FunctionComponent<IconProps> } =
   Regex: (props: IconProps) => <AsteriskIcon className={props.className} />,
   Repository: (props: IconProps) => <RepositoryIcon className={props.className} />,
   RequestRouting: (props: IconProps) => <CodeBranchIcon className={props.className} />,
-  ResetSettings: (props: IconProps) => <UndoIcon className={props.className} />,
+  ResetSettings: (props: IconProps) => <ProcessAutomationIcon className={props.className} />,
   RequestTimeout: (props: IconProps) => <OutlinedClockIcon className={props.className} />,
   Services: (props: IconProps) => <ServiceIcon className={props.className} />,
   Stop: (props: IconProps) => <StopIcon className={props.className} />,
