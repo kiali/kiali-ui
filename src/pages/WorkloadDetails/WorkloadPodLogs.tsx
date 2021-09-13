@@ -6,6 +6,7 @@ import {
   CardBody,
   Grid,
   GridItem,
+  Popover,
   TextInput,
   Toolbar,
   ToolbarGroup,
@@ -21,7 +22,7 @@ import {
   DropdownSeparator
 } from '@patternfly/react-core';
 import { style } from 'typestyle';
-import { addError } from 'utils/AlertUtils';
+import { addError, addSuccess } from 'utils/AlertUtils';
 import { Pod, LogEntry, AccessLog, PodLogs } from '../../types/IstioObjects';
 import { getPodLogs, getWorkloadSpans, setPodEnvoyProxyLogLevel } from '../../services/Api';
 import { PromisesRegistry } from '../../utils/CancelablePromises';
@@ -493,6 +494,26 @@ export class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, Workl
         </DropdownItem>
       );
     });
+    const dropdownGroupLabel = (
+      // nowrap is needed for the info icon to appear on same line as the label text
+      <Popover
+        headerContent="Setting Proxy Logger Level"
+        bodyContent={
+          <span>
+            This action configures the <b>application</b> log level for the proxy but will not affect the <b>access</b>{' '}
+            logs. Setting the log level to 'off' will <b>not</b> disable access logging. To hide all proxy logging from
+            the logs view, un-check the 'istio-proxy' container.
+          </span>
+        }
+      >
+        <div style={{ whiteSpace: 'nowrap' }}>
+          Set Proxy Log Level
+          <Button variant={ButtonVariant.link} style={{ paddingLeft: '6px' }}>
+            <KialiIcon.Info className={defaultIconStyle} />
+          </Button>
+        </div>
+      </Popover>
+    );
 
     const kebabActions = [
       <DropdownItem key="toggleToolbar" onClick={this.toggleToolbar}>
@@ -505,7 +526,7 @@ export class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, Workl
         {`${this.state.showTimestamps ? 'Remove' : 'Show'} Timestamps`}
       </DropdownItem>,
       <DropdownSeparator key="logLevelSeparator" />,
-      <DropdownGroup label="Set Proxy Log Level" key="setLogLevels">
+      <DropdownGroup label={dropdownGroupLabel} key="setLogLevels">
         {logDropDowns}
       </DropdownGroup>
     ];
@@ -733,9 +754,13 @@ export class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, Workl
     this.setState({ kebabOpen: false });
     const pod = this.props.pods[this.state.podValue!];
 
-    setPodEnvoyProxyLogLevel(this.props.namespace, pod.name, level).catch(error => {
-      addError('Unable to set proxy pod level', error);
-    });
+    setPodEnvoyProxyLogLevel(this.props.namespace, pod.name, level)
+      .then(_resp => {
+        addSuccess(`Successfully updated proxy log level to '${level}' for pod: ${pod.name}`);
+      })
+      .catch(error => {
+        addError('Unable to set proxy pod level', error);
+      });
   };
 
   private doShowAndHide = () => {
