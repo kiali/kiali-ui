@@ -6,7 +6,6 @@ import {
   CardBody,
   Grid,
   GridItem,
-  Popover,
   TextInput,
   Toolbar,
   ToolbarGroup,
@@ -43,6 +42,7 @@ import { TracingQuery, Span } from 'types/Tracing';
 import { AxiosResponse } from 'axios';
 import moment from 'moment';
 import { formatDuration } from 'utils/tracing/TracingHelper';
+import { infoStyle } from 'styles/DropdownStyles';
 
 const appContainerColors = [PFColors.White, PFColors.LightGreen400, PFColors.Purple100, PFColors.LightBlue400];
 const proxyContainerColor = PFColors.Gold400;
@@ -482,6 +482,7 @@ export class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, Workl
   };
 
   private getLogsDiv = () => {
+    const hasProxyContainer = this.state.containerOptions?.some(opt => opt.isProxy);
     const logDropDowns = Object.keys(LogLevel).map(level => {
       return (
         <DropdownItem
@@ -496,23 +497,25 @@ export class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, Workl
     });
     const dropdownGroupLabel = (
       // nowrap is needed for the info icon to appear on same line as the label text
-      <Popover
-        headerContent="Setting Proxy Logger Level"
-        bodyContent={
-          <span>
-            This action configures the <b>application</b> log level for the proxy but will not affect the <b>access</b>{' '}
-            logs. Setting the log level to 'off' will <b>not</b> disable access logging. To hide all proxy logging from
-            the logs view, un-check the 'istio-proxy' container.
-          </span>
-        }
-      >
-        <div style={{ whiteSpace: 'nowrap' }}>
-          Set Proxy Log Level
-          <Button variant={ButtonVariant.link} style={{ paddingLeft: '6px' }}>
-            <KialiIcon.Info className={defaultIconStyle} />
-          </Button>
-        </div>
-      </Popover>
+      <div style={{ whiteSpace: 'nowrap' }}>
+        Set Proxy Log Level
+        <Tooltip
+          position={TooltipPosition.right}
+          content={
+            <div style={{ textAlign: 'left' }}>
+              <div>
+                This action configures the proxy logger level but does not affect the proxy <b>access</b> logs. Setting
+                the log level to 'off' disables the proxy loggers but does <b>not</b> disable access logging. To hide
+                all proxy logging from the logs view, including access logs, un-check the proxy container. <br />
+                <br />
+                This option is disabled for pods with no proxy container.
+              </div>
+            </div>
+          }
+        >
+          <KialiIcon.Info className={infoStyle} />
+        </Tooltip>
+      </div>
     );
 
     const kebabActions = [
@@ -527,7 +530,7 @@ export class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, Workl
       </DropdownItem>,
       <DropdownSeparator key="logLevelSeparator" />,
       <DropdownGroup label={dropdownGroupLabel} key="setLogLevels">
-        {logDropDowns}
+        {hasProxyContainer && logDropDowns}
       </DropdownGroup>
     ];
 

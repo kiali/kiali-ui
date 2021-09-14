@@ -16,13 +16,24 @@ jest.mock('../../../services/Api', () => {
   };
 });
 
-let defaultProps = {
+const defaultProps = () => ({
   lastRefreshAt: 200,
   timeRange: {},
   namespace: 'namespace',
-  pods: [],
-  workload: 'workload'
-};
+  workload: 'workload',
+  pods: [
+    {
+      name: 'testingpod',
+      createdAt: 'anytime',
+      createdBy: [],
+      status: 'any',
+      appLabel: false,
+      versionLabel: false,
+      containers: [{ name: 'busybox', image: 'busybox:v1', isProxy: false, isReady: true }],
+      istioContainers: [{ name: 'istio-proxy', image: 'istio:latest', isProxy: true, isReady: true }]
+    }
+  ]
+});
 
 describe('WorkloadPodLogs', () => {
   beforeEach(() => {
@@ -34,18 +45,12 @@ describe('WorkloadPodLogs', () => {
   });
 
   it('renders', () => {
-    const wrapper = shallow(<WorkloadPodLogs {...defaultProps} />);
+    const wrapper = shallow(<WorkloadPodLogs {...defaultProps()} />);
     expect(wrapper.exists()).toBeTruthy();
   });
 
-  const props = {
-    ...defaultProps,
-    pods: [
-      { name: 'testingpod', createdAt: 'anytime', createdBy: [], status: 'any', appLabel: false, versionLabel: false }
-    ]
-  };
   it('renders a kebab toggle dropdown', () => {
-    const wrapper = shallow(<WorkloadPodLogs {...props} />);
+    const wrapper = shallow(<WorkloadPodLogs {...defaultProps()} />);
     const kebabDropdownWrapper = wrapper
       .find(Dropdown)
       .findWhere(n => n.prop('toggle') && n.prop('toggle').type === KebabToggle);
@@ -55,7 +60,7 @@ describe('WorkloadPodLogs', () => {
 
   it('renders a log level action in the kebab', () => {
     // using 'mount' since the dropdowns are children of the kebab
-    const wrapper = mount(<WorkloadPodLogs {...props} />);
+    const wrapper = mount(<WorkloadPodLogs {...defaultProps()} />);
     wrapper.setState({ kebabOpen: true });
     expect(
       wrapper
@@ -65,8 +70,21 @@ describe('WorkloadPodLogs', () => {
     ).toBeTruthy();
   });
 
-  it('calls set log level when action selected', () => {
+  it('does not render log level actions in the kebab when proxy not present', () => {
+    let props = defaultProps();
+    props.pods[0].istioContainers = [];
     const wrapper = mount(<WorkloadPodLogs {...props} />);
+    wrapper.setState({ kebabOpen: true });
+    expect(
+      wrapper
+        .find(DropdownItem)
+        .findWhere(n => n.key() === 'setLogLevelDebug')
+        .exists()
+    ).toBeFalsy();
+  });
+
+  it('calls set log level when action selected', () => {
+    const wrapper = mount(<WorkloadPodLogs {...defaultProps()} />);
     wrapper.setState({ kebabOpen: true });
     wrapper
       .find(DropdownItem)
