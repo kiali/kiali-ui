@@ -380,7 +380,7 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
           return nsInfo;
         });
       })
-    ).catch(err => this.handleAxiosError('Could not fetch health', err));
+    ).catch(err => this.handleAxiosError('Could not fetch metrics', err));
   }
 
   fetchTLS(isAscending: boolean, sortField: SortField<NamespaceInfo>) {

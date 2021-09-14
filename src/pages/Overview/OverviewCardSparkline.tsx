@@ -8,6 +8,7 @@ import { SparklineChart } from 'components/Charts/SparklineChart';
 import { toVCLine } from 'utils/VictoryChartsUtils';
 
 import 'components/Charts/Charts.css';
+import { RichDataPoint, VCLine } from 'types/VictoryChartInfo';
 
 type Props = {
   metrics?: Metric[];
@@ -17,29 +18,33 @@ type Props = {
 
 class OverviewCardSparkline extends React.Component<Props, {}> {
   render() {
-    if (
-      this.props.metrics &&
-      this.props.metrics.length > 0 &&
-      this.props.errorMetrics &&
-      this.props.metrics.length > 0
-    ) {
-      const data = toVCLine(this.props.metrics[0].datapoints, 'RPS', PFColors.Blue400);
-      const dataErrors = toVCLine(this.props.errorMetrics[0].datapoints, 'Errors', PFColors.Danger);
+    if (this.props.metrics && this.props.metrics.length > 0) {
+      let series: VCLine<RichDataPoint>[] = [];
+
+      const data = toVCLine(this.props.metrics[0].datapoints, 'Total', PFColors.Blue400);
+      series.push(data);
+
+      if (this.props.errorMetrics && this.props.errorMetrics.length > 0) {
+        const dataErrors = toVCLine(this.props.errorMetrics[0].datapoints, '4XX+5XX', PFColors.Danger);
+        series.push(dataErrors);
+      }
+
       return (
         <>
-          {'Traffic, ' + getName(this.props.duration).toLowerCase()}
+          {'Inbound traffic, ' + getName(this.props.duration).toLowerCase()}
           <SparklineChart
             name={'traffic'}
             height={60}
             showLegend={false}
+            showYAxis={true}
             padding={{ top: 5, left: 30 }}
             tooltipFormat={dp => `${(dp.x as Date).toLocaleTimeString()}\n${dp.y} ${dp.name}`}
-            series={[data, dataErrors]}
+            series={series}
           />
         </>
       );
     }
-    return <div style={{ paddingTop: '40px' }}>No traffic</div>;
+    return <div style={{ paddingTop: '40px' }}>No inbound traffic</div>;
   }
 }
 
