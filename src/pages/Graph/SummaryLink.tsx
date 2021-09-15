@@ -54,7 +54,9 @@ const getBadge = (nodeData: GraphNodeData, nodeType?: NodeType) => {
           )
         : getPFBadge(PFBadges.Service.badge, getTooltip(PFBadges.Service.tt!, nodeData));
     case NodeType.WORKLOAD:
-      return getPFBadge(PFBadges.Workload.badge, getTooltip(PFBadges.Workload.tt!, nodeData));
+      return nodeData.hasWorkloadEntry
+        ? getPFBadge(PFBadges.WorkloadEntry.badge, getTooltip(PFBadges.WorkloadEntry.tt!, nodeData))
+        : getPFBadge(PFBadges.Workload.badge, getTooltip(PFBadges.Workload.tt!, nodeData));
     default:
       return <PFBadge badge={PFBadges.Unknown} />;
   }
@@ -105,7 +107,9 @@ const getLink = (nodeData: GraphNodeData, nodeType?: NodeType) => {
       displayName = service!;
       break;
     case NodeType.WORKLOAD:
-      link = `/namespaces/${encodeURIComponent(namespace)}/workloads/${encodeURIComponent(workload!)}`;
+      link = nodeData.hasWorkloadEntry
+        ? `/namespaces/${encodeURIComponent(namespace)}/istio/workloadentries/${encodeURIComponent(workload!)}`
+        : `/namespaces/${encodeURIComponent(namespace)}/workloads/${encodeURIComponent(workload!)}`;
       key = `${namespace}.wl.${workload}`;
       displayName = workload!;
       break;
@@ -129,7 +133,7 @@ export const renderBadgedHost = (host: string) => {
   return (
     <div>
       <PFBadge badge={PFBadges.Host} />
-      {host === "*" ? "* (all hosts)" : host}
+      {host === '*' ? '* (all hosts)' : host}
     </div>
   );
 };
