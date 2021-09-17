@@ -7,7 +7,15 @@ import { summaryHeader, summaryPanel, summaryBodyTabs, summaryFont } from './Sum
 import { decoratedNodeData } from '../../components/CytoscapeGraph/CytoscapeGraphUtils';
 import { KialiIcon } from 'config/KialiIcon';
 import { getOptions, clickHandler } from 'components/CytoscapeGraph/ContextMenu/NodeContextMenu';
-import { Dropdown, DropdownGroup, DropdownItem, DropdownPosition, Expandable, KebabToggle, Tab } from '@patternfly/react-core';
+import {
+  Dropdown,
+  DropdownGroup,
+  DropdownItem,
+  DropdownPosition,
+  Expandable,
+  KebabToggle,
+  Tab
+} from '@patternfly/react-core';
 import { KialiAppState } from 'store/Store';
 import { SummaryPanelNodeTraffic } from './SummaryPanelNodeTraffic';
 import SummaryPanelNodeTraces from './SummaryPanelNodeTraces';
@@ -93,6 +101,29 @@ export class SummaryPanelNode extends React.Component<SummaryPanelNodeProps, Sum
     const actions =
       options.length > 0 ? [<DropdownGroup label="Show" className="kiali-group-menu" children={options} />] : undefined;
 
+    // TODO: Summary Panel node tests
+    let workloadLinks;
+    if (nodeData.hasWorkloadEntry) {
+      nodeData.hasWorkloadEntry.forEach(we => {
+        if (!workloadLinks) {
+          workloadLinks = [];
+        }
+        const generateWorkloadEntryLink = () => ({
+          link: `/namespaces/${encodeURIComponent(nodeData.namespace)}/istio/workloadentries/${encodeURIComponent(
+            we.name
+          )}`,
+          displayName: we.name,
+          key: `${nodeData.namespace}.wle.${we.name}`
+        });
+
+        workloadLinks.push(
+          <div>{renderBadgedLink(nodeData, NodeType.WORKLOAD, undefined, generateWorkloadEntryLink)}</div>
+        );
+      });
+    } else {
+      workloadLinks = <div>{renderBadgedLink(nodeData, NodeType.WORKLOAD)}</div>;
+    }
+
     return (
       <div ref={this.mainDivRef} className={`panel panel-default ${summaryPanel}`}>
         <div className="panel-heading" style={summaryHeader}>
@@ -117,7 +148,8 @@ export class SummaryPanelNode extends React.Component<SummaryPanelNodeProps, Sum
             {shouldRenderSvcList && <div>{servicesList}</div>}
             {shouldRenderService && <div>{renderBadgedLink(nodeData, NodeType.SERVICE)}</div>}
             {shouldRenderApp && <div>{renderBadgedLink(nodeData, NodeType.APP)}</div>}
-            {shouldRenderWorkload && <div>{renderBadgedLink(nodeData, NodeType.WORKLOAD)}</div>}
+            {shouldRenderWorkload && workloadLinks}
+            {/* Add case for WE entries and rendering each workload entry */}
           </div>
         </div>
         {shouldRenderTraces ? this.renderWithTabs(nodeData) : this.renderTrafficOnly()}
@@ -125,11 +157,11 @@ export class SummaryPanelNode extends React.Component<SummaryPanelNodeProps, Sum
     );
   }
 
-  private renderGatewayHostnames = (nodeData:  DecoratedGraphNodeData) => {
+  private renderGatewayHostnames = (nodeData: DecoratedGraphNodeData) => {
     return this.renderHostnamesSection(nodeData.isGateway?.ingressInfo?.hostnames!);
   };
 
-  private renderVsHostnames = (nodeData:  DecoratedGraphNodeData) => {
+  private renderVsHostnames = (nodeData: DecoratedGraphNodeData) => {
     return this.renderHostnamesSection(nodeData.hasVS?.hostnames!);
   };
 
@@ -143,10 +175,14 @@ export class SummaryPanelNode extends React.Component<SummaryPanelNodeProps, Sum
 
     return (
       <Expandable toggleText={toggleText} className={expandableSectionStyle}>
-        {hostnames.map(hostname => (<div key={hostname} title={hostname}>{hostname === '*' ? '* (all hosts)' : hostname}</div>))}
+        {hostnames.map(hostname => (
+          <div key={hostname} title={hostname}>
+            {hostname === '*' ? '* (all hosts)' : hostname}
+          </div>
+        ))}
       </Expandable>
     );
-  }
+  };
 
   private renderTrafficOnly() {
     return (
@@ -193,7 +229,8 @@ export class SummaryPanelNode extends React.Component<SummaryPanelNodeProps, Sum
     } = nodeData;
     const hasTrafficScenario =
       hasRequestRouting || hasFaultInjection || hasTrafficShifting || hasTCPTrafficShifting || hasRequestTimeout;
-    const shouldRenderGatewayHostnames = nodeData.isGateway?.ingressInfo?.hostnames !== undefined && nodeData.isGateway.ingressInfo.hostnames.length !== 0;
+    const shouldRenderGatewayHostnames =
+      nodeData.isGateway?.ingressInfo?.hostnames !== undefined && nodeData.isGateway.ingressInfo.hostnames.length !== 0;
     const shouldRenderVsHostnames = nodeData.hasVS?.hostnames !== undefined && nodeData.hasVS?.hostnames.length !== 0;
     return (
       <div style={{ marginTop: '10px', marginBottom: '10px' }}>

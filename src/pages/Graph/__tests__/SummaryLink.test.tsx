@@ -17,21 +17,6 @@ describe('renderBadgedLink', () => {
     };
   });
 
-  it('should generate a link to istio config and badge for workload entries', () => {
-    const node = { ...defaultGraphData, workload: 'details-v1', hasWorkloadEntry: true };
-    const expectedLink = `/namespaces/${encodeURIComponent(node.namespace)}/istio/workloadentries/${encodeURIComponent(
-      node.workload!
-    )}`;
-    const wrapper = mount(<MemoryRouter>{renderBadgedLink(node)}</MemoryRouter>);
-    expect(wrapper.find('a').filter(`[href="${expectedLink}"]`).exists()).toBeTruthy();
-    expect(
-      wrapper
-        .find(PFBadge)
-        .filterWhere(badge => badge.prop('badge').badge === PFBadges.WorkloadEntry.badge)
-        .exists()
-    ).toBeTruthy();
-  });
-
   it('should generate a link to workload page and badge', () => {
     const node = { ...defaultGraphData, workload: 'details-v1' };
     const expectedLink = `/namespaces/${encodeURIComponent(node.namespace)}/workloads/${encodeURIComponent(
@@ -39,6 +24,25 @@ describe('renderBadgedLink', () => {
     )}`;
     const wrapper = mount(<MemoryRouter>{renderBadgedLink(node)}</MemoryRouter>);
     expect(wrapper.find('a').filter(`[href="${expectedLink}"]`).exists()).toBeTruthy();
+    expect(
+      wrapper
+        .find(PFBadge)
+        .filterWhere(badge => badge.prop('badge').badge === PFBadges.Workload.badge)
+        .exists()
+    ).toBeTruthy();
+  });
+
+  it('should generate link with link generator', () => {
+    const node: GraphNodeData = {
+      ...defaultGraphData,
+      workload: 'details-v1'
+    };
+    const linkInfo = { link: '/custom/link/to/url', displayName: 'customDisplay', key: 'key-1-2' };
+
+    const wrapper = mount(<MemoryRouter>{renderBadgedLink(node, undefined, undefined, () => linkInfo)}</MemoryRouter>);
+    const linkNode = wrapper.find('a').filter(`[href="${linkInfo.link}"]`);
+    expect(linkNode.exists()).toBeTruthy();
+    expect(linkNode.text()).toContain(linkInfo.displayName);
     expect(
       wrapper
         .find(PFBadge)
