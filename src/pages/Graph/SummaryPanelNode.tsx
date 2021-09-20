@@ -35,7 +35,7 @@ type ReduxProps = {
   jaegerState: JaegerState;
 };
 
-type SummaryPanelNodeProps = ReduxProps & SummaryPanelPropType;
+export type SummaryPanelNodeProps = ReduxProps & SummaryPanelPropType;
 
 const expandableSectionStyle = style({
   fontSize: 'var(--graph-side-panel--font-size)',
@@ -101,7 +101,6 @@ export class SummaryPanelNode extends React.Component<SummaryPanelNodeProps, Sum
     const actions =
       options.length > 0 ? [<DropdownGroup label="Show" className="kiali-group-menu" children={options} />] : undefined;
 
-    // TODO: Summary Panel node tests
     let workloadLinks;
     if (nodeData.hasWorkloadEntry) {
       nodeData.hasWorkloadEntry.forEach(we => {
@@ -149,7 +148,6 @@ export class SummaryPanelNode extends React.Component<SummaryPanelNodeProps, Sum
             {shouldRenderService && <div>{renderBadgedLink(nodeData, NodeType.SERVICE)}</div>}
             {shouldRenderApp && <div>{renderBadgedLink(nodeData, NodeType.APP)}</div>}
             {shouldRenderWorkload && workloadLinks}
-            {/* Add case for WE entries and rendering each workload entry */}
           </div>
         </div>
         {shouldRenderTraces ? this.renderWithTabs(nodeData) : this.renderTrafficOnly()}

@@ -9,7 +9,7 @@ import { getPFBadge, PFBadge, PFBadges } from 'components/Pf/PfBadges';
 import KialiPageLink from 'components/Link/KialiPageLink';
 import { serverConfig } from 'config';
 
-interface linkInfo {
+interface LinkInfo {
   link: string;
   displayName: string;
   key: string;
@@ -68,7 +68,7 @@ const getBadge = (nodeData: GraphNodeData, nodeType?: NodeType) => {
   }
 };
 
-const getLink = (nodeData: GraphNodeData, nodeType?: NodeType, linkGenerator?: () => linkInfo) => {
+const getLink = (nodeData: GraphNodeData, nodeType?: NodeType, linkGenerator?: () => LinkInfo) => {
   const { app, cluster, namespace, service, workload } = nodeData;
   if (!nodeType || nodeData.nodeType === NodeType.UNKNOWN) {
     nodeType = nodeData.nodeType;
@@ -150,11 +150,10 @@ export const renderBadgedLink = (
   nodeData: GraphNodeData,
   nodeType?: NodeType,
   label?: string,
-  linkGenerator?: () => linkInfo
+  linkGenerator?: () => LinkInfo
 ) => {
   const link = getLink(nodeData, nodeType, linkGenerator);
 
-  // Render multiple links for
   return (
     <>
       <span style={{ marginRight: '1em', marginBottom: '3px', display: 'inline-block' }}>
