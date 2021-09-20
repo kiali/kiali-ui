@@ -1,7 +1,7 @@
-export default interface Namespace {
-  name: string;
-  labels?: { [key: string]: string };
-}
+import { Namespace as GeneratedNamespace } from 'generated';
+
+type Namespace = GeneratedNamespace;
+export default Namespace;
 
 export const namespaceFromString = (namespace: string) => ({ name: namespace });
 
