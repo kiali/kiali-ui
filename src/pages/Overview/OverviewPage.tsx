@@ -84,7 +84,12 @@ const gridStyleList = style({
   marginTop: '0px'
 });
 
-const cardGridStyle = style({ borderTop: '2px solid #39a5dc', textAlign: 'center', marginTop: '10px' });
+const cardGridStyle = style({
+  borderTop: '2px solid #39a5dc',
+  textAlign: 'center',
+  marginTop: '0px',
+  marginBottom: '10px'
+});
 
 const emptyStateStyle = style({
   height: '300px',
@@ -157,7 +162,7 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
     this.state = {
       namespaces: [],
       type: OverviewToolbar.currentOverviewType(),
-      displayMode: display ? Number(display) : OverviewDisplayMode.EXPAND,
+      displayMode: display ? Number(display) : OverviewDisplayMode.LIST,
       permissions: {},
       showConfirmModal: false,
       nsTarget: '',
@@ -215,6 +220,7 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
               status: previous ? previous.status : undefined,
               tlsStatus: previous ? previous.tlsStatus : undefined,
               metrics: previous ? previous.metrics : undefined,
+              errorMetrics: previous ? previous.errorMetrics : undefined,
               validations: previous ? previous.validations : undefined,
               labels: ns.labels
             };
@@ -473,7 +479,7 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
   setDisplayMode = (mode: OverviewDisplayMode) => {
     this.setState({ displayMode: mode });
     HistoryManager.setParam(URLParam.DISPLAY_MODE, String(mode));
-    if (mode === OverviewDisplayMode.EXPAND) {
+    if (mode === OverviewDisplayMode.EXPAND || mode === OverviewDisplayMode.LIST) {
       // Load metrics
       this.fetchMetrics();
     }

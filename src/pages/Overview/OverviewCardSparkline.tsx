@@ -18,16 +18,19 @@ type Props = {
 
 class OverviewCardSparkline extends React.Component<Props, {}> {
   render() {
-    if (this.props.metrics && this.props.metrics.length > 0) {
+    if (
+      this.props.metrics &&
+      this.props.metrics.length > 0 &&
+      this.props.errorMetrics &&
+      this.props.errorMetrics.length > 0
+    ) {
       let series: VCLine<RichDataPoint>[] = [];
 
       const data = toVCLine(this.props.metrics[0].datapoints, 'Total', PFColors.Blue400);
       series.push(data);
 
-      if (this.props.errorMetrics && this.props.errorMetrics.length > 0) {
-        const dataErrors = toVCLine(this.props.errorMetrics[0].datapoints, '4XX+5XX', PFColors.Danger);
-        series.push(dataErrors);
-      }
+      const dataErrors = toVCLine(this.props.errorMetrics[0].datapoints, '4xx+5xx', PFColors.Danger);
+      series.push(dataErrors);
 
       return (
         <>
