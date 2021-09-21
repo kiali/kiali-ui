@@ -162,7 +162,7 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
     this.state = {
       namespaces: [],
       type: OverviewToolbar.currentOverviewType(),
-      displayMode: display ? Number(display) : OverviewDisplayMode.LIST,
+      displayMode: display ? Number(display) : OverviewDisplayMode.EXPAND,
       permissions: {},
       showConfirmModal: false,
       nsTarget: '',
@@ -479,7 +479,7 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
   setDisplayMode = (mode: OverviewDisplayMode) => {
     this.setState({ displayMode: mode });
     HistoryManager.setParam(URLParam.DISPLAY_MODE, String(mode));
-    if (mode === OverviewDisplayMode.EXPAND || mode === OverviewDisplayMode.LIST) {
+    if (mode === OverviewDisplayMode.EXPAND) {
       // Load metrics
       this.fetchMetrics();
     }
