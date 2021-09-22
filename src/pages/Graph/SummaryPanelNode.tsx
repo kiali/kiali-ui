@@ -1,7 +1,14 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
-import { renderDestServicesLinks, renderBadgedLink, renderHealth, renderBadgedHost } from './SummaryLink';
+import {
+  getBadge,
+  getLink,
+  renderBadgedHost,
+  renderBadgedLink,
+  renderDestServicesLinks,
+  renderHealth
+} from './SummaryLink';
 import { NodeType, SummaryPanelPropType, DecoratedGraphNodeData, DestService } from '../../types/Graph';
 import { summaryHeader, summaryPanel, summaryBodyTabs, summaryFont } from './SummaryPanelCommon';
 import { decoratedNodeData } from '../../components/CytoscapeGraph/CytoscapeGraphUtils';
@@ -21,7 +28,7 @@ import { SummaryPanelNodeTraffic } from './SummaryPanelNodeTraffic';
 import SummaryPanelNodeTraces from './SummaryPanelNodeTraces';
 import SimpleTabs from 'components/Tab/SimpleTabs';
 import { JaegerState } from 'reducers/JaegerState';
-import { style } from 'typestyle';
+import { classes, style } from 'typestyle';
 
 type SummaryPanelNodeState = {
   isActionOpen: boolean;
@@ -101,28 +108,6 @@ export class SummaryPanelNode extends React.Component<SummaryPanelNodeProps, Sum
     const actions =
       options.length > 0 ? [<DropdownGroup label="Show" className="kiali-group-menu" children={options} />] : undefined;
 
-    let workloadLinks;
-    if (nodeData.hasWorkloadEntry) {
-      nodeData.hasWorkloadEntry.forEach(we => {
-        if (!workloadLinks) {
-          workloadLinks = [];
-        }
-        const generateWorkloadEntryLink = () => ({
-          link: `/namespaces/${encodeURIComponent(nodeData.namespace)}/istio/workloadentries/${encodeURIComponent(
-            we.name
-          )}`,
-          displayName: we.name,
-          key: `${nodeData.namespace}.wle.${we.name}`
-        });
-
-        workloadLinks.push(
-          <div>{renderBadgedLink(nodeData, NodeType.WORKLOAD, undefined, generateWorkloadEntryLink)}</div>
-        );
-      });
-    } else {
-      workloadLinks = <div>{renderBadgedLink(nodeData, NodeType.WORKLOAD)}</div>;
-    }
-
     return (
       <div ref={this.mainDivRef} className={`panel panel-default ${summaryPanel}`}>
         <div className="panel-heading" style={summaryHeader}>
@@ -147,13 +132,47 @@ export class SummaryPanelNode extends React.Component<SummaryPanelNodeProps, Sum
             {shouldRenderSvcList && <div>{servicesList}</div>}
             {shouldRenderService && <div>{renderBadgedLink(nodeData, NodeType.SERVICE)}</div>}
             {shouldRenderApp && <div>{renderBadgedLink(nodeData, NodeType.APP)}</div>}
-            {shouldRenderWorkload && workloadLinks}
+            {shouldRenderWorkload && this.renderWorkloadSection(nodeData)}
           </div>
         </div>
         {shouldRenderTraces ? this.renderWithTabs(nodeData) : this.renderTrafficOnly()}
       </div>
     );
   }
+
+  private renderWorkloadSection = (nodeData: DecoratedGraphNodeData) => {
+    if (!nodeData.hasWorkloadEntry) {
+      return <div>{renderBadgedLink(nodeData, NodeType.WORKLOAD)}</div>;
+    }
+
+    const workloadEntryLinks = nodeData.hasWorkloadEntry.map(we => (
+      <div>
+        {getLink(nodeData, NodeType.WORKLOAD, () => ({
+          link: `/namespaces/${encodeURIComponent(nodeData.namespace)}/istio/workloadentries/${encodeURIComponent(
+            we.name
+          )}`,
+          displayName: we.name,
+          key: `${nodeData.namespace}.wle.${we.name}`
+        }))}
+      </div>
+    ));
+
+    return (
+      <>
+        {getBadge(nodeData, NodeType.WORKLOAD)}
+        <Expandable
+          toggleText={
+            nodeData.hasWorkloadEntry.length === 1
+              ? '1 workload entry'
+              : `${nodeData.hasWorkloadEntry.length} workload entries`
+          }
+          className={classes(expandableSectionStyle, style({ display: 'inline' }))}
+        >
+          <div style={{ marginLeft: '3em' }}>{workloadEntryLinks}</div>
+        </Expandable>
+      </>
+    );
+  };
 
   private renderGatewayHostnames = (nodeData: DecoratedGraphNodeData) => {
     return this.renderHostnamesSection(nodeData.isGateway?.ingressInfo?.hostnames!);

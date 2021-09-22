@@ -30,7 +30,7 @@ const getTooltip = (tooltip: React.ReactFragment, nodeData: GraphNodeData): Reac
   );
 };
 
-const getBadge = (nodeData: GraphNodeData, nodeType?: NodeType) => {
+export const getBadge = (nodeData: GraphNodeData, nodeType?: NodeType) => {
   switch (nodeType || nodeData.nodeType) {
     case NodeType.AGGREGATE:
       return getPFBadge(PFBadges.Operation.badge, getTooltip(`Operation: ${nodeData.aggregate!}`, nodeData));
@@ -68,7 +68,7 @@ const getBadge = (nodeData: GraphNodeData, nodeType?: NodeType) => {
   }
 };
 
-const getLink = (nodeData: GraphNodeData, nodeType?: NodeType, linkGenerator?: () => LinkInfo) => {
+export const getLink = (nodeData: GraphNodeData, nodeType?: NodeType, linkGenerator?: () => LinkInfo) => {
   const { app, cluster, namespace, service, workload } = nodeData;
   if (!nodeType || nodeData.nodeType === NodeType.UNKNOWN) {
     nodeType = nodeData.nodeType;
