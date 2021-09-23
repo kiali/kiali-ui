@@ -187,15 +187,17 @@ export class GraphToolbar extends React.PureComponent<GraphToolbarProps> {
 
           <ToolbarGroup className={rightToolbarStyle} aria-label="graph_refresh_toolbar">
             <Tooltip key={'graph-tour-help-ot'} position={TooltipPosition.right} content="Graph help tour...">
-              <Button
-                className={rightToolbarStyle}
-                variant="link"
-                style={{ paddingLeft: '6px', paddingRight: '0px' }}
-                onClick={this.props.onToggleHelp}
-              >
-                <KialiIcon.Help className={defaultIconStyle} />
-                {' Graph tour'}
-              </Button>
+              <TourStopContainer info={GraphTourStops.Shortcuts}>
+                <Button
+                  className={rightToolbarStyle}
+                  variant="link"
+                  style={{ paddingLeft: '6px', paddingRight: '0px' }}
+                  onClick={this.props.onToggleHelp}
+                >
+                  <KialiIcon.Help className={defaultIconStyle} />
+                  {' Graph tour'}
+                </Button>
+              </TourStopContainer>
             </Tooltip>
             <GraphResetContainer />
           </ToolbarGroup>

@@ -1,5 +1,21 @@
-import { PopoverPosition } from '@patternfly/react-core';
+import * as React from 'react';
+import { Chip, Grid, GridItem, PopoverPosition } from '@patternfly/react-core';
 import { TourStopInfo, TourInfo } from 'components/Tour/TourStop';
+
+const shortcuts = (): JSX.Element => {
+  return (
+    <Grid gutter={'md'}>
+      <GridItem span={5}>
+        <Chip isReadOnly>Mouse Wheel</Chip>
+      </GridItem>
+      <GridItem span={7}>Zoom in and out</GridItem>
+      <GridItem span={5}>
+        <Chip isReadOnly>Shift + Drag</Chip>
+      </GridItem>
+      <GridItem span={7}>Select and zoom</GridItem>
+    </Grid>
+  );
+};
 
 export const GraphTourStops: { [name: string]: TourStopInfo } = {
   ContextualMenu: {
@@ -54,6 +70,11 @@ export const GraphTourStops: { [name: string]: TourStopInfo } = {
     description: 'Select the namespaces you want to see in the graph.',
     position: PopoverPosition.bottom
   },
+  Shortcuts: {
+    name: 'Shortcuts',
+    htmlDescription: shortcuts(),
+    position: PopoverPosition.left
+  },
   SidePanel: {
     name: 'Side Panel',
     description: 'The Side Panel shows details about the currently selected node or edge, otherwise the whole graph.',
@@ -70,6 +91,7 @@ export const GraphTourStops: { [name: string]: TourStopInfo } = {
 const GraphTour: TourInfo = {
   name: 'GraphTour',
   stops: [
+    GraphTourStops.Shortcuts,
     GraphTourStops.Namespaces,
     GraphTourStops.GraphTraffic,
     GraphTourStops.GraphType,
