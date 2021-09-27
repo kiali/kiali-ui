@@ -1,21 +1,7 @@
 import * as React from 'react';
-import { Chip, Grid, GridItem, PopoverPosition } from '@patternfly/react-core';
+import { PopoverPosition } from '@patternfly/react-core';
 import { TourStopInfo, TourInfo } from 'components/Tour/TourStop';
-
-const shortcuts = (): JSX.Element => {
-  return (
-    <Grid gutter={'md'}>
-      <GridItem span={5}>
-        <Chip isReadOnly>Mouse Wheel</Chip>
-      </GridItem>
-      <GridItem span={7}>Zoom in and out</GridItem>
-      <GridItem span={5}>
-        <Chip isReadOnly>Shift + Drag</Chip>
-      </GridItem>
-      <GridItem span={7}>Select and zoom</GridItem>
-    </Grid>
-  );
-};
+import GraphShortcuts from './GraphToolbar/GraphShortcuts';
 
 export const GraphTourStops: { [name: string]: TourStopInfo } = {
   ContextualMenu: {
@@ -72,7 +58,7 @@ export const GraphTourStops: { [name: string]: TourStopInfo } = {
   },
   Shortcuts: {
     name: 'Shortcuts',
-    htmlDescription: shortcuts(),
+    htmlDescription: <GraphShortcuts />,
     position: PopoverPosition.left
   },
   SidePanel: {
