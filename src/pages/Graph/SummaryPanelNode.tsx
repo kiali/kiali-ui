@@ -61,6 +61,8 @@ const expandableSectionStyle = style({
   }
 });
 
+const workloadExpandableSectionStyle = classes(expandableSectionStyle, style({ display: 'inline' }));
+
 export class SummaryPanelNode extends React.Component<SummaryPanelNodeProps, SummaryPanelNodeState> {
   private readonly mainDivRef: React.RefObject<HTMLDivElement>;
 
@@ -166,9 +168,9 @@ export class SummaryPanelNode extends React.Component<SummaryPanelNodeProps, Sum
               ? '1 workload entry'
               : `${nodeData.hasWorkloadEntry.length} workload entries`
           }
-          className={classes(expandableSectionStyle, style({ display: 'inline' }))}
+          className={workloadExpandableSectionStyle}
         >
-          <div style={{ marginLeft: '3em' }}>{workloadEntryLinks}</div>
+          <div style={{ marginLeft: '3.5em' }}>{workloadEntryLinks}</div>
         </Expandable>
       </>
     );
