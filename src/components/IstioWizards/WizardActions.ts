@@ -1137,6 +1137,78 @@ export const buildAuthorizationPolicy = (
   return ap;
 };
 
+export const buildGraphSidecars = (namespace: string, _graph: GraphDefinition): Sidecar[] => {
+  const denyAll: Sidecar = {
+    metadata: {
+      name: 'deny-all-' + namespace,
+      namespace: namespace,
+      labels: {
+        [KIALI_WIZARD_LABEL]: 'Sidecar'
+      }
+    },
+    spec: {
+      egress: [
+        {
+          hosts: ['./*', 'istio-system/*']
+        }
+      ]
+    }
+  };
+
+  const sidecars: Sidecar[] = [denyAll];
+  /*
+  if (graph.elements.nodes) {
+    for (let i = 0; i < graph.elements.nodes.length; i++) {
+      const node = graph.elements.nodes[i];
+      if (
+        node.data.namespace === namespace &&
+        node.data.nodeType === NodeType.WORKLOAD &&
+        node.data.workload &&
+        node.data.app &&
+        node.data.version
+      ) {
+        const sc: Sidecar = {
+          metadata: {
+            name: node.data.workload,
+            namespace: namespace,
+            labels: {
+              [KIALI_WIZARD_LABEL]: 'AuthorizationPolicy'
+            }
+          },
+          spec: {
+            workloadSelector: {
+              labels: {
+                app: node.data.app,
+                version: node.data.version
+              }
+            },
+            egress: [
+              {
+                hosts: ["istio-system/*"]
+              }
+            ]
+          }
+        };
+
+        if (graph.elements.edges) {
+          for (let j = 0; j < graph.elements.edges.length; j++) {
+            const edge = graph.elements.edges[j];
+            if (node.data.id === edge.data.target) {
+              if (sc.spec.egress) {
+                sc.spec.egress[0].hosts.push(edge.data.target);
+              }
+            }
+          }
+        }
+
+        sidecars.push(sc);        
+      }
+    }
+  }
+*/
+  return sidecars;
+};
+
 export const buildGraphAuthorizationPolicy = (namespace: string, graph: GraphDefinition): AuthorizationPolicy[] => {
   const denyAll: AuthorizationPolicy = {
     metadata: {

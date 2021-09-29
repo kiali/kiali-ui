@@ -58,12 +58,13 @@ import { OverviewNamespaceAction, OverviewNamespaceActions } from './OverviewNam
 import history, { HistoryManager, URLParam } from '../../app/History';
 import {
   buildGraphAuthorizationPolicy,
+  buildGraphSidecars,
   buildNamespaceInjectionPatch
 } from '../../components/IstioWizards/WizardActions';
 import * as AlertUtils from '../../utils/AlertUtils';
 import { MessageType } from '../../types/MessageCenter';
 import GraphDataSource from '../../services/GraphDataSource';
-import { AuthorizationPolicy, ValidationStatus } from '../../types/IstioObjects';
+import { AuthorizationPolicy, Sidecar, ValidationStatus } from '../../types/IstioObjects';
 import { IstioPermissions } from '../../types/IstioConfigDetails';
 import { AUTHORIZATION_POLICIES } from '../IstioConfigNew/AuthorizationPolicyForm';
 import ValidationSummaryLink from '../../components/Link/ValidationSummaryLink';
@@ -442,7 +443,7 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
       chunk.map(nsInfo => {
         return Promise.all([
           API.getNamespaceValidations(nsInfo.name),
-          API.getIstioConfig(nsInfo.name, ['authorizationpolicies'], false, '', '')
+          API.getIstioConfig(nsInfo.name, ['authorizationpolicies', 'sidecars'], false, '', '')
         ]).then(results => {
           return { validations: results[0].data, istioConfig: results[1].data, nsInfo: nsInfo };
         });
@@ -759,7 +760,7 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
   };
 
   onCreateTrafficPolicies = (ns: string) => {
-    this.onAddRemoveAuthorizationPolicy(ns, [], false);
+    this.onAddRemoveAuthorizationPolicy(ns, [], [], false);
   };
 
   onUpdateTrafficPolicies = (ns: string) => {
@@ -781,13 +782,16 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
   onAddRemoveAuthorizationPolicy = (
     ns: string,
     authorizationPolicies: AuthorizationPolicy[],
+    sidecars: Sidecar[],
     remove: boolean
   ): void => {
     if (authorizationPolicies.length > 0) {
       this.promises
         .registerAll(
           'authorizationPoliciesDelete',
-          authorizationPolicies.map(ap => API.deleteIstioConfigDetail(ns, 'authorizationpolicies', ap.metadata.name))
+          authorizationPolicies
+            .map(ap => API.deleteIstioConfigDetail(ns, 'authorizationpolicies', ap.metadata.name))
+            .concat(sidecars.map(sc => API.deleteIstioConfigDetail(ns, 'sidecars', sc.metadata.name)))
         )
         .then(_ => {
           if (!remove) {
@@ -814,10 +818,14 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
     const graphDataSource = new GraphDataSource();
     graphDataSource.on('fetchSuccess', () => {
       const aps = buildGraphAuthorizationPolicy(ns, graphDataSource.graphDefinition);
+      const scs = buildGraphSidecars(ns, graphDataSource.graphDefinition);
+
       this.promises
         .registerAll(
           'authorizationPoliciesCreate',
-          aps.map(ap => API.createIstioConfigDetail(ns, 'authorizationpolicies', JSON.stringify(ap)))
+          aps
+            .map(ap => API.createIstioConfigDetail(ns, 'authorizationpolicies', JSON.stringify(ap)))
+            .concat(scs.map(sc => API.createIstioConfigDetail(ns, 'sidecars', JSON.stringify(sc))))
         )
         .then(results => {
           if (results.length > 0) {
@@ -852,10 +860,12 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
 
   onConfirmModal = () => {
     let aps: AuthorizationPolicy[] = [];
+    let scs: Sidecar[] = [];
     for (let i = 0; i < this.state.namespaces.length; i++) {
       const nsInfo = this.state.namespaces[i];
       if (this.state.namespaces[i].name === this.state.nsTarget) {
         aps = nsInfo.istioConfig?.authorizationPolicies || [];
+        scs = nsInfo.istioConfig?.sidecars || [];
         break;
       }
     }
@@ -867,7 +877,7 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
         nsTarget: '',
         opTarget: ''
       },
-      () => this.onAddRemoveAuthorizationPolicy(nsTarget, aps, remove)
+      () => this.onAddRemoveAuthorizationPolicy(nsTarget, aps, scs, remove)
     );
   };
 
