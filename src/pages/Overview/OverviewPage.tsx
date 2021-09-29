@@ -760,7 +760,7 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
   };
 
   onCreateTrafficPolicies = (ns: string) => {
-    this.onAddRemoveAuthorizationPolicy(ns, [], [], false);
+    this.onAddRemoveTrafficPolicies(ns, [], [], false);
   };
 
   onUpdateTrafficPolicies = (ns: string) => {
@@ -779,42 +779,42 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
     });
   };
 
-  onAddRemoveAuthorizationPolicy = (
+  onAddRemoveTrafficPolicies = (
     ns: string,
     authorizationPolicies: AuthorizationPolicy[],
     sidecars: Sidecar[],
     remove: boolean
   ): void => {
-    if (authorizationPolicies.length > 0) {
+    if (authorizationPolicies.length > 0 && sidecars.length > 0) {
       this.promises
         .registerAll(
-          'authorizationPoliciesDelete',
+          'trafficPoliciesDelete',
           authorizationPolicies
             .map(ap => API.deleteIstioConfigDetail(ns, 'authorizationpolicies', ap.metadata.name))
             .concat(sidecars.map(sc => API.deleteIstioConfigDetail(ns, 'sidecars', sc.metadata.name)))
         )
         .then(_ => {
           if (!remove) {
-            this.createAuthorizationPolicies(ns, this.load);
+            this.createTrafficPolicies(ns, this.load);
           } else {
             this.load();
           }
         })
         .catch(errorDelete => {
           if (!errorDelete.isCanceled) {
-            AlertUtils.addError('Could not delete AuthorizationPolicies.', errorDelete);
+            AlertUtils.addError('Could not delete traffic policies.', errorDelete);
           }
         });
     } else {
       if (!remove) {
-        this.createAuthorizationPolicies(ns, this.load);
+        this.createTrafficPolicies(ns, this.load);
       } else {
-        AlertUtils.addInfo('Namespace ' + ns + " doesn't have AuthorizationPolicy config.");
+        AlertUtils.addInfo('Namespace ' + ns + " doesn't have traffic policies config.");
       }
     }
   };
 
-  createAuthorizationPolicies = (ns: string, callback: () => void) => {
+  createTrafficPolicies = (ns: string, callback: () => void) => {
     const graphDataSource = new GraphDataSource();
     graphDataSource.on('fetchSuccess', () => {
       const aps = buildGraphAuthorizationPolicy(ns, graphDataSource.graphDefinition);
@@ -822,20 +822,20 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
 
       this.promises
         .registerAll(
-          'authorizationPoliciesCreate',
+          'trafficPoliciesCreate',
           aps
             .map(ap => API.createIstioConfigDetail(ns, 'authorizationpolicies', JSON.stringify(ap)))
             .concat(scs.map(sc => API.createIstioConfigDetail(ns, 'sidecars', JSON.stringify(sc))))
         )
         .then(results => {
           if (results.length > 0) {
-            AlertUtils.add('AuthorizationPolicies created for ' + ns + ' namespace.', 'default', MessageType.SUCCESS);
+            AlertUtils.add('Traffic policies created for ' + ns + ' namespace.', 'default', MessageType.SUCCESS);
           }
           callback();
         })
         .catch(errorCreate => {
           if (!errorCreate.isCanceled) {
-            AlertUtils.addError('Could not create AuthorizationPolicies.', errorCreate);
+            AlertUtils.addError('Could not create traffic policies.', errorCreate);
           }
         });
     });
@@ -877,7 +877,7 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
         nsTarget: '',
         opTarget: ''
       },
-      () => this.onAddRemoveAuthorizationPolicy(nsTarget, aps, scs, remove)
+      () => this.onAddRemoveTrafficPolicies(nsTarget, aps, scs, remove)
     );
   };
 
@@ -986,7 +986,7 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
         >
           {'Namespace ' +
             this.state.nsTarget +
-            ' has existing AuthorizationPolicy objects. Do you want to ' +
+            ' has existing traffic policies objects. Do you want to ' +
             this.state.opTarget +
             ' them ?'}
         </Modal>

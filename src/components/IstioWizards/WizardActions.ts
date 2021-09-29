@@ -44,7 +44,7 @@ import { RequestAuthenticationState } from '../../pages/IstioConfigNew/RequestAu
 import { Workload } from '../../types/Workload';
 import { FaultInjectionRoute } from './FaultInjection';
 import { TimeoutRetryRoute } from './RequestTimeouts';
-import { GraphDefinition, NodeType } from '../../types/Graph';
+import { DestService, GraphDefinition, NodeType } from '../../types/Graph';
 import { ServiceEntryState } from '../../pages/IstioConfigNew/ServiceEntryForm';
 
 export const WIZARD_TRAFFIC_SHIFTING = 'traffic_shifting';
@@ -1137,7 +1137,7 @@ export const buildAuthorizationPolicy = (
   return ap;
 };
 
-export const buildGraphSidecars = (namespace: string, _graph: GraphDefinition): Sidecar[] => {
+export const buildGraphSidecars = (namespace: string, graph: GraphDefinition): Sidecar[] => {
   const denyAll: Sidecar = {
     metadata: {
       name: 'deny-all-' + namespace,
@@ -1156,7 +1156,7 @@ export const buildGraphSidecars = (namespace: string, _graph: GraphDefinition): 
   };
 
   const sidecars: Sidecar[] = [denyAll];
-  /*
+
   if (graph.elements.nodes) {
     for (let i = 0; i < graph.elements.nodes.length; i++) {
       const node = graph.elements.nodes[i];
@@ -1184,7 +1184,7 @@ export const buildGraphSidecars = (namespace: string, _graph: GraphDefinition): 
             },
             egress: [
               {
-                hosts: ["istio-system/*"]
+                hosts: ['istio-system/*']
               }
             ]
           }
@@ -1193,19 +1193,30 @@ export const buildGraphSidecars = (namespace: string, _graph: GraphDefinition): 
         if (graph.elements.edges) {
           for (let j = 0; j < graph.elements.edges.length; j++) {
             const edge = graph.elements.edges[j];
-            if (node.data.id === edge.data.target) {
-              if (sc.spec.egress) {
-                sc.spec.egress[0].hosts.push(edge.data.target);
+
+            if (node.data.id === edge.data.source) {
+              for (let z = 0; z < graph.elements.nodes.length; z++) {
+                const targetNode = graph.elements.nodes[z];
+
+                if (targetNode.data.id === edge.data.target) {
+                  targetNode.data.destServices?.forEach((ds: DestService) => {
+                    if (sc.spec.egress && ds.namespace !== 'unknown') {
+                      sc.spec.egress[0].hosts.push(
+                        ds.namespace + '/' + ds.name + '.' + ds.namespace + '.svc.cluster.local'
+                      );
+                    }
+                  });
+                }
               }
             }
           }
         }
 
-        sidecars.push(sc);        
+        sidecars.push(sc);
       }
     }
   }
-*/
+
   return sidecars;
 };
 
