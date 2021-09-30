@@ -1,5 +1,5 @@
 import React from 'react';
-import { Chip, Grid, GridItem } from '@patternfly/react-core';
+import { Chip } from '@patternfly/react-core';
 
 interface Shortcut {
   shortcut: string;
@@ -17,26 +17,28 @@ const shortcuts: Shortcut[] = [
 
 const makeShortcut = (shortcut: Shortcut): JSX.Element => {
   return (
-    <>
-      <GridItem span={5}>
-        <Chip isReadOnly>{shortcut.shortcut}</Chip>
-      </GridItem>
-      <GridItem span={7}>
-        <p>{shortcut.description}</p>
-      </GridItem>
-    </>
+    <tr>
+      <td>
+        <div style={{ marginLeft: '10px', marginBottom: '10px' }}>
+          <Chip isReadOnly>{shortcut.shortcut}</Chip>
+        </div>
+      </td>
+      <td style={{ marginLeft: '10px' }}>
+        <div style={{ marginLeft: '10px', marginBottom: '10px' }}>{shortcut.description}</div>
+      </td>
+    </tr>
   );
 };
 
 const GraphShortcuts = (): JSX.Element => (
   <>
-    <Grid gutter={'md'}>
+    <table style={{ margin: '10px' }}>
       {shortcuts.map(
         (s: Shortcut): JSX.Element => {
           return makeShortcut(s);
         }
       )}
-    </Grid>
+    </table>
   </>
 );
 
