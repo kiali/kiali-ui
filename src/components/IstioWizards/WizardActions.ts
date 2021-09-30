@@ -1201,9 +1201,7 @@ export const buildGraphSidecars = (namespace: string, graph: GraphDefinition): S
                 if (targetNode.data.id === edge.data.target) {
                   targetNode.data.destServices?.forEach((ds: DestService) => {
                     if (sc.spec.egress && ds.namespace !== 'unknown') {
-                      sc.spec.egress[0].hosts.push(
-                        ds.namespace + '/' + ds.name + '.' + ds.namespace + '.svc.cluster.local'
-                      );
+                      sc.spec.egress[0].hosts.push(`${ds.namespace}/${ds.name}.${ds.namespace}.svc.cluster.local`);
                     }
                   });
                 }
