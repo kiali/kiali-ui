@@ -1138,24 +1138,7 @@ export const buildAuthorizationPolicy = (
 };
 
 export const buildGraphSidecars = (namespace: string, graph: GraphDefinition): Sidecar[] => {
-  const denyAll: Sidecar = {
-    metadata: {
-      name: 'deny-all-' + namespace,
-      namespace: namespace,
-      labels: {
-        [KIALI_WIZARD_LABEL]: 'Sidecar'
-      }
-    },
-    spec: {
-      egress: [
-        {
-          hosts: ['./*', 'istio-system/*']
-        }
-      ]
-    }
-  };
-
-  const sidecars: Sidecar[] = [denyAll];
+  const sidecars: Sidecar[] = [];
 
   if (graph.elements.nodes) {
     for (let i = 0; i < graph.elements.nodes.length; i++) {
@@ -1172,7 +1155,7 @@ export const buildGraphSidecars = (namespace: string, graph: GraphDefinition): S
             name: node.data.workload,
             namespace: namespace,
             labels: {
-              [KIALI_WIZARD_LABEL]: 'AuthorizationPolicy'
+              [KIALI_WIZARD_LABEL]: 'Sidecar'
             }
           },
           spec: {
@@ -1184,7 +1167,7 @@ export const buildGraphSidecars = (namespace: string, graph: GraphDefinition): S
             },
             egress: [
               {
-                hosts: ['istio-system/*']
+                hosts: [`${serverConfig.istioNamespace}/*`]
               }
             ]
           }
@@ -1201,7 +1184,9 @@ export const buildGraphSidecars = (namespace: string, graph: GraphDefinition): S
                 if (targetNode.data.id === edge.data.target) {
                   targetNode.data.destServices?.forEach((ds: DestService) => {
                     if (sc.spec.egress && ds.namespace !== 'unknown') {
-                      sc.spec.egress[0].hosts.push(`${ds.namespace}/${ds.name}.${ds.namespace}.svc.cluster.local`);
+                      sc.spec.egress[0].hosts.push(
+                        `${ds.namespace}/${ds.name}.${ds.namespace}.${serverConfig.istioIdentityDomain}`
+                      );
                     }
                   });
                 }
