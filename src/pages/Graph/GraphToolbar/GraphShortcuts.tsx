@@ -17,7 +17,7 @@ const shortcuts: Shortcut[] = [
 
 const makeShortcut = (shortcut: Shortcut): JSX.Element => {
   return (
-    <div style={{ display: 'flex', marginLeft: '10px', marginBottom: '10px' }}>
+    <div style={{ display: 'flex', marginBottom: '10px' }}>
       <div style={{ flex: '40%' }}>
         <Chip isReadOnly>{shortcut.shortcut}</Chip>
       </div>
@@ -28,13 +28,11 @@ const makeShortcut = (shortcut: Shortcut): JSX.Element => {
 
 const GraphShortcuts = (): JSX.Element => (
   <>
-    <div style={{ margin: '10px' }}>
-      {shortcuts.map(
-        (s: Shortcut): JSX.Element => {
-          return makeShortcut(s);
-        }
-      )}
-    </div>
+    {shortcuts.map(
+      (s: Shortcut): JSX.Element => {
+        return makeShortcut(s);
+      }
+    )}
   </>
 );
 
