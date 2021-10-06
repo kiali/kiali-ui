@@ -421,6 +421,7 @@ class ChartWithLegend<T extends RichDataPoint, O extends LineInfo> extends React
 
             let regressionDatapoints = serie.datapoints.map(d => ({
               ...d,
+              name: d.name + ' (trendline)',
               y: linearRegression.predict(((d.x as Date).getTime()/1000 - first_dpx) / 10000)[1]
             }));
 
