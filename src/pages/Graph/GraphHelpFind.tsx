@@ -204,6 +204,7 @@ export default class GraphHelpFind extends React.Component<GraphHelpFindProps> {
       ['faultinjection'],
       ['healthy', 'is not degraded or failing.'],
       ['idle', `will auto-enable 'idle nodes' display option`],
+      ['mirroring'],
       ['outside', 'is outside of requested namespaces'],
       ['requestrouting'],
       ['requesttimeout'],
@@ -230,7 +231,9 @@ export default class GraphHelpFind extends React.Component<GraphHelpFindProps> {
       ['The "name" operand expands internally to an "OR" expression (an "AND" when negated).'],
       ['Abbreviate: ns|namespace, svc|service, se|serviceentry, wl|workload, we|workloadentry, op|operation'],
       ['Abbreviate: rt|responsetime, sc|sidecar, vs|virtualservice'],
-      ['Abbreviate: cb|circuitbreaker, fi|faultinjection, rr|requestrouting, rto|requesttimeout, ts|trafficshifting'],
+      [
+        'Abbreviate: cb|circuitbreaker, fi|faultinjection, mi|mirroring, rr|requestrouting, rto|requesttimeout, ts|trafficshifting'
+      ],
       ['Hiding nodes will automatically hide connected edges.'],
       ['Hiding edges will automatically hide nodes left with no visible edges.'],
       ['Hiding "healthy" nodes may still leave valid, healthy edges in the graph.']
