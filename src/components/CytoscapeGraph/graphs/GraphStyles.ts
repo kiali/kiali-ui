@@ -243,8 +243,8 @@ export class GraphStyles {
       if (node.hasVS) {
         const hasKialiScenario =
           node.hasFaultInjection ||
-          node.hasRequestRouting ||
           node.hasMirroring ||
+          node.hasRequestRouting ||
           node.hasRequestTimeout ||
           node.hasTCPTrafficShifting ||
           node.hasTrafficShifting;
