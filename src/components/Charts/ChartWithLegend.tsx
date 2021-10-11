@@ -10,7 +10,7 @@ import { toBuckets } from 'utils/VictoryChartsUtils';
 import { VCEvent, addLegendEvent } from 'utils/VictoryEvents';
 import { XAxisType } from 'types/Dashboards';
 import { CustomTooltip } from './CustomTooltip';
-import { INTERPOTALION_STRATEGY } from './SparklineChart';
+import { INTERPOLATION_STRATEGY } from './SparklineChart';
 import { KialiIcon } from '../../config/KialiIcon';
 import { Button, ButtonVariant, Tooltip, TooltipPosition } from '@patternfly/react-core';
 import regression from 'regression';
@@ -408,7 +408,7 @@ class ChartWithLegend<T extends RichDataPoint, O extends LineInfo> extends React
                 key: 'serie-' + idx,
                 name: 'serie-' + idx,
                 data: serie.datapoints,
-                interpolation: INTERPOTALION_STRATEGY
+                interpolation: INTERPOLATION_STRATEGY
               },
               serie.color
             )
@@ -432,7 +432,7 @@ class ChartWithLegend<T extends RichDataPoint, O extends LineInfo> extends React
                   key: 'serie-reg-' + idx,
                   name: 'serie-reg-' + idx,
                   data: regressionDatapoints,
-                  interpolation: INTERPOTALION_STRATEGY
+                  interpolation: INTERPOLATION_STRATEGY
                 },
                 serie.color,
                 true
