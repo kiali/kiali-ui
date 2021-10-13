@@ -255,7 +255,9 @@ export class GraphStyles {
             icons = `<span class="${NodeIconFaultInjection} ${iconMargin(icons)}"></span> ${icons}`;
           }
           if (node.hasMirroring) {
-            icons = `<span class="${NodeIconMirroring} ${iconMargin(icons)}"></span> ${icons}`;
+            icons = `<span class="${NodeIconMirroring}  ${iconMargin(icons)} ${style({
+              marginTop: '1px'
+            })}"></span> ${icons}`;
           }
           if (node.hasTrafficShifting || node.hasTCPTrafficShifting) {
             icons = `<span class="${NodeIconTrafficShifting} ${iconMargin(icons)}"></span> ${icons}`;
