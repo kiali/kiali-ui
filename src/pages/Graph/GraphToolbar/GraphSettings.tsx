@@ -31,6 +31,7 @@ type ReduxProps = {
   boxByNamespace: boolean;
   compressOnHide: boolean;
   edgeLabels: EdgeLabelMode[];
+  rankByInboundEdges: boolean;
   setEdgeLabels: (edgeLabels: EdgeLabelMode[]) => void;
   showIdleEdges: boolean;
   showIdleNodes: boolean;
@@ -49,6 +50,7 @@ type ReduxProps = {
   toggleIdleEdges(): void;
   toggleIdleNodes(): void;
   toggleOperationNodes(): void;
+  toggleRankByInboundEdges(): void;
   toggleServiceNodes(): void;
   toggleTrafficAnimation(): void;
 };
@@ -143,6 +145,12 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
       props.showServiceNodes,
       props.toggleServiceNodes
     );
+    this.handleURLBool(
+      URLParam.GRAPH_RANK_BY_INBOUND_EDGES,
+      INITIAL_GRAPH_STATE.toolbarState.rankByInboundEdges,
+      props.rankByInboundEdges,
+      props.toggleRankByInboundEdges
+    );
   }
 
   componentDidUpdate(prev: GraphSettingsProps) {
@@ -213,6 +221,12 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
       prev.showServiceNodes,
       this.props.showServiceNodes
     );
+    this.alignURLBool(
+      URLParam.GRAPH_RANK_BY_INBOUND_EDGES,
+      INITIAL_GRAPH_STATE.toolbarState.rankByInboundEdges,
+      prev.rankByInboundEdges,
+      this.props.rankByInboundEdges
+    );
   }
 
   private handleURLBool = (param: URLParam, paramDefault: boolean, reduxValue: boolean, reduxToggle: () => void) => {
@@ -265,6 +279,7 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
       boxByNamespace,
       compressOnHide,
       edgeLabels,
+      rankByInboundEdges,
       showIdleEdges,
       showIdleNodes,
       showMissingSidecars,
@@ -286,6 +301,7 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
       toggleIdleEdges,
       toggleIdleNodes,
       toggleOperationNodes,
+      toggleRankByInboundEdges,
       toggleServiceNodes,
       toggleTrafficAnimation
     } = this.props;
@@ -555,6 +571,15 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
       }
     ];
 
+    const scoringOptions: DisplayOptionType[] = [
+      {
+        id: 'rankByInboundEdges',
+        labelText: 'Rank by Inbound Edges',
+        isChecked: rankByInboundEdges,
+        onChange: toggleRankByInboundEdges
+      }
+    ];
+
     return (
       <BoundingClientAwareComponent
         className={containerStyle}
@@ -702,6 +727,19 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
               )}
             </div>
           ))}
+          <div className={titleStyle}>Ranking</div>
+          {scoringOptions.map((item: DisplayOptionType) => (
+            <div key={item.id} style={{ display: 'inline-block' }}>
+              <label key={item.id} className={!!item.tooltip ? itemStyleWithInfo : itemStyleWithoutInfo}>
+                <Checkbox id={item.id} isChecked={item.isChecked} label={item.labelText} onChange={item.onChange} />
+              </label>
+              {!!item.tooltip && (
+                <Tooltip key={`tooltip_${item.id}`} position={TooltipPosition.right} content={item.tooltip}>
+                  <KialiIcon.Info className={infoStyle} />
+                </Tooltip>
+              )}
+            </div>
+          ))}
         </div>
       </BoundingClientAwareComponent>
     );
@@ -755,6 +793,7 @@ const mapStateToProps = (state: KialiAppState) => ({
   boxByNamespace: state.graph.toolbarState.boxByNamespace,
   compressOnHide: state.graph.toolbarState.compressOnHide,
   edgeLabels: edgeLabelsSelector(state),
+  rankByInboundEdges: state.graph.toolbarState.rankByInboundEdges,
   showIdleEdges: state.graph.toolbarState.showIdleEdges,
   showIdleNodes: state.graph.toolbarState.showIdleNodes,
   showMissingSidecars: state.graph.toolbarState.showMissingSidecars,
@@ -778,6 +817,7 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<KialiAppState, void, KialiAp
     toggleIdleEdges: bindActionCreators(GraphToolbarActions.toggleIdleEdges, dispatch),
     toggleIdleNodes: bindActionCreators(GraphToolbarActions.toggleIdleNodes, dispatch),
     toggleOperationNodes: bindActionCreators(GraphToolbarActions.toggleOperationNodes, dispatch),
+    toggleRankByInboundEdges: bindActionCreators(GraphToolbarActions.toggleRankByInboundEdges, dispatch),
     toggleServiceNodes: bindActionCreators(GraphToolbarActions.toggleServiceNodes, dispatch),
     toggleTrafficAnimation: bindActionCreators(GraphToolbarActions.toggleTrafficAnimation, dispatch)
   };

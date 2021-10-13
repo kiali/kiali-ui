@@ -93,6 +93,7 @@ const operands: string[] = [
   'operation',
   'outside',
   'protocol',
+  'rank',
   'requestrouting',
   'requesttimeout',
   'responsetime',
@@ -698,6 +699,10 @@ export class GraphFind extends React.Component<GraphFindProps, GraphFindState> {
       case 'op':
       case 'operation':
         return { target: 'node', selector: `[${CyNode.aggregateValue} ${op} "${val}"]` };
+      case 'rank': {
+        const s = this.getNumericSelector(CyNode.rank, op, val, expression, isFind);
+        return s ? { target: 'node', selector: s } : undefined;
+      }
       case 'svc':
       case 'service':
         return { target: 'node', selector: `[${CyNode.service} ${op} "${val}"]` };

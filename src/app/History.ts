@@ -35,6 +35,7 @@ export enum URLParam {
   GRAPH_IDLE_NODES = 'idleNodes',
   GRAPH_LAYOUT = 'layout',
   GRAPH_OPERATION_NODES = 'operationNodes',
+  GRAPH_RANK_BY_INBOUND_EDGES = 'rankByInboundEdges',
   GRAPH_REPLAY_ACTIVE = 'replayActive',
   GRAPH_REPLAY_INTERVAL = 'replayInterval',
   GRAPH_REPLAY_START = 'replayStart',

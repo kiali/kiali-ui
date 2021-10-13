@@ -20,6 +20,7 @@ export const INITIAL_GRAPH_STATE: GraphState = {
     findValue: '',
     graphType: GraphType.VERSIONED_APP,
     hideValue: '',
+    rankByInboundEdges: false,
     showFindHelp: false,
     showIdleEdges: false,
     showIdleNodes: false,
@@ -186,6 +187,12 @@ const graphDataState = (state: GraphState = INITIAL_GRAPH_STATE, action: KialiAp
         }),
         // TODO: This should be handled in GraphPage.ComponentDidUpdate (Init graph on type change)
         summaryData: INITIAL_GRAPH_STATE.summaryData
+      });
+    case getType(GraphToolbarActions.toggleRankByInboundEdges):
+      return updateState(state, {
+        toolbarState: updateState(state.toolbarState, {
+          rankByInboundEdges: !state.toolbarState.rankByInboundEdges
+        })
       });
     case getType(GraphToolbarActions.toggleServiceNodes):
       return updateState(state, {

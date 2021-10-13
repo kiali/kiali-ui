@@ -55,6 +55,7 @@ export interface GraphToolbarState {
   boxByCluster: boolean;
   boxByNamespace: boolean;
   compressOnHide: boolean;
+  rankByInboundEdges: boolean;
   showIdleEdges: boolean;
   showIdleNodes: boolean;
   showLegend: boolean;

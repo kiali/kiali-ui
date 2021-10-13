@@ -23,6 +23,7 @@ export const GraphToolbarActions = {
   toggleIdleEdges: createAction(ActionKeys.GRAPH_TOOLBAR_TOGGLE_IDLE_EDGES),
   toggleIdleNodes: createAction(ActionKeys.GRAPH_TOOLBAR_TOGGLE_IDLE_NODES),
   toggleOperationNodes: createAction(ActionKeys.GRAPH_TOOLBAR_TOGGLE_OPERATION_NODES),
+  toggleRankByInboundEdges: createAction(ActionKeys.GRAPH_TOOLBAR_TOGGLE_RANK_BY_INBOUND_EDGES),
   toggleServiceNodes: createAction(ActionKeys.GRAPH_TOOLBAR_TOGGLE_SERVICE_NODES),
   toggleTrafficAnimation: createAction(ActionKeys.GRAPH_TOOLBAR_TOGGLE_TRAFFIC_ANIMATION)
 };
