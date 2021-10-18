@@ -16,9 +16,17 @@ type Props = {
   duration: DurationInSeconds;
 };
 
+function someNonZeroValues(metrics: Metric[]): boolean {
+  if (metrics.length > 0) {
+    return metrics[0].datapoints.some(dp => Number(dp[1] != 0));
+  }
+
+  return false;
+}
+
 class OverviewCardSparkline extends React.Component<Props, {}> {
   render() {
-    if (this.props.metrics && this.props.metrics.length > 0) {
+    if (this.props.metrics && this.props.metrics.length > 0 && someNonZeroValues(this.props.metrics)) {
       let series: VCLine<RichDataPoint>[] = [];
 
       const data = toVCLine(this.props.metrics[0].datapoints, 'Total', PFColors.Blue400);
