@@ -18,7 +18,7 @@ type Props = {
 
 function someNonZeroValues(metrics: Metric[]): boolean {
   if (metrics.length > 0) {
-    return metrics[0].datapoints.some(dp => Number(dp[1] != 0));
+    return metrics[0].datapoints.some(dp => Number(dp[1]) !== 0);
   }
 
   return false;
