@@ -103,7 +103,7 @@ class GatewaySelector extends React.Component<Props, GatewaySelectorState> {
           {
             newGateway: value === 'true'
           },
-          () => this.props.onGatewayChange(true, this.state)
+          () => this.props.onGatewayChange(this.isIncludeMeshValid(), this.state)
         );
         break;
       case GatewayForm.GATEWAY_SELECTED:
@@ -111,7 +111,7 @@ class GatewaySelector extends React.Component<Props, GatewaySelectorState> {
           {
             selectedGateway: value
           },
-          () => this.props.onGatewayChange(true, this.state)
+          () => this.props.onGatewayChange(this.isIncludeMeshValid(), this.state)
         );
         break;
       case GatewayForm.PORT:
@@ -128,7 +128,14 @@ class GatewaySelector extends React.Component<Props, GatewaySelectorState> {
   };
 
   isIncludeMeshValid = (): boolean => {
-    return !(this.props.vsHosts.some(h => h === '*') && this.state.addMesh);
+    if (this.state.addMesh) {
+      if (this.state.newGateway) {
+        return !this.state.gwHosts.split(',').some(h => h === '*');
+      } else {
+        return !this.props.vsHosts.some(h => h === '*');
+      }
+    }
+    return true;
   };
 
   render() {
