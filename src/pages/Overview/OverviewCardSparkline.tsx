@@ -17,7 +17,8 @@ type Props = {
 };
 
 function showMetrics(metrics: Metric[] | undefined): boolean {
-  if (metrics && metrics.length && metrics[0].datapoints.some(dp => Number(dp[1]) !== 0)) {
+  // show metrics if metrics exists and some values at least are not zero
+  if (metrics && metrics.length > 0 && metrics[0].datapoints.some(dp => Number(dp[1]) !== 0)) {
     return true;
   }
 
