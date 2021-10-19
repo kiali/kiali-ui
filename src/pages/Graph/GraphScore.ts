@@ -1,7 +1,8 @@
 import { DecoratedGraphElements } from '../../types/Graph';
 
 export enum ScoringCriteria {
-  InboundEdges = 'InboundEdges'
+  InboundEdges = 'InboundEdges',
+  OutboundEdges = 'OutboundEdges'
 }
 
 // scores nodes by counting the number of "target" edges for each node.
@@ -15,6 +16,34 @@ function scoreByInboundEdges(elements: Readonly<DecoratedGraphElements>): Map<st
       inboundEdgeCountByID.set(edge.data.target, newVal);
     } else {
       inboundEdgeCountByID.set(edge.data.target, 1);
+    }
+  });
+
+  let scores = new Map<string, number | undefined>();
+  elements.nodes?.forEach(node => {
+    let score: number | undefined;
+    const inboundEdgeCount = inboundEdgeCountByID.get(node.data.id);
+    if (inboundEdgeCount !== undefined && totalEdgeCount !== undefined) {
+      score = inboundEdgeCount / totalEdgeCount;
+    }
+
+    scores.set(node.data.id, score);
+  });
+
+  return scores;
+}
+
+// scores nodes by counting number of "source" edges for each node.
+function scoreByOutboundEdges(elements: Readonly<DecoratedGraphElements>): Map<string, number | undefined> {
+  const totalEdgeCount = elements.edges?.length;
+
+  const inboundEdgeCountByID = new Map<string, number>();
+  elements.edges?.forEach(edge => {
+    if (inboundEdgeCountByID.has(edge.data.source)) {
+      const newVal = inboundEdgeCountByID.get(edge.data.source)! + 1;
+      inboundEdgeCountByID.set(edge.data.source, newVal);
+    } else {
+      inboundEdgeCountByID.set(edge.data.source, 1);
     }
   });
 
@@ -47,6 +76,10 @@ export function scoreNodes(
     switch (criteria) {
       case ScoringCriteria.InboundEdges:
         scoreForCriteria = scoreByInboundEdges(elements);
+        break;
+      case ScoringCriteria.OutboundEdges:
+        scoreForCriteria = scoreByOutboundEdges(elements);
+        break;
     }
 
     scoreForCriteria.forEach((score, id) => {

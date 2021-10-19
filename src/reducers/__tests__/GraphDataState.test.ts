@@ -20,6 +20,7 @@ describe('GraphDataState', () => {
         graphType: GraphType.VERSIONED_APP,
         hideValue: '',
         rankByInboundEdges: false,
+        rankByOutboundEdges: false,
         showFindHelp: false,
         showLegend: false,
         showIdleEdges: false,

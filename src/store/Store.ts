@@ -56,6 +56,7 @@ export interface GraphToolbarState {
   boxByNamespace: boolean;
   compressOnHide: boolean;
   rankByInboundEdges: boolean;
+  rankByOutboundEdges: boolean;
   showIdleEdges: boolean;
   showIdleNodes: boolean;
   showLegend: boolean;

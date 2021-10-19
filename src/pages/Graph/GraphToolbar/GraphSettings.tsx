@@ -32,6 +32,7 @@ type ReduxProps = {
   compressOnHide: boolean;
   edgeLabels: EdgeLabelMode[];
   rankByInboundEdges: boolean;
+  rankByOutboundEdges: boolean;
   setEdgeLabels: (edgeLabels: EdgeLabelMode[]) => void;
   showIdleEdges: boolean;
   showIdleNodes: boolean;
@@ -51,6 +52,7 @@ type ReduxProps = {
   toggleIdleNodes(): void;
   toggleOperationNodes(): void;
   toggleRankByInboundEdges(): void;
+  toggleRankByOutboundEdges(): void;
   toggleServiceNodes(): void;
   toggleTrafficAnimation(): void;
 };
@@ -151,6 +153,12 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
       props.rankByInboundEdges,
       props.toggleRankByInboundEdges
     );
+    this.handleURLBool(
+      URLParam.GRAPH_RANK_BY_OUTBOUND_EDGES,
+      INITIAL_GRAPH_STATE.toolbarState.rankByOutboundEdges,
+      props.rankByOutboundEdges,
+      props.toggleRankByOutboundEdges
+    );
   }
 
   componentDidUpdate(prev: GraphSettingsProps) {
@@ -227,6 +235,12 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
       prev.rankByInboundEdges,
       this.props.rankByInboundEdges
     );
+    this.alignURLBool(
+      URLParam.GRAPH_RANK_BY_OUTBOUND_EDGES,
+      INITIAL_GRAPH_STATE.toolbarState.rankByOutboundEdges,
+      prev.rankByOutboundEdges,
+      this.props.rankByOutboundEdges
+    );
   }
 
   private handleURLBool = (param: URLParam, paramDefault: boolean, reduxValue: boolean, reduxToggle: () => void) => {
@@ -280,6 +294,7 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
       compressOnHide,
       edgeLabels,
       rankByInboundEdges,
+      rankByOutboundEdges,
       showIdleEdges,
       showIdleNodes,
       showMissingSidecars,
@@ -302,6 +317,7 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
       toggleIdleNodes,
       toggleOperationNodes,
       toggleRankByInboundEdges,
+      toggleRankByOutboundEdges,
       toggleServiceNodes,
       toggleTrafficAnimation
     } = this.props;
@@ -574,9 +590,15 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
     const scoringOptions: DisplayOptionType[] = [
       {
         id: 'rankByInboundEdges',
-        labelText: 'Rank by Inbound Edges',
+        labelText: 'Inbound Edges',
         isChecked: rankByInboundEdges,
         onChange: toggleRankByInboundEdges
+      },
+      {
+        id: 'rankByOutboundEdges',
+        labelText: 'Outbound Edges',
+        isChecked: rankByOutboundEdges,
+        onChange: toggleRankByOutboundEdges
       }
     ];
 
@@ -794,6 +816,7 @@ const mapStateToProps = (state: KialiAppState) => ({
   compressOnHide: state.graph.toolbarState.compressOnHide,
   edgeLabels: edgeLabelsSelector(state),
   rankByInboundEdges: state.graph.toolbarState.rankByInboundEdges,
+  rankByOutboundEdges: state.graph.toolbarState.rankByOutboundEdges,
   showIdleEdges: state.graph.toolbarState.showIdleEdges,
   showIdleNodes: state.graph.toolbarState.showIdleNodes,
   showMissingSidecars: state.graph.toolbarState.showMissingSidecars,
@@ -818,6 +841,7 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<KialiAppState, void, KialiAp
     toggleIdleNodes: bindActionCreators(GraphToolbarActions.toggleIdleNodes, dispatch),
     toggleOperationNodes: bindActionCreators(GraphToolbarActions.toggleOperationNodes, dispatch),
     toggleRankByInboundEdges: bindActionCreators(GraphToolbarActions.toggleRankByInboundEdges, dispatch),
+    toggleRankByOutboundEdges: bindActionCreators(GraphToolbarActions.toggleRankByOutboundEdges, dispatch),
     toggleServiceNodes: bindActionCreators(GraphToolbarActions.toggleServiceNodes, dispatch),
     toggleTrafficAnimation: bindActionCreators(GraphToolbarActions.toggleTrafficAnimation, dispatch)
   };

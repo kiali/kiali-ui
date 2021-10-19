@@ -94,5 +94,8 @@ export const scoringCriteriaSelector = createIdentitySelector((state: KialiAppSt
   if (toolbarState.rankByInboundEdges) {
     selectedScoringCriteria.push(ScoringCriteria.InboundEdges);
   }
+  if (toolbarState.rankByOutboundEdges) {
+    selectedScoringCriteria.push(ScoringCriteria.OutboundEdges);
+  }
   return selectedScoringCriteria;
 });

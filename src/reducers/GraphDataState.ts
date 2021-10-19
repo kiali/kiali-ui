@@ -21,6 +21,7 @@ export const INITIAL_GRAPH_STATE: GraphState = {
     graphType: GraphType.VERSIONED_APP,
     hideValue: '',
     rankByInboundEdges: false,
+    rankByOutboundEdges: false,
     showFindHelp: false,
     showIdleEdges: false,
     showIdleNodes: false,
@@ -192,6 +193,12 @@ const graphDataState = (state: GraphState = INITIAL_GRAPH_STATE, action: KialiAp
       return updateState(state, {
         toolbarState: updateState(state.toolbarState, {
           rankByInboundEdges: !state.toolbarState.rankByInboundEdges
+        })
+      });
+    case getType(GraphToolbarActions.toggleRankByOutboundEdges):
+      return updateState(state, {
+        toolbarState: updateState(state.toolbarState, {
+          rankByOutboundEdges: !state.toolbarState.rankByOutboundEdges
         })
       });
     case getType(GraphToolbarActions.toggleServiceNodes):
