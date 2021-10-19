@@ -128,7 +128,7 @@ class GatewaySelector extends React.Component<Props, GatewaySelectorState> {
   };
 
   isIncludeMeshValid = (): boolean => {
-    if (this.state.addMesh) {
+    if (this.state.addGateway && this.state.addMesh) {
       if (this.state.newGateway) {
         return !this.state.gwHosts.split(',').some(h => h === '*');
       } else {
