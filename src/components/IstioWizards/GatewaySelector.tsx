@@ -17,6 +17,7 @@ type Props = {
   gateway: string;
   isMesh: boolean;
   gateways: string[];
+  vsHosts: string[];
   onGatewayChange: (valid: boolean, gateway: GatewaySelectorState) => void;
 };
 
@@ -85,7 +86,7 @@ class GatewaySelector extends React.Component<Props, GatewaySelectorState> {
               addMesh: !prevState.addMesh
             };
           },
-          () => this.props.onGatewayChange(true, this.state)
+          () => this.props.onGatewayChange(this.isIncludeMeshValid(), this.state)
         );
         break;
       case GatewayForm.GW_HOSTS:
@@ -126,6 +127,10 @@ class GatewaySelector extends React.Component<Props, GatewaySelectorState> {
     }
   };
 
+  isIncludeMeshValid = (): boolean => {
+    return !(this.props.vsHosts.some(h => h === '*') && this.state.addMesh);
+  };
+
   render() {
     return (
       <Form isHorizontal={true}>
@@ -141,7 +146,11 @@ class GatewaySelector extends React.Component<Props, GatewaySelectorState> {
         </FormGroup>
         {this.state.addGateway && (
           <>
-            <FormGroup fieldId="includeMesh">
+            <FormGroup
+              fieldId="includeMesh"
+              isValid={this.isIncludeMeshValid()}
+              helperTextInvalid={"VirtualService Host '*' wildcard not allowed on mesh gateway."}
+            >
               <Checkbox
                 id="includeMesh"
                 label={
