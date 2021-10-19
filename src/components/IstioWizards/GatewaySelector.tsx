@@ -76,7 +76,7 @@ class GatewaySelector extends React.Component<Props, GatewaySelectorState> {
               addGateway: !prevState.addGateway
             };
           },
-          () => this.props.onGatewayChange(true, this.state)
+          () => this.props.onGatewayChange(this.isGatewayValid(), this.state)
         );
         break;
       case GatewayForm.MESH:
@@ -86,7 +86,7 @@ class GatewaySelector extends React.Component<Props, GatewaySelectorState> {
               addMesh: !prevState.addMesh
             };
           },
-          () => this.props.onGatewayChange(this.isIncludeMeshValid(), this.state)
+          () => this.props.onGatewayChange(this.isGatewayValid(), this.state)
         );
         break;
       case GatewayForm.GW_HOSTS:
@@ -95,7 +95,7 @@ class GatewaySelector extends React.Component<Props, GatewaySelectorState> {
             gwHosts: value,
             gwHostsValid: this.checkGwHosts(value)
           },
-          () => this.props.onGatewayChange(this.state.gwHostsValid, this.state)
+          () => this.props.onGatewayChange(this.isGatewayValid(), this.state)
         );
         break;
       case GatewayForm.SELECT:
@@ -103,7 +103,7 @@ class GatewaySelector extends React.Component<Props, GatewaySelectorState> {
           {
             newGateway: value === 'true'
           },
-          () => this.props.onGatewayChange(this.isIncludeMeshValid(), this.state)
+          () => this.props.onGatewayChange(this.isGatewayValid(), this.state)
         );
         break;
       case GatewayForm.GATEWAY_SELECTED:
@@ -111,7 +111,7 @@ class GatewaySelector extends React.Component<Props, GatewaySelectorState> {
           {
             selectedGateway: value
           },
-          () => this.props.onGatewayChange(this.isIncludeMeshValid(), this.state)
+          () => this.props.onGatewayChange(this.isGatewayValid(), this.state)
         );
         break;
       case GatewayForm.PORT:
@@ -119,7 +119,7 @@ class GatewaySelector extends React.Component<Props, GatewaySelectorState> {
           {
             port: +value
           },
-          () => this.props.onGatewayChange(true, this.state)
+          () => this.props.onGatewayChange(this.isGatewayValid(), this.state)
         );
         break;
       default:
@@ -127,15 +127,30 @@ class GatewaySelector extends React.Component<Props, GatewaySelectorState> {
     }
   };
 
-  isIncludeMeshValid = (): boolean => {
-    if (this.state.addGateway && this.state.addMesh) {
-      if (this.state.newGateway) {
-        return !this.state.gwHosts.split(',').some(h => h === '*');
-      } else {
-        return !this.props.vsHosts.some(h => h === '*');
+  isMeshGatewayValid = (): boolean => {
+    // Gateway added
+    if (this.state.addGateway) {
+      // Mesh can't use wildcard in the hosts
+      if (this.state.addMesh) {
+        if (this.state.newGateway) {
+          // If mesh, a new gateway can't use wildcard
+          return !this.state.gwHosts.split(',').some(h => h === '*');
+        } else {
+          // If mesh, a selected gateway can't use wildcard
+          return !this.props.vsHosts.some(h => h === '*');
+        }
       }
+    } else {
+      // No gateway means that mesh is used by default
+      // Mesh can't use wildcard in the hosts
+      return !this.props.vsHosts.some(h => h === '*');
     }
     return true;
+  };
+
+  isGatewayValid = (): boolean => {
+    // gwHostsValid is used as last validation, it's true by default
+    return this.isMeshGatewayValid() && this.state.gwHostsValid;
   };
 
   render() {
@@ -155,7 +170,7 @@ class GatewaySelector extends React.Component<Props, GatewaySelectorState> {
           <>
             <FormGroup
               fieldId="includeMesh"
-              isValid={this.isIncludeMeshValid()}
+              isValid={this.isMeshGatewayValid()}
               helperTextInvalid={"VirtualService Host '*' wildcard not allowed on mesh gateway."}
             >
               <Checkbox

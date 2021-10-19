@@ -561,7 +561,7 @@ class ServiceWizard extends React.Component<ServiceWizardProps, ServiceWizardSta
                 <div style={{ marginTop: '20px' }}>
                   <VirtualServiceHosts
                     vsHosts={this.state.vsHosts}
-                    isMesh={this.state.gateway ? this.state.gateway.addGateway && this.state.gateway.addMesh : false}
+                    gateway={this.state.gateway}
                     onVsHostsChange={this.onVsHosts}
                   />
                 </div>
