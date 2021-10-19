@@ -16,9 +16,9 @@ type Props = {
   duration: DurationInSeconds;
 };
 
-function someNonZeroValues(metrics: Metric[]): boolean {
-  if (metrics.length > 0) {
-    return metrics[0].datapoints.some(dp => Number(dp[1]) !== 0);
+function showMetrics(metrics: Metric[] | undefined): boolean {
+  if (metrics && metrics.length && metrics[0].datapoints.some(dp => Number(dp[1]) !== 0)) {
+    return true;
   }
 
   return false;
@@ -26,11 +26,13 @@ function someNonZeroValues(metrics: Metric[]): boolean {
 
 class OverviewCardSparkline extends React.Component<Props, {}> {
   render() {
-    if (this.props.metrics && this.props.metrics.length > 0 && someNonZeroValues(this.props.metrics)) {
+    if (showMetrics(this.props.metrics)) {
       let series: VCLine<RichDataPoint>[] = [];
 
-      const data = toVCLine(this.props.metrics[0].datapoints, 'Total', PFColors.Blue400);
-      series.push(data);
+      if (this.props.metrics && this.props.metrics.length > 0) {
+        const data = toVCLine(this.props.metrics[0].datapoints, 'Total', PFColors.Blue400);
+        series.push(data);
+      }
 
       if (this.props.errorMetrics && this.props.errorMetrics.length > 0) {
         const dataErrors = toVCLine(this.props.errorMetrics[0].datapoints, '4xx+5xx', PFColors.Danger);
