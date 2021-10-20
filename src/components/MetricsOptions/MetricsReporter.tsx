@@ -10,6 +10,7 @@ import { style } from 'typestyle';
 interface Props {
   onChanged: (reproter: Reporter) => void;
   direction: Direction;
+  reporter: Reporter;
 }
 
 const infoStyle = style({
@@ -23,8 +24,6 @@ export default class MetricsReporter extends React.Component<Props> {
     source: 'Source'
   };
 
-  private reporter: Reporter;
-
   static initialReporter = (direction: Direction): Reporter => {
     const reporterParam = HistoryManager.getParam(URLParam.REPORTER);
     if (reporterParam !== undefined) {
@@ -35,13 +34,12 @@ export default class MetricsReporter extends React.Component<Props> {
 
   constructor(props: Props) {
     super(props);
-    this.reporter = MetricsReporter.initialReporter(props.direction);
   }
 
   onReporterChanged = (reporter: string) => {
     HistoryManager.setParam(URLParam.REPORTER, reporter);
-    this.reporter = reporter as Reporter;
-    this.props.onChanged(this.reporter);
+    const newReporter = reporter as Reporter;
+    this.props.onChanged(newReporter);
   };
 
   reportTooltip = (
@@ -79,8 +77,8 @@ export default class MetricsReporter extends React.Component<Props> {
           disabled={false}
           handleSelect={this.onReporterChanged}
           nameDropdown={'Reported from'}
-          value={this.reporter}
-          initialLabel={MetricsReporter.ReporterOptions[this.reporter]}
+          value={this.props.reporter}
+          initialLabel={MetricsReporter.ReporterOptions[this.props.reporter]}
           options={MetricsReporter.ReporterOptions}
         />
         <Tooltip content={<div style={{ textAlign: 'left' }}>{this.reportTooltip}</div>} position={TooltipPosition.top}>
