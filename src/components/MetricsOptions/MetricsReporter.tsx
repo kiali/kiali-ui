@@ -32,10 +32,6 @@ export default class MetricsReporter extends React.Component<Props> {
     return direction === 'inbound' ? 'destination' : 'source';
   };
 
-  constructor(props: Props) {
-    super(props);
-  }
-
   onReporterChanged = (reporter: string) => {
     HistoryManager.setParam(URLParam.REPORTER, reporter);
     const newReporter = reporter as Reporter;
