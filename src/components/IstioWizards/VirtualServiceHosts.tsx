@@ -13,16 +13,18 @@ class VirtualServiceHosts extends React.Component<Props> {
       // vsHosts must have a value
       return false;
     }
-    if (this.props.gateway && vsHosts.some(h => h === '*')) {
-      if (!this.props.gateway.addGateway) {
-        // wildcard needs a gateway
-        return false;
-      } else {
+    const hasWildcard = vsHosts.some(h => h === '*');
+    if (this.props.gateway) {
+      if (this.props.gateway.addGateway) {
         if (this.props.gateway.addMesh) {
-          // wildcard needs a non mesh gateway
-          return false;
+          // Mesh needs a non Wilcard
+          return !hasWildcard;
         }
+      } else {
+        return !hasWildcard;
       }
+    } else {
+      return !hasWildcard;
     }
     return true;
   };

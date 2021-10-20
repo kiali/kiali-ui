@@ -350,19 +350,20 @@ class ServiceWizard extends React.Component<ServiceWizardProps, ServiceWizardSta
   onVsHosts = (valid: boolean, vsHosts: string[]) => {
     this.setState(prevState => {
       prevState.valid.vsHosts = valid;
-      // Sync VS Hosts with GW
-      if (
-        valid &&
-        !prevState.valid.gateway &&
-        vsHosts.every(h => h !== '*') &&
-        prevState.gateway &&
-        prevState.gateway.addMesh
-      ) {
-        prevState.valid.gateway = valid;
-      }
-      // When adding a new Gateway, VirtualService host should be synced with Gateway host
       if (prevState.gateway && prevState.gateway.addGateway && prevState.gateway.newGateway) {
         prevState.gateway.gwHosts = vsHosts.join(',');
+      }
+      // Check if Gateway is valid after a VsHosts check
+      if (valid && !prevState.valid.gateway) {
+        const hasVsWildcard = vsHosts.some(h => h === '*');
+        if (hasVsWildcard) {
+          if (prevState.gateway && !prevState.gateway.addMesh) {
+            prevState.valid.gateway = true;
+          }
+        } else {
+          // If no wildcard Gateway should be ok
+          prevState.valid.gateway = true;
+        }
       }
       return {
         valid: prevState.valid,
@@ -402,11 +403,6 @@ class ServiceWizard extends React.Component<ServiceWizardProps, ServiceWizardSta
   onGateway = (valid: boolean, gateway: GatewaySelectorState) => {
     this.setState(prevState => {
       prevState.valid.gateway = valid;
-      // Sync VS Hosts as when Gateway is valid, it will be valid the VS Hosts
-      if (valid) {
-        prevState.valid.vsHosts = valid;
-      }
-      // When adding a new Gateway, VirtualService host should be synced with Gateway host
       return {
         valid: prevState.valid,
         gateway: gateway,

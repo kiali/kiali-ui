@@ -128,24 +128,26 @@ class GatewaySelector extends React.Component<Props, GatewaySelectorState> {
   };
 
   isMeshGatewayValid = (): boolean => {
+    const hasVsWildcard = this.props.vsHosts.some(h => h === '*');
+    const hasGwWildcard = this.state.gwHosts.split(',').some(h => h === '*');
     // Gateway added
     if (this.state.addGateway) {
       // Mesh can't use wildcard in the hosts
       if (this.state.addMesh) {
         if (this.state.newGateway) {
           // If mesh, a new gateway can't use wildcard
-          return !this.state.gwHosts.split(',').some(h => h === '*');
+          return !hasGwWildcard;
         } else {
           // If mesh, a selected gateway can't use wildcard
-          return !this.props.vsHosts.some(h => h === '*');
+          return !hasVsWildcard;
         }
       }
+      return true;
     } else {
       // No gateway means that mesh is used by default
       // Mesh can't use wildcard in the hosts
-      return !this.props.vsHosts.some(h => h === '*');
+      return !hasVsWildcard;
     }
-    return true;
   };
 
   isGatewayValid = (): boolean => {
