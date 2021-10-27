@@ -34,4 +34,6 @@ clone kiali-ui repository and setup the project
 
 `yarn install`
 
+launch cypress in visual mode
+
 `yarn run cypress open`
