@@ -28,7 +28,7 @@ v14.18.1`
 
 last install yarn package manager
 
-`npm install --global yarn`
+`sudo npm install --global yarn`
 
 clone kiali-ui repository and setup the project
 
