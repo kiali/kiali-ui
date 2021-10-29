@@ -1,4 +1,4 @@
-import { DecoratedGraphElements } from '../../types/Graph';
+import { DecoratedGraphElements, DecoratedGraphNodeWrapper } from '../../types/Graph';
 
 export enum ScoringCriteria {
   InboundEdges = 'InboundEdges',
@@ -140,8 +140,58 @@ export function scoreNodes(
     return node;
   });
 
+  const normalizedNodes = rankedNodes !== undefined ? normalizeRanks(rankedNodes) : undefined;
+
   return {
-    nodes: rankedNodes,
+    nodes: normalizedNodes,
     edges: elements.edges
   };
+}
+
+// normalizeRanks normalizes the ranks for the given nodes so that ranks for
+// all the nodes fall between 1..100.
+function normalizeRanks(nodes: Readonly<DecoratedGraphNodeWrapper[]>): DecoratedGraphNodeWrapper[] {
+  const minRange = 1;
+  const minRank = nodes.length >= 1 ? 1 : undefined;
+  let maxRank: number | undefined;
+  for (const node of nodes) {
+    if (node.data.rank === undefined) {
+      break;
+    }
+    maxRank = node.data.rank;
+  }
+  const maxRange = maxRank !== undefined && maxRank < 100 ? maxRank : 100;
+
+  // If there's no min/max then we can't normalize
+  if (minRank === undefined || maxRank === undefined) {
+    return [...nodes];
+  }
+
+  return nodes.map(node => {
+    if (node.data.rank === undefined) {
+      return node;
+    }
+
+    // All nodes are the same rank and we want to avoid div by 0
+    if (maxRank === minRank) {
+      node.data.rank = minRank;
+      node.data.isHighestRank = true;
+      node.data.isLowestRank = true;
+      return node;
+    }
+
+    const normalizedRank = (minRange + (node.data.rank - minRank) * (maxRange - minRange)) / (maxRank! - minRank);
+    // Ranks should be whole numbers
+    node.data.rank = Math.ceil(normalizedRank);
+
+    node.data.isLowestRank = false;
+    node.data.isHighestRank = false;
+    if (node.data.rank === minRange) {
+      node.data.isHighestRank = true;
+    } else if (node.data.rank === maxRange || node.data.rank === maxRank) {
+      node.data.isLowestRank = true;
+    }
+
+    return node;
+  });
 }

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 import { GraphFind } from '../GraphFind';
+import { RankMode } from 'types/Graph';
 
 const testHandler = () => undefined;
 const testSetter = _val => undefined;
@@ -14,6 +15,8 @@ describe('Parse find value test', () => {
         edgeLabels={[]}
         findValue="testFind"
         hideValue="testHide"
+        rank={true}
+        rankBy={[RankMode.RANK_BY_INBOUND_EDGES]}
         showFindHelp={false}
         showSecurity={false}
         showIdleNodes={false}
@@ -62,6 +65,8 @@ describe('Parse find value test', () => {
     expect(instance.parseValue('operation = foo')).toEqual('node[aggregateValue = "foo"]');
     // @ts-ignore
     expect(instance.parseValue('op = foo')).toEqual('node[aggregateValue = "foo"]');
+    // @ts-ignore
+    expect(instance.parseValue('rank = 1')).toEqual('node[rank = 1]');
     // @ts-ignore
     expect(instance.parseValue('service = foo')).toEqual('node[service = "foo"]');
     // @ts-ignore

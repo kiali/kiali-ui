@@ -14,6 +14,7 @@ import {
   GraphType,
   Layout,
   NodeParamsType,
+  RankMode,
   SummaryData,
   TrafficRate
 } from '../types/Graph';
@@ -46,6 +47,7 @@ export interface GraphToolbarState {
   // dropdown props
   edgeLabels: EdgeLabelMode[];
   graphType: GraphType;
+  rankBy: RankMode[];
   trafficRates: TrafficRate[];
   // find props
   findValue: string;
@@ -55,13 +57,12 @@ export interface GraphToolbarState {
   boxByCluster: boolean;
   boxByNamespace: boolean;
   compressOnHide: boolean;
-  rankByInboundEdges: boolean;
-  rankByOutboundEdges: boolean;
   showIdleEdges: boolean;
   showIdleNodes: boolean;
   showLegend: boolean;
   showMissingSidecars: boolean;
   showOperationNodes: boolean;
+  rank: boolean;
   showSecurity: boolean;
   showServiceNodes: boolean;
   showTrafficAnimation: boolean;

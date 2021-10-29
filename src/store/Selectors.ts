@@ -2,7 +2,6 @@ import { createSelector } from 'reselect';
 import { KialiAppState } from './Store';
 import { isMTLSEnabled } from '../types/TLSStatus';
 import { TimeRange } from '../types/Common';
-import { ScoringCriteria } from 'pages/Graph/GraphScore';
 // These memoized selectors are from Redux Reselect package
 
 type Selector<T> = (state: KialiAppState) => T;
@@ -48,6 +47,10 @@ const namespaceItems = (state: KialiAppState) => state.namespaces.items;
 
 export const namespaceItemsSelector = createIdentitySelector(namespaceItems);
 
+const rankLabels = (state: KialiAppState) => state.graph.toolbarState.rankBy;
+
+export const rankLabelSelector = createIdentitySelector(rankLabels);
+
 const refreshInterval = (state: KialiAppState) => state.userSettings.refreshInterval;
 
 export const refreshIntervalSelector = createIdentitySelector(refreshInterval);
@@ -87,15 +90,3 @@ export const istioStatusSelector = createIdentitySelector(istioStatus);
 const istioCertsInfo = (state: KialiAppState) => state.istioCertsInfo;
 
 export const istioCertsInfoSelector = createIdentitySelector(istioCertsInfo);
-
-export const scoringCriteriaSelector = createIdentitySelector((state: KialiAppState) => {
-  const toolbarState = state.graph.toolbarState;
-  const selectedScoringCriteria: ScoringCriteria[] = [];
-  if (toolbarState.rankByInboundEdges) {
-    selectedScoringCriteria.push(ScoringCriteria.InboundEdges);
-  }
-  if (toolbarState.rankByOutboundEdges) {
-    selectedScoringCriteria.push(ScoringCriteria.OutboundEdges);
-  }
-  return selectedScoringCriteria;
-});

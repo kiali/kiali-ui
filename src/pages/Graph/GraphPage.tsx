@@ -10,7 +10,6 @@ import history from '../../app/History';
 import { DurationInSeconds, IntervalInMilliseconds, TimeInMilliseconds, TimeInSeconds } from '../../types/Common';
 import { MessageType } from '../../types/MessageCenter';
 import Namespace from '../../types/Namespace';
-import { scoreNodes, ScoringCriteria } from './GraphScore';
 import {
   CytoscapeClickEvent,
   DecoratedGraphElements,
@@ -23,7 +22,8 @@ import {
   SummaryData,
   UNKNOWN,
   BoxByType,
-  TrafficRate
+  TrafficRate,
+  RankMode
 } from '../../types/Graph';
 import { computePrometheusRateParams } from '../../services/Prometheus';
 import * as AlertUtils from '../../utils/AlertUtils';
@@ -45,7 +45,6 @@ import {
   refreshIntervalSelector,
   replayActiveSelector,
   replayQueryTimeSelector,
-  scoringCriteriaSelector,
   trafficRatesSelector
 } from '../../store/Selectors';
 import { KialiAppState } from '../../store/Store';
@@ -96,10 +95,11 @@ type ReduxProps = {
   node?: NodeParamsType;
   onNamespaceChange: () => void;
   onReady: (cytoscapeRef: any) => void;
+  rank: boolean;
+  rankBy: RankMode[];
   refreshInterval: IntervalInMilliseconds;
   replayActive: boolean;
   replayQueryTime: TimeInMilliseconds;
-  scoringCriteria: ScoringCriteria[];
   setActiveNamespaces: (namespaces: Namespace[]) => void;
   setGraphDefinition: (graphDefinition: GraphDefinition) => void;
   setNode: (node?: NodeParamsType) => void;
@@ -479,7 +479,7 @@ export class GraphPage extends React.Component<GraphPageProps, GraphPageState> {
   ) => {
     this.setState({
       graphData: {
-        elements: scoreNodes(elements, ...this.props.scoringCriteria),
+        elements: elements,
         isLoading: false,
         fetchParams: fetchParams,
         timestamp: graphTimestamp * 1000
@@ -702,10 +702,11 @@ const mapStateToProps = (state: KialiAppState) => ({
   layout: state.graph.layout,
   mtlsEnabled: meshWideMTLSEnabledSelector(state),
   node: state.graph.node,
+  rank: state.graph.toolbarState.rank,
+  rankBy: state.graph.toolbarState.rankBy,
   refreshInterval: refreshIntervalSelector(state),
   replayActive: replayActiveSelector(state),
   replayQueryTime: replayQueryTimeSelector(state),
-  scoringCriteria: scoringCriteriaSelector(state),
   showIdleEdges: state.graph.toolbarState.showIdleEdges,
   showIdleNodes: state.graph.toolbarState.showIdleNodes,
   showLegend: state.graph.toolbarState.showLegend,
