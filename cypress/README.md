@@ -30,7 +30,11 @@ last install yarn package manager
 
 `sudo npm install --global yarn`
 
-clone kiali-ui repository 
+clone kiali-ui repository and cd into directory
+
+`git clone ...`
+
+`cd kiali-ui`
 
 checkout on right branch
 
