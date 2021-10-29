@@ -30,7 +30,13 @@ last install yarn package manager
 
 `sudo npm install --global yarn`
 
-clone kiali-ui repository and setup the project
+clone kiali-ui repository 
+
+checkout on right branch
+
+`git checkout cypress-integration`
+
+and setup the project by running
 
 `yarn install`
 
