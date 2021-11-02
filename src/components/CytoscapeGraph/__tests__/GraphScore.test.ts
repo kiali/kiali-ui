@@ -103,8 +103,6 @@ describe('scoreNodes', () => {
 
     expect(target.data.score).toEqual(1);
     expect(target.data.rank).toEqual(1);
-    expect(target.data.isHighestRank).toBeTruthy();
-    expect(target.data.isLowestRank).toBeTruthy();
 
     expect(source.data.score).toBeUndefined();
     expect(source.data.rank).toBeUndefined();
@@ -136,8 +134,6 @@ describe('scoreNodes', () => {
 
     expect(source.data.score).toEqual(1);
     expect(source.data.rank).toEqual(1);
-    expect(source.data.isHighestRank).toBeTruthy();
-    expect(source.data.isLowestRank).toBeTruthy();
 
     expect(target.data.score).toBeUndefined();
     expect(target.data.rank).toBeUndefined();
@@ -169,13 +165,9 @@ describe('scoreNodes', () => {
 
     expect(source.data.score).toEqual(1);
     expect(source.data.rank).toEqual(1);
-    expect(source.data.isHighestRank).toBeTruthy();
-    expect(source.data.isLowestRank).toBeTruthy();
 
     expect(target.data.score).toEqual(1);
     expect(target.data.rank).toEqual(1);
-    expect(target.data.isHighestRank).toBeTruthy();
-    expect(target.data.isLowestRank).toBeTruthy();
   });
 
   it('scores inbound edges with multiple targets', () => {
@@ -214,13 +206,9 @@ describe('scoreNodes', () => {
 
     expect(target2.data.score).toBeGreaterThan(target1.data.score!);
     expect(target2.data.rank).toEqual(1);
-    expect(target2.data.isHighestRank).toBeTruthy();
-    expect(target2.data.isLowestRank).toBeFalsy();
 
     expect(target1.data.score).toBeDefined();
     expect(target1.data.rank).toEqual(2);
-    expect(target1.data.isHighestRank).toBeFalsy();
-    expect(target1.data.isLowestRank).toBeTruthy();
 
     expect(source.data.score).toBeUndefined();
     expect(source.data.rank).toBeUndefined();
@@ -249,15 +237,12 @@ describe('scoreNodes', () => {
 
     expect(target2.data.score).toBeUndefined();
     expect(target2.data.rank).toBeUndefined();
-    expect(target2.data.isHighestRank).toBeUndefined();
 
     expect(target1.data.score).toBeUndefined();
     expect(target1.data.rank).toBeUndefined();
-    expect(target1.data.isHighestRank).toBeUndefined();
 
     expect(source.data.score).toBeUndefined();
     expect(source.data.rank).toBeUndefined();
-    expect(source.data.isHighestRank).toBeUndefined();
   });
 
   it('normalizes scores within 100 when more than 100', () => {
@@ -297,9 +282,7 @@ describe('scoreNodes', () => {
     const lastTarget = scoredNodes.nodes?.find(findById('target149'))!;
 
     expect(firstTarget.data.rank).toEqual(1);
-    expect(firstTarget.data.isHighestRank).toBeTruthy();
 
     expect(lastTarget.data.rank).toEqual(100);
-    expect(lastTarget.data.isLowestRank).toBeTruthy();
   });
 });

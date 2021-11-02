@@ -175,22 +175,12 @@ function normalizeRanks(nodes: Readonly<DecoratedGraphNodeWrapper[]>): Decorated
     // All nodes are the same rank and we want to avoid div by 0
     if (maxRank === minRank) {
       node.data.rank = minRank;
-      node.data.isHighestRank = true;
-      node.data.isLowestRank = true;
       return node;
     }
 
     const normalizedRank = (minRange + (node.data.rank - minRank) * (maxRange - minRange)) / (maxRank! - minRank);
     // Ranks should be whole numbers
     node.data.rank = Math.ceil(normalizedRank);
-
-    node.data.isLowestRank = false;
-    node.data.isHighestRank = false;
-    if (node.data.rank === minRange) {
-      node.data.isHighestRank = true;
-    } else if (node.data.rank === maxRange || node.data.rank === maxRank) {
-      node.data.isLowestRank = true;
-    }
 
     return node;
   });

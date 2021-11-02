@@ -88,13 +88,13 @@ export class GraphToolbar extends React.PureComponent<GraphToolbarProps> {
       HistoryManager.setParam(URLParam.GRAPH_EDGE_LABEL, props.edgeLabels.join(','));
     }
 
-    const urlRankLabels = HistoryManager.getParam(URLParam.GRAPH_RANK_LABELS, urlParams);
+    const urlRankLabels = HistoryManager.getParam(URLParam.GRAPH_RANK_BY, urlParams);
     if (!!urlRankLabels) {
       if (urlRankLabels !== props.rankBy.join(',')) {
         props.setRankBy(urlRankLabels.split(',') as RankMode[]);
       }
     } else if (props.setRankBy.length > 0) {
-      HistoryManager.setParam(URLParam.GRAPH_RANK_LABELS, props.rankBy.join(','));
+      HistoryManager.setParam(URLParam.GRAPH_RANK_BY, props.rankBy.join(','));
     }
 
     const urlReplayActive = HistoryManager.getBooleanParam(URLParam.GRAPH_REPLAY_ACTIVE);
@@ -143,9 +143,9 @@ export class GraphToolbar extends React.PureComponent<GraphToolbarProps> {
     }
 
     if (this.props.rankBy?.length === 0) {
-      HistoryManager.deleteParam(URLParam.GRAPH_RANK_LABELS, true);
+      HistoryManager.deleteParam(URLParam.GRAPH_RANK_BY, true);
     } else {
-      HistoryManager.setParam(URLParam.GRAPH_RANK_LABELS, String(this.props.rankBy));
+      HistoryManager.setParam(URLParam.GRAPH_RANK_BY, String(this.props.rankBy));
     }
 
     if (this.props.activeNamespaces?.length === 0) {

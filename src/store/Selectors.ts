@@ -47,9 +47,9 @@ const namespaceItems = (state: KialiAppState) => state.namespaces.items;
 
 export const namespaceItemsSelector = createIdentitySelector(namespaceItems);
 
-const rankLabels = (state: KialiAppState) => state.graph.toolbarState.rankBy;
+const rankBy = (state: KialiAppState) => state.graph.toolbarState.rankBy;
 
-export const rankLabelSelector = createIdentitySelector(rankLabels);
+export const rankBySelector = createIdentitySelector(rankBy);
 
 const refreshInterval = (state: KialiAppState) => state.userSettings.refreshInterval;
 

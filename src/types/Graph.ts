@@ -395,8 +395,6 @@ export interface DecoratedGraphNodeData extends GraphNodeData {
   // importance in relation to other nodes. Whole number. Smaller is more important.
   // There can be ties with other nodes.
   rank?: number;
-  isHighestRank?: boolean;
-  isLowestRank?: boolean;
 }
 
 // Edge data after decorating at fetch-time (what is mainly used by ui code)

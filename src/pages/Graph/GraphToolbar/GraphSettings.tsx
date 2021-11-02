@@ -31,13 +31,13 @@ type ReduxProps = {
   boxByNamespace: boolean;
   compressOnHide: boolean;
   edgeLabels: EdgeLabelMode[];
-  rankBy: RankMode[];
   setEdgeLabels: (edgeLabels: EdgeLabelMode[]) => void;
   showIdleEdges: boolean;
   showIdleNodes: boolean;
   showMissingSidecars: boolean;
   showOperationNodes: boolean;
   rank: boolean;
+  rankBy: RankMode[];
   showSecurity: boolean;
   showServiceNodes: boolean;
   showTrafficAnimation: boolean;
@@ -531,8 +531,9 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
         onChange: toggleRank,
         tooltip: (
           <div style={{ textAlign: 'left' }}>
-            Animate the graph to reflect traffic flow. The particle density and speed roughly reflects an edge's request
-            load relevant to the other edges. Animation can be CPU intensive.
+            Rank graph nodes based on configurable criteria such as 'number of inbound edges'. These rankings can be
+            used in the graph find/hide feature to help highlight the most important workloads, services, and
+            applications. Rankings are normalized to fit between 1..100 and nodes may tie with each other in rank.
           </div>
         )
       }
@@ -827,12 +828,12 @@ const mapStateToProps = (state: KialiAppState) => ({
   boxByNamespace: state.graph.toolbarState.boxByNamespace,
   compressOnHide: state.graph.toolbarState.compressOnHide,
   edgeLabels: edgeLabelsSelector(state),
-  rankBy: state.graph.toolbarState.rankBy,
   showIdleEdges: state.graph.toolbarState.showIdleEdges,
   showIdleNodes: state.graph.toolbarState.showIdleNodes,
   showMissingSidecars: state.graph.toolbarState.showMissingSidecars,
   showOperationNodes: state.graph.toolbarState.showOperationNodes,
   rank: state.graph.toolbarState.rank,
+  rankBy: state.graph.toolbarState.rankBy,
   showSecurity: state.graph.toolbarState.showSecurity,
   showServiceNodes: state.graph.toolbarState.showServiceNodes,
   showTrafficAnimation: state.graph.toolbarState.showTrafficAnimation,

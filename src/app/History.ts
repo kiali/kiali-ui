@@ -36,7 +36,7 @@ export enum URLParam {
   GRAPH_LAYOUT = 'layout',
   GRAPH_OPERATION_NODES = 'operationNodes',
   GRAPH_RANK = 'rank',
-  GRAPH_RANK_LABELS = 'rankBy',
+  GRAPH_RANK_BY = 'rankBy',
   GRAPH_REPLAY_ACTIVE = 'replayActive',
   GRAPH_REPLAY_INTERVAL = 'replayInterval',
   GRAPH_REPLAY_START = 'replayStart',
