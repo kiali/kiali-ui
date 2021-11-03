@@ -5,24 +5,27 @@ export enum ScoringCriteria {
   OutboundEdges = 'OutboundEdges'
 }
 
-// scores nodes by counting the number of "target" edges for each node.
-function scoreByInboundEdges(elements: Readonly<DecoratedGraphElements>): Map<string, number | undefined> {
+function scoreByEdges(
+  elements: Readonly<DecoratedGraphElements>,
+  criteria: ScoringCriteria.InboundEdges | ScoringCriteria.OutboundEdges
+): Map<string, number | undefined> {
   const totalEdgeCount = elements.edges?.length;
 
-  const inboundEdgeCountByID = new Map<string, number>();
+  const edgeCountById = new Map<string, number>();
   elements.edges?.forEach(edge => {
-    if (inboundEdgeCountByID.has(edge.data.target)) {
-      const newVal = inboundEdgeCountByID.get(edge.data.target)! + 1;
-      inboundEdgeCountByID.set(edge.data.target, newVal);
+    const nodeId = criteria === ScoringCriteria.InboundEdges ? edge.data.target : edge.data.source;
+    if (edgeCountById.has(nodeId)) {
+      const newVal = edgeCountById.get(nodeId)! + 1;
+      edgeCountById.set(nodeId, newVal);
     } else {
-      inboundEdgeCountByID.set(edge.data.target, 1);
+      edgeCountById.set(nodeId, 1);
     }
   });
 
   let scores = new Map<string, number | undefined>();
   elements.nodes?.forEach(node => {
     let score: number | undefined;
-    const inboundEdgeCount = inboundEdgeCountByID.get(node.data.id);
+    const inboundEdgeCount = edgeCountById.get(node.data.id);
     if (inboundEdgeCount !== undefined && totalEdgeCount !== undefined) {
       score = inboundEdgeCount / totalEdgeCount;
     }
@@ -33,32 +36,14 @@ function scoreByInboundEdges(elements: Readonly<DecoratedGraphElements>): Map<st
   return scores;
 }
 
+// scores nodes by counting the number of "target" edges for each node.
+function scoreByInboundEdges(elements: Readonly<DecoratedGraphElements>): Map<string, number | undefined> {
+  return scoreByEdges(elements, ScoringCriteria.InboundEdges);
+}
+
 // scores nodes by counting number of "source" edges for each node.
 function scoreByOutboundEdges(elements: Readonly<DecoratedGraphElements>): Map<string, number | undefined> {
-  const totalEdgeCount = elements.edges?.length;
-
-  const inboundEdgeCountByID = new Map<string, number>();
-  elements.edges?.forEach(edge => {
-    if (inboundEdgeCountByID.has(edge.data.source)) {
-      const newVal = inboundEdgeCountByID.get(edge.data.source)! + 1;
-      inboundEdgeCountByID.set(edge.data.source, newVal);
-    } else {
-      inboundEdgeCountByID.set(edge.data.source, 1);
-    }
-  });
-
-  let scores = new Map<string, number | undefined>();
-  elements.nodes?.forEach(node => {
-    let score: number | undefined;
-    const inboundEdgeCount = inboundEdgeCountByID.get(node.data.id);
-    if (inboundEdgeCount !== undefined && totalEdgeCount !== undefined) {
-      score = inboundEdgeCount / totalEdgeCount;
-    }
-
-    scores.set(node.data.id, score);
-  });
-
-  return scores;
+  return scoreByEdges(elements, ScoringCriteria.OutboundEdges);
 }
 
 // Adds a score to the node elements based on the criteria(s).
