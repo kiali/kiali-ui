@@ -28,7 +28,7 @@ import { DurationInSeconds, IntervalInMilliseconds } from 'types/Common';
 import { config } from 'config';
 import { store } from 'store/ConfigStore';
 import { toGrpcRate, toHttpRate, toTcpRate, TrafficRate } from 'types/Graph';
-import { GraphToolbarActions } from 'actions/GraphToolbarActions';
+import { graphSettingsSlice } from '../pages/Graph/GraphToolbar/graphSettingsSlice';
 import { StatusState } from 'types/StatusState';
 import { PromisesRegistry } from '../utils/CancelablePromises';
 
@@ -361,7 +361,7 @@ const mapDispatchToProps = (dispatch: KialiDispatch) => ({
   setMeshTlsStatus: bindActionCreators(MeshTlsActions.setinfo, dispatch),
   setNamespaces: bindActionCreators(NamespaceActions.receiveList, dispatch),
   setRefreshInterval: bindActionCreators(UserSettingsActions.setRefreshInterval, dispatch),
-  setTrafficRates: bindActionCreators(GraphToolbarActions.setTrafficRates, dispatch),
+  setTrafficRates: bindActionCreators(graphSettingsSlice.actions.setTrafficRates, dispatch),
   statusRefresh: bindActionCreators(HelpDropdownActions.statusRefresh, dispatch)
 });
 

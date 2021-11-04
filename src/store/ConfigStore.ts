@@ -98,4 +98,5 @@ const initialStore: KialiAppState = {
 
 // pass an optional param to rehydrate state on app start
 export const store = configureStore(initialStore);
+// export type RootState = ReturnType<typeof store.getState>
 export const persistor = persistStore(store);

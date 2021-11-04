@@ -1,13 +1,24 @@
 import { Radio, Dropdown, DropdownToggle, Checkbox, Tooltip, TooltipPosition } from '@patternfly/react-core';
-import * as React from 'react';
-import { connect } from 'react-redux';
-import { ThunkDispatch } from 'redux-thunk';
-import { bindActionCreators } from 'redux';
+import React, { useEffect, useState } from 'react';
+import {
+  boxByClusterToggled,
+  boxByNamespaceToggled,
+  compressOnHideToggled,
+  showMissingSidecarsToggled,
+  setEdgeLabels as setEdgeLabelsAction,
+  showIdleEdgesToggled,
+  operationNodesToggled,
+  showServiceNodesToggled,
+  trafficAnimationToggled,
+  showSecurityToggled,
+  showVirtualServicesToggled,
+  showIdleNodesToggled,
+  INITIAL_GRAPH_STATE
+} from './graphSettingsSlice';
+import { useSelector, useDispatch } from 'react-redux';
 import { HistoryManager, URLParam } from '../../../app/History';
-import { GraphToolbarState, KialiAppState } from '../../../store/Store';
-import { GraphToolbarActions } from '../../../actions/GraphToolbarActions';
+import { KialiAppState } from '../../../store/Store';
 import { GraphType, EdgeLabelMode, isResponseTimeMode, isThroughputMode } from '../../../types/Graph';
-import { KialiAppAction } from 'actions/KialiAppAction';
 import * as _ from 'lodash';
 import { edgeLabelsSelector } from 'store/Selectors';
 import {
@@ -24,39 +35,6 @@ import {
   menuEntryStyle,
   titleStyle
 } from 'styles/DropdownStyles';
-import { INITIAL_GRAPH_STATE } from 'reducers/GraphDataState';
-
-type ReduxProps = {
-  boxByCluster: boolean;
-  boxByNamespace: boolean;
-  compressOnHide: boolean;
-  edgeLabels: EdgeLabelMode[];
-  setEdgeLabels: (edgeLabels: EdgeLabelMode[]) => void;
-  showIdleEdges: boolean;
-  showIdleNodes: boolean;
-  showMissingSidecars: boolean;
-  showOperationNodes: boolean;
-  showSecurity: boolean;
-  showServiceNodes: boolean;
-  showTrafficAnimation: boolean;
-  showVirtualServices: boolean;
-  toggleBoxByCluster(): void;
-  toggleBoxByNamespace(): void;
-  toggleCompressOnHide(): void;
-  toggleGraphMissingSidecars(): void;
-  toggleGraphSecurity(): void;
-  toggleGraphVirtualServices(): void;
-  toggleIdleEdges(): void;
-  toggleIdleNodes(): void;
-  toggleOperationNodes(): void;
-  toggleServiceNodes(): void;
-  toggleTrafficAnimation(): void;
-};
-
-type GraphSettingsProps = ReduxProps &
-  Omit<GraphToolbarState, 'findValue' | 'hideValue' | 'showLegend' | 'showFindHelp' | 'trafficRates'>;
-
-type GraphSettingsState = { isOpen: boolean };
 
 interface DisplayOptionType {
   id: string;
@@ -67,229 +45,206 @@ interface DisplayOptionType {
   tooltip?: React.ReactNode;
 }
 
+interface GraphSettingsProps {
+  graphType: GraphType;
+}
+
 const marginBottom = 20;
 
-class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSettingsState> {
-  constructor(props: GraphSettingsProps) {
-    super(props);
-    this.state = {
-      isOpen: false
-    };
+const handleURLBool = (param: URLParam, paramDefault: boolean, reduxValue: boolean, reduxToggle: () => void) => {
+  const urlValue = HistoryManager.getBooleanParam(param);
+  if (urlValue !== undefined) {
+    if (urlValue !== reduxValue) {
+      reduxToggle();
+    }
+  } else if (reduxValue !== paramDefault) {
+    HistoryManager.setParam(param, String(reduxValue));
+  }
+};
 
-    // Let URL override current redux state at construction time. Update URL as needed.
-    this.handleURLBool(
-      URLParam.GRAPH_ANIMATION,
-      INITIAL_GRAPH_STATE.toolbarState.showTrafficAnimation,
-      props.showTrafficAnimation,
-      props.toggleTrafficAnimation
-    );
-    this.handleURLBool(
-      URLParam.GRAPH_BADGE_SECURITY,
-      INITIAL_GRAPH_STATE.toolbarState.showSecurity,
-      props.showSecurity,
-      props.toggleGraphSecurity
-    );
-    this.handleURLBool(
-      URLParam.GRAPH_BADGE_SIDECAR,
-      INITIAL_GRAPH_STATE.toolbarState.showMissingSidecars,
-      props.showMissingSidecars,
-      props.toggleGraphMissingSidecars
-    );
-    this.handleURLBool(
-      URLParam.GRAPH_BADGE_VS,
-      INITIAL_GRAPH_STATE.toolbarState.showVirtualServices,
-      props.showVirtualServices,
-      props.toggleGraphVirtualServices
-    );
-    this.handleURLBool(
-      URLParam.GRAPH_BOX_CLUSTER,
-      INITIAL_GRAPH_STATE.toolbarState.boxByCluster,
-      props.boxByCluster,
-      props.toggleBoxByCluster
-    );
-    this.handleURLBool(
-      URLParam.GRAPH_BOX_NAMESPACE,
-      INITIAL_GRAPH_STATE.toolbarState.boxByNamespace,
-      props.boxByNamespace,
-      props.toggleBoxByNamespace
-    );
-    this.handleURLBool(
-      URLParam.GRAPH_COMPRESS_ON_HIDE,
-      INITIAL_GRAPH_STATE.toolbarState.compressOnHide,
-      props.compressOnHide,
-      props.toggleCompressOnHide
-    );
-    this.handleURLBool(
-      URLParam.GRAPH_IDLE_EDGES,
-      INITIAL_GRAPH_STATE.toolbarState.showIdleEdges,
-      props.showIdleEdges,
-      props.toggleIdleEdges
-    );
-    this.handleURLBool(
-      URLParam.GRAPH_IDLE_NODES,
-      INITIAL_GRAPH_STATE.toolbarState.showIdleNodes,
-      props.showIdleNodes,
-      props.toggleIdleNodes
-    );
-    this.handleURLBool(
-      URLParam.GRAPH_OPERATION_NODES,
-      INITIAL_GRAPH_STATE.toolbarState.showOperationNodes,
-      props.showOperationNodes,
-      props.toggleOperationNodes
-    );
-    this.handleURLBool(
-      URLParam.GRAPH_SERVICE_NODES,
-      INITIAL_GRAPH_STATE.toolbarState.showServiceNodes,
-      props.showServiceNodes,
-      props.toggleServiceNodes
-    );
+const alignURLBool = (param: URLParam, paramDefault: boolean, curr: boolean) => {
+  const currentURLParam = HistoryManager.getParam(param);
+  if (currentURLParam !== undefined && Boolean(currentURLParam) === curr) {
+    return;
   }
 
-  componentDidUpdate(prev: GraphSettingsProps) {
+  if (curr === paramDefault) {
+    HistoryManager.deleteParam(param, true);
+  } else {
+    HistoryManager.setParam(param, String(curr));
+  }
+};
+
+const GraphSettings = ({ graphType }: GraphSettingsProps) => {
+  const {
+    boxByCluster,
+    boxByNamespace,
+    compressOnHide,
+    showIdleEdges,
+    showIdleNodes,
+    showMissingSidecars,
+    showOperationNodes,
+    showSecurity,
+    showServiceNodes,
+    showTrafficAnimation,
+    showVirtualServices
+  } = useSelector((state: KialiAppState) => state.graph.toolbar);
+  const edgeLabels = useSelector(edgeLabelsSelector);
+
+  const dispatch = useDispatch();
+  const toggleBoxByCluster = () => {
+    dispatch(boxByClusterToggled());
+  };
+  const toggleBoxByNamespace = () => {
+    dispatch(boxByNamespaceToggled());
+  };
+  const toggleCompressOnHide = () => {
+    dispatch(compressOnHideToggled());
+  };
+  const toggleGraphMissingSidecars = () => {
+    dispatch(showMissingSidecarsToggled());
+  };
+  const setEdgeLabels = (edgeLabels: EdgeLabelMode[]) => {
+    dispatch(setEdgeLabelsAction(edgeLabels));
+  };
+  const toggleIdleEdges = () => {
+    dispatch(showIdleEdgesToggled());
+  };
+  const toggleIdleNodes = () => {
+    dispatch(showIdleNodesToggled());
+  };
+  const toggleOperationNodes = () => {
+    dispatch(operationNodesToggled());
+  };
+  const toggleServiceNodes = () => {
+    dispatch(showServiceNodesToggled());
+  };
+  const toggleTrafficAnimation = () => {
+    dispatch(trafficAnimationToggled());
+  };
+  const toggleGraphSecurity = () => {
+    dispatch(showSecurityToggled());
+  };
+  const toggleGraphVirtualServices = () => {
+    dispatch(showVirtualServicesToggled());
+  };
+
+  const [isOpen, setIsOpen] = useState(false);
+
+  // Let URL override current redux state at construction time. Update URL as needed.
+  handleURLBool(
+    URLParam.GRAPH_ANIMATION,
+    INITIAL_GRAPH_STATE.toolbar.showTrafficAnimation,
+    showTrafficAnimation,
+    toggleTrafficAnimation
+  );
+  handleURLBool(
+    URLParam.GRAPH_BADGE_SECURITY,
+    INITIAL_GRAPH_STATE.toolbar.showSecurity,
+    showSecurity,
+    toggleGraphSecurity
+  );
+  handleURLBool(
+    URLParam.GRAPH_BADGE_SIDECAR,
+    INITIAL_GRAPH_STATE.toolbar.showMissingSidecars,
+    showMissingSidecars,
+    toggleGraphMissingSidecars
+  );
+  handleURLBool(
+    URLParam.GRAPH_BADGE_VS,
+    INITIAL_GRAPH_STATE.toolbar.showVirtualServices,
+    showVirtualServices,
+    toggleGraphVirtualServices
+  );
+  handleURLBool(URLParam.GRAPH_BOX_CLUSTER, INITIAL_GRAPH_STATE.toolbar.boxByCluster, boxByCluster, toggleBoxByCluster);
+  handleURLBool(
+    URLParam.GRAPH_BOX_NAMESPACE,
+    INITIAL_GRAPH_STATE.toolbar.boxByNamespace,
+    boxByNamespace,
+    toggleBoxByNamespace
+  );
+  handleURLBool(
+    URLParam.GRAPH_COMPRESS_ON_HIDE,
+    INITIAL_GRAPH_STATE.toolbar.compressOnHide,
+    compressOnHide,
+    toggleCompressOnHide
+  );
+  handleURLBool(URLParam.GRAPH_IDLE_EDGES, INITIAL_GRAPH_STATE.toolbar.showIdleEdges, showIdleEdges, toggleIdleEdges);
+  handleURLBool(URLParam.GRAPH_IDLE_NODES, INITIAL_GRAPH_STATE.toolbar.showIdleNodes, showIdleNodes, toggleIdleNodes);
+  handleURLBool(
+    URLParam.GRAPH_OPERATION_NODES,
+    INITIAL_GRAPH_STATE.toolbar.showOperationNodes,
+    showOperationNodes,
+    toggleOperationNodes
+  );
+  handleURLBool(
+    URLParam.GRAPH_SERVICE_NODES,
+    INITIAL_GRAPH_STATE.toolbar.showServiceNodes,
+    showServiceNodes,
+    toggleServiceNodes
+  );
+
+  useEffect(() => {
     // ensure redux state and URL are aligned
-    this.alignURLBool(
-      URLParam.GRAPH_ANIMATION,
-      INITIAL_GRAPH_STATE.toolbarState.showTrafficAnimation,
-      prev.showTrafficAnimation,
-      this.props.showTrafficAnimation
-    );
-    this.alignURLBool(
-      URLParam.GRAPH_BADGE_SECURITY,
-      INITIAL_GRAPH_STATE.toolbarState.showSecurity,
-      prev.showSecurity,
-      this.props.showSecurity
-    );
-    this.alignURLBool(
-      URLParam.GRAPH_BADGE_SIDECAR,
-      INITIAL_GRAPH_STATE.toolbarState.showMissingSidecars,
-      prev.showMissingSidecars,
-      this.props.showMissingSidecars
-    );
-    this.alignURLBool(
-      URLParam.GRAPH_BADGE_VS,
-      INITIAL_GRAPH_STATE.toolbarState.showVirtualServices,
-      prev.showVirtualServices,
-      this.props.showVirtualServices
-    );
-    this.alignURLBool(
-      URLParam.GRAPH_BOX_CLUSTER,
-      INITIAL_GRAPH_STATE.toolbarState.boxByCluster,
-      prev.boxByCluster,
-      this.props.boxByCluster
-    );
-    this.alignURLBool(
-      URLParam.GRAPH_BOX_NAMESPACE,
-      INITIAL_GRAPH_STATE.toolbarState.boxByNamespace,
-      prev.boxByNamespace,
-      this.props.boxByNamespace
-    );
-    this.alignURLBool(
-      URLParam.GRAPH_COMPRESS_ON_HIDE,
-      INITIAL_GRAPH_STATE.toolbarState.compressOnHide,
-      prev.compressOnHide,
-      this.props.compressOnHide
-    );
-    this.alignURLBool(
-      URLParam.GRAPH_IDLE_EDGES,
-      INITIAL_GRAPH_STATE.toolbarState.showIdleEdges,
-      prev.showIdleEdges,
-      this.props.showIdleEdges
-    );
-    this.alignURLBool(
-      URLParam.GRAPH_IDLE_NODES,
-      INITIAL_GRAPH_STATE.toolbarState.showIdleNodes,
-      prev.showIdleNodes,
-      this.props.showIdleNodes
-    );
-    this.alignURLBool(
-      URLParam.GRAPH_OPERATION_NODES,
-      INITIAL_GRAPH_STATE.toolbarState.showOperationNodes,
-      prev.showOperationNodes,
-      this.props.showOperationNodes
-    );
-    this.alignURLBool(
-      URLParam.GRAPH_SERVICE_NODES,
-      INITIAL_GRAPH_STATE.toolbarState.showServiceNodes,
-      prev.showServiceNodes,
-      this.props.showServiceNodes
-    );
-  }
+    alignURLBool(URLParam.GRAPH_ANIMATION, INITIAL_GRAPH_STATE.toolbar.showTrafficAnimation, showTrafficAnimation);
+    alignURLBool(URLParam.GRAPH_BADGE_SECURITY, INITIAL_GRAPH_STATE.toolbar.showSecurity, showSecurity);
+    alignURLBool(URLParam.GRAPH_BADGE_SIDECAR, INITIAL_GRAPH_STATE.toolbar.showMissingSidecars, showMissingSidecars);
+    alignURLBool(URLParam.GRAPH_BADGE_VS, INITIAL_GRAPH_STATE.toolbar.showVirtualServices, showVirtualServices);
+    alignURLBool(URLParam.GRAPH_BOX_CLUSTER, INITIAL_GRAPH_STATE.toolbar.boxByCluster, boxByCluster);
+    alignURLBool(URLParam.GRAPH_BOX_NAMESPACE, INITIAL_GRAPH_STATE.toolbar.boxByNamespace, boxByNamespace);
+    alignURLBool(URLParam.GRAPH_COMPRESS_ON_HIDE, INITIAL_GRAPH_STATE.toolbar.compressOnHide, compressOnHide);
+    alignURLBool(URLParam.GRAPH_IDLE_EDGES, INITIAL_GRAPH_STATE.toolbar.showIdleEdges, showIdleEdges);
+    alignURLBool(URLParam.GRAPH_IDLE_NODES, INITIAL_GRAPH_STATE.toolbar.showIdleNodes, showIdleNodes);
+    alignURLBool(URLParam.GRAPH_OPERATION_NODES, INITIAL_GRAPH_STATE.toolbar.showOperationNodes, showOperationNodes);
+    alignURLBool(URLParam.GRAPH_SERVICE_NODES, INITIAL_GRAPH_STATE.toolbar.showServiceNodes, showServiceNodes);
+  });
 
-  private handleURLBool = (param: URLParam, paramDefault: boolean, reduxValue: boolean, reduxToggle: () => void) => {
-    const urlValue = HistoryManager.getBooleanParam(param);
-    if (urlValue !== undefined) {
-      if (urlValue !== reduxValue) {
-        reduxToggle();
+  const onToggle = (isOpen: boolean) => {
+    setIsOpen(isOpen);
+  };
+
+  const toggleEdgeLabelMode = (_, event) => {
+    const mode = event.target.value as EdgeLabelMode;
+    if (edgeLabels.includes(mode)) {
+      let newEdgeLabels;
+      switch (mode) {
+        case EdgeLabelMode.RESPONSE_TIME_GROUP:
+          newEdgeLabels = edgeLabels.filter(l => !isResponseTimeMode(l));
+          break;
+        case EdgeLabelMode.THROUGHPUT_GROUP:
+          newEdgeLabels = edgeLabels.filter(l => !isThroughputMode(l));
+          break;
+        default:
+          newEdgeLabels = edgeLabels.filter(l => l !== mode);
       }
-    } else if (reduxValue !== paramDefault) {
-      HistoryManager.setParam(param, String(reduxValue));
-    }
-  };
-
-  private alignURLBool = (param: URLParam, paramDefault: boolean, prev: boolean, curr: boolean) => {
-    if (prev === curr) {
-      return;
-    }
-    if (curr === paramDefault) {
-      HistoryManager.deleteParam(param, true);
+      setEdgeLabels(newEdgeLabels);
     } else {
-      HistoryManager.setParam(param, String(curr));
+      switch (mode) {
+        case EdgeLabelMode.RESPONSE_TIME_GROUP:
+          setEdgeLabels([...edgeLabels, mode, EdgeLabelMode.RESPONSE_TIME_P95]);
+          break;
+        case EdgeLabelMode.THROUGHPUT_GROUP:
+          setEdgeLabels([...edgeLabels, mode, EdgeLabelMode.THROUGHPUT_REQUEST]);
+          break;
+        default:
+          setEdgeLabels([...edgeLabels, mode]);
+      }
     }
   };
 
-  render() {
-    return (
-      <Dropdown
-        toggle={
-          <DropdownToggle id="display-settings" onToggle={this.onToggle}>
-            Display
-          </DropdownToggle>
-        }
-        isOpen={this.state.isOpen}
-      >
-        {this.getPopoverContent()}
-      </Dropdown>
-    );
-  }
-
-  private onToggle = isOpen => {
-    this.setState({
-      isOpen
-    });
+  const toggleEdgeLabelResponseTimeMode = (_, event) => {
+    const mode = event.target.value as EdgeLabelMode;
+    const newEdgeLabels = edgeLabels.filter(l => !isResponseTimeMode(l));
+    setEdgeLabels([...newEdgeLabels, EdgeLabelMode.RESPONSE_TIME_GROUP, mode]);
   };
 
-  private getPopoverContent() {
-    // map our attributes from redux
-    const {
-      boxByCluster,
-      boxByNamespace,
-      compressOnHide,
-      edgeLabels,
-      showIdleEdges,
-      showIdleNodes,
-      showMissingSidecars,
-      showOperationNodes,
-      showSecurity,
-      showServiceNodes,
-      showTrafficAnimation,
-      showVirtualServices
-    } = this.props;
+  const toggleEdgeLabelThroughputMode = (_, event) => {
+    const mode = event.target.value as EdgeLabelMode;
+    const newEdgeLabels = edgeLabels.filter(l => !isThroughputMode(l));
+    setEdgeLabels([...newEdgeLabels, EdgeLabelMode.THROUGHPUT_GROUP, mode]);
+  };
 
-    // map our dispatchers for redux
-    const {
-      toggleBoxByCluster,
-      toggleBoxByNamespace,
-      toggleCompressOnHide,
-      toggleGraphMissingSidecars,
-      toggleGraphSecurity,
-      toggleGraphVirtualServices,
-      toggleIdleEdges,
-      toggleIdleNodes,
-      toggleOperationNodes,
-      toggleServiceNodes,
-      toggleTrafficAnimation
-    } = this.props;
-
+  const getPopoverContent = () => {
     const edgeLabelOptions: DisplayOptionType[] = [
       {
         id: EdgeLabelMode.RESPONSE_TIME_GROUP,
@@ -467,7 +422,7 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
       },
       {
         id: 'filterOperationNodes',
-        disabled: this.props.graphType === GraphType.SERVICE,
+        disabled: graphType === GraphType.SERVICE,
         labelText: 'Operation Nodes',
         isChecked: showOperationNodes,
         onChange: toggleOperationNodes,
@@ -489,7 +444,7 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
       },
       {
         id: 'filterServiceNodes',
-        disabled: this.props.graphType === GraphType.SERVICE,
+        disabled: graphType === GraphType.SERVICE,
         labelText: 'Service Nodes',
         isChecked: showServiceNodes,
         onChange: toggleServiceNodes,
@@ -591,7 +546,7 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
                   name="edgeLabelOptions"
                   isChecked={edgeLabelOption.isChecked}
                   label={edgeLabelOption.labelText}
-                  onChange={this.toggleEdgeLabelMode}
+                  onChange={toggleEdgeLabelMode}
                   value={edgeLabelOption.id}
                 />
               </label>
@@ -619,7 +574,7 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
                           name="rtOptions"
                           isChecked={rtOption.isChecked}
                           label={rtOption.labelText}
-                          onChange={this.toggleEdgeLabelResponseTimeMode}
+                          onChange={toggleEdgeLabelResponseTimeMode}
                           value={rtOption.id}
                         />
                       </label>
@@ -651,7 +606,7 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
                           name="throughputOptions"
                           isChecked={throughputOption.isChecked}
                           label={throughputOption.labelText}
-                          onChange={this.toggleEdgeLabelThroughputMode}
+                          onChange={toggleEdgeLabelThroughputMode}
                           value={throughputOption.id}
                         />
                       </label>
@@ -705,84 +660,20 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
         </div>
       </BoundingClientAwareComponent>
     );
-  }
+  };
 
-  private toggleEdgeLabelMode = (_, event) => {
-    const mode = event.target.value as EdgeLabelMode;
-    if (this.props.edgeLabels.includes(mode)) {
-      let newEdgeLabels;
-      switch (mode) {
-        case EdgeLabelMode.RESPONSE_TIME_GROUP:
-          newEdgeLabels = this.props.edgeLabels.filter(l => !isResponseTimeMode(l));
-          break;
-        case EdgeLabelMode.THROUGHPUT_GROUP:
-          newEdgeLabels = this.props.edgeLabels.filter(l => !isThroughputMode(l));
-          break;
-        default:
-          newEdgeLabels = this.props.edgeLabels.filter(l => l !== mode);
+  return (
+    <Dropdown
+      toggle={
+        <DropdownToggle id="display-settings" onToggle={onToggle}>
+          Display
+        </DropdownToggle>
       }
-      this.props.setEdgeLabels(newEdgeLabels);
-    } else {
-      switch (mode) {
-        case EdgeLabelMode.RESPONSE_TIME_GROUP:
-          this.props.setEdgeLabels([...this.props.edgeLabels, mode, EdgeLabelMode.RESPONSE_TIME_P95]);
-          break;
-        case EdgeLabelMode.THROUGHPUT_GROUP:
-          this.props.setEdgeLabels([...this.props.edgeLabels, mode, EdgeLabelMode.THROUGHPUT_REQUEST]);
-          break;
-        default:
-          this.props.setEdgeLabels([...this.props.edgeLabels, mode]);
-      }
-    }
-  };
-
-  private toggleEdgeLabelResponseTimeMode = (_, event) => {
-    const mode = event.target.value as EdgeLabelMode;
-    const newEdgeLabels = this.props.edgeLabels.filter(l => !isResponseTimeMode(l));
-    this.props.setEdgeLabels([...newEdgeLabels, EdgeLabelMode.RESPONSE_TIME_GROUP, mode]);
-  };
-
-  private toggleEdgeLabelThroughputMode = (_, event) => {
-    const mode = event.target.value as EdgeLabelMode;
-    const newEdgeLabels = this.props.edgeLabels.filter(l => !isThroughputMode(l));
-    this.props.setEdgeLabels([...newEdgeLabels, EdgeLabelMode.THROUGHPUT_GROUP, mode]);
-  };
-}
-
-// Allow Redux to map sections of our global app state to our props
-const mapStateToProps = (state: KialiAppState) => ({
-  boxByCluster: state.graph.toolbarState.boxByCluster,
-  boxByNamespace: state.graph.toolbarState.boxByNamespace,
-  compressOnHide: state.graph.toolbarState.compressOnHide,
-  edgeLabels: edgeLabelsSelector(state),
-  showIdleEdges: state.graph.toolbarState.showIdleEdges,
-  showIdleNodes: state.graph.toolbarState.showIdleNodes,
-  showMissingSidecars: state.graph.toolbarState.showMissingSidecars,
-  showOperationNodes: state.graph.toolbarState.showOperationNodes,
-  showSecurity: state.graph.toolbarState.showSecurity,
-  showServiceNodes: state.graph.toolbarState.showServiceNodes,
-  showTrafficAnimation: state.graph.toolbarState.showTrafficAnimation,
-  showVirtualServices: state.graph.toolbarState.showVirtualServices
-});
-
-// Map our actions to Redux
-const mapDispatchToProps = (dispatch: ThunkDispatch<KialiAppState, void, KialiAppAction>) => {
-  return {
-    setEdgeLabels: bindActionCreators(GraphToolbarActions.setEdgeLabels, dispatch),
-    toggleBoxByCluster: bindActionCreators(GraphToolbarActions.toggleBoxByCluster, dispatch),
-    toggleBoxByNamespace: bindActionCreators(GraphToolbarActions.toggleBoxByNamespace, dispatch),
-    toggleCompressOnHide: bindActionCreators(GraphToolbarActions.toggleCompressOnHide, dispatch),
-    toggleGraphMissingSidecars: bindActionCreators(GraphToolbarActions.toggleGraphMissingSidecars, dispatch),
-    toggleGraphSecurity: bindActionCreators(GraphToolbarActions.toggleGraphSecurity, dispatch),
-    toggleGraphVirtualServices: bindActionCreators(GraphToolbarActions.toggleGraphVirtualServices, dispatch),
-    toggleIdleEdges: bindActionCreators(GraphToolbarActions.toggleIdleEdges, dispatch),
-    toggleIdleNodes: bindActionCreators(GraphToolbarActions.toggleIdleNodes, dispatch),
-    toggleOperationNodes: bindActionCreators(GraphToolbarActions.toggleOperationNodes, dispatch),
-    toggleServiceNodes: bindActionCreators(GraphToolbarActions.toggleServiceNodes, dispatch),
-    toggleTrafficAnimation: bindActionCreators(GraphToolbarActions.toggleTrafficAnimation, dispatch)
-  };
+      isOpen={isOpen}
+    >
+      {getPopoverContent()}
+    </Dropdown>
+  );
 };
 
-// hook up to Redux for our State to be mapped to props
-const GraphSettingsContainer = connect(mapStateToProps, mapDispatchToProps)(GraphSettings);
-export default GraphSettingsContainer;
+export default GraphSettings;

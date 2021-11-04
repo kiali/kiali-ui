@@ -1,4 +1,3 @@
-import * as Cy from 'cytoscape';
 import * as React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -48,8 +47,15 @@ import {
 } from '../../store/Selectors';
 import { KialiAppState } from '../../store/Store';
 import { KialiAppAction } from '../../actions/KialiAppAction';
-import { GraphActions } from '../../actions/GraphActions';
-import { GraphToolbarActions } from '../../actions/GraphToolbarActions';
+import {
+  showIdleNodesToggled,
+  showLegendToggled,
+  namespaceChanged,
+  nodeUpdated,
+  summaryDataUpdated,
+  graphDefinitionUpdated,
+  updateTimeUpdated
+} from './GraphToolbar/graphSettingsSlice';
 import { NodeContextMenuContainer } from '../../components/CytoscapeGraph/ContextMenu/NodeContextMenu';
 import { PFColors } from 'components/Pf/PfColors';
 import { TourActions } from 'actions/TourActions';
@@ -60,7 +66,6 @@ import { toRangeString } from 'components/Time/Utils';
 import { replayBorder } from 'components/Time/Replay';
 import GraphDataSource, { FetchParams, EMPTY_GRAPH_DATA } from '../../services/GraphDataSource';
 import { NamespaceActions } from '../../actions/NamespaceAction';
-import GraphThunkActions from '../../actions/GraphThunkActions';
 import { JaegerTrace } from 'types/JaegerInfo';
 import { JaegerThunkActions } from 'actions/JaegerThunkActions';
 import GraphTour from 'pages/Graph/GraphHelpTour';
@@ -93,7 +98,6 @@ type ReduxProps = {
   mtlsEnabled: boolean;
   node?: NodeParamsType;
   onNamespaceChange: () => void;
-  onReady: (cytoscapeRef: any) => void;
   refreshInterval: IntervalInMilliseconds;
   replayActive: boolean;
   replayQueryTime: TimeInMilliseconds;
@@ -688,9 +692,9 @@ export class GraphPage extends React.Component<GraphPageProps, GraphPageState> {
 const mapStateToProps = (state: KialiAppState) => ({
   activeNamespaces: activeNamespacesSelector(state),
   activeTour: state.tourState.activeTour,
-  boxByCluster: state.graph.toolbarState.boxByCluster,
-  boxByNamespace: state.graph.toolbarState.boxByNamespace,
-  compressOnHide: state.graph.toolbarState.compressOnHide,
+  boxByCluster: state.graph.toolbar.boxByCluster,
+  boxByNamespace: state.graph.toolbar.boxByNamespace,
+  compressOnHide: state.graph.toolbar.compressOnHide,
   duration: durationSelector(state),
   edgeLabels: edgeLabelsSelector(state),
   graphType: graphTypeSelector(state),
@@ -702,15 +706,15 @@ const mapStateToProps = (state: KialiAppState) => ({
   refreshInterval: refreshIntervalSelector(state),
   replayActive: replayActiveSelector(state),
   replayQueryTime: replayQueryTimeSelector(state),
-  showIdleEdges: state.graph.toolbarState.showIdleEdges,
-  showIdleNodes: state.graph.toolbarState.showIdleNodes,
-  showLegend: state.graph.toolbarState.showLegend,
-  showMissingSidecars: state.graph.toolbarState.showMissingSidecars,
-  showOperationNodes: state.graph.toolbarState.showOperationNodes,
-  showSecurity: state.graph.toolbarState.showSecurity,
-  showServiceNodes: state.graph.toolbarState.showServiceNodes,
-  showTrafficAnimation: state.graph.toolbarState.showTrafficAnimation,
-  showVirtualServices: state.graph.toolbarState.showVirtualServices,
+  showIdleEdges: state.graph.toolbar.showIdleEdges,
+  showIdleNodes: state.graph.toolbar.showIdleNodes,
+  showLegend: state.graph.toolbar.showLegend,
+  showMissingSidecars: state.graph.toolbar.showMissingSidecars,
+  showOperationNodes: state.graph.toolbar.showOperationNodes,
+  showSecurity: state.graph.toolbar.showSecurity,
+  showServiceNodes: state.graph.toolbar.showServiceNodes,
+  showTrafficAnimation: state.graph.toolbar.showTrafficAnimation,
+  showVirtualServices: state.graph.toolbar.showVirtualServices,
   summaryData: state.graph.summaryData,
   trace: state.jaegerState?.selectedTrace,
   trafficRates: trafficRatesSelector(state)
@@ -718,17 +722,16 @@ const mapStateToProps = (state: KialiAppState) => ({
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<KialiAppState, void, KialiAppAction>) => ({
   endTour: bindActionCreators(TourActions.endTour, dispatch),
-  onNamespaceChange: bindActionCreators(GraphActions.onNamespaceChange, dispatch),
-  onReady: (cy: Cy.Core) => dispatch(GraphThunkActions.graphReady(cy)),
+  onNamespaceChange: bindActionCreators(namespaceChanged, dispatch),
   setActiveNamespaces: (namespaces: Namespace[]) => dispatch(NamespaceActions.setActiveNamespaces(namespaces)),
-  setGraphDefinition: bindActionCreators(GraphActions.setGraphDefinition, dispatch),
-  setNode: bindActionCreators(GraphActions.setNode, dispatch),
+  setGraphDefinition: bindActionCreators(graphDefinitionUpdated, dispatch),
+  setNode: bindActionCreators(nodeUpdated, dispatch),
   setTraceId: (traceId?: string) => dispatch(JaegerThunkActions.setTraceId(traceId)),
-  setUpdateTime: (val: TimeInMilliseconds) => dispatch(GraphActions.setUpdateTime(val)),
+  setUpdateTime: bindActionCreators(updateTimeUpdated, dispatch),
   startTour: bindActionCreators(TourActions.startTour, dispatch),
-  toggleIdleNodes: bindActionCreators(GraphToolbarActions.toggleIdleNodes, dispatch),
-  toggleLegend: bindActionCreators(GraphToolbarActions.toggleLegend, dispatch),
-  updateSummary: (event: CytoscapeClickEvent) => dispatch(GraphActions.updateSummary(event))
+  toggleIdleNodes: bindActionCreators(showIdleNodesToggled, dispatch),
+  toggleLegend: bindActionCreators(showLegendToggled, dispatch),
+  updateSummary: bindActionCreators(summaryDataUpdated, dispatch)
 });
 
 const GraphPageContainer = connect(mapStateToProps, mapDispatchToProps)(GraphPage);

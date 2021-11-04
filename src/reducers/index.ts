@@ -4,7 +4,6 @@ import { KialiAppState } from '../store/Store';
 import messageCenter from './MessageCenter';
 import loginState from './LoginState';
 import HelpDropdownState from './HelpDropdownState';
-import graphDataState from './GraphDataState';
 import globalState from './GlobalState';
 import namespaceState from './NamespaceState';
 import UserSettingsState from './UserSettingsState';
@@ -15,11 +14,12 @@ import IstioStatusState from './IstioStatusState';
 import JaegerStateReducer from './JaegerState';
 import MetricsStatsReducer from './MetricsStatsState';
 import IstioCertsInfoState from './IstioCertsInfoState';
+import graphSettingsSlice from '../pages/Graph/GraphToolbar/graphSettingsSlice';
 
 const rootReducer = combineReducers<KialiAppState, KialiAppAction>({
   authentication: loginState,
   globalState: globalState,
-  graph: graphDataState,
+  graph: graphSettingsSlice,
   messageCenter,
   namespaces: namespaceState,
   statusState: HelpDropdownState,

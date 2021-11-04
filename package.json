@@ -60,6 +60,7 @@
     "@patternfly/react-styles": "3.7.14",
     "@patternfly/react-table": "2.28.51",
     "@patternfly/react-tokens": "2.8.15",
+    "@reduxjs/toolkit": "^1.6.2",
     "@webcomponents/custom-elements": "1.2.4",
     "axios": "0.21.4",
     "bootstrap-slider-without-jquery": "10.0.0",
@@ -179,5 +180,6 @@
         }
       }
     ]
-  }
+  },
+  "proxy": "https://192.168.61.49/kiali"
 }

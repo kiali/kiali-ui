@@ -20,10 +20,9 @@ import { ColaGraph } from './graphs/ColaGraph';
 import { CoseGraph } from './graphs/CoseGraph';
 import { DagreGraph } from './graphs/DagreGraph';
 import { KialiAppAction } from '../../actions/KialiAppAction';
-import { GraphActions } from '../../actions/GraphActions';
 import { HistoryManager, URLParam } from '../../app/History';
 import * as LayoutDictionary from './graphs/LayoutDictionary';
-import { GraphToolbarActions } from '../../actions/GraphToolbarActions';
+import { showLegendToggled, layoutUpdated } from 'pages/Graph/GraphToolbar/graphSettingsSlice';
 import { GraphTourStops } from 'pages/Graph/GraphHelpTour';
 import TourStopContainer from 'components/Tour/TourStop';
 
@@ -262,12 +261,12 @@ export class CytoscapeToolbar extends React.PureComponent<CytoscapeToolbarProps,
 
 const mapStateToProps = (state: KialiAppState) => ({
   layout: state.graph.layout,
-  showLegend: state.graph.toolbarState.showLegend
+  showLegend: state.graph.toolbar.showLegend
 });
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<KialiAppState, void, KialiAppAction>) => ({
-  setLayout: bindActionCreators(GraphActions.setLayout, dispatch),
-  toggleLegend: bindActionCreators(GraphToolbarActions.toggleLegend, dispatch)
+  setLayout: bindActionCreators(layoutUpdated, dispatch),
+  toggleLegend: bindActionCreators(showLegendToggled, dispatch)
 });
 
 const CytoscapeToolbarContainer = connect(mapStateToProps, mapDispatchToProps)(CytoscapeToolbar);

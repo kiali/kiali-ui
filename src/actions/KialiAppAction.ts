@@ -1,6 +1,4 @@
 import { GlobalAction } from './GlobalActions';
-import { GraphAction } from './GraphActions';
-import { GraphToolbarAction } from './GraphToolbarActions';
 import { HelpDropdownAction } from './HelpDropdownActions';
 import { LoginAction } from './LoginActions';
 import { MessageCenterAction } from './MessageCenterActions';
@@ -15,8 +13,6 @@ import { IstioCertsInfoAction } from './IstioCertsInfoActions';
 
 export type KialiAppAction =
   | GlobalAction
-  | GraphAction
-  | GraphToolbarAction
   | HelpDropdownAction
   | LoginAction
   | MessageCenterAction

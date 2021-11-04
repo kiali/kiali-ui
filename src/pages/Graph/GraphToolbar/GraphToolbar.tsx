@@ -13,14 +13,13 @@ import {
   replayActiveSelector,
   trafficRatesSelector
 } from '../../../store/Selectors';
-import { GraphToolbarActions } from '../../../actions/GraphToolbarActions';
+import { graphSettingsSlice } from './graphSettingsSlice';
 import { GraphType, NodeParamsType, EdgeLabelMode, SummaryData, TrafficRate } from '../../../types/Graph';
 import GraphFindContainer from './GraphFind';
 import GraphSettingsContainer from './GraphSettings';
 import history, { HistoryManager, URLParam } from '../../../app/History';
 import Namespace, { namespacesFromString, namespacesToString } from '../../../types/Namespace';
 import { NamespaceActions } from '../../../actions/NamespaceAction';
-import { GraphActions } from '../../../actions/GraphActions';
 import { KialiAppAction } from '../../../actions/KialiAppAction';
 import { GraphTourStops } from 'pages/Graph/GraphHelpTour';
 import TourStopContainer from 'components/Tour/TourStop';
@@ -241,11 +240,11 @@ const mapStateToProps = (state: KialiAppState) => ({
 const mapDispatchToProps = (dispatch: ThunkDispatch<KialiAppState, void, KialiAppAction>) => {
   return {
     setActiveNamespaces: bindActionCreators(NamespaceActions.setActiveNamespaces, dispatch),
-    setEdgeLabels: bindActionCreators(GraphToolbarActions.setEdgeLabels, dispatch),
-    setGraphType: bindActionCreators(GraphToolbarActions.setGraphType, dispatch),
-    setIdleNodes: bindActionCreators(GraphToolbarActions.setIdleNodes, dispatch),
-    setNode: bindActionCreators(GraphActions.setNode, dispatch),
-    setTrafficRates: bindActionCreators(GraphToolbarActions.setTrafficRates, dispatch),
+    setEdgeLabels: bindActionCreators(graphSettingsSlice.actions.setEdgeLabels, dispatch),
+    setGraphType: bindActionCreators(graphSettingsSlice.actions.setGraphType, dispatch),
+    setIdleNodes: bindActionCreators(graphSettingsSlice.actions.setIdleNodes, dispatch),
+    setNode: bindActionCreators(graphSettingsSlice.actions.nodeUpdated, dispatch),
+    setTrafficRates: bindActionCreators(graphSettingsSlice.actions.setTrafficRates, dispatch),
     toggleReplayActive: bindActionCreators(UserSettingsActions.toggleReplayActive, dispatch)
   };
 };

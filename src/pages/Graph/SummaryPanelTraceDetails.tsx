@@ -17,7 +17,6 @@ import { JaegerTrace, RichSpanData, EnvoySpanInfo, OpenTracingHTTPInfo, OpenTrac
 import { KialiAppState } from 'store/Store';
 import { KialiAppAction } from 'actions/KialiAppAction';
 import { JaegerThunkActions } from 'actions/JaegerThunkActions';
-import { GraphActions } from 'actions/GraphActions';
 import { PFColors } from 'components/Pf/PfColors';
 import { findChildren, findParent, formatDuration } from 'utils/tracing/TracingHelper';
 import { CytoscapeGraphSelectorBuilder } from 'components/CytoscapeGraph/CytoscapeGraphSelector';
@@ -29,6 +28,7 @@ import { summaryFont } from './SummaryPanelCommon';
 import { NodeParamsType, GraphType } from 'types/Graph';
 import { bindActionCreators } from 'redux';
 import responseFlags from 'utils/ResponseFlags';
+import { nodeUpdated } from './GraphToolbar/graphSettingsSlice';
 
 type Props = {
   trace: JaegerTrace;
@@ -343,7 +343,7 @@ class SummaryPanelTraceDetails extends React.Component<Props, State> {
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<KialiAppState, void, KialiAppAction>) => ({
   close: () => dispatch(JaegerThunkActions.setTraceId(undefined)),
-  setNode: bindActionCreators(GraphActions.setNode, dispatch)
+  setNode: bindActionCreators(nodeUpdated, dispatch)
 });
 
 const SummaryPanelTraceDetailsContainer = connect(() => ({}), mapDispatchToProps)(SummaryPanelTraceDetails);

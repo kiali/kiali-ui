@@ -5,8 +5,8 @@ import { ThunkDispatch } from 'redux-thunk';
 import { bindActionCreators } from 'redux';
 import { KialiAppState } from '../../../store/Store';
 import { findValueSelector, hideValueSelector, edgeLabelsSelector } from '../../../store/Selectors';
-import { GraphToolbarActions } from '../../../actions/GraphToolbarActions';
 import { KialiAppAction } from '../../../actions/KialiAppAction';
+import { graphSettingsSlice } from './graphSettingsSlice';
 import GraphHelpFind from '../../../pages/Graph/GraphHelpFind';
 import { CyNode, CyEdge } from '../../../components/CytoscapeGraph/CytoscapeGraphUtils';
 import * as CytoscapeGraphUtils from '../../../components/CytoscapeGraph/CytoscapeGraphUtils';
@@ -938,25 +938,25 @@ export class GraphFind extends React.Component<GraphFindProps, GraphFindState> {
 }
 
 const mapStateToProps = (state: KialiAppState) => ({
-  compressOnHide: state.graph.toolbarState.compressOnHide,
+  compressOnHide: state.graph.toolbar.compressOnHide,
   edgeLabels: edgeLabelsSelector(state),
   findValue: findValueSelector(state),
   hideValue: hideValueSelector(state),
   layout: state.graph.layout,
-  showFindHelp: state.graph.toolbarState.showFindHelp,
-  showIdleNodes: state.graph.toolbarState.showIdleNodes,
-  showSecurity: state.graph.toolbarState.showSecurity,
+  showFindHelp: state.graph.toolbar.showFindHelp,
+  showIdleNodes: state.graph.toolbar.showIdleNodes,
+  showSecurity: state.graph.toolbar.showSecurity,
   updateTime: state.graph.updateTime
 });
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<KialiAppState, void, KialiAppAction>) => {
   return {
-    setEdgeLabels: bindActionCreators(GraphToolbarActions.setEdgeLabels, dispatch),
-    setFindValue: bindActionCreators(GraphToolbarActions.setFindValue, dispatch),
-    setHideValue: bindActionCreators(GraphToolbarActions.setHideValue, dispatch),
-    toggleFindHelp: bindActionCreators(GraphToolbarActions.toggleFindHelp, dispatch),
-    toggleGraphSecurity: bindActionCreators(GraphToolbarActions.toggleGraphSecurity, dispatch),
-    toggleIdleNodes: bindActionCreators(GraphToolbarActions.toggleIdleNodes, dispatch)
+    setEdgeLabels: bindActionCreators(graphSettingsSlice.actions.setEdgeLabels, dispatch),
+    setFindValue: bindActionCreators(graphSettingsSlice.actions.setFindValue, dispatch),
+    setHideValue: bindActionCreators(graphSettingsSlice.actions.setHideValue, dispatch),
+    toggleFindHelp: bindActionCreators(graphSettingsSlice.actions.findHelpToggled, dispatch),
+    toggleGraphSecurity: bindActionCreators(graphSettingsSlice.actions.showSecurityToggled, dispatch),
+    toggleIdleNodes: bindActionCreators(graphSettingsSlice.actions.showIdleNodesToggled, dispatch)
   };
 };
 

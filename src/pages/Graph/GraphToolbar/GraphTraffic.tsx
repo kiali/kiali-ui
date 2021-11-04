@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { bindActionCreators } from 'redux';
 import { KialiAppState } from '../../../store/Store';
-import { GraphToolbarActions } from '../../../actions/GraphToolbarActions';
+import { graphSettingsSlice } from './graphSettingsSlice';
 import { TrafficRate, isGrpcRate, isHttpRate, isTcpRate } from '../../../types/Graph';
 import { KialiAppAction } from 'actions/KialiAppAction';
 import * as _ from 'lodash';
@@ -388,7 +388,7 @@ const mapStateToProps = (state: KialiAppState) => ({
 // Map our actions to Redux
 const mapDispatchToProps = (dispatch: ThunkDispatch<KialiAppState, void, KialiAppAction>) => {
   return {
-    setTrafficRates: bindActionCreators(GraphToolbarActions.setTrafficRates, dispatch)
+    setTrafficRates: bindActionCreators(graphSettingsSlice.actions.setTrafficRates, dispatch)
   };
 };
 

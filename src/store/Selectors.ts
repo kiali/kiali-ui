@@ -27,19 +27,19 @@ const namespaceFilter = (state: KialiAppState) => state.namespaces.filter;
 
 export const namespaceFilterSelector = createIdentitySelector(namespaceFilter);
 
-const edgeLabels = (state: KialiAppState) => state.graph.toolbarState.edgeLabels;
+const edgeLabels = (state: KialiAppState) => state.graph.toolbar.edgeLabels;
 
 export const edgeLabelsSelector = createIdentitySelector(edgeLabels);
 
-const findValue = (state: KialiAppState) => state.graph.toolbarState.findValue;
+const findValue = (state: KialiAppState) => state.graph.toolbar.findValue;
 
 export const findValueSelector = createIdentitySelector(findValue);
 
-const graphType = (state: KialiAppState) => state.graph.toolbarState.graphType;
+const graphType = (state: KialiAppState) => state.graph.toolbar.graphType;
 
 export const graphTypeSelector = createIdentitySelector(graphType);
 
-const hideValue = (state: KialiAppState) => state.graph.toolbarState.hideValue;
+const hideValue = (state: KialiAppState) => state.graph.toolbar.hideValue;
 
 export const hideValueSelector = createIdentitySelector(hideValue);
 
@@ -63,11 +63,11 @@ const lastRefreshAt = (state: KialiAppState) => state.globalState.lastRefreshAt;
 
 export const lastRefreshAtSelector = createIdentitySelector(lastRefreshAt);
 
-const showIdleNodes = (state: KialiAppState) => state.graph.toolbarState.showIdleNodes;
+const showIdleNodes = (state: KialiAppState) => state.graph.toolbar.showIdleNodes;
 
 export const showIdleNodesSelector = createIdentitySelector(showIdleNodes);
 
-const trafficRates = (state: KialiAppState) => state.graph.toolbarState.trafficRates;
+const trafficRates = (state: KialiAppState) => state.graph.toolbar.trafficRates;
 
 export const trafficRatesSelector = createIdentitySelector(trafficRates);
 

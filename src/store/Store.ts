@@ -79,7 +79,7 @@ export interface GraphState {
   layout: Layout;
   node?: NodeParamsType;
   summaryData: SummaryData | null;
-  toolbarState: GraphToolbarState;
+  toolbar: GraphToolbarState;
   updateTime: TimeInMilliseconds;
 }
 
