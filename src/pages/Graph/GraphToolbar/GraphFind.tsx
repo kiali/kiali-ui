@@ -41,6 +41,7 @@ type ReduxProps = {
   toggleFindHelp: () => void;
   toggleGraphSecurity: () => void;
   toggleIdleNodes: () => void;
+  toggleRank: () => void;
 };
 
 type GraphFindProps = ReduxProps & {
@@ -702,7 +703,16 @@ export class GraphFind extends React.Component<GraphFindProps, GraphFindState> {
       case 'operation':
         return { target: 'node', selector: `[${CyNode.aggregateValue} ${op} "${val}"]` };
       case 'rank': {
-        if (!this.props.rank || this.props.rankBy.length === 0) {
+        if (!this.props.rank) {
+          AlertUtils.addSuccess('Enabling "rank" display option for graph find/hide expression');
+          this.props.toggleRank();
+        }
+
+        const valAsNum = Number(val);
+        if (valAsNum < 1 || valAsNum > 100) {
+          this.setError(`Invalid rank range [${valAsNum}]. Expected a number between 1..100`, isFind);
+        }
+        if (this.props.rankBy.length === 0) {
           return undefined;
         }
         const s = this.getNumericSelector(CyNode.rank, op, val, expression, isFind);
@@ -962,7 +972,8 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<KialiAppState, void, KialiAp
     setHideValue: bindActionCreators(GraphToolbarActions.setHideValue, dispatch),
     toggleFindHelp: bindActionCreators(GraphToolbarActions.toggleFindHelp, dispatch),
     toggleGraphSecurity: bindActionCreators(GraphToolbarActions.toggleGraphSecurity, dispatch),
-    toggleIdleNodes: bindActionCreators(GraphToolbarActions.toggleIdleNodes, dispatch)
+    toggleIdleNodes: bindActionCreators(GraphToolbarActions.toggleIdleNodes, dispatch),
+    toggleRank: bindActionCreators(GraphToolbarActions.toggleRank, dispatch)
   };
 };
 

@@ -177,7 +177,7 @@ export default class GraphHelpFind extends React.Component<GraphHelpFindProps> {
       ['rt > 500', `edges with response time > 500ms. (requires response time edge labels)`],
       ['%httptraffic >= 50.0', `edges with >= 50% of the outbound http request traffic of the parent`],
       ['node = svc and svc startswith det or !traffic', 'service node starting with "det" or edges with no traffic'],
-      ['rank >= 2', 'top 2 highest ranking nodes']
+      ['rank <= 2', 'top 2 highest ranking nodes']
     ];
   };
 
@@ -196,7 +196,8 @@ export default class GraphHelpFind extends React.Component<GraphHelpFindProps> {
       ['namespace <op> <namespaceName>'],
       ['node <op> <nodeType>', 'nodeType: app | operation | service | workload | unknown'],
       ['operation <op> <operationName>'],
-      ['rank <op> <number>', 'unit: 1..100']['service <op> <serviceName>'],
+      ['rank <op> <number>', 'unit: 1..100'],
+      ['service <op> <serviceName>'],
       ['version <op> <string>'],
       ['tcpin <op> <number>', 'unit: bytes per second'],
       ['tcpout <op> <number>', 'unit: bytes per second'],

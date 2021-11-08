@@ -498,6 +498,22 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
         )
       },
       {
+        id: 'rank',
+        labelText: 'Rank',
+        isChecked: rank,
+        onChange: toggleRank,
+        tooltip: (
+          <div style={{ textAlign: 'left' }}>
+            Rank graph nodes based on configurable criteria such as 'number of inbound edges'. These rankings can be
+            used in the graph find/hide feature to help highlight the most important workloads, services, and
+            applications. Rankings are normalized to fit between 1..100 and nodes may tie with each other in rank.
+            Ranking starts at 1 for the top ranked nodes so when ranking nodes based on 'number of inbound edges', the
+            node(s) with the most inbound edges would have rank 1. Node(s) with the second most inbound edges would have
+            rank 2.
+          </div>
+        )
+      },
+      {
         id: 'filterServiceNodes',
         disabled: this.props.graphType === GraphType.SERVICE,
         labelText: 'Service Nodes',
@@ -521,19 +537,6 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
           <div style={{ textAlign: 'left' }}>
             Animate the graph to reflect traffic flow. The particle density and speed roughly reflects an edge's request
             load relevant to the other edges. Animation can be CPU intensive.
-          </div>
-        )
-      },
-      {
-        id: 'rank',
-        labelText: 'Rank',
-        isChecked: rank,
-        onChange: toggleRank,
-        tooltip: (
-          <div style={{ textAlign: 'left' }}>
-            Rank graph nodes based on configurable criteria such as 'number of inbound edges'. These rankings can be
-            used in the graph find/hide feature to help highlight the most important workloads, services, and
-            applications. Rankings are normalized to fit between 1..100 and nodes may tie with each other in rank.
           </div>
         )
       }
