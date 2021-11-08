@@ -709,8 +709,8 @@ export class GraphFind extends React.Component<GraphFindProps, GraphFindState> {
         }
 
         const valAsNum = Number(val);
-        if (valAsNum < 1 || valAsNum > 100) {
-          this.setError(`Invalid rank range [${valAsNum}]. Expected a number between 1..100`, isFind);
+        if (Number.isNaN(valAsNum) || valAsNum < 1 || valAsNum > 100) {
+          this.setError(`Invalid rank range [${val}]. Expected a number between 1..100`, isFind);
         }
         if (this.props.rankBy.length === 0) {
           return undefined;
