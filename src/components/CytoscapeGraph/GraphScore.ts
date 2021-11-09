@@ -54,6 +54,18 @@ export function scoreNodes(
   elements: Readonly<DecoratedGraphElements>,
   ...criterias: ScoringCriteria[]
 ): DecoratedGraphElements {
+  // Zeroes out old scores and ranks if no ScoringCriteria is passed in.
+  if (criterias.length === 0) {
+    return {
+      nodes: elements.nodes?.map(node => {
+        node.data.score = undefined;
+        node.data.rank = undefined;
+        return node;
+      }),
+      edges: elements.edges
+    };
+  }
+
   let totalScore = new Map<string, number | undefined>();
   // TODO: This can probably be parallelized.
   for (const criteria of criterias) {

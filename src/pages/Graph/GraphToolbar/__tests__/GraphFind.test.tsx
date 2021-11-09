@@ -26,6 +26,7 @@ describe('Parse find value test', () => {
         toggleFindHelp={testHandler}
         toggleGraphSecurity={testHandler}
         toggleIdleNodes={testHandler}
+        toggleRank={testHandler}
         compressOnHide={false}
         layout={{ name: '' }}
         updateTime={0}
@@ -283,5 +284,9 @@ describe('Parse find value test', () => {
     expect(instance.parseValue('node = appp')).toEqual(undefined); // invalid node type
     // @ts-ignore
     expect(instance.parseValue('ns=foo AND http > 5.0')).toEqual(undefined); // Node and Edge
+    // @ts-ignore
+    expect(instance.parseValue('rank = a')).toEqual(undefined); // not a number
+    // @ts-ignore
+    expect(instance.parseValue('rank = 101')).toEqual(undefined); // outside acceptable range
   });
 });

@@ -285,4 +285,38 @@ describe('scoreNodes', () => {
 
     expect(lastTarget.data.rank).toEqual(100);
   });
+
+  it('removes old scores when no selection criteria is added', () => {
+    const input: DecoratedGraphElements = {
+      nodes: [
+        {
+          data: { ...nodeData, id: 'source', score: 0 }
+        },
+        {
+          data: { ...nodeData, id: 'target1', score: 0.5 }
+        },
+        {
+          data: { ...nodeData, id: 'target2', score: 0.5 }
+        }
+      ],
+      edges: [
+        {
+          data: { ...edgeData, protocol: 'tcp', id: 'edge1', source: 'source', target: 'target1' }
+        },
+        {
+          data: { ...edgeData, protocol: 'tcp', id: 'edge2', source: 'source', target: 'target2' }
+        },
+        {
+          data: { ...edgeData, protocol: 'tcp', id: 'edge3', source: 'source', target: 'target2' }
+        },
+        {
+          data: { ...edgeData, protocol: 'tcp', id: 'edge4', source: 'source', target: 'target2' }
+        }
+      ]
+    };
+
+    expect(
+      scoreNodes(input).nodes?.every(node => node.data.score === undefined && node.data.rank === undefined)
+    ).toBeTruthy();
+  });
 });
