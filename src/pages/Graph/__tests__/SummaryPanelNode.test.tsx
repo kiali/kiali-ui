@@ -32,6 +32,8 @@ describe('SummaryPanelNode', () => {
       injectServiceNodes: false,
       namespaces: [],
       queryTime: 20,
+      rank: false,
+      rankBy: [],
       rateInterval: '30s',
       step: 15,
       trafficRates: []
@@ -41,7 +43,7 @@ describe('SummaryPanelNode', () => {
   it('renders', () => {
     const wrapper = mount(
       <MemoryRouter>
-        <SummaryPanelNode {...defaultProps}></SummaryPanelNode>
+        <SummaryPanelNode {...defaultProps} />
       </MemoryRouter>
     );
     expect(wrapper.exists()).toBeTruthy();
@@ -51,7 +53,7 @@ describe('SummaryPanelNode', () => {
     nodeData = { ...nodeData, workload: 'ratings-v1', hasWorkloadEntry: [{ name: 'first_we' }, { name: 'second_we' }] };
     const wrapper = mount(
       <MemoryRouter>
-        <SummaryPanelNode {...defaultProps}></SummaryPanelNode>
+        <SummaryPanelNode {...defaultProps} />
       </MemoryRouter>
     );
     const weLinks = wrapper.find('a').findWhere(a => a.prop('href') && a.prop('href').includes('workloadentries'));
@@ -63,7 +65,7 @@ describe('SummaryPanelNode', () => {
     nodeData = { ...nodeData, workload: 'ratings-v1', hasWorkloadEntry: [{ name: 'first_we' }, { name: 'second_we' }] };
     const wrapper = mount(
       <MemoryRouter>
-        <SummaryPanelNode {...defaultProps}></SummaryPanelNode>
+        <SummaryPanelNode {...defaultProps} />
       </MemoryRouter>
     );
     const expandable = wrapper.find(Expandable);
@@ -81,11 +83,23 @@ describe('SummaryPanelNode', () => {
     nodeData = { ...nodeData, workload: 'ratings-v1' };
     const wrapper = mount(
       <MemoryRouter>
-        <SummaryPanelNode {...defaultProps}></SummaryPanelNode>
+        <SummaryPanelNode {...defaultProps} />
       </MemoryRouter>
     );
     const weLinks = wrapper.find('a').findWhere(a => a.prop('href') && a.prop('href').includes('workload'));
     expect(weLinks.exists()).toBeTruthy();
     expect(weLinks.length).toEqual(1);
+  });
+
+  it('shows rank', () => {
+    const props = { ...defaultProps, rank: true };
+    const wrapper = mount(
+      <MemoryRouter>
+        <SummaryPanelNode {...props} />
+      </MemoryRouter>
+    );
+    const rankText = wrapper.find('span').findWhere(span => span.render().html().includes('Rank: N/A'));
+    expect(rankText.exists()).toBeTruthy();
+    expect(rankText.length).toEqual(1);
   });
 });
