@@ -10,6 +10,7 @@ import { updateState } from '../utils/Reducer';
 export const INITIAL_GRAPH_STATE: GraphState = {
   graphDefinition: null,
   layout: DagreGraph.getLayout(),
+  lowestNodeRank: undefined,
   node: undefined,
   summaryData: null,
   toolbarState: {
@@ -55,6 +56,8 @@ const graphDataState = (state: GraphState = INITIAL_GRAPH_STATE, action: KialiAp
       return updateState(state, { graphDefinition: action.payload });
     case getType(GraphActions.setLayout):
       return updateState(state, { layout: action.payload });
+    case getType(GraphActions.setLowestNodeRank):
+      return updateState(state, { lowestNodeRank: action.payload });
     case getType(GraphActions.setNode):
       return updateState(state, {
         node: action.payload,

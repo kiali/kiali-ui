@@ -80,6 +80,7 @@ export interface MessageCenterState {
 export interface GraphState {
   graphDefinition: GraphDefinition | null; // Not for consumption. Only for "Debug" dialog.
   layout: Layout;
+  lowestNodeRank?: number;
   node?: NodeParamsType;
   summaryData: SummaryData | null;
   toolbarState: GraphToolbarState;

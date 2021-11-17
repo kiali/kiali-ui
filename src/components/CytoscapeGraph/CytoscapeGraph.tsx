@@ -60,6 +60,7 @@ type CytoscapeGraphProps = {
   rankBy: RankMode[];
   refreshInterval: IntervalInMilliseconds;
   setActiveNamespaces?: (namespace: Namespace[]) => void;
+  setLowestNodeRank?: (rank?: number) => void;
   setNode?: (node?: NodeParamsType) => void;
   setTraceId?: (traceId?: string) => void;
   setUpdateTime?: (val: TimeInMilliseconds) => void;
@@ -671,9 +672,14 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
     }
 
     // update the entire set of nodes and edges to keep the graph up-to-date
-    cy.json({ elements: scoreNodes(this.props.graphData.elements, ...scoringCriteria) });
+    const elements = scoreNodes(this.props.graphData.elements, ...scoringCriteria);
+    cy.json({ elements: elements });
 
     cy.endBatch();
+
+    if (this.props.setLowestNodeRank) {
+      this.props.setLowestNodeRank(elements.lowestNodeRank);
+    }
 
     // Run layout outside of the batch operation for it to take effect on the new nodes,
     // Layouts can run async so wait until it completes to finish the graph update.

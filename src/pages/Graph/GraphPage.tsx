@@ -102,6 +102,7 @@ type ReduxProps = {
   replayQueryTime: TimeInMilliseconds;
   setActiveNamespaces: (namespaces: Namespace[]) => void;
   setGraphDefinition: (graphDefinition: GraphDefinition) => void;
+  setLowestNodeRank: (rank?: number) => void;
   setNode: (node?: NodeParamsType) => void;
   setTraceId: (traceId?: string) => void;
   setUpdateTime: (val: TimeInMilliseconds) => void;
@@ -727,6 +728,7 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<KialiAppState, void, KialiAp
   onReady: (cy: Cy.Core) => dispatch(GraphThunkActions.graphReady(cy)),
   setActiveNamespaces: (namespaces: Namespace[]) => dispatch(NamespaceActions.setActiveNamespaces(namespaces)),
   setGraphDefinition: bindActionCreators(GraphActions.setGraphDefinition, dispatch),
+  setLowestNodeRank: bindActionCreators(GraphActions.setLowestNodeRank, dispatch),
   setNode: bindActionCreators(GraphActions.setNode, dispatch),
   setTraceId: (traceId?: string) => dispatch(JaegerThunkActions.setTraceId(traceId)),
   setUpdateTime: (val: TimeInMilliseconds) => dispatch(GraphActions.setUpdateTime(val)),

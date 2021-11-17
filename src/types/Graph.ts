@@ -441,4 +441,7 @@ export interface DecoratedGraphEdgeWrapper {
 export interface DecoratedGraphElements {
   nodes?: DecoratedGraphNodeWrapper[];
   edges?: DecoratedGraphEdgeWrapper[];
+  // The upper bound for node ranking. This is calculated
+  // during graph node scoring. The max is 100.
+  lowestNodeRank?: number;
 }
