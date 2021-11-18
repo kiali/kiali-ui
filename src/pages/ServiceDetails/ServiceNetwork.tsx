@@ -145,7 +145,7 @@ class ServiceNetwork extends React.Component<Props> {
                         <span style={{ marginRight: '5px' }}>
                           {port.name} {port.port}/{port.protocol}
                         </span>
-                        {port.appProtocol !== '' ? (
+                        {port.appProtocol && port.appProtocol !== '' ? (
                           <Tooltip
                             position={TooltipPosition.right}
                             content={<div style={{ textAlign: 'left' }}>App Protocol: {port.appProtocol}</div>}
