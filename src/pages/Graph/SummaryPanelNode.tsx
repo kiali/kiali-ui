@@ -9,12 +9,11 @@ import {
   renderDestServicesLinks,
   renderHealth
 } from './SummaryLink';
-import { NodeType, SummaryPanelPropType, DecoratedGraphNodeData, DestService, RankMode } from '../../types/Graph';
+import { DecoratedGraphNodeData, DestService, NodeType, SummaryPanelPropType } from '../../types/Graph';
 import { summaryHeader, summaryPanel, summaryBodyTabs, summaryFont } from './SummaryPanelCommon';
 import { decoratedNodeData } from '../../components/CytoscapeGraph/CytoscapeGraphUtils';
 import { KialiIcon } from 'config/KialiIcon';
 import { getOptions, clickHandler } from 'components/CytoscapeGraph/ContextMenu/NodeContextMenu';
-import { rankBySelector } from '../../store/Selectors';
 import {
   Dropdown,
   DropdownGroup,
@@ -43,10 +42,6 @@ type ReduxProps = {
   jaegerState: JaegerState;
   lowestNodeRank?: number;
   rank: boolean;
-
-  // Even though rankBy is not used in this component, this component needs to subscribe to
-  // rankBy updates in order to receive updated node ranking data.
-  rankBy: RankMode[];
 };
 
 export type SummaryPanelNodeProps = ReduxProps & SummaryPanelPropType;
@@ -275,6 +270,7 @@ export class SummaryPanelNode extends React.Component<SummaryPanelNodeProps, Sum
         nodeData.isGateway.ingressInfo.hostnames.length !== 0) ||
       (nodeData.isGateway?.egressInfo?.hostnames !== undefined && nodeData.isGateway.egressInfo.hostnames.length !== 0);
     const shouldRenderVsHostnames = nodeData.hasVS?.hostnames !== undefined && nodeData.hasVS?.hostnames.length !== 0;
+    const shouldRenderRank = this.props.rank;
     return (
       <div style={{ marginTop: '10px', marginBottom: '10px' }}>
         {hasCB && (
@@ -354,12 +350,14 @@ export class SummaryPanelNode extends React.Component<SummaryPanelNodeProps, Sum
             {shouldRenderGatewayHostnames && this.renderGatewayHostnames(nodeData)}
           </>
         )}
-        <div>
-          <KialiIcon.Rank />
-          <span style={{ paddingLeft: '4px' }}>
-            Rank: {nodeData.rank !== undefined ? `${nodeData.rank} / ${this.props.lowestNodeRank}` : 'N/A'}
-          </span>
-        </div>
+        {shouldRenderRank && (
+          <div>
+            <KialiIcon.Rank />
+            <span style={{ paddingLeft: '4px' }}>
+              Rank: {nodeData.rank !== undefined ? `${nodeData.rank} / ${this.props.lowestNodeRank}` : 'N/A'}
+            </span>
+          </div>
+        )}
       </div>
     );
   };
@@ -383,8 +381,7 @@ export class SummaryPanelNode extends React.Component<SummaryPanelNodeProps, Sum
 const mapStateToProps = (state: KialiAppState) => ({
   jaegerState: state.jaegerState,
   lowestNodeRank: state.graph.lowestNodeRank,
-  rank: state.graph.toolbarState.rank,
-  rankBy: rankBySelector(state)
+  rank: state.graph.toolbarState.rank
 });
 
 const SummaryPanelNodeContainer = connect(mapStateToProps)(SummaryPanelNode);

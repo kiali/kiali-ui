@@ -1,7 +1,5 @@
 import * as Cy from 'cytoscape';
-import { Core } from 'cytoscape';
-import { EdgeSingular } from 'cytoscape';
-import { NodeSingular } from 'cytoscape';
+import { Core, EdgeSingular, NodeSingular } from 'cytoscape';
 import * as React from 'react';
 import ReactResizeDetector from 'react-resize-detector';
 import { GraphData } from 'pages/Graph/GraphPage';
@@ -20,6 +18,7 @@ import {
   NodeParamsType,
   NodeType,
   RankMode,
+  SummaryData,
   UNKNOWN
 } from '../../types/Graph';
 import { JaegerTrace } from 'types/JaegerInfo';
@@ -72,6 +71,7 @@ type CytoscapeGraphProps = {
   showServiceNodes: boolean;
   showTrafficAnimation: boolean;
   showVirtualServices: boolean;
+  summaryData: SummaryData | null;
   toggleIdleNodes: () => void;
   trace?: JaegerTrace;
   updateSummary?: (event: CytoscapeClickEvent) => void;
@@ -679,6 +679,19 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
 
     if (this.props.setLowestNodeRank) {
       this.props.setLowestNodeRank(elements.lowestNodeRank);
+    }
+
+    // summary target data may have changed such as the ranking score.
+    if (this.props.summaryData && this.props.summaryData.summaryTarget && this.props.updateSummary) {
+      const updatedSummaryData = elements.nodes?.find(
+        node => node.data.id === CytoscapeGraphUtils.decoratedNodeData(this.props.summaryData!.summaryTarget).id
+      );
+
+      if (updatedSummaryData) {
+        const target = this.props.summaryData.summaryTarget;
+        target.data(updatedSummaryData.data);
+        this.props.updateSummary({ summaryType: 'node', summaryTarget: target });
+      }
     }
 
     // Run layout outside of the batch operation for it to take effect on the new nodes,

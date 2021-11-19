@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { GraphNodeData, GraphType, NodeType } from '../../../types/Graph';
+import { DecoratedGraphNodeData, GraphNodeData, GraphType, NodeType } from '../../../types/Graph';
 import { mount } from 'enzyme';
 import { SummaryPanelNode, SummaryPanelNodeProps } from '../SummaryPanelNode';
 import { MemoryRouter } from 'react-router-dom';
@@ -33,7 +33,6 @@ describe('SummaryPanelNode', () => {
       namespaces: [],
       queryTime: 20,
       rank: false,
-      rankBy: [],
       rateInterval: '30s',
       step: 15,
       trafficRates: []
@@ -91,7 +90,7 @@ describe('SummaryPanelNode', () => {
     expect(weLinks.length).toEqual(1);
   });
 
-  it('shows rank', () => {
+  it('shows rank N/A when node rank undefined', () => {
     const props = { ...defaultProps, rank: true };
     const wrapper = mount(
       <MemoryRouter>
@@ -99,6 +98,19 @@ describe('SummaryPanelNode', () => {
       </MemoryRouter>
     );
     const rankText = wrapper.find('span').findWhere(span => span.render().html().includes('Rank: N/A'));
+    expect(rankText.exists()).toBeTruthy();
+    expect(rankText.length).toEqual(1);
+  });
+
+  it('shows node rank', () => {
+    (nodeData as DecoratedGraphNodeData).rank = 2;
+    const props = { ...defaultProps, lowestNodeRank: 3, rank: true };
+    const wrapper = mount(
+      <MemoryRouter>
+        <SummaryPanelNode {...props} />
+      </MemoryRouter>
+    );
+    const rankText = wrapper.find('span').findWhere(span => span.render().html().includes('Rank: 2 / 3'));
     expect(rankText.exists()).toBeTruthy();
     expect(rankText.length).toEqual(1);
   });

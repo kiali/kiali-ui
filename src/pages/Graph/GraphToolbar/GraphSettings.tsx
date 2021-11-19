@@ -499,7 +499,7 @@ class GraphSettings extends React.PureComponent<GraphSettingsProps, GraphSetting
       },
       {
         id: 'rank',
-        labelText: 'Rank Nodes',
+        labelText: 'Rank',
         isChecked: rank,
         onChange: toggleRank,
         tooltip: (
