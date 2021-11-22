@@ -51,7 +51,7 @@ export class GraphHighlighter {
   onMouseIn = (event: CytoscapeMouseInEvent) => {
     // only highlight on hover when the graph is currently selected, otherwise leave the
     // selected element highlighted
-    if (this.selected.summaryType === 'graph' && ['node', 'edge', 'box'].indexOf(event.summaryType) !== -1) {
+    if (this.selected.summaryType === 'graph' && ['node', 'edge', 'box'].includes(event.summaryType)) {
       this.hovered = event;
       this.hovered.summaryTarget.addClass(HoveredClass);
       this.refresh();
@@ -92,9 +92,9 @@ export class GraphHighlighter {
     if (event) {
       switch (event.summaryType) {
         case 'node':
-          return { toHighlight: this.getNodeHighlight(event.summaryTarget, isHover), dimOthers: true };
+          return { toHighlight: this.getNodeHighlight(event.summaryTarget, isHover), dimOthers: !isHover };
         case 'edge':
-          return { toHighlight: this.getEdgeHighlight(event.summaryTarget, isHover), dimOthers: true };
+          return { toHighlight: this.getEdgeHighlight(event.summaryTarget, isHover), dimOthers: !isHover };
         case 'box':
           return this.getBoxHighlight(event.summaryTarget, isHover);
         default:
@@ -115,7 +115,7 @@ export class GraphHighlighter {
   }
 
   getNodeHighlight(node: any, isHover: boolean) {
-    const elems = isHover ? node.closedNeighborhood() : node.predecessors().add(node.successors());
+    const elems = isHover ? node : node.predecessors().add(node.successors());
     return this.includeAncestorNodes(elems.add(node));
   }
 

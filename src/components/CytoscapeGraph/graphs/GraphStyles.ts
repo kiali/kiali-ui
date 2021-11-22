@@ -203,12 +203,18 @@ export class GraphStyles {
   }
 
   static getNodeLabel(ele: Cy.NodeSingular) {
+    const node = decoratedNodeData(ele);
+    const isBox = node.isBox;
+    const zoomThresh = isBox ? 0.6 : 0.8;
+    if (ele.cy().zoom() < zoomThresh) {
+      return '';
+    }
+
     const getCyGlobalData = (ele: Cy.NodeSingular): CytoscapeGlobalScratchData => {
       return ele.cy().scratch(CytoscapeGlobalScratchNamespace);
     };
 
     const cyGlobal = getCyGlobalData(ele);
-    const node = decoratedNodeData(ele);
     const app = node.app || '';
     const cluster = node.cluster;
     const namespace = node.namespace;
@@ -216,7 +222,6 @@ export class GraphStyles {
     const service = node.service || '';
     const version = node.version || '';
     const workload = node.workload || '';
-    const isBox = node.isBox;
     const isBoxed = node.parent;
     const box1 = isBoxed ? ele.parent()[0] : undefined;
     const box1Type = box1 ? box1.data().isBox : undefined;

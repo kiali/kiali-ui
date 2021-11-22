@@ -128,6 +128,7 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
   private resetSelection: boolean = false;
   private trafficRenderer?: TrafficRenderer;
   private userBoxSelected?: Cy.Collection;
+  private zoom?: number;
 
   constructor(props: CytoscapeGraphProps) {
     super(props);
@@ -470,6 +471,31 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
       const cytoscapeEvent = getCytoscapeBaseEvent(evt);
       if (cytoscapeEvent) {
         this.customViewport = false;
+      }
+    });
+
+    // 'fit' is a custom event that we emit allowing us to reset cytoscapeGraph.customViewport
+    cy.on('zoom', (evt: Cy.EventObject) => {
+      const cytoscapeEvent = getCytoscapeBaseEvent(evt);
+      if (cytoscapeEvent) {
+        const zoomThresholds = [0.6, 0.8];
+        const oldZoom = this.zoom;
+        const newZoom = cy.zoom();
+        this.zoom = newZoom;
+
+        zoomThresholds.some(zoomThresh => {
+          if (
+            (newZoom < zoomThresh && (!oldZoom || oldZoom >= zoomThresh)) ||
+            (newZoom >= zoomThresh && oldZoom && oldZoom < zoomThresh)
+          ) {
+            console.log(`changeLabels onzoom=${this.zoom}`);
+            CytoscapeGraphUtils.runLayout(cy, this.props.layout);
+            return true;
+          } else {
+            console.log(`zoom=${this.zoom}`);
+            return false;
+          }
+        });
       }
     });
 
