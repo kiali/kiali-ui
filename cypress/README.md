@@ -47,3 +47,4 @@ and setup the project by running
 launch cypress in visual mode
 
 `yarn run cypress open`
+
