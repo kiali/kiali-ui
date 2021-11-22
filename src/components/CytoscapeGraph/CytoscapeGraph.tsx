@@ -659,7 +659,12 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
           scoringCriteria.push(ScoringCriteria.OutboundEdges);
         }
       }
-      elements = scoreNodes(this.props.graphData.elements, this.props.setRankResult, ...scoringCriteria);
+
+      let upperBound = 0;
+      ({ elements, upperBound } = scoreNodes(this.props.graphData.elements, ...scoringCriteria));
+      if (this.props.setRankResult) {
+        this.props.setRankResult({ upperBound });
+      }
     }
 
     cy.startBatch();

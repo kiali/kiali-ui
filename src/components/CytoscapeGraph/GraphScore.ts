@@ -1,4 +1,4 @@
-import { DecoratedGraphElements, DecoratedGraphNodeWrapper, RankResult } from '../../types/Graph';
+import { DecoratedGraphElements, DecoratedGraphNodeWrapper } from '../../types/Graph';
 
 export enum ScoringCriteria {
   InboundEdges = 'InboundEdges',
@@ -57,20 +57,19 @@ type ScoredNode = DecoratedGraphNodeWrapper & {
 // data from elements such as edge info.
 export function scoreNodes(
   elements: Readonly<DecoratedGraphElements>,
-  setRankResult?: (result: RankResult) => void,
   ...criterias: ScoringCriteria[]
-): DecoratedGraphElements {
+): { elements: DecoratedGraphElements; upperBound: number } {
   // Zeroes out old scores and ranks if no ScoringCriteria is passed in.
   if (criterias.length === 0) {
-    if (setRankResult) {
-      setRankResult({ upperBound: 0 } as RankResult);
-    }
     return {
-      nodes: elements.nodes?.map(node => {
-        node.data.rank = undefined;
-        return node;
-      }),
-      edges: elements.edges
+      elements: {
+        nodes: elements.nodes?.map(node => {
+          node.data.rank = undefined;
+          return node;
+        }),
+        edges: elements.edges
+      },
+      upperBound: 0
     };
   }
 
@@ -148,11 +147,10 @@ export function scoreNodes(
     edges: elements.edges
   } as DecoratedGraphElements);
 
-  if (setRankResult) {
-    setRankResult({ upperBound: upperBound } as RankResult);
-  }
-
-  return normalizedElements;
+  return {
+    elements: normalizedElements,
+    upperBound
+  };
 }
 
 // normalizeRanks normalizes the ranks for the given nodes so that ranks for
