@@ -15,6 +15,7 @@ export interface ServicePort {
   name: string;
   port: number;
   protocol: string;
+  appProtocol?: string;
 }
 
 export interface Endpoints {
@@ -35,6 +36,7 @@ export interface WorkloadOverview {
   labels?: { [key: string]: string };
   resourceVersion: string;
   createdAt: string;
+  serviceAccountNames: string[];
 }
 
 export interface Service {
