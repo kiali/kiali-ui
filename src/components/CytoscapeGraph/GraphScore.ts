@@ -1,4 +1,4 @@
-import { DecoratedGraphElements } from '../../types/Graph';
+import { DecoratedGraphElements, DecoratedGraphNodeWrapper, RankResult } from '../../types/Graph';
 
 export enum ScoringCriteria {
   InboundEdges = 'InboundEdges',
@@ -47,24 +47,30 @@ function scoreByOutboundEdges(elements: Readonly<DecoratedGraphElements>): Map<s
   return scoreByEdges(elements, ScoringCriteria.OutboundEdges);
 }
 
+type ScoredNode = DecoratedGraphNodeWrapper & {
+  score: number;
+};
+
 // Adds a score to the node elements based on the criteria(s).
 // Scores are all relative to the other nodes. Criteria
 // can include any source of data but typically looks at
 // data from elements such as edge info.
 export function scoreNodes(
   elements: Readonly<DecoratedGraphElements>,
+  setRankResult?: (result: RankResult) => void,
   ...criterias: ScoringCriteria[]
 ): DecoratedGraphElements {
   // Zeroes out old scores and ranks if no ScoringCriteria is passed in.
   if (criterias.length === 0) {
+    if (setRankResult) {
+      setRankResult({ upperBound: 0 } as RankResult);
+    }
     return {
       nodes: elements.nodes?.map(node => {
-        node.data.score = undefined;
         node.data.rank = undefined;
         return node;
       }),
-      edges: elements.edges,
-      lowestNodeRank: undefined
+      edges: elements.edges
     };
   }
 
@@ -92,15 +98,13 @@ export function scoreNodes(
   }
 
   const scoredNodes = elements.nodes?.map(node => {
-    if (totalScore.has(node.data.id)) {
-      node.data.score = totalScore.get(node.data.id);
-    }
-    return node;
+    let score = totalScore.has(node.data.id) ? totalScore.get(node.data.id) : undefined;
+    return { ...node, score: score } as ScoredNode;
   });
 
   const sortedByScore = scoredNodes?.sort((a, b) => {
-    const scoreA = a.data.score;
-    const scoreB = b.data.score;
+    const scoreA = a.score;
+    const scoreB = b.score;
     if (scoreA !== undefined && scoreB === undefined) {
       return -1;
     }
@@ -117,7 +121,7 @@ export function scoreNodes(
   let prevScore: number | undefined;
   let currentRank = 1; // Start rankings at 1
   const rankedNodes = sortedByScore?.map(node => {
-    const currentScore = node.data.score;
+    const currentScore = node.score;
     // No score means no rank
     if (currentScore === undefined) {
       return node;
@@ -139,18 +143,26 @@ export function scoreNodes(
     return node;
   });
 
-  return normalizeRanks({
+  const { normalizedElements, upperBound } = normalizeRanks({
     nodes: rankedNodes,
     edges: elements.edges
-  });
+  } as DecoratedGraphElements);
+
+  if (setRankResult) {
+    setRankResult({ upperBound: upperBound } as RankResult);
+  }
+
+  return normalizedElements;
 }
 
 // normalizeRanks normalizes the ranks for the given nodes so that ranks for
 // all the nodes fall between 1..100.
-function normalizeRanks(elements: Readonly<DecoratedGraphElements>): DecoratedGraphElements {
+function normalizeRanks(
+  elements: Readonly<DecoratedGraphElements>
+): { normalizedElements: DecoratedGraphElements; upperBound: number } {
   const { nodes, edges } = elements;
   if (nodes === undefined) {
-    return elements;
+    return { normalizedElements: elements, upperBound: 0 };
   }
 
   const minRange = 1;
@@ -165,10 +177,10 @@ function normalizeRanks(elements: Readonly<DecoratedGraphElements>): DecoratedGr
 
   // If there's no min/max then we can't normalize
   if (minRank === undefined || maxRank === undefined) {
-    return elements;
+    return { normalizedElements: elements, upperBound: 0 };
   }
 
-  const maxRange = maxRank < 100 ? maxRank : 100;
+  const upperBound = maxRank < 100 ? maxRank : 100;
 
   const normalizedNodes = nodes.map(node => {
     if (node.data.rank === undefined) {
@@ -181,7 +193,7 @@ function normalizeRanks(elements: Readonly<DecoratedGraphElements>): DecoratedGr
       return node;
     }
 
-    const normalizedRank = (minRange + (node.data.rank - minRank) * (maxRange - minRange)) / (maxRank! - minRank);
+    const normalizedRank = (minRange + (node.data.rank - minRank) * (upperBound - minRange)) / (maxRank! - minRank);
     // Ranks should be whole numbers
     node.data.rank = Math.ceil(normalizedRank);
 
@@ -189,8 +201,10 @@ function normalizeRanks(elements: Readonly<DecoratedGraphElements>): DecoratedGr
   });
 
   return {
-    nodes: normalizedNodes,
-    edges: edges,
-    lowestNodeRank: maxRange
+    normalizedElements: {
+      nodes: normalizedNodes,
+      edges: edges
+    },
+    upperBound: upperBound
   };
 }

@@ -32,7 +32,8 @@ describe('SummaryPanelNode', () => {
       injectServiceNodes: false,
       namespaces: [],
       queryTime: 20,
-      rank: false,
+      rankResult: { upperBound: 0 },
+      showRank: false,
       rateInterval: '30s',
       step: 15,
       trafficRates: []
@@ -91,7 +92,7 @@ describe('SummaryPanelNode', () => {
   });
 
   it('shows rank N/A when node rank undefined', () => {
-    const props = { ...defaultProps, rank: true };
+    const props = { ...defaultProps, rankResult: { upperBound: 0 }, showRank: true };
     const wrapper = mount(
       <MemoryRouter>
         <SummaryPanelNode {...props} />
@@ -104,7 +105,7 @@ describe('SummaryPanelNode', () => {
 
   it('shows node rank', () => {
     (nodeData as DecoratedGraphNodeData).rank = 2;
-    const props = { ...defaultProps, lowestNodeRank: 3, rank: true };
+    const props = { ...defaultProps, rankResult: { upperBound: 3 }, showRank: true };
     const wrapper = mount(
       <MemoryRouter>
         <SummaryPanelNode {...props} />

@@ -4,7 +4,8 @@ import {
   DecoratedGraphNodeData,
   DecoratedGraphEdgeData,
   DecoratedGraphNodeWrapper,
-  DecoratedGraphEdgeWrapper
+  DecoratedGraphEdgeWrapper,
+  RankResult
 } from '../../../types/Graph';
 import { KialiIcon } from 'config/KialiIcon';
 import { ScoringCriteria, scoreNodes } from '../GraphScore';
@@ -96,18 +97,22 @@ describe('scoreNodes', () => {
         }
       ]
     };
-    const scoredNodes = scoreNodes(input, ScoringCriteria.InboundEdges);
-
-    expect(scoredNodes.lowestNodeRank).toEqual(2);
+    const scoredNodes = scoreNodes(
+      input,
+      (result: RankResult) => {
+        expect(result.upperBound).toEqual(2);
+      },
+      ScoringCriteria.InboundEdges
+    );
 
     const source = scoredNodes.nodes?.find(findById('source'))!;
     const target = scoredNodes.nodes?.find(findById('target'))!;
 
-    expect(target.data.score).toEqual(1);
+    // expect(target.data.score).toEqual(1);
     expect(target.data.rank).toEqual(1);
 
-    expect(source.data.score).toEqual(0);
-    expect(source.data.rank).toEqual(scoredNodes.lowestNodeRank);
+    // expect(source.data.score).toEqual(0);
+    expect(source.data.rank).toEqual(2);
   });
 
   it('scores outbound edges', () => {
@@ -129,17 +134,21 @@ describe('scoreNodes', () => {
         }
       ]
     };
-    const scoredNodes = scoreNodes(input, ScoringCriteria.OutboundEdges);
-
-    expect(scoredNodes.lowestNodeRank).toEqual(2);
+    const scoredNodes = scoreNodes(
+      input,
+      (result: RankResult) => {
+        expect(result.upperBound).toEqual(2);
+      },
+      ScoringCriteria.OutboundEdges
+    );
 
     const source = scoredNodes.nodes?.find(findById('source'))!;
     const target = scoredNodes.nodes?.find(findById('target'))!;
 
-    expect(source.data.score).toEqual(1);
+    // expect(source.data.score).toEqual(1);
     expect(source.data.rank).toEqual(1);
 
-    expect(target.data.score).toEqual(0);
+    // expect(target.data.score).toEqual(0);
     expect(target.data.rank).toEqual(2);
   });
 
@@ -162,17 +171,22 @@ describe('scoreNodes', () => {
         }
       ]
     };
-    const scoredNodes = scoreNodes(input, ScoringCriteria.OutboundEdges, ScoringCriteria.InboundEdges);
-
-    expect(scoredNodes.lowestNodeRank).toEqual(1);
+    const scoredNodes = scoreNodes(
+      input,
+      (result: RankResult) => {
+        expect(result.upperBound).toEqual(1);
+      },
+      ScoringCriteria.OutboundEdges,
+      ScoringCriteria.InboundEdges
+    );
 
     const source = scoredNodes.nodes?.find(findById('source'))!;
     const target = scoredNodes.nodes?.find(findById('target'))!;
 
-    expect(source.data.score).toEqual(1);
+    // expect(source.data.score).toEqual(1);
     expect(source.data.rank).toEqual(1);
 
-    expect(target.data.score).toEqual(1);
+    // expect(target.data.score).toEqual(1);
     expect(target.data.rank).toEqual(1);
   });
 
@@ -204,22 +218,26 @@ describe('scoreNodes', () => {
         }
       ]
     };
-    const scoredNodes = scoreNodes(input, ScoringCriteria.InboundEdges);
-
-    expect(scoredNodes.lowestNodeRank).toEqual(3);
+    const scoredNodes = scoreNodes(
+      input,
+      (result: RankResult) => {
+        expect(result.upperBound).toEqual(3);
+      },
+      ScoringCriteria.InboundEdges
+    );
 
     const target2 = scoredNodes.nodes?.find(findById('target2'))!;
     const target1 = scoredNodes.nodes?.find(findById('target1'))!;
     const source = scoredNodes.nodes?.find(findById('source'))!;
 
-    expect(target2.data.score).toBeGreaterThan(target1.data.score!);
+    // expect(target2.data.score).toBeGreaterThan(target1.data.score!);
     expect(target2.data.rank).toEqual(1);
 
-    expect(target1.data.score).toBeDefined();
+    // expect(target1.data.score).toBeDefined();
     expect(target1.data.rank).toEqual(2);
 
-    expect(source.data.score).toEqual(0);
-    expect(source.data.rank).toEqual(scoredNodes.lowestNodeRank);
+    // expect(source.data.score).toEqual(0);
+    expect(source.data.rank).toEqual(3);
   });
 
   it('assigns lowest rank to each node for graph without edges', () => {
@@ -237,22 +255,26 @@ describe('scoreNodes', () => {
       ],
       edges: []
     };
-    const scoredNodes = scoreNodes(input, ScoringCriteria.InboundEdges);
-
-    expect(scoredNodes.lowestNodeRank).toEqual(1);
+    const scoredNodes = scoreNodes(
+      input,
+      (result: RankResult) => {
+        expect(result.upperBound).toEqual(1);
+      },
+      ScoringCriteria.InboundEdges
+    );
 
     const target2 = scoredNodes.nodes?.find(findById('target2'))!;
     const target1 = scoredNodes.nodes?.find(findById('target1'))!;
     const source = scoredNodes.nodes?.find(findById('source'))!;
 
-    expect(target2.data.score).toEqual(0);
-    expect(target2.data.rank).toEqual(scoredNodes.lowestNodeRank);
+    // expect(target2.data.score).toEqual(0);
+    expect(target2.data.rank).toEqual(1);
 
-    expect(target1.data.score).toEqual(0);
-    expect(target1.data.rank).toEqual(scoredNodes.lowestNodeRank);
+    // expect(target1.data.score).toEqual(0);
+    expect(target1.data.rank).toEqual(1);
 
-    expect(source.data.score).toEqual(0);
-    expect(source.data.rank).toEqual(scoredNodes.lowestNodeRank);
+    // expect(source.data.score).toEqual(0);
+    expect(source.data.rank).toEqual(1);
   });
 
   it('assigns lowest rank for nodes without edges', () => {
@@ -274,22 +296,26 @@ describe('scoreNodes', () => {
         }
       ]
     };
-    const scoredNodes = scoreNodes(input, ScoringCriteria.InboundEdges);
-
-    expect(scoredNodes.lowestNodeRank).toEqual(2);
+    const scoredNodes = scoreNodes(
+      input,
+      (result: RankResult) => {
+        expect(result.upperBound).toEqual(2);
+      },
+      ScoringCriteria.InboundEdges
+    );
 
     const target2 = scoredNodes.nodes?.find(findById('target2'))!;
     const target1 = scoredNodes.nodes?.find(findById('target1'))!;
     const source = scoredNodes.nodes?.find(findById('source'))!;
 
-    expect(target2.data.score).toEqual(0);
-    expect(target2.data.rank).toEqual(scoredNodes.lowestNodeRank);
+    // expect(target2.data.score).toEqual(0);
+    expect(target2.data.rank).toEqual(2);
 
-    expect(target1.data.score).toEqual(1);
+    // expect(target1.data.score).toEqual(1);
     expect(target1.data.rank).toEqual(1);
 
-    expect(source.data.score).toEqual(0);
-    expect(source.data.rank).toEqual(scoredNodes.lowestNodeRank);
+    // expect(source.data.score).toEqual(0);
+    expect(source.data.rank).toEqual(2);
   });
 
   it('normalizes scores within 100 when more than 100', () => {
@@ -323,9 +349,13 @@ describe('scoreNodes', () => {
     };
 
     const input = elements();
-    const scoredNodes = scoreNodes(input, ScoringCriteria.InboundEdges);
-
-    expect(scoredNodes.lowestNodeRank).toEqual(100);
+    const scoredNodes = scoreNodes(
+      input,
+      (result: RankResult) => {
+        expect(result.upperBound).toEqual(100);
+      },
+      ScoringCriteria.InboundEdges
+    );
 
     const firstTarget = scoredNodes.nodes?.find(findById('target0'))!;
     const lastTarget = scoredNodes.nodes?.find(findById('target149'))!;
@@ -340,13 +370,13 @@ describe('scoreNodes', () => {
     const input: DecoratedGraphElements = {
       nodes: [
         {
-          data: { ...nodeData, id: 'source', score: 0, rank: 2 }
+          data: { ...nodeData, id: 'source', rank: 2 }
         },
         {
-          data: { ...nodeData, id: 'target1', score: 0.5, rank: 1 }
+          data: { ...nodeData, id: 'target1', rank: 1 }
         },
         {
-          data: { ...nodeData, id: 'target2', score: 0.5, rank: 1 }
+          data: { ...nodeData, id: 'target2', rank: 1 }
         }
       ],
       edges: [
@@ -365,8 +395,6 @@ describe('scoreNodes', () => {
       ]
     };
 
-    expect(
-      scoreNodes(input).nodes?.every(node => node.data.score === undefined && node.data.rank === undefined)
-    ).toBeTruthy();
+    expect(scoreNodes(input).nodes?.every(node => node.data.rank === undefined)).toBeTruthy();
   });
 });

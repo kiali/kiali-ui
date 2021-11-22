@@ -9,7 +9,7 @@ import {
   renderDestServicesLinks,
   renderHealth
 } from './SummaryLink';
-import { DecoratedGraphNodeData, DestService, NodeType, SummaryPanelPropType } from '../../types/Graph';
+import { DecoratedGraphNodeData, DestService, NodeType, RankResult, SummaryPanelPropType } from '../../types/Graph';
 import { summaryHeader, summaryPanel, summaryBodyTabs, summaryFont } from './SummaryPanelCommon';
 import { decoratedNodeData } from '../../components/CytoscapeGraph/CytoscapeGraphUtils';
 import { KialiIcon } from 'config/KialiIcon';
@@ -40,8 +40,8 @@ const defaultState: SummaryPanelNodeState = {
 
 type ReduxProps = {
   jaegerState: JaegerState;
-  lowestNodeRank?: number;
-  rank: boolean;
+  rankResult: RankResult;
+  showRank: boolean;
 };
 
 export type SummaryPanelNodeProps = ReduxProps & SummaryPanelPropType;
@@ -270,7 +270,7 @@ export class SummaryPanelNode extends React.Component<SummaryPanelNodeProps, Sum
         nodeData.isGateway.ingressInfo.hostnames.length !== 0) ||
       (nodeData.isGateway?.egressInfo?.hostnames !== undefined && nodeData.isGateway.egressInfo.hostnames.length !== 0);
     const shouldRenderVsHostnames = nodeData.hasVS?.hostnames !== undefined && nodeData.hasVS?.hostnames.length !== 0;
-    const shouldRenderRank = this.props.rank;
+    const shouldRenderRank = this.props.showRank;
     return (
       <div style={{ marginTop: '10px', marginBottom: '10px' }}>
         {hasCB && (
@@ -354,7 +354,7 @@ export class SummaryPanelNode extends React.Component<SummaryPanelNodeProps, Sum
           <div>
             <KialiIcon.Rank />
             <span style={{ paddingLeft: '4px' }}>
-              Rank: {nodeData.rank !== undefined ? `${nodeData.rank} / ${this.props.lowestNodeRank}` : 'N/A'}
+              Rank: {nodeData.rank !== undefined ? `${nodeData.rank} / ${this.props.rankResult.upperBound}` : 'N/A'}
             </span>
           </div>
         )}
@@ -380,8 +380,8 @@ export class SummaryPanelNode extends React.Component<SummaryPanelNodeProps, Sum
 
 const mapStateToProps = (state: KialiAppState) => ({
   jaegerState: state.jaegerState,
-  lowestNodeRank: state.graph.lowestNodeRank,
-  rank: state.graph.toolbarState.rank
+  rankResult: state.graph.rankResult,
+  showRank: state.graph.toolbarState.showRank
 });
 
 const SummaryPanelNodeContainer = connect(mapStateToProps)(SummaryPanelNode);

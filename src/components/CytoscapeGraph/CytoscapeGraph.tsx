@@ -18,7 +18,7 @@ import {
   NodeParamsType,
   NodeType,
   RankMode,
-  SummaryData,
+  RankResult,
   UNKNOWN
 } from '../../types/Graph';
 import { JaegerTrace } from 'types/JaegerInfo';
@@ -55,23 +55,22 @@ type CytoscapeGraphProps = {
   onEdgeTap?: (e: GraphEdgeTapEvent) => void;
   onNodeTap?: (e: GraphNodeTapEvent) => void;
   onReady?: (cytoscapeRef: any) => void;
-  rank: boolean;
   rankBy: RankMode[];
   refreshInterval: IntervalInMilliseconds;
   setActiveNamespaces?: (namespace: Namespace[]) => void;
-  setLowestNodeRank?: (rank?: number) => void;
   setNode?: (node?: NodeParamsType) => void;
+  setRankResult?: (result: RankResult) => void;
   setTraceId?: (traceId?: string) => void;
   setUpdateTime?: (val: TimeInMilliseconds) => void;
   showIdleEdges: boolean;
   showIdleNodes: boolean;
   showMissingSidecars: boolean;
   showOperationNodes: boolean;
+  showRank: boolean;
   showSecurity: boolean;
   showServiceNodes: boolean;
   showTrafficAnimation: boolean;
   showVirtualServices: boolean;
-  summaryData: SummaryData | null;
   toggleIdleNodes: () => void;
   trace?: JaegerTrace;
   updateSummary?: (event: CytoscapeClickEvent) => void;
@@ -158,11 +157,11 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
       this.props.graphData.elements !== nextProps.graphData.elements ||
       this.props.layout !== nextProps.layout ||
       this.props.compressOnHide !== nextProps.compressOnHide ||
+      this.props.rankBy !== nextProps.rankBy ||
       this.props.showMissingSidecars !== nextProps.showMissingSidecars ||
+      this.props.showRank !== nextProps.showRank ||
       this.props.showTrafficAnimation !== nextProps.showTrafficAnimation ||
       this.props.showVirtualServices !== nextProps.showVirtualServices ||
-      this.props.rank !== nextProps.rank ||
-      this.props.rankBy !== nextProps.rankBy ||
       this.props.trace !== nextProps.trace;
 
     return result;
@@ -649,6 +648,20 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
     };
     cy.scratch(CytoscapeGlobalScratchNamespace, globalScratchData);
 
+    let elements = this.props.graphData.elements;
+    if (this.props.showRank) {
+      let scoringCriteria: ScoringCriteria[] = [];
+      for (const ranking of this.props.rankBy) {
+        if (ranking === RankMode.RANK_BY_INBOUND_EDGES) {
+          scoringCriteria.push(ScoringCriteria.InboundEdges);
+        }
+        if (ranking === RankMode.RANK_BY_OUTBOUND_EDGES) {
+          scoringCriteria.push(ScoringCriteria.OutboundEdges);
+        }
+      }
+      elements = scoreNodes(this.props.graphData.elements, this.props.setRankResult, ...scoringCriteria);
+    }
+
     cy.startBatch();
 
     // KIALI-1291 issue was caused because some layouts (can't tell if all) do reuse the existing positions.
@@ -659,40 +672,10 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
       cy.nodes().positions({ x: 0, y: 0 });
     }
 
-    let scoringCriteria: ScoringCriteria[] = [];
-    if (this.props.rank) {
-      for (const ranking of this.props.rankBy) {
-        if (ranking === RankMode.RANK_BY_INBOUND_EDGES) {
-          scoringCriteria.push(ScoringCriteria.InboundEdges);
-        }
-        if (ranking === RankMode.RANK_BY_OUTBOUND_EDGES) {
-          scoringCriteria.push(ScoringCriteria.OutboundEdges);
-        }
-      }
-    }
-
     // update the entire set of nodes and edges to keep the graph up-to-date
-    const elements = scoreNodes(this.props.graphData.elements, ...scoringCriteria);
     cy.json({ elements: elements });
 
     cy.endBatch();
-
-    if (this.props.setLowestNodeRank) {
-      this.props.setLowestNodeRank(elements.lowestNodeRank);
-    }
-
-    // summary target data may have changed such as the ranking score.
-    if (this.props.summaryData && this.props.summaryData.summaryTarget && this.props.updateSummary) {
-      const updatedSummaryData = elements.nodes?.find(
-        node => node.data.id === CytoscapeGraphUtils.decoratedNodeData(this.props.summaryData!.summaryTarget).id
-      );
-
-      if (updatedSummaryData) {
-        const target = this.props.summaryData.summaryTarget;
-        target.data(updatedSummaryData.data);
-        this.props.updateSummary({ summaryType: 'node', summaryTarget: target });
-      }
-    }
 
     // Run layout outside of the batch operation for it to take effect on the new nodes,
     // Layouts can run async so wait until it completes to finish the graph update.
