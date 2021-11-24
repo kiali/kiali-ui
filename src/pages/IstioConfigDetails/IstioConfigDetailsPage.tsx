@@ -12,7 +12,7 @@ import * as API from '../../services/Api';
 import AceEditor from 'react-ace';
 import 'ace-builds/src-noconflict/mode-yaml';
 import 'ace-builds/src-noconflict/theme-eclipse';
-import { ObjectReference, ObjectValidation, StatusCondition, ValidationMessage } from '../../types/IstioObjects';
+import { ObjectReference, ObjectValidation, ValidationMessage } from '../../types/IstioObjects';
 import { AceValidations, jsYaml, parseKialiValidations, parseYamlValidations } from '../../types/AceValidations';
 import IstioActionDropdown from '../../components/IstioActions/IstioActionsDropdown';
 import { RenderComponentScroll, RenderHeader } from '../../components/Nav/Page';
@@ -21,7 +21,7 @@ import { default as IstioActionButtonsContainer } from '../../components/IstioAc
 import history from '../../app/History';
 import { Paths } from '../../config';
 import { MessageType } from '../../types/MessageCenter';
-import { getIstioObject, mergeJsonPatch } from '../../utils/IstioConfigUtils';
+import { getIstioObject, getReconciliationCondition, mergeJsonPatch } from '../../utils/IstioConfigUtils';
 import { style } from 'typestyle';
 import ParameterizedTabs, { activeTab } from '../../components/Tab/Tabs';
 import {
@@ -372,11 +372,6 @@ class IstioConfigDetailsPage extends React.Component<RouteComponentProps<IstioCo
       : ([] as ValidationMessage[]);
   };
 
-  getReconciliationCondition = (istioConfigDetails?: IstioConfigDetails): StatusCondition | undefined => {
-    const istioObject = getIstioObject(istioConfigDetails);
-    return istioObject?.status?.conditions?.find(condition => condition.type === 'Reconciled');
-  };
-
   // Not all Istio types have an overview card
   hasOverview = (): boolean => {
     return (
@@ -436,7 +431,7 @@ class IstioConfigDetailsPage extends React.Component<RouteComponentProps<IstioCo
   renderEditor = () => {
     const yamlSource = this.fetchYaml();
     const istioStatusMsgs = this.getStatusMessages(this.state.istioObjectDetails);
-    const reconciliationStatus = this.getReconciliationCondition(this.state.istioObjectDetails);
+    const reconciliationStatus = getReconciliationCondition(this.state.istioObjectDetails);
     const objectReferences = this.objectReferences(this.state.istioObjectDetails);
     const refPresent = objectReferences.length > 0;
     const showCards = this.showCards(refPresent, istioStatusMsgs);
