@@ -12,7 +12,7 @@ import * as API from '../../services/Api';
 import AceEditor from 'react-ace';
 import 'ace-builds/src-noconflict/mode-yaml';
 import 'ace-builds/src-noconflict/theme-eclipse';
-import { ObjectReference, ObjectValidation, ValidationMessage } from '../../types/IstioObjects';
+import { ObjectReference, ObjectValidation, StatusCondition, ValidationMessage } from '../../types/IstioObjects';
 import { AceValidations, jsYaml, parseKialiValidations, parseYamlValidations } from '../../types/AceValidations';
 import IstioActionDropdown from '../../components/IstioActions/IstioActionsDropdown';
 import { RenderComponentScroll, RenderHeader } from '../../components/Nav/Page';
@@ -372,6 +372,11 @@ class IstioConfigDetailsPage extends React.Component<RouteComponentProps<IstioCo
       : ([] as ValidationMessage[]);
   };
 
+  getReconciliationCondition = (istioConfigDetails?: IstioConfigDetails): StatusCondition | undefined => {
+    const istioObject = getIstioObject(istioConfigDetails);
+    return istioObject?.status?.conditions?.find(condition => condition.type === 'Reconciled');
+  };
+
   // Not all Istio types have an overview card
   hasOverview = (): boolean => {
     return (
@@ -431,6 +436,7 @@ class IstioConfigDetailsPage extends React.Component<RouteComponentProps<IstioCo
   renderEditor = () => {
     const yamlSource = this.fetchYaml();
     const istioStatusMsgs = this.getStatusMessages(this.state.istioObjectDetails);
+    const reconciliationStatus = this.getReconciliationCondition(this.state.istioObjectDetails);
     const objectReferences = this.objectReferences(this.state.istioObjectDetails);
     const refPresent = objectReferences.length > 0;
     const showCards = this.showCards(refPresent, istioStatusMsgs);
@@ -462,6 +468,19 @@ class IstioConfigDetailsPage extends React.Component<RouteComponentProps<IstioCo
                     objectReferences={objectReferences}
                   />
                 )}
+<<<<<<< HEAD
+=======
+                {this.state.istioObjectDetails && this.state.istioObjectDetails.destinationRule && (
+                  <DestinationRuleOverview
+                    destinationRule={this.state.istioObjectDetails.destinationRule}
+                    validation={this.state.istioValidations}
+                    namespace={this.state.istioObjectDetails.namespace.name}
+                  />
+                )}
+                {reconciliationStatus && <IstioReconciliationStatus condition={reconciliationStatus} />}
+                {istioStatusMsgs && istioStatusMsgs.length > 0 && <IstioStatusMessageList messages={istioStatusMsgs} />}
+                {refPresent && <ValidationReferences objectReferences={objectReferences} />}
+>>>>>>> 20d0af6e (Reconciled status on side panel of Istio configs)
               </>
             )}
           </div>
