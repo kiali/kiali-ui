@@ -110,6 +110,14 @@ export const setServerConfig = (cfg: ServerConfig) => {
     ...defaultServerConfig,
     ...cfg
   };
+
+  serverConfig.kialiFeatureFlags.uiDefaults!.graph.thresholds = {
+    zoomBoxLabel: 0.8,
+    zoomEdgeLabel: 0.9,
+    zoomNodeBadge: 0.6,
+    zoomNodeLabel: 0.9
+  };
+
   serverConfig.healthConfig = cfg.healthConfig ? parseHealthConfig(cfg.healthConfig) : serverConfig.healthConfig;
 
   computeValidDurations(serverConfig);

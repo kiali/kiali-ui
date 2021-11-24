@@ -129,6 +129,7 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
   private trafficRenderer?: TrafficRenderer;
   private userBoxSelected?: Cy.Collection;
   private zoom?: number;
+  private zoomThresholds?: number[];
 
   constructor(props: CytoscapeGraphProps) {
     super(props);
@@ -338,6 +339,11 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
     this.graphHighlighter = new GraphHighlighter(cy);
     this.trafficRenderer = new TrafficRenderer(cy);
 
+    const thresholds = serverConfig.kialiFeatureFlags.uiDefaults!.graph.thresholds;
+    this.zoomThresholds = Array.from(
+      new Set([thresholds.zoomBoxLabel, thresholds.zoomEdgeLabel, thresholds.zoomNodeBadge, thresholds.zoomNodeLabel])
+    );
+
     const getCytoscapeBaseEvent = (event: Cy.EventObject): CytoscapeBaseEvent | null => {
       const target = event.target;
       if (target === cy) {
@@ -474,16 +480,15 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
       }
     });
 
-    // 'fit' is a custom event that we emit allowing us to reset cytoscapeGraph.customViewport
+    // we must refresh the layout whenever we cross a zoom threshold that could affect GraphStyles.ts
     cy.on('zoom', (evt: Cy.EventObject) => {
       const cytoscapeEvent = getCytoscapeBaseEvent(evt);
       if (cytoscapeEvent) {
-        const zoomThresholds = [0.6, 0.8];
         const oldZoom = this.zoom;
         const newZoom = cy.zoom();
         this.zoom = newZoom;
 
-        zoomThresholds.some(zoomThresh => {
+        this.zoomThresholds!.some(zoomThresh => {
           if (
             (newZoom < zoomThresh && (!oldZoom || oldZoom >= zoomThresh)) ||
             (newZoom >= zoomThresh && oldZoom && oldZoom < zoomThresh)
