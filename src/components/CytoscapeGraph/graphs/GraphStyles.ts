@@ -37,7 +37,7 @@ let EdgeTextOutlineColor: PFColorVal;
 const EdgeTextOutlineWidth = '1px';
 const EdgeTextFont = 'Verdana,Arial,Helvetica,sans-serif,pficon';
 const EdgeTextFontSize = '6px';
-const EdgeTextFontSizeHover = '16px';
+const EdgeTextFontSizeHover = '10px';
 const EdgeWidth = 2;
 const EdgeWidthSelected = 4;
 const NodeBorderWidth = '1px';
@@ -77,8 +77,8 @@ const NodeBadgeFontSize = '12px';
 const NodeTextFont = EdgeTextFont;
 const NodeTextFontSize = '8px';
 const NodeTextFontSizeBox = '10px';
-const NodeTextFontSizeHover = '20px';
-const NodeTextFontSizeHoverBox = '20px';
+const NodeTextFontSizeHover = '11px';
+const NodeTextFontSizeHoverBox = '13px';
 const NodeWidth = NodeHeight;
 
 // Puts a little more space between icons when a badge has multiple icons
@@ -157,7 +157,7 @@ const labelDefault = style({
   fontSize: '0',
   fontWeight: 'normal',
   marginTop: '4px',
-  lineHeight: '11px',
+  lineHeight: 'auto',
   textAlign: 'center'
 });
 
@@ -304,34 +304,17 @@ export class GraphStyles {
     }
 
     let labelStyle = '';
-    /*
     if (ele.hasClass(HighlightClass)) {
       labelStyle += 'font-size: ' + NodeTextFontSizeHover + ';';
-      labelStyle += 'margin-top: 10px;';
-    }
-    */
-    if (ele.hasClass(HoveredClass)) {
-      labelStyle += 'font-size: ' + NodeTextFontSizeHover + ';';
-      labelStyle += 'margin-top: 10px;';
     }
     if (ele.hasClass(DimClass)) {
       labelStyle += 'opacity: 0.6;';
     }
 
     let contentStyle = '';
-    /*
     if (ele.hasClass(HighlightClass)) {
       const fontSize = isBox && isBox !== BoxByType.APP ? NodeTextFontSizeHoverBox : NodeTextFontSizeHover;
       contentStyle += 'font-size: ' + fontSize + ';';
-    }
-    */
-    if (ele.hasClass(HoveredClass)) {
-      const fontSize = isBox && isBox !== BoxByType.APP ? NodeTextFontSizeHoverBox : NodeTextFontSizeHover;
-      contentStyle += 'font-size: ' + fontSize + ';';
-    }
-
-    if (ele.hasClass(HighlightClass) && isBox && isBox !== BoxByType.APP) {
-      contentStyle += 'font-size: ' + NodeTextFontSizeHoverBox + ';';
     }
 
     const content: string[] = [];
@@ -412,7 +395,7 @@ export class GraphStyles {
     const contentText = content.join('<br/>');
     const contentClasses = hasBadge ? `${contentDefault} ${contentWithBadges}` : `${contentDefault}`;
     let appBoxStyle = '';
-    if (isBox) {
+    if (isBox && !noBoxLabel) {
       let pfBadge = '';
       switch (isBox) {
         case BoxByType.APP:
@@ -452,6 +435,10 @@ export class GraphStyles {
       htmlHosts = `<div class='${hostsClass}'><div>${hosts.length} ${
         hosts.length === 1 ? 'host' : 'hosts'
       }</div><div>${hostsToShow.join('<br/>')}</div></div>`;
+    }
+
+    if (noLabel && !hasBadge) {
+      return '';
     }
 
     const contentSpan = noLabel
@@ -509,6 +496,14 @@ export class GraphStyles {
     };
 
     const getEdgeLabel = (ele: Cy.EdgeSingular, isVerbose?: boolean): string => {
+      const thresholds = serverConfig.kialiFeatureFlags.uiDefaults!.graph.thresholds;
+      const zoom = ele.cy().zoom();
+      const isHovered = ele.hasClass(HoveredClass);
+      const noLabel = !isHovered && zoom < thresholds.zoomEdgeLabel;
+      if (noLabel) {
+        return '';
+      }
+
       const cyGlobal = getCyGlobalData(ele);
       const edgeLabels = cyGlobal.edgeLabels;
       const edgeData = decoratedEdgeData(ele);
@@ -886,7 +881,7 @@ export class GraphStyles {
         selector: `edge.${HoveredClass}`,
         style: {
           label: (ele: Cy.EdgeSingular) => {
-            return getEdgeLabel(ele, true);
+            return getEdgeLabel(ele);
           }
         }
       },

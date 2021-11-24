@@ -113,8 +113,8 @@ export const setServerConfig = (cfg: ServerConfig) => {
 
   serverConfig.kialiFeatureFlags.uiDefaults!.graph.thresholds = {
     zoomBoxLabel: 0.8,
-    zoomEdgeLabel: 0.9,
-    zoomNodeBadge: 0.6,
+    zoomEdgeLabel: 1.0,
+    zoomNodeBadge: 0.75,
     zoomNodeLabel: 0.9
   };
 

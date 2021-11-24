@@ -488,19 +488,21 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
         const newZoom = cy.zoom();
         this.zoom = newZoom;
 
-        this.zoomThresholds!.some(zoomThresh => {
-          if (
+        const thresholdCrossed = this.zoomThresholds!.some(zoomThresh => {
+          return (
             (newZoom < zoomThresh && (!oldZoom || oldZoom >= zoomThresh)) ||
             (newZoom >= zoomThresh && oldZoom && oldZoom < zoomThresh)
-          ) {
-            console.log(`changeLabels onzoom=${this.zoom}`);
-            CytoscapeGraphUtils.runLayout(cy, this.props.layout);
-            return true;
-          } else {
-            console.log(`zoom=${this.zoom}`);
-            return false;
-          }
+          );
         });
+
+        if (thresholdCrossed) {
+          console.log(`changeLabels onzoom=${this.zoom}`);
+          // this ensure that if html labels changed that we re-layout to potentially condense the graph
+          // CytoscapeGraphUtils.runLayout(cy, this.props.layout);
+          this.forceUpdate();
+        } else {
+          console.log(`zoom=${this.zoom}`);
+        }
       }
     });
 
@@ -598,6 +600,7 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
         this.props.onReady(evt.cy);
       }
       this.needsInitialLayout = true;
+      this.zoom = evt.cy.zoom();
     });
 
     cy.on('destroy', (_evt: Cy.EventObject) => {
