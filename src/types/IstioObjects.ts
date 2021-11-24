@@ -49,7 +49,7 @@ export interface IstioObject {
 
 export interface IstioStatus {
   validationMessages?: ValidationMessage[];
-  conditions?: any[];
+  conditions?: StatusCondition[];
 }
 
 export interface ValidationMessage {
@@ -57,6 +57,12 @@ export interface ValidationMessage {
   documentationUrl: string;
   level?: string;
   type: ValidationMessageType;
+}
+
+export interface StatusCondition {
+  type: string;
+  status: boolean;
+  message: string;
 }
 
 export interface ValidationMessageType {
