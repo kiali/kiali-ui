@@ -129,6 +129,7 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
   private graphHighlighter?: GraphHighlighter;
   private namespaceChanged: boolean;
   private needsInitialLayout: boolean;
+  private needsZoomLayout: boolean;
   private nodeChanged: boolean;
   private resetSelection: boolean = false;
   private trafficRenderer?: TrafficRenderer;
@@ -144,6 +145,7 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
     this.focusSelector = props.focusSelector;
     this.namespaceChanged = false;
     this.needsInitialLayout = false;
+    this.needsZoomLayout = false;
     this.nodeChanged = false;
   }
 
@@ -175,12 +177,21 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
   }
 
   componentDidUpdate(prevProps: CytoscapeGraphProps) {
-    if (this.props.graphData.isLoading) {
+    const cy = this.getCy();
+    if (!cy) {
       return;
     }
 
-    const cy = this.getCy();
-    if (!cy) {
+    // A zoom change can force an update to re-render the labeling.  After the update we
+    // need to perform a layout that considers the labeling changes.  The graph elements
+    // themselves are unchanges, so just return after the layout.
+    if (this.needsZoomLayout) {
+      this.needsZoomLayout = false;
+      CytoscapeGraphUtils.runLayout(cy, this.props.layout);
+      return;
+    }
+
+    if (this.props.graphData.isLoading) {
       return;
     }
 
@@ -546,8 +557,9 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
         });
 
         if (thresholdCrossed) {
-          // note, running the layout will not necessarily update the cached labeling, so force a re-render
-          // CytoscapeGraphUtils.runLayout(cy, this.props.layout);
+          // Force a render to update the labeling, and call for a layout to be performed after the update, to
+          // account for the label changes.
+          this.needsZoomLayout = true;
           this.forceUpdate();
         }
       }
