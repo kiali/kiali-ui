@@ -546,12 +546,9 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
         });
 
         if (thresholdCrossed) {
-          console.log(`changeLabels onzoom=${this.zoom}`);
-          // this ensure that if html labels changed that we re-layout to potentially condense the graph
+          // note, running the layout will not necessarily update the cached labeling, so force a re-render
           // CytoscapeGraphUtils.runLayout(cy, this.props.layout);
           this.forceUpdate();
-        } else {
-          console.log(`zoom=${this.zoom}`);
         }
       }
     });

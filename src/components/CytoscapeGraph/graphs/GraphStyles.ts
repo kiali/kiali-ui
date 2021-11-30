@@ -157,7 +157,7 @@ const labelDefault = style({
   fontSize: '0',
   fontWeight: 'normal',
   marginTop: '4px',
-  lineHeight: 'auto',
+  lineHeight: '11px',
   textAlign: 'center'
 });
 
@@ -310,7 +310,7 @@ export class GraphStyles {
 
     let labelStyle = '';
     if (ele.hasClass(HighlightClass)) {
-      labelStyle += 'font-size: ' + noLabel ? '30px' : NodeTextFontSizeHover + ';';
+      labelStyle += 'font-size: ' + NodeTextFontSizeHover + ';';
     }
     if (ele.hasClass(DimClass)) {
       labelStyle += 'opacity: 0.6;';
@@ -318,8 +318,7 @@ export class GraphStyles {
 
     let contentStyle = '';
     if (ele.hasClass(HighlightClass)) {
-      const fontSize =
-        isBox && isBox !== BoxByType.APP ? NodeTextFontSizeHoverBox : noLabel ? '30px' : NodeTextFontSizeHover;
+      const fontSize = isBox && isBox !== BoxByType.APP ? NodeTextFontSizeHoverBox : NodeTextFontSizeHover;
       contentStyle += 'font-size: ' + fontSize + ';';
     }
 
