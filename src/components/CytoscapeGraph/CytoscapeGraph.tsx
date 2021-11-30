@@ -402,10 +402,14 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
         clearTimeout(CytoscapeGraph.tapTimeout);
         CytoscapeGraph.tapTimeout = null;
 
-        // cancel any hover timer in progress
+        // cancel any hover timers in progress
         if (CytoscapeGraph.mouseInTimeout) {
           clearTimeout(CytoscapeGraph.mouseInTimeout);
           CytoscapeGraph.mouseInTimeout = null;
+        }
+        if (CytoscapeGraph.mouseOutTimeout) {
+          clearTimeout(CytoscapeGraph.mouseOutTimeout);
+          CytoscapeGraph.mouseOutTimeout = null;
         }
 
         if (tapped === CytoscapeGraph.tapTarget) {
