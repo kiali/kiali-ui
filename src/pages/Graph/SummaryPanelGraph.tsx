@@ -37,6 +37,10 @@ import { PFColors } from '../../components/Pf/PfColors';
 import ValidationSummaryLink from '../../components/Link/ValidationSummaryLink';
 import { PFBadge, PFBadges } from 'components/Pf/PfBadges';
 
+type SummaryPanelGraphProps = SummaryPanelPropType & {
+  isHover: boolean;
+};
+
 type SummaryPanelGraphMetricsState = {
   grpcRequestIn: Datapoint[];
   grpcRequestOut: Datapoint[];
@@ -110,7 +114,7 @@ const topologyStyle = style({
   margin: '0 1em'
 });
 
-export default class SummaryPanelGraph extends React.Component<SummaryPanelPropType, SummaryPanelGraphState> {
+export default class SummaryPanelGraph extends React.Component<SummaryPanelGraphProps, SummaryPanelGraphState> {
   static readonly panelStyle = {
     height: '100%',
     margin: 0,
@@ -124,7 +128,7 @@ export default class SummaryPanelGraph extends React.Component<SummaryPanelPropT
   private metricsPromise?: CancelablePromise<Response<IstioMetricsMap>[]>;
   private validationSummaryPromises: PromisesRegistry = new PromisesRegistry();
 
-  constructor(props: SummaryPanelPropType) {
+  constructor(props: SummaryPanelGraphProps) {
     super(props);
 
     this.state = { ...defaultState };
@@ -166,13 +170,13 @@ export default class SummaryPanelGraph extends React.Component<SummaryPanelPropT
   }
 
   render() {
-    const cy = this.props.data.summaryTarget;
+    const cy = this.props.isHover ? this.props.data.summaryTarget?.cy() : this.props.data.summaryTarget;
     if (!cy) {
       return null;
     }
 
-    const numSvc = cy.$(`node[nodeType = "${NodeType.SERVICE}"]`).size();
-    const numWorkloads = cy.$(`node[nodeType = "${NodeType.WORKLOAD}"]`).size();
+    const numSvc = cy.nodes(`[nodeType = "${NodeType.SERVICE}"]`).size();
+    const numWorkloads = cy.nodes(`[nodeType = "${NodeType.WORKLOAD}"]`).size();
     const { numApps, numVersions } = this.countApps(cy);
     const numEdges = cy.edges().size();
 
@@ -291,15 +295,23 @@ export default class SummaryPanelGraph extends React.Component<SummaryPanelPropT
             </Tab>
           </SimpleTabs>
         </div>
+        <div className="panel-footer" style={summaryHeader}>
+          <strong>Hovering Over:</strong>
+          <br />
+          <br />
+          {this.renderNamespacesSummary()}
+          <br />
+          {this.renderTopologySummary(numSvc, numWorkloads, numApps, numVersions, numEdges)}
+        </div>
       </div>
     );
   }
 
   private getGraphTraffic = (): SummaryPanelGraphTraffic => {
     // when getting total traffic rates don't count requests from injected service nodes
-    const cy = this.props.data.summaryTarget;
-    const totalEdges = cy.$(`node[nodeType != "${NodeType.SERVICE}"][!isBox]`).edgesTo('*');
-    const inboundEdges = cy.$(`node[?${CyNode.isRoot}]`).edgesTo('*');
+    const cy = this.props.isHover ? this.props.data.summaryTarget!.cy() : this.props.data.summaryTarget;
+    const totalEdges = cy.nodes(`[nodeType != "${NodeType.SERVICE}"][!isBox]`).edgesTo('*');
+    const inboundEdges = cy.nodes(`[?${CyNode.isRoot}]`).edgesTo('*');
     const outboundEdges = cy.nodes().leaves(`node[?${CyNode.isOutside}],[?${CyNode.isServiceEntry}]`).connectedEdges();
 
     return {
@@ -626,7 +638,7 @@ export default class SummaryPanelGraph extends React.Component<SummaryPanelPropT
     });
   };
 
-  fetchValidationsChunk(chunk: Namespace[], validationsMap: ValidationsMap) {
+  private fetchValidationsChunk(chunk: Namespace[], validationsMap: ValidationsMap) {
     return Promise.all(
       chunk.map(ns => {
         return API.getNamespaceValidations(ns.name).then(rs => ({ validation: rs.data, ns: ns }));

@@ -10,6 +10,7 @@ export interface Layout {
 export const SUMMARY_PANEL_CHART_WIDTH = 250;
 export type SummaryType = 'graph' | 'node' | 'edge' | 'box';
 export interface SummaryData {
+  isHover: boolean;
   summaryType: SummaryType;
   summaryTarget: any;
 }
@@ -218,9 +219,9 @@ export interface CytoscapeBaseEvent {
   summaryTarget: any; // the cytoscape element that was the target of the event
 }
 
-export interface CytoscapeClickEvent extends CytoscapeBaseEvent {}
-export interface CytoscapeMouseInEvent extends CytoscapeBaseEvent {}
-export interface CytoscapeMouseOutEvent extends CytoscapeBaseEvent {}
+export interface CytoscapeEvent extends CytoscapeBaseEvent {
+  isHover?: boolean;
+}
 
 // Graph Structures
 

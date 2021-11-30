@@ -11,7 +11,7 @@ import { DurationInSeconds, IntervalInMilliseconds, TimeInMilliseconds, TimeInSe
 import { MessageType } from '../../types/MessageCenter';
 import Namespace from '../../types/Namespace';
 import {
-  CytoscapeClickEvent,
+  CytoscapeEvent,
   DecoratedGraphElements,
   EdgeLabelMode,
   GraphDefinition,
@@ -122,7 +122,7 @@ type ReduxProps = {
   trafficRates: TrafficRate[];
   toggleIdleNodes: () => void;
   toggleLegend: () => void;
-  updateSummary: (event: CytoscapeClickEvent) => void;
+  updateSummary: (event: CytoscapeEvent) => void;
 };
 
 export type GraphPageProps = RouteComponentProps<Partial<GraphURLPathProps>> & ReduxProps;
@@ -736,7 +736,7 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<KialiAppState, void, KialiAp
   startTour: bindActionCreators(TourActions.startTour, dispatch),
   toggleIdleNodes: bindActionCreators(GraphToolbarActions.toggleIdleNodes, dispatch),
   toggleLegend: bindActionCreators(GraphToolbarActions.toggleLegend, dispatch),
-  updateSummary: (event: CytoscapeClickEvent) => dispatch(GraphActions.updateSummary(event))
+  updateSummary: (event: CytoscapeEvent) => dispatch(GraphActions.updateSummary(event))
 });
 
 const GraphPageContainer = connect(mapStateToProps, mapDispatchToProps)(GraphPage);

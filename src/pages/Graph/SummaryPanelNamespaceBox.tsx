@@ -580,7 +580,7 @@ export default class SummaryPanelNamespaceBox extends React.Component<
       })
       .catch(error => {
         if (error.isCanceled) {
-          console.debug('SummaryPanelGraph: Ignore fetch error (canceled).');
+          console.debug('SummaryPanelNamespaceBox: Ignore fetch error (canceled).');
           return;
         }
         const errorMsg = error.response && error.response.data.error ? error.response.data.error : error.message;

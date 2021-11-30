@@ -85,6 +85,9 @@ class SummaryPanel extends React.Component<MainSummaryPanelPropType, SummaryPane
     const summaryType = this.props.data.summaryType as string;
     const boxType: BoxByType | undefined =
       summaryType === 'box' ? this.props.data.summaryTarget.data(CyNode.isBox) : undefined;
+    const isHover = !!this.props.data.isHover;
+
+    console.log(`Is Hover=${this.props.data.isHover}`);
 
     const mainTopStyle = this.state.isVisible
       ? this.props.jaegerState.selectedTrace
@@ -106,7 +109,7 @@ class SummaryPanel extends React.Component<MainSummaryPanelPropType, SummaryPane
                 </>
               )}
             </div>
-            {summaryType === 'box' && boxType === 'app' && (
+            {summaryType === 'box' && boxType === 'app' && !isHover && (
               <SummaryPanelAppBox
                 data={this.props.data}
                 duration={this.props.duration}
@@ -119,7 +122,7 @@ class SummaryPanel extends React.Component<MainSummaryPanelPropType, SummaryPane
                 trafficRates={this.props.trafficRates}
               />
             )}
-            {summaryType === 'box' && boxType === 'cluster' && (
+            {summaryType === 'box' && boxType === 'cluster' && !isHover && (
               <SummaryPanelClusterBox
                 data={this.props.data}
                 duration={this.props.duration}
@@ -132,7 +135,7 @@ class SummaryPanel extends React.Component<MainSummaryPanelPropType, SummaryPane
                 trafficRates={this.props.trafficRates}
               />
             )}
-            {summaryType === 'box' && boxType === 'namespace' && (
+            {summaryType === 'box' && boxType === 'namespace' && !isHover && (
               <SummaryPanelNamespaceBox
                 data={this.props.data}
                 duration={this.props.duration}
@@ -145,13 +148,14 @@ class SummaryPanel extends React.Component<MainSummaryPanelPropType, SummaryPane
                 trafficRates={this.props.trafficRates}
               />
             )}
-            {summaryType === 'edge' && <SummaryPanelEdge {...this.props} />}
-            {summaryType === 'graph' && (
+            {summaryType === 'edge' && !isHover && <SummaryPanelEdge {...this.props} />}
+            {(summaryType === 'graph' || isHover) && (
               <SummaryPanelGraph
                 data={this.props.data}
                 duration={this.props.duration}
                 graphType={this.props.graphType}
                 injectServiceNodes={this.props.injectServiceNodes}
+                isHover={isHover}
                 namespaces={this.props.namespaces}
                 queryTime={this.props.queryTime}
                 rateInterval={this.props.rateInterval}
@@ -159,7 +163,7 @@ class SummaryPanel extends React.Component<MainSummaryPanelPropType, SummaryPane
                 trafficRates={this.props.trafficRates}
               />
             )}
-            {this.props.data.summaryType === 'node' && (
+            {this.props.data.summaryType === 'node' && !isHover && (
               <SummaryPanelNodeContainer
                 data={this.props.data}
                 duration={this.props.duration}

@@ -305,7 +305,7 @@ export class GraphStyles {
 
     let labelStyle = '';
     if (ele.hasClass(HighlightClass)) {
-      labelStyle += 'font-size: ' + NodeTextFontSizeHover + ';';
+      labelStyle += 'font-size: ' + noLabel ? '30px' : NodeTextFontSizeHover + ';';
     }
     if (ele.hasClass(DimClass)) {
       labelStyle += 'opacity: 0.6;';
@@ -313,7 +313,8 @@ export class GraphStyles {
 
     let contentStyle = '';
     if (ele.hasClass(HighlightClass)) {
-      const fontSize = isBox && isBox !== BoxByType.APP ? NodeTextFontSizeHoverBox : NodeTextFontSizeHover;
+      const fontSize =
+        isBox && isBox !== BoxByType.APP ? NodeTextFontSizeHoverBox : noLabel ? '30px' : NodeTextFontSizeHover;
       contentStyle += 'font-size: ' + fontSize + ';';
     }
 

@@ -1,4 +1,4 @@
-import { BoxByType, CytoscapeClickEvent, CytoscapeMouseInEvent, CytoscapeMouseOutEvent } from '../../../types/Graph';
+import { BoxByType, CytoscapeBaseEvent } from '../../../types/Graph';
 import { CyNode } from '../CytoscapeGraphUtils';
 import { DimClass, HoveredClass, HighlightClass } from './GraphStyles';
 
@@ -32,8 +32,8 @@ import { DimClass, HoveredClass, HighlightClass } from './GraphStyles';
 //
 export class GraphHighlighter {
   cy: any;
-  selected: CytoscapeClickEvent;
-  hovered?: CytoscapeMouseInEvent;
+  selected: CytoscapeBaseEvent;
+  hovered?: CytoscapeBaseEvent;
 
   constructor(cy: any) {
     this.cy = cy;
@@ -46,7 +46,7 @@ export class GraphHighlighter {
   // Need to define these methods using the "public class fields syntax", to be able to keep
   // *this* binded when passing it to events handlers (or use the annoying syntax)
   // https://reactjs.org/docs/handling-events.html
-  onClick = (event: CytoscapeClickEvent) => {
+  onClick = (event: CytoscapeBaseEvent) => {
     // ignore clicks on the currently selected element
     if (this.selected.summaryTarget === event.summaryTarget) {
       return;
@@ -69,7 +69,7 @@ export class GraphHighlighter {
     }
   };
 
-  onMouseIn = (event: CytoscapeMouseInEvent) => {
+  onMouseIn = (event: CytoscapeBaseEvent) => {
     // only set Hovered when the graph is currently selected, otherwise just leave the selected element as-is
     if (this.selected.summaryType === 'graph' && ['node', 'edge', 'box'].includes(event.summaryType)) {
       this.hovered = event;
@@ -78,7 +78,7 @@ export class GraphHighlighter {
     }
   };
 
-  onMouseOut = (event: CytoscapeMouseOutEvent) => {
+  onMouseOut = (event: CytoscapeBaseEvent) => {
     if (this.hovered && this.hovered.summaryTarget === event.summaryTarget) {
       this.clearHover();
       this.unhighlight();
