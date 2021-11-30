@@ -155,7 +155,7 @@ export const renderBadgedLink = (
   const link = getLink(nodeData, nodeType, linkGenerator);
 
   return (
-    <>
+    <div>
       <span style={{ marginRight: '1em', marginBottom: '3px', display: 'inline-block' }}>
         {label && (
           <span style={{ whiteSpace: 'pre' }}>
@@ -166,7 +166,7 @@ export const renderBadgedLink = (
         {link}
       </span>
       {nodeData.isInaccessible && <KialiIcon.MtlsLock />}
-    </>
+    </div>
   );
 };
 

@@ -119,8 +119,11 @@ export default class SummaryPanelAppBox extends React.Component<SummaryPanelProp
   }
 
   render() {
+    const isHover = this.props.data.isHover;
+
     const appBox = this.props.data.summaryTarget;
     const nodeData = decoratedNodeData(appBox);
+
     const serviceList = this.renderServiceList(appBox);
     const workloadList = this.renderWorkloadList(appBox);
     const hasGrpc = this.hasGrpcTraffic(appBox);
@@ -171,33 +174,35 @@ export default class SummaryPanelAppBox extends React.Component<SummaryPanelProp
             {workloadList.length > 0 && <div> {workloadList}</div>}
           </div>
         </div>
-        <div className="panel-body">
-          {hasGrpc && isGrpcRequests && (
-            <>
-              {this.renderGrpcRequests(appBox)}
+        {!isHover && (
+          <div className="panel-body">
+            {hasGrpc && isGrpcRequests && (
+              <>
+                {this.renderGrpcRequests(appBox)}
+                {hr()}
+              </>
+            )}
+            {hasHttp && (
+              <>
+                {this.renderHttpRequests(appBox)}
+                {hr()}
+              </>
+            )}
+            <div>
+              {this.renderSparklines(appBox)}
               {hr()}
-            </>
-          )}
-          {hasHttp && (
-            <>
-              {this.renderHttpRequests(appBox)}
-              {hr()}
-            </>
-          )}
-          <div>
-            {this.renderSparklines(appBox)}
-            {hr()}
+            </div>
+            {hasGrpc && !hasGrpcIn && renderNoTraffic('gRPC inbound')}
+            {hasGrpc && !hasGrpcOut && renderNoTraffic('gRPC outbound')}
+            {!hasGrpc && renderNoTraffic('gRPC')}
+            {hasHttp && !hasHttpIn && renderNoTraffic('HTTP inbound')}
+            {hasHttp && !hasHttpOut && renderNoTraffic('HTTP outbound')}
+            {!hasHttp && renderNoTraffic('HTTP')}
+            {hasTcp && !hasTcpIn && renderNoTraffic('TCP inbound')}
+            {hasTcp && !hasTcpOut && renderNoTraffic('TCP outbound')}
+            {!hasTcp && renderNoTraffic('TCP')}
           </div>
-          {hasGrpc && !hasGrpcIn && renderNoTraffic('gRPC inbound')}
-          {hasGrpc && !hasGrpcOut && renderNoTraffic('gRPC outbound')}
-          {!hasGrpc && renderNoTraffic('gRPC')}
-          {hasHttp && !hasHttpIn && renderNoTraffic('HTTP inbound')}
-          {hasHttp && !hasHttpOut && renderNoTraffic('HTTP outbound')}
-          {!hasHttp && renderNoTraffic('HTTP')}
-          {hasTcp && !hasTcpIn && renderNoTraffic('TCP inbound')}
-          {hasTcp && !hasTcpOut && renderNoTraffic('TCP outbound')}
-          {!hasTcp && renderNoTraffic('TCP')}
-        </div>
+        )}
       </div>
     );
   }

@@ -85,6 +85,7 @@ export class SummaryPanelNode extends React.Component<SummaryPanelNodeProps, Sum
   }
 
   render() {
+    const isHover = this.props.data.isHover;
     const node = this.props.data.summaryTarget;
     const nodeData = decoratedNodeData(node);
     const { nodeType, app, service, workload, isServiceEntry } = nodeData;
@@ -140,7 +141,7 @@ export class SummaryPanelNode extends React.Component<SummaryPanelNodeProps, Sum
             {shouldRenderWorkload && this.renderWorkloadSection(nodeData)}
           </div>
         </div>
-        {shouldRenderTraces ? this.renderWithTabs(nodeData) : this.renderTrafficOnly()}
+        {!isHover && <>{shouldRenderTraces ? this.renderWithTabs(nodeData) : this.renderTrafficOnly()}</>}
       </div>
     );
   }

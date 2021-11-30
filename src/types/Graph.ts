@@ -284,6 +284,17 @@ export const hasProtocolTraffic = (protocolTraffic: ProtocolTraffic): protocolTr
   );
 };
 
+export const prettyProtocol = (protocol: ValidProtocols): string => {
+  switch (protocol.toLowerCase()) {
+    case 'http':
+      return 'HTTP';
+    case 'tcp':
+      return 'TCP';
+    default:
+      return 'gRPC';
+  }
+};
+
 export interface DestService {
   cluster: string;
   namespace: string;

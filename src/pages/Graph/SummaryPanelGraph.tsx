@@ -37,10 +37,6 @@ import { PFColors } from '../../components/Pf/PfColors';
 import ValidationSummaryLink from '../../components/Link/ValidationSummaryLink';
 import { PFBadge, PFBadges } from 'components/Pf/PfBadges';
 
-type SummaryPanelGraphProps = SummaryPanelPropType & {
-  isHover: boolean;
-};
-
 type SummaryPanelGraphMetricsState = {
   grpcRequestIn: Datapoint[];
   grpcRequestOut: Datapoint[];
@@ -114,7 +110,7 @@ const topologyStyle = style({
   margin: '0 1em'
 });
 
-export default class SummaryPanelGraph extends React.Component<SummaryPanelGraphProps, SummaryPanelGraphState> {
+export default class SummaryPanelGraph extends React.Component<SummaryPanelPropType, SummaryPanelGraphState> {
   static readonly panelStyle = {
     height: '100%',
     margin: 0,
@@ -128,7 +124,7 @@ export default class SummaryPanelGraph extends React.Component<SummaryPanelGraph
   private metricsPromise?: CancelablePromise<Response<IstioMetricsMap>[]>;
   private validationSummaryPromises: PromisesRegistry = new PromisesRegistry();
 
-  constructor(props: SummaryPanelGraphProps) {
+  constructor(props: SummaryPanelPropType) {
     super(props);
 
     this.state = { ...defaultState };
@@ -170,7 +166,7 @@ export default class SummaryPanelGraph extends React.Component<SummaryPanelGraph
   }
 
   render() {
-    const cy = this.props.isHover ? this.props.data.summaryTarget?.cy() : this.props.data.summaryTarget;
+    const cy = this.props.data.summaryTarget;
     if (!cy) {
       return null;
     }
@@ -295,21 +291,13 @@ export default class SummaryPanelGraph extends React.Component<SummaryPanelGraph
             </Tab>
           </SimpleTabs>
         </div>
-        <div className="panel-footer" style={summaryHeader}>
-          <strong>Hovering Over:</strong>
-          <br />
-          <br />
-          {this.renderNamespacesSummary()}
-          <br />
-          {this.renderTopologySummary(numSvc, numWorkloads, numApps, numVersions, numEdges)}
-        </div>
       </div>
     );
   }
 
   private getGraphTraffic = (): SummaryPanelGraphTraffic => {
     // when getting total traffic rates don't count requests from injected service nodes
-    const cy = this.props.isHover ? this.props.data.summaryTarget!.cy() : this.props.data.summaryTarget;
+    const cy = this.props.data.summaryTarget;
     const totalEdges = cy.nodes(`[nodeType != "${NodeType.SERVICE}"][!isBox]`).edgesTo('*');
     const inboundEdges = cy.nodes(`[?${CyNode.isRoot}]`).edgesTo('*');
     const outboundEdges = cy.nodes().leaves(`node[?${CyNode.isOutside}],[?${CyNode.isServiceEntry}]`).connectedEdges();

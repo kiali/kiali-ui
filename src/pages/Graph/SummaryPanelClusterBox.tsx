@@ -50,6 +50,8 @@ export default class SummaryPanelClusterBox extends React.Component<SummaryPanel
   }
 
   render() {
+    const isHover = this.props.data.isHover;
+
     const clusterBox = this.props.data.summaryTarget;
     const boxed = clusterBox.descendants();
     const cluster = clusterBox.data(CyNode.cluster);
@@ -81,102 +83,104 @@ export default class SummaryPanelClusterBox extends React.Component<SummaryPanel
           {this.renderCluster(cluster)}
           {this.renderTopologySummary(numSvc, numWorkloads, numApps, numVersions, numEdges)}
         </div>
-        <div className={summaryBodyTabs}>
-          <SimpleTabs id="graph_summary_tabs" defaultTab={0} style={{ paddingBottom: '10px' }}>
-            <Tab style={summaryFont} title="Inbound" eventKey={0}>
-              <div style={summaryFont}>
-                {grpcIn.rate === 0 && httpIn.rate === 0 && tcpIn.rate === 0 && (
-                  <>
-                    <KialiIcon.Info /> No inbound traffic.
-                  </>
-                )}
-                {grpcIn.rate > 0 && (
-                  <RateTableGrpc
-                    isRequests={isGrpcRequests}
-                    rate={grpcIn.rate}
-                    rateGrpcErr={grpcIn.rateGrpcErr}
-                    rateNR={grpcIn.rateNoResponse}
-                  />
-                )}
-                {httpIn.rate > 0 && (
-                  <RateTableHttp
-                    title="HTTP (requests per second):"
-                    rate={httpIn.rate}
-                    rate3xx={httpIn.rate3xx}
-                    rate4xx={httpIn.rate4xx}
-                    rate5xx={httpIn.rate5xx}
-                    rateNR={httpIn.rateNoResponse}
-                  />
-                )}
-                {tcpIn.rate > 0 && <RateTableTcp rate={tcpIn.rate} />}
-                {
-                  // We don't show a sparkline here because we need to aggregate the traffic of an
-                  // ad hoc set of [root] nodes. We don't have backend support for that aggregation.
-                }
-              </div>
-            </Tab>
-            <Tab style={summaryFont} title="Outbound" eventKey={1}>
-              <div style={summaryFont}>
-                {grpcOut.rate === 0 && httpOut.rate === 0 && tcpOut.rate === 0 && (
-                  <>
-                    <KialiIcon.Info /> No outbound traffic.
-                  </>
-                )}
-                {grpcOut.rate > 0 && (
-                  <RateTableGrpc
-                    isRequests={isGrpcRequests}
-                    rate={grpcOut.rate}
-                    rateGrpcErr={grpcOut.rateGrpcErr}
-                    rateNR={grpcOut.rateNoResponse}
-                  />
-                )}
-                {httpOut.rate > 0 && (
-                  <RateTableHttp
-                    title="HTTP (requests per second):"
-                    rate={httpOut.rate}
-                    rate3xx={httpOut.rate3xx}
-                    rate4xx={httpOut.rate4xx}
-                    rate5xx={httpOut.rate5xx}
-                    rateNR={httpOut.rateNoResponse}
-                  />
-                )}
-                {tcpOut.rate > 0 && <RateTableTcp rate={tcpOut.rate} />}
-                {
-                  // We don't show a sparkline here because we need to aggregate the traffic of an
-                  // ad hoc set of [root] nodes. We don't have backend support for that aggregation.
-                }
-              </div>
-            </Tab>
-            <Tab style={summaryFont} title="Total" eventKey={2}>
-              <div style={summaryFont}>
-                {grpcTotal.rate === 0 && httpTotal.rate === 0 && tcpTotal.rate === 0 && (
-                  <>
-                    <KialiIcon.Info /> No traffic.
-                  </>
-                )}
-                {grpcTotal.rate > 0 && (
-                  <RateTableGrpc
-                    isRequests={isGrpcRequests}
-                    rate={grpcTotal.rate}
-                    rateGrpcErr={grpcTotal.rateGrpcErr}
-                    rateNR={grpcTotal.rateNoResponse}
-                  />
-                )}
-                {httpTotal.rate > 0 && (
-                  <RateTableHttp
-                    title="HTTP (requests per second):"
-                    rate={httpTotal.rate}
-                    rate3xx={httpTotal.rate3xx}
-                    rate4xx={httpTotal.rate4xx}
-                    rate5xx={httpTotal.rate5xx}
-                    rateNR={httpTotal.rateNoResponse}
-                  />
-                )}
-                {tcpTotal.rate > 0 && <RateTableTcp rate={tcpTotal.rate} />}
-              </div>
-            </Tab>
-          </SimpleTabs>
-        </div>
+        {!isHover && (
+          <div className={summaryBodyTabs}>
+            <SimpleTabs id="graph_summary_tabs" defaultTab={0} style={{ paddingBottom: '10px' }}>
+              <Tab style={summaryFont} title="Inbound" eventKey={0}>
+                <div style={summaryFont}>
+                  {grpcIn.rate === 0 && httpIn.rate === 0 && tcpIn.rate === 0 && (
+                    <>
+                      <KialiIcon.Info /> No inbound traffic.
+                    </>
+                  )}
+                  {grpcIn.rate > 0 && (
+                    <RateTableGrpc
+                      isRequests={isGrpcRequests}
+                      rate={grpcIn.rate}
+                      rateGrpcErr={grpcIn.rateGrpcErr}
+                      rateNR={grpcIn.rateNoResponse}
+                    />
+                  )}
+                  {httpIn.rate > 0 && (
+                    <RateTableHttp
+                      title="HTTP (requests per second):"
+                      rate={httpIn.rate}
+                      rate3xx={httpIn.rate3xx}
+                      rate4xx={httpIn.rate4xx}
+                      rate5xx={httpIn.rate5xx}
+                      rateNR={httpIn.rateNoResponse}
+                    />
+                  )}
+                  {tcpIn.rate > 0 && <RateTableTcp rate={tcpIn.rate} />}
+                  {
+                    // We don't show a sparkline here because we need to aggregate the traffic of an
+                    // ad hoc set of [root] nodes. We don't have backend support for that aggregation.
+                  }
+                </div>
+              </Tab>
+              <Tab style={summaryFont} title="Outbound" eventKey={1}>
+                <div style={summaryFont}>
+                  {grpcOut.rate === 0 && httpOut.rate === 0 && tcpOut.rate === 0 && (
+                    <>
+                      <KialiIcon.Info /> No outbound traffic.
+                    </>
+                  )}
+                  {grpcOut.rate > 0 && (
+                    <RateTableGrpc
+                      isRequests={isGrpcRequests}
+                      rate={grpcOut.rate}
+                      rateGrpcErr={grpcOut.rateGrpcErr}
+                      rateNR={grpcOut.rateNoResponse}
+                    />
+                  )}
+                  {httpOut.rate > 0 && (
+                    <RateTableHttp
+                      title="HTTP (requests per second):"
+                      rate={httpOut.rate}
+                      rate3xx={httpOut.rate3xx}
+                      rate4xx={httpOut.rate4xx}
+                      rate5xx={httpOut.rate5xx}
+                      rateNR={httpOut.rateNoResponse}
+                    />
+                  )}
+                  {tcpOut.rate > 0 && <RateTableTcp rate={tcpOut.rate} />}
+                  {
+                    // We don't show a sparkline here because we need to aggregate the traffic of an
+                    // ad hoc set of [root] nodes. We don't have backend support for that aggregation.
+                  }
+                </div>
+              </Tab>
+              <Tab style={summaryFont} title="Total" eventKey={2}>
+                <div style={summaryFont}>
+                  {grpcTotal.rate === 0 && httpTotal.rate === 0 && tcpTotal.rate === 0 && (
+                    <>
+                      <KialiIcon.Info /> No traffic.
+                    </>
+                  )}
+                  {grpcTotal.rate > 0 && (
+                    <RateTableGrpc
+                      isRequests={isGrpcRequests}
+                      rate={grpcTotal.rate}
+                      rateGrpcErr={grpcTotal.rateGrpcErr}
+                      rateNR={grpcTotal.rateNoResponse}
+                    />
+                  )}
+                  {httpTotal.rate > 0 && (
+                    <RateTableHttp
+                      title="HTTP (requests per second):"
+                      rate={httpTotal.rate}
+                      rate3xx={httpTotal.rate3xx}
+                      rate4xx={httpTotal.rate4xx}
+                      rate5xx={httpTotal.rate5xx}
+                      rateNR={httpTotal.rateNoResponse}
+                    />
+                  )}
+                  {tcpTotal.rate > 0 && <RateTableTcp rate={tcpTotal.rate} />}
+                </div>
+              </Tab>
+            </SimpleTabs>
+          </div>
+        )}
       </div>
     );
   }

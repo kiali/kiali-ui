@@ -111,8 +111,9 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
 
   // for hover support
   static hoverMs = 500;
-  static hoverTarget: any;
-  static hoverTimeout: any;
+  static mouseInTarget: any;
+  static mouseInTimeout: any;
+  static mouseOutTimeout: any;
 
   // for dbl-click support
   static doubleTapMs = 350;
@@ -402,9 +403,9 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
         CytoscapeGraph.tapTimeout = null;
 
         // cancel any hover timer in progress
-        if (CytoscapeGraph.hoverTimeout) {
-          clearTimeout(CytoscapeGraph.hoverTimeout);
-          CytoscapeGraph.hoverTimeout = null;
+        if (CytoscapeGraph.mouseInTimeout) {
+          clearTimeout(CytoscapeGraph.mouseInTimeout);
+          CytoscapeGraph.mouseInTimeout = null;
         }
 
         if (tapped === CytoscapeGraph.tapTarget) {
@@ -463,21 +464,24 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
 
     cy.on('mouseover', 'node,edge', (evt: Cy.EventObject) => {
       const cytoscapeEvent = getCytoscapeBaseEvent(evt);
-      if (cytoscapeEvent) {
-        this.handleMouseIn(cytoscapeEvent);
 
-        // start hover timer
-        CytoscapeGraph.hoverTarget = evt.target;
-        CytoscapeGraph.hoverTimeout = setTimeout(() => {
+      if (cytoscapeEvent) {
+        // cancel any mouseOut timer in progress
+        if (CytoscapeGraph.mouseOutTimeout) {
+          clearTimeout(CytoscapeGraph.mouseOutTimeout);
+          CytoscapeGraph.mouseOutTimeout = null;
+        }
+
+        // start mouseIn timer
+        CytoscapeGraph.mouseInTimeout = setTimeout(() => {
           // timer expired without a mouseout so perform hover action
-          const event: CytoscapeEvent = {
-            isHover: true,
-            summaryType: CytoscapeGraph.hoverTarget.data(CyNode.isBox) ? 'box' : 'node',
-            summaryTarget: CytoscapeGraph.hoverTarget
-          };
-          CytoscapeGraph.hoverTarget = null;
+          this.handleMouseIn(cytoscapeEvent);
+
           if (this.props.updateSummary) {
-            this.props.updateSummary(event);
+            this.props.updateSummary({
+              isHover: true,
+              ...cytoscapeEvent
+            });
           }
         }, CytoscapeGraph.hoverMs);
       }
@@ -485,12 +489,23 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
 
     cy.on('mouseout', 'node,edge', (evt: Cy.EventObject) => {
       const cytoscapeEvent = getCytoscapeBaseEvent(evt);
+
       if (cytoscapeEvent) {
-        // cancel any hover timer in progress
-        if (CytoscapeGraph.hoverTimeout) {
-          clearTimeout(CytoscapeGraph.hoverTimeout);
-          CytoscapeGraph.hoverTimeout = null;
+        // cancel any mouseIn timer in progress
+        if (CytoscapeGraph.mouseInTimeout) {
+          clearTimeout(CytoscapeGraph.mouseInTimeout);
+          CytoscapeGraph.mouseInTimeout = null;
         }
+
+        // start mouseOut timer to return to graph summary
+        CytoscapeGraph.mouseOutTimeout = setTimeout(() => {
+          if (this.props.updateSummary) {
+            this.props.updateSummary({
+              summaryType: 'graph',
+              summaryTarget: cytoscapeEvent.summaryTarget.cy()
+            });
+          }
+        }, CytoscapeGraph.hoverMs);
 
         this.handleMouseOut(cytoscapeEvent);
       }
