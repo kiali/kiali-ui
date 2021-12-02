@@ -241,7 +241,6 @@ export class CytoscapeToolbar extends React.PureComponent<CytoscapeToolbarProps,
           y: container.offsetHeight / 2
         }
       });
-      cy.emit('kializoom');
     }
   };
 
