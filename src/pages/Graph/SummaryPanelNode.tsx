@@ -29,6 +29,7 @@ import SummaryPanelNodeTraces from './SummaryPanelNodeTraces';
 import SimpleTabs from 'components/Tab/SimpleTabs';
 import { JaegerState } from 'reducers/JaegerState';
 import { classes, style } from 'typestyle';
+import { PFBadge, PFBadges } from 'components/Pf/PfBadges';
 
 type SummaryPanelNodeState = {
   isActionOpen: boolean;
@@ -118,20 +119,24 @@ export class SummaryPanelNode extends React.Component<SummaryPanelNodeProps, Sum
       <div ref={this.mainDivRef} className={`panel panel-default ${summaryPanel}`}>
         <div className="panel-heading" style={summaryHeader}>
           <div>
-            {renderBadgedLink(nodeData)}
-            {actions && (
-              <Dropdown
-                id="summary-node-actions"
-                style={{ float: 'right' }}
-                isPlain={true}
-                dropdownItems={actions}
-                isOpen={this.state.isActionOpen}
-                position={DropdownPosition.right}
-                toggle={<KebabToggle id="summary-node-kebab" onToggle={this.onToggleActions} />}
-              />
-            )}
+            <span>
+              <PFBadge badge={PFBadges.Namespace} style={{ marginBottom: '2px' }} />
+              {nodeData.namespace}
+              {!isHover && actions && (
+                <Dropdown
+                  id="summary-node-actions"
+                  style={{ float: 'right' }}
+                  isPlain={true}
+                  dropdownItems={actions}
+                  isOpen={this.state.isActionOpen}
+                  position={DropdownPosition.right}
+                  toggle={<KebabToggle id="summary-node-kebab" onToggle={this.onToggleActions} />}
+                />
+              )}
+              {renderBadgedLink(nodeData)}
+              {renderHealth(nodeData.health)}
+            </span>
           </div>
-          <div>{renderHealth(nodeData.health)}</div>
           <div>
             {this.renderBadgeSummary(nodeData)}
             {shouldRenderDestsList && <div>{destsList}</div>}

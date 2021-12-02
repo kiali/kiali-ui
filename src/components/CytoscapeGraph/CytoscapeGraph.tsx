@@ -503,51 +503,60 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
 
     cy.on('mouseover', 'node,edge', (evt: Cy.EventObject) => {
       const cytoscapeEvent = getCytoscapeBaseEvent(evt);
-
-      if (cytoscapeEvent) {
-        // cancel any mouseOut timer in progress
-        if (CytoscapeGraph.mouseOutTimeout) {
-          clearTimeout(CytoscapeGraph.mouseOutTimeout);
-          CytoscapeGraph.mouseOutTimeout = null;
-        }
-
-        // start mouseIn timer
-        CytoscapeGraph.mouseInTimeout = setTimeout(() => {
-          // timer expired without a mouseout so perform hover action
-          this.handleMouseIn(cytoscapeEvent);
-
-          if (this.props.updateSummary) {
-            this.props.updateSummary({
-              isHover: true,
-              ...cytoscapeEvent
-            });
-          }
-        }, CytoscapeGraph.hoverMs);
+      if (!cytoscapeEvent) {
+        return;
       }
+      if (!cy.elements(':selected').empty()) {
+        return;
+      }
+
+      // cancel any mouseOut timer in progress
+      if (CytoscapeGraph.mouseOutTimeout) {
+        clearTimeout(CytoscapeGraph.mouseOutTimeout);
+        CytoscapeGraph.mouseOutTimeout = null;
+      }
+
+      // start mouseIn timer
+      CytoscapeGraph.mouseInTimeout = setTimeout(() => {
+        // timer expired without a mouseout so perform hover action
+        this.handleMouseIn(cytoscapeEvent);
+
+        if (this.props.updateSummary) {
+          this.props.updateSummary({
+            isHover: true,
+            ...cytoscapeEvent
+          });
+        }
+      }, CytoscapeGraph.hoverMs);
     });
 
     cy.on('mouseout', 'node,edge', (evt: Cy.EventObject) => {
       const cytoscapeEvent = getCytoscapeBaseEvent(evt);
 
-      if (cytoscapeEvent) {
-        // cancel any mouseIn timer in progress
-        if (CytoscapeGraph.mouseInTimeout) {
-          clearTimeout(CytoscapeGraph.mouseInTimeout);
-          CytoscapeGraph.mouseInTimeout = null;
-        }
-
-        // start mouseOut timer to return to graph summary
-        CytoscapeGraph.mouseOutTimeout = setTimeout(() => {
-          if (this.props.updateSummary) {
-            this.props.updateSummary({
-              summaryType: 'graph',
-              summaryTarget: cytoscapeEvent.summaryTarget.cy()
-            });
-          }
-        }, CytoscapeGraph.hoverMs);
-
-        this.handleMouseOut(cytoscapeEvent);
+      if (!cytoscapeEvent) {
+        return;
       }
+      if (!cy.elements(':selected').empty()) {
+        return;
+      }
+
+      // cancel any mouseIn timer in progress
+      if (CytoscapeGraph.mouseInTimeout) {
+        clearTimeout(CytoscapeGraph.mouseInTimeout);
+        CytoscapeGraph.mouseInTimeout = null;
+      }
+
+      // start mouseOut timer to return to graph summary
+      CytoscapeGraph.mouseOutTimeout = setTimeout(() => {
+        if (this.props.updateSummary) {
+          this.props.updateSummary({
+            summaryType: 'graph',
+            summaryTarget: cytoscapeEvent.summaryTarget.cy()
+          });
+        }
+      }, CytoscapeGraph.hoverMs);
+
+      this.handleMouseOut(cytoscapeEvent);
     });
 
     cy.on('viewport', (evt: Cy.EventObject) => {

@@ -24,6 +24,7 @@ import { KialiIcon } from 'config/KialiIcon';
 import { decoratedNodeData, CyNode } from 'components/CytoscapeGraph/CytoscapeGraphUtils';
 import { Dropdown, DropdownPosition, DropdownItem, KebabToggle, DropdownGroup } from '@patternfly/react-core';
 import { getOptions, clickHandler } from 'components/CytoscapeGraph/ContextMenu/NodeContextMenu';
+import { PFBadge, PFBadges } from 'components/Pf/PfBadges';
 
 type SummaryPanelAppBoxMetricsState = {
   grpcRequestIn: Datapoint[];
@@ -152,9 +153,10 @@ export default class SummaryPanelAppBox extends React.Component<SummaryPanelProp
     return (
       <div ref={this.mainDivRef} className={`panel panel-default ${summaryPanel}`}>
         <div className="panel-heading" style={summaryHeader}>
-          <div>
-            {renderBadgedLink(nodeData)}
-            {actions && (
+          <span>
+            <PFBadge badge={PFBadges.Namespace} style={{ marginBottom: '2px' }} />
+            {nodeData.namespace}
+            {!isHover && actions && (
               <Dropdown
                 id="summary-appbox-actions"
                 isPlain={true}
@@ -166,8 +168,9 @@ export default class SummaryPanelAppBox extends React.Component<SummaryPanelProp
                 isGrouped={true}
               />
             )}
-          </div>
-          <div>{renderHealth(nodeData.health)}</div>
+            {renderBadgedLink(nodeData)}
+            {renderHealth(nodeData.health)}
+          </span>
           <div>
             {this.renderBadgeSummary(appBox)}
             {serviceList.length > 0 && <div>{serviceList}</div>}
