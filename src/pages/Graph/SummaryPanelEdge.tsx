@@ -133,7 +133,7 @@ export default class SummaryPanelEdge extends React.Component<SummaryPanelPropTy
     const isMtls = mTLSPercentage && mTLSPercentage > 0;
     const hasPrincipals = !!edge.sourcePrincipal || !!edge.destPrincipal;
     const hasSecurity = isMtls || hasPrincipals;
-    const protocol = prettyProtocol(edge.protocol);
+    const protocol = edge.protocol;
     const isGrpc = protocol === Protocol.GRPC;
     const isHttp = protocol === Protocol.HTTP;
     const isTcp = protocol === Protocol.TCP;
@@ -167,7 +167,7 @@ export default class SummaryPanelEdge extends React.Component<SummaryPanelPropTy
           {renderBadgedLink(dest, undefined, 'To:        ')}
           {isHover && (
             <div>
-              <b>Protocol: {protocol}</b>
+              <b>Protocol: {prettyProtocol(protocol)}</b>
             </div>
           )}
         </div>

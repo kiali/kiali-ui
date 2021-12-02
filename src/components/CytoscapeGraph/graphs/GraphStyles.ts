@@ -211,10 +211,9 @@ export class GraphStyles {
     const noBoxLabel = !isHovered && zoom < thresholds.zoomBoxLabel;
     const noLabel = !isHovered && zoom < thresholds.zoomNodeLabel;
     */
-    const noBadge = zoom < thresholds.zoomNodeBadge;
-    const noBoxLabel = zoom < thresholds.zoomBoxLabel;
-    const noLabel = zoom < thresholds.zoomNodeLabel;
-    if (noBadge && noBoxLabel && noLabel) {
+    const noBadge = zoom < thresholds.zoomBadge;
+    const noLabel = zoom < thresholds.zoomLabel;
+    if (noBadge && noLabel) {
       return '';
     }
 
@@ -324,7 +323,7 @@ export class GraphStyles {
 
     const content: string[] = [];
 
-    if ((isBox && !noBoxLabel) || (!isBox && !noLabel)) {
+    if (!noLabel) {
       // append namespace if necessary
       if (
         (isMultiNamespace || isOutside) &&
@@ -400,7 +399,8 @@ export class GraphStyles {
     const contentText = content.join('<br/>');
     const contentClasses = hasBadge ? `${contentDefault} ${contentWithBadges}` : `${contentDefault}`;
     let appBoxStyle = '';
-    if (isBox && !noBoxLabel) {
+
+    if (isBox && !noLabel) {
       let pfBadge = '';
       switch (isBox) {
         case BoxByType.APP:
@@ -507,7 +507,7 @@ export class GraphStyles {
       const isHovered = ele.hasClass(HoveredClass);
       const noLabel = !isHovered && zoom < thresholds.zoomEdgeLabel;
       */
-      const noLabel = zoom < thresholds.zoomEdgeLabel;
+      const noLabel = zoom < thresholds.zoomLabel;
       if (noLabel) {
         return '';
       }

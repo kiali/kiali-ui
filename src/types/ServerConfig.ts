@@ -38,10 +38,8 @@ interface GraphTraffic {
 }
 
 interface GraphThresholds {
-  zoomBoxLabel: number;
-  zoomEdgeLabel: number;
-  zoomNodeBadge: number;
-  zoomNodeLabel: number;
+  zoomLabel: number;
+  zoomBadge: number;
 }
 
 interface GraphUIDefaults {

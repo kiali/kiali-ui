@@ -74,6 +74,10 @@ type CytoscapeGraphProps = {
   updateSummary?: (event: CytoscapeEvent) => void;
 };
 
+type CytoscapeGraphState = {
+  zoomChangeTime: TimeInMilliseconds;
+};
+
 export interface GraphEdgeTapEvent {
   namespace: string;
   type: string;
@@ -101,7 +105,7 @@ export interface GraphNodeTapEvent {
 export interface GraphNodeDoubleTapEvent extends GraphNodeTapEvent {}
 
 // exporting this class for testing
-export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps> {
+export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps, CytoscapeGraphState> {
   static contextTypes = {
     router: () => null
   };
@@ -129,12 +133,12 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
   private graphHighlighter?: GraphHighlighter;
   private namespaceChanged: boolean;
   private needsInitialLayout: boolean;
-  private needsZoomLayout: boolean;
+  //private needsZoomLayout: boolean;
   private nodeChanged: boolean;
   private resetSelection: boolean = false;
   private trafficRenderer?: TrafficRenderer;
   private userBoxSelected?: Cy.Collection;
-  private zoom?: number;
+  private zoom: number;
   private zoomThresholds?: number[];
 
   constructor(props: CytoscapeGraphProps) {
@@ -145,15 +149,18 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
     this.focusSelector = props.focusSelector;
     this.namespaceChanged = false;
     this.needsInitialLayout = false;
-    this.needsZoomLayout = false;
+    //this.needsZoomLayout = false;
     this.nodeChanged = false;
+    this.zoom = 1; // 1 is the initial cy zoom
+
+    this.state = { zoomChangeTime: 0 };
   }
 
   componentDidMount() {
     this.cyInitialization(this.getCy()!);
   }
 
-  shouldComponentUpdate(nextProps: CytoscapeGraphProps) {
+  shouldComponentUpdate(nextProps: CytoscapeGraphProps, nextState: CytoscapeGraphState) {
     this.nodeChanged =
       this.nodeChanged || this.props.graphData.fetchParams.node !== nextProps.graphData.fetchParams.node;
 
@@ -171,43 +178,51 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
       this.props.showRank !== nextProps.showRank ||
       this.props.showTrafficAnimation !== nextProps.showTrafficAnimation ||
       this.props.showVirtualServices !== nextProps.showVirtualServices ||
-      this.props.trace !== nextProps.trace;
+      this.props.trace !== nextProps.trace ||
+      this.state.zoomChangeTime !== nextState.zoomChangeTime;
 
     return result;
   }
 
-  componentDidUpdate(prevProps: CytoscapeGraphProps) {
+  componentDidUpdate(prevProps: CytoscapeGraphProps, prevState: CytoscapeGraphState) {
     const cy = this.getCy();
     if (!cy) {
       return;
     }
-
-    // A zoom change can force an update to re-render the labeling.  After the update we
-    // need to perform a layout that considers the labeling changes.  The graph elements
-    // themselves are unchanges, so just return after the layout.
-    if (this.needsZoomLayout) {
-      this.needsZoomLayout = false;
-      CytoscapeGraphUtils.runLayout(cy, this.props.layout);
-      return;
-    }
-
     if (this.props.graphData.isLoading) {
       return;
     }
 
-    let updateLayout = false;
+    // Check to see if we should run a layout when we process the graphUpdate
+    let needsLayout = false;
     if (
       this.needsInitialLayout ||
+      this.state.zoomChangeTime !== prevState.zoomChangeTime ||
       this.nodeNeedsRelayout() ||
       this.namespaceNeedsRelayout(prevProps.graphData.elements, this.props.graphData.elements) ||
       this.elementsNeedRelayout(prevProps.graphData.elements, this.props.graphData.elements) ||
       this.props.layout.name !== prevProps.layout.name
     ) {
-      updateLayout = true;
       this.needsInitialLayout = false;
+      // this.needsZoomLayout = false;
+      needsLayout = true;
     }
 
-    this.processGraphUpdate(cy, updateLayout).then(_response => {
+    // A zoom change can force an update to re-render the labeling.  After the render we
+    // need to perform a layout that considers the labeling changes.  Unless we are
+    // already going to run a layout, do it here.  The graph elements
+    // themselves are unchanged, so just return after the layout.
+    /*
+    if (this.needsZoomLayout && !needsLayout) {
+      console.log('force zoom layout');
+      CytoscapeGraphUtils.runLayout(cy, this.props.layout).then(_);
+      this.needsZoomLayout = false;
+      return;
+    }
+    */
+
+    console.log(`graph layout=${needsLayout}`);
+    this.processGraphUpdate(cy, needsLayout).then(_response => {
       // pre-select node if provided
       const node = this.props.graphData.fetchParams.node;
       if (node && cy && cy.$(':selected').length === 0) {
@@ -254,6 +269,17 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
         hideTrace(cy);
       }
     });
+  }
+
+  componentWillUnmount() {
+    if (CytoscapeGraph.mouseInTimeout) {
+      clearTimeout(CytoscapeGraph.mouseInTimeout);
+      CytoscapeGraph.mouseInTimeout = null;
+    }
+    if (CytoscapeGraph.mouseOutTimeout) {
+      clearTimeout(CytoscapeGraph.mouseOutTimeout);
+      CytoscapeGraph.mouseOutTimeout = null;
+    }
   }
 
   render() {
@@ -356,9 +382,7 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
     this.trafficRenderer = new TrafficRenderer(cy);
 
     const thresholds = serverConfig.kialiFeatureFlags.uiDefaults!.graph.thresholds;
-    this.zoomThresholds = Array.from(
-      new Set([thresholds.zoomBoxLabel, thresholds.zoomEdgeLabel, thresholds.zoomNodeBadge, thresholds.zoomNodeLabel])
-    );
+    this.zoomThresholds = Array.from(new Set([thresholds.zoomLabel, thresholds.zoomBadge]));
 
     const getCytoscapeBaseEvent = (event: Cy.EventObject): CytoscapeBaseEvent | null => {
       const target = event.target;
@@ -538,30 +562,56 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
       const cytoscapeEvent = getCytoscapeBaseEvent(evt);
       if (cytoscapeEvent) {
         this.customViewport = false;
+        if (this.zoom !== cy.zoom()) {
+        }
       }
     });
 
     // we must refresh the layout whenever we cross a zoom threshold that could affect GraphStyles.ts
+    /*
     cy.on('zoom', (evt: Cy.EventObject) => {
       const cytoscapeEvent = getCytoscapeBaseEvent(evt);
       if (cytoscapeEvent) {
-        const oldZoom = this.zoom;
-        const newZoom = cy.zoom();
-        this.zoom = newZoom;
+        console.log(`Zoom to ${cy.zoom()}`);
+      }
+    });
+    */
 
-        const thresholdCrossed = this.zoomThresholds!.some(zoomThresh => {
-          return (
-            (newZoom < zoomThresh && (!oldZoom || oldZoom >= zoomThresh)) ||
-            (newZoom >= zoomThresh && oldZoom && oldZoom < zoomThresh)
-          );
-        });
+    // we must refresh the layout whenever we cross a zoom threshold that could affect GraphStyles.ts.  We
+    // don't check on every cy 'zoom' event because cy emits some 'zoom' events with what look like
+    // intermediate values, that tend to be large and short lived. Those "false" values cause problems, so
+    // instead we react only to zoom events initiated by the user, mousewheel, cytoscape toolbar, shitf-zoom, etc.
+    cy.on('kializoom', (evt: Cy.EventObject) => {
+      const cytoscapeEvent = getCytoscapeBaseEvent(evt);
+      if (!cytoscapeEvent) {
+        return;
+      }
+      console.log(`KialiZoom to ${cy.zoom()}`);
 
-        if (thresholdCrossed) {
-          // Force a render to update the labeling, and call for a layout to be performed after the update, to
-          // account for the label changes.
-          this.needsZoomLayout = true;
-          this.forceUpdate();
-        }
+      const oldZoom = this.zoom;
+      const newZoom = cy.zoom();
+      this.zoom = newZoom;
+      console.log(`old=${oldZoom}, new=${newZoom}`);
+
+      const thresholdCrossed = this.zoomThresholds!.some(zoomThresh => {
+        return (newZoom < zoomThresh && oldZoom >= zoomThresh) || (newZoom >= zoomThresh && oldZoom < zoomThresh);
+      });
+
+      if (thresholdCrossed) {
+        // Force a render to update the labeling, and call for a layout to be performed after the update, to
+        // account for the label changes.
+        console.log(`zoom thresh crossed ${oldZoom} -> ${newZoom}`);
+        this.setState({ zoomChangeTime: Date.now() });
+        // this.needsZoomLayout = true;
+        // this.forceUpdate();
+      }
+    });
+
+    // see the 'kializoom' comment
+    cy.on('scrollzoom', (evt: Cy.EventObject) => {
+      const cytoscapeEvent = getCytoscapeBaseEvent(evt);
+      if (cytoscapeEvent) {
+        cy.emit('kializoom');
       }
     });
 
@@ -659,7 +709,7 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
         this.props.onReady(evt.cy);
       }
       this.needsInitialLayout = true;
-      this.zoom = evt.cy.zoom();
+      // this.setState({ zoom: evt.cy.zoom() });
     });
 
     cy.on('destroy', (_evt: Cy.EventObject) => {
@@ -804,6 +854,9 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
     if (this.props.showTrafficAnimation) {
       this.trafficRenderer!.start(cy.edges());
     }
+
+    this.zoom = cy.zoom();
+    console.log(`Set zoom to ${this.zoom} after layout`);
 
     // notify that the graph has been updated
     if (this.props.setUpdateTime) {
