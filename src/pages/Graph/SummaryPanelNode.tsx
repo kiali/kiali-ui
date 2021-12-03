@@ -116,7 +116,11 @@ export class SummaryPanelNode extends React.Component<SummaryPanelNodeProps, Sum
       options.length > 0 ? [<DropdownGroup label="Show" className="kiali-group-menu" children={options} />] : undefined;
 
     return (
-      <div ref={this.mainDivRef} className={`panel panel-default ${summaryPanel}`}>
+      <div
+        ref={this.mainDivRef}
+        className={`panel panel-default ${summaryPanel}`}
+        style={isHover ? { background: 'gray' } : {}}
+      >
         <div className="panel-heading" style={summaryHeader}>
           <div>
             <span>

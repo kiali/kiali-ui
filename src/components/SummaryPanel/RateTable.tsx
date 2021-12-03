@@ -75,7 +75,7 @@ export class RateTableHttp extends React.Component<RateTableHttpPropType, {}> {
     return (
       <div>
         <strong>{this.props.title}</strong>
-        <table className="table" style={{ marginBottom: '10px' }}>
+        <table className="table" style={{ marginBottom: '0' }}>
           <thead>
             <tr style={{ backgroundColor: 'white' }}>
               <th>Total</th>

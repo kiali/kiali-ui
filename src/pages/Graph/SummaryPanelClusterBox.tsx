@@ -78,7 +78,10 @@ export default class SummaryPanelClusterBox extends React.Component<SummaryPanel
     const tcpTotal = getAccumulatedTrafficRateTcp(totalEdges);
 
     return (
-      <div className="panel panel-default" style={SummaryPanelClusterBox.panelStyle}>
+      <div
+        className="panel panel-default"
+        style={{ ...SummaryPanelClusterBox.panelStyle, ...(isHover ? { background: 'gray' } : {}) }}
+      >
         <div className="panel-heading" style={summaryHeader}>
           {this.renderCluster(cluster)}
           {this.renderTopologySummary(numSvc, numWorkloads, numApps, numVersions, numEdges)}

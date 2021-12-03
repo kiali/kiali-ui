@@ -175,7 +175,10 @@ export default class SummaryPanelNamespaceBox extends React.Component<
       this.boxTraffic || this.getBoxTraffic();
 
     return (
-      <div className="panel panel-default" style={SummaryPanelNamespaceBox.panelStyle}>
+      <div
+        className="panel panel-default"
+        style={{ ...SummaryPanelNamespaceBox.panelStyle, ...(isHover ? { background: 'gray' } : {}) }}
+      >
         <div className="panel-heading" style={summaryHeader}>
           {this.renderNamespace(namespace)}
           <br />

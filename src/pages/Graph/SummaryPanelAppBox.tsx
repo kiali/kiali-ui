@@ -151,7 +151,11 @@ export default class SummaryPanelAppBox extends React.Component<SummaryPanelProp
         : undefined;
 
     return (
-      <div ref={this.mainDivRef} className={`panel panel-default ${summaryPanel}`}>
+      <div
+        ref={this.mainDivRef}
+        className={`panel panel-default ${summaryPanel}`}
+        style={isHover ? { background: 'gray' } : {}}
+      >
         <div className="panel-heading" style={summaryHeader}>
           <span>
             <PFBadge badge={PFBadges.Namespace} style={{ marginBottom: '2px' }} />
