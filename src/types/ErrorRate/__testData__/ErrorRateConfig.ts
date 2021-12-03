@@ -73,7 +73,25 @@ export const serverRateConfig = {
       enabled: true
     },
     istioInjectionAction: true,
-    istioUpgradeAction: false
+    istioUpgradeAction: false,
+    uiDefaults: {
+      graph: {
+        findOptions: [],
+        hideOptions: [],
+        thresholds: {
+          zoomBadge: 0.8,
+          zoomLabel: 0.9
+        },
+        traffic: {
+          grpc: 'requests',
+          http: 'requests',
+          tcp: 'sent'
+        }
+      },
+      metricsPerRefresh: '1m',
+      namespaces: [],
+      refreshInterval: '15s'
+    }
   },
   healthConfig: {
     rate: [

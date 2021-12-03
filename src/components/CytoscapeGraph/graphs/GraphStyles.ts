@@ -203,7 +203,7 @@ export class GraphStyles {
   }
 
   static getNodeLabel(ele: Cy.NodeSingular) {
-    const thresholds = serverConfig.kialiFeatureFlags.uiDefaults!.graph.thresholds;
+    const thresholds = serverConfig.kialiFeatureFlags.uiDefaults.graph.thresholds;
     const zoom = ele.cy().zoom();
     /*
     const isHovered = ele.hasClass(HoveredClass);
@@ -501,7 +501,7 @@ export class GraphStyles {
     };
 
     const getEdgeLabel = (ele: Cy.EdgeSingular, isVerbose?: boolean): string => {
-      const thresholds = serverConfig.kialiFeatureFlags.uiDefaults!.graph.thresholds;
+      const thresholds = serverConfig.kialiFeatureFlags.uiDefaults.graph.thresholds;
       const zoom = ele.cy().zoom();
       /*
       const isHovered = ele.hasClass(HoveredClass);

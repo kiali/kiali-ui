@@ -64,7 +64,7 @@ interface KialiFeatureFlags {
   certificatesInformationIndicators: CertificatesInformationIndicators;
   istioInjectionAction: boolean;
   istioUpgradeAction: boolean;
-  uiDefaults?: UIDefaults;
+  uiDefaults: UIDefaults;
 }
 
 interface IstioCanaryRevision {

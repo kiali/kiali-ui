@@ -153,7 +153,7 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
     this.nodeChanged = false;
     this.zoom = 1; // 1 is the default cy zoom
     this.zoomIgnore = true; // ignore zoom events prior to the first rendering
-    const thresholds = serverConfig.kialiFeatureFlags.uiDefaults!.graph.thresholds;
+    const thresholds = serverConfig.kialiFeatureFlags.uiDefaults.graph.thresholds;
     this.zoomThresholds = Array.from(new Set([thresholds.zoomLabel, thresholds.zoomBadge]));
 
     this.state = { zoomThresholdTime: 0 };
