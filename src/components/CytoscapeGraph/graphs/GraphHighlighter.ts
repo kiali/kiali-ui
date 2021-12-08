@@ -112,9 +112,9 @@ export class GraphHighlighter {
     if (event) {
       switch (event.summaryType) {
         case 'node':
-          return { toHighlight: this.getNodeHighlight(event.summaryTarget, isHover), dimOthers: !isHover };
+          return { toHighlight: this.getNodeHighlight(event.summaryTarget, isHover), dimOthers: true };
         case 'edge':
-          return { toHighlight: this.getEdgeHighlight(event.summaryTarget, isHover), dimOthers: !isHover };
+          return { toHighlight: this.getEdgeHighlight(event.summaryTarget, isHover), dimOthers: true };
         case 'box':
           return this.getBoxHighlight(event.summaryTarget, isHover);
         default:
@@ -135,7 +135,7 @@ export class GraphHighlighter {
   }
 
   getNodeHighlight(node: any, isHover: boolean) {
-    const elems = isHover ? node : node.predecessors().add(node.successors());
+    const elems = isHover ? node.closedNeighborhood() : node.predecessors().add(node.successors());
     return this.includeAncestorNodes(elems.add(node));
   }
 

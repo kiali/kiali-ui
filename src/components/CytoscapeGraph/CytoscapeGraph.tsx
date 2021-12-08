@@ -115,7 +115,7 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
   };
 
   // for hover support
-  static hoverMs = 500;
+  static hoverMs = 250;
   static mouseInTarget: any;
   static mouseInTimeout: any;
   static mouseOutTimeout: any;

@@ -22,7 +22,8 @@ import {
   shouldRefreshData,
   summaryBodyTabs,
   summaryFont,
-  summaryHeader
+  summaryHeader,
+  summaryPanelWidth
 } from './SummaryPanelCommon';
 import { Datapoint, IstioMetricsMap, Labels } from '../../types/Metrics';
 import { IstioMetricsOptions } from '../../types/MetricsOptions';
@@ -114,10 +115,10 @@ export default class SummaryPanelGraph extends React.Component<SummaryPanelPropT
   static readonly panelStyle = {
     height: '100%',
     margin: 0,
-    minWidth: '25em',
+    minWidth: summaryPanelWidth,
     overflowY: 'auto' as 'auto',
     backgroundColor: PFColors.White,
-    width: '25em'
+    width: summaryPanelWidth
   };
 
   private graphTraffic?: SummaryPanelGraphTraffic;

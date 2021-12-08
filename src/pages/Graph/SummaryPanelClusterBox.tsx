@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Tab } from '@patternfly/react-core';
 import { style } from 'typestyle';
-import { summaryFont, summaryHeader, summaryBodyTabs } from './SummaryPanelCommon';
+import { summaryFont, summaryHeader, summaryBodyTabs, summaryPanelWidth } from './SummaryPanelCommon';
 import { CyNode } from 'components/CytoscapeGraph/CytoscapeGraphUtils';
 import KialiPageLink from 'components/Link/KialiPageLink';
 import { RateTableGrpc, RateTableHttp, RateTableTcp } from 'components/SummaryPanel/RateTable';
@@ -32,10 +32,10 @@ export default class SummaryPanelClusterBox extends React.Component<SummaryPanel
   static readonly panelStyle = {
     height: '100%',
     margin: 0,
-    minWidth: '25em',
+    minWidth: summaryPanelWidth,
     overflowY: 'auto' as 'auto',
     backgroundColor: PFColors.White,
-    width: '25em'
+    width: summaryPanelWidth
   };
 
   constructor(props: SummaryPanelPropType) {
@@ -78,10 +78,7 @@ export default class SummaryPanelClusterBox extends React.Component<SummaryPanel
     const tcpTotal = getAccumulatedTrafficRateTcp(totalEdges);
 
     return (
-      <div
-        className="panel panel-default"
-        style={{ ...SummaryPanelClusterBox.panelStyle, ...(isHover ? { background: 'gray' } : {}) }}
-      >
+      <div className="panel panel-default" style={SummaryPanelClusterBox.panelStyle}>
         <div className="panel-heading" style={summaryHeader}>
           {this.renderCluster(cluster)}
           {this.renderTopologySummary(numSvc, numWorkloads, numApps, numVersions, numEdges)}

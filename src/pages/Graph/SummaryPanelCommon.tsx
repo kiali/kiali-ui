@@ -26,13 +26,15 @@ export const summaryHeader: React.CSSProperties = {
   backgroundColor: PFColors.White
 };
 
+export const summaryPanelWidth = '25em';
+
 export const summaryPanel = style({
   height: '100%',
   margin: 0,
-  minWidth: '25em',
+  minWidth: summaryPanelWidth,
   overflowY: 'scroll',
   backgroundColor: PFColors.White,
-  width: '25em',
+  width: summaryPanelWidth,
   fontSize: 'var(--graph-side-panel--font-size)',
   padding: 0,
   position: 'relative'

@@ -154,7 +154,7 @@ export default class SummaryPanelAppBox extends React.Component<SummaryPanelProp
       <div
         ref={this.mainDivRef}
         className={`panel panel-default ${summaryPanel}`}
-        style={isHover ? { background: 'gray' } : {}}
+        style={isHover ? { overflowY: 'auto' } : {}}
       >
         <div className="panel-heading" style={summaryHeader}>
           <span>

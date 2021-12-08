@@ -119,7 +119,7 @@ export class SummaryPanelNode extends React.Component<SummaryPanelNodeProps, Sum
       <div
         ref={this.mainDivRef}
         className={`panel panel-default ${summaryPanel}`}
-        style={isHover ? { background: 'gray' } : {}}
+        style={isHover ? { overflowY: 'auto' } : {}}
       >
         <div className="panel-heading" style={summaryHeader}>
           <div>
