@@ -23,6 +23,7 @@ export interface Workload {
   services: Service[];
   runtimes: Runtime[];
   additionalDetails: AdditionalItem[];
+  validations?: Validations;
 }
 
 export const emptyWorkload: Workload = {
