@@ -19,6 +19,7 @@ import { connect } from 'react-redux';
 import DefaultSecondaryMasthead from '../../components/DefaultSecondaryMasthead/DefaultSecondaryMasthead';
 import TimeDurationContainer from '../../components/Time/TimeDurationComponent';
 import { sortIstioReferences } from '../AppList/FiltersAndSorts';
+import { ObjectCheck, Validations } from 'types/IstioObjects';
 
 type WorkloadListPageState = FilterComponent.State<WorkloadListItem>;
 
@@ -91,6 +92,22 @@ class WorkloadListPageComponent extends FilterComponent.Component<
     }
   }
 
+  hasMissingAuthPolicy = (workloadName: string, validations: Validations): boolean => {
+    let hasMissingAP = false;
+
+    if (validations['workload'] && validations['workload'][workloadName]) {
+      const workloadValidation = validations['workload'][workloadName];
+
+      workloadValidation.checks.forEach((check: ObjectCheck) => {
+        if (check.code === 'KIA1201') {
+          hasMissingAP = true;
+        }
+      });
+    }
+
+    return hasMissingAP;
+  };
+
   getDeploymentItems = (data: WorkloadNamespaceResponse): WorkloadListItem[] => {
     if (data.workloads) {
       return data.workloads.map(deployment => ({
@@ -109,7 +126,8 @@ class WorkloadListPageComponent extends FilterComponent.Component<
           deployment.istioSidecar
         ),
         labels: deployment.labels,
-        istioReferences: sortIstioReferences(deployment.istioReferences, true)
+        istioReferences: sortIstioReferences(deployment.istioReferences, true),
+        notCoveredAuthPolicy: this.hasMissingAuthPolicy(deployment.name, data.validations)
       }));
     }
     return [];
