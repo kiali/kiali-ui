@@ -14,7 +14,9 @@ import {
   hr,
   summaryPanel,
   mergeMetricsResponses,
-  getDatapoints
+  getDatapoints,
+  summaryPanelHover,
+  getHoverTitle
 } from './SummaryPanelCommon';
 import { Response } from '../../services/Api';
 import { IstioMetricsMap, Datapoint, Labels } from '../../types/Metrics';
@@ -151,12 +153,9 @@ export default class SummaryPanelAppBox extends React.Component<SummaryPanelProp
         : undefined;
 
     return (
-      <div
-        ref={this.mainDivRef}
-        className={`panel panel-default ${summaryPanel}`}
-        style={isHover ? { overflowY: 'auto' } : {}}
-      >
+      <div ref={this.mainDivRef} className={`panel panel-default ${isHover ? summaryPanelHover : summaryPanel}`}>
         <div className="panel-heading" style={summaryHeader}>
+          {isHover && getHoverTitle()}
           <span>
             <PFBadge badge={PFBadges.Namespace} style={{ marginBottom: '2px' }} />
             {nodeData.namespace}

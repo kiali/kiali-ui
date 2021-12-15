@@ -8,6 +8,7 @@ import { Response } from '../../services/Api';
 import { decoratedNodeData } from 'components/CytoscapeGraph/CytoscapeGraphUtils';
 import { PFColors } from 'components/Pf/PfColors';
 import { KialiIcon } from 'config/KialiIcon';
+import { Title, TitleSize } from '@patternfly/react-core';
 
 export enum NodeMetricType {
   APP = 1,
@@ -29,15 +30,28 @@ export const summaryHeader: React.CSSProperties = {
 export const summaryPanelWidth = '25em';
 
 export const summaryPanel = style({
+  backgroundColor: PFColors.White,
+  fontSize: 'var(--graph-side-panel--font-size)',
   height: '100%',
   margin: 0,
   minWidth: summaryPanelWidth,
   overflowY: 'scroll',
-  backgroundColor: PFColors.White,
-  width: summaryPanelWidth,
-  fontSize: 'var(--graph-side-panel--font-size)',
   padding: 0,
-  position: 'relative'
+  position: 'relative',
+  width: summaryPanelWidth
+});
+
+export const summaryPanelHover = style({
+  height: 'auto',
+  margin: 0,
+  fontSize: 'var(--graph-side-panel--font-size)',
+  overflowY: 'auto',
+  padding: 0,
+  position: 'absolute',
+  right: 0,
+  top: 0,
+  whiteSpace: 'nowrap',
+  width: 'auto'
 });
 
 export const summaryFont: React.CSSProperties = {
@@ -174,6 +188,17 @@ export const renderNoTraffic = (protocol?: string) => {
       <div>
         <KialiIcon.Info /> No {protocol ? protocol : ''} traffic logged.
       </div>
+    </>
+  );
+};
+
+export const getHoverTitle = (): React.ReactFragment => {
+  return (
+    <>
+      <Title headingLevel="h5" size={TitleSize.md}>
+        Hover Target
+      </Title>
+      <br />
     </>
   );
 };

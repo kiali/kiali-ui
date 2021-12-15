@@ -55,12 +55,12 @@ const toggleSidePanelStyle = style({
   backgroundColor: 'white',
   border: '1px #ddd solid',
   borderRadius: '3px',
+  bottom: 0,
   cursor: 'pointer',
   left: '-1.6em',
   minWidth: '5em',
   position: 'absolute',
   textAlign: 'center',
-  top: '6.5em',
   transform: 'rotate(-90deg)',
   transformOrigin: 'left top 0'
 });

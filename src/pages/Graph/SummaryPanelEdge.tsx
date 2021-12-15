@@ -24,7 +24,9 @@ import {
   summaryHeader,
   summaryBodyTabs,
   summaryPanel,
-  summaryFont
+  summaryFont,
+  summaryPanelHover,
+  getHoverTitle
 } from './SummaryPanelCommon';
 import { Metric, Datapoint, IstioMetricsMap, Labels } from '../../types/Metrics';
 import { Response } from '../../services/Api';
@@ -161,12 +163,9 @@ export default class SummaryPanelEdge extends React.Component<SummaryPanelPropTy
     };
 
     return (
-      <div
-        ref={this.mainDivRef}
-        className={`panel panel-default ${summaryPanel}`}
-        style={isHover ? { overflowY: 'auto' } : {}}
-      >
+      <div ref={this.mainDivRef} className={`panel panel-default ${isHover ? summaryPanelHover : summaryPanel}`}>
         <div className="panel-heading" style={summaryHeader}>
+          {isHover && getHoverTitle()}
           {renderBadgedLink(source, undefined, 'From:  ')}
           {renderBadgedLink(dest, undefined, 'To:        ')}
           {isHover && (
