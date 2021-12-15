@@ -78,9 +78,10 @@ export const serverRateConfig = {
       graph: {
         findOptions: [],
         hideOptions: [],
-        thresholds: {
-          zoomBadge: 0.8,
-          zoomLabel: 0.9
+        settings: {
+          fontLabel: 13,
+          minFontBadge: 7,
+          minFontLabel: 10
         },
         traffic: {
           grpc: 'requests',
