@@ -1,6 +1,5 @@
 import * as React from 'react';
 import {
-  Button,
   Card,
   CardActions,
   CardBody,
@@ -11,7 +10,6 @@ import {
   EmptyStateVariant,
   Grid,
   GridItem,
-  Modal,
   Title,
   Tooltip,
   TooltipPosition
@@ -40,6 +38,7 @@ import NamespaceMTLSStatusContainer from '../../components/MTls/NamespaceMTLSSta
 import { RenderComponentScroll } from '../../components/Nav/Page';
 import OverviewCardContentCompact from './OverviewCardContentCompact';
 import OverviewCardContentExpanded from './OverviewCardContentExpanded';
+import TrafficManagement from './TrafficManagement';
 import { IstioMetricsOptions } from '../../types/MetricsOptions';
 import { computePrometheusRateParams } from '../../services/Prometheus';
 import { KialiAppState } from '../../store/Store';
@@ -893,10 +892,6 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
       const actions = this.getNamespaceActions(ns);
       return <OverviewNamespaceActions key={'namespaceAction_' + i} namespace={ns.name} actions={actions} />;
     });
-    const modalAction =
-      this.state.opTarget.length > 0
-        ? this.state.opTarget.charAt(0).toLocaleUpperCase() + this.state.opTarget.slice(1)
-        : '';
     return (
       <>
         <OverviewToolbarContainer
@@ -970,26 +965,13 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
             </EmptyState>
           </div>
         )}
-        <Modal
-          isSmall={true}
-          title={'Confirm ' + modalAction + ' Traffic Policies ?'}
+        <TrafficManagement
+          opTarget={this.state.opTarget}
           isOpen={this.state.showConfirmModal}
-          onClose={this.hideConfirmModal}
-          actions={[
-            <Button key="cancel" variant="secondary" onClick={this.hideConfirmModal}>
-              Cancel
-            </Button>,
-            <Button key="confirm" variant="danger" onClick={this.onConfirmModal}>
-              {modalAction}
-            </Button>
-          ]}
-        >
-          {'Namespace ' +
-            this.state.nsTarget +
-            ' has existing traffic policies objects. Do you want to ' +
-            this.state.opTarget +
-            ' them ?'}
-        </Modal>
+          hideConfirmModal={this.hideConfirmModal}
+          onConfirm={this.onConfirmModal}
+          nsTarget={this.state.nsTarget}
+        />
       </>
     );
   }
