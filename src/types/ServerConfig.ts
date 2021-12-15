@@ -37,15 +37,16 @@ interface GraphTraffic {
   tcp: string;
 }
 
-interface GraphThresholds {
-  zoomLabel: number;
-  zoomBadge: number;
+interface GraphSettings {
+  fontLabel: number;
+  minFontBadge: number;
+  minFontLabel: number;
 }
 
 interface GraphUIDefaults {
   findOptions: GraphFindOption[];
   hideOptions: GraphFindOption[];
-  thresholds: GraphThresholds;
+  settings: GraphSettings;
   traffic: GraphTraffic;
 }
 

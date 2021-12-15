@@ -153,8 +153,10 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
     this.nodeChanged = false;
     this.zoom = 1; // 1 is the default cy zoom
     this.zoomIgnore = true; // ignore zoom events prior to the first rendering
-    const thresholds = serverConfig.kialiFeatureFlags.uiDefaults.graph.thresholds;
-    this.zoomThresholds = Array.from(new Set([thresholds.zoomLabel, thresholds.zoomBadge]));
+    const settings = serverConfig.kialiFeatureFlags.uiDefaults.graph.settings;
+    this.zoomThresholds = Array.from(
+      new Set([settings.minFontLabel / settings.fontLabel, settings.minFontBadge / settings.fontLabel])
+    );
 
     this.state = { zoomThresholdTime: 0 };
   }
@@ -210,9 +212,7 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
       needsLayout = true;
     }
 
-    console.log(`graph layout=${needsLayout}`);
     this.zoomIgnore = true;
-    console.log(`zoomIgnore=true`);
     this.processGraphUpdate(cy, needsLayout).then(_response => {
       // pre-select node if provided
       const node = this.props.graphData.fetchParams.node;
@@ -469,8 +469,6 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
     cy.on('boxstart', (evt: Cy.EventObject) => {
       const cytoscapeEvent = getCytoscapeBaseEvent(evt);
       if (cytoscapeEvent) {
-        console.log('boxstart');
-
         this.userBoxSelected = cy.collection();
       }
     });
@@ -478,8 +476,6 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
     cy.on('box', (evt: Cy.EventObject) => {
       const cytoscapeEvent = getCytoscapeBaseEvent(evt);
       if (cytoscapeEvent) {
-        console.log('box');
-
         const elements: Cy.Collection = evt.target;
         if (elements) {
           elements.forEach(e => {
@@ -487,10 +483,8 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
               this.userBoxSelected = this.userBoxSelected?.add(elements);
             }
           });
-          console.log('box fit start');
           this.zoomIgnore = true;
           CytoscapeGraphUtils.safeFit(cy, this.userBoxSelected);
-          console.log('box fit end');
           this.customViewport = true;
           // We'd prefer to do this once, after all of the 'box' events, but because cy doesn't seem to give
           // us an event for this, we force an update here to ensure labels are updated, if the box event has
@@ -562,7 +556,6 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
     cy.on('viewport', (evt: Cy.EventObject) => {
       const cytoscapeEvent = getCytoscapeBaseEvent(evt);
       if (cytoscapeEvent) {
-        console.log('customViewport->true');
         this.customViewport = true;
       }
     });
@@ -571,7 +564,6 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
     cy.on('kiali-fit', (evt: Cy.EventObject) => {
       const cytoscapeEvent = getCytoscapeBaseEvent(evt);
       if (cytoscapeEvent) {
-        console.log('customViewport->false');
         this.customViewport = false;
       }
     });
@@ -605,7 +597,6 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
         console.log(`zoom thresh crossed ${oldZoom} -> ${newZoom}`);
         // start a zoomIgnore which will end after the layout (this.processGraphUpdate()) completes.
         this.zoomIgnore = true;
-        console.log(`zoomIgnore=true`);
         this.setState({ zoomThresholdTime: Date.now() });
       }
     });
@@ -785,6 +776,8 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
     };
     cy.scratch(CytoscapeGlobalScratchNamespace, globalScratchData);
 
+    console.log(`Before graphUpdate this.zoom=${this.zoom} (cy.zoom=${cy.zoom()})`);
+
     let elements = this.props.graphData.elements;
     if (this.props.showRank) {
       let scoringCriteria: ScoringCriteria[] = [];
@@ -822,8 +815,16 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
     // Run layout outside of the batch operation for it to take effect on the new nodes,
     // Layouts can run async so wait until it completes to finish the graph update.
     if (updateLayout) {
+      console.log(`updateLayout=true, running layout...`);
       return new Promise((resolve, _reject) => {
         CytoscapeGraphUtils.runLayout(cy, this.props.layout).then(_response => {
+          // During a layout styles can be applied using an intermediate zoom value.  Because we
+          // have zoom-influence styling, we force an cy-update to the whole graph. There doesn't
+          // seem to a be a better way to do this thant to remove and add the elements.
+          cy.startBatch();
+          cy.add(cy.elements().remove());
+          cy.endBatch();
+
           this.finishGraphUpdate(cy, isTheGraphSelected);
           resolve();
         });
@@ -852,8 +853,7 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
     // When the update is complete, set the resulting zoom level and re-enable zoom changes.
     this.zoom = cy.zoom();
     this.zoomIgnore = false;
-    console.log(`zoomIgnore=false`);
-    console.log(`Set zoom to ${this.zoom} after layout`);
+    console.log(`After graphUpdate this.zoom=${this.zoom}`);
 
     // notify that the graph has been updated
     if (this.props.setUpdateTime) {

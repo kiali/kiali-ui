@@ -36,10 +36,11 @@ const EdgeIconMTLS = icons.istio.mtls.ascii; // lock
 let EdgeTextOutlineColor: PFColorVal;
 const EdgeTextOutlineWidth = '1px';
 const EdgeTextFont = 'Verdana,Arial,Helvetica,sans-serif,pficon';
-const EdgeTextFontSize = '6px';
-const EdgeTextFontSizeHover = '10px';
 const EdgeWidth = 2;
 const EdgeWidthSelected = 4;
+const FontSizeRatioEdgeText = 0.8;
+const FontSizeRatioHover = 1.2;
+const FontSizeRatioHoverBox = 1.3;
 const NodeBorderWidth = '1px';
 const NodeBorderWidthSelected = '3px';
 let NodeColorBorder: PFColorVal;
@@ -75,10 +76,6 @@ const NodeBadgeBackgroundColor = PFColors.Purple400;
 const NodeBadgeColor = PFColors.White;
 const NodeBadgeFontSize = '12px';
 const NodeTextFont = EdgeTextFont;
-const NodeTextFontSize = '8px';
-const NodeTextFontSizeBox = '10px';
-const NodeTextFontSizeHover = '11px';
-const NodeTextFontSizeHoverBox = '13px';
 const NodeWidth = NodeHeight;
 
 // Puts a little more space between icons when a badge has multiple icons
@@ -98,7 +95,6 @@ const iconsDefault = style({
 
 const contentBoxPfBadge = style({
   backgroundColor: PFColors.Badge,
-  fontSize: NodeTextFontSizeBox,
   marginRight: '5px',
   minWidth: '24px', // reduce typical minWidth for badge to save label space
   paddingLeft: '0px',
@@ -112,14 +108,12 @@ const contentDefault = style({
   borderWidth: '1px',
   color: NodeTextColor,
   display: 'flex',
-  fontSize: NodeTextFontSize,
   padding: '3px 5px'
 });
 
 const contentBox = style({
   backgroundColor: NodeTextBackgroundColorBox,
-  color: NodeTextColorBox,
-  fontSize: NodeTextFontSizeBox
+  color: NodeTextColorBox
 });
 
 const contentWithBadges = style({
@@ -133,7 +127,6 @@ const contentWithBadges = style({
 const hostsClass = style({
   borderTop: `1px solid ${PFColors.Black600}`,
   textAlign: 'initial',
-  fontSize: NodeTextFontSize,
   marginTop: '0.5em',
   paddingTop: '0.5em',
   $nest: {
@@ -203,16 +196,10 @@ export class GraphStyles {
   }
 
   static getNodeLabel(ele: Cy.NodeSingular) {
-    const thresholds = serverConfig.kialiFeatureFlags.uiDefaults.graph.thresholds;
+    const settings = serverConfig.kialiFeatureFlags.uiDefaults.graph.settings;
     const zoom = ele.cy().zoom();
-    /*
-    const isHovered = ele.hasClass(HoveredClass);
-    const noBadge = !isHovered && zoom < thresholds.zoomNodeBadge;
-    const noBoxLabel = !isHovered && zoom < thresholds.zoomBoxLabel;
-    const noLabel = !isHovered && zoom < thresholds.zoomNodeLabel;
-    */
-    const noBadge = zoom < thresholds.zoomBadge;
-    const noLabel = zoom < thresholds.zoomLabel;
+    const noBadge = zoom < settings.minFontBadge / settings.fontLabel;
+    const noLabel = zoom < settings.minFontLabel / settings.fontLabel;
     if (noBadge && noLabel) {
       return '';
     }
@@ -223,7 +210,6 @@ export class GraphStyles {
 
     const cyGlobal = getCyGlobalData(ele);
     const node = decoratedNodeData(ele);
-
     const app = node.app || '';
     const cluster = node.cluster;
     const namespace = node.namespace;
@@ -309,7 +295,9 @@ export class GraphStyles {
 
     let labelStyle = '';
     if (ele.hasClass(HighlightClass)) {
-      labelStyle += 'font-size: ' + NodeTextFontSizeHover + ';';
+      labelStyle += `font-size: ${settings.fontLabel * FontSizeRatioHover}px;`;
+    } else {
+      labelStyle += `font-size: ${settings.fontLabel}px;`;
     }
     if (ele.hasClass(DimClass)) {
       labelStyle += 'opacity: 0.6;';
@@ -317,8 +305,13 @@ export class GraphStyles {
 
     let contentStyle = '';
     if (ele.hasClass(HighlightClass)) {
-      const fontSize = isBox && isBox !== BoxByType.APP ? NodeTextFontSizeHoverBox : NodeTextFontSizeHover;
-      contentStyle += 'font-size: ' + fontSize + ';';
+      const fontSize =
+        isBox && isBox !== BoxByType.APP
+          ? settings.fontLabel * FontSizeRatioHoverBox
+          : settings.fontLabel * FontSizeRatioHover;
+      contentStyle = `font-size: ${fontSize}px;`;
+    } else {
+      contentStyle = `font-size: ${settings.fontLabel}px;`;
     }
 
     const content: string[] = [];
@@ -405,7 +398,7 @@ export class GraphStyles {
       switch (isBox) {
         case BoxByType.APP:
           pfBadge = PFBadges.App.badge;
-          appBoxStyle += `font-size: ${NodeTextFontSize};`;
+          appBoxStyle += `font-size: ${settings.fontLabel}px;`;
           break;
         case BoxByType.CLUSTER:
           pfBadge = PFBadges.Cluster.badge;
@@ -501,13 +494,10 @@ export class GraphStyles {
     };
 
     const getEdgeLabel = (ele: Cy.EdgeSingular, isVerbose?: boolean): string => {
-      const thresholds = serverConfig.kialiFeatureFlags.uiDefaults.graph.thresholds;
+      const settings = serverConfig.kialiFeatureFlags.uiDefaults.graph.settings;
       const zoom = ele.cy().zoom();
-      /*
-      const isHovered = ele.hasClass(HoveredClass);
-      const noLabel = !isHovered && zoom < thresholds.zoomEdgeLabel;
-      */
-      const noLabel = zoom < thresholds.zoomLabel;
+      const noLabel = zoom < settings.minFontLabel / settings.fontLabel;
+
       if (noLabel) {
         return '';
       }
@@ -801,13 +791,6 @@ export class GraphStyles {
         selector: 'node:selected',
         style: nodeSelectedStyle
       },
-      // Node is highlighted (see GraphHighlighter.ts)
-      {
-        selector: `node.${HighlightClass}`,
-        style: {
-          'font-size': NodeTextFontSizeHover
-        }
-      },
       // Node other than Box is highlighted (see GraphHighlighter.ts)
       {
         selector: `node.${HighlightClass}[^isBox]`,
@@ -846,7 +829,9 @@ export class GraphStyles {
         css: {
           'curve-style': 'bezier',
           'font-family': EdgeTextFont,
-          'font-size': EdgeTextFontSize,
+          'font-size': `${
+            serverConfig.kialiFeatureFlags.uiDefaults.graph.settings.fontLabel * FontSizeRatioEdgeText
+          }px`,
           label: (ele: Cy.EdgeSingular) => {
             return getEdgeLabel(ele);
           },
@@ -882,7 +867,7 @@ export class GraphStyles {
       {
         selector: `edge.${HighlightClass}`,
         style: {
-          'font-size': EdgeTextFontSizeHover
+          'font-size': `${serverConfig.kialiFeatureFlags.uiDefaults.graph.settings.fontLabel}px`
         }
       },
       {

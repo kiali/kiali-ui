@@ -83,9 +83,10 @@ const defaultServerConfig: ComputedServerConfig = {
       graph: {
         findOptions: [],
         hideOptions: [],
-        thresholds: {
-          zoomLabel: 0.85,
-          zoomBadge: 0.75
+        settings: {
+          fontLabel: 13,
+          minFontBadge: 7,
+          minFontLabel: 10
         },
         traffic: {
           grpc: 'requests',
