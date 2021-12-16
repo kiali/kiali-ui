@@ -1,21 +1,23 @@
 import * as React from 'react';
 import { Button, Modal } from '@patternfly/react-core';
 import NamespaceInfo from './NamespaceInfo';
-import { AuthorizationPolicy, Sidecar } from '../../types/IstioObjects';
-import { MessageType } from '../../types/MessageCenter';
-import { PromisesRegistry } from '../../utils/CancelablePromises';
+import { AuthorizationPolicy, Sidecar } from 'types/IstioObjects';
+import { MessageType } from 'types/MessageCenter';
+import { PromisesRegistry } from 'utils/CancelablePromises';
 import { DurationInSeconds } from 'types/Common';
-import { IstioConfigPreview } from '../../components/IstioConfigPreview/IstioConfigPreview';
-import * as AlertUtils from '../../utils/AlertUtils';
-import * as API from '../../services/Api';
-import GraphDataSource from '../../services/GraphDataSource';
-import { buildGraphAuthorizationPolicy, buildGraphSidecars } from '../../components/IstioWizards/WizardActions';
+import { IstioConfigPreview } from 'components/IstioConfigPreview/IstioConfigPreview';
+import * as AlertUtils from 'utils/AlertUtils';
+import * as API from 'services/Api';
+import GraphDataSource from 'services/GraphDataSource';
+import { buildGraphAuthorizationPolicy, buildGraphSidecars } from 'components/IstioWizards/WizardActions';
+import { ResourcePermissions } from 'types/Permissions';
 
 type TrafficManagementProps = {
   opTarget: string;
   isOpen: boolean;
   nsTarget: string;
   nsInfo: NamespaceInfo;
+  permissions?: ResourcePermissions;
   hideConfirmModal: () => void;
   load: () => void;
   duration: DurationInSeconds;
@@ -163,6 +165,7 @@ export default class TrafficManagement extends React.Component<TrafficManagement
           authorizationPolicies={this.state.authorizationPolicies}
           sidecars={this.state.sidecars}
           opTarget={this.props.opTarget}
+          disableOp={this.props.permissions ? !this.props.permissions[this.props.opTarget] : true}
         />
         <Modal
           isSmall={true}

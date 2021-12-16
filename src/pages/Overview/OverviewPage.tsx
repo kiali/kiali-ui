@@ -682,7 +682,7 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
       const addAuthorizationAction = {
         isGroup: false,
         isSeparator: false,
-        isDisabled: !canWrite,
+        isDisabled: false,
         title: (aps.length === 0 ? 'Create ' : 'Update') + ' Traffic Policies',
         action: (ns: string) => {
           this.setState({
@@ -849,6 +849,11 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
         <TrafficManagement
           opTarget={this.state.opTarget}
           isOpen={this.state.showTrafficManagement}
+          permissions={
+            this.state.permissions && this.state.permissions[this.state.nsTarget]
+              ? this.state.permissions[this.state.nsTarget][AUTHORIZATION_POLICIES]
+              : undefined
+          }
           hideConfirmModal={this.hideTrafficManagement}
           nsTarget={this.state.nsTarget}
           nsInfo={this.state.namespaces.filter(ns => ns.name === this.state.nsTarget)[0]}
