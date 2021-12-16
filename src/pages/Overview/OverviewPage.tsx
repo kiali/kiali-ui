@@ -55,15 +55,10 @@ import { PFColors } from '../../components/Pf/PfColors';
 import VirtualList from '../../components/VirtualList/VirtualList';
 import { OverviewNamespaceAction, OverviewNamespaceActions } from './OverviewNamespaceActions';
 import history, { HistoryManager, URLParam } from '../../app/History';
-import {
-  buildGraphAuthorizationPolicy,
-  buildGraphSidecars,
-  buildNamespaceInjectionPatch
-} from '../../components/IstioWizards/WizardActions';
+import { buildNamespaceInjectionPatch } from '../../components/IstioWizards/WizardActions';
 import * as AlertUtils from '../../utils/AlertUtils';
 import { MessageType } from '../../types/MessageCenter';
-import GraphDataSource from '../../services/GraphDataSource';
-import { AuthorizationPolicy, Sidecar, ValidationStatus } from '../../types/IstioObjects';
+import { ValidationStatus } from '../../types/IstioObjects';
 import { IstioPermissions } from '../../types/IstioConfigDetails';
 import { AUTHORIZATION_POLICIES } from '../IstioConfigNew/AuthorizationPolicyForm';
 import ValidationSummaryLink from '../../components/Link/ValidationSummaryLink';
@@ -135,7 +130,7 @@ type State = {
   type: OverviewType;
   displayMode: OverviewDisplayMode;
   permissions: IstioPermissions;
-  showConfirmModal: boolean;
+  showTrafficManagement: boolean;
   nsTarget: string;
   opTarget: string;
   grafanaLinks: ExternalLink[];
@@ -164,7 +159,7 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
       type: OverviewToolbar.currentOverviewType(),
       displayMode: display ? Number(display) : OverviewDisplayMode.EXPAND,
       permissions: {},
-      showConfirmModal: false,
+      showTrafficManagement: false,
       nsTarget: '',
       opTarget: '',
       grafanaLinks: []
@@ -237,7 +232,7 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
               type: type,
               namespaces: Sorts.sortFunc(allNamespaces, sortField, isAscending),
               displayMode: displayMode,
-              showConfirmModal: prevState.showConfirmModal,
+              showTrafficManagement: prevState.showTrafficManagement,
               nsTarget: prevState.nsTarget,
               opTarget: prevState.opTarget
             };
@@ -690,11 +685,11 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
         isDisabled: !canWrite,
         title: (aps.length === 0 ? 'Create ' : 'Update') + ' Traffic Policies',
         action: (ns: string) => {
-          if (aps.length === 0) {
-            this.onCreateTrafficPolicies(ns);
-          } else {
-            this.onUpdateTrafficPolicies(ns);
-          }
+          this.setState({
+            opTarget: aps.length === 0 ? 'create' : 'update',
+            nsTarget: ns,
+            showTrafficManagement: true
+          });
         }
       };
       const removeAuthorizationAction = {
@@ -702,7 +697,7 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
         isSeparator: false,
         isDisabled: !canWrite,
         title: 'Delete Traffic Policies',
-        action: (ns: string) => this.onDeleteTrafficPolicies(ns)
+        action: (ns: string) => this.setState({ opTarget: 'delete', nsTarget: ns, showTrafficManagement: true })
       };
       namespaceActions.push(addAuthorizationAction);
       if (aps.length > 0) {
@@ -758,126 +753,12 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
       });
   };
 
-  onCreateTrafficPolicies = (ns: string) => {
-    this.onAddRemoveTrafficPolicies(ns, [], [], false);
-  };
-
-  onUpdateTrafficPolicies = (ns: string) => {
+  hideTrafficManagement = () => {
     this.setState({
-      showConfirmModal: true,
-      nsTarget: ns,
-      opTarget: 'update'
-    });
-  };
-
-  onDeleteTrafficPolicies = (ns: string) => {
-    this.setState({
-      showConfirmModal: true,
-      nsTarget: ns,
-      opTarget: 'delete'
-    });
-  };
-
-  onAddRemoveTrafficPolicies = (
-    ns: string,
-    authorizationPolicies: AuthorizationPolicy[],
-    sidecars: Sidecar[],
-    remove: boolean
-  ): void => {
-    if (authorizationPolicies.length > 0 && sidecars.length > 0) {
-      this.promises
-        .registerAll(
-          'trafficPoliciesDelete',
-          authorizationPolicies
-            .map(ap => API.deleteIstioConfigDetail(ns, 'authorizationpolicies', ap.metadata.name))
-            .concat(sidecars.map(sc => API.deleteIstioConfigDetail(ns, 'sidecars', sc.metadata.name)))
-        )
-        .then(_ => {
-          if (!remove) {
-            this.createTrafficPolicies(ns, this.load);
-          } else {
-            this.load();
-          }
-        })
-        .catch(errorDelete => {
-          if (!errorDelete.isCanceled) {
-            AlertUtils.addError('Could not delete traffic policies.', errorDelete);
-          }
-        });
-    } else {
-      if (!remove) {
-        this.createTrafficPolicies(ns, this.load);
-      } else {
-        AlertUtils.addInfo('Namespace ' + ns + " doesn't have traffic policies config.");
-      }
-    }
-  };
-
-  createTrafficPolicies = (ns: string, callback: () => void) => {
-    const graphDataSource = new GraphDataSource();
-    graphDataSource.on('fetchSuccess', () => {
-      const aps = buildGraphAuthorizationPolicy(ns, graphDataSource.graphDefinition);
-      const scs = buildGraphSidecars(ns, graphDataSource.graphDefinition);
-
-      this.promises
-        .registerAll(
-          'trafficPoliciesCreate',
-          aps
-            .map(ap => API.createIstioConfigDetail(ns, 'authorizationpolicies', JSON.stringify(ap)))
-            .concat(scs.map(sc => API.createIstioConfigDetail(ns, 'sidecars', JSON.stringify(sc))))
-        )
-        .then(results => {
-          if (results.length > 0) {
-            AlertUtils.add('Traffic policies created for ' + ns + ' namespace.', 'default', MessageType.SUCCESS);
-          }
-          callback();
-        })
-        .catch(errorCreate => {
-          if (!errorCreate.isCanceled) {
-            AlertUtils.addError('Could not create traffic policies.', errorCreate);
-          }
-        });
-    });
-    graphDataSource.on('fetchError', (errorMessage: string | null) => {
-      if (errorMessage !== '') {
-        errorMessage = 'Could not fetch traffic data: ' + errorMessage;
-      } else {
-        errorMessage = 'Could not fetch traffic data.';
-      }
-      AlertUtils.addError(errorMessage);
-    });
-    graphDataSource.fetchForNamespace(this.props.duration, ns);
-  };
-
-  hideConfirmModal = () => {
-    this.setState({
-      showConfirmModal: false,
+      showTrafficManagement: false,
       nsTarget: '',
       opTarget: ''
     });
-  };
-
-  onConfirmModal = () => {
-    let aps: AuthorizationPolicy[] = [];
-    let scs: Sidecar[] = [];
-    for (let i = 0; i < this.state.namespaces.length; i++) {
-      const nsInfo = this.state.namespaces[i];
-      if (this.state.namespaces[i].name === this.state.nsTarget) {
-        aps = nsInfo.istioConfig?.authorizationPolicies || [];
-        scs = nsInfo.istioConfig?.sidecars || [];
-        break;
-      }
-    }
-    const nsTarget = this.state.nsTarget;
-    const remove = this.state.opTarget === 'delete';
-    this.setState(
-      {
-        showConfirmModal: false,
-        nsTarget: '',
-        opTarget: ''
-      },
-      () => this.onAddRemoveTrafficPolicies(nsTarget, aps, scs, remove)
-    );
   };
 
   render() {
@@ -967,10 +848,12 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
         )}
         <TrafficManagement
           opTarget={this.state.opTarget}
-          isOpen={this.state.showConfirmModal}
-          hideConfirmModal={this.hideConfirmModal}
-          onConfirm={this.onConfirmModal}
+          isOpen={this.state.showTrafficManagement}
+          hideConfirmModal={this.hideTrafficManagement}
           nsTarget={this.state.nsTarget}
+          nsInfo={this.state.namespaces.filter(ns => ns.name === this.state.nsTarget)[0]}
+          duration={this.props.duration}
+          load={this.load}
         />
       </>
     );
