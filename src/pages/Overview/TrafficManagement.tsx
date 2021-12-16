@@ -10,14 +10,13 @@ import * as AlertUtils from 'utils/AlertUtils';
 import * as API from 'services/Api';
 import GraphDataSource from 'services/GraphDataSource';
 import { buildGraphAuthorizationPolicy, buildGraphSidecars } from 'components/IstioWizards/WizardActions';
-import { ResourcePermissions } from 'types/Permissions';
 
 type TrafficManagementProps = {
   opTarget: string;
   isOpen: boolean;
   nsTarget: string;
   nsInfo: NamespaceInfo;
-  permissions?: ResourcePermissions;
+  disableOp: boolean;
   hideConfirmModal: () => void;
   load: () => void;
   duration: DurationInSeconds;
@@ -165,7 +164,7 @@ export default class TrafficManagement extends React.Component<TrafficManagement
           authorizationPolicies={this.state.authorizationPolicies}
           sidecars={this.state.sidecars}
           opTarget={this.props.opTarget}
-          disableOp={this.props.permissions ? !this.props.permissions[this.props.opTarget] : true}
+          disableOp={this.props.disableOp}
         />
         <Modal
           isSmall={true}

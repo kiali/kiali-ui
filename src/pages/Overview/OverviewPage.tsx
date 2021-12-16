@@ -849,10 +849,12 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
         <TrafficManagement
           opTarget={this.state.opTarget}
           isOpen={this.state.showTrafficManagement}
-          permissions={
-            this.state.permissions && this.state.permissions[this.state.nsTarget]
-              ? this.state.permissions[this.state.nsTarget][AUTHORIZATION_POLICIES]
-              : undefined
+          disableOp={
+            !(
+              this.state.permissions[this.state.nsTarget] &&
+              this.state.permissions[this.state.nsTarget][AUTHORIZATION_POLICIES] &&
+              this.state.permissions[this.state.nsTarget][AUTHORIZATION_POLICIES][this.state.opTarget]
+            )
           }
           hideConfirmModal={this.hideTrafficManagement}
           nsTarget={this.state.nsTarget}

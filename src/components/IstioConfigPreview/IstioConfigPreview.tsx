@@ -24,7 +24,7 @@ type PolicyItem = AuthorizationPolicy | Sidecar;
 
 interface Props {
   isOpen: boolean;
-  disableOp?: boolean;
+  disableOp: boolean;
   ns: string;
   authorizationPolicies: AuthorizationPolicy[];
   sidecars: Sidecar[];
