@@ -189,7 +189,7 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
     return result;
   }
 
-  componentDidUpdate(prevProps: CytoscapeGraphProps, prevState: CytoscapeGraphState) {
+  componentDidUpdate(prevProps: CytoscapeGraphProps, _prevState: CytoscapeGraphState) {
     const cy = this.getCy();
     if (!cy) {
       return;
@@ -202,7 +202,7 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
     let needsLayout = false;
     if (
       this.needsInitialLayout ||
-      this.state.zoomThresholdTime !== prevState.zoomThresholdTime ||
+      // this.state.zoomThresholdTime !== prevState.zoomThresholdTime ||
       this.nodeNeedsRelayout() ||
       this.namespaceNeedsRelayout(prevProps.graphData.elements, this.props.graphData.elements) ||
       this.elementsNeedRelayout(prevProps.graphData.elements, this.props.graphData.elements) ||

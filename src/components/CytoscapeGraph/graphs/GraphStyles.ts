@@ -82,7 +82,7 @@ const NodeWidth = NodeHeight;
 const badgeMargin = (existingIcons: string) =>
   existingIcons === '' ? style({ marginLeft: '1px' }) : style({ marginRight: '2px' });
 
-const iconsDefault = style({
+const badgesDefault = style({
   alignItems: 'center',
   backgroundColor: NodeBadgeBackgroundColor,
   borderTopLeftRadius: '3px',
@@ -200,9 +200,6 @@ export class GraphStyles {
     const zoom = ele.cy().zoom();
     const noBadge = zoom < settings.minFontBadge / settings.fontLabel;
     const noLabel = zoom < settings.minFontLabel / settings.fontLabel;
-    if (noBadge && noLabel) {
-      return '';
-    }
 
     const getCyGlobalData = (ele: Cy.NodeSingular): CytoscapeGlobalScratchData => {
       return ele.cy().scratch(CytoscapeGlobalScratchNamespace);
@@ -232,47 +229,46 @@ export class GraphStyles {
     const isOutside = node.isOutside;
 
     let badges = '';
-    if (!noBadge) {
-      if (cyGlobal.showMissingSidecars && node.hasMissingSC) {
-        badges = `<span class="${NodeIconMS} ${badgeMargin(badges)}"></span> ${badges}`;
+    if (cyGlobal.showMissingSidecars && node.hasMissingSC) {
+      badges = `<span class="${NodeIconMS} ${badgeMargin(badges)}"></span> ${badges}`;
+    }
+    if (cyGlobal.showVirtualServices) {
+      if (node.hasCB) {
+        badges = `<span class="${NodeIconCB} ${badgeMargin(badges)}"></span> ${badges}`;
       }
-      if (cyGlobal.showVirtualServices) {
-        if (node.hasCB) {
-          badges = `<span class="${NodeIconCB} ${badgeMargin(badges)}"></span> ${badges}`;
-        }
-        // If there's an additional traffic scenario present then it's assumed
-        // that there is a VS present so the VS badge is omitted.
-        if (node.hasVS) {
-          const hasKialiScenario =
-            node.hasFaultInjection ||
-            node.hasMirroring ||
-            node.hasRequestRouting ||
-            node.hasRequestTimeout ||
-            node.hasTCPTrafficShifting ||
-            node.hasTrafficShifting;
-          if (!hasKialiScenario) {
-            badges = `<span class="${NodeIconVS} ${badgeMargin(badges)}"></span> ${badges}`;
-          } else {
-            if (node.hasFaultInjection) {
-              badges = `<span class="${NodeIconFaultInjection} ${badgeMargin(badges)}"></span> ${badges}`;
-            }
-            if (node.hasMirroring) {
-              badges = `<span class="${NodeIconMirroring}  ${badgeMargin(badges)} ${style({
-                marginTop: '1px'
-              })}"></span> ${badges}`;
-            }
-            if (node.hasTrafficShifting || node.hasTCPTrafficShifting) {
-              badges = `<span class="${NodeIconTrafficShifting} ${badgeMargin(badges)}"></span> ${badges}`;
-            }
-            if (node.hasRequestTimeout) {
-              badges = `<span class="${NodeIconRequestTimeout} ${badgeMargin(badges)}"></span> ${badges}`;
-            }
-            if (node.hasRequestRouting) {
-              badges = `<span class="${NodeIconRequestRouting} ${badgeMargin(badges)}"></span> ${badges}`;
-            }
+      // If there's an additional traffic scenario present then it's assumed
+      // that there is a VS present so the VS badge is omitted.
+      if (node.hasVS) {
+        const hasKialiScenario =
+          node.hasFaultInjection ||
+          node.hasMirroring ||
+          node.hasRequestRouting ||
+          node.hasRequestTimeout ||
+          node.hasTCPTrafficShifting ||
+          node.hasTrafficShifting;
+        if (!hasKialiScenario) {
+          badges = `<span class="${NodeIconVS} ${badgeMargin(badges)}"></span> ${badges}`;
+        } else {
+          if (node.hasFaultInjection) {
+            badges = `<span class="${NodeIconFaultInjection} ${badgeMargin(badges)}"></span> ${badges}`;
+          }
+          if (node.hasMirroring) {
+            badges = `<span class="${NodeIconMirroring}  ${badgeMargin(badges)} ${style({
+              marginTop: '1px'
+            })}"></span> ${badges}`;
+          }
+          if (node.hasTrafficShifting || node.hasTCPTrafficShifting) {
+            badges = `<span class="${NodeIconTrafficShifting} ${badgeMargin(badges)}"></span> ${badges}`;
+          }
+          if (node.hasRequestTimeout) {
+            badges = `<span class="${NodeIconRequestTimeout} ${badgeMargin(badges)}"></span> ${badges}`;
+          }
+          if (node.hasRequestRouting) {
+            badges = `<span class="${NodeIconRequestRouting} ${badgeMargin(badges)}"></span> ${badges}`;
           }
         }
       }
+
       if (node.hasWorkloadEntry) {
         badges = `<span class="${NodeIconWorkloadEntry} ${badgeMargin(badges)}"></span> ${badges}`;
       }
@@ -289,8 +285,10 @@ export class GraphStyles {
     }
 
     const hasBadge = badges.length > 0;
+    const badgesStyle = noBadge ? 'display: none;' : '';
+
     if (hasBadge) {
-      badges = `<div class=${iconsDefault}>${badges}</div>`;
+      badges = `<div class=${badgesDefault} style=${badgesStyle}>${badges}</div>`;
     }
 
     let labelStyle = '';
@@ -301,6 +299,9 @@ export class GraphStyles {
     }
     if (ele.hasClass(DimClass)) {
       labelStyle += 'opacity: 0.6;';
+    }
+    if (noBadge && noLabel) {
+      labelStyle += 'display: none;';
     }
 
     let contentStyle = '';
@@ -313,87 +314,89 @@ export class GraphStyles {
     } else {
       contentStyle = `font-size: ${settings.fontLabel}px;`;
     }
+    if (noLabel) {
+      contentStyle += 'display: none';
+    }
 
     const content: string[] = [];
 
-    if (!noLabel) {
-      // append namespace if necessary
-      if (
-        (isMultiNamespace || isOutside) &&
-        !!namespace &&
-        namespace !== UNKNOWN &&
-        !isAppBoxed &&
-        !isNamespaceBoxed &&
-        isBox !== BoxByType.NAMESPACE
-      ) {
-        content.push(`(${namespace})`);
-      }
-
-      // append cluster if necessary
-      if (
-        !!cluster &&
-        cluster !== UNKNOWN &&
-        cluster !== cyGlobal.homeCluster &&
-        !isBoxed &&
-        isBox !== BoxByType.CLUSTER
-      ) {
-        content.push(`(${cluster})`);
-      }
-
-      switch (nodeType) {
-        case NodeType.AGGREGATE:
-          content.unshift(node.aggregateValue!);
-          break;
-        case NodeType.APP:
-          if (isAppBoxed) {
-            if (cyGlobal.graphType === GraphType.APP) {
-              content.unshift(app);
-            } else if (version && version !== UNKNOWN) {
-              content.unshift(version);
-            } else {
-              content.unshift(workload ? workload : app);
-            }
-          } else {
-            if (cyGlobal.graphType === GraphType.APP || version === UNKNOWN) {
-              content.unshift(app);
-            } else {
-              content.unshift(version);
-              content.unshift(app);
-            }
-          }
-          break;
-        case NodeType.BOX:
-          switch (isBox) {
-            case BoxByType.APP:
-              content.unshift(app);
-              break;
-            case BoxByType.CLUSTER:
-              content.unshift(node.cluster);
-              break;
-            case BoxByType.NAMESPACE:
-              content.unshift(node.namespace);
-              break;
-          }
-          break;
-        case NodeType.SERVICE:
-          content.unshift(service);
-          break;
-        case NodeType.UNKNOWN:
-          content.unshift(UNKNOWN);
-          break;
-        case NodeType.WORKLOAD:
-          content.unshift(workload);
-          break;
-        default:
-          content.unshift('error');
-      }
+    // append namespace if necessary
+    if (
+      (isMultiNamespace || isOutside) &&
+      !!namespace &&
+      namespace !== UNKNOWN &&
+      !isAppBoxed &&
+      !isNamespaceBoxed &&
+      isBox !== BoxByType.NAMESPACE
+    ) {
+      content.push(`(${namespace})`);
     }
 
+    // append cluster if necessary
+    if (
+      !!cluster &&
+      cluster !== UNKNOWN &&
+      cluster !== cyGlobal.homeCluster &&
+      !isBoxed &&
+      isBox !== BoxByType.CLUSTER
+    ) {
+      content.push(`(${cluster})`);
+    }
+
+    switch (nodeType) {
+      case NodeType.AGGREGATE:
+        content.unshift(node.aggregateValue!);
+        break;
+      case NodeType.APP:
+        if (isAppBoxed) {
+          if (cyGlobal.graphType === GraphType.APP) {
+            content.unshift(app);
+          } else if (version && version !== UNKNOWN) {
+            content.unshift(version);
+          } else {
+            content.unshift(workload ? workload : app);
+          }
+        } else {
+          if (cyGlobal.graphType === GraphType.APP || version === UNKNOWN) {
+            content.unshift(app);
+          } else {
+            content.unshift(version);
+            content.unshift(app);
+          }
+        }
+        break;
+      case NodeType.BOX:
+        switch (isBox) {
+          case BoxByType.APP:
+            content.unshift(app);
+            break;
+          case BoxByType.CLUSTER:
+            content.unshift(node.cluster);
+            break;
+          case BoxByType.NAMESPACE:
+            content.unshift(node.namespace);
+            break;
+        }
+        break;
+      case NodeType.SERVICE:
+        content.unshift(service);
+        break;
+      case NodeType.UNKNOWN:
+        content.unshift(UNKNOWN);
+        break;
+      case NodeType.WORKLOAD:
+        content.unshift(workload);
+        break;
+      default:
+        content.unshift('error');
+    }
+    //}
+
     const contentText = content.join('<br/>');
-    const contentClasses = hasBadge ? `${contentDefault} ${contentWithBadges}` : `${contentDefault}`;
+    const contentClasses = hasBadge && !noBadge ? `${contentDefault} ${contentWithBadges}` : `${contentDefault}`;
     let appBoxStyle = '';
 
-    if (isBox && !noLabel) {
+    if (isBox) {
       let pfBadge = '';
       switch (isBox) {
         case BoxByType.APP:
@@ -409,9 +412,9 @@ export class GraphStyles {
         default:
           console.warn(`GraphSyles: Unexpected box [${isBox}] `);
       }
-      const contentBadge = `<span class="pf-c-badge pf-m-unread ${contentBoxPfBadge}" style="${appBoxStyle}">${pfBadge}</span>`;
-      const contentSpan = `<span class="${contentClasses} ${contentBox}" style=" ${appBoxStyle}${contentStyle}">${contentBadge}${contentText}</span>`;
-      return `<div class="${labelDefault} ${labelBox}" style="${labelStyle}">${badges}${contentSpan}</div>`;
+      const contentPfBadge = `<span class="pf-c-badge pf-m-unread ${contentBoxPfBadge}" style="${appBoxStyle}">${pfBadge}</span>`;
+      const contentSpan = `<span class="${contentClasses} ${contentBox}" style="${appBoxStyle} ${contentStyle}">${contentPfBadge}${contentText}</span>`;
+      return `<div class="${labelDefault} ${labelBox}" style=${labelStyle}>${badges}${contentSpan}</div>`;
     }
 
     let hosts: string[] = [];
@@ -435,13 +438,7 @@ export class GraphStyles {
       }</div><div>${hostsToShow.join('<br/>')}</div></div>`;
     }
 
-    if (noLabel && !hasBadge) {
-      return '';
-    }
-
-    const contentSpan = noLabel
-      ? ''
-      : `<div class="${contentClasses}" style="display: block; ${contentStyle}"><div>${contentText}</div><div></div>${htmlHosts}</div></div>`;
+    const contentSpan = `<div class="${contentClasses}" style="${contentStyle}"><div>${contentText}</div><div></div>${htmlHosts}</div></div>`;
     return `<div class="${labelDefault}" style="${labelStyle}">${badges}${contentSpan}</div>`;
   }
 
