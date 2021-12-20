@@ -165,7 +165,7 @@ export default class SummaryPanelEdge extends React.Component<SummaryPanelPropTy
     return (
       <div ref={this.mainDivRef} className={`panel panel-default ${isHover ? summaryPanelHover : summaryPanel}`}>
         <div className="panel-heading" style={summaryHeader}>
-          {isHover && getHoverTitle()}
+          {isHover && getHoverTitle('Edge')}
           {renderBadgedLink(source, undefined, 'From:  ')}
           {renderBadgedLink(dest, undefined, 'To:        ')}
           {isHover && (

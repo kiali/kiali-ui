@@ -202,7 +202,6 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
     let needsLayout = false;
     if (
       this.needsInitialLayout ||
-      // this.state.zoomThresholdTime !== prevState.zoomThresholdTime ||
       this.nodeNeedsRelayout() ||
       this.namespaceNeedsRelayout(prevProps.graphData.elements, this.props.graphData.elements) ||
       this.elementsNeedRelayout(prevProps.graphData.elements, this.props.graphData.elements) ||
@@ -593,7 +592,7 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
       });
 
       if (thresholdCrossed) {
-        // Update state to force an update with layout, to account for the label changes.
+        // Update state to re-render with the label changes.
         console.log(`zoom thresh crossed ${oldZoom} -> ${newZoom}`);
         // start a zoomIgnore which will end after the layout (this.processGraphUpdate()) completes.
         this.zoomIgnore = true;

@@ -125,7 +125,7 @@ export class SummaryPanelNode extends React.Component<SummaryPanelNodeProps, Sum
     return (
       <div ref={this.mainDivRef} className={`panel panel-default ${isHover ? summaryPanelHover : summaryPanel}`}>
         <div className="panel-heading" style={summaryHeader}>
-          {isHover && getHoverTitle()}
+          {isHover && getHoverTitle(nodeType)}
           <div>
             <span>
               <PFBadge badge={PFBadges.Namespace} style={{ marginBottom: '2px' }} />

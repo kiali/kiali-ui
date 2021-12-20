@@ -183,7 +183,7 @@ export default class SummaryPanelNamespaceBox extends React.Component<
         style={isHover ? {} : SummaryPanelNamespaceBox.panelStyle}
       >
         <div className="panel-heading" style={summaryHeader}>
-          {isHover && getHoverTitle()}
+          {isHover && getHoverTitle('Namespace')}
           {this.renderNamespace(namespace)}
           <br />
           {this.renderTopologySummary(numSvc, numWorkloads, numApps, numVersions, numEdges)}

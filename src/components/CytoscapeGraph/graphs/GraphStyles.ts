@@ -72,9 +72,8 @@ const NodeTextColor = PFColors.Black1000;
 const NodeTextColorBox = PFColors.White;
 const NodeTextBackgroundColor = PFColors.White;
 const NodeTextBackgroundColorBox = PFColors.Black700;
-const NodeBadgeBackgroundColor = PFColors.Purple400;
+const NodeBadgeBackgroundColor = PFColors.Purple500;
 const NodeBadgeColor = PFColors.White;
-const NodeBadgeFontSize = '12px';
 const NodeTextFont = EdgeTextFont;
 const NodeWidth = NodeHeight;
 
@@ -89,7 +88,6 @@ const badgesDefault = style({
   borderBottomLeftRadius: '3px',
   color: NodeBadgeColor,
   display: 'flex',
-  fontSize: NodeBadgeFontSize,
   padding: '3px 3px'
 });
 
@@ -107,7 +105,6 @@ const contentDefault = style({
   borderRadius: '3px',
   borderWidth: '1px',
   color: NodeTextColor,
-  display: 'flex',
   padding: '3px 5px'
 });
 
@@ -129,6 +126,7 @@ const hostsClass = style({
   textAlign: 'initial',
   marginTop: '0.5em',
   paddingTop: '0.5em',
+  display: 'block',
   $nest: {
     '& div:last-child': {
       display: 'none'
@@ -147,10 +145,8 @@ const labelDefault = style({
   boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 2px 8px 0 rgba(0, 0, 0, 0.19)',
   display: 'inline-flex',
   fontFamily: NodeTextFont,
-  fontSize: '0',
   fontWeight: 'normal',
   marginTop: '4px',
-  lineHeight: '11px',
   textAlign: 'center'
 });
 
@@ -228,6 +224,8 @@ export class GraphStyles {
     const isMultiNamespace = cyGlobal.activeNamespaces.length > 1;
     const isOutside = node.isOutside;
 
+    // Badges portion of label...
+
     let badges = '';
     if (cyGlobal.showMissingSidecars && node.hasMissingSC) {
       badges = `<span class="${NodeIconMS} ${badgeMargin(badges)}"></span> ${badges}`;
@@ -284,25 +282,13 @@ export class GraphStyles {
       }
     }
 
-    const hasBadge = badges.length > 0;
     const badgesStyle = noBadge ? 'display: none;' : '';
-
+    const hasBadge = badges.length > 0;
     if (hasBadge) {
       badges = `<div class=${badgesDefault} style=${badgesStyle}>${badges}</div>`;
     }
 
-    let labelStyle = '';
-    if (ele.hasClass(HighlightClass)) {
-      labelStyle += `font-size: ${settings.fontLabel * FontSizeRatioHover}px;`;
-    } else {
-      labelStyle += `font-size: ${settings.fontLabel}px;`;
-    }
-    if (ele.hasClass(DimClass)) {
-      labelStyle += 'opacity: 0.6;';
-    }
-    if (noBadge && noLabel) {
-      labelStyle += 'display: none;';
-    }
+    // Content portion of label (i.e. the text)...
 
     let contentStyle = '';
     if (ele.hasClass(HighlightClass)) {
@@ -315,7 +301,7 @@ export class GraphStyles {
       contentStyle = `font-size: ${settings.fontLabel}px;`;
     }
     if (noLabel) {
-      contentStyle += 'display: none';
+      contentStyle += 'display: none;';
     }
 
     const content: string[] = [];
@@ -390,13 +376,26 @@ export class GraphStyles {
       default:
         content.unshift('error');
     }
-    //}
 
     const contentText = content.join('<br/>');
     const contentClasses = hasBadge && !noBadge ? `${contentDefault} ${contentWithBadges}` : `${contentDefault}`;
-    let appBoxStyle = '';
+
+    // The final label...
+    let fontSize = settings.fontLabel;
+    if (ele.hasClass(HighlightClass)) {
+      fontSize = fontSize * FontSizeRatioHover;
+    }
+    const lineHeight = fontSize + 1;
+    let labelStyle = `font-size: ${fontSize}px;line-height: ${lineHeight}px;`;
+    if (ele.hasClass(DimClass)) {
+      labelStyle += 'opacity: 0.6;';
+    }
+    if ((noBadge || !hasBadge) && noLabel) {
+      labelStyle += 'display: none;';
+    }
 
     if (isBox) {
+      let appBoxStyle = '';
       let pfBadge = '';
       switch (isBox) {
         case BoxByType.APP:
@@ -435,10 +434,10 @@ export class GraphStyles {
       }
       htmlHosts = `<div class='${hostsClass}'><div>${hosts.length} ${
         hosts.length === 1 ? 'host' : 'hosts'
-      }</div><div>${hostsToShow.join('<br/>')}</div></div>`;
+      }</div><div>${hostsToShow.join('<br />')}</div></div>`;
     }
 
-    const contentSpan = `<div class="${contentClasses}" style="${contentStyle}"><div>${contentText}</div><div></div>${htmlHosts}</div></div>`;
+    const contentSpan = `<div class="${contentClasses}" style="${contentStyle}"><div>${contentText}</div>${htmlHosts}</div></div>`;
     return `<div class="${labelDefault}" style="${labelStyle}">${badges}${contentSpan}</div>`;
   }
 

@@ -90,7 +90,7 @@ export default class SummaryPanelClusterBox extends React.Component<SummaryPanel
         style={isHover ? {} : SummaryPanelClusterBox.panelStyle}
       >
         <div className="panel-heading" style={summaryHeader}>
-          {isHover && getHoverTitle()}
+          {isHover && getHoverTitle('Cluster')}
           {this.renderCluster(cluster)}
           {this.renderTopologySummary(numSvc, numWorkloads, numApps, numVersions, numEdges)}
         </div>

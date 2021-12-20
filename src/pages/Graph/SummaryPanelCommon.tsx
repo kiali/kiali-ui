@@ -192,11 +192,25 @@ export const renderNoTraffic = (protocol?: string) => {
   );
 };
 
-export const getHoverTitle = (): React.ReactFragment => {
+export const getHoverTitle = (title: string): React.ReactFragment => {
+  switch (title) {
+    case NodeType.AGGREGATE:
+      title = 'Operation';
+      break;
+    case NodeType.APP:
+      title = 'Application';
+      break;
+    case NodeType.SERVICE:
+      title = 'Service';
+      break;
+    case NodeType.WORKLOAD:
+      title = 'Workload';
+      break;
+  }
   return (
     <>
       <Title headingLevel="h5" size={TitleSize.md}>
-        Hover Target
+        {title}
       </Title>
       <br />
     </>
