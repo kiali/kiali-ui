@@ -24,7 +24,6 @@ type PolicyItem = AuthorizationPolicy | Sidecar;
 
 interface Props {
   isOpen: boolean;
-  disableOp: boolean;
   ns: string;
   authorizationPolicies: AuthorizationPolicy[];
   sidecars: Sidecar[];
@@ -132,7 +131,6 @@ export class IstioConfigPreview extends React.Component<Props, State> {
             key={this.props.opTarget}
             variant={this.props.opTarget === 'delete' ? 'danger' : 'primary'}
             onClick={this.onConfirm}
-            isDisabled={this.props.disableOp}
           >
             {this.props.opTarget && this.props.opTarget[0].toUpperCase() + this.props.opTarget.substr(1)}
           </Button>

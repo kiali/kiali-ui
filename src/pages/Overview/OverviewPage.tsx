@@ -55,12 +55,9 @@ import { PFColors } from '../../components/Pf/PfColors';
 import VirtualList from '../../components/VirtualList/VirtualList';
 import { OverviewNamespaceAction, OverviewNamespaceActions } from './OverviewNamespaceActions';
 import history, { HistoryManager, URLParam } from '../../app/History';
-import { buildNamespaceInjectionPatch } from '../../components/IstioWizards/WizardActions';
 import * as AlertUtils from '../../utils/AlertUtils';
 import { MessageType } from '../../types/MessageCenter';
 import { ValidationStatus } from '../../types/IstioObjects';
-import { IstioPermissions } from '../../types/IstioConfigDetails';
-import { AUTHORIZATION_POLICIES } from '../IstioConfigNew/AuthorizationPolicyForm';
 import ValidationSummaryLink from '../../components/Link/ValidationSummaryLink';
 import { GrafanaInfo, ISTIO_DASHBOARDS } from '../../types/GrafanaInfo';
 import { ExternalLink } from '../../types/Dashboards';
@@ -129,8 +126,8 @@ type State = {
   namespaces: NamespaceInfo[];
   type: OverviewType;
   displayMode: OverviewDisplayMode;
-  permissions: IstioPermissions;
   showTrafficManagement: boolean;
+  kind: string;
   nsTarget: string;
   opTarget: string;
   grafanaLinks: ExternalLink[];
@@ -158,8 +155,8 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
       namespaces: [],
       type: OverviewToolbar.currentOverviewType(),
       displayMode: display ? Number(display) : OverviewDisplayMode.EXPAND,
-      permissions: {},
       showTrafficManagement: false,
+      kind: '',
       nsTarget: '',
       opTarget: '',
       grafanaLinks: []
@@ -233,6 +230,7 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
               namespaces: Sorts.sortFunc(allNamespaces, sortField, isAscending),
               displayMode: displayMode,
               showTrafficManagement: prevState.showTrafficManagement,
+              kind: prevState.kind,
               nsTarget: prevState.nsTarget,
               opTarget: prevState.opTarget
             };
@@ -241,7 +239,6 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
             this.fetchHealth(isAscending, sortField, type);
             this.fetchTLS(isAscending, sortField);
             this.fetchValidations(isAscending, sortField);
-            this.fetchPermissions();
             if (displayMode !== OverviewDisplayMode.COMPACT) {
               this.fetchMetrics();
             }
@@ -452,16 +449,6 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
       .catch(err => this.handleAxiosError('Could not fetch validations status', err));
   }
 
-  fetchPermissions() {
-    this.promises
-      .register('namespacepermissions', API.getIstioPermissions(this.state.namespaces.map(ns => ns.name)))
-      .then(result => {
-        this.setState({
-          permissions: result.data
-        });
-      });
-  }
-
   handleAxiosError(message: string, error: AxiosError) {
     FilterHelper.handleError(`${message}: ${API.getErrorString(error)}`);
   }
@@ -528,35 +515,30 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
           {
             isGroup: true,
             isSeparator: false,
-            isDisabled: false,
             title: 'Graph',
             action: (ns: string) => this.show(Show.GRAPH, ns, this.state.type)
           },
           {
             isGroup: true,
             isSeparator: false,
-            isDisabled: false,
             title: 'Applications',
             action: (ns: string) => this.show(Show.APPLICATIONS, ns, this.state.type)
           },
           {
             isGroup: true,
             isSeparator: false,
-            isDisabled: false,
             title: 'Workloads',
             action: (ns: string) => this.show(Show.WORKLOADS, ns, this.state.type)
           },
           {
             isGroup: true,
             isSeparator: false,
-            isDisabled: false,
             title: 'Services',
             action: (ns: string) => this.show(Show.SERVICES, ns, this.state.type)
           },
           {
             isGroup: true,
             isSeparator: false,
-            isDisabled: false,
             title: 'Istio Config',
             action: (ns: string) => this.show(Show.ISTIO_CONFIG, ns, this.state.type)
           }
@@ -566,43 +548,33 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
     // We are going to assume that if the user can create/update Istio AuthorizationPolicies in a namespace
     // then it can use the Istio Injection Actions.
     // RBAC allow more fine granularity but Kiali won't check that in detail.
-    let canWrite = false;
-    if (
-      this.state.permissions &&
-      this.state.permissions[nsInfo.name] &&
-      this.state.permissions[nsInfo.name][AUTHORIZATION_POLICIES]
-    ) {
-      const resourcePermission = this.state.permissions[nsInfo.name][AUTHORIZATION_POLICIES];
-      canWrite = resourcePermission.create && resourcePermission.update && resourcePermission.delete;
-    }
 
     if (serverConfig.istioNamespace !== nsInfo.name) {
       if (serverConfig.kialiFeatureFlags.istioInjectionAction && !serverConfig.kialiFeatureFlags.istioUpgradeAction) {
         namespaceActions.push({
           isGroup: false,
-          isSeparator: true,
-          isDisabled: false
+          isSeparator: true
         });
         const enableAction = {
           isGroup: false,
           isSeparator: false,
-          isDisabled: !canWrite,
           title: 'Enable Auto Injection',
-          action: (ns: string) => this.onAddRemoveAutoInjection(ns, true, false)
+          action: (ns: string) =>
+            this.setState({ showTrafficManagement: true, nsTarget: ns, opTarget: 'enable', kind: 'injection' })
         };
         const disableAction = {
           isGroup: false,
           isSeparator: false,
-          isDisabled: !canWrite,
           title: 'Disable Auto Injection',
-          action: (ns: string) => this.onAddRemoveAutoInjection(ns, false, false)
+          action: (ns: string) =>
+            this.setState({ showTrafficManagement: true, nsTarget: ns, opTarget: 'disable', kind: 'injection' })
         };
         const removeAction = {
           isGroup: false,
           isSeparator: false,
-          isDisabled: !canWrite,
           title: 'Remove Auto Injection',
-          action: (ns: string) => this.onAddRemoveAutoInjection(ns, false, true)
+          action: (ns: string) =>
+            this.setState({ showTrafficManagement: true, nsTarget: ns, opTarget: 'remove', kind: 'injection' })
         };
         if (
           nsInfo.labels &&
@@ -635,22 +607,21 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
       ) {
         namespaceActions.push({
           isGroup: false,
-          isSeparator: true,
-          isDisabled: false
+          isSeparator: true
         });
         const upgradeAction = {
           isGroup: false,
           isSeparator: false,
-          isDisabled: !canWrite,
           title: 'Upgrade to ' + serverConfig.istioCanaryRevision.upgrade + ' revision',
-          action: (ns: string) => this.onUpgradeDowngradeIstio(ns, serverConfig.istioCanaryRevision.upgrade)
+          action: (ns: string) =>
+            this.setState({ opTarget: 'upgrade', kind: 'canary', nsTarget: ns, showTrafficManagement: true })
         };
         const downgradeAction = {
           isGroup: false,
           isSeparator: false,
-          isDisabled: !canWrite,
           title: 'Downgrade to ' + serverConfig.istioCanaryRevision.current + ' revision',
-          action: (ns: string) => this.onUpgradeDowngradeIstio(ns, serverConfig.istioCanaryRevision.current)
+          action: (ns: string) =>
+            this.setState({ opTarget: 'current', kind: 'canary', nsTarget: ns, showTrafficManagement: true })
         };
         if (
           nsInfo.labels &&
@@ -662,8 +633,7 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
           namespaceActions.push(upgradeAction);
           namespaceActions.push({
             isGroup: false,
-            isSeparator: true,
-            isDisabled: false
+            isSeparator: true
           });
         } else if (
           nsInfo.labels &&
@@ -673,8 +643,7 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
           namespaceActions.push(downgradeAction);
           namespaceActions.push({
             isGroup: false,
-            isSeparator: true,
-            isDisabled: false
+            isSeparator: true
           });
         }
       }
@@ -682,22 +651,22 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
       const addAuthorizationAction = {
         isGroup: false,
         isSeparator: false,
-        isDisabled: false,
         title: (aps.length === 0 ? 'Create ' : 'Update') + ' Traffic Policies',
         action: (ns: string) => {
           this.setState({
             opTarget: aps.length === 0 ? 'create' : 'update',
             nsTarget: ns,
-            showTrafficManagement: true
+            showTrafficManagement: true,
+            kind: 'policy'
           });
         }
       };
       const removeAuthorizationAction = {
         isGroup: false,
         isSeparator: false,
-        isDisabled: !canWrite,
         title: 'Delete Traffic Policies',
-        action: (ns: string) => this.setState({ opTarget: 'delete', nsTarget: ns, showTrafficManagement: true })
+        action: (ns: string) =>
+          this.setState({ opTarget: 'delete', nsTarget: ns, showTrafficManagement: true, kind: 'policy' })
       };
       namespaceActions.push(addAuthorizationAction);
       if (aps.length > 0) {
@@ -707,14 +676,12 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
       // Istio namespace will render external Grafana dashboards
       namespaceActions.push({
         isGroup: false,
-        isSeparator: true,
-        isDisabled: false
+        isSeparator: true
       });
       this.state.grafanaLinks.forEach(link => {
         const grafanaDashboard = {
           isGroup: false,
           isSeparator: false,
-          isDisabled: false,
           isExternal: true,
           title: link.name,
           action: (_ns: string) => {
@@ -729,35 +696,12 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
     return namespaceActions;
   };
 
-  onAddRemoveAutoInjection = (ns: string, enable: boolean, remove: boolean): void => {
-    const jsonPatch = buildNamespaceInjectionPatch(enable, remove, null);
-    API.updateNamespace(ns, jsonPatch)
-      .then(_ => {
-        AlertUtils.add('Namespace ' + ns + ' updated', 'default', MessageType.SUCCESS);
-        this.load();
-      })
-      .catch(error => {
-        AlertUtils.addError('Could not update namespace ' + ns, error);
-      });
-  };
-
-  onUpgradeDowngradeIstio = (ns: string, revision: string): void => {
-    const jsonPatch = buildNamespaceInjectionPatch(false, false, revision);
-    API.updateNamespace(ns, jsonPatch)
-      .then(_ => {
-        AlertUtils.add('Namespace ' + ns + ' updated', 'default', MessageType.SUCCESS);
-        this.load();
-      })
-      .catch(error => {
-        AlertUtils.addError('Could not update namespace ' + ns, error);
-      });
-  };
-
   hideTrafficManagement = () => {
     this.setState({
       showTrafficManagement: false,
       nsTarget: '',
-      opTarget: ''
+      opTarget: '',
+      kind: ''
     });
   };
 
@@ -849,14 +793,7 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
         <TrafficManagement
           opTarget={this.state.opTarget}
           isOpen={this.state.showTrafficManagement}
-          disableOp={
-            !(
-              this.state.permissions &&
-              this.state.permissions[this.state.nsTarget] &&
-              this.state.permissions[this.state.nsTarget][AUTHORIZATION_POLICIES] &&
-              this.state.permissions[this.state.nsTarget][AUTHORIZATION_POLICIES][this.state.opTarget]
-            )
-          }
+          kind={this.state.kind}
           hideConfirmModal={this.hideTrafficManagement}
           nsTarget={this.state.nsTarget}
           nsInfo={this.state.namespaces.filter(ns => ns.name === this.state.nsTarget)[0]}

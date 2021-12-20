@@ -8,15 +8,21 @@ import { DurationInSeconds } from 'types/Common';
 import { IstioConfigPreview } from 'components/IstioConfigPreview/IstioConfigPreview';
 import * as AlertUtils from 'utils/AlertUtils';
 import * as API from 'services/Api';
+import { serverConfig } from '../../config';
 import GraphDataSource from 'services/GraphDataSource';
-import { buildGraphAuthorizationPolicy, buildGraphSidecars } from 'components/IstioWizards/WizardActions';
+import {
+  buildGraphAuthorizationPolicy,
+  buildNamespaceInjectionPatch,
+  buildGraphSidecars
+} from 'components/IstioWizards/WizardActions';
+import { AUTHORIZATION_POLICIES } from '../IstioConfigNew/AuthorizationPolicyForm';
 
 type TrafficManagementProps = {
   opTarget: string;
+  kind: string;
   isOpen: boolean;
   nsTarget: string;
   nsInfo: NamespaceInfo;
-  disableOp: boolean;
   hideConfirmModal: () => void;
   load: () => void;
   duration: DurationInSeconds;
@@ -26,36 +32,65 @@ type State = {
   confirmationModal: boolean;
   authorizationPolicies: AuthorizationPolicy[];
   sidecars: Sidecar[];
+  disableOp: boolean;
+  canaryVersion: string;
 };
 
 export default class TrafficManagement extends React.Component<TrafficManagementProps, State> {
   private promises = new PromisesRegistry();
   constructor(props: TrafficManagementProps) {
     super(props);
-    this.state = { confirmationModal: false, authorizationPolicies: [], sidecars: [] };
+    this.state = {
+      confirmationModal: false,
+      authorizationPolicies: [],
+      sidecars: [],
+      disableOp: true,
+      canaryVersion: this.props.kind === 'canary' ? serverConfig.istioCanaryRevision[this.props.opTarget] : ''
+    };
   }
 
   componentDidUpdate(prevProps: TrafficManagementProps) {
     if (prevProps.nsTarget !== this.props.nsTarget || prevProps.opTarget !== this.props.opTarget) {
       var authorizationPolicies = this.props.nsInfo?.istioConfig?.authorizationPolicies || [];
       var sidecars = this.props.nsInfo?.istioConfig?.sidecars || [];
-      if (this.props.opTarget === 'create') {
-        this.generateTrafficPolicies();
-      } else if (this.props.opTarget === 'update') {
-        const remove = ['uid', 'resourceVersion', 'generation', 'creationTimestamp', 'managedFields'];
-        sidecars.map(sdc => remove.map(key => delete sdc.metadata[key]));
-        authorizationPolicies.map(ap => remove.map(key => delete ap.metadata[key]));
-        this.setState({ authorizationPolicies, sidecars });
-      } else if (this.props.opTarget === 'delete') {
-        var nsInfo = this.props.nsInfo.istioConfig;
-        this.setState({
-          confirmationModal: true,
-          authorizationPolicies: nsInfo?.authorizationPolicies || [],
-          sidecars: nsInfo?.sidecars || []
-        });
+
+      switch (this.props.kind) {
+        case 'injection':
+          this.fetchPermission();
+          break;
+        case 'canary':
+          this.setState({ canaryVersion: serverConfig.istioCanaryRevision[this.props.opTarget] });
+          this.fetchPermission();
+          break;
+        default:
+          if (this.props.opTarget === 'create') {
+            this.generateTrafficPolicies();
+          } else if (this.props.opTarget === 'update') {
+            const remove = ['uid', 'resourceVersion', 'generation', 'creationTimestamp', 'managedFields'];
+            sidecars.map(sdc => remove.map(key => delete sdc.metadata[key]));
+            authorizationPolicies.map(ap => remove.map(key => delete ap.metadata[key]));
+            this.setState({ authorizationPolicies, sidecars });
+          } else if (this.props.opTarget === 'delete') {
+            var nsInfo = this.props.nsInfo.istioConfig;
+            this.setState({
+              authorizationPolicies: nsInfo?.authorizationPolicies || [],
+              sidecars: nsInfo?.sidecars || []
+            });
+            this.fetchPermission();
+          }
+          break;
       }
     }
   }
+
+  fetchPermission = () => {
+    this.promises.register('namespacepermissions', API.getIstioPermissions([this.props.nsTarget])).then(result => {
+      this.setState({
+        confirmationModal: true,
+        disableOp: !result.data[this.props.nsTarget][AUTHORIZATION_POLICIES][this.props.opTarget]
+      });
+    });
+  };
 
   generateTrafficPolicies = () => {
     const graphDataSource = new GraphDataSource();
@@ -68,9 +103,46 @@ export default class TrafficManagement extends React.Component<TrafficManagement
   };
 
   onConfirm = () => {
-    this.setState({ confirmationModal: false });
-    this.onAddRemoveTrafficPolicies();
-    this.props.hideConfirmModal();
+    switch (this.props.kind) {
+      case 'injection':
+        this.onAddRemoveAutoInjection();
+        break;
+      case 'canary':
+        this.onUpgradeDowngradeIstio();
+        break;
+      default:
+        this.onAddRemoveTrafficPolicies();
+        break;
+    }
+    this.onHideConfirmModal();
+  };
+
+  onAddRemoveAutoInjection = () => {
+    const jsonPatch = buildNamespaceInjectionPatch(
+      this.props.opTarget === 'enable',
+      this.props.opTarget === 'remove',
+      null
+    );
+    API.updateNamespace(this.props.nsTarget, jsonPatch)
+      .then(_ => {
+        AlertUtils.add('Namespace ' + this.props.nsTarget + ' updated', 'default', MessageType.SUCCESS);
+        this.props.load();
+      })
+      .catch(error => {
+        AlertUtils.addError('Could not update namespace ' + this.props.nsTarget, error);
+      });
+  };
+
+  onUpgradeDowngradeIstio = (): void => {
+    const jsonPatch = buildNamespaceInjectionPatch(false, false, this.state.canaryVersion);
+    API.updateNamespace(this.props.nsTarget, jsonPatch)
+      .then(_ => {
+        AlertUtils.add('Namespace ' + this.props.nsTarget + ' updated', 'default', MessageType.SUCCESS);
+        this.props.load();
+      })
+      .catch(error => {
+        AlertUtils.addError('Could not update namespace ' + this.props.nsTarget, error);
+      });
   };
 
   onAddRemoveTrafficPolicies = (): void => {
@@ -146,14 +218,30 @@ export default class TrafficManagement extends React.Component<TrafficManagement
   };
 
   onConfirmPreviewPoliciesModal = (aps: AuthorizationPolicy[], sds: Sidecar[]) => {
-    this.setState({ authorizationPolicies: aps, sidecars: sds, confirmationModal: true });
+    this.setState({ authorizationPolicies: aps, sidecars: sds });
+    this.fetchPermission();
+  };
+
+  onHideConfirmModal = () => {
+    this.setState({ confirmationModal: false });
+    this.props.hideConfirmModal();
   };
 
   render() {
+    const canaryVersion = this.props.kind === 'canary' ? serverConfig.istioCanaryRevision[this.props.opTarget] : '';
     const modalAction =
       this.props.opTarget.length > 0
         ? this.props.opTarget.charAt(0).toLocaleUpperCase() + this.props.opTarget.slice(1)
         : '';
+    const title =
+      'Confirm ' +
+      modalAction +
+      (this.props.kind === 'policy'
+        ? ' Traffic Policies'
+        : this.props.kind === 'injection'
+        ? ' Auto Injection'
+        : ' to ' + canaryVersion) +
+      '?';
     return (
       <>
         <IstioConfigPreview
@@ -164,27 +252,35 @@ export default class TrafficManagement extends React.Component<TrafficManagement
           authorizationPolicies={this.state.authorizationPolicies}
           sidecars={this.state.sidecars}
           opTarget={this.props.opTarget}
-          disableOp={this.props.disableOp}
         />
         <Modal
           isSmall={true}
-          title={'Confirm ' + modalAction + ' Traffic Policies ?'}
+          title={title}
           isOpen={this.state.confirmationModal}
-          onClose={this.props.hideConfirmModal}
+          onClose={this.onHideConfirmModal}
           actions={[
-            <Button key="cancel" variant="secondary" onClick={this.props.hideConfirmModal}>
+            <Button key="cancel" variant="secondary" onClick={this.onHideConfirmModal}>
               Cancel
             </Button>,
-            <Button key="confirm" variant="danger" onClick={this.onConfirm}>
+            <Button key="confirm" variant="danger" onClick={this.onConfirm} isDisabled={this.state.disableOp}>
               {modalAction}
             </Button>
           ]}
         >
-          {'Namespace ' +
-            this.props.nsTarget +
-            ' has existing traffic policies objects. Do you want to ' +
-            this.props.opTarget +
-            ' them ?'}
+          {this.props.kind === 'injection' ? (
+            <>
+              You're going to {this.props.opTarget} Auto Injection in the namespace {this.props.opTarget}. Are you sure?
+            </>
+          ) : this.props.kind === 'canary' ? (
+            <>
+              You're going to {this.props.opTarget} to {this.state.canaryVersion} revision. Are you sure?
+            </>
+          ) : (
+            <>
+              Namespace {this.props.nsTarget} has existing traffic policies objects. Do you want to{' '}
+              {this.props.opTarget} them ?
+            </>
+          )}
         </Modal>
       </>
     );
