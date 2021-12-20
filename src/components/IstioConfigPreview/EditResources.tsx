@@ -33,24 +33,28 @@ export class EditResources extends React.Component<Props, State> {
       <Grid className={style({ padding: '20px' })}>
         <GridItem span={12}>
           <Tabs activeKey={this.state.resourceTab} onSelect={(_, tab) => this.setState({ resourceTab: Number(tab) })}>
-            {this.props.items.map((item, i) => {
-              return (
-                <Tab
-                  eventKey={i}
-                  key={i}
-                  title={
-                    <>
-                      {item.metadata.name} {!_.isEqual(item, this.props.orig[i]) && '*'}
-                    </>
-                  }
-                >
-                  <EditorPreview
-                    yaml={jsYaml.safeDump(item, safeDumpOptions)}
-                    onChange={obj => this.props.onChange(obj, i)}
-                  />
-                </Tab>
-              );
-            })}
+            {this.props.items
+              .sort((a, b) => a.metadata.name.localeCompare(b.metadata.name))
+              .map((item, i) => {
+                return (
+                  <Tab
+                    eventKey={i}
+                    key={i}
+                    title={
+                      <>
+                        {item.metadata.name}{' '}
+                        {!_.isEqual(item, this.props.orig.filter(it => it.metadata.name === item.metadata.name)[0]) &&
+                          '*'}
+                      </>
+                    }
+                  >
+                    <EditorPreview
+                      yaml={jsYaml.safeDump(item, safeDumpOptions)}
+                      onChange={obj => this.props.onChange(obj, i)}
+                    />
+                  </Tab>
+                );
+              })}
           </Tabs>
         </GridItem>
       </Grid>

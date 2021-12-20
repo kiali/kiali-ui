@@ -42,6 +42,7 @@ exports[`Overview page renders initial layout 1`] = `
     </EmptyState>
   </div>
   <TrafficManagement
+    disableOp={true}
     duration={600}
     hideConfirmModal={[Function]}
     isOpen={false}

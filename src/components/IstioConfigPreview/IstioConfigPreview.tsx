@@ -90,6 +90,11 @@ export class IstioConfigPreview extends React.Component<Props, State> {
 
   onConfirm = () => {
     this.props.onConfirm(this.state.authorizationPolicies, this.state.sidecars);
+    this.setState({
+      mainTab: authorizationPoliciesTitle.toLocaleLowerCase().replace(/\s/g, ''),
+      sidecars: [],
+      authorizationPolicies: []
+    });
   };
 
   editorChange = (object: PolicyItem, index: number) => {
