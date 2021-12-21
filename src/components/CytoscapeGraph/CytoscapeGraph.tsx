@@ -135,7 +135,6 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
   private namespaceChanged: boolean;
   private needsInitialLayout: boolean;
   private nodeChanged: boolean;
-  private resetSelection: boolean = false;
   private trafficRenderer?: TrafficRenderer;
   private userBoxSelected?: Cy.Collection;
   private zoom: number; // the current zoom value, used for checking threshold crossing
@@ -452,8 +451,16 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
           CytoscapeGraph.tapTarget = null;
           const cytoscapeEvent = getCytoscapeBaseEvent(event);
           if (cytoscapeEvent) {
+            // ignore if clicking the graph background and this is not the main graph
+            if (
+              cytoscapeEvent.summaryType === 'graph' &&
+              (this.props.isMiniGraph || this.props.graphData.fetchParams.node)
+            ) {
+              return;
+            }
+
             this.handleTap(cytoscapeEvent);
-            this.selectTarget(event.target, true);
+            this.selectTarget(event.target);
           }
         }, CytoscapeGraph.doubleTapMs);
       }
@@ -748,13 +755,6 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
     this.trafficRenderer!.pause();
 
     const isTheGraphSelected = cy.$(':selected').length === 0;
-    if (this.resetSelection) {
-      if (!isTheGraphSelected) {
-        this.selectTarget();
-        this.handleTap({ summaryType: 'graph', summaryTarget: cy });
-      }
-      this.resetSelection = false;
-    }
 
     const globalScratchData: CytoscapeGlobalScratchData = {
       activeNamespaces: this.props.graphData.fetchParams.namespaces,
@@ -849,10 +849,7 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
     }
   }
 
-  private selectTarget = (target?: Cy.NodeSingular | Cy.EdgeSingular | Cy.Core, isTapped: boolean = false) => {
-    if (this.props.isMiniGraph && isTapped) {
-      return;
-    }
+  private selectTarget = (target?: Cy.NodeSingular | Cy.EdgeSingular | Cy.Core) => {
     if (this.cy) {
       this.cy.$(':selected').selectify().unselect().unselectify();
       if (target && !isCore(target)) {
