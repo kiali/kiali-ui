@@ -568,14 +568,9 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
     });
 
     // Crossing a zoom threshold can affect labeling, and so we need an update to re-render the labels.
-    // But the label addition/removal/change can also affect spacing, so we also need to run the layout.
     // Some cy 'zoom' events need to be ignored, typically while a layout or drag-zoom 'box' event is
-    // in progress, as cy can generate unwanted 'intermediate' values.
-    //
-    // Note that cy 3.19.0 introduces 'scrollzoom' events, which are generated only on mousewheel zoom.
-    // That, in addition to us emitting some custom events (like a kiali-zoom) on things like cytoscape
-    // toolbar zooming, could be cleaner. But, 3.16.0 introduced a behavior/regression that currently affects
-    // us negatively (see https://github.com/cytoscape/cytoscape.js/issues/2956) and is holding us as 3.15.*.
+    // in progress, as cy can generate unwanted 'intermediate' values.  So we set zoomIgnore=true, it will
+    // be set false after the update.
     cy.on('zoom', (evt: Cy.EventObject) => {
       const cytoscapeEvent = getCytoscapeBaseEvent(evt);
       if (!cytoscapeEvent || this.zoomIgnore) {
@@ -824,9 +819,10 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
 
   private finishGraphUpdate(cy: Cy.Core, isTheGraphSelected: boolean) {
     // For reasons unknown, box label positions can be wrong after a graph update.
-    // Actually, It seems like only outer nested compound nodes. It seems like a cy bug to me,
-    // But maybe it has to do with either the html node-label extension, or our BoxLayout.
-    // Anyway, refreshing them here seems to fix the positioning.
+    // It seems limited to outer nested compound nodes and looks like a cy bug to me,
+    // but maybe it has to do with either the html node-label extension, or our BoxLayout.
+    // Anyway, refreshing them here seems to fix the positioning (for now, kust refresh
+    // box nodes, but we may find the need to do all nodes).
     (cy as any).nodeHtmlLabel().updateNodeLabel(cy.nodes(':parent'));
 
     // We opt-in for manual selection to be able to control when to select a node/edge
