@@ -812,13 +812,6 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
     if (updateLayout) {
       return new Promise((resolve, _reject) => {
         CytoscapeGraphUtils.runLayout(cy, this.props.layout).then(_response => {
-          // During a layout styles can be applied using an intermediate zoom value.  Because we
-          // have zoom-influence styling, we force an cy-update to the whole graph. There doesn't
-          // seem to a be a better way to do this than to remove and add the elements.
-          cy.startBatch();
-          cy.add(cy.elements().remove());
-          cy.endBatch();
-
           this.finishGraphUpdate(cy, isTheGraphSelected);
           resolve();
         });
