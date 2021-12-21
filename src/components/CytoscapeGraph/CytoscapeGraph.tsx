@@ -585,7 +585,6 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
       const oldZoom = this.zoom;
       const newZoom = cy.zoom();
       this.zoom = newZoom;
-      console.log(`old=${oldZoom}, new=${newZoom}`);
 
       const thresholdCrossed = this.zoomThresholds!.some(zoomThresh => {
         return (newZoom < zoomThresh && oldZoom >= zoomThresh) || (newZoom >= zoomThresh && oldZoom < zoomThresh);
@@ -593,7 +592,6 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
 
       if (thresholdCrossed) {
         // Update state to re-render with the label changes.
-        console.log(`zoom thresh crossed ${oldZoom} -> ${newZoom}`);
         // start a zoomIgnore which will end after the layout (this.processGraphUpdate()) completes.
         this.zoomIgnore = true;
         this.setState({ zoomThresholdTime: Date.now() });
@@ -775,8 +773,6 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
     };
     cy.scratch(CytoscapeGlobalScratchNamespace, globalScratchData);
 
-    console.log(`Before graphUpdate this.zoom=${this.zoom} (cy.zoom=${cy.zoom()})`);
-
     let elements = this.props.graphData.elements;
     if (this.props.showRank) {
       let scoringCriteria: ScoringCriteria[] = [];
@@ -814,12 +810,11 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
     // Run layout outside of the batch operation for it to take effect on the new nodes,
     // Layouts can run async so wait until it completes to finish the graph update.
     if (updateLayout) {
-      console.log(`updateLayout=true, running layout...`);
       return new Promise((resolve, _reject) => {
         CytoscapeGraphUtils.runLayout(cy, this.props.layout).then(_response => {
           // During a layout styles can be applied using an intermediate zoom value.  Because we
           // have zoom-influence styling, we force an cy-update to the whole graph. There doesn't
-          // seem to a be a better way to do this thant to remove and add the elements.
+          // seem to a be a better way to do this than to remove and add the elements.
           cy.startBatch();
           cy.add(cy.elements().remove());
           cy.endBatch();
@@ -835,6 +830,12 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
   }
 
   private finishGraphUpdate(cy: Cy.Core, isTheGraphSelected: boolean) {
+    // For reasons unknown, box label positions can be wrong after a graph update.
+    // Actually, It seems like only outer nested compound nodes. It seems like a cy bug to me,
+    // But maybe it has to do with either the html node-label extension, or our BoxLayout.
+    // Anyway, refreshing them here seems to fix the positioning.
+    (cy as any).nodeHtmlLabel().updateNodeLabel(cy.nodes(':parent'));
+
     // We opt-in for manual selection to be able to control when to select a node/edge
     // https://github.com/cytoscape/cytoscape.js/issues/1145#issuecomment-153083828
     cy.nodes().unselectify();
@@ -852,7 +853,6 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
     // When the update is complete, set the resulting zoom level and re-enable zoom changes.
     this.zoom = cy.zoom();
     this.zoomIgnore = false;
-    console.log(`After graphUpdate this.zoom=${this.zoom}`);
 
     // notify that the graph has been updated
     if (this.props.setUpdateTime) {

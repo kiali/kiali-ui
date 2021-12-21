@@ -195,7 +195,7 @@ export class GraphStyles {
     const settings = serverConfig.kialiFeatureFlags.uiDefaults.graph.settings;
     const zoom = ele.cy().zoom();
     const noBadge = zoom < settings.minFontBadge / settings.fontLabel;
-    const noLabel = zoom < settings.minFontLabel / settings.fontLabel;
+    const noContent = zoom < settings.minFontLabel / settings.fontLabel;
 
     const getCyGlobalData = (ele: Cy.NodeSingular): CytoscapeGlobalScratchData => {
       return ele.cy().scratch(CytoscapeGlobalScratchNamespace);
@@ -272,20 +272,22 @@ export class GraphStyles {
       }
       if (node.isRoot) {
         if (node.isGateway?.ingressInfo?.hostnames?.length !== undefined) {
-          badges = `<span class='${NodeIconGateway} ${badgeMargin(badges)}'></span> ${badges}`;
+          badges = `<span class="${NodeIconGateway} ${badgeMargin(badges)}"></span> ${badges}`;
         }
-        badges = `<span class='${NodeIconRoot} ${badgeMargin(badges)}'></span> ${badges}`;
+        badges = `<span class="${NodeIconRoot} ${badgeMargin(badges)}"></span> ${badges}`;
       } else {
         if (node.isGateway?.egressInfo?.hostnames?.length !== undefined) {
-          badges = `<span class='${NodeIconGateway} ${badgeMargin(badges)}'></span> ${badges}`;
+          badges = `<span class="${NodeIconGateway} ${badgeMargin(badges)}"></span> ${badges}`;
         }
       }
     }
 
-    const badgesStyle = noBadge ? 'display: none;' : '';
-    const hasBadge = badges.length > 0;
-    if (hasBadge) {
-      badges = `<div class=${badgesDefault} style=${badgesStyle}>${badges}</div>`;
+    const hasBadges = badges.length > 0;
+    const noLabel = noContent && (noBadge || !hasBadges);
+
+    if (hasBadges) {
+      const badgesStyle = noLabel || !noBadge ? '' : 'display:none;';
+      badges = `<div class="${badgesDefault}" style="${badgesStyle}">${badges}</div>`;
     }
 
     // Content portion of label (i.e. the text)...
@@ -296,12 +298,12 @@ export class GraphStyles {
         isBox && isBox !== BoxByType.APP
           ? settings.fontLabel * FontSizeRatioHoverBox
           : settings.fontLabel * FontSizeRatioHover;
-      contentStyle = `font-size: ${fontSize}px;`;
+      contentStyle = `font-size:${fontSize}px;`;
     } else {
-      contentStyle = `font-size: ${settings.fontLabel}px;`;
+      contentStyle = `font-size:${settings.fontLabel}px;`;
     }
-    if (noLabel) {
-      contentStyle += 'display: none;';
+    if (!noLabel && noContent) {
+      contentStyle += 'display:none;';
     }
 
     const content: string[] = [];
@@ -378,7 +380,7 @@ export class GraphStyles {
     }
 
     const contentText = content.join('<br/>');
-    const contentClasses = hasBadge && !noBadge ? `${contentDefault} ${contentWithBadges}` : `${contentDefault}`;
+    const contentClasses = hasBadges && !noBadge ? `${contentDefault} ${contentWithBadges}` : `${contentDefault}`;
 
     // The final label...
     let fontSize = settings.fontLabel;
@@ -386,12 +388,12 @@ export class GraphStyles {
       fontSize = fontSize * FontSizeRatioHover;
     }
     const lineHeight = fontSize + 1;
-    let labelStyle = `font-size: ${fontSize}px;line-height: ${lineHeight}px;`;
+    let labelStyle = `font-size:${fontSize}px;line-height:${lineHeight}px;`;
     if (ele.hasClass(DimClass)) {
-      labelStyle += 'opacity: 0.6;';
+      labelStyle += 'opacity:0.6;';
     }
-    if ((noBadge || !hasBadge) && noLabel) {
-      labelStyle += 'display: none;';
+    if (noLabel) {
+      labelStyle += 'display:none;';
     }
 
     if (isBox) {
@@ -413,7 +415,7 @@ export class GraphStyles {
       }
       const contentPfBadge = `<span class="pf-c-badge pf-m-unread ${contentBoxPfBadge}" style="${appBoxStyle}">${pfBadge}</span>`;
       const contentSpan = `<span class="${contentClasses} ${contentBox}" style="${appBoxStyle} ${contentStyle}">${contentPfBadge}${contentText}</span>`;
-      return `<div class="${labelDefault} ${labelBox}" style=${labelStyle}>${badges}${contentSpan}</div>`;
+      return `<div class="${labelDefault} ${labelBox}" style="${labelStyle}">${badges}${contentSpan}</div>`;
     }
 
     let hosts: string[] = [];
@@ -432,7 +434,7 @@ export class GraphStyles {
             : `${hosts.length - config.graph.maxHosts} more hosts...`
         );
       }
-      htmlHosts = `<div class='${hostsClass}'><div>${hosts.length} ${
+      htmlHosts = `<div class="${hostsClass}"><div>${hosts.length} ${
         hosts.length === 1 ? 'host' : 'hosts'
       }</div><div>${hostsToShow.join('<br />')}</div></div>`;
     }
