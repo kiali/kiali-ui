@@ -247,7 +247,12 @@ export default class OverviewTrafficPolicies extends React.Component<OverviewTra
     return (
       <>
         <IstioConfigPreview
-          isOpen={this.props.isOpen && this.props.opTarget !== 'delete' && this.state.authorizationPolicies.length > 0}
+          isOpen={
+            this.props.isOpen &&
+            this.props.kind === 'policy' &&
+            this.props.opTarget !== 'delete' &&
+            this.state.authorizationPolicies.length > 0
+          }
           onClose={this.props.hideConfirmModal}
           onConfirm={this.onConfirmPreviewPoliciesModal}
           ns={this.props.nsTarget}
