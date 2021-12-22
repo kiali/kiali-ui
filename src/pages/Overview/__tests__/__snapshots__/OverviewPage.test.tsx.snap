@@ -41,7 +41,7 @@ exports[`Overview page renders initial layout 1`] = `
       </EmptyStateBody>
     </EmptyState>
   </div>
-  <TrafficManagement
+  <OverviewTrafficPolicies
     duration={600}
     hideConfirmModal={[Function]}
     isOpen={false}

@@ -64,7 +64,7 @@ export class EditorPreview extends React.Component<Props, State> {
         mode="yaml"
         theme="eclipse"
         onChange={value => this.onChange(value)}
-        height={'var(--kiali-yaml-editor-height)'}
+        height={'275px  '}
         width={'100%'}
         className={'istio-ace-editor'}
         wrapEnabled={true}

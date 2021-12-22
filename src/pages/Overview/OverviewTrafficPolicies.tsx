@@ -17,7 +17,7 @@ import {
 } from 'components/IstioWizards/WizardActions';
 import { AUTHORIZATION_POLICIES } from '../IstioConfigNew/AuthorizationPolicyForm';
 
-type TrafficManagementProps = {
+type OverviewTrafficPoliciesProps = {
   opTarget: string;
   kind: string;
   isOpen: boolean;
@@ -36,9 +36,9 @@ type State = {
   canaryVersion: string;
 };
 
-export default class TrafficManagement extends React.Component<TrafficManagementProps, State> {
+export default class OverviewTrafficPolicies extends React.Component<OverviewTrafficPoliciesProps, State> {
   private promises = new PromisesRegistry();
-  constructor(props: TrafficManagementProps) {
+  constructor(props: OverviewTrafficPoliciesProps) {
     super(props);
     this.state = {
       confirmationModal: false,
@@ -49,7 +49,7 @@ export default class TrafficManagement extends React.Component<TrafficManagement
     };
   }
 
-  componentDidUpdate(prevProps: TrafficManagementProps) {
+  componentDidUpdate(prevProps: OverviewTrafficPoliciesProps) {
     if (prevProps.nsTarget !== this.props.nsTarget || prevProps.opTarget !== this.props.opTarget) {
       var authorizationPolicies = this.props.nsInfo?.istioConfig?.authorizationPolicies || [];
       var sidecars = this.props.nsInfo?.istioConfig?.sidecars || [];
@@ -85,9 +85,11 @@ export default class TrafficManagement extends React.Component<TrafficManagement
 
   fetchPermission = () => {
     this.promises.register('namespacepermissions', API.getIstioPermissions([this.props.nsTarget])).then(result => {
+      const permission = result.data[this.props.nsTarget][AUTHORIZATION_POLICIES];
+      const disableOp = !(permission.create && permission.update && permission.delete);
       this.setState({
         confirmationModal: true,
-        disableOp: !result.data[this.props.nsTarget][AUTHORIZATION_POLICIES][this.props.opTarget]
+        disableOp
       });
     });
   };

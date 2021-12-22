@@ -38,7 +38,7 @@ import NamespaceMTLSStatusContainer from '../../components/MTls/NamespaceMTLSSta
 import { RenderComponentScroll } from '../../components/Nav/Page';
 import OverviewCardContentCompact from './OverviewCardContentCompact';
 import OverviewCardContentExpanded from './OverviewCardContentExpanded';
-import TrafficManagement from './TrafficManagement';
+import OverviewTrafficPolicies from './OverviewTrafficPolicies';
 import { IstioMetricsOptions } from '../../types/MetricsOptions';
 import { computePrometheusRateParams } from '../../services/Prometheus';
 import { KialiAppState } from '../../store/Store';
@@ -126,7 +126,7 @@ type State = {
   namespaces: NamespaceInfo[];
   type: OverviewType;
   displayMode: OverviewDisplayMode;
-  showTrafficManagement: boolean;
+  showTrafficPoliciesModal: boolean;
   kind: string;
   nsTarget: string;
   opTarget: string;
@@ -155,7 +155,7 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
       namespaces: [],
       type: OverviewToolbar.currentOverviewType(),
       displayMode: display ? Number(display) : OverviewDisplayMode.EXPAND,
-      showTrafficManagement: false,
+      showTrafficPoliciesModal: false,
       kind: '',
       nsTarget: '',
       opTarget: '',
@@ -229,7 +229,7 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
               type: type,
               namespaces: Sorts.sortFunc(allNamespaces, sortField, isAscending),
               displayMode: displayMode,
-              showTrafficManagement: prevState.showTrafficManagement,
+              showTrafficPoliciesModal: prevState.showTrafficPoliciesModal,
               kind: prevState.kind,
               nsTarget: prevState.nsTarget,
               opTarget: prevState.opTarget
@@ -560,21 +560,21 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
           isSeparator: false,
           title: 'Enable Auto Injection',
           action: (ns: string) =>
-            this.setState({ showTrafficManagement: true, nsTarget: ns, opTarget: 'enable', kind: 'injection' })
+            this.setState({ showTrafficPoliciesModal: true, nsTarget: ns, opTarget: 'enable', kind: 'injection' })
         };
         const disableAction = {
           isGroup: false,
           isSeparator: false,
           title: 'Disable Auto Injection',
           action: (ns: string) =>
-            this.setState({ showTrafficManagement: true, nsTarget: ns, opTarget: 'disable', kind: 'injection' })
+            this.setState({ showTrafficPoliciesModal: true, nsTarget: ns, opTarget: 'disable', kind: 'injection' })
         };
         const removeAction = {
           isGroup: false,
           isSeparator: false,
           title: 'Remove Auto Injection',
           action: (ns: string) =>
-            this.setState({ showTrafficManagement: true, nsTarget: ns, opTarget: 'remove', kind: 'injection' })
+            this.setState({ showTrafficPoliciesModal: true, nsTarget: ns, opTarget: 'remove', kind: 'injection' })
         };
         if (
           nsInfo.labels &&
@@ -614,14 +614,14 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
           isSeparator: false,
           title: 'Upgrade to ' + serverConfig.istioCanaryRevision.upgrade + ' revision',
           action: (ns: string) =>
-            this.setState({ opTarget: 'upgrade', kind: 'canary', nsTarget: ns, showTrafficManagement: true })
+            this.setState({ opTarget: 'upgrade', kind: 'canary', nsTarget: ns, showTrafficPoliciesModal: true })
         };
         const downgradeAction = {
           isGroup: false,
           isSeparator: false,
           title: 'Downgrade to ' + serverConfig.istioCanaryRevision.current + ' revision',
           action: (ns: string) =>
-            this.setState({ opTarget: 'current', kind: 'canary', nsTarget: ns, showTrafficManagement: true })
+            this.setState({ opTarget: 'current', kind: 'canary', nsTarget: ns, showTrafficPoliciesModal: true })
         };
         if (
           nsInfo.labels &&
@@ -656,7 +656,7 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
           this.setState({
             opTarget: aps.length === 0 ? 'create' : 'update',
             nsTarget: ns,
-            showTrafficManagement: true,
+            showTrafficPoliciesModal: true,
             kind: 'policy'
           });
         }
@@ -666,7 +666,7 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
         isSeparator: false,
         title: 'Delete Traffic Policies',
         action: (ns: string) =>
-          this.setState({ opTarget: 'delete', nsTarget: ns, showTrafficManagement: true, kind: 'policy' })
+          this.setState({ opTarget: 'delete', nsTarget: ns, showTrafficPoliciesModal: true, kind: 'policy' })
       };
       namespaceActions.push(addAuthorizationAction);
       if (aps.length > 0) {
@@ -698,7 +698,7 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
 
   hideTrafficManagement = () => {
     this.setState({
-      showTrafficManagement: false,
+      showTrafficPoliciesModal: false,
       nsTarget: '',
       opTarget: '',
       kind: ''
@@ -790,9 +790,9 @@ export class OverviewPage extends React.Component<OverviewProps, State> {
             </EmptyState>
           </div>
         )}
-        <TrafficManagement
+        <OverviewTrafficPolicies
           opTarget={this.state.opTarget}
-          isOpen={this.state.showTrafficManagement}
+          isOpen={this.state.showTrafficPoliciesModal}
           kind={this.state.kind}
           hideConfirmModal={this.hideTrafficManagement}
           nsTarget={this.state.nsTarget}
