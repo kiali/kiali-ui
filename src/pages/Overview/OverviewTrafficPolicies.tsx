@@ -51,9 +51,6 @@ export default class OverviewTrafficPolicies extends React.Component<OverviewTra
 
   componentDidUpdate(prevProps: OverviewTrafficPoliciesProps) {
     if (prevProps.nsTarget !== this.props.nsTarget || prevProps.opTarget !== this.props.opTarget) {
-      var authorizationPolicies = this.props.nsInfo?.istioConfig?.authorizationPolicies || [];
-      var sidecars = this.props.nsInfo?.istioConfig?.sidecars || [];
-
       switch (this.props.kind) {
         case 'injection':
           this.fetchPermission();
@@ -66,6 +63,8 @@ export default class OverviewTrafficPolicies extends React.Component<OverviewTra
           if (this.props.opTarget === 'create') {
             this.generateTrafficPolicies();
           } else if (this.props.opTarget === 'update') {
+            var authorizationPolicies = this.props.nsInfo?.istioConfig?.authorizationPolicies || [];
+            var sidecars = this.props.nsInfo?.istioConfig?.sidecars || [];
             const remove = ['uid', 'resourceVersion', 'generation', 'creationTimestamp', 'managedFields'];
             sidecars.map(sdc => remove.map(key => delete sdc.metadata[key]));
             authorizationPolicies.map(ap => remove.map(key => delete ap.metadata[key]));
@@ -225,7 +224,7 @@ export default class OverviewTrafficPolicies extends React.Component<OverviewTra
   };
 
   onHideConfirmModal = () => {
-    this.setState({ confirmationModal: false });
+    this.setState({ confirmationModal: false, sidecars: [], authorizationPolicies: [] });
     this.props.hideConfirmModal();
   };
 
@@ -253,7 +252,7 @@ export default class OverviewTrafficPolicies extends React.Component<OverviewTra
             this.props.opTarget !== 'delete' &&
             this.state.authorizationPolicies.length > 0
           }
-          onClose={this.props.hideConfirmModal}
+          onClose={this.onHideConfirmModal}
           onConfirm={this.onConfirmPreviewPoliciesModal}
           ns={this.props.nsTarget}
           authorizationPolicies={this.state.authorizationPolicies}
