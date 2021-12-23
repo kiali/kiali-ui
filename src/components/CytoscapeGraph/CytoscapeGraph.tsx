@@ -489,14 +489,8 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
               this.userBoxSelected = this.userBoxSelected?.add(elements);
             }
           });
-          this.zoomIgnore = true;
           CytoscapeGraphUtils.safeFit(cy, this.userBoxSelected);
           this.customViewport = true;
-          // We'd prefer to do this once, after all of the 'box' events, but because cy doesn't seem to give
-          // us an event for this, we force an update here to ensure labels are updated, if the box event has
-          // cause a zoom threshold to be changed.
-          this.forceUpdate();
-          this.zoomIgnore = false;
         }
       }
     });
