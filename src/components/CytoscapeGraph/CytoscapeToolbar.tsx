@@ -3,6 +3,7 @@ import * as Cy from 'cytoscape';
 import { Button, Toolbar, ToolbarItem, Tooltip } from '@patternfly/react-core';
 import {
   ExpandArrowsAltIcon,
+  MapIcon,
   PficonDragdropIcon,
   SearchMinusIcon,
   SearchPlusIcon,
@@ -45,15 +46,16 @@ type CytoscapeToolbarState = {
 
 const buttonStyle = style({
   backgroundColor: PFColors.White,
-  marginRight: '1px'
+  padding: '3px 8px',
+  marginLeft: '4px',
+  marginBottom: '2px'
 });
 const activeButtonStyle = style({
   color: PFColors.Active
 });
 const cytoscapeToolbarStyle = style({
-  padding: '7px 10px'
+  width: '20px'
 });
-const cytoscapeToolbarPadStyle = style({ marginLeft: '9px' });
 
 const ZOOM_STEP = 0.2;
 
@@ -100,7 +102,7 @@ export class CytoscapeToolbar extends React.PureComponent<CytoscapeToolbarProps,
             <Button
               id="toolbar_zoom_in"
               aria-label="Zoom In"
-              className={[cytoscapeToolbarPadStyle, buttonStyle].join(' ')}
+              className={buttonStyle}
               variant="plain"
               onClick={() => this.zoomIn()}
             >
@@ -126,7 +128,7 @@ export class CytoscapeToolbar extends React.PureComponent<CytoscapeToolbarProps,
             <Button
               id="toolbar_graph_fit"
               aria-label="Zoom to Fit"
-              className={[cytoscapeToolbarPadStyle, buttonStyle].join(' ')}
+              className={buttonStyle}
               variant="plain"
               onClick={() => this.fit()}
             >
@@ -135,7 +137,7 @@ export class CytoscapeToolbar extends React.PureComponent<CytoscapeToolbarProps,
           </Tooltip>
         </ToolbarItem>
 
-        <ToolbarItem className={cytoscapeToolbarPadStyle}>
+        <ToolbarItem>
           <Tooltip content={'Layout default ' + DagreGraph.getLayout().name}>
             <Button
               id="toolbar_layout_default"
@@ -169,8 +171,7 @@ export class CytoscapeToolbar extends React.PureComponent<CytoscapeToolbarProps,
               >
                 <TopologyIcon
                   className={this.props.layout.name === CoseGraph.getLayout().name ? activeButtonStyle : undefined}
-                />{' '}
-                1
+                />
               </Button>
             </Tooltip>
           </ToolbarItem>
@@ -190,8 +191,7 @@ export class CytoscapeToolbar extends React.PureComponent<CytoscapeToolbarProps,
             >
               <TopologyIcon
                 className={this.props.layout.name === ColaGraph.getLayout().name ? activeButtonStyle : undefined}
-              />{' '}
-              2
+              />
             </Button>
           </Tooltip>
         </ToolbarItem>
@@ -199,14 +199,14 @@ export class CytoscapeToolbar extends React.PureComponent<CytoscapeToolbarProps,
         <TourStopContainer info={GraphTourStops.Legend}>
           <ToolbarItem>
             <Button
-              variant="primary"
               id="toolbar_toggle_legend"
               aria-label="Show Legend"
+              className={buttonStyle}
+              variant="plain"
               onClick={this.props.toggleLegend}
               isActive={this.props.showLegend}
-              className={cytoscapeToolbarPadStyle}
             >
-              Legend
+              <MapIcon className={this.props.showLegend ? activeButtonStyle : undefined} size="sm" />
             </Button>
           </ToolbarItem>
         </TourStopContainer>
