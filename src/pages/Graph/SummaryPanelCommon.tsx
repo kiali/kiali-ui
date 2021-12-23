@@ -8,7 +8,6 @@ import { Response } from '../../services/Api';
 import { decoratedNodeData } from 'components/CytoscapeGraph/CytoscapeGraphUtils';
 import { PFColors } from 'components/Pf/PfColors';
 import { KialiIcon } from 'config/KialiIcon';
-import { Title, TitleSize } from '@patternfly/react-core';
 
 export enum NodeMetricType {
   APP = 1,
@@ -192,7 +191,7 @@ export const renderNoTraffic = (protocol?: string) => {
   );
 };
 
-export const getHoverTitle = (title: string): React.ReactFragment => {
+export const getTitle = (title: string): React.ReactFragment => {
   switch (title) {
     case NodeType.AGGREGATE:
       title = 'Operation';
@@ -208,11 +207,10 @@ export const getHoverTitle = (title: string): React.ReactFragment => {
       break;
   }
   return (
-    <>
-      <Title headingLevel="h5" size={TitleSize.md}>
-        {title}
-      </Title>
+    <div style={{ textAlign: 'center' }}>
+      <strong>{title}</strong>
       <br />
-    </>
+      <br />
+    </div>
   );
 };

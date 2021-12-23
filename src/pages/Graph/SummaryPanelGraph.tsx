@@ -18,6 +18,7 @@ import { Response } from '../../services/Api';
 import {
   getDatapoints,
   getFirstDatapoints,
+  getTitle,
   hr,
   shouldRefreshData,
   summaryBodyTabs,
@@ -183,9 +184,7 @@ export default class SummaryPanelGraph extends React.Component<SummaryPanelPropT
     return (
       <div className="panel panel-default" style={SummaryPanelGraph.panelStyle}>
         <div className="panel-heading" style={summaryHeader}>
-          <strong>Current Graph:</strong>
-          <br />
-          <br />
+          {getTitle('Current Graph')}
           {this.renderNamespacesSummary()}
           <br />
           {this.renderTopologySummary(numSvc, numWorkloads, numApps, numVersions, numEdges)}

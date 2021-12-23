@@ -7,7 +7,7 @@ import {
   summaryBodyTabs,
   summaryPanelWidth,
   summaryPanelHover,
-  getHoverTitle
+  getTitle
 } from './SummaryPanelCommon';
 import { CyNode } from 'components/CytoscapeGraph/CytoscapeGraphUtils';
 import KialiPageLink from 'components/Link/KialiPageLink';
@@ -90,7 +90,7 @@ export default class SummaryPanelClusterBox extends React.Component<SummaryPanel
         style={isHover ? {} : SummaryPanelClusterBox.panelStyle}
       >
         <div className="panel-heading" style={summaryHeader}>
-          {isHover && getHoverTitle('Cluster')}
+          {getTitle('Cluster')}
           {this.renderCluster(cluster)}
           {this.renderTopologySummary(numSvc, numWorkloads, numApps, numVersions, numEdges)}
         </div>
@@ -238,8 +238,7 @@ export default class SummaryPanelClusterBox extends React.Component<SummaryPanel
   ) => (
     <>
       <br />
-      <strong>Current Graph:</strong>
-      <br />
+      {getTitle('Current Graph')}
       {numApps > 0 && (
         <>
           <KialiIcon.Applications className={topologyStyle} />

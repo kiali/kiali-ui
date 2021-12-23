@@ -26,7 +26,7 @@ import {
   summaryPanel,
   summaryFont,
   summaryPanelHover,
-  getHoverTitle
+  getTitle
 } from './SummaryPanelCommon';
 import { Metric, Datapoint, IstioMetricsMap, Labels } from '../../types/Metrics';
 import { Response } from '../../services/Api';
@@ -165,14 +165,9 @@ export default class SummaryPanelEdge extends React.Component<SummaryPanelPropTy
     return (
       <div ref={this.mainDivRef} className={`panel panel-default ${isHover ? summaryPanelHover : summaryPanel}`}>
         <div className="panel-heading" style={summaryHeader}>
-          {isHover && getHoverTitle('Edge')}
+          {getTitle(`Edge (${prettyProtocol(protocol)})`)}
           {renderBadgedLink(source, undefined, 'From:  ')}
           {renderBadgedLink(dest, undefined, 'To:        ')}
-          {isHover && (
-            <div>
-              <b>Protocol: {prettyProtocol(protocol)}</b>
-            </div>
-          )}
         </div>
         {!isHover && (
           <>

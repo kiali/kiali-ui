@@ -16,7 +16,7 @@ import {
   mergeMetricsResponses,
   getDatapoints,
   summaryPanelHover,
-  getHoverTitle
+  getTitle
 } from './SummaryPanelCommon';
 import { Response } from '../../services/Api';
 import { IstioMetricsMap, Datapoint, Labels } from '../../types/Metrics';
@@ -155,7 +155,7 @@ export default class SummaryPanelAppBox extends React.Component<SummaryPanelProp
     return (
       <div ref={this.mainDivRef} className={`panel panel-default ${isHover ? summaryPanelHover : summaryPanel}`}>
         <div className="panel-heading" style={summaryHeader}>
-          {isHover && getHoverTitle('Application')}
+          {getTitle('Application')}
           <span>
             <PFBadge badge={PFBadges.Namespace} style={{ marginBottom: '2px' }} />
             {nodeData.namespace}

@@ -23,7 +23,7 @@ import {
   getDatapoints,
   summaryPanelWidth,
   summaryPanelHover,
-  getHoverTitle
+  getTitle
 } from './SummaryPanelCommon';
 import { Response } from '../../services/Api';
 import { IstioMetricsMap, Datapoint, Labels } from '../../types/Metrics';
@@ -183,7 +183,7 @@ export default class SummaryPanelNamespaceBox extends React.Component<
         style={isHover ? {} : SummaryPanelNamespaceBox.panelStyle}
       >
         <div className="panel-heading" style={summaryHeader}>
-          {isHover && getHoverTitle('Namespace')}
+          {getTitle('Namespace')}
           {this.renderNamespace(namespace)}
           <br />
           {this.renderTopologySummary(numSvc, numWorkloads, numApps, numVersions, numEdges)}
