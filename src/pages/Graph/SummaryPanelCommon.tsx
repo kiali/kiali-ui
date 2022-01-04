@@ -57,6 +57,11 @@ export const summaryFont: React.CSSProperties = {
   fontSize: 'var(--graph-side-panel--font-size)'
 };
 
+export const summaryTitle = style({
+  fontWeight: 'bolder',
+  textAlign: 'center'
+});
+
 export const hr = () => {
   return <hr style={{ margin: '10px 0' }} />;
 };
@@ -207,7 +212,7 @@ export const getTitle = (title: string): React.ReactFragment => {
       break;
   }
   return (
-    <div style={{ textAlign: 'center' }}>
+    <div style={{ fontWeight: 'bolder', textAlign: 'center' }}>
       <strong>{title}</strong>
       <br />
       <br />

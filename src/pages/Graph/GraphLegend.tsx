@@ -4,6 +4,7 @@ import legendData, { GraphLegendItem, GraphLegendItemRow } from './GraphLegendDa
 import { Button, Tooltip } from '@patternfly/react-core';
 import CloseIcon from '@patternfly/react-icons/dist/js/icons/close-icon';
 import { PFColors } from 'components/Pf/PfColors';
+import { summaryFont, summaryTitle } from './SummaryPanelCommon';
 
 export interface GraphLegendProps {
   closeLegend: () => void;
@@ -11,28 +12,23 @@ export interface GraphLegendProps {
   isMTLSEnabled: boolean;
 }
 
-const width = '200px';
+const width = '190px';
 
 export default class GraphLegend extends React.Component<GraphLegendProps> {
   render() {
     const legendBoxStyle = style({
-      margin: '0 0 3.8em 0',
-      padding: '1em',
+      backgroundColor: PFColors.White,
       border: '1px #ddd solid',
+      margin: '0 0 3.25em 0',
       overflow: 'hidden',
       overflowX: 'auto',
       overflowY: 'auto',
-      backgroundColor: PFColors.White,
+      padding: '1em 0.5em 1em 1em',
       zIndex: 3
     });
 
     const headerStyle = style({
       width: width
-    });
-
-    const legendTextHeadingStyle = style({
-      fontWeight: 'bold',
-      fontSize: '16px'
     });
 
     const bodyStyle = style({
@@ -47,13 +43,13 @@ export default class GraphLegend extends React.Component<GraphLegendProps> {
 
     const closeBoxStyle = style({
       float: 'right',
-      marginTop: '-7px'
+      margin: '-7px -5px 0 -10px'
     });
 
     return (
-      <div className={legendBoxStyle}>
-        <div className={headerStyle}>
-          <span className={legendTextHeadingStyle}>Legend</span>
+      <div className={legendBoxStyle} style={summaryFont}>
+        <div className={`${headerStyle} ${summaryTitle}`}>
+          <span>Legend</span>
           <span className={closeBoxStyle}>
             <Tooltip content="Close Legend">
               <Button id="legend_close" variant="plain" onClick={this.props.closeLegend}>
@@ -71,8 +67,8 @@ export default class GraphLegend extends React.Component<GraphLegendProps> {
 
   renderGraphLegendList(legendData: GraphLegendItem[]) {
     const legendColumnHeadingStyle = style({
-      paddingTop: '1.25em',
-      fontSize: '14px'
+      fontWeight: 'bold',
+      paddingTop: '1.25em'
     });
     const aStyle = style({
       height: '100%',
