@@ -2,18 +2,21 @@
 
 exports[`GraphLegend test should render correctly 1`] = `
 <div
-  className="f19vkxmv"
+  className="fi0mnqz"
+  style={
+    Object {
+      "fontSize": "var(--graph-side-panel--font-size)",
+    }
+  }
 >
   <div
-    className="f1xvjjtv"
+    className="fsgo6a1 fdxg6uc"
   >
-    <span
-      className="f1i76bsh"
-    >
+    <span>
       Legend
     </span>
     <span
-      className="f1vrdyv8"
+      className="f1blspom"
     >
       <Tooltip
         appendTo={[Function]}
@@ -62,16 +65,16 @@ exports[`GraphLegend test should render correctly 1`] = `
     </span>
   </div>
   <div
-    className="f1hnvrw2"
+    className="f6nw80o"
   >
     <div
       className="fkhz08q"
     >
       <div
-        className="fls9dm1"
+        className="firji6b"
       >
         <div
-          className="f1unvj7z"
+          className="fng0jlu"
           key="Node Shapes"
         >
           Node Shapes
@@ -157,7 +160,7 @@ exports[`GraphLegend test should render correctly 1`] = `
           </div>
         </div>
         <div
-          className="f1unvj7z"
+          className="fng0jlu"
           key="Node Colors"
         >
           Node Colors
@@ -227,7 +230,7 @@ exports[`GraphLegend test should render correctly 1`] = `
           </div>
         </div>
         <div
-          className="f1unvj7z"
+          className="fng0jlu"
           key="Node Background"
         >
           Node Background
@@ -265,7 +268,7 @@ exports[`GraphLegend test should render correctly 1`] = `
           </div>
         </div>
         <div
-          className="f1unvj7z"
+          className="fng0jlu"
           key="Edges"
         >
           Edges
@@ -367,7 +370,7 @@ exports[`GraphLegend test should render correctly 1`] = `
           </div>
         </div>
         <div
-          className="f1unvj7z"
+          className="fng0jlu"
           key="Traffic Animation"
         >
           Traffic Animation
@@ -421,7 +424,7 @@ exports[`GraphLegend test should render correctly 1`] = `
           </div>
         </div>
         <div
-          className="f1unvj7z"
+          className="fng0jlu"
           key="Node Badges"
         >
           Node Badges

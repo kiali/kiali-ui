@@ -17,6 +17,7 @@ import {
   NodeType,
   RankMode,
   RankResult,
+  SummaryData,
   UNKNOWN
 } from '../../types/Graph';
 import { JaegerTrace } from 'types/JaegerInfo';
@@ -69,6 +70,7 @@ type CytoscapeGraphProps = {
   showServiceNodes: boolean;
   showTrafficAnimation: boolean;
   showVirtualServices: boolean;
+  summaryData: SummaryData | null;
   toggleIdleNodes: () => void;
   trace?: JaegerTrace;
   updateSummary?: (event: CytoscapeEvent) => void;
@@ -115,7 +117,7 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
   };
 
   // for hover support
-  static hoverMs = 250;
+  static hoverMs = 270;
   static mouseInTarget: any;
   static mouseInTimeout: any;
   static mouseOutTimeout: any;
@@ -459,8 +461,20 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
               return;
             }
 
-            this.handleTap(cytoscapeEvent);
-            this.selectTarget(event.target);
+            // if clicking the same target, then unselect it (by re-selecting the graph)
+            if (
+              this.props.summaryData &&
+              !this.props.summaryData.isHover &&
+              cytoscapeEvent.summaryType !== 'graph' &&
+              cytoscapeEvent.summaryType === this.props.summaryData.summaryType &&
+              cytoscapeEvent.summaryTarget === this.props.summaryData.summaryTarget
+            ) {
+              this.handleTap({ isHover: false, summaryType: 'graph', summaryTarget: cy } as SummaryData);
+              this.selectTarget(cy);
+            } else {
+              this.handleTap(cytoscapeEvent);
+              this.selectTarget(event.target);
+            }
           }
         }, CytoscapeGraph.doubleTapMs);
       }
