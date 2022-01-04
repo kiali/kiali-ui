@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as Cy from 'cytoscape';
-import { Button, Toolbar, ToolbarItem, Tooltip } from '@patternfly/react-core';
+import { Button, Toolbar, ToolbarItem, Tooltip, TooltipPosition } from '@patternfly/react-core';
 import {
   ExpandArrowsAltIcon,
   MapIcon,
@@ -84,7 +84,7 @@ export class CytoscapeToolbar extends React.PureComponent<CytoscapeToolbarProps,
     return (
       <Toolbar className={cytoscapeToolbarStyle}>
         <ToolbarItem>
-          <Tooltip content={this.state.allowGrab ? 'Disable Drag' : 'Enable Drag'}>
+          <Tooltip content={this.state.allowGrab ? 'Disable Drag' : 'Enable Drag'} position={TooltipPosition.right}>
             <Button
               id="toolbar_grab"
               aria-label="Toggle Drag"
@@ -98,7 +98,7 @@ export class CytoscapeToolbar extends React.PureComponent<CytoscapeToolbarProps,
           </Tooltip>
         </ToolbarItem>
         <ToolbarItem>
-          <Tooltip content="Zoom In">
+          <Tooltip content="Zoom In" position={TooltipPosition.right}>
             <Button
               id="toolbar_zoom_in"
               aria-label="Zoom In"
@@ -111,7 +111,7 @@ export class CytoscapeToolbar extends React.PureComponent<CytoscapeToolbarProps,
           </Tooltip>
         </ToolbarItem>
         <ToolbarItem>
-          <Tooltip content="Zoom Out">
+          <Tooltip content="Zoom Out" position={TooltipPosition.right}>
             <Button
               id="toolbar_zoom_out"
               aria-label="Zoom Out"
@@ -124,7 +124,7 @@ export class CytoscapeToolbar extends React.PureComponent<CytoscapeToolbarProps,
           </Tooltip>
         </ToolbarItem>
         <ToolbarItem>
-          <Tooltip content="Zoom to Fit">
+          <Tooltip content="Zoom to Fit" position={TooltipPosition.right}>
             <Button
               id="toolbar_graph_fit"
               aria-label="Zoom to Fit"
@@ -138,7 +138,7 @@ export class CytoscapeToolbar extends React.PureComponent<CytoscapeToolbarProps,
         </ToolbarItem>
 
         <ToolbarItem>
-          <Tooltip content={'Layout default ' + DagreGraph.getLayout().name}>
+          <Tooltip content={'Layout default ' + DagreGraph.getLayout().name} position={TooltipPosition.right}>
             <Button
               id="toolbar_layout_default"
               aria-label="Graph Layout Default Style"
@@ -158,7 +158,7 @@ export class CytoscapeToolbar extends React.PureComponent<CytoscapeToolbarProps,
 
         <TourStopContainer info={GraphTourStops.Layout}>
           <ToolbarItem>
-            <Tooltip content={'Layout 1 ' + CoseGraph.getLayout().name}>
+            <Tooltip content={'Layout 1 ' + CoseGraph.getLayout().name} position={TooltipPosition.right}>
               <Button
                 id="toolbar_layout1"
                 aria-label="Graph Layout Style 1"
@@ -178,7 +178,7 @@ export class CytoscapeToolbar extends React.PureComponent<CytoscapeToolbarProps,
         </TourStopContainer>
 
         <ToolbarItem>
-          <Tooltip content={'Layout 2 ' + ColaGraph.getLayout().name}>
+          <Tooltip content={'Layout 2 ' + ColaGraph.getLayout().name} position={TooltipPosition.right}>
             <Button
               id="toolbar_layout2"
               aria-label="Graph Layout Style 2"
@@ -198,16 +198,18 @@ export class CytoscapeToolbar extends React.PureComponent<CytoscapeToolbarProps,
 
         <TourStopContainer info={GraphTourStops.Legend}>
           <ToolbarItem>
-            <Button
-              id="toolbar_toggle_legend"
-              aria-label="Show Legend"
-              className={buttonStyle}
-              variant="plain"
-              onClick={this.props.toggleLegend}
-              isActive={this.props.showLegend}
-            >
-              <MapIcon className={this.props.showLegend ? activeButtonStyle : undefined} size="sm" />
-            </Button>
+            <Tooltip content="Show Legend" position={TooltipPosition.right}>
+              <Button
+                id="toolbar_toggle_legend"
+                aria-label="Show Legend"
+                className={buttonStyle}
+                variant="plain"
+                onClick={this.props.toggleLegend}
+                isActive={this.props.showLegend}
+              >
+                <MapIcon className={this.props.showLegend ? activeButtonStyle : undefined} size="sm" />
+              </Button>
+            </Tooltip>
           </ToolbarItem>
         </TourStopContainer>
       </Toolbar>
