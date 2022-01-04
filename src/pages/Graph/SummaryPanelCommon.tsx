@@ -212,8 +212,8 @@ export const getTitle = (title: string): React.ReactFragment => {
       break;
   }
   return (
-    <div style={{ fontWeight: 'bolder', textAlign: 'center' }}>
-      <strong>{title}</strong>
+    <div className={summaryTitle}>
+      {title}
       <br />
       <br />
     </div>
