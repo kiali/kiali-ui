@@ -36,6 +36,8 @@ type State = {
   canaryVersion: string;
 };
 
+type colorButton = 'primary' | 'secondary' | 'tertiary' | 'danger' | 'link' | 'plain' | 'control';
+
 export default class OverviewTrafficPolicies extends React.Component<OverviewTrafficPoliciesProps, State> {
   private promises = new PromisesRegistry();
   constructor(props: OverviewTrafficPoliciesProps) {
@@ -234,6 +236,7 @@ export default class OverviewTrafficPolicies extends React.Component<OverviewTra
       this.props.opTarget.length > 0
         ? this.props.opTarget.charAt(0).toLocaleUpperCase() + this.props.opTarget.slice(1)
         : '';
+    const colorAction = ['enable', 'disable'].includes(this.props.opTarget) ? 'primary' : 'danger';
     const title =
       'Confirm ' +
       modalAction +
@@ -268,18 +271,24 @@ export default class OverviewTrafficPolicies extends React.Component<OverviewTra
             <Button key="cancel" variant="secondary" onClick={this.onHideConfirmModal}>
               Cancel
             </Button>,
-            <Button key="confirm" variant="danger" onClick={this.onConfirm} isDisabled={this.state.disableOp}>
+            <Button
+              key="confirm"
+              variant={colorAction as colorButton}
+              onClick={this.onConfirm}
+              isDisabled={this.state.disableOp}
+            >
               {modalAction}
             </Button>
           ]}
         >
           {this.props.kind === 'injection' ? (
             <>
-              You're going to {this.props.opTarget} Auto Injection in the namespace {this.props.opTarget}. Are you sure?
+              You're going to {this.props.opTarget} Auto Injection in the namespace {this.props.nsTarget}. Are you sure?
             </>
           ) : this.props.kind === 'canary' ? (
             <>
-              You're going to {this.props.opTarget} to {this.state.canaryVersion} revision. Are you sure?
+              You're going to {this.props.opTarget} to {this.state.canaryVersion} revision in the namespace{' '}
+              {this.props.nsTarget}. Are you sure?
             </>
           ) : (
             <>
