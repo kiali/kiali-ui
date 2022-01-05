@@ -34,6 +34,7 @@ type State = {
   sidecars: Sidecar[];
   disableOp: boolean;
   canaryVersion: string;
+  loaded: boolean;
 };
 
 type colorButton = 'primary' | 'secondary' | 'tertiary' | 'danger' | 'link' | 'plain' | 'control';
@@ -46,6 +47,7 @@ export default class OverviewTrafficPolicies extends React.Component<OverviewTra
       confirmationModal: false,
       authorizationPolicies: [],
       sidecars: [],
+      loaded: false,
       disableOp: true,
       canaryVersion: this.props.kind === 'canary' ? serverConfig.istioCanaryRevision[this.props.opTarget] : ''
     };
@@ -58,8 +60,9 @@ export default class OverviewTrafficPolicies extends React.Component<OverviewTra
           this.fetchPermission();
           break;
         case 'canary':
-          this.setState({ canaryVersion: serverConfig.istioCanaryRevision[this.props.opTarget] });
-          this.fetchPermission();
+          this.setState({ canaryVersion: serverConfig.istioCanaryRevision[this.props.opTarget] }, () =>
+            this.fetchPermission()
+          );
           break;
         default:
           if (this.props.opTarget === 'create') {
@@ -73,11 +76,13 @@ export default class OverviewTrafficPolicies extends React.Component<OverviewTra
             this.setState({ authorizationPolicies, sidecars });
           } else if (this.props.opTarget === 'delete') {
             var nsInfo = this.props.nsInfo.istioConfig;
-            this.setState({
-              authorizationPolicies: nsInfo?.authorizationPolicies || [],
-              sidecars: nsInfo?.sidecars || []
-            });
-            this.fetchPermission();
+            this.setState(
+              {
+                authorizationPolicies: nsInfo?.authorizationPolicies || [],
+                sidecars: nsInfo?.sidecars || []
+              },
+              () => this.fetchPermission()
+            );
           }
           break;
       }
@@ -100,7 +105,7 @@ export default class OverviewTrafficPolicies extends React.Component<OverviewTra
     graphDataSource.on('fetchSuccess', () => {
       const aps = buildGraphAuthorizationPolicy(this.props.nsTarget, graphDataSource.graphDefinition);
       const scs = buildGraphSidecars(this.props.nsTarget, graphDataSource.graphDefinition);
-      this.setState({ authorizationPolicies: aps, sidecars: scs });
+      this.setState({ authorizationPolicies: aps, sidecars: scs, loaded: true });
     });
     graphDataSource.fetchForNamespace(this.props.duration, this.props.nsTarget);
   };
@@ -221,13 +226,13 @@ export default class OverviewTrafficPolicies extends React.Component<OverviewTra
   };
 
   onConfirmPreviewPoliciesModal = (aps: AuthorizationPolicy[], sds: Sidecar[]) => {
-    this.setState({ authorizationPolicies: aps, sidecars: sds });
-    this.fetchPermission();
+    this.setState({ authorizationPolicies: aps, sidecars: sds }, () => this.fetchPermission());
   };
 
   onHideConfirmModal = () => {
-    this.setState({ confirmationModal: false, sidecars: [], authorizationPolicies: [] });
-    this.props.hideConfirmModal();
+    this.setState({ confirmationModal: false, sidecars: [], authorizationPolicies: [], loaded: false }, () =>
+      this.props.hideConfirmModal()
+    );
   };
 
   render() {
@@ -248,20 +253,22 @@ export default class OverviewTrafficPolicies extends React.Component<OverviewTra
       '?';
     return (
       <>
-        <IstioConfigPreview
-          isOpen={
-            this.props.isOpen &&
-            this.props.kind === 'policy' &&
-            this.props.opTarget !== 'delete' &&
-            this.state.authorizationPolicies.length > 0
-          }
-          onClose={this.onHideConfirmModal}
-          onConfirm={this.onConfirmPreviewPoliciesModal}
-          ns={this.props.nsTarget}
-          authorizationPolicies={this.state.authorizationPolicies}
-          sidecars={this.state.sidecars}
-          opTarget={this.props.opTarget}
-        />
+        {this.state.loaded && (
+          <IstioConfigPreview
+            isOpen={
+              this.props.isOpen &&
+              this.props.kind === 'policy' &&
+              this.props.opTarget !== 'delete' &&
+              this.state.authorizationPolicies.length > 0
+            }
+            onClose={this.onHideConfirmModal}
+            onConfirm={this.onConfirmPreviewPoliciesModal}
+            ns={this.props.nsTarget}
+            authorizationPolicies={this.state.authorizationPolicies}
+            sidecars={this.state.sidecars}
+            opTarget={this.props.opTarget}
+          />
+        )}
         <Modal
           isSmall={true}
           title={title}
