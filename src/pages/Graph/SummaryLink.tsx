@@ -146,6 +146,17 @@ export const renderBadgedHost = (host: string) => {
   );
 };
 
+export const renderBadgedName = (nodeData: GraphNodeData) => {
+  return (
+    <div>
+      <span style={{ marginRight: '1em', marginBottom: '3px', display: 'inline-block' }}>
+        {getBadge(nodeData)}
+        {getLink({ ...nodeData, isInaccessible: true })}
+      </span>
+    </div>
+  );
+};
+
 export const renderBadgedLink = (
   nodeData: GraphNodeData,
   nodeType?: NodeType,

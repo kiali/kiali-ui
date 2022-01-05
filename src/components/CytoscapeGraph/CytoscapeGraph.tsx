@@ -24,7 +24,11 @@ import { JaegerTrace } from 'types/JaegerInfo';
 import Namespace from '../../types/Namespace';
 import { addInfo } from 'utils/AlertUtils';
 import { angleBetweenVectors, squaredDistance, normalize } from '../../utils/MathUtils';
-import { CytoscapeContextMenuWrapper, NodeContextMenuType, EdgeContextMenuType } from './CytoscapeContextMenu';
+import {
+  CytoscapeContextMenuWrapper,
+  NodeContextMenuComponentType,
+  EdgeContextMenuComponentType
+} from './CytoscapeContextMenu';
 import * as CytoscapeGraphUtils from './CytoscapeGraphUtils';
 import { CyNode, isCore, isEdge, isNode } from './CytoscapeGraphUtils';
 import { CytoscapeReactWrapper } from './CytoscapeReactWrapper';
@@ -40,9 +44,9 @@ import { scoreNodes, ScoringCriteria } from './GraphScore';
 type CytoscapeGraphProps = {
   compressOnHide: boolean;
   containerClassName?: string;
-  contextMenuEdgeComponent?: EdgeContextMenuType;
-  contextMenuGroupComponent?: NodeContextMenuType;
-  contextMenuNodeComponent?: NodeContextMenuType;
+  contextMenuEdgeComponent?: EdgeContextMenuComponentType;
+  contextMenuBoxComponent?: NodeContextMenuComponentType;
+  contextMenuNodeComponent?: NodeContextMenuComponentType;
   edgeLabels: EdgeLabelMode[];
   graphData: GraphData;
   focusSelector?: string;
@@ -292,7 +296,7 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
             ref={this.contextMenuRef}
             edgeContextMenuContent={this.props.contextMenuEdgeComponent}
             nodeContextMenuContent={this.props.contextMenuNodeComponent}
-            groupContextMenuContent={this.props.contextMenuGroupComponent}
+            boxContextMenuContent={this.props.contextMenuBoxComponent}
           />
           <CytoscapeReactWrapper ref={e => this.setCytoscapeReactWrapperRef(e)} />
         </EmptyGraphLayout>

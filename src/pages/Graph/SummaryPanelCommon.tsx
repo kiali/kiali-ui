@@ -59,6 +59,7 @@ export const summaryFont: React.CSSProperties = {
 
 export const summaryTitle = style({
   fontWeight: 'bolder',
+  marginBottom: '5px',
   textAlign: 'center'
 });
 
@@ -214,7 +215,6 @@ export const getTitle = (title: string): React.ReactFragment => {
   return (
     <div className={summaryTitle}>
       {title}
-      <br />
       <br />
     </div>
   );

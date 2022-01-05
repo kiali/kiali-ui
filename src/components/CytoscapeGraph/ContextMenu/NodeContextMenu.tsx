@@ -10,24 +10,31 @@ import { JaegerInfo } from 'types/JaegerInfo';
 import { KialiAppState } from 'store/Store';
 import { Paths, serverConfig } from 'config';
 import { NodeContextMenuProps } from '../CytoscapeContextMenu';
+import { getTitle } from 'pages/Graph/SummaryPanelCommon';
+import { PFBadge, PFBadges } from 'components/Pf/PfBadges';
+import { renderBadgedName } from 'pages/Graph/SummaryLink';
 
 type ReduxProps = {
   jaegerInfo?: JaegerInfo;
 };
 
 const graphContextMenuContainerStyle = style({
-  textAlign: 'left'
+  fontSize: 'var(--graph-side-panel--font-size)'
+  // textAlign: 'left'
 });
 
+/*
 const graphContextMenuTitleStyle = style({
   textAlign: 'left',
   fontSize: '16px',
   borderBottom: '1px solid black'
 });
+*/
 
 const graphContextMenuSubTitleStyle = style({
+  // borderTop: '1px solid black',
   textAlign: 'left',
-  fontSize: '14px',
+  // fontSize: '14px',
   color: '#737679',
   fontWeight: 700,
   paddingTop: 2,
@@ -36,7 +43,7 @@ const graphContextMenuSubTitleStyle = style({
 
 const graphContextMenuItemStyle = style({
   textAlign: 'left',
-  fontSize: '12px',
+  // fontSize: '12px',
   textDecoration: 'none',
   $nest: {
     '&:hover': {
@@ -136,9 +143,13 @@ export class NodeContextMenu extends React.PureComponent<Props> {
 
     return (
       <div className={graphContextMenuContainerStyle}>
-        <div className={graphContextMenuTitleStyle}>
-          <strong>{linkParams.name}</strong>
+        {getTitle(this.props.nodeType)}
+        <div style={{ marginBottom: '2px', textAlign: 'left' }}>
+          <PFBadge badge={PFBadges.Namespace} style={{ marginBottom: '2px' }} />
+          {this.props.namespace}
+          {renderBadgedName(this.props)}
         </div>
+        <hr />
         {menuOptions}
       </div>
     );
