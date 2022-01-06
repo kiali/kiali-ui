@@ -5,7 +5,7 @@ import { style } from 'typestyle';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 
 import history from 'app/History';
-import { NodeType, DecoratedGraphNodeData } from 'types/Graph';
+import { NodeType, DecoratedGraphNodeData, BoxByType } from 'types/Graph';
 import { JaegerInfo } from 'types/JaegerInfo';
 import { KialiAppState } from 'store/Store';
 import { Paths, serverConfig } from 'config';
@@ -60,14 +60,17 @@ export class NodeContextMenu extends React.PureComponent<Props> {
     let type: string | undefined = undefined;
     switch (node.nodeType) {
       case NodeType.APP:
-      case NodeType.BOX: // we only support app box node graphs, so treat like app
-        // Prefer workload type for nodes backed by a workload
-        if (node.workload && node.parent) {
-          name = node.workload;
-          type = Paths.WORKLOADS;
-        } else {
-          type = Paths.APPLICATIONS;
-          name = node.app;
+      case NodeType.BOX:
+        // only app boxes have full context menus
+        if (node.isBox === BoxByType.APP) {
+          // Prefer workload links
+          if (node.workload && node.parent) {
+            name = node.workload;
+            type = Paths.WORKLOADS;
+          } else {
+            type = Paths.APPLICATIONS;
+            name = node.app;
+          }
         }
         break;
       case NodeType.SERVICE:
@@ -112,6 +115,27 @@ export class NodeContextMenu extends React.PureComponent<Props> {
   }
 
   render() {
+    const isBox = this.props.isBox;
+    const title = isBox ? getTitle(isBox) : getTitle(this.props.nodeType);
+    const header: React.ReactFragment = (
+      <>
+        {title}
+        <div className={contextMenuHeader}>
+          {(!isBox || isBox === BoxByType.APP) && (
+            <>
+              <PFBadge badge={PFBadges.Namespace} style={{ marginBottom: '2px' }} />
+              {this.props.namespace}
+            </>
+          )}
+          {renderBadgedName(this.props)}
+        </div>
+      </>
+    );
+
+    if (this.props.isHover) {
+      return <div className={contextMenu}>{header}</div>;
+    }
+
     const linkParams = NodeContextMenu.derivedValuesFromProps(this.props);
 
     // Disable context menu if we are dealing with an aggregate (currently has no detail) or an inaccessible node
@@ -135,12 +159,7 @@ export class NodeContextMenu extends React.PureComponent<Props> {
 
     return (
       <div className={contextMenu}>
-        {getTitle(this.props.nodeType)}
-        <div className={contextMenuHeader}>
-          <PFBadge badge={PFBadges.Namespace} style={{ marginBottom: '2px' }} />
-          {this.props.namespace}
-          {renderBadgedName(this.props)}
-        </div>
+        {header}
         <hr />
         {menuOptions}
       </div>

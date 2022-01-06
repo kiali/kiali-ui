@@ -28,16 +28,19 @@ type ContextMenuContainer = HTMLDivElement & {
 };
 
 type ContextMenuProps = {
-  element: Cy.NodeSingular | Cy.EdgeSingular;
   contextMenu: TippyInstance;
+  element: Cy.NodeSingular | Cy.EdgeSingular;
+  isHover: boolean;
 };
 
 export class CytoscapeContextMenuWrapper extends React.PureComponent<Props> {
   private readonly contextMenuRef: React.RefObject<ContextMenuContainer>;
+  private isHover: boolean | undefined;
 
   constructor(props: Props) {
     super(props);
     this.contextMenuRef = React.createRef<ContextMenuContainer>();
+    this.isHover = undefined;
   }
 
   componentDidMount() {
@@ -69,11 +72,6 @@ export class CytoscapeContextMenuWrapper extends React.PureComponent<Props> {
 
   // Connects cy to this component
   handleContextMenu(elem: Cy.NodeSingular | Cy.EdgeSingular, isHover: boolean) {
-    const currentContextMenu = this.getCurrentContextMenu();
-    if (currentContextMenu) {
-      currentContextMenu.hide(0); // hide it in 0ms
-    }
-
     let contextMenuType: ContextMenuComponentType | undefined;
 
     if (elem.isNode()) {
@@ -82,8 +80,18 @@ export class CytoscapeContextMenuWrapper extends React.PureComponent<Props> {
       contextMenuType = this.props.contextMenuEdgeComponent;
     }
 
-    if (contextMenuType && (!isHover || getOptions({ ...elem.data() }).length > 0)) {
-      this.makeContextMenu(contextMenuType, elem);
+    if (contextMenuType) {
+      this.makeContextMenu(contextMenuType, elem, isHover);
+    }
+  }
+
+  hideContextMenu(isHover: boolean | undefined) {
+    const currentContextMenu = this.getCurrentContextMenu();
+    if (currentContextMenu) {
+      if (!isHover || this.isHover) {
+        currentContextMenu.hide(0); // hide it in 0ms
+        this.isHover = undefined;
+      }
     }
   }
 
@@ -98,15 +106,27 @@ export class CytoscapeContextMenuWrapper extends React.PureComponent<Props> {
       if (event.target && currentContextMenu.popper.contains(event.target as Node)) {
         return;
       }
-      currentContextMenu.hide();
+
+      this.hideContextMenu(this.isHover);
     }
   };
 
   private makeContextMenu(
     ContextMenuComponentType: ContextMenuComponentType,
-    target: Cy.NodeSingular | Cy.EdgeSingular
+    target: Cy.NodeSingular | Cy.EdgeSingular,
+    isHover: boolean
   ) {
-    console.log('makeContextMenu');
+    // Don't let a hover trump a non-hover context menu
+    if (isHover && this.isHover === false) {
+      return;
+    }
+    // If there is no valid context menu just return
+    if (!isHover && (target.isEdge() || getOptions({ ...target.data() }).length === 0)) {
+      return;
+    }
+
+    // hide any existing context menu
+    this.hideContextMenu(isHover);
 
     // Prevent the tippy content from picking up the right-click when we are moving it over to the edge/node
     this.addContextMenuEventListener();
@@ -131,10 +151,13 @@ export class CytoscapeContextMenuWrapper extends React.PureComponent<Props> {
     const result = (
       <Provider store={store}>
         <Router history={history}>
-          <ContextMenuComponentType element={target} contextMenu={tippyInstance} {...target.data()} />
+          <ContextMenuComponentType element={target} contextMenu={tippyInstance} isHover={isHover} {...target.data()} />
         </Router>
       </Provider>
     );
+
+    // save the context menu type to make sure we don't hide full context menus
+    this.isHover = isHover;
 
     ReactDOM.render(result, content, () => {
       this.setCurrentContextMenu(tippyInstance);
