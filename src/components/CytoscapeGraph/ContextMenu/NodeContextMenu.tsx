@@ -62,7 +62,8 @@ export class NodeContextMenu extends React.PureComponent<Props> {
       case NodeType.APP:
       case NodeType.BOX:
         // only app boxes have full context menus
-        if (node.isBox === BoxByType.APP) {
+        const isBox = node.isBox;
+        if (!isBox || isBox === BoxByType.APP) {
           // Prefer workload links
           if (node.workload && node.parent) {
             name = node.workload;
