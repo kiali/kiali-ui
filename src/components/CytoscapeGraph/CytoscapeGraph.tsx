@@ -294,9 +294,9 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
         >
           <CytoscapeContextMenuWrapper
             ref={this.contextMenuRef}
-            edgeContextMenuContent={this.props.contextMenuEdgeComponent}
-            nodeContextMenuContent={this.props.contextMenuNodeComponent}
-            boxContextMenuContent={this.props.contextMenuBoxComponent}
+            contextMenuBoxComponent={this.props.contextMenuBoxComponent}
+            contextMenuEdgeComponent={this.props.contextMenuEdgeComponent}
+            contextMenuNodeComponent={this.props.contextMenuNodeComponent}
           />
           <CytoscapeReactWrapper ref={e => this.setCytoscapeReactWrapperRef(e)} />
         </EmptyGraphLayout>
@@ -533,12 +533,14 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
         // timer expired without a mouseout so perform hover action
         this.handleMouseIn(cytoscapeEvent);
 
+        /*
         if (this.props.updateSummary) {
           this.props.updateSummary({
             isHover: true,
             ...cytoscapeEvent
           });
         }
+        */
       }, CytoscapeGraph.hoverMs);
     });
 
@@ -560,12 +562,14 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
 
       // start mouseOut timer to return to graph summary
       CytoscapeGraph.mouseOutTimeout = setTimeout(() => {
+        /*
         if (this.props.updateSummary) {
           this.props.updateSummary({
             summaryType: 'graph',
             summaryTarget: cytoscapeEvent.summaryTarget.cy()
           });
         }
+        */
       }, CytoscapeGraph.hoverMs);
 
       this.handleMouseOut(cytoscapeEvent);

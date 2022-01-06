@@ -9,10 +9,16 @@ import { store } from '../../store/ConfigStore';
 import history from '../../app/History';
 import { getOptions } from './ContextMenu/NodeContextMenu';
 
+export type EdgeContextMenuProps = DecoratedGraphEdgeData & ContextMenuProps;
+export type EdgeContextMenuComponentType = React.ComponentType<EdgeContextMenuProps>;
+export type NodeContextMenuProps = DecoratedGraphNodeData & ContextMenuProps;
+export type NodeContextMenuComponentType = React.ComponentType<NodeContextMenuProps>;
+export type ContextMenuComponentType = EdgeContextMenuComponentType | NodeContextMenuComponentType;
+
 type Props = {
-  boxContextMenuContent?: NodeContextMenuComponentType;
-  edgeContextMenuContent?: EdgeContextMenuComponentType;
-  nodeContextMenuContent?: NodeContextMenuComponentType;
+  contextMenuBoxComponent?: NodeContextMenuComponentType;
+  contextMenuEdgeComponent?: EdgeContextMenuComponentType;
+  contextMenuNodeComponent?: NodeContextMenuComponentType;
 };
 
 type TippyInstance = Instance;
@@ -22,15 +28,9 @@ type ContextMenuContainer = HTMLDivElement & {
 };
 
 type ContextMenuProps = {
-  element: Cy.NodeSingular | Cy.Core;
+  element: Cy.NodeSingular | Cy.EdgeSingular;
   contextMenu: TippyInstance;
 };
-
-export type EdgeContextMenuProps = DecoratedGraphEdgeData & ContextMenuProps;
-export type EdgeContextMenuComponentType = React.ComponentType<EdgeContextMenuProps>;
-export type NodeContextMenuProps = DecoratedGraphNodeData & ContextMenuProps;
-export type NodeContextMenuComponentType = React.ComponentType<NodeContextMenuProps>;
-export type ContextMenuComponentType = EdgeContextMenuComponentType | NodeContextMenuComponentType;
 
 export class CytoscapeContextMenuWrapper extends React.PureComponent<Props> {
   private readonly contextMenuRef: React.RefObject<ContextMenuContainer>;
@@ -48,69 +48,6 @@ export class CytoscapeContextMenuWrapper extends React.PureComponent<Props> {
     document.removeEventListener('mouseup', this.handleDocumentMouseUp);
   }
 
-  handleDocumentMouseUp = (event: MouseEvent) => {
-    if (event.button === 2) {
-      console.log('ignore mouseup');
-      // Ignore mouseup of right button
-      return;
-    }
-    const currentContextMenu = this.getCurrentContextMenu();
-    if (currentContextMenu) {
-      console.log('in mouseup');
-      // Allow interaction in our popper component (Selecting and copying) without it disappearing
-      if (event.target && currentContextMenu.popper.contains(event.target as Node)) {
-        console.log('in mouseup ignore');
-        return;
-      }
-      console.log('in mouseup hide');
-      currentContextMenu.hide();
-    }
-  };
-
-  handleContextMenu = (event: MouseEvent) => {
-    console.log('handle');
-    // Disable the context menu in popper
-    const currentContextMenu = this.getCurrentContextMenu();
-    if (currentContextMenu) {
-      if (event.target && currentContextMenu.popper.contains(event.target as Node)) {
-        console.log('handle prevent');
-        event.preventDefault();
-      }
-    }
-    console.log('handle true');
-    return true;
-  };
-
-  // Connects cy to this component
-  connectCy(cy: Cy.Core) {
-    cy.on('cxttapstart', (event: Cy.EventObject) => {
-      event.preventDefault();
-      if (event.target) {
-        const currentContextMenu = this.getCurrentContextMenu();
-        if (currentContextMenu) {
-          currentContextMenu.hide(0); // hide it in 0ms
-        }
-
-        let contextMenuType: ContextMenuComponentType | undefined;
-
-        if (event.target === cy) {
-          contextMenuType = undefined;
-        } else if (event.target.isNode() && event.target.isParent()) {
-          contextMenuType = this.props.boxContextMenuContent;
-        } else if (event.target.isNode()) {
-          contextMenuType = this.props.nodeContextMenuContent;
-        } else if (event.target.isEdge()) {
-          contextMenuType = this.props.edgeContextMenuContent;
-        }
-
-        if (contextMenuType && getOptions({ ...event.target.data() }).length > 0) {
-          this.makeContextMenu(contextMenuType, event.target);
-        }
-      }
-      return false;
-    });
-  }
-
   render() {
     return (
       <div className="hidden">
@@ -119,28 +56,51 @@ export class CytoscapeContextMenuWrapper extends React.PureComponent<Props> {
     );
   }
 
-  private getCurrentContextMenu() {
-    return this.contextMenuRef?.current?._contextMenu;
+  // Add cy listener for context menu events on nodes and edges
+  connectCy(cy: Cy.Core) {
+    cy.on('cxttapstart', 'node,edge', (event: Cy.EventObject) => {
+      event.preventDefault();
+      if (event.target) {
+        this.handleContextMenu(event.target, false);
+      }
+      return false;
+    });
   }
 
-  private setCurrentContextMenu(current: TippyInstance) {
-    this.contextMenuRef!.current!._contextMenu = current;
-  }
-
-  private tippyDistance(target: Cy.NodeSingular | Cy.EdgeSingular) {
-    if (target.isNode === undefined || target.isNode()) {
-      return 10;
+  // Connects cy to this component
+  handleContextMenu(elem: Cy.NodeSingular | Cy.EdgeSingular, isHover: boolean) {
+    const currentContextMenu = this.getCurrentContextMenu();
+    if (currentContextMenu) {
+      currentContextMenu.hide(0); // hide it in 0ms
     }
-    return -30;
+
+    let contextMenuType: ContextMenuComponentType | undefined;
+
+    if (elem.isNode()) {
+      contextMenuType = elem.isParent() ? this.props.contextMenuBoxComponent : this.props.contextMenuNodeComponent;
+    } else {
+      contextMenuType = this.props.contextMenuEdgeComponent;
+    }
+
+    if (contextMenuType && (!isHover || getOptions({ ...elem.data() }).length > 0)) {
+      this.makeContextMenu(contextMenuType, elem);
+    }
   }
 
-  private addContextMenuEventListener() {
-    document.addEventListener('contextmenu', this.handleContextMenu);
-  }
-
-  private removeContextMenuEventListener() {
-    document.removeEventListener('contextmenu', this.handleContextMenu);
-  }
+  private handleDocumentMouseUp = (event: MouseEvent) => {
+    if (event.button === 2) {
+      // Ignore mouseup of right button
+      return;
+    }
+    const currentContextMenu = this.getCurrentContextMenu();
+    if (currentContextMenu) {
+      // Allow interaction in our popper component (Selecting and copying) without it disappearing
+      if (event.target && currentContextMenu.popper.contains(event.target as Node)) {
+        return;
+      }
+      currentContextMenu.hide();
+    }
+  };
 
   private makeContextMenu(
     ContextMenuComponentType: ContextMenuComponentType,
@@ -185,5 +145,36 @@ export class CytoscapeContextMenuWrapper extends React.PureComponent<Props> {
         this.removeContextMenuEventListener();
       }, 0);
     });
+  }
+
+  private getCurrentContextMenu() {
+    return this.contextMenuRef?.current?._contextMenu;
+  }
+
+  private setCurrentContextMenu(current: TippyInstance) {
+    this.contextMenuRef!.current!._contextMenu = current;
+  }
+
+  private addContextMenuEventListener() {
+    document.addEventListener('contextmenu', this.handleContextMenuEvent);
+  }
+
+  private removeContextMenuEventListener() {
+    document.removeEventListener('contextmenu', this.handleContextMenuEvent);
+  }
+
+  private handleContextMenuEvent = (event: MouseEvent) => {
+    // Disable the context menu in popper
+    const currentContextMenu = this.getCurrentContextMenu();
+    if (currentContextMenu) {
+      if (event.target && currentContextMenu.popper.contains(event.target as Node)) {
+        event.preventDefault();
+      }
+    }
+    return true;
+  };
+
+  private tippyDistance(_target: Cy.NodeSingular | Cy.EdgeSingular) {
+    return 10;
   }
 }

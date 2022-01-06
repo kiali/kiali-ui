@@ -67,6 +67,7 @@ import { JaegerTrace } from 'types/JaegerInfo';
 import { JaegerThunkActions } from 'actions/JaegerThunkActions';
 import GraphTour from 'pages/Graph/GraphHelpTour';
 import { getNextTourStop, TourInfo } from 'components/Tour/TourStop';
+import { EdgeContextMenu } from 'components/CytoscapeGraph/ContextMenu/EdgeContextMenu';
 
 // GraphURLPathProps holds path variable values.  Currently all path variables are relevant only to a node graph
 type GraphURLPathProps = {
@@ -434,7 +435,7 @@ export class GraphPage extends React.Component<GraphPageProps, GraphPageState> {
                 <CytoscapeGraph
                   containerClassName={cytoscapeGraphContainerStyle}
                   contextMenuBoxComponent={NodeContextMenuContainer}
-                  // contextMenuEdgeComponent={EdgeContextMenuContainer}
+                  contextMenuEdgeComponent={EdgeContextMenu}
                   contextMenuNodeComponent={NodeContextMenuContainer}
                   focusSelector={this.focusSelector}
                   graphData={this.state.graphData}

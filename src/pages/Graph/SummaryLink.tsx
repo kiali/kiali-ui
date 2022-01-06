@@ -146,10 +146,15 @@ export const renderBadgedHost = (host: string) => {
   );
 };
 
-export const renderBadgedName = (nodeData: GraphNodeData) => {
+export const renderBadgedName = (nodeData: GraphNodeData, label?: string) => {
   return (
     <div>
       <span style={{ marginRight: '1em', marginBottom: '3px', display: 'inline-block' }}>
+        {label && (
+          <span style={{ whiteSpace: 'pre' }}>
+            <b>{label}</b>
+          </span>
+        )}
         {getBadge(nodeData)}
         {getLink({ ...nodeData, isInaccessible: true })}
       </span>

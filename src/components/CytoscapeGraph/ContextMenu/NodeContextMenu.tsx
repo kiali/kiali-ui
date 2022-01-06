@@ -13,48 +13,40 @@ import { NodeContextMenuProps } from '../CytoscapeContextMenu';
 import { getTitle } from 'pages/Graph/SummaryPanelCommon';
 import { PFBadge, PFBadges } from 'components/Pf/PfBadges';
 import { renderBadgedName } from 'pages/Graph/SummaryLink';
+import { PFColors } from 'components/Pf/PfColors';
 
 type ReduxProps = {
   jaegerInfo?: JaegerInfo;
 };
 
-const graphContextMenuContainerStyle = style({
-  fontSize: 'var(--graph-side-panel--font-size)'
-  // textAlign: 'left'
+const contextMenu = style({
+  fontSize: 'var(--graph-side-panel--font-size)',
+  textAlign: 'left'
 });
 
-/*
-const graphContextMenuTitleStyle = style({
-  textAlign: 'left',
-  fontSize: '16px',
-  borderBottom: '1px solid black'
+const contextMenuHeader = style({
+  marginBottom: '2px'
 });
-*/
 
-const graphContextMenuSubTitleStyle = style({
-  // borderTop: '1px solid black',
-  textAlign: 'left',
-  // fontSize: '14px',
-  color: '#737679',
+const contextMenuSubTitle = style({
+  color: PFColors.Black600,
   fontWeight: 700,
   paddingTop: 2,
   paddingBottom: 4
 });
 
-const graphContextMenuItemStyle = style({
-  textAlign: 'left',
-  // fontSize: '12px',
+const contextMenuItem = style({
   textDecoration: 'none',
   $nest: {
     '&:hover': {
-      backgroundColor: '#def3ff',
-      color: '#4d5258'
+      backgroundColor: PFColors.Black200,
+      color: PFColors.Blue400
     }
   }
 });
 
-const graphContextMenuItemLinkStyle = style({
-  color: '#363636'
+const contextMenuItemLink = style({
+  color: PFColors.Black600
 });
 
 type Props = NodeContextMenuProps & ReduxProps;
@@ -93,7 +85,7 @@ export class NodeContextMenu extends React.PureComponent<Props> {
 
   createMenuItem(href: string, title: string, target: string = '_self', external: boolean = false) {
     const commonLinkProps = {
-      className: graphContextMenuItemLinkStyle,
+      className: contextMenuItemLink,
       children: title,
       onClick: this.onClick,
       target
@@ -113,7 +105,7 @@ export class NodeContextMenu extends React.PureComponent<Props> {
     }
 
     return (
-      <div key={title} className={graphContextMenuItemStyle}>
+      <div key={title} className={contextMenuItem}>
         {item}
       </div>
     );
@@ -136,15 +128,15 @@ export class NodeContextMenu extends React.PureComponent<Props> {
     const options: ContextMenuOption[] = getOptionsFromLinkParams(linkParams, this.props.jaegerInfo);
     const menuOptions = (
       <>
-        <div className={graphContextMenuSubTitleStyle}>Show</div>
+        <div className={contextMenuSubTitle}>Show</div>
         {options.map(o => this.createMenuItem(o.url, o.text, o.target, o.external))}
       </>
     );
 
     return (
-      <div className={graphContextMenuContainerStyle}>
+      <div className={contextMenu}>
         {getTitle(this.props.nodeType)}
-        <div style={{ marginBottom: '2px', textAlign: 'left' }}>
+        <div className={contextMenuHeader}>
           <PFBadge badge={PFBadges.Namespace} style={{ marginBottom: '2px' }} />
           {this.props.namespace}
           {renderBadgedName(this.props)}
