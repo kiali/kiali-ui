@@ -15,7 +15,6 @@ import {
   summaryPanel,
   mergeMetricsResponses,
   getDatapoints,
-  summaryPanelHover,
   getTitle
 } from './SummaryPanelCommon';
 import { Response } from '../../services/Api';
@@ -122,8 +121,6 @@ export default class SummaryPanelAppBox extends React.Component<SummaryPanelProp
   }
 
   render() {
-    const isHover = this.props.data.isHover;
-
     const appBox = this.props.data.summaryTarget;
     const nodeData = decoratedNodeData(appBox);
 
@@ -153,13 +150,13 @@ export default class SummaryPanelAppBox extends React.Component<SummaryPanelProp
         : undefined;
 
     return (
-      <div ref={this.mainDivRef} className={`panel panel-default ${isHover ? summaryPanelHover : summaryPanel}`}>
+      <div ref={this.mainDivRef} className={`panel panel-default ${summaryPanel}`}>
         <div className="panel-heading" style={summaryHeader}>
           {getTitle('Application')}
           <span>
             <PFBadge badge={PFBadges.Namespace} style={{ marginBottom: '2px' }} />
             {nodeData.namespace}
-            {!isHover && actions && (
+            {actions && (
               <Dropdown
                 id="summary-appbox-actions"
                 isPlain={true}
@@ -180,35 +177,33 @@ export default class SummaryPanelAppBox extends React.Component<SummaryPanelProp
             {workloadList.length > 0 && <div> {workloadList}</div>}
           </div>
         </div>
-        {!isHover && (
-          <div className="panel-body">
-            {hasGrpc && isGrpcRequests && (
-              <>
-                {this.renderGrpcRequests(appBox)}
-                {hr()}
-              </>
-            )}
-            {hasHttp && (
-              <>
-                {this.renderHttpRequests(appBox)}
-                {hr()}
-              </>
-            )}
-            <div>
-              {this.renderSparklines(appBox)}
+        <div className="panel-body">
+          {hasGrpc && isGrpcRequests && (
+            <>
+              {this.renderGrpcRequests(appBox)}
               {hr()}
-            </div>
-            {hasGrpc && !hasGrpcIn && renderNoTraffic('gRPC inbound')}
-            {hasGrpc && !hasGrpcOut && renderNoTraffic('gRPC outbound')}
-            {!hasGrpc && renderNoTraffic('gRPC')}
-            {hasHttp && !hasHttpIn && renderNoTraffic('HTTP inbound')}
-            {hasHttp && !hasHttpOut && renderNoTraffic('HTTP outbound')}
-            {!hasHttp && renderNoTraffic('HTTP')}
-            {hasTcp && !hasTcpIn && renderNoTraffic('TCP inbound')}
-            {hasTcp && !hasTcpOut && renderNoTraffic('TCP outbound')}
-            {!hasTcp && renderNoTraffic('TCP')}
+            </>
+          )}
+          {hasHttp && (
+            <>
+              {this.renderHttpRequests(appBox)}
+              {hr()}
+            </>
+          )}
+          <div>
+            {this.renderSparklines(appBox)}
+            {hr()}
           </div>
-        )}
+          {hasGrpc && !hasGrpcIn && renderNoTraffic('gRPC inbound')}
+          {hasGrpc && !hasGrpcOut && renderNoTraffic('gRPC outbound')}
+          {!hasGrpc && renderNoTraffic('gRPC')}
+          {hasHttp && !hasHttpIn && renderNoTraffic('HTTP inbound')}
+          {hasHttp && !hasHttpOut && renderNoTraffic('HTTP outbound')}
+          {!hasHttp && renderNoTraffic('HTTP')}
+          {hasTcp && !hasTcpIn && renderNoTraffic('TCP inbound')}
+          {hasTcp && !hasTcpOut && renderNoTraffic('TCP outbound')}
+          {!hasTcp && renderNoTraffic('TCP')}
+        </div>
       </div>
     );
   }

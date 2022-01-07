@@ -430,7 +430,7 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
         clearTimeout(CytoscapeGraph.tapTimeout);
         CytoscapeGraph.tapTimeout = null;
 
-        // cancel any hover timers in progress
+        // cancel any active hover timers
         if (CytoscapeGraph.mouseInTimeout) {
           clearTimeout(CytoscapeGraph.mouseInTimeout);
           CytoscapeGraph.mouseInTimeout = null;
@@ -469,12 +469,11 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
             // if clicking the same target, then unselect it (by re-selecting the graph)
             if (
               this.props.summaryData &&
-              !this.props.summaryData.isHover &&
               cytoscapeEvent.summaryType !== 'graph' &&
               cytoscapeEvent.summaryType === this.props.summaryData.summaryType &&
               cytoscapeEvent.summaryTarget === this.props.summaryData.summaryTarget
             ) {
-              this.handleTap({ isHover: false, summaryType: 'graph', summaryTarget: cy } as SummaryData);
+              this.handleTap({ summaryType: 'graph', summaryTarget: cy } as SummaryData);
               this.selectTarget(cy);
             } else {
               this.handleTap(cytoscapeEvent);
@@ -523,7 +522,7 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
         return;
       }
 
-      // cancel any mouseOut timer in progress
+      // cancel any active mouseOut timer
       if (CytoscapeGraph.mouseOutTimeout) {
         clearTimeout(CytoscapeGraph.mouseOutTimeout);
         CytoscapeGraph.mouseOutTimeout = null;
@@ -531,18 +530,9 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
 
       // start mouseIn timer
       CytoscapeGraph.mouseInTimeout = setTimeout(() => {
-        // timer expired without a mouseout so perform hover action
+        // timer expired without a mouseout so perform highlighting and show hover contextInfo
         this.handleMouseIn(cytoscapeEvent);
-
         this.contextMenuRef!.current!.handleContextMenu(cytoscapeEvent.summaryTarget, true);
-        /*
-        if (this.props.updateSummary) {
-          this.props.updateSummary({
-            isHover: true,
-            ...cytoscapeEvent
-          });
-        }
-        */
       }, CytoscapeGraph.hoverInMs);
     });
 
@@ -556,26 +546,19 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
         return;
       }
 
-      // cancel any mouseIn timer in progress
+      // cancel any active mouseIn timer
       if (CytoscapeGraph.mouseInTimeout) {
         clearTimeout(CytoscapeGraph.mouseInTimeout);
         CytoscapeGraph.mouseInTimeout = null;
       }
 
-      // start mouseOut timer to return to graph summary
+      // start mouseOut timer
       CytoscapeGraph.mouseOutTimeout = setTimeout(() => {
+        // timer expired so remove contextInfo
         this.contextMenuRef!.current!.hideContextMenu(true);
-
-        /*
-        if (this.props.updateSummary) {
-          this.props.updateSummary({
-            summaryType: 'graph',
-            summaryTarget: cytoscapeEvent.summaryTarget.cy()
-          });
-        }
-        */
       }, CytoscapeGraph.hoverOutMs);
 
+      // remove highlighting
       this.handleMouseOut(cytoscapeEvent);
     });
 

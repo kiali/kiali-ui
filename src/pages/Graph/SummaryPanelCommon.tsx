@@ -40,19 +40,6 @@ export const summaryPanel = style({
   width: summaryPanelWidth
 });
 
-export const summaryPanelHover = style({
-  height: 'auto',
-  margin: 0,
-  fontSize: 'var(--graph-side-panel--font-size)',
-  overflowY: 'auto',
-  padding: 0,
-  position: 'absolute',
-  right: 0,
-  top: 0,
-  whiteSpace: 'nowrap',
-  width: 'auto'
-});
-
 export const summaryFont: React.CSSProperties = {
   fontSize: 'var(--graph-side-panel--font-size)'
 };

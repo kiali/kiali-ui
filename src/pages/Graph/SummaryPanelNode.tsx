@@ -10,14 +10,7 @@ import {
   renderHealth
 } from './SummaryLink';
 import { DecoratedGraphNodeData, DestService, NodeType, RankResult, SummaryPanelPropType } from '../../types/Graph';
-import {
-  summaryHeader,
-  summaryPanel,
-  summaryBodyTabs,
-  summaryFont,
-  summaryPanelHover,
-  getTitle
-} from './SummaryPanelCommon';
+import { summaryHeader, summaryPanel, summaryBodyTabs, summaryFont, getTitle } from './SummaryPanelCommon';
 import { decoratedNodeData } from '../../components/CytoscapeGraph/CytoscapeGraphUtils';
 import { KialiIcon } from 'config/KialiIcon';
 import { getOptions, clickHandler } from 'components/CytoscapeGraph/ContextMenu/NodeContextMenu';
@@ -93,7 +86,6 @@ export class SummaryPanelNode extends React.Component<SummaryPanelNodeProps, Sum
   }
 
   render() {
-    const isHover = this.props.data.isHover;
     const node = this.props.data.summaryTarget;
     const nodeData = decoratedNodeData(node);
     const { nodeType, app, service, workload, isServiceEntry } = nodeData;
@@ -123,14 +115,14 @@ export class SummaryPanelNode extends React.Component<SummaryPanelNodeProps, Sum
       options.length > 0 ? [<DropdownGroup label="Show" className="kiali-group-menu" children={options} />] : undefined;
 
     return (
-      <div ref={this.mainDivRef} className={`panel panel-default ${isHover ? summaryPanelHover : summaryPanel}`}>
+      <div ref={this.mainDivRef} className={`panel panel-default ${summaryPanel}`}>
         <div className="panel-heading" style={summaryHeader}>
           {getTitle(nodeType)}
           <div>
             <span>
               <PFBadge badge={PFBadges.Namespace} style={{ marginBottom: '2px' }} />
               {nodeData.namespace}
-              {!isHover && actions && (
+              {actions && (
                 <Dropdown
                   id="summary-node-actions"
                   style={{ float: 'right' }}
@@ -154,7 +146,7 @@ export class SummaryPanelNode extends React.Component<SummaryPanelNodeProps, Sum
             {shouldRenderWorkload && this.renderWorkloadSection(nodeData)}
           </div>
         </div>
-        {!isHover && <>{shouldRenderTraces ? this.renderWithTabs(nodeData) : this.renderTrafficOnly()}</>}
+        {shouldRenderTraces ? this.renderWithTabs(nodeData) : this.renderTrafficOnly()}
       </div>
     );
   }

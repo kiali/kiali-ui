@@ -25,7 +25,6 @@ import {
   summaryBodyTabs,
   summaryPanel,
   summaryFont,
-  summaryPanelHover,
   getTitle
 } from './SummaryPanelCommon';
 import { Metric, Datapoint, IstioMetricsMap, Labels } from '../../types/Metrics';
@@ -126,7 +125,6 @@ export default class SummaryPanelEdge extends React.Component<SummaryPanelPropTy
   }
 
   render() {
-    const isHover = this.props.data.isHover;
     const target = this.props.data.summaryTarget;
     const source = decoratedNodeData(target.source());
     const dest = decoratedNodeData(target.target());
@@ -163,88 +161,84 @@ export default class SummaryPanelEdge extends React.Component<SummaryPanelPropTy
     };
 
     return (
-      <div ref={this.mainDivRef} className={`panel panel-default ${isHover ? summaryPanelHover : summaryPanel}`}>
+      <div ref={this.mainDivRef} className={`panel panel-default ${summaryPanel}`}>
         <div className="panel-heading" style={summaryHeader}>
           {getTitle(`Edge (${prettyProtocol(protocol)})`)}
           {renderBadgedLink(source, undefined, 'From:  ')}
           {renderBadgedLink(dest, undefined, 'To:        ')}
         </div>
-        {!isHover && (
-          <>
-            {hasSecurity && <SecurityBlock />}
-            {(isHttp || isGrpc) && (
-              <div className={summaryBodyTabs}>
-                <SimpleTabs id="edge_summary_rate_tabs" defaultTab={0} style={{ paddingBottom: '10px' }}>
-                  <Tab style={summaryFont} title="Traffic" eventKey={0}>
-                    <div style={summaryFont}>
-                      {isGrpc && (
-                        <>
-                          <RateTableGrpc
-                            isRequests={isRequests}
-                            rate={this.safeRate(edge.grpc)}
-                            rateGrpcErr={this.safeRate(edge.grpcErr)}
-                            rateNR={this.safeRate(edge.grpcNoResponse)}
-                          />
-                        </>
-                      )}
-                      {isHttp && (
-                        <>
-                          <RateTableHttp
-                            title="HTTP requests per second:"
-                            rate={this.safeRate(edge.http)}
-                            rate3xx={this.safeRate(edge.http3xx)}
-                            rate4xx={this.safeRate(edge.http4xx)}
-                            rate5xx={this.safeRate(edge.http5xx)}
-                            rateNR={this.safeRate(edge.httpNoResponse)}
-                          />
-                        </>
-                      )}
-                    </div>
-                  </Tab>
-                  {isRequests && (
-                    <Tab style={summaryFont} title="Flags" eventKey={1}>
-                      <div style={summaryFont}>
-                        <ResponseFlagsTable
-                          title={'Response flags by ' + (isGrpc ? 'GRPC code:' : 'HTTP code:')}
-                          responses={edge.responses}
-                        />
-                      </div>
-                    </Tab>
-                  )}
-                  <Tab style={summaryFont} title="Hosts" eventKey={2}>
-                    <div style={summaryFont}>
-                      <ResponseHostsTable
-                        title={'Hosts by ' + (isGrpc ? 'GRPC code:' : 'HTTP code:')}
-                        responses={edge.responses}
+        {hasSecurity && <SecurityBlock />}
+        {(isHttp || isGrpc) && (
+          <div className={summaryBodyTabs}>
+            <SimpleTabs id="edge_summary_rate_tabs" defaultTab={0} style={{ paddingBottom: '10px' }}>
+              <Tab style={summaryFont} title="Traffic" eventKey={0}>
+                <div style={summaryFont}>
+                  {isGrpc && (
+                    <>
+                      <RateTableGrpc
+                        isRequests={isRequests}
+                        rate={this.safeRate(edge.grpc)}
+                        rateGrpcErr={this.safeRate(edge.grpcErr)}
+                        rateNR={this.safeRate(edge.grpcNoResponse)}
                       />
-                    </div>
-                  </Tab>
-                </SimpleTabs>
-                {hr()}
-                {this.renderCharts(target, isGrpc, isHttp, isTcp, isRequests)}
-              </div>
-            )}
-            {isTcp && (
-              <div className={summaryBodyTabs}>
-                <SimpleTabs id="edge_summary_flag_hosts_tabs" defaultTab={0} style={{ paddingBottom: '10px' }}>
-                  <Tab style={summaryFont} eventKey={0} title="Flags">
-                    <div style={summaryFont}>
-                      <ResponseFlagsTable title="Response flags by code:" responses={edge.responses} />
-                    </div>
-                  </Tab>
-                  <Tab style={summaryFont} eventKey={1} title="Hosts">
-                    <div style={summaryFont}>
-                      <ResponseHostsTable title="Hosts by code:" responses={edge.responses} />
-                    </div>
-                  </Tab>
-                </SimpleTabs>
-                {hr()}
-                {this.renderCharts(target, isGrpc, isHttp, isTcp, isRequests)}
-              </div>
-            )}
-            {!isGrpc && !isHttp && !isTcp && <div className="panel-body">{renderNoTraffic()}</div>}
-          </>
+                    </>
+                  )}
+                  {isHttp && (
+                    <>
+                      <RateTableHttp
+                        title="HTTP requests per second:"
+                        rate={this.safeRate(edge.http)}
+                        rate3xx={this.safeRate(edge.http3xx)}
+                        rate4xx={this.safeRate(edge.http4xx)}
+                        rate5xx={this.safeRate(edge.http5xx)}
+                        rateNR={this.safeRate(edge.httpNoResponse)}
+                      />
+                    </>
+                  )}
+                </div>
+              </Tab>
+              {isRequests && (
+                <Tab style={summaryFont} title="Flags" eventKey={1}>
+                  <div style={summaryFont}>
+                    <ResponseFlagsTable
+                      title={'Response flags by ' + (isGrpc ? 'GRPC code:' : 'HTTP code:')}
+                      responses={edge.responses}
+                    />
+                  </div>
+                </Tab>
+              )}
+              <Tab style={summaryFont} title="Hosts" eventKey={2}>
+                <div style={summaryFont}>
+                  <ResponseHostsTable
+                    title={'Hosts by ' + (isGrpc ? 'GRPC code:' : 'HTTP code:')}
+                    responses={edge.responses}
+                  />
+                </div>
+              </Tab>
+            </SimpleTabs>
+            {hr()}
+            {this.renderCharts(target, isGrpc, isHttp, isTcp, isRequests)}
+          </div>
         )}
+        {isTcp && (
+          <div className={summaryBodyTabs}>
+            <SimpleTabs id="edge_summary_flag_hosts_tabs" defaultTab={0} style={{ paddingBottom: '10px' }}>
+              <Tab style={summaryFont} eventKey={0} title="Flags">
+                <div style={summaryFont}>
+                  <ResponseFlagsTable title="Response flags by code:" responses={edge.responses} />
+                </div>
+              </Tab>
+              <Tab style={summaryFont} eventKey={1} title="Hosts">
+                <div style={summaryFont}>
+                  <ResponseHostsTable title="Hosts by code:" responses={edge.responses} />
+                </div>
+              </Tab>
+            </SimpleTabs>
+            {hr()}
+            {this.renderCharts(target, isGrpc, isHttp, isTcp, isRequests)}
+          </div>
+        )}
+        {!isGrpc && !isHttp && !isTcp && <div className="panel-body">{renderNoTraffic()}</div>}
       </div>
     );
   }

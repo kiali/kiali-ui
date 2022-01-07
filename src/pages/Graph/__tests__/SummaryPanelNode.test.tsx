@@ -24,7 +24,6 @@ describe('SummaryPanelNode', () => {
     defaultProps = {
       jaegerState: {},
       data: {
-        isHover: false,
         summaryType: 'node',
         summaryTarget: target
       },

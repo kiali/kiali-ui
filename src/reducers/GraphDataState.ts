@@ -73,7 +73,6 @@ const graphDataState = (state: GraphState = INITIAL_GRAPH_STATE, action: KialiAp
     case getType(GraphActions.updateSummary):
       return updateState(state, {
         summaryData: updateState(state.summaryData, {
-          isHover: action.payload.isHover,
           summaryType: action.payload.summaryType,
           summaryTarget: action.payload.summaryTarget
         })

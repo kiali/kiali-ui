@@ -74,11 +74,7 @@ class SummaryPanel extends React.Component<MainSummaryPanelPropType, SummaryPane
   }
 
   componentDidUpdate(prevProps: Readonly<MainSummaryPanelPropType>): void {
-    if (
-      !this.props.data.isHover &&
-      !prevProps.data.isHover &&
-      prevProps.data.summaryTarget !== this.props.data.summaryTarget
-    ) {
+    if (prevProps.data.summaryTarget !== this.props.data.summaryTarget) {
       this.setState({ isVisible: true });
     }
   }
@@ -124,37 +120,12 @@ class SummaryPanel extends React.Component<MainSummaryPanelPropType, SummaryPane
             </div>
           )}
         </div>
-        {this.props.data.isHover && (
-          <div id="graph-side-panel" className={mainStyle}>
-            <div style={this.state.isVisible ? { position: 'absolute', right: summaryPanelWidth } : {}}>
-              {this.getSummaryPanel({ ...this.props.data, isHover: false })}
-            </div>
-          </div>
-        )}
       </TourStopContainer>
     );
   }
 
   private getSummaryPanel = (summary: SummaryData): React.ReactFragment => {
-    const isHover = summary.isHover;
     const summaryType = summary.summaryType as string;
-
-    if (isHover || summaryType === 'graph') {
-      const cy = this.props.data.isHover ? this.props.data.summaryTarget.cy() : this.props.data.summaryTarget;
-      return (
-        <SummaryPanelGraph
-          data={{ isHover: false, summaryType: 'graph', summaryTarget: cy }}
-          duration={this.props.duration}
-          graphType={this.props.graphType}
-          injectServiceNodes={this.props.injectServiceNodes}
-          namespaces={this.props.namespaces}
-          queryTime={this.props.queryTime}
-          rateInterval={this.props.rateInterval}
-          step={this.props.step}
-          trafficRates={this.props.trafficRates}
-        />
-      );
-    }
 
     switch (summaryType) {
       case 'box': {
@@ -209,6 +180,20 @@ class SummaryPanel extends React.Component<MainSummaryPanelPropType, SummaryPane
       }
       case 'edge':
         return <SummaryPanelEdge {...this.props} />;
+      case 'graph':
+        return (
+          <SummaryPanelGraph
+            data={summary}
+            duration={this.props.duration}
+            graphType={this.props.graphType}
+            injectServiceNodes={this.props.injectServiceNodes}
+            namespaces={this.props.namespaces}
+            queryTime={this.props.queryTime}
+            rateInterval={this.props.rateInterval}
+            step={this.props.step}
+            trafficRates={this.props.trafficRates}
+          />
+        );
       case 'node':
         return (
           <SummaryPanelNodeContainer
