@@ -39,7 +39,6 @@ import AccessLogModal from 'components/Envoy/AccessLogModal';
 import { PFBadge, PFBadges } from 'components/Pf/PfBadges';
 import history, { URLParam } from 'app/History';
 import { TracingQuery, Span } from 'types/Tracing';
-import { AxiosResponse } from 'axios';
 import moment from 'moment';
 import { formatDuration } from 'utils/tracing/TracingHelper';
 import { infoStyle } from 'styles/DropdownStyles';
@@ -933,7 +932,9 @@ export class WorkloadPodLogs extends React.Component<WorkloadPodLogsProps, Workl
     }
 
     const selectedContainers = containerOptions.filter(c => c.isSelected);
-    const promises: Promise<AxiosResponse<PodLogs | Span[]>>[] = selectedContainers.map(c => {
+    // below, instead of Promise<any>[], it should be something like (Promise<AxiosResponse<PodLogs>> | Promise<AxiosResponse<Span[]>>)[], but I can't
+    // get Typescript to accept it.
+    const promises: Promise<any>[] = selectedContainers.map(c => {
       return getPodLogs(namespace, podName, c.name, tailLines, sinceTime, duration, c.isProxy);
     });
     if (showSpans) {

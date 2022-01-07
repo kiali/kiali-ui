@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { RouteComponentProps } from 'react-router-dom';
 import { EmptyState, EmptyStateBody, EmptyStateVariant, Tab, Title } from '@patternfly/react-core';
 import * as API from '../../services/Api';
-import { Workload, WorkloadId } from '../../types/Workload';
+import { emptyWorkload, Workload, WorkloadId } from '../../types/Workload';
 import WorkloadInfo from './WorkloadInfo';
 import * as AlertUtils from '../../utils/AlertUtils';
 import IstioMetricsContainer from '../../components/Metrics/IstioMetrics';
@@ -80,7 +80,7 @@ class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, Workload
     API.getWorkload(this.props.match.params.namespace, this.props.match.params.workload)
       .then(details => {
         this.setState({
-          workload: details.data
+          workload: { ...emptyWorkload, ...details.data } as Workload
         });
       })
       .catch(error => AlertUtils.addError('Could not fetch Workload.', error));

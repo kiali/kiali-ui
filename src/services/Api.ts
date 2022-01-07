@@ -40,6 +40,7 @@ export const ANONYMOUS_USER = 'anonymous';
 
 export interface Response<T> {
   data: T;
+  status?: number;
 }
 
 /** API URLs */
@@ -70,7 +71,7 @@ const basicAuth = (username: UserName, password: Password) => {
   return { username: username, password: password };
 };
 
-const newRequest = <P>(method: HTTP_VERBS, url: string, queryParams: any, data: any) =>
+const newRequest = <P>(method: HTTP_VERBS, url: string, queryParams: any, data: any): Promise<Response<P>> =>
   axios.request<P>({
     method: method,
     url: url,
@@ -86,7 +87,7 @@ interface LoginRequest {
 }
 
 /** Requests */
-export const extendSession = () => {
+export const extendSession = (): Promise<Response<LoginSession>> => {
   return newRequest<LoginSession>(HTTP_VERBS.GET, urls.authenticate, {}, {});
 };
 
@@ -105,11 +106,11 @@ export const login = async (
   });
 };
 
-export const logout = () => {
+export const logout = (): Promise<Response<undefined>> => {
   return newRequest<undefined>(HTTP_VERBS.GET, urls.logout, {}, {});
 };
 
-export const getAuthInfo = async () => {
+export const getAuthInfo = async (): Promise<Response<AuthInfo>> => {
   return newRequest<AuthInfo>(HTTP_VERBS.GET, urls.authInfo, {}, {});
 };
 
@@ -117,23 +118,26 @@ export const checkOpenshiftAuth = async (data: any): Promise<Response<LoginSessi
   return newRequest<LoginSession>(HTTP_VERBS.POST, urls.authenticate, {}, data);
 };
 
-export const getStatus = () => {
+export const getStatus = (): Promise<Response<StatusState>> => {
   return newRequest<StatusState>(HTTP_VERBS.GET, urls.status, {}, {});
 };
 
-export const getNamespaces = () => {
+export const getNamespaces = (): Promise<Response<Namespace[]>> => {
   return newRequest<Namespace[]>(HTTP_VERBS.GET, urls.namespaces, {}, {});
 };
 
-export const getNamespaceMetrics = (namespace: string, params: IstioMetricsOptions) => {
+export const getNamespaceMetrics = (
+  namespace: string,
+  params: IstioMetricsOptions
+): Promise<Response<IstioMetricsMap>> => {
   return newRequest<Readonly<IstioMetricsMap>>(HTTP_VERBS.GET, urls.namespaceMetrics(namespace), params, {});
 };
 
-export const getMeshTls = () => {
+export const getMeshTls = (): Promise<Response<TLSStatus>> => {
   return newRequest<TLSStatus>(HTTP_VERBS.GET, urls.meshTls(), {}, {});
 };
 
-export const getIstioStatus = () => {
+export const getIstioStatus = (): Promise<Response<ComponentStatus[]>> => {
   return newRequest<ComponentStatus[]>(HTTP_VERBS.GET, urls.istioStatus(), {}, {});
 };
 
@@ -141,11 +145,11 @@ export const getIstioCertsInfo = () => {
   return newRequest<CertsInfo[]>(HTTP_VERBS.GET, urls.istioCertsInfo(), {}, {});
 };
 
-export const getNamespaceTls = (namespace: string) => {
+export const getNamespaceTls = (namespace: string): Promise<Response<TLSStatus>> => {
   return newRequest<TLSStatus>(HTTP_VERBS.GET, urls.namespaceTls(namespace), {}, {});
 };
 
-export const getNamespaceValidations = (namespace: string) => {
+export const getNamespaceValidations = (namespace: string): Promise<Response<ValidationStatus>> => {
   return newRequest<ValidationStatus>(HTTP_VERBS.GET, urls.namespaceValidations(namespace), {}, {});
 };
 
@@ -159,7 +163,7 @@ export const getIstioConfig = (
   validate: boolean,
   labelSelector: string,
   workloadSelector: string
-) => {
+): Promise<Response<IstioConfigList>> => {
   const params: any = objects && objects.length > 0 ? { objects: objects.join(',') } : {};
   if (validate) {
     params.validate = validate;
@@ -173,7 +177,12 @@ export const getIstioConfig = (
   return newRequest<IstioConfigList>(HTTP_VERBS.GET, urls.istioConfig(namespace), params, {});
 };
 
-export const getIstioConfigDetail = (namespace: string, objectType: string, object: string, validate: boolean) => {
+export const getIstioConfigDetail = (
+  namespace: string,
+  objectType: string,
+  object: string,
+  validate: boolean
+): Promise<Response<IstioConfigDetails>> => {
   return newRequest<IstioConfigDetails>(
     HTTP_VERBS.GET,
     urls.istioConfigDetail(namespace, objectType, object),
@@ -182,7 +191,11 @@ export const getIstioConfigDetail = (namespace: string, objectType: string, obje
   );
 };
 
-export const deleteIstioConfigDetail = (namespace: string, objectType: string, object: string) => {
+export const deleteIstioConfigDetail = (
+  namespace: string,
+  objectType: string,
+  object: string
+): Promise<Response<string>> => {
   return newRequest<string>(HTTP_VERBS.DELETE, urls.istioConfigDetail(namespace, objectType, object), {}, {});
 };
 
@@ -203,15 +216,23 @@ export const createIstioConfigDetail = (
   return newRequest(HTTP_VERBS.POST, urls.istioConfigCreate(namespace, objectType), {}, json);
 };
 
-export const getServices = (namespace: string) => {
+export const getServices = (namespace: string): Promise<Response<ServiceList>> => {
   return newRequest<ServiceList>(HTTP_VERBS.GET, urls.services(namespace), {}, {});
 };
 
-export const getServiceMetrics = (namespace: string, service: string, params: IstioMetricsOptions) => {
+export const getServiceMetrics = (
+  namespace: string,
+  service: string,
+  params: IstioMetricsOptions
+): Promise<Response<IstioMetricsMap>> => {
   return newRequest<IstioMetricsMap>(HTTP_VERBS.GET, urls.serviceMetrics(namespace, service), params, {});
 };
 
-export const getServiceDashboard = (namespace: string, service: string, params: IstioMetricsOptions) => {
+export const getServiceDashboard = (
+  namespace: string,
+  service: string,
+  params: IstioMetricsOptions
+): Promise<Response<DashboardModel>> => {
   return newRequest<DashboardModel>(HTTP_VERBS.GET, urls.serviceDashboard(namespace, service), params, {});
 };
 
@@ -220,7 +241,7 @@ export const getAggregateMetrics = (
   aggregate: string,
   aggregateValue: string,
   params: IstioMetricsOptions
-) => {
+): Promise<Response<IstioMetricsMap>> => {
   return newRequest<IstioMetricsMap>(
     HTTP_VERBS.GET,
     urls.aggregateMetrics(namespace, aggregate, aggregateValue),
@@ -229,31 +250,51 @@ export const getAggregateMetrics = (
   );
 };
 
-export const getApp = (namespace: string, app: string) => {
+export const getApp = (namespace: string, app: string): Promise<Response<App>> => {
   return newRequest<App>(HTTP_VERBS.GET, urls.app(namespace, app), {}, {});
 };
 
-export const getApps = (namespace: string) => {
+export const getApps = (namespace: string): Promise<Response<AppList>> => {
   return newRequest<AppList>(HTTP_VERBS.GET, urls.apps(namespace), {}, {});
 };
 
-export const getAppMetrics = (namespace: string, app: string, params: IstioMetricsOptions) => {
+export const getAppMetrics = (
+  namespace: string,
+  app: string,
+  params: IstioMetricsOptions
+): Promise<Response<IstioMetricsMap>> => {
   return newRequest<IstioMetricsMap>(HTTP_VERBS.GET, urls.appMetrics(namespace, app), params, {});
 };
 
-export const getAppDashboard = (namespace: string, app: string, params: IstioMetricsOptions) => {
+export const getAppDashboard = (
+  namespace: string,
+  app: string,
+  params: IstioMetricsOptions
+): Promise<Response<DashboardModel>> => {
   return newRequest<DashboardModel>(HTTP_VERBS.GET, urls.appDashboard(namespace, app), params, {});
 };
 
-export const getWorkloadMetrics = (namespace: string, workload: string, params: IstioMetricsOptions) => {
+export const getWorkloadMetrics = (
+  namespace: string,
+  workload: string,
+  params: IstioMetricsOptions
+): Promise<Response<IstioMetricsMap>> => {
   return newRequest<IstioMetricsMap>(HTTP_VERBS.GET, urls.workloadMetrics(namespace, workload), params, {});
 };
 
-export const getWorkloadDashboard = (namespace: string, workload: string, params: IstioMetricsOptions) => {
+export const getWorkloadDashboard = (
+  namespace: string,
+  workload: string,
+  params: IstioMetricsOptions
+): Promise<Response<DashboardModel>> => {
   return newRequest<DashboardModel>(HTTP_VERBS.GET, urls.workloadDashboard(namespace, workload), params, {});
 };
 
-export const getCustomDashboard = (ns: string, tpl: string, params: DashboardQuery) => {
+export const getCustomDashboard = (
+  ns: string,
+  tpl: string,
+  params: DashboardQuery
+): Promise<Response<DashboardModel>> => {
   return newRequest<DashboardModel>(HTTP_VERBS.GET, urls.customDashboard(ns, tpl), params, {});
 };
 
@@ -374,39 +415,55 @@ export const getNamespaceWorkloadHealth = (
   );
 };
 
-export const getGrafanaInfo = () => {
+export const getGrafanaInfo = (): Promise<Response<GrafanaInfo>> => {
   return newRequest<GrafanaInfo>(HTTP_VERBS.GET, urls.grafana, {}, {});
 };
 
-export const getJaegerInfo = () => {
+export const getJaegerInfo = (): Promise<Response<JaegerInfo>> => {
   return newRequest<JaegerInfo>(HTTP_VERBS.GET, urls.jaeger, {}, {});
 };
 
-export const getAppTraces = (namespace: string, app: string, params: TracingQuery) => {
+export const getAppTraces = (
+  namespace: string,
+  app: string,
+  params: TracingQuery
+): Promise<Response<JaegerResponse>> => {
   return newRequest<JaegerResponse>(HTTP_VERBS.GET, urls.appTraces(namespace, app), params, {});
 };
 
-export const getServiceTraces = (namespace: string, service: string, params: TracingQuery) => {
+export const getServiceTraces = (
+  namespace: string,
+  service: string,
+  params: TracingQuery
+): Promise<Response<JaegerResponse>> => {
   return newRequest<JaegerResponse>(HTTP_VERBS.GET, urls.serviceTraces(namespace, service), params, {});
 };
 
-export const getWorkloadTraces = (namespace: string, workload: string, params: TracingQuery) => {
+export const getWorkloadTraces = (
+  namespace: string,
+  workload: string,
+  params: TracingQuery
+): Promise<Response<JaegerResponse>> => {
   return newRequest<JaegerResponse>(HTTP_VERBS.GET, urls.workloadTraces(namespace, workload), params, {});
 };
 
-export const getJaegerErrorTraces = (namespace: string, service: string, duration: DurationInSeconds) => {
+export const getJaegerErrorTraces = (
+  namespace: string,
+  service: string,
+  duration: DurationInSeconds
+): Promise<Response<number>> => {
   return newRequest<number>(HTTP_VERBS.GET, urls.jaegerErrorTraces(namespace, service), { duration: duration }, {});
 };
 
-export const getJaegerTrace = (idTrace: string) => {
+export const getJaegerTrace = (idTrace: string): Promise<Response<JaegerSingleResponse>> => {
   return newRequest<JaegerSingleResponse>(HTTP_VERBS.GET, urls.jaegerTrace(idTrace), {}, {});
 };
 
-export const getGraphElements = (params: any) => {
+export const getGraphElements = (params: any): Promise<Response<GraphDefinition>> => {
   return newRequest<GraphDefinition>(HTTP_VERBS.GET, urls.namespacesGraphElements, params, {});
 };
 
-export const getNodeGraphElements = (node: NodeParamsType, params: any) => {
+export const getNodeGraphElements = (node: NodeParamsType, params: any): Promise<Response<GraphDefinition>> => {
   switch (node.nodeType) {
     case NodeType.AGGREGATE:
       return !node.service
@@ -455,7 +512,7 @@ export const getNodeGraphElements = (node: NodeParamsType, params: any) => {
   }
 };
 
-export const getServerConfig = () => {
+export const getServerConfig = (): Promise<Response<ServerConfig>> => {
   return newRequest<ServerConfig>(HTTP_VERBS.GET, urls.serverConfig, {}, {});
 };
 
@@ -485,11 +542,11 @@ export const getServiceDetail = (
   });
 };
 
-export const getWorkloads = (namespace: string) => {
+export const getWorkloads = (namespace: string): Promise<Response<WorkloadNamespaceResponse>> => {
   return newRequest<WorkloadNamespaceResponse>(HTTP_VERBS.GET, urls.workloads(namespace), {}, {});
 };
 
-export const getWorkload = (namespace: string, name: string) => {
+export const getWorkload = (namespace: string, name: string): Promise<Response<Workload>> => {
   return newRequest<Workload>(HTTP_VERBS.GET, urls.workload(namespace, name), {}, {});
 };
 
@@ -502,7 +559,7 @@ export const updateWorkload = (
   return newRequest(HTTP_VERBS.PATCH, urls.workload(namespace, name), { type: type }, jsonPatch);
 };
 
-export const getPod = (namespace: string, name: string) => {
+export const getPod = (namespace: string, name: string): Promise<Response<Pod>> => {
   return newRequest<Pod>(HTTP_VERBS.GET, urls.pod(namespace, name), {}, {});
 };
 
@@ -514,7 +571,7 @@ export const getPodLogs = (
   sinceTime?: number,
   duration?: DurationInSeconds,
   isProxy?: boolean
-) => {
+): Promise<Response<PodLogs>> => {
   const params: any = {};
   if (container) {
     params.container = container;
@@ -533,18 +590,26 @@ export const getPodLogs = (
   return newRequest<PodLogs>(HTTP_VERBS.GET, urls.podLogs(namespace, name), params, {});
 };
 
-export const setPodEnvoyProxyLogLevel = (namespace: string, name: string, level: string) => {
+export const setPodEnvoyProxyLogLevel = (
+  namespace: string,
+  name: string,
+  level: string
+): Promise<Response<undefined>> => {
   const params: any = {};
   params.level = level;
 
   return newRequest<undefined>(HTTP_VERBS.POST, urls.podEnvoyProxyLogging(namespace, name), params, {});
 };
 
-export const getPodEnvoyProxy = (namespace: string, pod: string) => {
+export const getPodEnvoyProxy = (namespace: string, pod: string): Promise<Response<EnvoyProxyDump>> => {
   return newRequest<EnvoyProxyDump>(HTTP_VERBS.GET, urls.podEnvoyProxy(namespace, pod), {}, {});
 };
 
-export const getPodEnvoyProxyResourceEntries = (namespace: string, pod: string, resource: string) => {
+export const getPodEnvoyProxyResourceEntries = (
+  namespace: string,
+  pod: string,
+  resource: string
+): Promise<Response<EnvoyProxyDump>> => {
   return newRequest<EnvoyProxyDump>(
     HTTP_VERBS.GET,
     urls.podEnvoyProxyResourceEntries(namespace, pod, resource),
@@ -578,62 +643,74 @@ export const getErrorDetail = (error: AxiosError): string => {
   return '';
 };
 
-export const getAppSpans = (namespace: string, app: string, params: TracingQuery) => {
+export const getAppSpans = (namespace: string, app: string, params: TracingQuery): Promise<Response<Span[]>> => {
   return newRequest<Span[]>(HTTP_VERBS.GET, urls.appSpans(namespace, app), params, {});
 };
 
-export const getServiceSpans = (namespace: string, service: string, params: TracingQuery) => {
+export const getServiceSpans = (
+  namespace: string,
+  service: string,
+  params: TracingQuery
+): Promise<Response<Span[]>> => {
   return newRequest<Span[]>(HTTP_VERBS.GET, urls.serviceSpans(namespace, service), params, {});
 };
 
-export const getWorkloadSpans = (namespace: string, workload: string, params: TracingQuery) => {
+export const getWorkloadSpans = (
+  namespace: string,
+  workload: string,
+  params: TracingQuery
+): Promise<Response<Span[]>> => {
   return newRequest<Span[]>(HTTP_VERBS.GET, urls.workloadSpans(namespace, workload), params, {});
 };
 
-export const getIstioPermissions = (namespaces: string[]) => {
+export const getIstioPermissions = (namespaces: string[]): Promise<Response<IstioPermissions>> => {
   return newRequest<IstioPermissions>(HTTP_VERBS.GET, urls.istioPermissions, { namespaces: namespaces.join(',') }, {});
 };
 
-export const getIter8Info = () => {
+export const getIter8Info = (): Promise<Response<Iter8Info>> => {
   return newRequest<Iter8Info>(HTTP_VERBS.GET, urls.iter8, {}, {});
 };
 
-export const getIter8Metrics = () => {
+export const getIter8Metrics = (): Promise<Response<string[]>> => {
   return newRequest<string[]>(HTTP_VERBS.GET, urls.iter8Metrics, {}, {});
 };
 
-export const getExperiments = (namespaces: string[]) => {
+export const getExperiments = (namespaces: string[]): Promise<Response<Iter8Experiment[]>> => {
   return newRequest<Iter8Experiment[]>(HTTP_VERBS.GET, urls.iter8Experiments, { namespaces: namespaces.join(',') }, {});
 };
 
-export const getExperimentsByNamespace = (namespace: string) => {
+export const getExperimentsByNamespace = (namespace: string): Promise<Response<Iter8Experiment>> => {
   return newRequest<Iter8Experiment>(HTTP_VERBS.GET, urls.iter8ExperimentsByNamespace(namespace), {}, {});
 };
 
-export const getExperiment = (namespace: string, name: string) => {
+export const getExperiment = (namespace: string, name: string): Promise<Response<Iter8ExpDetailsInfo>> => {
   return newRequest<Iter8ExpDetailsInfo>(HTTP_VERBS.GET, urls.iter8Experiment(namespace, name), {}, {});
 };
 
-export const getExperimentYAML = (namespace: string, name: string) => {
+export const getExperimentYAML = (namespace: string, name: string): Promise<Response<ExperimentSpec>> => {
   return newRequest<ExperimentSpec>(HTTP_VERBS.GET, urls.iter8ExperimentYAML(namespace, name), {}, {});
 };
 
-export const deleteExperiment = (namespace: string, name: string) => {
+export const deleteExperiment = (namespace: string, name: string): Promise<Response<Iter8Experiment>> => {
   return newRequest<Iter8Experiment>(HTTP_VERBS.DELETE, urls.iter8Experiment(namespace, name), {}, {});
 };
 
-export const createExperiment = (namespace: string, specBody: string, params) => {
+export const createExperiment = (namespace: string, specBody: string, params): Promise<Response<string>> => {
   return newRequest<string>(HTTP_VERBS.POST, urls.iter8ExperimentsByNamespace(namespace), params, specBody);
 };
 
-export const updateExperiment = (namespace: string, name: string, specBody: string) => {
+export const updateExperiment = (
+  namespace: string,
+  name: string,
+  specBody: string
+): Promise<Response<Iter8Experiment>> => {
   return newRequest<Iter8Experiment>(HTTP_VERBS.PATCH, urls.iter8Experiment(namespace, name), {}, specBody);
 };
 
-export const getMetricsStats = (queries: MetricsStatsQuery[]) => {
+export const getMetricsStats = (queries: MetricsStatsQuery[]): Promise<Response<MetricsStatsResult>> => {
   return newRequest<MetricsStatsResult>(HTTP_VERBS.POST, urls.metricsStats, {}, { queries: queries });
 };
 
-export const getClusters = () => {
+export const getClusters = (): Promise<Response<MeshClusters>> => {
   return newRequest<MeshClusters>(HTTP_VERBS.GET, urls.clusters, {}, {});
 };
