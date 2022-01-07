@@ -46,9 +46,9 @@ type CytoscapeToolbarState = {
 
 const buttonStyle = style({
   backgroundColor: PFColors.White,
-  padding: '3px 8px',
+  marginBottom: '2px',
   marginLeft: '4px',
-  marginBottom: '2px'
+  padding: '3px 8px'
 });
 const activeButtonStyle = style({
   color: PFColors.Active

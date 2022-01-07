@@ -822,7 +822,7 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
     // For reasons unknown, box label positions can be wrong after a graph update.
     // It seems limited to outer nested compound nodes and looks like a cy bug to me,
     // but maybe it has to do with either the html node-label extension, or our BoxLayout.
-    // Anyway, refreshing them here seems to fix the positioning (for now, kust refresh
+    // Anyway, refreshing them here seems to fix the positioning (for now, just refresh
     // box nodes, but we may find the need to do all nodes).
     (cy as any).nodeHtmlLabel().updateNodeLabel(cy.nodes(':parent'));
 
