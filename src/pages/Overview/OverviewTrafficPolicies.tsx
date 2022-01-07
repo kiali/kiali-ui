@@ -226,7 +226,7 @@ export default class OverviewTrafficPolicies extends React.Component<OverviewTra
   };
 
   onConfirmPreviewPoliciesModal = (aps: AuthorizationPolicy[], sds: Sidecar[]) => {
-    this.setState({ authorizationPolicies: aps, sidecars: sds }, () => this.fetchPermission());
+    this.setState({ authorizationPolicies: aps, sidecars: sds, loaded: false }, () => this.fetchPermission());
   };
 
   onHideConfirmModal = () => {
@@ -299,8 +299,8 @@ export default class OverviewTrafficPolicies extends React.Component<OverviewTra
             </>
           ) : (
             <>
-              Namespace {this.props.nsTarget} has existing traffic policies objects. Do you want to{' '}
-              {this.props.opTarget} them ?
+              Namespace {this.props.nsTarget} {this.props.opTarget === 'create' ? 'has not ' : 'has'} existing traffic
+              policies objects. Do you want to {this.props.opTarget} them ?
             </>
           )}
         </Modal>
