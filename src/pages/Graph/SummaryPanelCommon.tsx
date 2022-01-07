@@ -60,7 +60,7 @@ export const summaryFont: React.CSSProperties = {
 export const summaryTitle = style({
   fontWeight: 'bolder',
   marginBottom: '5px',
-  textAlign: 'center'
+  textAlign: 'left'
 });
 
 export const hr = () => {

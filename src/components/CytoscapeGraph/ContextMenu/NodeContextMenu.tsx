@@ -19,6 +19,7 @@ type ReduxProps = {
   jaegerInfo?: JaegerInfo;
 };
 
+// Note, in the below styles we assign colors to be consistent with PF Dropdown
 const contextMenu = style({
   fontSize: 'var(--graph-side-panel--font-size)',
   textAlign: 'left'
@@ -46,7 +47,7 @@ const contextMenuItem = style({
 });
 
 const contextMenuItemLink = style({
-  color: PFColors.Black600
+  color: PFColors.Black900
 });
 
 type Props = NodeContextMenuProps & ReduxProps;

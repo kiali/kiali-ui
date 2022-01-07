@@ -16,6 +16,7 @@ export enum PFColors {
   Black600 = 'var(--pf-global--palette--black-600)', // use instead of Gray
   Black700 = 'var(--pf-global--palette--black-700)',
   Black800 = 'var(--pf-global--palette--black-800)',
+  Black900 = 'var(--pf-global--palette--black-900)',
   Black1000 = 'var(--pf-global--palette--black-1000)',
   Blue200 = 'var(--pf-global--palette--blue-200)',
   Blue300 = 'var(--pf-global--palette--blue-300)',
