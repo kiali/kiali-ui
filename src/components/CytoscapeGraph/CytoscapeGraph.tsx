@@ -45,7 +45,6 @@ type CytoscapeGraphProps = {
   compressOnHide: boolean;
   containerClassName?: string;
   contextMenuEdgeComponent?: EdgeContextMenuComponentType;
-  contextMenuBoxComponent?: NodeContextMenuComponentType;
   contextMenuNodeComponent?: NodeContextMenuComponentType;
   edgeLabels: EdgeLabelMode[];
   graphData: GraphData;
@@ -295,7 +294,6 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
         >
           <CytoscapeContextMenuWrapper
             ref={this.contextMenuRef}
-            contextMenuBoxComponent={this.props.contextMenuBoxComponent}
             contextMenuEdgeComponent={this.props.contextMenuEdgeComponent}
             contextMenuNodeComponent={this.props.contextMenuNodeComponent}
           />

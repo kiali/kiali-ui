@@ -16,7 +16,6 @@ export type NodeContextMenuComponentType = React.ComponentType<NodeContextMenuPr
 export type ContextMenuComponentType = EdgeContextMenuComponentType | NodeContextMenuComponentType;
 
 type Props = {
-  contextMenuBoxComponent?: NodeContextMenuComponentType;
   contextMenuEdgeComponent?: EdgeContextMenuComponentType;
   contextMenuNodeComponent?: NodeContextMenuComponentType;
 };
@@ -72,13 +71,7 @@ export class CytoscapeContextMenuWrapper extends React.PureComponent<Props> {
 
   // Connects cy to this component
   handleContextMenu(elem: Cy.NodeSingular | Cy.EdgeSingular, isHover: boolean) {
-    let contextMenuType: ContextMenuComponentType | undefined;
-
-    if (elem.isNode()) {
-      contextMenuType = elem.isParent() ? this.props.contextMenuBoxComponent : this.props.contextMenuNodeComponent;
-    } else {
-      contextMenuType = this.props.contextMenuEdgeComponent;
-    }
+    const contextMenuType = elem.isNode() ? this.props.contextMenuNodeComponent : this.props.contextMenuEdgeComponent;
 
     if (contextMenuType) {
       this.makeContextMenu(contextMenuType, elem, isHover);

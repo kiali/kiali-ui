@@ -434,7 +434,6 @@ export class GraphPage extends React.Component<GraphPageProps, GraphPageState> {
               {(!this.props.replayActive || isReplayReady) && (
                 <CytoscapeGraph
                   containerClassName={cytoscapeGraphContainerStyle}
-                  contextMenuBoxComponent={NodeContextMenuContainer}
                   contextMenuEdgeComponent={EdgeContextMenu}
                   contextMenuNodeComponent={NodeContextMenuContainer}
                   focusSelector={this.focusSelector}
