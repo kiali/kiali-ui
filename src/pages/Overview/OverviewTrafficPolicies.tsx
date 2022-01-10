@@ -47,7 +47,7 @@ export default class OverviewTrafficPolicies extends React.Component<OverviewTra
       confirmationModal: false,
       authorizationPolicies: [],
       sidecars: [],
-      loaded: false,
+      loaded: this.props.opTarget === 'update',
       disableOp: true,
       canaryVersion: this.props.kind === 'canary' ? serverConfig.istioCanaryRevision[this.props.opTarget] : ''
     };
@@ -73,7 +73,7 @@ export default class OverviewTrafficPolicies extends React.Component<OverviewTra
             const remove = ['uid', 'resourceVersion', 'generation', 'creationTimestamp', 'managedFields'];
             sidecars.map(sdc => remove.map(key => delete sdc.metadata[key]));
             authorizationPolicies.map(ap => remove.map(key => delete ap.metadata[key]));
-            this.setState({ authorizationPolicies, sidecars });
+            this.setState({ authorizationPolicies, sidecars, loaded: true });
           } else if (this.props.opTarget === 'delete') {
             var nsInfo = this.props.nsInfo.istioConfig;
             this.setState(
@@ -241,7 +241,7 @@ export default class OverviewTrafficPolicies extends React.Component<OverviewTra
       this.props.opTarget.length > 0
         ? this.props.opTarget.charAt(0).toLocaleUpperCase() + this.props.opTarget.slice(1)
         : '';
-    const colorAction = ['enable', 'disable'].includes(this.props.opTarget) ? 'primary' : 'danger';
+    const colorAction = ['enable', 'disable', 'create'].includes(this.props.opTarget) ? 'primary' : 'danger';
     const title =
       'Confirm ' +
       modalAction +
