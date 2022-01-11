@@ -74,6 +74,7 @@ export class IstioConfigPreview extends React.Component<Props, State> {
   ) => {
     var trafficPoliciesYaml = '';
     trafficPoliciesYaml = authorizationPolicies.map(obj => jsYaml.safeDump(obj, safeDumpOptions)).join(separator);
+    trafficPoliciesYaml += separator;
     trafficPoliciesYaml += sidecars.map(obj => jsYaml.safeDump(obj, safeDumpOptions)).join(separator);
     return trafficPoliciesYaml;
   };
