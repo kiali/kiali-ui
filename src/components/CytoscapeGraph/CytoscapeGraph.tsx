@@ -120,7 +120,7 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
   };
 
   // for hover support
-  static hoverInMs = 300;
+  static hoverInMs = 260;
   static hoverOutMs = 100;
   static mouseInTarget: any;
   static mouseInTimeout: any;
@@ -516,9 +516,6 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
       if (!cytoscapeEvent) {
         return;
       }
-      if (!cy.elements(':selected').empty()) {
-        return;
-      }
 
       // cancel any active mouseOut timer
       if (CytoscapeGraph.mouseOutTimeout) {
@@ -538,9 +535,6 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
       const cytoscapeEvent = getCytoscapeBaseEvent(evt);
 
       if (!cytoscapeEvent) {
-        return;
-      }
-      if (!cy.elements(':selected').empty()) {
         return;
       }
 
