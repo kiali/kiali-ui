@@ -25,12 +25,10 @@ const ItemNames = {
   applications: 'App',
   services: 'Service',
   workloads: 'Workload',
-  istio: 'Istio Object',
-  iter8: 'Iter8 Experiment'
+  istio: 'Istio Object'
 };
 
 const IstioName = 'Istio Config';
-const Iter8Name = 'Iter8 Experiments';
 const namespaceRegex = /namespaces\/([a-z0-9-]+)\/([\w-.]+)\/([\w-.*]+)(\/([\w-.]+))?(\/([\w-.]+))?/;
 const extNamespaceRegex = /extensions\/namespaces\/([a-z0-9-]+)\/([\w-.]+)\/([\w-.]+)(\/([\w-.]+))?(\/([\w-.]+))?/;
 
@@ -89,10 +87,6 @@ export class BreadcrumbView extends React.Component<BreadCumbViewProps, BreadCum
     return this.state.pathItem === 'istio';
   };
 
-  isIter8 = () => {
-    return this.state.pathItem === 'iter8';
-  };
-
   getItemPage = () => {
     let path = `/namespaces/${this.state.namespace}/${this.state.pathItem}/${this.state.item}`;
     if (this.state.extension) {
@@ -104,7 +98,6 @@ export class BreadcrumbView extends React.Component<BreadCumbViewProps, BreadCum
   render() {
     const { namespace, item, istioType, pathItem } = this.state;
     const isIstio = this.isIstio();
-    const isIter8 = this.isIter8();
     const linkItem = isIstio ? (
       <BreadcrumbItem isActive={true}>{item}</BreadcrumbItem>
     ) : (
@@ -118,7 +111,7 @@ export class BreadcrumbView extends React.Component<BreadCumbViewProps, BreadCum
       <Breadcrumb>
         <BreadcrumbItem>
           <Link to={`/${this.state.extension ? 'extensions/' + pathItem : pathItem}`} onClick={this.cleanFilters}>
-            {isIstio ? IstioName : isIter8 ? Iter8Name : BreadcrumbView.capitalize(pathItem)}
+            {isIstio ? IstioName : BreadcrumbView.capitalize(pathItem)}
           </Link>
         </BreadcrumbItem>
         <BreadcrumbItem>
