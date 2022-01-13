@@ -21,7 +21,6 @@ export default class GraphLegend extends React.Component<GraphLegendProps> {
       border: '1px #ddd solid',
       margin: '0 0 3.25em 0',
       overflow: 'hidden',
-      overflowX: 'auto',
       overflowY: 'auto',
       padding: '1em 0.5em 1em 1em',
       zIndex: 3
@@ -32,13 +31,8 @@ export default class GraphLegend extends React.Component<GraphLegendProps> {
     });
 
     const bodyStyle = style({
-      width: width,
-      height: 'auto'
-    });
-
-    const legendListStyle = style({
-      display: 'flex',
-      flexDirection: 'column'
+      height: 'auto',
+      width: width
     });
 
     const closeBoxStyle = style({
@@ -59,7 +53,7 @@ export default class GraphLegend extends React.Component<GraphLegendProps> {
           </span>
         </div>
         <div className={bodyStyle}>
-          <div className={legendListStyle}>{this.renderGraphLegendList(legendData)}</div>
+          <div>{this.renderGraphLegendList(legendData)}</div>
         </div>
       </div>
     );
@@ -71,8 +65,7 @@ export default class GraphLegend extends React.Component<GraphLegendProps> {
       paddingTop: '1.25em'
     });
     const aStyle = style({
-      height: '100%',
-      width: width
+      height: '100%'
     });
 
     return (
@@ -94,24 +87,26 @@ export default class GraphLegend extends React.Component<GraphLegendProps> {
   }
 
   static renderLegendIconAndLabel(legendItemRow: GraphLegendItemRow) {
-    const legendItemContainerStyle = style({
-      fontSize: '1em',
+    const keyWidth = '70px';
+
+    const keyStyle = style({
+      minWidth: keyWidth,
+      width: keyWidth
+    });
+
+    const legendItemStyle = style({
       display: 'flex',
       flexDirection: 'row',
-      justifyContent: 'space-between',
       padding: '5px 5px 0 5px'
     });
 
     const legendItemLabelStyle = style({
-      fontSize: '12px',
-      fontWeight: 'normal',
-      width: '130px',
-      marginTop: '3px'
+      fontWeight: 'normal'
     });
 
     return (
-      <div key={legendItemRow.icon} className={legendItemContainerStyle}>
-        <span>
+      <div key={legendItemRow.icon} className={legendItemStyle}>
+        <span className={keyStyle}>
           <img alt={legendItemRow.label} src={legendItemRow.icon} />
         </span>
         <span className={legendItemLabelStyle}>{legendItemRow.label}</span>
