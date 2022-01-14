@@ -17,17 +17,13 @@ class RenderPage extends React.Component<{ isGraph: boolean }> {
     });
   }
 
-  renderPathRoutes() {
-    return this.renderPaths(pathRoutes);
-  }
-
   render() {
     const component = (
       <div className={`${containerStyle} ${this.props.isGraph && containerPadding}`}>
         <SwitchErrorBoundary
           fallBackComponent={() => <h2>Sorry, there was a problem. Try a refresh or navigate to a different page.</h2>}
         >
-          {this.renderPathRoutes()}
+          {this.renderPaths(pathRoutes)}
           <Redirect from="/" to={defaultRoute} />
         </SwitchErrorBoundary>
       </div>
