@@ -1,0 +1,2917 @@
+{
+  "timestamp": 1642448246,
+  "duration": 15,
+  "graphType": "versionedApp",
+  "elements": {
+    "nodes": [
+      {
+        "data": {
+          "id": "fd81e92d0eb9bf0f2645f976123a3250",
+          "nodeType": "box",
+          "cluster": "test",
+          "namespace": "n10",
+          "app": "app-1",
+          "isBox": "app"
+        }
+      },
+      {
+        "data": {
+          "id": "e95b342a89a791e3fef533e86782e074",
+          "parent": "fd81e92d0eb9bf0f2645f976123a3250",
+          "nodeType": "service",
+          "cluster": "test",
+          "namespace": "n10",
+          "app": "app-1",
+          "service": "app-1",
+          "traffic": [
+            {
+              "protocol": "http",
+              "rates": {
+                "httpIn": "1.00"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "data": {
+          "id": "1b4023b8a455e51f46e93b62bf01ed4b",
+          "parent": "fd81e92d0eb9bf0f2645f976123a3250",
+          "nodeType": "app",
+          "cluster": "test",
+          "namespace": "n10",
+          "workload": "app-1-v1",
+          "app": "app-1",
+          "version": "v1"
+        }
+      },
+      {
+        "data": {
+          "id": "7907afbd5cbb6c13c8b91a6b13951da2",
+          "nodeType": "box",
+          "cluster": "test",
+          "namespace": "n17",
+          "app": "app-2",
+          "isBox": "app"
+        }
+      },
+      {
+        "data": {
+          "id": "82097f2378c6cdc9c5c9a9964327d7e0",
+          "parent": "7907afbd5cbb6c13c8b91a6b13951da2",
+          "nodeType": "service",
+          "cluster": "test",
+          "namespace": "n17",
+          "app": "app-2",
+          "service": "app-2",
+          "traffic": [
+            {
+              "protocol": "http",
+              "rates": {
+                "httpIn": "1.00"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "data": {
+          "id": "d7e79728ff3e10f6c4b4efbc8167d8b5",
+          "parent": "7907afbd5cbb6c13c8b91a6b13951da2",
+          "nodeType": "app",
+          "cluster": "test",
+          "namespace": "n17",
+          "workload": "app-2-v1",
+          "app": "app-2",
+          "version": "v1"
+        }
+      },
+      {
+        "data": {
+          "id": "e158bdc422bd1278675ad93d5adecc75",
+          "parent": "7907afbd5cbb6c13c8b91a6b13951da2",
+          "nodeType": "app",
+          "cluster": "test",
+          "namespace": "n17",
+          "workload": "app-2-v2",
+          "app": "app-2",
+          "version": "v2"
+        }
+      },
+      {
+        "data": {
+          "id": "048ddd73605e167d6cc295dedd13d1eb",
+          "nodeType": "box",
+          "cluster": "test",
+          "namespace": "n25",
+          "app": "app-3",
+          "isBox": "app"
+        }
+      },
+      {
+        "data": {
+          "id": "91e9749b05c15484b24bba40adcb6035",
+          "parent": "048ddd73605e167d6cc295dedd13d1eb",
+          "nodeType": "service",
+          "cluster": "test",
+          "namespace": "n25",
+          "app": "app-3",
+          "service": "app-3",
+          "traffic": [
+            {
+              "protocol": "http",
+              "rates": {
+                "httpIn": "1.00"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "data": {
+          "id": "8dc5578b0b5d326c22c137cce32e384b",
+          "parent": "048ddd73605e167d6cc295dedd13d1eb",
+          "nodeType": "app",
+          "cluster": "test",
+          "namespace": "n25",
+          "workload": "app-3-v1",
+          "app": "app-3",
+          "version": "v1"
+        }
+      },
+      {
+        "data": {
+          "id": "1ce7271310134991b7abb32d792b3349",
+          "parent": "048ddd73605e167d6cc295dedd13d1eb",
+          "nodeType": "app",
+          "cluster": "test",
+          "namespace": "n25",
+          "workload": "app-3-v2",
+          "app": "app-3",
+          "version": "v2"
+        }
+      },
+      {
+        "data": {
+          "id": "3c0893149fdf1ccff9748ea75b8339f3",
+          "nodeType": "box",
+          "cluster": "test",
+          "namespace": "n5",
+          "app": "app-4",
+          "isBox": "app"
+        }
+      },
+      {
+        "data": {
+          "id": "a3348a6e42feddb1145bd9fc1f743826",
+          "parent": "3c0893149fdf1ccff9748ea75b8339f3",
+          "nodeType": "service",
+          "cluster": "test",
+          "namespace": "n5",
+          "app": "app-4",
+          "service": "app-4",
+          "traffic": [
+            {
+              "protocol": "http",
+              "rates": {
+                "httpIn": "1.00"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "data": {
+          "id": "f55d05c9ff0f9b75c47f85e048c37b2a",
+          "parent": "3c0893149fdf1ccff9748ea75b8339f3",
+          "nodeType": "app",
+          "cluster": "test",
+          "namespace": "n5",
+          "workload": "app-4-v1",
+          "app": "app-4",
+          "version": "v1"
+        }
+      },
+      {
+        "data": {
+          "id": "3b0bfba6ac6ff10998cb02e466c4ecea",
+          "nodeType": "box",
+          "cluster": "test",
+          "namespace": "n9",
+          "app": "app-5",
+          "isBox": "app"
+        }
+      },
+      {
+        "data": {
+          "id": "627076703436f9cdc5c7df014227d99f",
+          "parent": "3b0bfba6ac6ff10998cb02e466c4ecea",
+          "nodeType": "service",
+          "cluster": "test",
+          "namespace": "n9",
+          "app": "app-5",
+          "service": "app-5",
+          "traffic": [
+            {
+              "protocol": "http",
+              "rates": {
+                "httpIn": "1.00"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "data": {
+          "id": "eddb28c267bb7244d1dd91daba13623b",
+          "parent": "3b0bfba6ac6ff10998cb02e466c4ecea",
+          "nodeType": "app",
+          "cluster": "test",
+          "namespace": "n9",
+          "workload": "app-5-v1",
+          "app": "app-5",
+          "version": "v1"
+        }
+      },
+      {
+        "data": {
+          "id": "79fba57eb45fe3192e6e331cf3c49d01",
+          "parent": "3b0bfba6ac6ff10998cb02e466c4ecea",
+          "nodeType": "app",
+          "cluster": "test",
+          "namespace": "n9",
+          "workload": "app-5-v2",
+          "app": "app-5",
+          "version": "v2"
+        }
+      },
+      {
+        "data": {
+          "id": "f43c4a3290a29fc00bc7fb2076f1d99d",
+          "nodeType": "box",
+          "cluster": "test",
+          "namespace": "n24",
+          "app": "app-6",
+          "isBox": "app"
+        }
+      },
+      {
+        "data": {
+          "id": "c6c75202ef25285bd019b43a1bffc50e",
+          "parent": "f43c4a3290a29fc00bc7fb2076f1d99d",
+          "nodeType": "service",
+          "cluster": "test",
+          "namespace": "n24",
+          "app": "app-6",
+          "service": "app-6",
+          "traffic": [
+            {
+              "protocol": "http",
+              "rates": {
+                "httpIn": "1.00"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "data": {
+          "id": "4c625fb35b68e22623afe8e72110af5b",
+          "parent": "f43c4a3290a29fc00bc7fb2076f1d99d",
+          "nodeType": "app",
+          "cluster": "test",
+          "namespace": "n24",
+          "workload": "app-6-v1",
+          "app": "app-6",
+          "version": "v1"
+        }
+      },
+      {
+        "data": {
+          "id": "c7937d11589669fb333f491d14f912ea",
+          "parent": "f43c4a3290a29fc00bc7fb2076f1d99d",
+          "nodeType": "app",
+          "cluster": "test",
+          "namespace": "n24",
+          "workload": "app-6-v2",
+          "app": "app-6",
+          "version": "v2"
+        }
+      },
+      {
+        "data": {
+          "id": "56a40e2c2be8ca7fc79de981b8e98233",
+          "nodeType": "box",
+          "cluster": "test",
+          "namespace": "n13",
+          "app": "app-7",
+          "isBox": "app"
+        }
+      },
+      {
+        "data": {
+          "id": "f5e9b55086fdcdbd8921dd619120fb35",
+          "parent": "56a40e2c2be8ca7fc79de981b8e98233",
+          "nodeType": "service",
+          "cluster": "test",
+          "namespace": "n13",
+          "app": "app-7",
+          "service": "app-7",
+          "traffic": [
+            {
+              "protocol": "http",
+              "rates": {
+                "httpIn": "1.00"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "data": {
+          "id": "b482de177d49b0f79aa1c4671405d3ed",
+          "parent": "56a40e2c2be8ca7fc79de981b8e98233",
+          "nodeType": "app",
+          "cluster": "test",
+          "namespace": "n13",
+          "workload": "app-7-v1",
+          "app": "app-7",
+          "version": "v1"
+        }
+      },
+      {
+        "data": {
+          "id": "66e0bf2d7762bbd72389938d747bc8e7",
+          "parent": "56a40e2c2be8ca7fc79de981b8e98233",
+          "nodeType": "app",
+          "cluster": "test",
+          "namespace": "n13",
+          "workload": "app-7-v2",
+          "app": "app-7",
+          "version": "v2"
+        }
+      },
+      {
+        "data": {
+          "id": "564883f02cee80a1e0ee7aabb7ebddde",
+          "nodeType": "box",
+          "cluster": "test",
+          "namespace": "n2",
+          "app": "app-8",
+          "isBox": "app"
+        }
+      },
+      {
+        "data": {
+          "id": "3d1361c1c2cd1a3d565bd2a7d542df1b",
+          "parent": "564883f02cee80a1e0ee7aabb7ebddde",
+          "nodeType": "service",
+          "cluster": "test",
+          "namespace": "n2",
+          "app": "app-8",
+          "service": "app-8",
+          "traffic": [
+            {
+              "protocol": "http",
+              "rates": {
+                "httpIn": "1.00"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "data": {
+          "id": "89f8b37ec5fe1f3447a9d58003f8d5a0",
+          "parent": "564883f02cee80a1e0ee7aabb7ebddde",
+          "nodeType": "app",
+          "cluster": "test",
+          "namespace": "n2",
+          "workload": "app-8-v1",
+          "app": "app-8",
+          "version": "v1"
+        }
+      },
+      {
+        "data": {
+          "id": "b8180c2c5e4c497effc3aaae2e7f2a0a",
+          "parent": "564883f02cee80a1e0ee7aabb7ebddde",
+          "nodeType": "app",
+          "cluster": "test",
+          "namespace": "n2",
+          "workload": "app-8-v2",
+          "app": "app-8",
+          "version": "v2"
+        }
+      },
+      {
+        "data": {
+          "id": "e60f8b4532c2637ff18f4bba56dad996",
+          "parent": "564883f02cee80a1e0ee7aabb7ebddde",
+          "nodeType": "app",
+          "cluster": "test",
+          "namespace": "n2",
+          "workload": "app-8-v3",
+          "app": "app-8",
+          "version": "v3"
+        }
+      },
+      {
+        "data": {
+          "id": "4a95c7d8685be4fb76cbfba2cdf80a72",
+          "nodeType": "box",
+          "cluster": "test",
+          "namespace": "n4",
+          "app": "app-9",
+          "isBox": "app"
+        }
+      },
+      {
+        "data": {
+          "id": "dda457b37b44ac82c705650137113d83",
+          "parent": "4a95c7d8685be4fb76cbfba2cdf80a72",
+          "nodeType": "service",
+          "cluster": "test",
+          "namespace": "n4",
+          "app": "app-9",
+          "service": "app-9",
+          "traffic": [
+            {
+              "protocol": "http",
+              "rates": {
+                "httpIn": "1.00"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "data": {
+          "id": "19b03a04dc397e0dbd2b59b028b7f8e0",
+          "parent": "4a95c7d8685be4fb76cbfba2cdf80a72",
+          "nodeType": "app",
+          "cluster": "test",
+          "namespace": "n4",
+          "workload": "app-9-v1",
+          "app": "app-9",
+          "version": "v1"
+        }
+      },
+      {
+        "data": {
+          "id": "c1d0b952c5327aacf7004ea5e7106ccf",
+          "parent": "4a95c7d8685be4fb76cbfba2cdf80a72",
+          "nodeType": "app",
+          "cluster": "test",
+          "namespace": "n4",
+          "workload": "app-9-v2",
+          "app": "app-9",
+          "version": "v2"
+        }
+      },
+      {
+        "data": {
+          "id": "227f214b4646dd22fa60906bc1df81d7",
+          "parent": "4a95c7d8685be4fb76cbfba2cdf80a72",
+          "nodeType": "app",
+          "cluster": "test",
+          "namespace": "n4",
+          "workload": "app-9-v3",
+          "app": "app-9",
+          "version": "v3"
+        }
+      },
+      {
+        "data": {
+          "id": "3a12bf122bc6d877038e72ab46fc490d",
+          "nodeType": "box",
+          "cluster": "test",
+          "namespace": "n2",
+          "app": "app-10",
+          "isBox": "app"
+        }
+      },
+      {
+        "data": {
+          "id": "ce9b38001ac90290cf4795670e848569",
+          "parent": "3a12bf122bc6d877038e72ab46fc490d",
+          "nodeType": "service",
+          "cluster": "test",
+          "namespace": "n2",
+          "app": "app-10",
+          "service": "app-10",
+          "traffic": [
+            {
+              "protocol": "http",
+              "rates": {
+                "httpIn": "1.00"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "data": {
+          "id": "12524bd5152a7726be0284c9fbb86a5f",
+          "parent": "3a12bf122bc6d877038e72ab46fc490d",
+          "nodeType": "app",
+          "cluster": "test",
+          "namespace": "n2",
+          "workload": "app-10-v1",
+          "app": "app-10",
+          "version": "v1"
+        }
+      },
+      {
+        "data": {
+          "id": "9266948fcf5b64944d26646ac9dbda55",
+          "parent": "3a12bf122bc6d877038e72ab46fc490d",
+          "nodeType": "app",
+          "cluster": "test",
+          "namespace": "n2",
+          "workload": "app-10-v2",
+          "app": "app-10",
+          "version": "v2"
+        }
+      },
+      {
+        "data": {
+          "id": "48418886c311837da70d824035fe43a3",
+          "parent": "3a12bf122bc6d877038e72ab46fc490d",
+          "nodeType": "app",
+          "cluster": "test",
+          "namespace": "n2",
+          "workload": "app-10-v3",
+          "app": "app-10",
+          "version": "v3"
+        }
+      },
+      {
+        "data": {
+          "id": "2940c99cbf1331e678a7586419def2be",
+          "nodeType": "box",
+          "cluster": "test",
+          "namespace": "n10",
+          "app": "app-11",
+          "isBox": "app"
+        }
+      },
+      {
+        "data": {
+          "id": "810dacf873472d730ba160e953c33595",
+          "parent": "2940c99cbf1331e678a7586419def2be",
+          "nodeType": "service",
+          "cluster": "test",
+          "namespace": "n10",
+          "app": "app-11",
+          "service": "app-11",
+          "traffic": [
+            {
+              "protocol": "http",
+              "rates": {
+                "httpIn": "1.00"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "data": {
+          "id": "b92735aaec341b2c2b813fc4a18436eb",
+          "parent": "2940c99cbf1331e678a7586419def2be",
+          "nodeType": "app",
+          "cluster": "test",
+          "namespace": "n10",
+          "workload": "app-11-v1",
+          "app": "app-11",
+          "version": "v1"
+        }
+      },
+      {
+        "data": {
+          "id": "a328ceb49a06139c8a82c41187a4f4a0",
+          "parent": "2940c99cbf1331e678a7586419def2be",
+          "nodeType": "app",
+          "cluster": "test",
+          "namespace": "n10",
+          "workload": "app-11-v2",
+          "app": "app-11",
+          "version": "v2"
+        }
+      },
+      {
+        "data": {
+          "id": "7512c691acb05233a3727510b35423bd",
+          "nodeType": "box",
+          "cluster": "test",
+          "namespace": "n1",
+          "app": "app-12",
+          "isBox": "app"
+        }
+      },
+      {
+        "data": {
+          "id": "720c1136d8bed8b9a48bfebd840bb27d",
+          "parent": "7512c691acb05233a3727510b35423bd",
+          "nodeType": "service",
+          "cluster": "test",
+          "namespace": "n1",
+          "app": "app-12",
+          "service": "app-12",
+          "traffic": [
+            {
+              "protocol": "http",
+              "rates": {
+                "httpIn": "1.00"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "data": {
+          "id": "f4a15796db35aeba800fac08b1571c90",
+          "parent": "7512c691acb05233a3727510b35423bd",
+          "nodeType": "app",
+          "cluster": "test",
+          "namespace": "n1",
+          "workload": "app-12-v1",
+          "app": "app-12",
+          "version": "v1"
+        }
+      },
+      {
+        "data": {
+          "id": "95c4ff43e897ac64ba400b80229e7cf6",
+          "parent": "7512c691acb05233a3727510b35423bd",
+          "nodeType": "app",
+          "cluster": "test",
+          "namespace": "n1",
+          "workload": "app-12-v2",
+          "app": "app-12",
+          "version": "v2"
+        }
+      },
+      {
+        "data": {
+          "id": "711f831b526412704a659b3857123641",
+          "parent": "7512c691acb05233a3727510b35423bd",
+          "nodeType": "app",
+          "cluster": "test",
+          "namespace": "n1",
+          "workload": "app-12-v3",
+          "app": "app-12",
+          "version": "v3"
+        }
+      },
+      {
+        "data": {
+          "id": "ba05b3c32ecc5031bf0f4dc5d6e1237d",
+          "nodeType": "box",
+          "cluster": "test",
+          "namespace": "n17",
+          "app": "app-13",
+          "isBox": "app"
+        }
+      },
+      {
+        "data": {
+          "id": "24fddc7abde76018d6c822a4153d1af7",
+          "parent": "ba05b3c32ecc5031bf0f4dc5d6e1237d",
+          "nodeType": "service",
+          "cluster": "test",
+          "namespace": "n17",
+          "app": "app-13",
+          "service": "app-13",
+          "traffic": [
+            {
+              "protocol": "http",
+              "rates": {
+                "httpIn": "1.00"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "data": {
+          "id": "04b472ad178af267e420954499491c9d",
+          "parent": "ba05b3c32ecc5031bf0f4dc5d6e1237d",
+          "nodeType": "app",
+          "cluster": "test",
+          "namespace": "n17",
+          "workload": "app-13-v1",
+          "app": "app-13",
+          "version": "v1"
+        }
+      },
+      {
+        "data": {
+          "id": "37004fbf7748e3293e16a9c457b38f2a",
+          "nodeType": "box",
+          "cluster": "test",
+          "namespace": "n9",
+          "app": "app-14",
+          "isBox": "app"
+        }
+      },
+      {
+        "data": {
+          "id": "91a56900b92f2c7a9f3d327b9794a7ba",
+          "parent": "37004fbf7748e3293e16a9c457b38f2a",
+          "nodeType": "service",
+          "cluster": "test",
+          "namespace": "n9",
+          "app": "app-14",
+          "service": "app-14",
+          "traffic": [
+            {
+              "protocol": "http",
+              "rates": {
+                "httpIn": "1.00"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "data": {
+          "id": "2d90b73c55b5cf07a3ea36e8a4bce9ec",
+          "parent": "37004fbf7748e3293e16a9c457b38f2a",
+          "nodeType": "app",
+          "cluster": "test",
+          "namespace": "n9",
+          "workload": "app-14-v1",
+          "app": "app-14",
+          "version": "v1"
+        }
+      },
+      {
+        "data": {
+          "id": "7ae3e03d22fdfcc6d4b3c13adbfe28fa",
+          "parent": "37004fbf7748e3293e16a9c457b38f2a",
+          "nodeType": "app",
+          "cluster": "test",
+          "namespace": "n9",
+          "workload": "app-14-v2",
+          "app": "app-14",
+          "version": "v2"
+        }
+      },
+      {
+        "data": {
+          "id": "51d8c5cae62acbb6cf0ac599f20d15f4",
+          "nodeType": "box",
+          "cluster": "test",
+          "namespace": "n17",
+          "app": "app-15",
+          "isBox": "app"
+        }
+      },
+      {
+        "data": {
+          "id": "a117be62518b85fc13636ca07c407dae",
+          "parent": "51d8c5cae62acbb6cf0ac599f20d15f4",
+          "nodeType": "service",
+          "cluster": "test",
+          "namespace": "n17",
+          "app": "app-15",
+          "service": "app-15",
+          "traffic": [
+            {
+              "protocol": "http",
+              "rates": {
+                "httpIn": "1.00"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "data": {
+          "id": "a50566906624a82b0d3f3e9162b5884b",
+          "parent": "51d8c5cae62acbb6cf0ac599f20d15f4",
+          "nodeType": "app",
+          "cluster": "test",
+          "namespace": "n17",
+          "workload": "app-15-v1",
+          "app": "app-15",
+          "version": "v1"
+        }
+      },
+      {
+        "data": {
+          "id": "11bbd056b289a192562a94802b9ea5e3",
+          "nodeType": "box",
+          "cluster": "test",
+          "namespace": "n19",
+          "app": "app-16",
+          "isBox": "app"
+        }
+      },
+      {
+        "data": {
+          "id": "c54b42f03df7e3b32df074d76dc0b9d9",
+          "parent": "11bbd056b289a192562a94802b9ea5e3",
+          "nodeType": "service",
+          "cluster": "test",
+          "namespace": "n19",
+          "app": "app-16",
+          "service": "app-16",
+          "traffic": [
+            {
+              "protocol": "http",
+              "rates": {
+                "httpIn": "1.00"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "data": {
+          "id": "680fc23f9386b1aba9e6dad85d91c7b0",
+          "parent": "11bbd056b289a192562a94802b9ea5e3",
+          "nodeType": "app",
+          "cluster": "test",
+          "namespace": "n19",
+          "workload": "app-16-v1",
+          "app": "app-16",
+          "version": "v1"
+        }
+      },
+      {
+        "data": {
+          "id": "94162b7bac12eafa9676fe5d1f337b3f",
+          "parent": "11bbd056b289a192562a94802b9ea5e3",
+          "nodeType": "app",
+          "cluster": "test",
+          "namespace": "n19",
+          "workload": "app-16-v2",
+          "app": "app-16",
+          "version": "v2"
+        }
+      },
+      {
+        "data": {
+          "id": "fa50346cfc11bc80f93a1d132f058bfa",
+          "parent": "11bbd056b289a192562a94802b9ea5e3",
+          "nodeType": "app",
+          "cluster": "test",
+          "namespace": "n19",
+          "workload": "app-16-v3",
+          "app": "app-16",
+          "version": "v3"
+        }
+      },
+      {
+        "data": {
+          "id": "e9363e25a2ba39a617947baa94e03431",
+          "nodeType": "box",
+          "cluster": "test",
+          "namespace": "n19",
+          "app": "app-17",
+          "isBox": "app"
+        }
+      },
+      {
+        "data": {
+          "id": "633522977fc1fc85264f3f39e56304b0",
+          "parent": "e9363e25a2ba39a617947baa94e03431",
+          "nodeType": "service",
+          "cluster": "test",
+          "namespace": "n19",
+          "app": "app-17",
+          "service": "app-17",
+          "traffic": [
+            {
+              "protocol": "http",
+              "rates": {
+                "httpIn": "1.00"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "data": {
+          "id": "7d90501de6264ed6e57aa1a9718a96be",
+          "parent": "e9363e25a2ba39a617947baa94e03431",
+          "nodeType": "app",
+          "cluster": "test",
+          "namespace": "n19",
+          "workload": "app-17-v1",
+          "app": "app-17",
+          "version": "v1"
+        }
+      },
+      {
+        "data": {
+          "id": "f79fcee1744f30e510230457918909a3",
+          "parent": "e9363e25a2ba39a617947baa94e03431",
+          "nodeType": "app",
+          "cluster": "test",
+          "namespace": "n19",
+          "workload": "app-17-v2",
+          "app": "app-17",
+          "version": "v2"
+        }
+      },
+      {
+        "data": {
+          "id": "41cc56bfa908b9ef98fe36fb875d42ab",
+          "parent": "e9363e25a2ba39a617947baa94e03431",
+          "nodeType": "app",
+          "cluster": "test",
+          "namespace": "n19",
+          "workload": "app-17-v3",
+          "app": "app-17",
+          "version": "v3"
+        }
+      },
+      {
+        "data": {
+          "id": "4c054c3793d1cd6bc29a6fa085c2b623",
+          "nodeType": "box",
+          "cluster": "test",
+          "namespace": "n20",
+          "app": "app-18",
+          "isBox": "app"
+        }
+      },
+      {
+        "data": {
+          "id": "99afd85dee9333ffbb3a271cbf93df84",
+          "parent": "4c054c3793d1cd6bc29a6fa085c2b623",
+          "nodeType": "service",
+          "cluster": "test",
+          "namespace": "n20",
+          "app": "app-18",
+          "service": "app-18",
+          "traffic": [
+            {
+              "protocol": "http",
+              "rates": {
+                "httpIn": "1.00"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "data": {
+          "id": "ed26b7ce789b7a5113030985ec102c0d",
+          "parent": "4c054c3793d1cd6bc29a6fa085c2b623",
+          "nodeType": "app",
+          "cluster": "test",
+          "namespace": "n20",
+          "workload": "app-18-v1",
+          "app": "app-18",
+          "version": "v1"
+        }
+      },
+      {
+        "data": {
+          "id": "9d56a15a99161dc2e84abd494ff5ed91",
+          "nodeType": "box",
+          "cluster": "test",
+          "namespace": "n11",
+          "app": "app-19",
+          "isBox": "app"
+        }
+      },
+      {
+        "data": {
+          "id": "f77fd322e102f5cfed79ca799f3a6f36",
+          "parent": "9d56a15a99161dc2e84abd494ff5ed91",
+          "nodeType": "service",
+          "cluster": "test",
+          "namespace": "n11",
+          "app": "app-19",
+          "service": "app-19",
+          "traffic": [
+            {
+              "protocol": "http",
+              "rates": {
+                "httpIn": "1.00"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "data": {
+          "id": "dc64ce55c8f3ee287f01da823d30c3bf",
+          "parent": "9d56a15a99161dc2e84abd494ff5ed91",
+          "nodeType": "app",
+          "cluster": "test",
+          "namespace": "n11",
+          "workload": "app-19-v1",
+          "app": "app-19",
+          "version": "v1"
+        }
+      },
+      {
+        "data": {
+          "id": "8a89e211f95ff779c909176a42198683",
+          "nodeType": "box",
+          "cluster": "test",
+          "namespace": "n14",
+          "app": "app-20",
+          "isBox": "app"
+        }
+      },
+      {
+        "data": {
+          "id": "2c3a067059119edfa0791288b05d5da0",
+          "parent": "8a89e211f95ff779c909176a42198683",
+          "nodeType": "service",
+          "cluster": "test",
+          "namespace": "n14",
+          "app": "app-20",
+          "service": "app-20",
+          "traffic": [
+            {
+              "protocol": "http",
+              "rates": {
+                "httpIn": "1.00"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "data": {
+          "id": "300e6afc8325245af328aa843c719925",
+          "parent": "8a89e211f95ff779c909176a42198683",
+          "nodeType": "app",
+          "cluster": "test",
+          "namespace": "n14",
+          "workload": "app-20-v1",
+          "app": "app-20",
+          "version": "v1"
+        }
+      },
+      {
+        "data": {
+          "id": "5c42b85f09fea7dc179407b11f60ef64",
+          "nodeType": "box",
+          "cluster": "test",
+          "namespace": "n11",
+          "app": "app-21",
+          "isBox": "app"
+        }
+      },
+      {
+        "data": {
+          "id": "67ab89fea7d20578d89806206b520e1a",
+          "parent": "5c42b85f09fea7dc179407b11f60ef64",
+          "nodeType": "service",
+          "cluster": "test",
+          "namespace": "n11",
+          "app": "app-21",
+          "service": "app-21",
+          "traffic": [
+            {
+              "protocol": "http",
+              "rates": {
+                "httpIn": "1.00"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "data": {
+          "id": "9fb995a028f02c87c649482c86eb5b61",
+          "parent": "5c42b85f09fea7dc179407b11f60ef64",
+          "nodeType": "app",
+          "cluster": "test",
+          "namespace": "n11",
+          "workload": "app-21-v1",
+          "app": "app-21",
+          "version": "v1"
+        }
+      },
+      {
+        "data": {
+          "id": "d0dadfd5b114011e0ea3c5f7ac2e436b",
+          "nodeType": "box",
+          "cluster": "test",
+          "namespace": "n1",
+          "app": "app-22",
+          "isBox": "app"
+        }
+      },
+      {
+        "data": {
+          "id": "c736206b4b2f979018820a660650fc53",
+          "parent": "d0dadfd5b114011e0ea3c5f7ac2e436b",
+          "nodeType": "service",
+          "cluster": "test",
+          "namespace": "n1",
+          "app": "app-22",
+          "service": "app-22",
+          "traffic": [
+            {
+              "protocol": "http",
+              "rates": {
+                "httpIn": "1.00"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "data": {
+          "id": "0005155f8510b88bffe60fa181edabff",
+          "parent": "d0dadfd5b114011e0ea3c5f7ac2e436b",
+          "nodeType": "app",
+          "cluster": "test",
+          "namespace": "n1",
+          "workload": "app-22-v1",
+          "app": "app-22",
+          "version": "v1"
+        }
+      },
+      {
+        "data": {
+          "id": "7f9a413028407a91bf795176b13e9f1e",
+          "parent": "d0dadfd5b114011e0ea3c5f7ac2e436b",
+          "nodeType": "app",
+          "cluster": "test",
+          "namespace": "n1",
+          "workload": "app-22-v2",
+          "app": "app-22",
+          "version": "v2"
+        }
+      },
+      {
+        "data": {
+          "id": "2afb242170e89c62d5d340d7e406ab09",
+          "parent": "d0dadfd5b114011e0ea3c5f7ac2e436b",
+          "nodeType": "app",
+          "cluster": "test",
+          "namespace": "n1",
+          "workload": "app-22-v3",
+          "app": "app-22",
+          "version": "v3"
+        }
+      },
+      {
+        "data": {
+          "id": "9d0b4e54cf767aa5fb50c5d104a6fb2f",
+          "nodeType": "box",
+          "cluster": "test",
+          "namespace": "n8",
+          "app": "app-23",
+          "isBox": "app"
+        }
+      },
+      {
+        "data": {
+          "id": "856d391864a03c8b55c29f73dac69a29",
+          "parent": "9d0b4e54cf767aa5fb50c5d104a6fb2f",
+          "nodeType": "service",
+          "cluster": "test",
+          "namespace": "n8",
+          "app": "app-23",
+          "service": "app-23",
+          "traffic": [
+            {
+              "protocol": "http",
+              "rates": {
+                "httpIn": "1.00"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "data": {
+          "id": "436af64a73cd2db03112c63bd737371e",
+          "parent": "9d0b4e54cf767aa5fb50c5d104a6fb2f",
+          "nodeType": "app",
+          "cluster": "test",
+          "namespace": "n8",
+          "workload": "app-23-v1",
+          "app": "app-23",
+          "version": "v1"
+        }
+      },
+      {
+        "data": {
+          "id": "1c9faaeaf0f6efa4a70421903bc4820e",
+          "parent": "9d0b4e54cf767aa5fb50c5d104a6fb2f",
+          "nodeType": "app",
+          "cluster": "test",
+          "namespace": "n8",
+          "workload": "app-23-v2",
+          "app": "app-23",
+          "version": "v2"
+        }
+      },
+      {
+        "data": {
+          "id": "dcf59642288d860965efc48fc18b17ac",
+          "parent": "9d0b4e54cf767aa5fb50c5d104a6fb2f",
+          "nodeType": "app",
+          "cluster": "test",
+          "namespace": "n8",
+          "workload": "app-23-v3",
+          "app": "app-23",
+          "version": "v3"
+        }
+      },
+      {
+        "data": {
+          "id": "7ef398ef581a1c7a63aed47aebf588bd",
+          "nodeType": "box",
+          "cluster": "test",
+          "namespace": "n23",
+          "app": "app-24",
+          "isBox": "app"
+        }
+      },
+      {
+        "data": {
+          "id": "7c62aad0e82d0e1c5aab8ebf6885a50e",
+          "parent": "7ef398ef581a1c7a63aed47aebf588bd",
+          "nodeType": "service",
+          "cluster": "test",
+          "namespace": "n23",
+          "app": "app-24",
+          "service": "app-24",
+          "traffic": [
+            {
+              "protocol": "http",
+              "rates": {
+                "httpIn": "1.00"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "data": {
+          "id": "ba15b0f8919b87f40aae84400a476470",
+          "parent": "7ef398ef581a1c7a63aed47aebf588bd",
+          "nodeType": "app",
+          "cluster": "test",
+          "namespace": "n23",
+          "workload": "app-24-v1",
+          "app": "app-24",
+          "version": "v1"
+        }
+      },
+      {
+        "data": {
+          "id": "a3417a4528c9e590a820bd55dcb36989",
+          "parent": "7ef398ef581a1c7a63aed47aebf588bd",
+          "nodeType": "app",
+          "cluster": "test",
+          "namespace": "n23",
+          "workload": "app-24-v2",
+          "app": "app-24",
+          "version": "v2"
+        }
+      },
+      {
+        "data": {
+          "id": "1e7f59dd16de7b2f7fd5875ac8539236",
+          "parent": "7ef398ef581a1c7a63aed47aebf588bd",
+          "nodeType": "app",
+          "cluster": "test",
+          "namespace": "n23",
+          "workload": "app-24-v3",
+          "app": "app-24",
+          "version": "v3"
+        }
+      },
+      {
+        "data": {
+          "id": "c61450ec416abd4aabf803eef55d9272",
+          "nodeType": "box",
+          "cluster": "test",
+          "namespace": "n15",
+          "app": "app-25",
+          "isBox": "app"
+        }
+      },
+      {
+        "data": {
+          "id": "681e7611827cde7b68527d8e3a205ad2",
+          "parent": "c61450ec416abd4aabf803eef55d9272",
+          "nodeType": "service",
+          "cluster": "test",
+          "namespace": "n15",
+          "app": "app-25",
+          "service": "app-25",
+          "traffic": [
+            {
+              "protocol": "http",
+              "rates": {
+                "httpIn": "1.00"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "data": {
+          "id": "187bb51d49dba05d89d7e5c834a4249e",
+          "parent": "c61450ec416abd4aabf803eef55d9272",
+          "nodeType": "app",
+          "cluster": "test",
+          "namespace": "n15",
+          "workload": "app-25-v1",
+          "app": "app-25",
+          "version": "v1"
+        }
+      },
+      {
+        "data": {
+          "id": "9cb7735a5dc8e32f85ab884f2eba4ef4",
+          "parent": "c61450ec416abd4aabf803eef55d9272",
+          "nodeType": "app",
+          "cluster": "test",
+          "namespace": "n15",
+          "workload": "app-25-v2",
+          "app": "app-25",
+          "version": "v2"
+        }
+      },
+      {
+        "data": {
+          "id": "01cd0c9180e1f8599d706b3ad3473819",
+          "parent": "c61450ec416abd4aabf803eef55d9272",
+          "nodeType": "app",
+          "cluster": "test",
+          "namespace": "n15",
+          "workload": "app-25-v3",
+          "app": "app-25",
+          "version": "v3"
+        }
+      },
+      {
+        "data": {
+          "id": "c28135449227e912849c36e32fcc4e73",
+          "nodeType": "app",
+          "cluster": "test",
+          "namespace": "istio-system",
+          "workload": "istio-ingressgateway-latest",
+          "app": "istio-ingressgateway",
+          "version": "latest",
+          "isGateway": {
+            "ingressInfo": {
+              "hostnames": [
+                "*"
+              ]
+            },
+            "egressInfo": {}
+          },
+          "isOutside": true,
+          "isRoot": true
+        }
+      }
+    ],
+    "edges": [
+      {
+        "data": {
+          "id": "3c089ee5a3b5c98e18eefaf3e8c6acd4",
+          "source": "e95b342a89a791e3fef533e86782e074",
+          "target": "1b4023b8a455e51f46e93b62bf01ed4b",
+          "traffic": {
+            "protocol": "http",
+            "rates": {
+              "http": "1.00",
+              "httpPercentReq": "50.0"
+            },
+            "responses": {
+              "200": {
+                "flags": {
+                  "-": "100.0"
+                },
+                "hosts": {
+                  "app-1": "100.0"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "40eb8dede0a9c4fff18166064f9379aa",
+          "source": "82097f2378c6cdc9c5c9a9964327d7e0",
+          "target": "d7e79728ff3e10f6c4b4efbc8167d8b5",
+          "traffic": {
+            "protocol": "http",
+            "rates": {
+              "http": "1.00",
+              "httpPercentReq": "50.0"
+            },
+            "responses": {
+              "200": {
+                "flags": {
+                  "-": "100.0"
+                },
+                "hosts": {
+                  "app-2": "100.0"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "62be98cf27a5845ff38916616cd7e160",
+          "source": "82097f2378c6cdc9c5c9a9964327d7e0",
+          "target": "e158bdc422bd1278675ad93d5adecc75",
+          "traffic": {
+            "protocol": "http",
+            "rates": {
+              "http": "1.00",
+              "httpPercentReq": "50.0"
+            },
+            "responses": {
+              "200": {
+                "flags": {
+                  "-": "100.0"
+                },
+                "hosts": {
+                  "app-2": "100.0"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "8a4ae5b1555a2aeef4e82c95da703f95",
+          "source": "91e9749b05c15484b24bba40adcb6035",
+          "target": "8dc5578b0b5d326c22c137cce32e384b",
+          "traffic": {
+            "protocol": "http",
+            "rates": {
+              "http": "1.00",
+              "httpPercentReq": "50.0"
+            },
+            "responses": {
+              "200": {
+                "flags": {
+                  "-": "100.0"
+                },
+                "hosts": {
+                  "app-3": "100.0"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "4214cb7be0d63656b34295d1c1a7afd6",
+          "source": "91e9749b05c15484b24bba40adcb6035",
+          "target": "1ce7271310134991b7abb32d792b3349",
+          "traffic": {
+            "protocol": "http",
+            "rates": {
+              "http": "1.00",
+              "httpPercentReq": "50.0"
+            },
+            "responses": {
+              "200": {
+                "flags": {
+                  "-": "100.0"
+                },
+                "hosts": {
+                  "app-3": "100.0"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "a15fa1da91fb22a4dceac7fea9a6e54e",
+          "source": "a3348a6e42feddb1145bd9fc1f743826",
+          "target": "f55d05c9ff0f9b75c47f85e048c37b2a",
+          "traffic": {
+            "protocol": "http",
+            "rates": {
+              "http": "1.00",
+              "httpPercentReq": "50.0"
+            },
+            "responses": {
+              "200": {
+                "flags": {
+                  "-": "100.0"
+                },
+                "hosts": {
+                  "app-4": "100.0"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "58ab5f10480960e7d3ba8beb4bb4eb1b",
+          "source": "627076703436f9cdc5c7df014227d99f",
+          "target": "eddb28c267bb7244d1dd91daba13623b",
+          "traffic": {
+            "protocol": "http",
+            "rates": {
+              "http": "1.00",
+              "httpPercentReq": "50.0"
+            },
+            "responses": {
+              "200": {
+                "flags": {
+                  "-": "100.0"
+                },
+                "hosts": {
+                  "app-5": "100.0"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "7a8165f9c66898b06718ce9dddeadc18",
+          "source": "627076703436f9cdc5c7df014227d99f",
+          "target": "79fba57eb45fe3192e6e331cf3c49d01",
+          "traffic": {
+            "protocol": "http",
+            "rates": {
+              "http": "1.00",
+              "httpPercentReq": "50.0"
+            },
+            "responses": {
+              "200": {
+                "flags": {
+                  "-": "100.0"
+                },
+                "hosts": {
+                  "app-5": "100.0"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "c12ae2e40b4730f8837cf505d30ef6c4",
+          "source": "c6c75202ef25285bd019b43a1bffc50e",
+          "target": "4c625fb35b68e22623afe8e72110af5b",
+          "traffic": {
+            "protocol": "http",
+            "rates": {
+              "http": "1.00",
+              "httpPercentReq": "50.0"
+            },
+            "responses": {
+              "200": {
+                "flags": {
+                  "-": "100.0"
+                },
+                "hosts": {
+                  "app-6": "100.0"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "eee99d1238a9f8bba3a2613527e57bbe",
+          "source": "c6c75202ef25285bd019b43a1bffc50e",
+          "target": "c7937d11589669fb333f491d14f912ea",
+          "traffic": {
+            "protocol": "http",
+            "rates": {
+              "http": "1.00",
+              "httpPercentReq": "50.0"
+            },
+            "responses": {
+              "200": {
+                "flags": {
+                  "-": "100.0"
+                },
+                "hosts": {
+                  "app-6": "100.0"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "55f467e6d8a0c6840a967664833bbec6",
+          "source": "f5e9b55086fdcdbd8921dd619120fb35",
+          "target": "b482de177d49b0f79aa1c4671405d3ed",
+          "traffic": {
+            "protocol": "http",
+            "rates": {
+              "http": "1.00",
+              "httpPercentReq": "50.0"
+            },
+            "responses": {
+              "200": {
+                "flags": {
+                  "-": "100.0"
+                },
+                "hosts": {
+                  "app-7": "100.0"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "ab068f41fca3873bbfba5e79d86b4a58",
+          "source": "f5e9b55086fdcdbd8921dd619120fb35",
+          "target": "66e0bf2d7762bbd72389938d747bc8e7",
+          "traffic": {
+            "protocol": "http",
+            "rates": {
+              "http": "1.00",
+              "httpPercentReq": "50.0"
+            },
+            "responses": {
+              "200": {
+                "flags": {
+                  "-": "100.0"
+                },
+                "hosts": {
+                  "app-7": "100.0"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "38f563ee344dfeac78bb2e5336c1a847",
+          "source": "3d1361c1c2cd1a3d565bd2a7d542df1b",
+          "target": "89f8b37ec5fe1f3447a9d58003f8d5a0",
+          "traffic": {
+            "protocol": "http",
+            "rates": {
+              "http": "1.00",
+              "httpPercentReq": "50.0"
+            },
+            "responses": {
+              "200": {
+                "flags": {
+                  "-": "100.0"
+                },
+                "hosts": {
+                  "app-8": "100.0"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "d68f68440ee85357d8f7b452e12d1c0c",
+          "source": "3d1361c1c2cd1a3d565bd2a7d542df1b",
+          "target": "b8180c2c5e4c497effc3aaae2e7f2a0a",
+          "traffic": {
+            "protocol": "http",
+            "rates": {
+              "http": "1.00",
+              "httpPercentReq": "50.0"
+            },
+            "responses": {
+              "200": {
+                "flags": {
+                  "-": "100.0"
+                },
+                "hosts": {
+                  "app-8": "100.0"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "54d96b776c48da68ede81c3ed3d062be",
+          "source": "3d1361c1c2cd1a3d565bd2a7d542df1b",
+          "target": "e60f8b4532c2637ff18f4bba56dad996",
+          "traffic": {
+            "protocol": "http",
+            "rates": {
+              "http": "1.00",
+              "httpPercentReq": "50.0"
+            },
+            "responses": {
+              "200": {
+                "flags": {
+                  "-": "100.0"
+                },
+                "hosts": {
+                  "app-8": "100.0"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "e6c364af2d89143902b42d8aaf70316b",
+          "source": "dda457b37b44ac82c705650137113d83",
+          "target": "19b03a04dc397e0dbd2b59b028b7f8e0",
+          "traffic": {
+            "protocol": "http",
+            "rates": {
+              "http": "1.00",
+              "httpPercentReq": "50.0"
+            },
+            "responses": {
+              "200": {
+                "flags": {
+                  "-": "100.0"
+                },
+                "hosts": {
+                  "app-9": "100.0"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "c9ee679afb611fb7956ae3473ceed727",
+          "source": "dda457b37b44ac82c705650137113d83",
+          "target": "c1d0b952c5327aacf7004ea5e7106ccf",
+          "traffic": {
+            "protocol": "http",
+            "rates": {
+              "http": "1.00",
+              "httpPercentReq": "50.0"
+            },
+            "responses": {
+              "200": {
+                "flags": {
+                  "-": "100.0"
+                },
+                "hosts": {
+                  "app-9": "100.0"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "a1bd96fdd794d3d6973dc0d5631ba46a",
+          "source": "dda457b37b44ac82c705650137113d83",
+          "target": "227f214b4646dd22fa60906bc1df81d7",
+          "traffic": {
+            "protocol": "http",
+            "rates": {
+              "http": "1.00",
+              "httpPercentReq": "50.0"
+            },
+            "responses": {
+              "200": {
+                "flags": {
+                  "-": "100.0"
+                },
+                "hosts": {
+                  "app-9": "100.0"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "89821fb78a58a48e870f3bc4d4ada5ea",
+          "source": "ce9b38001ac90290cf4795670e848569",
+          "target": "12524bd5152a7726be0284c9fbb86a5f",
+          "traffic": {
+            "protocol": "http",
+            "rates": {
+              "http": "1.00",
+              "httpPercentReq": "50.0"
+            },
+            "responses": {
+              "200": {
+                "flags": {
+                  "-": "100.0"
+                },
+                "hosts": {
+                  "app-10": "100.0"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "dbda3b80d80900e976c2f94155b9c344",
+          "source": "ce9b38001ac90290cf4795670e848569",
+          "target": "9266948fcf5b64944d26646ac9dbda55",
+          "traffic": {
+            "protocol": "http",
+            "rates": {
+              "http": "1.00",
+              "httpPercentReq": "50.0"
+            },
+            "responses": {
+              "200": {
+                "flags": {
+                  "-": "100.0"
+                },
+                "hosts": {
+                  "app-10": "100.0"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "31669b0732fa6a5265662b012771b479",
+          "source": "ce9b38001ac90290cf4795670e848569",
+          "target": "48418886c311837da70d824035fe43a3",
+          "traffic": {
+            "protocol": "http",
+            "rates": {
+              "http": "1.00",
+              "httpPercentReq": "50.0"
+            },
+            "responses": {
+              "200": {
+                "flags": {
+                  "-": "100.0"
+                },
+                "hosts": {
+                  "app-10": "100.0"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "9f9a9831bbabf3ca25a5aa60fd5d2c56",
+          "source": "810dacf873472d730ba160e953c33595",
+          "target": "b92735aaec341b2c2b813fc4a18436eb",
+          "traffic": {
+            "protocol": "http",
+            "rates": {
+              "http": "1.00",
+              "httpPercentReq": "50.0"
+            },
+            "responses": {
+              "200": {
+                "flags": {
+                  "-": "100.0"
+                },
+                "hosts": {
+                  "app-11": "100.0"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "ba52ffe6a9f5bb7607eedbb303026818",
+          "source": "810dacf873472d730ba160e953c33595",
+          "target": "a328ceb49a06139c8a82c41187a4f4a0",
+          "traffic": {
+            "protocol": "http",
+            "rates": {
+              "http": "1.00",
+              "httpPercentReq": "50.0"
+            },
+            "responses": {
+              "200": {
+                "flags": {
+                  "-": "100.0"
+                },
+                "hosts": {
+                  "app-11": "100.0"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "1ca37bfee3180394bd3ae14c342570c5",
+          "source": "720c1136d8bed8b9a48bfebd840bb27d",
+          "target": "f4a15796db35aeba800fac08b1571c90",
+          "traffic": {
+            "protocol": "http",
+            "rates": {
+              "http": "1.00",
+              "httpPercentReq": "50.0"
+            },
+            "responses": {
+              "200": {
+                "flags": {
+                  "-": "100.0"
+                },
+                "hosts": {
+                  "app-12": "100.0"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "2f8ca063d4582a49574bdce537f8a973",
+          "source": "720c1136d8bed8b9a48bfebd840bb27d",
+          "target": "95c4ff43e897ac64ba400b80229e7cf6",
+          "traffic": {
+            "protocol": "http",
+            "rates": {
+              "http": "1.00",
+              "httpPercentReq": "50.0"
+            },
+            "responses": {
+              "200": {
+                "flags": {
+                  "-": "100.0"
+                },
+                "hosts": {
+                  "app-12": "100.0"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "02ccba36d12475ca0e7d689859b03673",
+          "source": "720c1136d8bed8b9a48bfebd840bb27d",
+          "target": "711f831b526412704a659b3857123641",
+          "traffic": {
+            "protocol": "http",
+            "rates": {
+              "http": "1.00",
+              "httpPercentReq": "50.0"
+            },
+            "responses": {
+              "200": {
+                "flags": {
+                  "-": "100.0"
+                },
+                "hosts": {
+                  "app-12": "100.0"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "561ba21528097bb23ef1e61c250ad419",
+          "source": "24fddc7abde76018d6c822a4153d1af7",
+          "target": "04b472ad178af267e420954499491c9d",
+          "traffic": {
+            "protocol": "http",
+            "rates": {
+              "http": "1.00",
+              "httpPercentReq": "50.0"
+            },
+            "responses": {
+              "200": {
+                "flags": {
+                  "-": "100.0"
+                },
+                "hosts": {
+                  "app-13": "100.0"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "b3a66dc59b708def6eb680a6a753db39",
+          "source": "91a56900b92f2c7a9f3d327b9794a7ba",
+          "target": "2d90b73c55b5cf07a3ea36e8a4bce9ec",
+          "traffic": {
+            "protocol": "http",
+            "rates": {
+              "http": "1.00",
+              "httpPercentReq": "50.0"
+            },
+            "responses": {
+              "200": {
+                "flags": {
+                  "-": "100.0"
+                },
+                "hosts": {
+                  "app-14": "100.0"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "740363f2af7132c418740c176addada7",
+          "source": "91a56900b92f2c7a9f3d327b9794a7ba",
+          "target": "7ae3e03d22fdfcc6d4b3c13adbfe28fa",
+          "traffic": {
+            "protocol": "http",
+            "rates": {
+              "http": "1.00",
+              "httpPercentReq": "50.0"
+            },
+            "responses": {
+              "200": {
+                "flags": {
+                  "-": "100.0"
+                },
+                "hosts": {
+                  "app-14": "100.0"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "ac8ddf6a52687600d4e24fb53d043e70",
+          "source": "a117be62518b85fc13636ca07c407dae",
+          "target": "a50566906624a82b0d3f3e9162b5884b",
+          "traffic": {
+            "protocol": "http",
+            "rates": {
+              "http": "1.00",
+              "httpPercentReq": "50.0"
+            },
+            "responses": {
+              "200": {
+                "flags": {
+                  "-": "100.0"
+                },
+                "hosts": {
+                  "app-15": "100.0"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "91c54ebc850412682f3db5bca3229b5f",
+          "source": "c54b42f03df7e3b32df074d76dc0b9d9",
+          "target": "680fc23f9386b1aba9e6dad85d91c7b0",
+          "traffic": {
+            "protocol": "http",
+            "rates": {
+              "http": "1.00",
+              "httpPercentReq": "50.0"
+            },
+            "responses": {
+              "200": {
+                "flags": {
+                  "-": "100.0"
+                },
+                "hosts": {
+                  "app-16": "100.0"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "cecc0fecdbf222750e4dc8abf001a160",
+          "source": "c54b42f03df7e3b32df074d76dc0b9d9",
+          "target": "94162b7bac12eafa9676fe5d1f337b3f",
+          "traffic": {
+            "protocol": "http",
+            "rates": {
+              "http": "1.00",
+              "httpPercentReq": "50.0"
+            },
+            "responses": {
+              "200": {
+                "flags": {
+                  "-": "100.0"
+                },
+                "hosts": {
+                  "app-16": "100.0"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "a3de4aab6d0d878ac0ceadd676cc3547",
+          "source": "c54b42f03df7e3b32df074d76dc0b9d9",
+          "target": "fa50346cfc11bc80f93a1d132f058bfa",
+          "traffic": {
+            "protocol": "http",
+            "rates": {
+              "http": "1.00",
+              "httpPercentReq": "50.0"
+            },
+            "responses": {
+              "200": {
+                "flags": {
+                  "-": "100.0"
+                },
+                "hosts": {
+                  "app-16": "100.0"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "3c4eb91943516403f0f97f1c62ad1ac9",
+          "source": "633522977fc1fc85264f3f39e56304b0",
+          "target": "7d90501de6264ed6e57aa1a9718a96be",
+          "traffic": {
+            "protocol": "http",
+            "rates": {
+              "http": "1.00",
+              "httpPercentReq": "50.0"
+            },
+            "responses": {
+              "200": {
+                "flags": {
+                  "-": "100.0"
+                },
+                "hosts": {
+                  "app-17": "100.0"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "c9f98e3499104ed337ae647aa19f15e5",
+          "source": "633522977fc1fc85264f3f39e56304b0",
+          "target": "f79fcee1744f30e510230457918909a3",
+          "traffic": {
+            "protocol": "http",
+            "rates": {
+              "http": "1.00",
+              "httpPercentReq": "50.0"
+            },
+            "responses": {
+              "200": {
+                "flags": {
+                  "-": "100.0"
+                },
+                "hosts": {
+                  "app-17": "100.0"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "08ad2427f8622d2ee48670898c80f2da",
+          "source": "633522977fc1fc85264f3f39e56304b0",
+          "target": "41cc56bfa908b9ef98fe36fb875d42ab",
+          "traffic": {
+            "protocol": "http",
+            "rates": {
+              "http": "1.00",
+              "httpPercentReq": "50.0"
+            },
+            "responses": {
+              "200": {
+                "flags": {
+                  "-": "100.0"
+                },
+                "hosts": {
+                  "app-17": "100.0"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "907fa8a1d4038f1e458bad9661e77b15",
+          "source": "99afd85dee9333ffbb3a271cbf93df84",
+          "target": "ed26b7ce789b7a5113030985ec102c0d",
+          "traffic": {
+            "protocol": "http",
+            "rates": {
+              "http": "1.00",
+              "httpPercentReq": "50.0"
+            },
+            "responses": {
+              "200": {
+                "flags": {
+                  "-": "100.0"
+                },
+                "hosts": {
+                  "app-18": "100.0"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "6a214dcb8778ce575c2f4ef8dec399ae",
+          "source": "f77fd322e102f5cfed79ca799f3a6f36",
+          "target": "dc64ce55c8f3ee287f01da823d30c3bf",
+          "traffic": {
+            "protocol": "http",
+            "rates": {
+              "http": "1.00",
+              "httpPercentReq": "50.0"
+            },
+            "responses": {
+              "200": {
+                "flags": {
+                  "-": "100.0"
+                },
+                "hosts": {
+                  "app-19": "100.0"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "869cb586395b04f221c1260d0a575059",
+          "source": "2c3a067059119edfa0791288b05d5da0",
+          "target": "300e6afc8325245af328aa843c719925",
+          "traffic": {
+            "protocol": "http",
+            "rates": {
+              "http": "1.00",
+              "httpPercentReq": "50.0"
+            },
+            "responses": {
+              "200": {
+                "flags": {
+                  "-": "100.0"
+                },
+                "hosts": {
+                  "app-20": "100.0"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "1835ef303f315d1ad92a7c74ba312092",
+          "source": "67ab89fea7d20578d89806206b520e1a",
+          "target": "9fb995a028f02c87c649482c86eb5b61",
+          "traffic": {
+            "protocol": "http",
+            "rates": {
+              "http": "1.00",
+              "httpPercentReq": "50.0"
+            },
+            "responses": {
+              "200": {
+                "flags": {
+                  "-": "100.0"
+                },
+                "hosts": {
+                  "app-21": "100.0"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "917b337d19fae97f7c16857a538e0ef5",
+          "source": "c736206b4b2f979018820a660650fc53",
+          "target": "0005155f8510b88bffe60fa181edabff",
+          "traffic": {
+            "protocol": "http",
+            "rates": {
+              "http": "1.00",
+              "httpPercentReq": "50.0"
+            },
+            "responses": {
+              "200": {
+                "flags": {
+                  "-": "100.0"
+                },
+                "hosts": {
+                  "app-22": "100.0"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "3e1e54f88967d465b92903def8870bd0",
+          "source": "c736206b4b2f979018820a660650fc53",
+          "target": "7f9a413028407a91bf795176b13e9f1e",
+          "traffic": {
+            "protocol": "http",
+            "rates": {
+              "http": "1.00",
+              "httpPercentReq": "50.0"
+            },
+            "responses": {
+              "200": {
+                "flags": {
+                  "-": "100.0"
+                },
+                "hosts": {
+                  "app-22": "100.0"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "1bdfb87e3f03e83f39d4e4daf1f5fe12",
+          "source": "c736206b4b2f979018820a660650fc53",
+          "target": "2afb242170e89c62d5d340d7e406ab09",
+          "traffic": {
+            "protocol": "http",
+            "rates": {
+              "http": "1.00",
+              "httpPercentReq": "50.0"
+            },
+            "responses": {
+              "200": {
+                "flags": {
+                  "-": "100.0"
+                },
+                "hosts": {
+                  "app-22": "100.0"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "debc8ddfff3ea49c5071cf496e85ecfd",
+          "source": "856d391864a03c8b55c29f73dac69a29",
+          "target": "436af64a73cd2db03112c63bd737371e",
+          "traffic": {
+            "protocol": "http",
+            "rates": {
+              "http": "1.00",
+              "httpPercentReq": "50.0"
+            },
+            "responses": {
+              "200": {
+                "flags": {
+                  "-": "100.0"
+                },
+                "hosts": {
+                  "app-23": "100.0"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "86dfb2a6168ae3df947acd968aaa828f",
+          "source": "856d391864a03c8b55c29f73dac69a29",
+          "target": "1c9faaeaf0f6efa4a70421903bc4820e",
+          "traffic": {
+            "protocol": "http",
+            "rates": {
+              "http": "1.00",
+              "httpPercentReq": "50.0"
+            },
+            "responses": {
+              "200": {
+                "flags": {
+                  "-": "100.0"
+                },
+                "hosts": {
+                  "app-23": "100.0"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "af90f74ea0b92994b15246ec67ad014f",
+          "source": "856d391864a03c8b55c29f73dac69a29",
+          "target": "dcf59642288d860965efc48fc18b17ac",
+          "traffic": {
+            "protocol": "http",
+            "rates": {
+              "http": "1.00",
+              "httpPercentReq": "50.0"
+            },
+            "responses": {
+              "200": {
+                "flags": {
+                  "-": "100.0"
+                },
+                "hosts": {
+                  "app-23": "100.0"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "15f9c21d598d48df347b785f45f556a1",
+          "source": "7c62aad0e82d0e1c5aab8ebf6885a50e",
+          "target": "ba15b0f8919b87f40aae84400a476470",
+          "traffic": {
+            "protocol": "http",
+            "rates": {
+              "http": "1.00",
+              "httpPercentReq": "50.0"
+            },
+            "responses": {
+              "200": {
+                "flags": {
+                  "-": "100.0"
+                },
+                "hosts": {
+                  "app-24": "100.0"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "cb3cf68a05911d3c7decc986c99b1ed3",
+          "source": "7c62aad0e82d0e1c5aab8ebf6885a50e",
+          "target": "a3417a4528c9e590a820bd55dcb36989",
+          "traffic": {
+            "protocol": "http",
+            "rates": {
+              "http": "1.00",
+              "httpPercentReq": "50.0"
+            },
+            "responses": {
+              "200": {
+                "flags": {
+                  "-": "100.0"
+                },
+                "hosts": {
+                  "app-24": "100.0"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "3d67477d2daadaf038ff7474aac366dc",
+          "source": "7c62aad0e82d0e1c5aab8ebf6885a50e",
+          "target": "1e7f59dd16de7b2f7fd5875ac8539236",
+          "traffic": {
+            "protocol": "http",
+            "rates": {
+              "http": "1.00",
+              "httpPercentReq": "50.0"
+            },
+            "responses": {
+              "200": {
+                "flags": {
+                  "-": "100.0"
+                },
+                "hosts": {
+                  "app-24": "100.0"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "04a03a701a58757a4e088470984fdb25",
+          "source": "681e7611827cde7b68527d8e3a205ad2",
+          "target": "187bb51d49dba05d89d7e5c834a4249e",
+          "traffic": {
+            "protocol": "http",
+            "rates": {
+              "http": "1.00",
+              "httpPercentReq": "50.0"
+            },
+            "responses": {
+              "200": {
+                "flags": {
+                  "-": "100.0"
+                },
+                "hosts": {
+                  "app-25": "100.0"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "1df8f92088d080b1ab29f2bb80471034",
+          "source": "681e7611827cde7b68527d8e3a205ad2",
+          "target": "9cb7735a5dc8e32f85ab884f2eba4ef4",
+          "traffic": {
+            "protocol": "http",
+            "rates": {
+              "http": "1.00",
+              "httpPercentReq": "50.0"
+            },
+            "responses": {
+              "200": {
+                "flags": {
+                  "-": "100.0"
+                },
+                "hosts": {
+                  "app-25": "100.0"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "a3363c27331d4f826527013883aa5b00",
+          "source": "681e7611827cde7b68527d8e3a205ad2",
+          "target": "01cd0c9180e1f8599d706b3ad3473819",
+          "traffic": {
+            "protocol": "http",
+            "rates": {
+              "http": "1.00",
+              "httpPercentReq": "50.0"
+            },
+            "responses": {
+              "200": {
+                "flags": {
+                  "-": "100.0"
+                },
+                "hosts": {
+                  "app-25": "100.0"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "911cf696f5a89a843e53a32840704d84",
+          "source": "c28135449227e912849c36e32fcc4e73",
+          "target": "e95b342a89a791e3fef533e86782e074",
+          "traffic": {
+            "protocol": "http",
+            "rates": {
+              "http": "1.00",
+              "httpPercentReq": "100.0"
+            },
+            "responses": {
+              "200": {
+                "flags": {
+                  "-": "100.0"
+                },
+                "hosts": {
+                  "app-1": "100.0"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "8dead5bbe8c011499423d01358497f0a",
+          "source": "c28135449227e912849c36e32fcc4e73",
+          "target": "82097f2378c6cdc9c5c9a9964327d7e0",
+          "traffic": {
+            "protocol": "http",
+            "rates": {
+              "http": "1.00",
+              "httpPercentReq": "100.0"
+            },
+            "responses": {
+              "200": {
+                "flags": {
+                  "-": "100.0"
+                },
+                "hosts": {
+                  "app-2": "100.0"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "27942a1b0d82c2c94780f1ff6c8c6e57",
+          "source": "c28135449227e912849c36e32fcc4e73",
+          "target": "91e9749b05c15484b24bba40adcb6035",
+          "traffic": {
+            "protocol": "http",
+            "rates": {
+              "http": "1.00",
+              "httpPercentReq": "100.0"
+            },
+            "responses": {
+              "200": {
+                "flags": {
+                  "-": "100.0"
+                },
+                "hosts": {
+                  "app-3": "100.0"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "696f32e177940f511a150a1a12ac14be",
+          "source": "c28135449227e912849c36e32fcc4e73",
+          "target": "a3348a6e42feddb1145bd9fc1f743826",
+          "traffic": {
+            "protocol": "http",
+            "rates": {
+              "http": "1.00",
+              "httpPercentReq": "100.0"
+            },
+            "responses": {
+              "200": {
+                "flags": {
+                  "-": "100.0"
+                },
+                "hosts": {
+                  "app-4": "100.0"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "2a5bac25b0e85706817019964f43a096",
+          "source": "c28135449227e912849c36e32fcc4e73",
+          "target": "627076703436f9cdc5c7df014227d99f",
+          "traffic": {
+            "protocol": "http",
+            "rates": {
+              "http": "1.00",
+              "httpPercentReq": "100.0"
+            },
+            "responses": {
+              "200": {
+                "flags": {
+                  "-": "100.0"
+                },
+                "hosts": {
+                  "app-5": "100.0"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "44d82b7b911e10cbc6e77832b2590bbd",
+          "source": "c28135449227e912849c36e32fcc4e73",
+          "target": "c6c75202ef25285bd019b43a1bffc50e",
+          "traffic": {
+            "protocol": "http",
+            "rates": {
+              "http": "1.00",
+              "httpPercentReq": "100.0"
+            },
+            "responses": {
+              "200": {
+                "flags": {
+                  "-": "100.0"
+                },
+                "hosts": {
+                  "app-6": "100.0"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "c5814c0abceb0fe2b8b647f801692706",
+          "source": "c28135449227e912849c36e32fcc4e73",
+          "target": "f5e9b55086fdcdbd8921dd619120fb35",
+          "traffic": {
+            "protocol": "http",
+            "rates": {
+              "http": "1.00",
+              "httpPercentReq": "100.0"
+            },
+            "responses": {
+              "200": {
+                "flags": {
+                  "-": "100.0"
+                },
+                "hosts": {
+                  "app-7": "100.0"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "75c57194840a2eee9677cd7d35428261",
+          "source": "c28135449227e912849c36e32fcc4e73",
+          "target": "3d1361c1c2cd1a3d565bd2a7d542df1b",
+          "traffic": {
+            "protocol": "http",
+            "rates": {
+              "http": "1.00",
+              "httpPercentReq": "100.0"
+            },
+            "responses": {
+              "200": {
+                "flags": {
+                  "-": "100.0"
+                },
+                "hosts": {
+                  "app-8": "100.0"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "9a3eac68239188c1dbc3a7b4babe7b90",
+          "source": "c28135449227e912849c36e32fcc4e73",
+          "target": "dda457b37b44ac82c705650137113d83",
+          "traffic": {
+            "protocol": "http",
+            "rates": {
+              "http": "1.00",
+              "httpPercentReq": "100.0"
+            },
+            "responses": {
+              "200": {
+                "flags": {
+                  "-": "100.0"
+                },
+                "hosts": {
+                  "app-9": "100.0"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "ef0e8b1a73b398cd5aa157cb43cad753",
+          "source": "c28135449227e912849c36e32fcc4e73",
+          "target": "ce9b38001ac90290cf4795670e848569",
+          "traffic": {
+            "protocol": "http",
+            "rates": {
+              "http": "1.00",
+              "httpPercentReq": "100.0"
+            },
+            "responses": {
+              "200": {
+                "flags": {
+                  "-": "100.0"
+                },
+                "hosts": {
+                  "app-10": "100.0"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "7875c04c47dd27181d26d908f9968caf",
+          "source": "c28135449227e912849c36e32fcc4e73",
+          "target": "810dacf873472d730ba160e953c33595",
+          "traffic": {
+            "protocol": "http",
+            "rates": {
+              "http": "1.00",
+              "httpPercentReq": "100.0"
+            },
+            "responses": {
+              "200": {
+                "flags": {
+                  "-": "100.0"
+                },
+                "hosts": {
+                  "app-11": "100.0"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "data": {
+          "id": "b0012e791cb04f0877229632838c4879",
+          "source": "c28135449227e912849c36e32fcc4e73",
+          "target": "720c1136d8bed8b9a48bfebd840bb27d",
+          "traffic": {
+            "protocol": "http",
+            "rates": {
+              "http": "1.00",
+              "httpPercentReq": "100.0"
+            },
+            "responses": {
+              "200": {
+                "flags": {
+                  "-": "100.0"
+                },
+                "hosts": {
+                  "app-12": "100.0"
+                }
+              }
+            }
+          }
+        }
+      }
+    ]
+  }
+}
