@@ -40,6 +40,7 @@ import TrafficRenderer from './TrafficAnimation/TrafficRenderer';
 import { serverConfig } from 'config';
 import { decoratedNodeData } from './CytoscapeGraphUtils';
 import { scoreNodes, ScoringCriteria } from './GraphScore';
+import { assignEdgeHealth } from 'types/ErrorRate/GraphEdgeStatus';
 
 type CytoscapeGraphProps = {
   compressOnHide: boolean;
@@ -801,6 +802,9 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
     cy.json({ elements: elements });
 
     cy.endBatch();
+
+    // Compute edge healths one time for the graph
+    assignEdgeHealth(cy);
 
     // Run layout outside of the batch operation for it to take effect on the new nodes,
     // Layouts can run async so wait until it completes to finish the graph update.

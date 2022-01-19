@@ -19,7 +19,6 @@ import NodeImageKey from '../../../assets/img/node-background-key.png';
 import { CyNode, decoratedEdgeData, decoratedNodeData } from '../CytoscapeGraphUtils';
 import _ from 'lodash';
 import * as Cy from 'cytoscape';
-import { getEdgeHealth } from '../../../types/ErrorRate';
 import { PFBadges } from 'components/Pf/PfBadges';
 import { config } from 'config/Config';
 
@@ -489,7 +488,6 @@ export class GraphStyles {
 
     const getEdgeColor = (ele: Cy.EdgeSingular): string => {
       const edgeData = decoratedEdgeData(ele);
-      const cyGlobal = getCyGlobalData(ele);
 
       if (!edgeData.hasTraffic) {
         return EdgeColorDead;
@@ -497,18 +495,11 @@ export class GraphStyles {
       if (edgeData.protocol === 'tcp') {
         return EdgeColorTCPWithTraffic;
       }
-      if (edgeData.protocol === 'grpc' && !cyGlobal.trafficRates.includes(TrafficRate.GRPC_REQUEST)) {
-        return EdgeColor;
-      }
 
-      const sourceNodeData = decoratedNodeData(ele.source());
-      const destNodeData = decoratedNodeData(ele.target());
-      const statusEdge = getEdgeHealth(edgeData, sourceNodeData, destNodeData);
-
-      switch (statusEdge.status) {
-        case FAILURE:
+      switch (edgeData.healthStatus) {
+        case FAILURE.name:
           return EdgeColorFailure;
-        case DEGRADED:
+        case DEGRADED.name:
           return EdgeColorDegraded;
         default:
           return EdgeColor;
