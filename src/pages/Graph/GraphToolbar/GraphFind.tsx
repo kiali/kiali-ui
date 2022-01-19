@@ -472,10 +472,10 @@ export class GraphFind extends React.Component<GraphFindProps, GraphFindState> {
       // add the edges connected to hidden nodes
       hiddenElements = hiddenElements.add(hiddenElements.connectedEdges());
       // add nodes with only hidden edges (keep idle nodes as that is an explicit option)
-      const visibleElements = hiddenElements.absoluteComplement();
-      const nodesWithVisibleEdges = visibleElements.edges().connectedNodes();
-      const nodesWithOnlyHiddenEdges = visibleElements.nodes(`[^${CyNode.isIdle}]`).subtract(nodesWithVisibleEdges);
-      hiddenElements = hiddenElements.add(nodesWithOnlyHiddenEdges);
+      // const visibleElements = hiddenElements.absoluteComplement();
+      // const nodesWithVisibleEdges = visibleElements.edges().connectedNodes();
+      // const nodesWithOnlyHiddenEdges = visibleElements.nodes(`[^${CyNode.isIdle}]`).subtract(nodesWithVisibleEdges);
+      // hiddenElements = hiddenElements.add(nodesWithOnlyHiddenEdges);
       // subtract any appbox hits, we only hide empty appboxes
       hiddenElements = hiddenElements.subtract(hiddenElements.filter('$node[isBox]'));
 
