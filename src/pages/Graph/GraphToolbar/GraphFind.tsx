@@ -490,7 +490,10 @@ export class GraphFind extends React.Component<GraphFindProps, GraphFindState> {
 
     const hasRemovedElements: boolean = !!this.removedElements && this.removedElements.length > 0;
     if (hideChanged || (compressOnHideChanged && selector) || hasRemovedElements) {
-      CytoscapeGraphUtils.runLayout(cy, this.props.layout);
+      cy.emit('kiali-zoomignore', [true]);
+      CytoscapeGraphUtils.runLayout(cy, this.props.layout).then(() => {
+        cy.emit('kiali-zoomignore', [false]);
+      });
     }
   };
 

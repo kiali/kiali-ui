@@ -216,7 +216,7 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
       needsLayout = true;
     }
 
-    this.zoomIgnore = true;
+    cy.emit('kiali-zoomignore', [true]);
     this.processGraphUpdate(cy, needsLayout).then(_response => {
       // pre-select node if provided
       const node = this.props.graphData.fetchParams.node;
@@ -569,6 +569,20 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
       }
     });
 
+    // 'kiali-zoomignore' is a custom event that we emit before and after a graph manipulation
+    // that can generate unwanted 'intermediate' values (like a CytsoscapeGraphUtils.runLayout()).
+    // note - this event does not currently support nesting (i.e. expects true followed by false)
+    cy.on('kiali-zoomignore', (evt: Cy.EventObject, zoomIgnore: boolean) => {
+      const cytoscapeEvent = getCytoscapeBaseEvent(evt);
+      if (cytoscapeEvent) {
+        // When ending the zoomIgnore update to the current zoom level to prepare for the next 'zoom' event
+        if (!zoomIgnore) {
+          this.zoom = cy.zoom();
+        }
+        this.zoomIgnore = zoomIgnore;
+      }
+    });
+
     // Crossing a zoom threshold can affect labeling, and so we need an update to re-render the labels.
     // Some cy 'zoom' events need to be ignored, typically while a layout or drag-zoom 'box' event is
     // in progress, as cy can generate unwanted 'intermediate' values.  So we set zoomIgnore=true, it will
@@ -834,9 +848,8 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
       this.trafficRenderer!.start(cy.edges());
     }
 
-    // When the update is complete, set the resulting zoom level and re-enable zoom changes.
-    this.zoom = cy.zoom();
-    this.zoomIgnore = false;
+    // When the update is complete, re-enable zoom changes.
+    cy.emit('kiali-zoomignore', [false]);
 
     // notify that the graph has been updated
     if (this.props.setUpdateTime) {

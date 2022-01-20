@@ -95,6 +95,8 @@ export const safeFit = (cy: Cy.Core, centerElements?: Cy.Collection) => {
   cy.emit('kiali-fit');
 };
 
+// Note that this call is typically prefixed with cy.emit('kiali-zoomignore', [true]), and
+// when the promise resolves then call cy.emit('kiali-zoomignore', [false])
 export const runLayout = (cy: Cy.Core, layout: Layout): Promise<any> => {
   // Using an extension
   (cy as any).nodeHtmlLabel().updateNodeLabel(cy.nodes());
