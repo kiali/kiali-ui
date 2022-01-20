@@ -32,6 +32,12 @@ export interface SummaryPanelPropType {
   trafficRates: TrafficRate[];
 }
 
+export enum EdgeMode {
+  ALL = 'all',
+  NONE = 'none',
+  UNHEALTHY = 'unhealthy'
+}
+
 export enum EdgeLabelMode {
   RESPONSE_TIME_GROUP = 'responseTime',
   RESPONSE_TIME_AVERAGE = 'avg',

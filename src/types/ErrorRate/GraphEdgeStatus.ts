@@ -49,7 +49,7 @@ export const assignEdgeHealth = (cy: any) => {
         edgeData.healthStatus = DEGRADED.name;
         return;
       default:
-        edgeData.healthStatus = HEALTHY.name;
+        // unset implies healthy or n/a
         return;
     }
   });

@@ -12,6 +12,7 @@ import {
   CytoscapeGlobalScratchData,
   CytoscapeGlobalScratchNamespace,
   EdgeLabelMode,
+  EdgeMode,
   Layout,
   NodeParamsType,
   NodeType,
@@ -48,6 +49,7 @@ type CytoscapeGraphProps = {
   contextMenuEdgeComponent?: EdgeContextMenuComponentType;
   contextMenuNodeComponent?: NodeContextMenuComponentType;
   edgeLabels: EdgeLabelMode[];
+  edgeMode: EdgeMode;
   focusSelector?: string;
   graphData: GraphData;
   isMiniGraph: boolean;
@@ -171,6 +173,7 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
     // completes (showIdleNodes, showSecurity, showServiceNodes, etc).
     let result =
       this.props.edgeLabels !== nextProps.edgeLabels ||
+      // this.props.edgeMode !== nextProps.edgeMode ||
       this.props.graphData.isLoading !== nextProps.graphData.isLoading ||
       this.props.graphData.elements !== nextProps.graphData.elements ||
       this.props.layout !== nextProps.layout ||

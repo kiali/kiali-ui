@@ -4,13 +4,13 @@ import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { bindActionCreators } from 'redux';
 import { KialiAppState } from '../../../store/Store';
-import { findValueSelector, hideValueSelector, edgeLabelsSelector } from '../../../store/Selectors';
+import { findValueSelector, hideValueSelector, edgeLabelsSelector, edgeModeSelector } from '../../../store/Selectors';
 import { GraphToolbarActions } from '../../../actions/GraphToolbarActions';
 import { KialiAppAction } from '../../../actions/KialiAppAction';
 import GraphHelpFind from '../../../pages/Graph/GraphHelpFind';
 import { CyNode, CyEdge } from '../../../components/CytoscapeGraph/CytoscapeGraphUtils';
 import * as CytoscapeGraphUtils from '../../../components/CytoscapeGraph/CytoscapeGraphUtils';
-import { EdgeLabelMode, NodeType, Layout } from '../../../types/Graph';
+import { EdgeLabelMode, NodeType, Layout, EdgeMode } from '../../../types/Graph';
 import * as AlertUtils from '../../../utils/AlertUtils';
 import { KialiIcon, defaultIconStyle } from 'config/KialiIcon';
 import { style } from 'typestyle';
@@ -25,6 +25,7 @@ import history, { HistoryManager, URLParam } from '../../../app/History';
 type ReduxProps = {
   compressOnHide: boolean;
   edgeLabels: EdgeLabelMode[];
+  edgeMode: EdgeMode;
   findValue: string;
   hideValue: string;
   layout: Layout;
@@ -173,6 +174,7 @@ export class GraphFind extends React.Component<GraphFindProps, GraphFindState> {
   // wait for the graph change to do the update.
   shouldComponentUpdate(nextProps: GraphFindProps, nextState: GraphFindState) {
     const cyChanged = this.props.cy !== nextProps.cy;
+    const edgeModeChanged = this.props.edgeMode !== nextProps.edgeMode;
     const findChanged = this.props.findValue !== nextProps.findValue;
     const hideChanged = this.props.hideValue !== nextProps.hideValue;
     const graphChanged = this.props.updateTime !== nextProps.updateTime;
@@ -182,12 +184,17 @@ export class GraphFind extends React.Component<GraphFindProps, GraphFindState> {
 
     const shouldUpdate =
       cyChanged ||
+      edgeModeChanged ||
       findChanged ||
       hideChanged ||
       graphChanged ||
       showFindHelpChanged ||
       findErrorChanged ||
       hideErrorChanged;
+
+    if (shouldUpdate) {
+      console.log(`Find should update, edgeModeChange=${edgeModeChanged}`);
+    }
 
     return shouldUpdate;
   }
@@ -202,6 +209,7 @@ export class GraphFind extends React.Component<GraphFindProps, GraphFindState> {
       return;
     }
 
+    const edgeModeChanged = this.props.edgeMode !== prevProps.edgeMode;
     const findChanged = this.props.findValue !== prevProps.findValue;
     const hideChanged = this.props.hideValue !== prevProps.hideValue;
     const graphChanged = this.props.updateTime !== prevProps.updateTime;
@@ -233,14 +241,21 @@ export class GraphFind extends React.Component<GraphFindProps, GraphFindState> {
       this.handleFind(this.props.cy);
     }
 
-    if (hideChanged || (graphChanged && !!this.props.hideValue)) {
+    if (hideChanged || (graphChanged && !!this.props.hideValue) || edgeModeChanged) {
       // ensure hideInputValue is aligned if hideValue is set externally (e.g. resetSettings)
       if (this.state.hideInputValue !== this.props.hideValue) {
         this.setHide(this.props.hideValue);
       }
 
       const compressOnHideChanged = this.props.compressOnHide !== prevProps.compressOnHide;
-      this.handleHide(this.props.cy, hideChanged, graphChanged, graphElementsChanged, compressOnHideChanged);
+      this.handleHide(
+        this.props.cy,
+        hideChanged,
+        graphChanged,
+        graphElementsChanged,
+        edgeModeChanged,
+        compressOnHideChanged
+      );
     }
   }
 
@@ -447,9 +462,12 @@ export class GraphFind extends React.Component<GraphFindProps, GraphFindState> {
     hideChanged: boolean,
     graphChanged: boolean,
     graphElementsChanged: boolean,
+    edgeModeChanged: boolean,
     compressOnHideChanged: boolean
   ) => {
     const selector = this.parseValue(this.props.hideValue, false);
+    const checkRemovals = selector || (edgeModeChanged && this.props.edgeMode !== EdgeMode.ALL);
+
     console.debug(`Hide selector=[${selector}]`);
 
     cy.startBatch();
@@ -460,30 +478,51 @@ export class GraphFind extends React.Component<GraphFindProps, GraphFindState> {
     }
     this.hiddenElements = undefined;
 
-    // restore removed elements when we are working with the same graph. Either way,release for garbage collection.  If the graph has changed
+    // restore removed elements when we are working with the same graph. Either way,release for garbage collection.
     if (!!this.removedElements && !graphChanged) {
       this.removedElements.restore();
     }
     this.removedElements = undefined;
 
-    if (selector) {
-      // select the new hide-hits
-      let hiddenElements = cy.$(selector);
-      // add the edges connected to hidden nodes
-      hiddenElements = hiddenElements.add(hiddenElements.connectedEdges());
-      // add nodes with only hidden edges (keep idle nodes as that is an explicit option)
-      // const visibleElements = hiddenElements.absoluteComplement();
-      // const nodesWithVisibleEdges = visibleElements.edges().connectedNodes();
-      // const nodesWithOnlyHiddenEdges = visibleElements.nodes(`[^${CyNode.isIdle}]`).subtract(nodesWithVisibleEdges);
-      // hiddenElements = hiddenElements.add(nodesWithOnlyHiddenEdges);
-      // subtract any appbox hits, we only hide empty appboxes
-      hiddenElements = hiddenElements.subtract(hiddenElements.filter('$node[isBox]'));
+    // select the new hide-hits
+    if (checkRemovals) {
+      let hiddenElements = cy.collection();
+
+      if (selector) {
+        hiddenElements = cy.$(selector);
+        // add the edges connected to hidden nodes
+        hiddenElements = hiddenElements.add(hiddenElements.connectedEdges());
+        // add nodes with only hidden edges (keep idle nodes as that is an explicit option)
+        const visibleElements = hiddenElements.absoluteComplement();
+        const nodesWithVisibleEdges = visibleElements.edges().connectedNodes();
+        const nodesWithOnlyHiddenEdges = visibleElements.nodes(`[^${CyNode.isIdle}]`).subtract(nodesWithVisibleEdges);
+        hiddenElements = hiddenElements.add(nodesWithOnlyHiddenEdges);
+        // subtract any appbox hits, we only hide empty appboxes
+        hiddenElements = hiddenElements.subtract(hiddenElements.filter('$node[isBox]'));
+      }
+      console.log(`Hiding ${hiddenElements.size()} selected elements`);
+
+      if (this.props.edgeMode !== EdgeMode.ALL) {
+        // remove other unwanted edges, don't touch the remaining nodes
+        const visibleElements = hiddenElements.absoluteComplement();
+        switch (this.props.edgeMode) {
+          case EdgeMode.NONE:
+            hiddenElements = hiddenElements.add(visibleElements.edges());
+            break;
+          case EdgeMode.UNHEALTHY:
+            hiddenElements = hiddenElements.add(visibleElements.edges(`[^${CyEdge.healthStatus}]`));
+            break;
+        }
+      }
+      console.log(`Hiding ${hiddenElements.size()} total elements`);
 
       if (this.props.compressOnHide) {
         this.removedElements = cy.remove(hiddenElements);
+        console.log(`Removed ${this.removedElements.size()} total elements`);
         // now subtract any appboxes that don't have any visible children
         const hiddenAppBoxes = cy.$('$node[isBox]').subtract(cy.$('$node[isBox] > :inside'));
         this.removedElements = this.removedElements.add(cy.remove(hiddenAppBoxes));
+        console.log(`Appended Removed ${this.removedElements.size()} total elements`);
       } else {
         // set the remaining hide-hits hidden
         this.hiddenElements = hiddenElements;
@@ -498,7 +537,7 @@ export class GraphFind extends React.Component<GraphFindProps, GraphFindState> {
     cy.endBatch();
 
     const hasRemovedElements: boolean = !!this.removedElements && this.removedElements.length > 0;
-    if (hideChanged || (compressOnHideChanged && selector) || (hasRemovedElements && graphElementsChanged)) {
+    if (hideChanged || (compressOnHideChanged && checkRemovals) || (hasRemovedElements && graphElementsChanged)) {
       cy.emit('kiali-zoomignore', [true]);
       CytoscapeGraphUtils.runLayout(cy, this.props.layout).then(() => {
         // do nothing, defer to CytoscapeGraph.tsx 'onlayout' event handler
@@ -968,6 +1007,7 @@ export class GraphFind extends React.Component<GraphFindProps, GraphFindState> {
 const mapStateToProps = (state: KialiAppState) => ({
   compressOnHide: state.graph.toolbarState.compressOnHide,
   edgeLabels: edgeLabelsSelector(state),
+  edgeMode: edgeModeSelector(state),
   findValue: findValueSelector(state),
   hideValue: hideValueSelector(state),
   layout: state.graph.layout,
