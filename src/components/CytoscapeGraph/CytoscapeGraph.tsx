@@ -204,20 +204,21 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
     }
 
     // Check to see if we should run a layout when we process the graphUpdate
-    let needsLayout = false;
+    let runLayout = false;
+    const newLayout = this.props.layout.name !== prevProps.layout.name;
     if (
       this.needsInitialLayout ||
+      newLayout ||
       this.nodeNeedsRelayout() ||
       this.namespaceNeedsRelayout(prevProps.graphData.elements, this.props.graphData.elements) ||
-      this.elementsNeedRelayout(prevProps.graphData.elements, this.props.graphData.elements) ||
-      this.props.layout.name !== prevProps.layout.name
+      this.elementsNeedRelayout(prevProps.graphData.elements, this.props.graphData.elements)
     ) {
       this.needsInitialLayout = false;
-      needsLayout = true;
+      runLayout = true;
     }
 
     cy.emit('kiali-zoomignore', [true]);
-    this.processGraphUpdate(cy, needsLayout).then(_response => {
+    this.processGraphUpdate(cy, runLayout, newLayout).then(_response => {
       // pre-select node if provided
       const node = this.props.graphData.fetchParams.node;
       if (node && cy && cy.$(':selected').length === 0) {
@@ -624,9 +625,9 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
         node.setAttribute('data-node-id', target.id());
       }
 
-      // Skip parent nodes from bounding expansion calculation, their size is defined by their contents, so no point in
+      // Skip root nodes from bounding expansion calculation, their size is defined by their contents, so no point in
       // messing with these values.
-      if (target.isParent()) {
+      if (target.isParent() && !target.isChild()) {
         return;
       }
 
@@ -642,7 +643,7 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
       //   If its center was aligned with the center of the node, we would do a similar operation as with the width.
       // - Spread the required width as extra space in the left area and space in the right area of the cy node
       //   (half in each side)
-      // - Required height is only needed at the bottom, so we now that we always have to grow at the bottom by this value.
+      // - Required height is only needed at the bottom, so we know that we always have to grow at the bottom by this value.
 
       let oldBE = target.numericStyle('bounds-expansion');
       if (oldBE.length === 1) {
@@ -678,21 +679,11 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
       // Only trigger an update if it really changed, else just skip to avoid this function to call again
       if (!compareBoundsExpansion(oldBE, newBE)) {
         target.style('bounds-expansion', newBE);
-        // bounds-expansion changed. Make sure we tell our parent (if any) to update as well (so he can update the label position).
-        if (target.isChild()) {
-          // The timeout ensures that the previous value is already applied
-          setTimeout(() => {
-            if (!target.cy().destroyed()) {
-              (target.cy() as any) // because we are using an extension
-                .nodeHtmlLabel()
-                .updateNodeLabel(target.parent());
-            }
-          }, 0);
-        }
       }
     });
 
     cy.on('layoutstop', (_evt: Cy.EventObject) => {
+      console.log('layoutStop');
       // Don't allow a large zoom if the graph has a few nodes (nodes would look too big).
       this.safeFit(cy);
       this.fixLoopOverlap(cy);
@@ -760,7 +751,7 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
     CytoscapeGraphUtils.safeFit(cy);
   }
 
-  private processGraphUpdate(cy: Cy.Core, updateLayout: boolean): Promise<void> {
+  private processGraphUpdate(cy: Cy.Core, runLayout: boolean, newLayout: boolean): Promise<void> {
     this.trafficRenderer!.pause();
 
     const isTheGraphSelected = cy.$(':selected').length === 0;
@@ -768,12 +759,13 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
     const globalScratchData: CytoscapeGlobalScratchData = {
       activeNamespaces: this.props.graphData.fetchParams.namespaces,
       edgeLabels: this.props.edgeLabels,
-      homeCluster: serverConfig?.clusterInfo?.name || CLUSTER_DEFAULT,
+      forceLabels: false,
       graphType: this.props.graphData.fetchParams.graphType,
-      trafficRates: this.props.graphData.fetchParams.trafficRates,
+      homeCluster: serverConfig?.clusterInfo?.name || CLUSTER_DEFAULT,
       showMissingSidecars: this.props.showMissingSidecars,
       showSecurity: this.props.showSecurity,
-      showVirtualServices: this.props.showVirtualServices
+      showVirtualServices: this.props.showVirtualServices,
+      trafficRates: this.props.graphData.fetchParams.trafficRates
     };
     cy.scratch(CytoscapeGlobalScratchNamespace, globalScratchData);
 
@@ -796,13 +788,18 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
       }
     }
 
+    // don't preserve any user pan/zoom when completely changing the layout
+    if (newLayout) {
+      this.customViewport = false;
+    }
+
     cy.startBatch();
 
     // KIALI-1291 issue was caused because some layouts (can't tell if all) do reuse the existing positions.
     // We got some issues when changing from/to cola/cose, as the nodes started to get far away from each other.
-    // Previously we deleted the nodes prior to a layout update, this was too much and it seems that only reseting the
+    // Previously we deleted the nodes prior to a layout update, this was too much and it seems that only resetting the
     // positions to 0,0 makes the layout more predictable.
-    if (updateLayout) {
+    if (runLayout) {
       cy.nodes().positions({ x: 0, y: 0 });
     }
 
@@ -813,26 +810,34 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
 
     // Run layout outside of the batch operation for it to take effect on the new nodes,
     // Layouts can run async so wait until it completes to finish the graph update.
-    if (updateLayout) {
+    if (runLayout) {
       return new Promise((resolve, _reject) => {
         CytoscapeGraphUtils.runLayout(cy, this.props.layout).then(_response => {
-          this.finishGraphUpdate(cy, isTheGraphSelected);
+          console.log('endLayout');
+          this.finishGraphUpdate(cy, isTheGraphSelected, newLayout);
           resolve();
         });
       });
     } else {
-      this.finishGraphUpdate(cy, isTheGraphSelected);
+      this.finishGraphUpdate(cy, isTheGraphSelected, newLayout);
       return Promise.resolve();
     }
   }
 
-  private finishGraphUpdate(cy: Cy.Core, isTheGraphSelected: boolean) {
+  private finishGraphUpdate(cy: Cy.Core, isTheGraphSelected: boolean, newLayout: boolean) {
     // For reasons unknown, box label positions can be wrong after a graph update.
     // It seems limited to outer nested compound nodes and looks like a cy bug to me,
     // but maybe it has to do with either the html node-label extension, or our BoxLayout.
     // Anyway, refreshing them here seems to fix the positioning (for now, just refresh
     // box nodes, but we may find the need to do all nodes).
     (cy as any).nodeHtmlLabel().updateNodeLabel(cy.nodes(':parent'));
+    /*
+    let nodes = cy.nodes('[^isBox]:visible');
+    while (nodes.length > 0) {
+      (cy as any).nodeHtmlLabel().updateNodeLabel(nodes);
+      nodes = nodes.parents();
+    }
+    */
 
     // We opt-in for manual selection to be able to control when to select a node/edge
     // https://github.com/cytoscape/cytoscape.js/issues/1145#issuecomment-153083828
@@ -844,12 +849,16 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
       this.handleTap({ summaryType: 'graph', summaryTarget: cy });
     }
 
+    // When the update is complete, re-enable zoom changes.
+    cy.emit('kiali-zoomignore', [false]);
+
+    if (newLayout) {
+      // CytoscapeGraphUtils.safeFit(cy);
+    }
+
     if (this.props.showTrafficAnimation) {
       this.trafficRenderer!.start(cy.edges());
     }
-
-    // When the update is complete, re-enable zoom changes.
-    cy.emit('kiali-zoomignore', [false]);
 
     // notify that the graph has been updated
     if (this.props.setUpdateTime) {

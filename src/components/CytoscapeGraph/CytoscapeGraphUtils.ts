@@ -1,5 +1,11 @@
 import * as LayoutDictionary from './graphs/LayoutDictionary';
-import { DecoratedGraphEdgeData, DecoratedGraphNodeData, Layout } from '../../types/Graph';
+import {
+  CytoscapeGlobalScratchData,
+  CytoscapeGlobalScratchNamespace,
+  DecoratedGraphEdgeData,
+  DecoratedGraphNodeData,
+  Layout
+} from '../../types/Graph';
 import * as Cy from 'cytoscape';
 
 export const CyEdge = {
@@ -98,8 +104,20 @@ export const safeFit = (cy: Cy.Core, centerElements?: Cy.Collection) => {
 // Note that this call is typically prefixed with cy.emit('kiali-zoomignore', [true]), and
 // when the promise resolves then call cy.emit('kiali-zoomignore', [false])
 export const runLayout = (cy: Cy.Core, layout: Layout): Promise<any> => {
-  // Using an extension
-  (cy as any).nodeHtmlLabel().updateNodeLabel(cy.nodes());
+  // Using the extension, force labels prior to the layout, so that the layout can take the lebel space into consideration
+  // Do this from leaf-to-root
+  const scratch = cy.scratch(CytoscapeGlobalScratchNamespace);
+  if (scratch) {
+    cy.scratch(CytoscapeGlobalScratchNamespace, { ...scratch, forceLabels: true } as CytoscapeGlobalScratchData);
+  }
+  let nodes = cy.nodes('[^isBox]:visible');
+  while (nodes.length > 0) {
+    (cy as any).nodeHtmlLabel().updateNodeLabel(nodes);
+    nodes = nodes.parents();
+  }
+  if (scratch) {
+    cy.scratch(CytoscapeGlobalScratchNamespace, { ...scratch, forceLabels: false } as CytoscapeGlobalScratchData);
+  }
 
   const layoutOptions = LayoutDictionary.getLayout(layout);
   let promise: Promise<any>;
@@ -116,6 +134,7 @@ export const runLayout = (cy: Cy.Core, layout: Layout): Promise<any> => {
     cyLayout = cy.layout(layoutOptions);
   }
   promise = cyLayout.promiseOn('layoutstop');
+  console.log('runLayout');
   cyLayout.run();
   return promise;
 };

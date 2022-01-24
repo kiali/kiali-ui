@@ -492,6 +492,7 @@ export class GraphFind extends React.Component<GraphFindProps, GraphFindState> {
     if (hideChanged || (compressOnHideChanged && selector) || hasRemovedElements) {
       cy.emit('kiali-zoomignore', [true]);
       CytoscapeGraphUtils.runLayout(cy, this.props.layout).then(() => {
+        console.log('endLayout (hide)');
         cy.emit('kiali-zoomignore', [false]);
       });
     }
