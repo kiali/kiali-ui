@@ -191,14 +191,6 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
       this.props.trace !== nextProps.trace ||
       this.state.zoomThresholdTime !== nextState.zoomThresholdTime;
 
-    /* TODO: REMOVE
-    console.log(
-      `graph shouldUpdate=${result}, zoomTimeChanged=${
-        this.state.zoomThresholdTime !== nextState.zoomThresholdTime
-      }, elementsChanged=${this.props.graphData.elements !== nextProps.graphData.elements}`
-    );
-    */
-
     return result;
   }
 
@@ -693,8 +685,6 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
     // We use a 'layoutstop' even handler to perform common handling, as layouts can be initiated
     // outside of just this class (for example, graph hide).
     cy.on('layoutstop', (_evt: Cy.EventObject) => {
-      // console.log(`layoutstop: ${evt.layout.options.name}`);
-
       // Perform a safeFit (one that takes into consideration a custom viewport set by the user).  This will
       // ensure we limit to max-zoom, or fit to the viewport when appropriate.
       this.safeFit(cy);
@@ -769,7 +759,7 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
     if (!force && this.customViewport) {
       return;
     }
-    // console.log('fit');
+
     CytoscapeGraphUtils.safeFit(cy);
     this.focus(cy);
   }
@@ -836,7 +826,6 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
     if (runLayout) {
       return new Promise((resolve, _reject) => {
         CytoscapeGraphUtils.runLayout(cy, this.props.layout).then(_response => {
-          // console.log('endLayout');
           this.finishGraphUpdate(cy, isTheGraphSelected, runLayout);
           resolve();
         });

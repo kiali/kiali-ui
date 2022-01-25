@@ -188,7 +188,6 @@ export class GraphFind extends React.Component<GraphFindProps, GraphFindState> {
       findErrorChanged ||
       hideErrorChanged;
 
-    // TODO: Remove console.log(`graphHide shouldUpdate=${shouldUpdate}, graphChanged=${graphChanged}`);
     return shouldUpdate;
   }
 
@@ -494,8 +493,7 @@ export class GraphFind extends React.Component<GraphFindProps, GraphFindState> {
     if (hideChanged || (compressOnHideChanged && selector) || hasRemovedElements) {
       cy.emit('kiali-zoomignore', [true]);
       CytoscapeGraphUtils.runLayout(cy, this.props.layout).then(() => {
-        // console.log('endLayout (hide)');
-        //cy.emit('kiali-zoomignore', [false]);
+        // do nothing, defer to CytoscapeGraph.tsx 'onlayout' event handler
       });
     }
   };

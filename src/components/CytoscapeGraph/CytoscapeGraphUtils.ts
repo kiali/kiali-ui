@@ -123,7 +123,6 @@ export const runLayout = (cy: Cy.Core, layout: Layout): Promise<any> => {
     cyLayout = cy.layout(layoutOptions);
   }
   promise = cyLayout.promiseOn('layoutstop');
-  // console.log('runLayout');
   cyLayout.run();
   return promise;
 };
