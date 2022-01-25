@@ -191,6 +191,14 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
       this.props.trace !== nextProps.trace ||
       this.state.zoomThresholdTime !== nextState.zoomThresholdTime;
 
+    /* TODO: REMOVE
+    console.log(
+      `graph shouldUpdate=${result}, zoomTimeChanged=${
+        this.state.zoomThresholdTime !== nextState.zoomThresholdTime
+      }, elementsChanged=${this.props.graphData.elements !== nextProps.graphData.elements}`
+    );
+    */
+
     return result;
   }
 
@@ -682,11 +690,25 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
       }
     });
 
+    // We use a 'layoutstop' even handler to perform common handling, as layouts can be initiated
+    // outside of just this class (for example, graph hide).
     cy.on('layoutstop', (_evt: Cy.EventObject) => {
-      console.log('layoutStop');
-      // Don't allow a large zoom if the graph has a few nodes (nodes would look too big).
+      // console.log(`layoutstop: ${evt.layout.options.name}`);
+
+      // Perform a safeFit (one that takes into consideration a custom viewport set by the user).  This will
+      // ensure we limit to max-zoom, or fit to the viewport when appropriate.
       this.safeFit(cy);
+
+      // After a layout Cytoscape seems to occasionally use stale visibility and/or positioning for labels.
+      // It looks like a cy bug to me, but maybe it has to do with either the html node-label extension,
+      // or our BoxLayout.  Anyway, refreshing them here seems to fix the issue.
+      CytoscapeGraphUtils.refreshLabels(cy, false);
+
+      // Finally, massage any loop edges as best as possible
       this.fixLoopOverlap(cy);
+
+      // re-enable zoom handling after the 'fit' to avoid any chance of a zoom-threshold-cross loop
+      cy.emit('kiali-zoomignore', [false]);
     });
 
     cy.ready((evt: Cy.EventObject) => {
@@ -747,8 +769,9 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
     if (!force && this.customViewport) {
       return;
     }
-    this.focus(cy);
+    // console.log('fit');
     CytoscapeGraphUtils.safeFit(cy);
+    this.focus(cy);
   }
 
   private processGraphUpdate(cy: Cy.Core, runLayout: boolean, newLayout: boolean): Promise<void> {
@@ -813,32 +836,18 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
     if (runLayout) {
       return new Promise((resolve, _reject) => {
         CytoscapeGraphUtils.runLayout(cy, this.props.layout).then(_response => {
-          console.log('endLayout');
-          this.finishGraphUpdate(cy, isTheGraphSelected, newLayout);
+          // console.log('endLayout');
+          this.finishGraphUpdate(cy, isTheGraphSelected, runLayout);
           resolve();
         });
       });
     } else {
-      this.finishGraphUpdate(cy, isTheGraphSelected, newLayout);
+      this.finishGraphUpdate(cy, isTheGraphSelected, runLayout);
       return Promise.resolve();
     }
   }
 
-  private finishGraphUpdate(cy: Cy.Core, isTheGraphSelected: boolean, newLayout: boolean) {
-    // For reasons unknown, box label positions can be wrong after a graph update.
-    // It seems limited to outer nested compound nodes and looks like a cy bug to me,
-    // but maybe it has to do with either the html node-label extension, or our BoxLayout.
-    // Anyway, refreshing them here seems to fix the positioning (for now, just refresh
-    // box nodes, but we may find the need to do all nodes).
-    (cy as any).nodeHtmlLabel().updateNodeLabel(cy.nodes(':parent'));
-    /*
-    let nodes = cy.nodes('[^isBox]:visible');
-    while (nodes.length > 0) {
-      (cy as any).nodeHtmlLabel().updateNodeLabel(nodes);
-      nodes = nodes.parents();
-    }
-    */
-
+  private finishGraphUpdate(cy: Cy.Core, isTheGraphSelected: boolean, runLayout: boolean) {
     // We opt-in for manual selection to be able to control when to select a node/edge
     // https://github.com/cytoscape/cytoscape.js/issues/1145#issuecomment-153083828
     cy.nodes().unselectify();
@@ -849,11 +858,10 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
       this.handleTap({ summaryType: 'graph', summaryTarget: cy });
     }
 
-    // When the update is complete, re-enable zoom changes.
-    cy.emit('kiali-zoomignore', [false]);
-
-    if (newLayout) {
-      // CytoscapeGraphUtils.safeFit(cy);
+    // When the graphUpdate runs a layout then this logic is handled in the 'layoutstop' eventhandler, otherwise do it here
+    if (!runLayout) {
+      CytoscapeGraphUtils.refreshLabels(cy, false);
+      cy.emit('kiali-zoomignore', [false]);
     }
 
     if (this.props.showTrafficAnimation) {

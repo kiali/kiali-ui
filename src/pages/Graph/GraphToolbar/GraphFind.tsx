@@ -179,15 +179,17 @@ export class GraphFind extends React.Component<GraphFindProps, GraphFindState> {
     const findErrorChanged = this.state.findError !== nextState.findError;
     const hideErrorChanged = this.state.hideError !== nextState.hideError;
 
-    return (
+    const shouldUpdate =
       cyChanged ||
       findChanged ||
       hideChanged ||
       graphChanged ||
       showFindHelpChanged ||
       findErrorChanged ||
-      hideErrorChanged
-    );
+      hideErrorChanged;
+
+    // TODO: Remove console.log(`graphHide shouldUpdate=${shouldUpdate}, graphChanged=${graphChanged}`);
+    return shouldUpdate;
   }
 
   // Note that we may have redux hide/find values set at mount-time. But because the toolbar mounts prior to
@@ -492,8 +494,8 @@ export class GraphFind extends React.Component<GraphFindProps, GraphFindState> {
     if (hideChanged || (compressOnHideChanged && selector) || hasRemovedElements) {
       cy.emit('kiali-zoomignore', [true]);
       CytoscapeGraphUtils.runLayout(cy, this.props.layout).then(() => {
-        console.log('endLayout (hide)');
-        cy.emit('kiali-zoomignore', [false]);
+        // console.log('endLayout (hide)');
+        //cy.emit('kiali-zoomignore', [false]);
       });
     }
   };

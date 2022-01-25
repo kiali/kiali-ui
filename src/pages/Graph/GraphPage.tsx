@@ -447,7 +447,10 @@ export class GraphPage extends React.Component<GraphPageProps, GraphPageState> {
               )}
               {isReady && (
                 <div className={cytoscapeToolbarWrapperDivStyle}>
-                  <CytoscapeToolbarContainer cytoscapeGraphRef={this.cytoscapeGraphRef} />
+                  <CytoscapeToolbarContainer
+                    cytoscapeGraphRef={this.cytoscapeGraphRef}
+                    disabled={this.state.graphData.isLoading}
+                  />
                 </div>
               )}
             </ErrorBoundary>
