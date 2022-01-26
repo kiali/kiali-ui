@@ -47,8 +47,8 @@ type CytoscapeGraphProps = {
   contextMenuEdgeComponent?: EdgeContextMenuComponentType;
   contextMenuNodeComponent?: NodeContextMenuComponentType;
   edgeLabels: EdgeLabelMode[];
-  graphData: GraphData;
   focusSelector?: string;
+  graphData: GraphData;
   isMiniGraph: boolean;
   isMTLSEnabled: boolean;
   layout: Layout;
@@ -138,7 +138,6 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
   private cytoscapeReactWrapperRef: any;
   private focusSelector?: string;
   private graphHighlighter?: GraphHighlighter;
-  private namespaceChanged: boolean;
   private needsInitialLayout: boolean;
   private nodeChanged: boolean;
   private trafficRenderer?: TrafficRenderer;
@@ -153,7 +152,6 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
     this.customViewport = false;
     this.cytoscapeReactWrapperRef = React.createRef();
     this.focusSelector = props.focusSelector;
-    this.namespaceChanged = false;
     this.needsInitialLayout = false;
     this.nodeChanged = false;
     this.zoom = 1; // 1 is the default cy zoom
@@ -206,13 +204,8 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
     // Check to see if we should run a layout when we process the graphUpdate
     let runLayout = false;
     const newLayout = this.props.layout.name !== prevProps.layout.name;
-    if (
-      this.needsInitialLayout ||
-      newLayout ||
-      this.nodeNeedsRelayout() ||
-      this.namespaceNeedsRelayout(prevProps.graphData.elements, this.props.graphData.elements) ||
-      this.elementsNeedRelayout(prevProps.graphData.elements, this.props.graphData.elements)
-    ) {
+
+    if (this.needsInitialLayout || newLayout || this.props.graphData.elementsChanged || this.nodeNeedsRelayout()) {
       this.needsInitialLayout = false;
       runLayout = true;
     }
@@ -610,6 +603,25 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
       }
     });
 
+    // We use a 'layoutstop' even handler to perform common handling, as layouts can be initiated
+    // outside of just this class (for example, graph hide).
+    cy.on('layoutstop', (_evt: Cy.EventObject) => {
+      // After a layout Cytoscape seems to occasionally use stale visibility and/or positioning for labels.
+      // It looks like a cy bug to me, but maybe it has to do with either the html node-label extension,
+      // or our BoxLayout.  Anyway, refreshing them here seems to fix the issue.
+      CytoscapeGraphUtils.refreshLabels(cy, false);
+
+      // Perform a safeFit (one that takes into consideration a custom viewport set by the user).  This will
+      // ensure we limit to max-zoom, or fit to the viewport when appropriate.
+      this.safeFit(cy);
+
+      // Finally, massage any loop edges as best as possible
+      this.fixLoopOverlap(cy);
+
+      // re-enable zoom handling after the 'fit' to avoid any chance of a zoom-threshold-cross loop
+      cy.emit('kiali-zoomignore', [false]);
+    });
+
     cy.on('nodehtml-create-or-update', 'node', (evt: Cy.EventObjectNode, data: any) => {
       const { label, isNew } = data;
       const { target } = evt;
@@ -680,25 +692,6 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
       if (!compareBoundsExpansion(oldBE, newBE)) {
         target.style('bounds-expansion', newBE);
       }
-    });
-
-    // We use a 'layoutstop' even handler to perform common handling, as layouts can be initiated
-    // outside of just this class (for example, graph hide).
-    cy.on('layoutstop', (_evt: Cy.EventObject) => {
-      // Perform a safeFit (one that takes into consideration a custom viewport set by the user).  This will
-      // ensure we limit to max-zoom, or fit to the viewport when appropriate.
-      this.safeFit(cy);
-
-      // After a layout Cytoscape seems to occasionally use stale visibility and/or positioning for labels.
-      // It looks like a cy bug to me, but maybe it has to do with either the html node-label extension,
-      // or our BoxLayout.  Anyway, refreshing them here seems to fix the issue.
-      CytoscapeGraphUtils.refreshLabels(cy, false);
-
-      // Finally, massage any loop edges as best as possible
-      this.fixLoopOverlap(cy);
-
-      // re-enable zoom handling after the 'fit' to avoid any chance of a zoom-threshold-cross loop
-      cy.emit('kiali-zoomignore', [false]);
     });
 
     cy.ready((evt: Cy.EventObject) => {
@@ -914,14 +907,6 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
     this.graphHighlighter!.onMouseOut(event);
   };
 
-  private namespaceNeedsRelayout(prevElements: any, nextElements: any) {
-    const needsRelayout = this.namespaceChanged && prevElements !== nextElements;
-    if (needsRelayout) {
-      this.namespaceChanged = false;
-    }
-    return needsRelayout;
-  }
-
   private nodeNeedsRelayout() {
     const needsRelayout = this.nodeChanged;
     if (needsRelayout) {
@@ -942,43 +927,6 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
   static isCyEdgeClickEvent(event: CytoscapeEvent): boolean {
     const targetType = event.summaryType;
     return targetType === 'edge';
-  }
-
-  // To know if we should re-layout, we need to know if any element changed
-  // Do a quick round by comparing the number of nodes and edges, if different
-  // a change is expected.
-  // If we have the same number of elements, compare the ids, if we find one that isn't
-  // in the other, we can be sure that there are changes.
-  // Worst case is when they are the same, avoid that.
-  private elementsNeedRelayout(prevElements: any, nextElements: any) {
-    if (prevElements === nextElements) {
-      return false;
-    }
-    if (
-      !prevElements ||
-      !nextElements ||
-      !prevElements.nodes ||
-      !prevElements.edges ||
-      !nextElements.nodes ||
-      !nextElements.edges ||
-      prevElements.nodes.length !== nextElements.nodes.length ||
-      prevElements.edges.length !== nextElements.edges.length
-    ) {
-      return true;
-    }
-    // If both have the same ids, we don't need to relayout
-    return !(
-      this.nodeOrEdgeArrayHasSameIds(nextElements.nodes, prevElements.nodes) &&
-      this.nodeOrEdgeArrayHasSameIds(nextElements.edges, prevElements.edges)
-    );
-  }
-
-  private nodeOrEdgeArrayHasSameIds<T extends Cy.NodeSingular | Cy.EdgeSingular>(a: Array<T>, b: Array<T>) {
-    const aIds = a.map(e => e.id).sort();
-    return b
-      .map(e => e.id)
-      .sort()
-      .every((eId, index) => eId === aIds[index]);
   }
 
   private fixLoopOverlap(cy: Cy.Core) {
