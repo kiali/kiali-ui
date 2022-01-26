@@ -2,13 +2,14 @@ import { Stack, StackItem, Title, TitleLevel, TitleSize, Tooltip, TooltipPositio
 import Labels from 'components/Label/Labels';
 import { PFBadge } from 'components/Pf/PfBadges';
 import LocalTime from 'components/Time/LocalTime';
+import { ValidationObjectSummary } from 'components/Validations/ValidationObjectSummary';
 import { IstioTypes } from 'components/VirtualList/Config';
 import { KialiIcon } from 'config/KialiIcon';
 import * as React from 'react';
 import { IstioConfigDetails } from 'types/IstioConfigDetails';
 import { ObjectReference, ObjectValidation, ValidationMessage } from 'types/IstioObjects';
 import { style } from 'typestyle';
-import { getIstioObject } from 'utils/IstioConfigUtils';
+import { getIstioObject, getReconciliationCondition } from 'utils/IstioConfigUtils';
 import ValidationReferences from '../ValidationReferences';
 import IstioStatusMessageList from './IstioStatusMessageList';
 import VirtualServiceOverview from './VirtualServiceOverview';
@@ -31,6 +32,11 @@ const iconStyle = style({
 const infoStyle = style({
   margin: '0px 0px 2px 10px',
   verticalAlign: '-5px !important'
+});
+
+const healthIconStyle = style({
+  marginLeft: '10px',
+  verticalAlign: '-1px !important'
 });
 
 const resourceListStyle = style({
@@ -88,6 +94,15 @@ class IstioConfigOverview extends React.Component<IstioConfigOverviewProps> {
               >
                 <KialiIcon.Info className={infoStyle} />
               </Tooltip>
+              {this.props.istioValidations && (
+                <span className={healthIconStyle}>
+                  <ValidationObjectSummary
+                    id={'config-validation'}
+                    validations={[this.props.istioValidations]}
+                    reconciledCondition={getReconciliationCondition(this.props.istioObjectDetails)}
+                  />
+                </span>
+              )}
             </>
           )}
         </StackItem>
