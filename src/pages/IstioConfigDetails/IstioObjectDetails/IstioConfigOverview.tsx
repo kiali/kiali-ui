@@ -1,0 +1,124 @@
+import { Stack, StackItem, Title, TitleLevel, TitleSize, Tooltip, TooltipPosition } from '@patternfly/react-core';
+import Labels from 'components/Label/Labels';
+import { PFBadge } from 'components/Pf/PfBadges';
+import LocalTime from 'components/Time/LocalTime';
+import { IstioTypes } from 'components/VirtualList/Config';
+import { KialiIcon } from 'config/KialiIcon';
+import * as React from 'react';
+import { IstioConfigDetails } from 'types/IstioConfigDetails';
+import { ObjectReference, ObjectValidation, ValidationMessage } from 'types/IstioObjects';
+import { style } from 'typestyle';
+import { getIstioObject } from 'utils/IstioConfigUtils';
+import ValidationReferences from '../ValidationReferences';
+import IstioStatusMessageList from './IstioStatusMessageList';
+import VirtualServiceOverview from './VirtualServiceOverview';
+
+interface IstioConfigOverviewProps {
+  istioObjectDetails: IstioConfigDetails;
+  istioValidations?: ObjectValidation;
+  namespace: string;
+  statusMessages: ValidationMessage[];
+  objectReferences: ObjectReference[];
+}
+
+const iconStyle = style({
+  margin: '0 0 0 0',
+  padding: '0 0 0 0',
+  display: 'inline-block',
+  verticalAlign: '2px !important'
+});
+
+const infoStyle = style({
+  margin: '0px 0px 2px 10px',
+  verticalAlign: '-5px !important'
+});
+
+const resourceListStyle = style({
+  margin: '0px 0 11px 0',
+  $nest: {
+    '& > ul > li > span': {
+      float: 'left',
+      width: '125px',
+      fontWeight: 700
+    }
+  }
+});
+
+class IstioConfigOverview extends React.Component<IstioConfigOverviewProps> {
+  render() {
+    const istioObject = getIstioObject(this.props.istioObjectDetails);
+    const resourceProperties = (
+      <div key="properties-list" className={resourceListStyle}>
+        <ul style={{ listStyleType: 'none' }}>
+          {istioObject && istioObject.metadata.creationTimestamp && (
+            <li>
+              <span>Created</span>
+              <div style={{ display: 'inline-block' }}>
+                <LocalTime time={istioObject.metadata.creationTimestamp} />
+              </div>
+            </li>
+          )}
+          {istioObject && istioObject.metadata.resourceVersion && (
+            <li>
+              <span>Version</span>
+              {istioObject.metadata.resourceVersion}
+            </li>
+          )}
+        </ul>
+      </div>
+    );
+
+    return (
+      <Stack gutter="md">
+        <StackItem>
+          <Title headingLevel={TitleLevel.h3} size={TitleSize.xl}>
+            Overview
+          </Title>
+        </StackItem>
+        <StackItem>
+          {istioObject && istioObject.kind && (
+            <>
+              <div className={iconStyle}>
+                <PFBadge badge={IstioTypes[istioObject.kind?.toLowerCase()].badge} position={TooltipPosition.top} />
+              </div>
+              {istioObject?.metadata.name}
+              <Tooltip
+                position={TooltipPosition.right}
+                content={<div style={{ textAlign: 'left' }}>{resourceProperties}</div>}
+              >
+                <KialiIcon.Info className={infoStyle} />
+              </Tooltip>
+            </>
+          )}
+        </StackItem>
+
+        {istioObject?.metadata.labels && (
+          <StackItem>
+            <Labels tooltipMessage="Labels defined on this resource" labels={istioObject?.metadata.labels}></Labels>
+          </StackItem>
+        )}
+
+        {this.props.statusMessages && this.props.statusMessages.length > 0 && (
+          <StackItem>
+            <IstioStatusMessageList messages={this.props.statusMessages} />
+          </StackItem>
+        )}
+        {this.props.istioObjectDetails.virtualService && (
+          <StackItem>
+            <VirtualServiceOverview
+              virtualService={this.props.istioObjectDetails.virtualService}
+              namespace={this.props.namespace}
+            />
+          </StackItem>
+        )}
+        {this.props.objectReferences.length > 0 && (
+          <StackItem>
+            <ValidationReferences objectReferences={this.props.objectReferences} />
+          </StackItem>
+        )}
+      </Stack>
+    );
+  }
+}
+
+export default IstioConfigOverview;

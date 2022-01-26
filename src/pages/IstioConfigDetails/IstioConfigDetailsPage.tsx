@@ -36,13 +36,10 @@ import {
 } from '@patternfly/react-core';
 import { dicIstioType } from '../../types/IstioConfigList';
 import { showInMessageCenter } from '../../utils/IstioValidationUtils';
-import VirtualServiceOverview from './IstioObjectDetails/VirtualServiceOverview';
-import DestinationRuleOverview from './IstioObjectDetails/DestinationRuleOverview';
 import { AxiosError } from 'axios';
-import IstioStatusMessageList from './IstioObjectDetails/IstioStatusMessageList';
 import { Annotation } from 'react-ace/types';
-import ValidationReferences from './ValidationReferences';
 import RefreshButtonContainer from '../../components/Refresh/RefreshButton';
+import IstioConfigOverview from './IstioObjectDetails/IstioConfigOverview';
 
 // Enables the search box for the ACEeditor
 require('ace-builds/src-noconflict/ext-searchbox');
@@ -419,7 +416,10 @@ class IstioConfigDetailsPage extends React.Component<RouteComponentProps<IstioCo
   isExpanded = (istioConfigDetails?: IstioConfigDetails) => {
     let isExpanded = false;
     if (istioConfigDetails) {
-      isExpanded = this.showCards(this.objectReferences(istioConfigDetails).length > 0, this.getStatusMessages(istioConfigDetails));
+      isExpanded = this.showCards(
+        this.objectReferences(istioConfigDetails).length > 0,
+        this.getStatusMessages(istioConfigDetails)
+      );
     }
     return isExpanded;
   };
@@ -453,22 +453,15 @@ class IstioConfigDetailsPage extends React.Component<RouteComponentProps<IstioCo
           <div>
             {showCards && (
               <>
-                {this.state.istioObjectDetails && this.state.istioObjectDetails.virtualService && (
-                  <VirtualServiceOverview
-                    virtualService={this.state.istioObjectDetails.virtualService}
-                    validation={this.state.istioValidations}
+                {this.state.istioObjectDetails && (
+                  <IstioConfigOverview
+                    istioObjectDetails={this.state.istioObjectDetails}
+                    istioValidations={this.state.istioValidations}
                     namespace={this.state.istioObjectDetails.namespace.name}
+                    statusMessages={istioStatusMsgs}
+                    objectReferences={objectReferences}
                   />
                 )}
-                {this.state.istioObjectDetails && this.state.istioObjectDetails.destinationRule && (
-                  <DestinationRuleOverview
-                    destinationRule={this.state.istioObjectDetails.destinationRule}
-                    validation={this.state.istioValidations}
-                    namespace={this.state.istioObjectDetails.namespace.name}
-                  />
-                )}
-                {istioStatusMsgs && istioStatusMsgs.length > 0 && <IstioStatusMessageList messages={istioStatusMsgs} />}
-                {refPresent && <ValidationReferences objectReferences={objectReferences} />}
               </>
             )}
           </div>
