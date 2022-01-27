@@ -5,7 +5,7 @@ import { AuthorizationPolicy, Sidecar } from 'types/IstioObjects';
 import { MessageType } from 'types/MessageCenter';
 import { PromisesRegistry } from 'utils/CancelablePromises';
 import { DurationInSeconds } from 'types/Common';
-import { IstioConfigPreview } from 'components/IstioConfigPreview/IstioConfigPreview';
+import { ConfigPreviewObject, IstioConfigPreview } from 'components/IstioConfigPreview/IstioConfigPreview';
 import * as AlertUtils from 'utils/AlertUtils';
 import * as API from 'services/Api';
 import { serverConfig } from '../../config';
@@ -225,8 +225,13 @@ export default class OverviewTrafficPolicies extends React.Component<OverviewTra
     graphDataSource.fetchForNamespace(duration, ns);
   };
 
-  onConfirmPreviewPoliciesModal = (aps: AuthorizationPolicy[], sds: Sidecar[]) => {
-    this.setState({ authorizationPolicies: aps, sidecars: sds, loaded: false }, () => this.fetchPermission());
+  onConfirmPreviewPoliciesModal = (items: ConfigPreviewObject[]) => {
+    const aps = items.filter(i => i.type === 'authorizationPolicy')[0];
+    const sds = items.filter(i => i.type === 'sidecar')[0];
+    this.setState(
+      { authorizationPolicies: aps.items as AuthorizationPolicy[], sidecars: sds.items as Sidecar[], loaded: false },
+      () => this.fetchPermission()
+    );
   };
 
   onHideConfirmModal = () => {
@@ -264,8 +269,10 @@ export default class OverviewTrafficPolicies extends React.Component<OverviewTra
             onClose={this.onHideConfirmModal}
             onConfirm={this.onConfirmPreviewPoliciesModal}
             ns={this.props.nsTarget}
-            authorizationPolicies={this.state.authorizationPolicies}
-            sidecars={this.state.sidecars}
+            items={[
+              { type: 'authorizationPolicy', items: this.state.authorizationPolicies, title: 'Authorization Policies' },
+              { type: 'sidecar', items: this.state.sidecars, title: 'Sidecars' }
+            ]}
             opTarget={this.props.opTarget}
           />
         )}

@@ -1,13 +1,11 @@
 import * as React from 'react';
-import { AuthorizationPolicy, Sidecar } from 'types/IstioObjects';
+import { PolicyItem } from './IstioConfigPreview';
 import { jsYaml } from '../../types/AceValidations';
 import AceEditor from 'react-ace';
 import { Tab, Tabs } from '@patternfly/react-core';
 import { EditorPreview } from './EditorPreview';
 import { safeDumpOptions } from '../../types/IstioConfigDetails';
 import _ from 'lodash';
-
-type PolicyItem = AuthorizationPolicy | Sidecar;
 
 interface Props {
   items: PolicyItem[];

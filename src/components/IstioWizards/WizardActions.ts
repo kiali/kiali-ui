@@ -96,9 +96,18 @@ export type ServiceWizardValid = {
   od: boolean;
 };
 
+export type WizardPreviews = {
+  dr: DestinationRule;
+  vs: VirtualService;
+  gw?: Gateway;
+  pa?: PeerAuthentication;
+};
+
 export type ServiceWizardState = {
   showWizard: boolean;
   showAdvanced: boolean;
+  showPreview: boolean;
+  previews?: WizardPreviews;
   advancedTabKey: number;
   workloads: WorkloadWeight[];
   rules: Rule[];
@@ -232,10 +241,7 @@ export const getGatewayName = (namespace: string, serviceName: string, gatewayNa
   return gatewayName;
 };
 
-export const buildIstioConfig = (
-  wProps: ServiceWizardProps,
-  wState: ServiceWizardState
-): [DestinationRule, VirtualService, Gateway?, PeerAuthentication?] => {
+export const buildIstioConfig = (wProps: ServiceWizardProps, wState: ServiceWizardState): WizardPreviews => {
   const wkdNameVersion: { [key: string]: string } = {};
 
   // DestinationRule from the labels
@@ -645,7 +651,7 @@ export const buildIstioConfig = (
   } else {
     wizardVS.spec.gateways = null;
   }
-  return [wizardDR, wizardVS, wizardGW, wizardPA];
+  return { dr: wizardDR, vs: wizardVS, gw: wizardGW, pa: wizardPA };
 };
 
 const getWorkloadsByVersion = (
