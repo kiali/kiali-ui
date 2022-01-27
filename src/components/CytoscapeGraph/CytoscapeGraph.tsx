@@ -79,11 +79,6 @@ type CytoscapeGraphProps = {
   updateSummary?: (event: CytoscapeEvent) => void;
 };
 
-type CytoscapeGraphState = {
-  // Used to trigger updates when the zoom value crosses a threshold and affects label rendering.
-  zoomThresholdTime: TimeInMilliseconds;
-};
-
 export interface GraphEdgeTapEvent {
   namespace: string;
   type: string;
@@ -111,7 +106,7 @@ export interface GraphNodeTapEvent {
 export interface GraphNodeDoubleTapEvent extends GraphNodeTapEvent {}
 
 // exporting this class for testing
-export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps, CytoscapeGraphState> {
+export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps> {
   static contextTypes = {
     router: () => null
   };
@@ -160,15 +155,13 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
     this.zoomThresholds = Array.from(
       new Set([settings.minFontLabel / settings.fontLabel, settings.minFontBadge / settings.fontLabel])
     );
-
-    this.state = { zoomThresholdTime: 0 };
   }
 
   componentDidMount() {
     this.cyInitialization(this.getCy()!);
   }
 
-  shouldComponentUpdate(nextProps: CytoscapeGraphProps, nextState: CytoscapeGraphState) {
+  shouldComponentUpdate(nextProps: CytoscapeGraphProps) {
     this.nodeChanged =
       this.nodeChanged || this.props.graphData.fetchParams.node !== nextProps.graphData.fetchParams.node;
 
@@ -186,13 +179,12 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
       this.props.showRank !== nextProps.showRank ||
       this.props.showTrafficAnimation !== nextProps.showTrafficAnimation ||
       this.props.showVirtualServices !== nextProps.showVirtualServices ||
-      this.props.trace !== nextProps.trace ||
-      this.state.zoomThresholdTime !== nextState.zoomThresholdTime;
+      this.props.trace !== nextProps.trace;
 
     return result;
   }
 
-  componentDidUpdate(prevProps: CytoscapeGraphProps, _prevState: CytoscapeGraphState) {
+  componentDidUpdate(prevProps: CytoscapeGraphProps) {
     const cy = this.getCy();
     if (!cy) {
       return;
@@ -577,10 +569,9 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
       }
     });
 
-    // Crossing a zoom threshold can affect labeling, and so we need an update to re-render the labels.
+    // Crossing a zoom threshold can affect labeling, and so we refresh labels when crossing a threshold.
     // Some cy 'zoom' events need to be ignored, typically while a layout or drag-zoom 'box' event is
-    // in progress, as cy can generate unwanted 'intermediate' values.  So we set zoomIgnore=true, it will
-    // be set false after the update.
+    // in progress, as cy can generate unwanted 'intermediate' values.  So check for zoomIgnore=true.
     cy.on('zoom', (evt: Cy.EventObject) => {
       const cytoscapeEvent = getCytoscapeBaseEvent(evt);
       if (!cytoscapeEvent || this.zoomIgnore) {
@@ -596,19 +587,19 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
       });
 
       if (thresholdCrossed) {
-        // Update state to re-render with the label changes.
-        // start a zoomIgnore which will end after the layout (this.processGraphUpdate()) completes.
-        this.zoomIgnore = true;
-        this.setState({ zoomThresholdTime: Date.now() });
+        CytoscapeGraphUtils.refreshLabels(cy, false);
       }
     });
 
     // We use a 'layoutstop' even handler to perform common handling, as layouts can be initiated
     // outside of just this class (for example, graph hide).
     cy.on('layoutstop', (_evt: Cy.EventObject) => {
+      // re-enable zoom handling after the 'fit' to avoid any chance of a zoom-threshold-cross loop
+      cy.emit('kiali-zoomignore', [false]);
+
       // After a layout Cytoscape seems to occasionally use stale visibility and/or positioning for labels.
       // It looks like a cy bug to me, but maybe it has to do with either the html node-label extension,
-      // or our BoxLayout.  Anyway, refreshing them here seems to fix the issue.
+      // or our BoxLayout.  Anyway, refreshing them here seems to usually fix the issue.
       CytoscapeGraphUtils.refreshLabels(cy, false);
 
       // Perform a safeFit (one that takes into consideration a custom viewport set by the user).  This will
@@ -617,9 +608,6 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps,
 
       // Finally, massage any loop edges as best as possible
       this.fixLoopOverlap(cy);
-
-      // re-enable zoom handling after the 'fit' to avoid any chance of a zoom-threshold-cross loop
-      cy.emit('kiali-zoomignore', [false]);
     });
 
     cy.on('nodehtml-create-or-update', 'node', (evt: Cy.EventObjectNode, data: any) => {
