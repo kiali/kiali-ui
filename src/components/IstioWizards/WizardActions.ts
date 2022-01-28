@@ -138,6 +138,8 @@ export type WorkloadWizardState = {
 export const KIALI_WIZARD_LABEL = 'kiali_wizard';
 export const KIALI_RELATED_LABEL = 'kiali_wizard_related';
 
+export const ISTIO_NETWORKING_VERSION = 'networking.istio.io/v1alpha3';
+
 export const fqdnServiceName = (serviceName: string, namespace: string): string => {
   return serviceName + '.' + namespace + '.' + serverConfig.istioIdentityDomain;
 };
@@ -251,6 +253,8 @@ export const buildIstioConfig = (wProps: ServiceWizardProps, wState: ServiceWiza
     drName = wProps.destinationRules[0].metadata.name;
   }
   const wizardDR: DestinationRule = {
+    kind: 'DestinationRule',
+    apiVersion: ISTIO_NETWORKING_VERSION,
     metadata: {
       namespace: wProps.namespace,
       name: drName,
@@ -293,6 +297,8 @@ export const buildIstioConfig = (wProps: ServiceWizardProps, wState: ServiceWiza
     vsName = wProps.virtualServices[0].metadata.name;
   }
   const wizardVS: VirtualService = {
+    kind: 'VirtualService',
+    apiVersion: ISTIO_NETWORKING_VERSION,
     metadata: {
       namespace: wProps.namespace,
       name: vsName,
@@ -310,6 +316,8 @@ export const buildIstioConfig = (wProps: ServiceWizardProps, wState: ServiceWiza
   const wizardGW: Gateway | undefined =
     wState.gateway && wState.gateway.addGateway && wState.gateway.newGateway
       ? {
+          kind: 'Gateway',
+          apiVersion: ISTIO_NETWORKING_VERSION,
           metadata: {
             namespace: wProps.namespace,
             name: fullNewGatewayName.substr(wProps.namespace.length + 1),
@@ -1152,7 +1160,7 @@ export const buildGraphSidecars = (namespace: string, graph: GraphDefinition): S
       ) {
         const sc: Sidecar = {
           kind: 'Sidecar',
-          apiVersion: 'networking.istio.io/v1alpha3',
+          apiVersion: ISTIO_NETWORKING_VERSION,
           metadata: {
             name: node.data.workload,
             namespace: namespace,
