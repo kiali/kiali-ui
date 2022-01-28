@@ -5,7 +5,7 @@ import { AuthorizationPolicy, Sidecar } from 'types/IstioObjects';
 import { MessageType } from 'types/MessageCenter';
 import { PromisesRegistry } from 'utils/CancelablePromises';
 import { DurationInSeconds } from 'types/Common';
-import { ConfigPreviewObject, IstioConfigPreview } from 'components/IstioConfigPreview/IstioConfigPreview';
+import { ConfigPreviewItem, IstioConfigPreview } from 'components/IstioConfigPreview/IstioConfigPreview';
 import * as AlertUtils from 'utils/AlertUtils';
 import * as API from 'services/Api';
 import { serverConfig } from '../../config';
@@ -225,7 +225,7 @@ export default class OverviewTrafficPolicies extends React.Component<OverviewTra
     graphDataSource.fetchForNamespace(duration, ns);
   };
 
-  onConfirmPreviewPoliciesModal = (items: ConfigPreviewObject[]) => {
+  onConfirmPreviewPoliciesModal = (items: ConfigPreviewItem[]) => {
     const aps = items.filter(i => i.type === 'authorizationPolicy')[0];
     const sds = items.filter(i => i.type === 'sidecar')[0];
     this.setState(

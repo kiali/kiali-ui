@@ -27,7 +27,7 @@ import { EditResources } from './EditResources';
 import { cloneDeep } from 'lodash';
 import _ from 'lodash';
 
-export type PolicyItem =
+export type IstioConfigItem =
   | AuthorizationPolicy
   | Sidecar
   | DestinationRule
@@ -35,10 +35,10 @@ export type PolicyItem =
   | Gateway
   | VirtualService;
 
-export interface ConfigPreviewObject {
+export interface ConfigPreviewItem {
   title: string;
   type: string;
-  items: PolicyItem[];
+  items: IstioConfigItem[];
 }
 
 interface Props {
@@ -46,15 +46,15 @@ interface Props {
   ns: string;
   title?: string;
   actions?: any;
-  items: ConfigPreviewObject[];
+  items: ConfigPreviewItem[];
   opTarget: string;
   onClose: () => void;
   onKeyPress?: (e: any) => void;
-  onConfirm: (items: ConfigPreviewObject[]) => void;
+  onConfirm: (items: ConfigPreviewItem[]) => void;
 }
 
 interface State {
-  items: ConfigPreviewObject[];
+  items: ConfigPreviewItem[];
   mainTab: string;
 }
 
@@ -74,7 +74,7 @@ export class IstioConfigPreview extends React.Component<Props, State> {
     }
   }
 
-  setStateValues = (items: ConfigPreviewObject[]) => {
+  setStateValues = (items: ConfigPreviewItem[]) => {
     this.setState({
       mainTab: items.length > 0 ? items[0].title.toLocaleLowerCase().replace(/\s/g, '') : '',
       items: cloneDeep(items)
@@ -105,7 +105,7 @@ export class IstioConfigPreview extends React.Component<Props, State> {
     this.setStateValues([]);
   };
 
-  editorChange = (object: PolicyItem, index: number, title: string) => {
+  editorChange = (object: IstioConfigItem, index: number, title: string) => {
     const items = this.state.items;
     const ind = items.findIndex(it => it.title === title);
     const config = items[ind];
@@ -114,7 +114,7 @@ export class IstioConfigPreview extends React.Component<Props, State> {
     this.setState({ items });
   };
 
-  addResource = (item: ConfigPreviewObject) => {
+  addResource = (item: ConfigPreviewItem) => {
     const key = item.title.toLocaleLowerCase().replace(/\s/g, '');
     const propItems =
       this.props.items.length > 0 ? this.props.items.filter(it => it.title === item.title)[0].items : undefined;
@@ -122,7 +122,7 @@ export class IstioConfigPreview extends React.Component<Props, State> {
       <Tab eventKey={key} key={key + '_tab_preview'} title={item.title}>
         <EditResources
           items={item.items}
-          orig={propItems as PolicyItem[]}
+          orig={propItems as IstioConfigItem[]}
           onChange={(obj, index) => this.editorChange(obj, index, item.title)}
         />
       </Tab>

@@ -53,7 +53,7 @@ import { style } from 'typestyle';
 import RequestTimeouts, { TimeoutRetryRoute } from './RequestTimeouts';
 import CircuitBreaker, { CircuitBreakerState } from './CircuitBreaker';
 import _ from 'lodash';
-import { ConfigPreviewObject, IstioConfigPreview } from 'components/IstioConfigPreview/IstioConfigPreview';
+import { ConfigPreviewItem, IstioConfigPreview } from 'components/IstioConfigPreview/IstioConfigPreview';
 
 const emptyServiceWizardState = (fqdnServiceName: string): ServiceWizardState => {
   return {
@@ -495,7 +495,7 @@ class ServiceWizard extends React.Component<ServiceWizardProps, ServiceWizardSta
     );
   };
 
-  onConfirmPreview = (items: ConfigPreviewObject[], callback: () => void | undefined) => {
+  onConfirmPreview = (items: ConfigPreviewItem[], callback: () => void | undefined) => {
     const dr = items.filter(it => it.type === 'destinationrule')[0];
     const gw = items.filter(it => it.type === 'gateway')[0];
     const pa = items.filter(it => it.type === 'peerauthentications')[0];
@@ -506,11 +506,11 @@ class ServiceWizard extends React.Component<ServiceWizardProps, ServiceWizardSta
       pa: pa ? (pa.items[0] as PeerAuthentication) : undefined,
       vs: vs.items[0] as VirtualService
     };
-    this.setState({ previews }, () => callback());
+    this.setState({ previews, showPreview: false }, () => callback());
   };
 
   getItems = () => {
-    const items: ConfigPreviewObject[] = [];
+    const items: ConfigPreviewItem[] = [];
     if (this.state.previews) {
       if (this.state.previews.dr) {
         items.push({ type: 'destinationrule', items: [this.state.previews.dr], title: 'Destination Rule' });
@@ -546,7 +546,7 @@ class ServiceWizard extends React.Component<ServiceWizardProps, ServiceWizardSta
           opTarget={this.props.update ? 'update' : 'create'}
           items={this.getItems()}
           onClose={() => this.onClose(false)}
-          onConfirm={(items: ConfigPreviewObject[]) => {
+          onConfirm={(items: ConfigPreviewItem[]) => {
             this.onConfirmPreview(items, this.onCreateUpdate);
           }}
         />

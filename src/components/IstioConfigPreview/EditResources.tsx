@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { PolicyItem } from './IstioConfigPreview';
+import { IstioConfigItem } from './IstioConfigPreview';
 import { jsYaml } from '../../types/AceValidations';
 import AceEditor from 'react-ace';
 import { Tab, Tabs } from '@patternfly/react-core';
@@ -8,8 +8,8 @@ import { safeDumpOptions } from '../../types/IstioConfigDetails';
 import _ from 'lodash';
 
 interface Props {
-  items: PolicyItem[];
-  orig: PolicyItem[];
+  items: IstioConfigItem[];
+  orig: IstioConfigItem[];
   onChange: (obj, index) => void;
 }
 
