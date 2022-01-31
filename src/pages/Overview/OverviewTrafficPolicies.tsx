@@ -266,6 +266,7 @@ export default class OverviewTrafficPolicies extends React.Component<OverviewTra
               this.props.opTarget !== 'delete' &&
               this.state.authorizationPolicies.length > 0
             }
+            disableAction={this.state.disableOp}
             onClose={this.onHideConfirmModal}
             onConfirm={this.onConfirmPreviewPoliciesModal}
             ns={this.props.nsTarget}
@@ -285,12 +286,7 @@ export default class OverviewTrafficPolicies extends React.Component<OverviewTra
             <Button key="cancel" variant="secondary" onClick={this.onHideConfirmModal}>
               Cancel
             </Button>,
-            <Button
-              key="confirm"
-              variant={colorAction as colorButton}
-              onClick={this.onConfirm}
-              isDisabled={this.state.disableOp}
-            >
+            <Button key="confirm" variant={colorAction as colorButton} onClick={this.onConfirm}>
               {modalAction}
             </Button>
           ]}

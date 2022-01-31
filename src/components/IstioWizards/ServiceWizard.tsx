@@ -538,14 +538,6 @@ class ServiceWizard extends React.Component<ServiceWizardProps, ServiceWizardSta
           ? 'Update ' + WIZARD_TITLES[this.props.type]
           : 'Create ' + WIZARD_TITLES[this.props.type]
         : '';
-    const actions = [
-      <Button key="cancel" variant="secondary" onClick={() => this.onClose(false)}>
-        Cancel
-      </Button>,
-      <Button key="confirm" variant={'primary'} onClick={this.onCreateUpdate} isDisabled={!this.props.createOrUpdate}>
-        {this.props.update ? 'Update' : 'Create'}
-      </Button>
-    ];
     return (
       <>
         <IstioConfigPreview
@@ -553,6 +545,7 @@ class ServiceWizard extends React.Component<ServiceWizardProps, ServiceWizardSta
           title={titleAction}
           ns={this.props.namespace}
           opTarget={this.props.update ? 'update' : 'create'}
+          disableAction={!this.props.createOrUpdate}
           items={this.getItems()}
           onClose={() => this.onClose(false)}
           onConfirm={(items: ConfigPreviewItem[]) => {
@@ -564,7 +557,14 @@ class ServiceWizard extends React.Component<ServiceWizardProps, ServiceWizardSta
           title={titleAction}
           isOpen={this.state.confirmationModal}
           onClose={() => this.onClose(false)}
-          actions={actions}
+          actions={[
+            <Button key="cancel" variant="secondary" onClick={() => this.onClose(false)}>
+              Cancel
+            </Button>,
+            <Button key="confirm" variant={'primary'} onClick={this.onCreateUpdate}>
+              {this.props.update ? 'Update' : 'Create'}
+            </Button>
+          ]}
         >
           <>
             You're going to {this.props.update ? 'update' : 'create'} istio objects in Namespace {this.props.namespace}.

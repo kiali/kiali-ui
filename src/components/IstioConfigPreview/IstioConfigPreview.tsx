@@ -25,6 +25,7 @@ import { safeDumpOptions } from '../../types/IstioConfigDetails';
 import { jsYaml } from '../../types/AceValidations';
 import { EditResources } from './EditResources';
 import { cloneDeep } from 'lodash';
+import { PFColors } from '../Pf/PfColors';
 import _ from 'lodash';
 
 export type IstioConfigItem =
@@ -46,6 +47,7 @@ interface Props {
   ns: string;
   title?: string;
   actions?: any;
+  disableAction?: boolean;
   items: ConfigPreviewItem[];
   opTarget: string;
   onClose: () => void;
@@ -147,6 +149,7 @@ export class IstioConfigPreview extends React.Component<Props, State> {
                 <Button
                   key={this.props.opTarget}
                   variant={this.props.opTarget === 'delete' ? 'danger' : 'primary'}
+                  isDisabled={this.props.disableAction}
                   onClick={this.onConfirm}
                 >
                   {this.props.opTarget && this.props.opTarget[0].toUpperCase() + this.props.opTarget.substr(1)}
@@ -193,6 +196,11 @@ export class IstioConfigPreview extends React.Component<Props, State> {
           >
             {this.state.items.map(item => this.addResource(item))}
           </Tabs>
+        )}
+        {this.props.disableAction && (
+          <div className={style({ color: PFColors.Danger })}>
+            You have not rights to perform this {this.props.opTarget} action.
+          </div>
         )}
       </Modal>
     );
