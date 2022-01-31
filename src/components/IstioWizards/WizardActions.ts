@@ -78,6 +78,7 @@ export type ServiceWizardProps = {
   namespace: string;
   serviceName: string;
   tlsStatus?: TLSStatus;
+  createOrUpdate: boolean;
   workloads: WorkloadOverview[];
   virtualServices: VirtualService[];
   destinationRules: DestinationRule[];
@@ -107,6 +108,7 @@ export type ServiceWizardState = {
   showWizard: boolean;
   showAdvanced: boolean;
   showPreview: boolean;
+  confirmationModal: boolean;
   previews?: WizardPreviews;
   advancedTabKey: number;
   workloads: WorkloadWeight[];

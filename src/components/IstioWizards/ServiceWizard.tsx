@@ -60,6 +60,7 @@ const emptyServiceWizardState = (fqdnServiceName: string): ServiceWizardState =>
     showWizard: false,
     showAdvanced: false,
     showPreview: false,
+    confirmationModal: false,
     previews: undefined,
     advancedTabKey: 0,
     workloads: [],
@@ -495,7 +496,7 @@ class ServiceWizard extends React.Component<ServiceWizardProps, ServiceWizardSta
     );
   };
 
-  onConfirmPreview = (items: ConfigPreviewItem[], callback: () => void | undefined) => {
+  onConfirmPreview = (items: ConfigPreviewItem[]) => {
     const dr = items.filter(it => it.type === 'destinationrule')[0];
     const gw = items.filter(it => it.type === 'gateway')[0];
     const pa = items.filter(it => it.type === 'peerauthentications')[0];
@@ -506,7 +507,7 @@ class ServiceWizard extends React.Component<ServiceWizardProps, ServiceWizardSta
       pa: pa ? (pa.items[0] as PeerAuthentication) : undefined,
       vs: vs.items[0] as VirtualService
     };
-    this.setState({ previews, showPreview: false }, () => callback());
+    this.setState({ previews, showPreview: false, confirmationModal: true });
   };
 
   getItems = () => {
@@ -531,25 +532,45 @@ class ServiceWizard extends React.Component<ServiceWizardProps, ServiceWizardSta
 
   render() {
     const [gatewaySelected, isMesh] = getInitGateway(this.props.virtualServices);
+    const titleAction =
+      this.props.type.length > 0
+        ? this.props.update
+          ? 'Update ' + WIZARD_TITLES[this.props.type]
+          : 'Create ' + WIZARD_TITLES[this.props.type]
+        : '';
+    const actions = [
+      <Button key="cancel" variant="secondary" onClick={() => this.onClose(false)}>
+        Cancel
+      </Button>,
+      <Button key="confirm" variant={'primary'} onClick={this.onCreateUpdate} isDisabled={!this.props.createOrUpdate}>
+        {this.props.update ? 'Update' : 'Create'}
+      </Button>
+    ];
     return (
       <>
         <IstioConfigPreview
           isOpen={this.state.showPreview}
-          title={
-            this.props.type.length > 0
-              ? this.props.update
-                ? 'Update ' + WIZARD_TITLES[this.props.type]
-                : 'Create ' + WIZARD_TITLES[this.props.type]
-              : ''
-          }
+          title={titleAction}
           ns={this.props.namespace}
           opTarget={this.props.update ? 'update' : 'create'}
           items={this.getItems()}
           onClose={() => this.onClose(false)}
           onConfirm={(items: ConfigPreviewItem[]) => {
-            this.onConfirmPreview(items, this.onCreateUpdate);
+            this.onConfirmPreview(items);
           }}
         />
+        <Modal
+          isSmall={true}
+          title={titleAction}
+          isOpen={this.state.confirmationModal}
+          onClose={() => this.onClose(false)}
+          actions={actions}
+        >
+          <>
+            You're going to {this.props.update ? 'update' : 'create'} istio objects in Namespace {this.props.namespace}.
+            Are you sure?
+          </>
+        </Modal>
         <Modal
           width={'75%'}
           title={
