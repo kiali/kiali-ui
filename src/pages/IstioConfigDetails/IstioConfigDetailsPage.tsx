@@ -466,10 +466,6 @@ class IstioConfigDetailsPage extends React.Component<RouteComponentProps<IstioCo
         editorValidations.annotations = this.state.yamlValidations.annotations;
       }
     }
-<<<<<<< HEAD
-
-=======
->>>>>>> 32ea474e (incorporating new service references for vs)
     const panelContent = (
       <DrawerPanelContent>
         <DrawerHead>
@@ -485,19 +481,6 @@ class IstioConfigDetailsPage extends React.Component<RouteComponentProps<IstioCo
                     objectReferences={objectReferences}
                   />
                 )}
-<<<<<<< HEAD
-=======
-                {this.state.istioObjectDetails && this.state.istioObjectDetails.destinationRule && (
-                  <DestinationRuleOverview
-                    destinationRule={this.state.istioObjectDetails.destinationRule}
-                    validation={this.state.istioValidations}
-                    namespace={this.state.istioObjectDetails.namespace.name}
-                  />
-                )}
-                {reconciliationStatus && <IstioReconciliationStatus condition={reconciliationStatus} />}
-                {istioStatusMsgs && istioStatusMsgs.length > 0 && <IstioStatusMessageList messages={istioStatusMsgs} />}
-                {refPresent && <ValidationReferences objectReferences={objectReferences} />}
->>>>>>> 20d0af6e (Reconciled status on side panel of Istio configs)
               </>
             )}
           </div>

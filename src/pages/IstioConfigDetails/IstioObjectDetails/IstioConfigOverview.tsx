@@ -12,8 +12,8 @@ import { style } from 'typestyle';
 import { getIstioObject, getReconciliationCondition } from 'utils/IstioConfigUtils';
 import ValidationReferences from '../ValidationReferences';
 import IstioConfigAssistant from './IstioConfigAssistant';
+import IstioConfigReferences from './IstioConfigReferences';
 import IstioStatusMessageList from './IstioStatusMessageList';
-import VirtualServiceOverview from './VirtualServiceOverview';
 
 interface IstioConfigOverviewProps {
   istioObjectDetails: IstioConfigDetails;
@@ -119,14 +119,7 @@ class IstioConfigOverview extends React.Component<IstioConfigOverviewProps> {
             <IstioStatusMessageList messages={this.props.statusMessages} />
           </StackItem>
         )}
-        {this.props.istioObjectDetails.virtualService && (
-          <StackItem>
-            <VirtualServiceOverview
-              virtualService={this.props.istioObjectDetails.virtualService}
-              namespace={this.props.namespace}
-            />
-          </StackItem>
-        )}
+
         {this.props.objectReferences.length > 0 && (
           <StackItem>
             <ValidationReferences objectReferences={this.props.objectReferences} />
@@ -134,6 +127,9 @@ class IstioConfigOverview extends React.Component<IstioConfigOverviewProps> {
         )}
         <StackItem>
           <IstioConfigAssistant />
+        </StackItem>
+        <StackItem>
+          <IstioConfigReferences />
         </StackItem>
       </Stack>
     );
