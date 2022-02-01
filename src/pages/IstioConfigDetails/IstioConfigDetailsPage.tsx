@@ -40,7 +40,7 @@ import { AxiosError } from 'axios';
 import { Annotation } from 'react-ace/types';
 import RefreshButtonContainer from '../../components/Refresh/RefreshButton';
 import IstioConfigOverview from './IstioObjectDetails/IstioConfigOverview';
-import { Ace } from 'ace-builds';
+//import { Ace } from 'ace-builds';
 
 // Enables the search box for the ACEeditor
 require('ace-builds/src-noconflict/ext-searchbox');
