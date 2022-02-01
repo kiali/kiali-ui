@@ -11,6 +11,7 @@ import { ObjectReference, ObjectValidation, ValidationMessage } from 'types/Isti
 import { style } from 'typestyle';
 import { getIstioObject, getReconciliationCondition } from 'utils/IstioConfigUtils';
 import ValidationReferences from '../ValidationReferences';
+import IstioConfigAssistant from './IstioConfigAssistant';
 import IstioStatusMessageList from './IstioStatusMessageList';
 import VirtualServiceOverview from './VirtualServiceOverview';
 
@@ -131,6 +132,9 @@ class IstioConfigOverview extends React.Component<IstioConfigOverviewProps> {
             <ValidationReferences objectReferences={this.props.objectReferences} />
           </StackItem>
         )}
+        <StackItem>
+          <IstioConfigAssistant />
+        </StackItem>
       </Stack>
     );
   }

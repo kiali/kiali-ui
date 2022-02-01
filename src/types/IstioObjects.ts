@@ -112,6 +112,11 @@ export interface Reference {
   kind: string;
 }
 
+export interface ServiceReference {
+  name: string;
+  namespace: string;
+}
+
 export interface ValidationStatus {
   errors: number;
   objectCount?: number;

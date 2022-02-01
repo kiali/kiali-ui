@@ -21,7 +21,7 @@ import { default as IstioActionButtonsContainer } from '../../components/IstioAc
 import history from '../../app/History';
 import { Paths } from '../../config';
 import { MessageType } from '../../types/MessageCenter';
-import { getIstioObject, getReconciliationCondition, mergeJsonPatch } from '../../utils/IstioConfigUtils';
+import { getIstioObject, mergeJsonPatch } from '../../utils/IstioConfigUtils';
 import { style } from 'typestyle';
 import ParameterizedTabs, { activeTab } from '../../components/Tab/Tabs';
 import {
@@ -40,6 +40,7 @@ import { AxiosError } from 'axios';
 import { Annotation } from 'react-ace/types';
 import RefreshButtonContainer from '../../components/Refresh/RefreshButton';
 import IstioConfigOverview from './IstioObjectDetails/IstioConfigOverview';
+import { Ace } from 'ace-builds';
 
 // Enables the search box for the ACEeditor
 require('ace-builds/src-noconflict/ext-searchbox');
@@ -186,7 +187,17 @@ class IstioConfigDetailsPage extends React.Component<RouteComponentProps<IstioCo
     this.fetchIstioObjectDetails();
   }
 
-  componentDidUpdate(prevProps: RouteComponentProps<IstioConfigId>, prevState: IstioConfigDetailsState) {
+  /*
+  updateMarker = (html: string[], marker: any, session: Ace.EditSession, config: any): void => {
+    console.log(html);
+    console.log(marker);
+    console.log(session);
+    console.log(config);
+    alert("asd");
+  };
+*/
+
+  componentDidUpdate(prevProps: RouteComponentProps<IstioConfigId>, prevState: IstioConfigDetailsState): void {
     // This will ask confirmation if we want to leave page on pending changes without save
     if (this.state.isModified) {
       window.onbeforeunload = () => true;
@@ -199,6 +210,14 @@ class IstioConfigDetailsPage extends React.Component<RouteComponentProps<IstioCo
     // See https://github.com/securingsincity/react-ace/issues/300
     if (this.aceEditorRef.current) {
       const editor = this.aceEditorRef.current!['editor'];
+
+      /*       const m: Ace.MarkerLike = { id: 1, 
+                                  clazz: "istio-validation-info", 
+                                  range: new Range(24, 2, 24, 10), 
+                                  inFront: false, 
+                                  type: "text", 
+                                  update: this.updateMarker };
+      editor.session.addDynamicMarker(m, false); */
 
       // tslint:disable-next-line
       editor.onChangeAnnotation();
@@ -431,7 +450,7 @@ class IstioConfigDetailsPage extends React.Component<RouteComponentProps<IstioCo
   renderEditor = () => {
     const yamlSource = this.fetchYaml();
     const istioStatusMsgs = this.getStatusMessages(this.state.istioObjectDetails);
-    const reconciliationStatus = getReconciliationCondition(this.state.istioObjectDetails);
+
     const objectReferences = this.objectReferences(this.state.istioObjectDetails);
     const refPresent = objectReferences.length > 0;
     const showCards = this.showCards(refPresent, istioStatusMsgs);
@@ -447,7 +466,10 @@ class IstioConfigDetailsPage extends React.Component<RouteComponentProps<IstioCo
         editorValidations.annotations = this.state.yamlValidations.annotations;
       }
     }
+<<<<<<< HEAD
 
+=======
+>>>>>>> 32ea474e (incorporating new service references for vs)
     const panelContent = (
       <DrawerPanelContent>
         <DrawerHead>
