@@ -91,7 +91,7 @@ export interface ObjectValidation {
   objectType: string;
   valid: boolean;
   checks: ObjectCheck[];
-  references?: ObjectReference[];
+  references?: References;
 }
 
 export interface ObjectCheck {
@@ -107,9 +107,14 @@ export interface ObjectReference {
   namespace: string;
 }
 
-export interface Reference {
+export interface PodReference {
   name: string;
   kind: string;
+}
+
+export interface References {
+  objectReferences: ObjectReference[];
+  serviceReferences: ServiceReference[];
 }
 
 export interface ServiceReference {
@@ -142,7 +147,7 @@ export interface Pod {
   name: string;
   labels?: { [key: string]: string };
   createdAt: string;
-  createdBy: Reference[];
+  createdBy: PodReference[];
   containers?: ContainerInfo[];
   istioContainers?: ContainerInfo[];
   istioInitContainers?: ContainerInfo[];

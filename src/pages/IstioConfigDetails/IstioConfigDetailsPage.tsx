@@ -12,7 +12,7 @@ import * as API from '../../services/Api';
 import AceEditor from 'react-ace';
 import 'ace-builds/src-noconflict/mode-yaml';
 import 'ace-builds/src-noconflict/theme-eclipse';
-import { ObjectReference, ObjectValidation, ValidationMessage } from '../../types/IstioObjects';
+import { ObjectReference, ObjectValidation, ServiceReference, ValidationMessage } from '../../types/IstioObjects';
 import { AceValidations, jsYaml, parseKialiValidations, parseYamlValidations } from '../../types/AceValidations';
 import IstioActionDropdown from '../../components/IstioActions/IstioActionsDropdown';
 import { RenderComponentScroll, RenderHeader } from '../../components/Nav/Page';
@@ -402,7 +402,12 @@ class IstioConfigDetailsPage extends React.Component<RouteComponentProps<IstioCo
   objectReferences = (istioConfigDetails?: IstioConfigDetails): ObjectReference[] => {
     const details: IstioConfigDetails = istioConfigDetails || ({} as IstioConfigDetails);
     const istioValidations: ObjectValidation = details.validation || ({} as ObjectValidation);
-    return istioValidations.references || ([] as ObjectReference[]);
+    return istioValidations.references?.objectReferences || ([] as ObjectReference[]);
+  };
+
+  serviceReferences = (istioConfigDetails?: IstioConfigDetails): ServiceReference[] => {
+    const details: IstioConfigDetails = istioConfigDetails || ({} as IstioConfigDetails);
+    return details.references?.serviceReferences || ([] as ServiceReference[]);
   };
 
   // Aux function to calculate rows for 'status' and 'managedFields' which are typically folded
@@ -452,6 +457,7 @@ class IstioConfigDetailsPage extends React.Component<RouteComponentProps<IstioCo
     const istioStatusMsgs = this.getStatusMessages(this.state.istioObjectDetails);
 
     const objectReferences = this.objectReferences(this.state.istioObjectDetails);
+    const serviceReferences = this.serviceReferences(this.state.istioObjectDetails);
     const refPresent = objectReferences.length > 0;
     const showCards = this.showCards(refPresent, istioStatusMsgs);
     let editorValidations: AceValidations = {
@@ -479,6 +485,7 @@ class IstioConfigDetailsPage extends React.Component<RouteComponentProps<IstioCo
                     namespace={this.state.istioObjectDetails.namespace.name}
                     statusMessages={istioStatusMsgs}
                     objectReferences={objectReferences}
+                    serviceReferences={serviceReferences}
                   />
                 )}
               </>
