@@ -241,7 +241,12 @@ export class GraphFind extends React.Component<GraphFindProps, GraphFindState> {
       this.handleFind(this.props.cy);
     }
 
-    if (hideChanged || (graphChanged && !!this.props.hideValue) || edgeModeChanged) {
+    if (
+      hideChanged ||
+      (graphChanged && !!this.props.hideValue) ||
+      edgeModeChanged ||
+      this.props.edgeMode !== EdgeMode.ALL
+    ) {
       // ensure hideInputValue is aligned if hideValue is set externally (e.g. resetSettings)
       if (this.state.hideInputValue !== this.props.hideValue) {
         this.setHide(this.props.hideValue);
@@ -466,7 +471,7 @@ export class GraphFind extends React.Component<GraphFindProps, GraphFindState> {
     compressOnHideChanged: boolean
   ) => {
     const selector = this.parseValue(this.props.hideValue, false);
-    const checkRemovals = selector || (edgeModeChanged && this.props.edgeMode !== EdgeMode.ALL);
+    const checkRemovals = selector || this.props.edgeMode !== EdgeMode.ALL;
 
     console.debug(`Hide selector=[${selector}]`);
 
@@ -537,7 +542,12 @@ export class GraphFind extends React.Component<GraphFindProps, GraphFindState> {
     cy.endBatch();
 
     const hasRemovedElements: boolean = !!this.removedElements && this.removedElements.length > 0;
-    if (hideChanged || (compressOnHideChanged && checkRemovals) || (hasRemovedElements && graphElementsChanged)) {
+    if (
+      hideChanged ||
+      (compressOnHideChanged && checkRemovals) ||
+      (hasRemovedElements && graphElementsChanged) ||
+      edgeModeChanged
+    ) {
       cy.emit('kiali-zoomignore', [true]);
       CytoscapeGraphUtils.runLayout(cy, this.props.layout).then(() => {
         // do nothing, defer to CytoscapeGraph.tsx 'onlayout' event handler
