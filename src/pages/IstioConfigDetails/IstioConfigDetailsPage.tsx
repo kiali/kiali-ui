@@ -401,8 +401,7 @@ class IstioConfigDetailsPage extends React.Component<RouteComponentProps<IstioCo
 
   objectReferences = (istioConfigDetails?: IstioConfigDetails): ObjectReference[] => {
     const details: IstioConfigDetails = istioConfigDetails || ({} as IstioConfigDetails);
-    const istioValidations: ObjectValidation = details.validation || ({} as ObjectValidation);
-    return istioValidations.references?.objectReferences || ([] as ObjectReference[]);
+    return details.references?.objectReferences || ([] as ObjectReference[]);
   };
 
   serviceReferences = (istioConfigDetails?: IstioConfigDetails): ServiceReference[] => {

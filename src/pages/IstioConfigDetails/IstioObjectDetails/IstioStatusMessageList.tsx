@@ -11,9 +11,9 @@ class IstioStatusMessageList extends React.Component<Props> {
   render() {
     return (
       <>
-        <Stack gutter="md">
+        <Stack>
           <StackItem>
-            <Title headingLevel={TitleLevel.h4} size={TitleSize.lg}>
+            <Title headingLevel={TitleLevel.h4} size={TitleSize.lg} style={{ paddingBottom: '10px' }}>
               Configuration Analysis
             </Title>
           </StackItem>

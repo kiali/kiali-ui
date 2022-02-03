@@ -11,7 +11,7 @@ class ValidationReferences extends React.Component<Props> {
   render() {
     return (
       <>
-        <Title headingLevel={TitleLevel.h4} size={TitleSize.lg}>
+        <Title headingLevel={TitleLevel.h3} size={TitleSize.xl}>
           Validation references
         </Title>
         <Stack>

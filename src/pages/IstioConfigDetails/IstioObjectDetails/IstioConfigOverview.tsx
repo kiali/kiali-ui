@@ -10,7 +10,6 @@ import { IstioConfigDetails } from 'types/IstioConfigDetails';
 import { ObjectReference, ObjectValidation, ServiceReference, ValidationMessage } from 'types/IstioObjects';
 import { style } from 'typestyle';
 import { getIstioObject, getReconciliationCondition } from 'utils/IstioConfigUtils';
-import ValidationReferences from '../ValidationReferences';
 import IstioConfigReferences from './IstioConfigReferences';
 import IstioStatusMessageList from './IstioStatusMessageList';
 
@@ -119,14 +118,12 @@ class IstioConfigOverview extends React.Component<IstioConfigOverviewProps> {
             <IstioStatusMessageList messages={this.props.statusMessages} />
           </StackItem>
         )}
-        {this.props.objectReferences.length > 0 && (
-          <StackItem>
-            <ValidationReferences objectReferences={this.props.objectReferences} />
-          </StackItem>
-        )}
         {this.props.serviceReferences.length > 0 && (
           <StackItem>
-            <IstioConfigReferences serviceReferences={this.props.serviceReferences} />
+            <IstioConfigReferences
+              objectReferences={this.props.objectReferences}
+              serviceReferences={this.props.serviceReferences}
+            />
           </StackItem>
         )}
       </Stack>
