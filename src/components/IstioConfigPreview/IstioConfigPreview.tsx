@@ -198,9 +198,7 @@ export class IstioConfigPreview extends React.Component<Props, State> {
           </Tabs>
         )}
         {this.props.disableAction && (
-          <div className={style({ color: PFColors.Danger })}>
-            You have not rights to perform this {this.props.opTarget} action.
-          </div>
+          <div className={style({ color: PFColors.Danger })}>User does not have enough permission for this action.</div>
         )}
       </Modal>
     );
