@@ -517,7 +517,15 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
       CytoscapeGraph.mouseInTimeout = setTimeout(() => {
         // timer expired without a mouseout so perform highlighting and show hover contextInfo
         this.handleMouseIn(cytoscapeEvent);
-        this.contextMenuRef!.current!.handleContextMenu(cytoscapeEvent.summaryTarget, true);
+
+        // if we are not showing labels (due to zoom level), show contextInfo
+        const zoom = cy.zoom();
+        const noLabels = this.zoomThresholds!.some(zoomThresh => {
+          return zoom <= zoomThresh;
+        });
+        if (noLabels) {
+          this.contextMenuRef!.current!.handleContextMenu(cytoscapeEvent.summaryTarget, true);
+        }
       }, CytoscapeGraph.hoverInMs);
     });
 
