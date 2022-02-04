@@ -6,8 +6,6 @@ import {
   ExpandArrowsAltIcon,
   MapIcon,
   PficonDragdropIcon,
-  SearchMinusIcon,
-  SearchPlusIcon,
   TopologyIcon
 } from '@patternfly/react-icons';
 import { style } from 'typestyle';
@@ -62,8 +60,6 @@ const cytoscapeToolbarStyle = style({
   width: '20px'
 });
 
-const ZOOM_STEP = 0.2;
-
 export class CytoscapeToolbar extends React.PureComponent<CytoscapeToolbarProps, CytoscapeToolbarState> {
   constructor(props: CytoscapeToolbarProps) {
     super(props);
@@ -103,32 +99,6 @@ export class CytoscapeToolbar extends React.PureComponent<CytoscapeToolbarProps,
           </Tooltip>
         </ToolbarItem>
         <ToolbarItem>
-          <Tooltip content="Zoom In" position={TooltipPosition.right}>
-            <Button
-              id="toolbar_zoom_in"
-              aria-label="Zoom In"
-              className={buttonStyle}
-              variant="plain"
-              onClick={() => this.zoomIn()}
-            >
-              <SearchPlusIcon />
-            </Button>
-          </Tooltip>
-        </ToolbarItem>
-        <ToolbarItem>
-          <Tooltip content="Zoom Out" position={TooltipPosition.right}>
-            <Button
-              id="toolbar_zoom_out"
-              aria-label="Zoom Out"
-              className={buttonStyle}
-              variant="plain"
-              onClick={() => this.zoomOut()}
-            >
-              <SearchMinusIcon />
-            </Button>
-          </Tooltip>
-        </ToolbarItem>
-        <ToolbarItem>
           <Tooltip content="Zoom to Fit" position={TooltipPosition.right}>
             <Button
               id="toolbar_graph_fit"
@@ -141,9 +111,8 @@ export class CytoscapeToolbar extends React.PureComponent<CytoscapeToolbarProps,
             </Button>
           </Tooltip>
         </ToolbarItem>
-
         <ToolbarItem>
-          <Tooltip content="Hide healthy edges">
+          <Tooltip content="Hide healthy edges" position={TooltipPosition.right}>
             <Button
               id="toolbar_edge_mode_unhealthy"
               aria-label="Hide Healthy Edges"
@@ -160,9 +129,8 @@ export class CytoscapeToolbar extends React.PureComponent<CytoscapeToolbarProps,
             </Button>
           </Tooltip>
         </ToolbarItem>
-
         <ToolbarItem>
-          <Tooltip content="Hide all edges">
+          <Tooltip content="Hide all edges" position={TooltipPosition.right}>
             <Button
               id="toolbar_edge_mode_none"
               aria-label="Hide All Edges"
@@ -276,28 +244,6 @@ export class CytoscapeToolbar extends React.PureComponent<CytoscapeToolbarProps,
     }
     cy.autoungrabify(this.state.allowGrab);
     this.setState({ allowGrab: !this.state.allowGrab });
-  };
-
-  private zoom = (step: number) => {
-    const cy = this.getCy();
-    const container = cy ? cy.container() : undefined;
-    if (cy && container) {
-      cy.zoom({
-        level: cy.zoom() * (1 + step),
-        renderedPosition: {
-          x: container.offsetWidth / 2,
-          y: container.offsetHeight / 2
-        }
-      });
-    }
-  };
-
-  private zoomIn = () => {
-    this.zoom(ZOOM_STEP);
-  };
-
-  private zoomOut = () => {
-    this.zoom(-ZOOM_STEP);
   };
 
   private fit = () => {
