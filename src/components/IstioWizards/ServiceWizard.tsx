@@ -492,7 +492,7 @@ class ServiceWizard extends React.Component<ServiceWizardProps, ServiceWizardSta
       {
         previews: buildIstioConfig(this.props, this.state)
       },
-      () => this.setState({ showPreview: true, showWizard: false })
+      () => this.setState({ showPreview: true })
     );
   };
 
@@ -507,7 +507,7 @@ class ServiceWizard extends React.Component<ServiceWizardProps, ServiceWizardSta
       pa: pa ? (pa.items[0] as PeerAuthentication) : undefined,
       vs: vs.items[0] as VirtualService
     };
-    this.setState({ previews, showPreview: false, confirmationModal: true });
+    this.setState({ previews, showPreview: false, showWizard: false, confirmationModal: true });
   };
 
   getItems = () => {
@@ -540,18 +540,6 @@ class ServiceWizard extends React.Component<ServiceWizardProps, ServiceWizardSta
         : '';
     return (
       <>
-        <IstioConfigPreview
-          isOpen={this.state.showPreview}
-          title={titleAction}
-          ns={this.props.namespace}
-          opTarget={this.props.update ? 'update' : 'create'}
-          disableAction={!this.props.createOrUpdate}
-          items={this.getItems()}
-          onClose={() => this.onClose(false)}
-          onConfirm={(items: ConfigPreviewItem[]) => {
-            this.onConfirmPreview(items);
-          }}
-        />
         <Modal
           isSmall={true}
           title={titleAction}
@@ -596,6 +584,18 @@ class ServiceWizard extends React.Component<ServiceWizardProps, ServiceWizardSta
             </Button>
           ]}
         >
+          <IstioConfigPreview
+            isOpen={this.state.showPreview}
+            title={titleAction}
+            ns={this.props.namespace}
+            opTarget={this.props.update ? 'update' : 'create'}
+            disableAction={!this.props.createOrUpdate}
+            items={this.getItems()}
+            onClose={() => this.setState({ showPreview: false })}
+            onConfirm={(items: ConfigPreviewItem[]) => {
+              this.onConfirmPreview(items);
+            }}
+          />
           {this.props.type === WIZARD_REQUEST_ROUTING && (
             <RequestRouting
               serviceName={this.props.serviceName}
