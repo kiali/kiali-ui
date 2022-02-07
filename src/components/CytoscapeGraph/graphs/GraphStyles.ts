@@ -22,9 +22,9 @@ import * as Cy from 'cytoscape';
 import { PFBadges } from 'components/Pf/PfBadges';
 import { config } from 'config/Config';
 
-export const DimClass = 'mousedim';
 export const HighlightClass = 'mousehighlight';
 export const HoveredClass = 'mousehover';
+export const UnhighlightClass = 'mouseunhighlight';
 
 let EdgeColor: PFColorVal;
 let EdgeColorDead: PFColorVal;
@@ -388,7 +388,7 @@ export class GraphStyles {
     }
     const lineHeight = fontSize + 1;
     let labelStyle = `font-size:${fontSize}px;line-height:${lineHeight}px;`;
-    if (ele.hasClass(DimClass)) {
+    if (ele.hasClass(UnhighlightClass)) {
       labelStyle += 'opacity:0.6;';
     }
     if (noLabel) {
@@ -830,9 +830,9 @@ export class GraphStyles {
           }
         }
       },
-      // Node is dimmed (see GraphHighlighter.ts)
+      // Node is unhighlighted (see GraphHighlighter.ts)
       {
-        selector: `node.${DimClass}`,
+        selector: `node.${UnhighlightClass}`,
         style: {
           opacity: 0.0
         }
@@ -892,7 +892,7 @@ export class GraphStyles {
         }
       },
       {
-        selector: `edge.${DimClass}`,
+        selector: `edge.${UnhighlightClass}`,
         style: {
           opacity: 0.0
         }
