@@ -225,6 +225,18 @@ export default class OverviewTrafficPolicies extends React.Component<OverviewTra
     graphDataSource.fetchForNamespace(duration, ns);
   };
 
+  getItemsPreview = () => {
+    const items: ConfigPreviewItem[] = [];
+    this.state.authorizationPolicies.length > 0 &&
+      items.push({
+        type: 'authorizationPolicy',
+        items: this.state.authorizationPolicies,
+        title: 'Authorization Policies'
+      });
+    this.state.sidecars.length > 0 && items.push({ type: 'sidecar', items: this.state.sidecars, title: 'Sidecars' });
+    return items;
+  };
+
   onConfirmPreviewPoliciesModal = (items: ConfigPreviewItem[]) => {
     const aps = items.filter(i => i.type === 'authorizationPolicy')[0];
     const sds = items.filter(i => i.type === 'sidecar')[0];
@@ -270,10 +282,7 @@ export default class OverviewTrafficPolicies extends React.Component<OverviewTra
             onClose={this.onHideConfirmModal}
             onConfirm={this.onConfirmPreviewPoliciesModal}
             ns={this.props.nsTarget}
-            items={[
-              { type: 'authorizationPolicy', items: this.state.authorizationPolicies, title: 'Authorization Policies' },
-              { type: 'sidecar', items: this.state.sidecars, title: 'Sidecars' }
-            ]}
+            items={this.getItemsPreview()}
             opTarget={this.props.opTarget}
           />
         )}
