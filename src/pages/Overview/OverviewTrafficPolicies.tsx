@@ -90,14 +90,17 @@ export default class OverviewTrafficPolicies extends React.Component<OverviewTra
     }
   }
 
-  fetchPermission = (confirmationModal: boolean = false) => {
+  fetchPermission = (
+    confirmationModal: boolean = false,
+    loaded: boolean = this.props.opTarget === 'update' || this.props.opTarget === 'create'
+  ) => {
     this.promises.register('namespacepermissions', API.getIstioPermissions([this.props.nsTarget])).then(result => {
       const permission = result.data[this.props.nsTarget][AUTHORIZATION_POLICIES];
       const disableOp = !(permission.create && permission.update && permission.delete);
       this.setState({
         confirmationModal,
         disableOp,
-        loaded: this.props.opTarget === 'update' || this.props.opTarget === 'create'
+        loaded
       });
     });
   };
@@ -244,7 +247,7 @@ export default class OverviewTrafficPolicies extends React.Component<OverviewTra
     const sds = items.filter(i => i.type === 'sidecar')[0];
     this.setState(
       { authorizationPolicies: aps.items as AuthorizationPolicy[], sidecars: sds.items as Sidecar[], loaded: false },
-      () => this.fetchPermission(true)
+      () => this.fetchPermission(true, false)
     );
   };
 
