@@ -67,13 +67,14 @@ export default class OverviewTrafficPolicies extends React.Component<OverviewTra
         default:
           if (this.props.opTarget === 'create') {
             this.generateTrafficPolicies();
+            this.fetchPermission();
           } else if (this.props.opTarget === 'update') {
             var authorizationPolicies = this.props.nsInfo?.istioConfig?.authorizationPolicies || [];
             var sidecars = this.props.nsInfo?.istioConfig?.sidecars || [];
             const remove = ['uid', 'resourceVersion', 'generation', 'creationTimestamp', 'managedFields'];
             sidecars.map(sdc => remove.map(key => delete sdc.metadata[key]));
             authorizationPolicies.map(ap => remove.map(key => delete ap.metadata[key]));
-            this.setState({ authorizationPolicies, sidecars, loaded: true });
+            this.setState({ authorizationPolicies, sidecars }, () => this.fetchPermission());
           } else if (this.props.opTarget === 'delete') {
             var nsInfo = this.props.nsInfo.istioConfig;
             this.setState(
@@ -81,7 +82,7 @@ export default class OverviewTrafficPolicies extends React.Component<OverviewTra
                 authorizationPolicies: nsInfo?.authorizationPolicies || [],
                 sidecars: nsInfo?.sidecars || []
               },
-              () => this.fetchPermission()
+              () => this.fetchPermission(true)
             );
           }
           break;
@@ -89,13 +90,14 @@ export default class OverviewTrafficPolicies extends React.Component<OverviewTra
     }
   }
 
-  fetchPermission = () => {
+  fetchPermission = (confirmationModal: boolean = false) => {
     this.promises.register('namespacepermissions', API.getIstioPermissions([this.props.nsTarget])).then(result => {
       const permission = result.data[this.props.nsTarget][AUTHORIZATION_POLICIES];
       const disableOp = !(permission.create && permission.update && permission.delete);
       this.setState({
-        confirmationModal: true,
-        disableOp
+        confirmationModal,
+        disableOp,
+        loaded: this.props.opTarget === 'update' || this.props.opTarget === 'create'
       });
     });
   };
@@ -105,7 +107,7 @@ export default class OverviewTrafficPolicies extends React.Component<OverviewTra
     graphDataSource.on('fetchSuccess', () => {
       const aps = buildGraphAuthorizationPolicy(this.props.nsTarget, graphDataSource.graphDefinition);
       const scs = buildGraphSidecars(this.props.nsTarget, graphDataSource.graphDefinition);
-      this.setState({ authorizationPolicies: aps, sidecars: scs, loaded: true });
+      this.setState({ authorizationPolicies: aps, sidecars: scs });
     });
     graphDataSource.fetchForNamespace(this.props.duration, this.props.nsTarget);
   };
@@ -242,7 +244,7 @@ export default class OverviewTrafficPolicies extends React.Component<OverviewTra
     const sds = items.filter(i => i.type === 'sidecar')[0];
     this.setState(
       { authorizationPolicies: aps.items as AuthorizationPolicy[], sidecars: sds.items as Sidecar[], loaded: false },
-      () => this.fetchPermission()
+      () => this.fetchPermission(true)
     );
   };
 
