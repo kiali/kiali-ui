@@ -300,7 +300,12 @@ export default class OverviewTrafficPolicies extends React.Component<OverviewTra
             <Button key="cancel" variant="secondary" onClick={this.onHideConfirmModal}>
               Cancel
             </Button>,
-            <Button key="confirm" variant={colorAction as colorButton} onClick={this.onConfirm}>
+            <Button
+              key="confirm"
+              isDisabled={this.state.disableOp}
+              variant={colorAction as colorButton}
+              onClick={this.onConfirm}
+            >
               {modalAction}
             </Button>
           ]}
