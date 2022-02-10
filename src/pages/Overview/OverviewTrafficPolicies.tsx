@@ -44,7 +44,7 @@ export default class OverviewTrafficPolicies extends React.Component<OverviewTra
   constructor(props: OverviewTrafficPoliciesProps) {
     super(props);
     this.state = {
-      confirmationModal: false,
+      confirmationModal: this.confirmationModalStatus(),
       authorizationPolicies: [],
       sidecars: [],
       loaded: this.props.opTarget === 'update',
@@ -53,15 +53,19 @@ export default class OverviewTrafficPolicies extends React.Component<OverviewTra
     };
   }
 
+  confirmationModalStatus = () => {
+    return this.props.kind === 'canary' || this.props.kind === 'injection';
+  };
+
   componentDidUpdate(prevProps: OverviewTrafficPoliciesProps) {
     if (prevProps.nsTarget !== this.props.nsTarget || prevProps.opTarget !== this.props.opTarget) {
       switch (this.props.kind) {
         case 'injection':
-          this.fetchPermission();
+          this.fetchPermission(true);
           break;
         case 'canary':
           this.setState({ canaryVersion: serverConfig.istioCanaryRevision[this.props.opTarget] }, () =>
-            this.fetchPermission()
+            this.fetchPermission(true)
           );
           break;
         default:
@@ -325,6 +329,7 @@ export default class OverviewTrafficPolicies extends React.Component<OverviewTra
               policies objects. Do you want to {this.props.opTarget} them ?
             </>
           )}
+          {}
         </Modal>
       </>
     );
