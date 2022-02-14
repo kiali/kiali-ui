@@ -192,10 +192,6 @@ export class GraphFind extends React.Component<GraphFindProps, GraphFindState> {
       findErrorChanged ||
       hideErrorChanged;
 
-    if (shouldUpdate) {
-      console.log(`Find should update, edgeModeChange=${edgeModeChanged}`);
-    }
-
     return shouldUpdate;
   }
 
@@ -505,7 +501,6 @@ export class GraphFind extends React.Component<GraphFindProps, GraphFindState> {
         // subtract any appbox hits, we only hide empty appboxes
         hiddenElements = hiddenElements.subtract(hiddenElements.filter('$node[isBox]'));
       }
-      console.log(`Hiding ${hiddenElements.size()} selected elements`);
 
       if (this.props.edgeMode !== EdgeMode.ALL) {
         // remove other unwanted edges, don't touch the remaining nodes
@@ -519,15 +514,12 @@ export class GraphFind extends React.Component<GraphFindProps, GraphFindState> {
             break;
         }
       }
-      console.log(`Hiding ${hiddenElements.size()} total elements`);
 
       if (this.props.compressOnHide) {
         this.removedElements = cy.remove(hiddenElements);
-        console.log(`Removed ${this.removedElements.size()} total elements`);
         // now subtract any appboxes that don't have any visible children
         const hiddenAppBoxes = cy.$('$node[isBox]').subtract(cy.$('$node[isBox] > :inside'));
         this.removedElements = this.removedElements.add(cy.remove(hiddenAppBoxes));
-        console.log(`Appended Removed ${this.removedElements.size()} total elements`);
       } else {
         // set the remaining hide-hits hidden
         this.hiddenElements = hiddenElements;

@@ -56,7 +56,6 @@ const graphDataState = (state: GraphState = INITIAL_GRAPH_STATE, action: KialiAp
         summaryData: INITIAL_GRAPH_STATE.summaryData
       });
     case getType(GraphActions.setEdgeMode): {
-      console.log(`Set edgeMode from ${state.edgeMode as EdgeMode} to ${action.payload as EdgeMode}`);
       return updateState(state, { edgeMode: action.payload });
     }
     case getType(GraphActions.setGraphDefinition):
