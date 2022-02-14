@@ -173,7 +173,6 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
     // completes (showIdleNodes, showSecurity, showServiceNodes, etc).
     let result =
       this.props.edgeLabels !== nextProps.edgeLabels ||
-      // this.props.edgeMode !== nextProps.edgeMode ||
       this.props.graphData.isLoading !== nextProps.graphData.isLoading ||
       this.props.graphData.elements !== nextProps.graphData.elements ||
       this.props.layout !== nextProps.layout ||
