@@ -1,12 +1,14 @@
 import { Stack, StackItem, Title, TitleLevel, TitleSize } from '@patternfly/react-core';
 import { ReferenceIstioObjectLink } from 'components/Link/IstioObjectLink';
 import ServiceLink from 'components/Link/ServiceLink';
+import WorkloadLink from 'components/Link/WorkloadLink';
 import * as React from 'react';
-import { ObjectReference, ServiceReference } from 'types/IstioObjects';
+import { ObjectReference, ServiceReference, WorkloadReference } from 'types/IstioObjects';
 
 interface IstioConfigReferencesProps {
   objectReferences: ObjectReference[];
   serviceReferences: ServiceReference[];
+  workloadReferences: WorkloadReference[];
 }
 
 class IstioConfigReferences extends React.Component<IstioConfigReferencesProps> {
@@ -22,6 +24,13 @@ class IstioConfigReferences extends React.Component<IstioConfigReferencesProps> 
           <StackItem>
             {this.props.serviceReferences.map(reference => {
               return <ServiceLink name={reference.name} namespace={reference.namespace} />;
+            })}
+          </StackItem>
+        )}
+        {this.props.workloadReferences && this.props.workloadReferences.length > 0 && (
+          <StackItem>
+            {this.props.workloadReferences.map(reference => {
+              return <WorkloadLink name={reference.name} namespace={reference.namespace} />;
             })}
           </StackItem>
         )}

@@ -7,7 +7,13 @@ import { IstioTypes } from 'components/VirtualList/Config';
 import { KialiIcon } from 'config/KialiIcon';
 import * as React from 'react';
 import { IstioConfigDetails } from 'types/IstioConfigDetails';
-import { ObjectReference, ObjectValidation, ServiceReference, ValidationMessage } from 'types/IstioObjects';
+import {
+  ObjectReference,
+  ObjectValidation,
+  ServiceReference,
+  ValidationMessage,
+  WorkloadReference
+} from 'types/IstioObjects';
 import { style } from 'typestyle';
 import { getIstioObject, getReconciliationCondition } from 'utils/IstioConfigUtils';
 import IstioConfigHelp from './IstioConfigHelp';
@@ -21,6 +27,7 @@ interface IstioConfigOverviewProps {
   statusMessages: ValidationMessage[];
   objectReferences: ObjectReference[];
   serviceReferences: ServiceReference[];
+  workloadReferences: WorkloadReference[];
 }
 
 const iconStyle = style({
@@ -124,6 +131,7 @@ class IstioConfigOverview extends React.Component<IstioConfigOverviewProps> {
             <IstioConfigReferences
               objectReferences={this.props.objectReferences}
               serviceReferences={this.props.serviceReferences}
+              workloadReferences={this.props.workloadReferences}
             />
           </StackItem>
         )}

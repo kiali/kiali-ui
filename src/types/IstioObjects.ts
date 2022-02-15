@@ -115,6 +115,7 @@ export interface PodReference {
 export interface References {
   objectReferences: ObjectReference[];
   serviceReferences: ServiceReference[];
+  workloadReferences: WorkloadReference[];
 }
 
 export interface ServiceReference {
@@ -126,6 +127,11 @@ export interface ValidationStatus {
   errors: number;
   objectCount?: number;
   warnings: number;
+}
+
+export interface WorkloadReference {
+  name: string;
+  namespace: string;
 }
 
 export interface ContainerInfo {
