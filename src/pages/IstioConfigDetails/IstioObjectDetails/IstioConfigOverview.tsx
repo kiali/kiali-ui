@@ -10,6 +10,7 @@ import { IstioConfigDetails } from 'types/IstioConfigDetails';
 import { ObjectReference, ObjectValidation, ServiceReference, ValidationMessage } from 'types/IstioObjects';
 import { style } from 'typestyle';
 import { getIstioObject, getReconciliationCondition } from 'utils/IstioConfigUtils';
+import IstioConfigHelp from './IstioConfigHelp';
 import IstioConfigReferences from './IstioConfigReferences';
 import IstioStatusMessageList from './IstioStatusMessageList';
 
@@ -126,6 +127,9 @@ class IstioConfigOverview extends React.Component<IstioConfigOverviewProps> {
             />
           </StackItem>
         )}
+        <StackItem>
+          <IstioConfigHelp></IstioConfigHelp>
+        </StackItem>
       </Stack>
     );
   }

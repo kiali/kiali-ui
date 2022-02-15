@@ -40,7 +40,6 @@ import { AxiosError } from 'axios';
 import { Annotation } from 'react-ace/types';
 import RefreshButtonContainer from '../../components/Refresh/RefreshButton';
 import IstioConfigOverview from './IstioObjectDetails/IstioConfigOverview';
-//import { Ace } from 'ace-builds';
 
 // Enables the search box for the ACEeditor
 require('ace-builds/src-noconflict/ext-searchbox');
@@ -187,16 +186,6 @@ class IstioConfigDetailsPage extends React.Component<RouteComponentProps<IstioCo
     this.fetchIstioObjectDetails();
   }
 
-  /*
-  updateMarker = (html: string[], marker: any, session: Ace.EditSession, config: any): void => {
-    console.log(html);
-    console.log(marker);
-    console.log(session);
-    console.log(config);
-    alert("asd");
-  };
-*/
-
   componentDidUpdate(prevProps: RouteComponentProps<IstioConfigId>, prevState: IstioConfigDetailsState): void {
     // This will ask confirmation if we want to leave page on pending changes without save
     if (this.state.isModified) {
@@ -210,14 +199,6 @@ class IstioConfigDetailsPage extends React.Component<RouteComponentProps<IstioCo
     // See https://github.com/securingsincity/react-ace/issues/300
     if (this.aceEditorRef.current) {
       const editor = this.aceEditorRef.current!['editor'];
-
-      /*       const m: Ace.MarkerLike = { id: 1, 
-                                  clazz: "istio-validation-info", 
-                                  range: new Range(24, 2, 24, 10), 
-                                  inFront: false, 
-                                  type: "text", 
-                                  update: this.updateMarker };
-      editor.session.addDynamicMarker(m, false); */
 
       // tslint:disable-next-line
       editor.onChangeAnnotation();
@@ -393,10 +374,7 @@ class IstioConfigDetailsPage extends React.Component<RouteComponentProps<IstioCo
 
   // Not all Istio types have an overview card
   hasOverview = (): boolean => {
-    return (
-      this.props.match.params.objectType === 'virtualservices' ||
-      this.props.match.params.objectType === 'destinationrules'
-    );
+    return true;
   };
 
   objectReferences = (istioConfigDetails?: IstioConfigDetails): ObjectReference[] => {
