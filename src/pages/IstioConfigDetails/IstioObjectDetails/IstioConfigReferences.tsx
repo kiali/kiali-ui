@@ -20,33 +20,34 @@ class IstioConfigReferences extends React.Component<IstioConfigReferencesProps> 
             References
           </Title>
         </StackItem>
-        {this.props.serviceReferences && this.props.serviceReferences.length > 0 && (
-          <StackItem>
-            {this.props.serviceReferences.map(reference => {
-              return <ServiceLink name={reference.name} namespace={reference.namespace} />;
-            })}
-          </StackItem>
-        )}
-        {this.props.workloadReferences && this.props.workloadReferences.length > 0 && (
-          <StackItem>
-            {this.props.workloadReferences.map(reference => {
-              return <WorkloadLink name={reference.name} namespace={reference.namespace} />;
-            })}
-          </StackItem>
-        )}
-        {this.props.objectReferences && this.props.objectReferences.length > 0 && (
-          <StackItem>
-            {this.props.objectReferences.map(reference => {
-              return (
+        {this.props.serviceReferences &&
+          this.props.serviceReferences.map(reference => {
+            return (
+              <StackItem>
+                <ServiceLink name={reference.name} namespace={reference.namespace} />
+              </StackItem>
+            );
+          })}
+        {this.props.workloadReferences &&
+          this.props.workloadReferences.map(reference => {
+            return (
+              <StackItem>
+                <WorkloadLink name={reference.name} namespace={reference.namespace} />
+              </StackItem>
+            );
+          })}
+        {this.props.objectReferences &&
+          this.props.objectReferences.map(reference => {
+            return (
+              <StackItem>
                 <ReferenceIstioObjectLink
                   name={reference.name}
                   namespace={reference.namespace}
                   type={reference.objectType}
                 />
-              );
-            })}
-          </StackItem>
-        )}
+              </StackItem>
+            );
+          })}
       </Stack>
     );
   }
