@@ -1066,15 +1066,11 @@ export const buildAuthorizationPolicy = (
 
   // DENY_ALL and ALLOW_ALL are two specific cases
   if (state.policy === 'DENY_ALL') {
-    ap.spec.action = undefined;
-    ap.spec.selector = undefined;
-    ap.spec.rules = undefined;
     return ap;
   }
 
   if (state.policy === 'ALLOW_ALL') {
     ap.spec.action = ALLOW;
-    ap.spec.selector = undefined;
     ap.spec.rules = [{}];
     return ap;
   }
