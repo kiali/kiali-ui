@@ -13,6 +13,7 @@ import AceEditor from 'react-ace';
 import 'ace-builds/src-noconflict/mode-yaml';
 import 'ace-builds/src-noconflict/theme-eclipse';
 import {
+  HelpMessage,
   ObjectReference,
   ObjectValidation,
   ServiceReference,
@@ -398,6 +399,11 @@ class IstioConfigDetailsPage extends React.Component<RouteComponentProps<IstioCo
     return details.references?.workloadReferences || ([] as WorkloadReference[]);
   };
 
+  helpMessages = (istioConfigDetails?: IstioConfigDetails): HelpMessage[] => {
+    const details: IstioConfigDetails = istioConfigDetails || ({} as IstioConfigDetails);
+    return details.help || ([] as HelpMessage[]);
+  };
+
   // Aux function to calculate rows for 'status' and 'managedFields' which are typically folded
   getFoldRanges = (yaml: string | undefined): any => {
     let range = {
@@ -447,6 +453,7 @@ class IstioConfigDetailsPage extends React.Component<RouteComponentProps<IstioCo
     const objectReferences = this.objectReferences(this.state.istioObjectDetails);
     const serviceReferences = this.serviceReferences(this.state.istioObjectDetails);
     const workloadReferences = this.workloadReferences(this.state.istioObjectDetails);
+    const helpMessages = this.helpMessages(this.state.istioObjectDetails);
 
     const refPresent = objectReferences.length > 0;
     const showCards = this.showCards(refPresent, istioStatusMsgs);
@@ -477,6 +484,7 @@ class IstioConfigDetailsPage extends React.Component<RouteComponentProps<IstioCo
                     objectReferences={objectReferences}
                     serviceReferences={serviceReferences}
                     workloadReferences={workloadReferences}
+                    helpMessages={helpMessages}
                   />
                 )}
               </>

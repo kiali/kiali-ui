@@ -176,7 +176,7 @@ export const getIstioConfigDetail = (namespace: string, objectType: string, obje
   return newRequest<IstioConfigDetails>(
     HTTP_VERBS.GET,
     urls.istioConfigDetail(namespace, objectType, object),
-    validate ? { validate: true, references: true } : {},
+    validate ? { validate: true, help: true } : {},
     {}
   );
 };

@@ -1,0 +1,19 @@
+.label-help {
+  margin: 3px 2px 2px;
+  max-width: 100%;
+  float: left;
+  display: block;
+
+  .label-value {
+    min-width: 50px;
+    border-radius: 2px;
+    color: #06c;
+    border-color: #06c;
+    background-color: #fff;
+    padding-top: 4px;
+    border-radius: 0 2px 2px 0;
+    padding-bottom: 4px;
+    margin-left: 0;
+    border: 1px solid;
+  }
+}

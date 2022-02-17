@@ -14,7 +14,8 @@ import {
   WorkloadEntry,
   EnvoyFilter,
   WorkloadGroup,
-  References
+  References,
+  HelpMessage
 } from './IstioObjects';
 import { AceOptions } from 'react-ace/types';
 
@@ -40,6 +41,7 @@ export interface IstioConfigDetails {
   permissions: ResourcePermissions;
   validation: ObjectValidation;
   references?: References;
+  help?: HelpMessage[];
 }
 
 export const aceOptions: AceOptions = {

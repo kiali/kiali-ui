@@ -8,6 +8,7 @@ import { KialiIcon } from 'config/KialiIcon';
 import * as React from 'react';
 import { IstioConfigDetails } from 'types/IstioConfigDetails';
 import {
+  HelpMessage,
   ObjectReference,
   ObjectValidation,
   ServiceReference,
@@ -28,6 +29,7 @@ interface IstioConfigOverviewProps {
   objectReferences: ObjectReference[];
   serviceReferences: ServiceReference[];
   workloadReferences: WorkloadReference[];
+  helpMessages?: HelpMessage[];
 }
 
 const iconStyle = style({
@@ -126,18 +128,27 @@ class IstioConfigOverview extends React.Component<IstioConfigOverviewProps> {
             <IstioStatusMessageList messages={this.props.statusMessages} />
           </StackItem>
         )}
-        {this.props.serviceReferences.length > 0 && (
+
+        {this.props.serviceReferences &&
+          this.props.serviceReferences.length > 0 &&
+          this.props.objectReferences &&
+          this.props.objectReferences.length > 0 &&
+          this.props.workloadReferences &&
+          this.props.workloadReferences.length > 0 && (
+            <StackItem>
+              <IstioConfigReferences
+                objectReferences={this.props.objectReferences}
+                serviceReferences={this.props.serviceReferences}
+                workloadReferences={this.props.workloadReferences}
+              />
+            </StackItem>
+          )}
+
+        {this.props.helpMessages && this.props.helpMessages.length > 0 && (
           <StackItem>
-            <IstioConfigReferences
-              objectReferences={this.props.objectReferences}
-              serviceReferences={this.props.serviceReferences}
-              workloadReferences={this.props.workloadReferences}
-            />
+            <IstioConfigHelp helpMessages={this.props.helpMessages}></IstioConfigHelp>
           </StackItem>
         )}
-        <StackItem>
-          <IstioConfigHelp></IstioConfigHelp>
-        </StackItem>
       </Stack>
     );
   }

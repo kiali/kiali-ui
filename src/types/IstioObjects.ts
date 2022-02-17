@@ -6,6 +6,11 @@ import { PFColorVal } from 'components/Pf/PfColors';
 
 // Common types
 
+export interface HelpMessage {
+  objectField: string;
+  message: string;
+}
+
 export interface K8sInitializer {
   name?: string;
 }
