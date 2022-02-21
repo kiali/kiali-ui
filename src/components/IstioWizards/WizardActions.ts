@@ -1320,7 +1320,7 @@ export const buildGateway = (name: string, namespace: string, state: GatewayStat
       servers: state.gatewayServers.map(s => ({
         port: s.port,
         hosts: s.hosts,
-        tls: s.tls
+        tls: s.tls || {}
       }))
     }
   };
