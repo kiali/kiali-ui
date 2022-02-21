@@ -1099,9 +1099,9 @@ export const buildAuthorizationPolicy = (
     ap.spec.rules = [];
     state.rules.forEach(rule => {
       const appRule: AuthorizationPolicyRule = {
-        from: undefined,
-        to: undefined,
-        when: undefined
+        from: [],
+        to: [],
+        when: []
       };
       if (rule.from.length > 0) {
         appRule.from = rule.from.map(fromItem => {
@@ -1128,7 +1128,9 @@ export const buildAuthorizationPolicy = (
       if (rule.when.length > 0) {
         appRule.when = rule.when.map(condition => {
           const cond: Condition = {
-            key: condition.key
+            key: condition.key,
+            values: [],
+            notValues: []
           };
           if (condition.values && condition.values.length > 0) {
             cond.values = condition.values;
