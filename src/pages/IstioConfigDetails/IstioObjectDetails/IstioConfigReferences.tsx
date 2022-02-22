@@ -20,6 +20,9 @@ class IstioConfigReferences extends React.Component<IstioConfigReferencesProps> 
             References
           </Title>
         </StackItem>
+        {!this.props.objectReferences && !this.props.serviceReferences && !this.props.workloadReferences && (
+          <StackItem>No references found for this object.</StackItem>
+        )}
         {this.props.serviceReferences &&
           this.props.serviceReferences.map(reference => {
             return (

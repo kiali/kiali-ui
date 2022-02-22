@@ -20,7 +20,13 @@ import {
   ValidationMessage,
   WorkloadReference
 } from '../../types/IstioObjects';
-import { AceValidations, jsYaml, parseKialiValidations, parseYamlValidations } from '../../types/AceValidations';
+import {
+  AceValidations,
+  jsYaml,
+  parseKialiValidations,
+  parseLine,
+  parseYamlValidations
+} from '../../types/AceValidations';
 import IstioActionDropdown from '../../components/IstioActions/IstioActionsDropdown';
 import { RenderComponentScroll, RenderHeader } from '../../components/Nav/Page';
 import './IstioConfigDetailsPage.css';
@@ -73,6 +79,7 @@ interface IstioConfigDetailsState {
   yamlValidations?: AceValidations;
   currentTab: string;
   isExpanded: boolean;
+  selectedEditorLine?: string;
 }
 
 const tabName = 'list';
@@ -446,6 +453,11 @@ class IstioConfigDetailsPage extends React.Component<RouteComponentProps<IstioCo
     return refPresent || this.hasOverview() || istioStatusMsgs.length > 0;
   };
 
+  onCursorChange = (e: any) => {
+    const line = parseLine(this.fetchYaml(), e.cursor.row);
+    this.setState({ selectedEditorLine: line });
+  };
+
   renderEditor = () => {
     const yamlSource = this.fetchYaml();
     const istioStatusMsgs = this.getStatusMessages(this.state.istioObjectDetails);
@@ -485,6 +497,7 @@ class IstioConfigDetailsPage extends React.Component<RouteComponentProps<IstioCo
                     serviceReferences={serviceReferences}
                     workloadReferences={workloadReferences}
                     helpMessages={helpMessages}
+                    selectedLine={this.state.selectedEditorLine}
                   />
                 )}
               </>
@@ -513,6 +526,7 @@ class IstioConfigDetailsPage extends React.Component<RouteComponentProps<IstioCo
           value={this.state.istioObjectDetails ? yamlSource : undefined}
           annotations={editorValidations.annotations}
           markers={editorValidations.markers}
+          onCursorChange={this.onCursorChange}
         />
       </div>
     ) : null;

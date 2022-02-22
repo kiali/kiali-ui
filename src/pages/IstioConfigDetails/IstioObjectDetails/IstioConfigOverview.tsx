@@ -30,6 +30,7 @@ interface IstioConfigOverviewProps {
   serviceReferences: ServiceReference[];
   workloadReferences: WorkloadReference[];
   helpMessages?: HelpMessage[];
+  selectedLine?: string;
 }
 
 const iconStyle = style({
@@ -129,24 +130,20 @@ class IstioConfigOverview extends React.Component<IstioConfigOverviewProps> {
           </StackItem>
         )}
 
-        {this.props.serviceReferences &&
-          this.props.serviceReferences.length > 0 &&
-          this.props.objectReferences &&
-          this.props.objectReferences.length > 0 &&
-          this.props.workloadReferences &&
-          this.props.workloadReferences.length > 0 && (
-            <StackItem>
-              <IstioConfigReferences
-                objectReferences={this.props.objectReferences}
-                serviceReferences={this.props.serviceReferences}
-                workloadReferences={this.props.workloadReferences}
-              />
-            </StackItem>
-          )}
+        <StackItem>
+          <IstioConfigReferences
+            objectReferences={this.props.objectReferences}
+            serviceReferences={this.props.serviceReferences}
+            workloadReferences={this.props.workloadReferences}
+          />
+        </StackItem>
 
         {this.props.helpMessages && this.props.helpMessages.length > 0 && (
           <StackItem>
-            <IstioConfigHelp helpMessages={this.props.helpMessages}></IstioConfigHelp>
+            <IstioConfigHelp
+              helpMessages={this.props.helpMessages}
+              selectedLine={this.props.selectedLine}
+            ></IstioConfigHelp>
           </StackItem>
         )}
       </Stack>

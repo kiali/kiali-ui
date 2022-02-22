@@ -55,7 +55,7 @@ const posToRowCol = (yaml: string, pos: number): YamlPosition => {
   return rowCol;
 };
 
-const rowColToPos = (yaml: string, row: number, col: number): number => {
+export const rowColToPos = (yaml: string, row: number, col: number): number => {
   let currentRow = 0;
   let currentCol = 0;
   const pos = -1;
@@ -72,6 +72,19 @@ const rowColToPos = (yaml: string, row: number, col: number): number => {
     }
   }
   return pos;
+};
+
+export const parseLine = (yaml: string, row: number): string => {
+  let i = 0;
+  let j = 0;
+  for (i; i < yaml.length; i++) {
+    if (yaml.charAt(i) === '\n') {
+      j = j + 1;
+    }
+
+    if (j === row) break;
+  }
+  return yaml.substring(i + 1, yaml.indexOf('\n', i + 1));
 };
 
 /*

@@ -1,14 +1,19 @@
-import { Stack, StackItem, Title, TitleLevel, TitleSize, Tooltip, TooltipPosition } from '@patternfly/react-core';
+import { Label, Stack, StackItem, Title, TitleLevel, TitleSize } from '@patternfly/react-core';
 import * as React from 'react';
 import { HelpMessage } from 'types/IstioObjects';
-import HelpField from './HelpField';
+import './HelpField.css';
 
 interface IstioConfigHelpProps {
   helpMessages?: HelpMessage[];
+  selectedLine?: string;
 }
 
 class IstioConfigHelp extends React.Component<IstioConfigHelpProps> {
   render() {
+    const helpMessage = this.props.helpMessages?.find(helpMessage =>
+      this.props.selectedLine?.includes(helpMessage.objectField.substring(helpMessage.objectField.lastIndexOf('.') + 1))
+    );
+
     return (
       <Stack>
         <StackItem>
@@ -16,19 +21,22 @@ class IstioConfigHelp extends React.Component<IstioConfigHelpProps> {
             Help
           </Title>
         </StackItem>
-        <StackItem>
-          {this.props.helpMessages &&
-            this.props.helpMessages.map(helpMessage => {
-              return (
-                <Tooltip
-                  position={TooltipPosition.right}
-                  content={<div style={{ textAlign: 'left' }}>{helpMessage.message}</div>}
-                >
-                  <HelpField value={helpMessage.objectField}></HelpField>
-                </Tooltip>
-              );
-            })}
-        </StackItem>
+
+        {helpMessage && (
+          <>
+            <StackItem>
+              <div className="label-help">
+                <Label className="label-value" isCompact={true}>
+                  {helpMessage.objectField}
+                </Label>
+              </div>
+            </StackItem>
+            <StackItem style={{ marginTop: '10px' }}>
+              <h6>{helpMessage.message}</h6>
+            </StackItem>
+          </>
+        )}
+        {!helpMessage && <p>Help messages will appear when editing around important key fields.</p>}
       </Stack>
     );
   }
