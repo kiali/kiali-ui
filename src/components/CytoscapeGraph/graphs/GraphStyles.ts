@@ -75,6 +75,8 @@ const NodeBadgeBackgroundColor = PFColors.Purple500;
 const NodeBadgeColor = PFColors.White;
 const NodeTextFont = EdgeTextFont;
 const NodeWidth = NodeHeight;
+const OpacityOverlay = 0.3;
+const OpacityUnhighlight = 0.1;
 
 // Puts a little more space between icons when a badge has multiple icons
 const badgeMargin = (existingIcons: string) =>
@@ -834,7 +836,7 @@ export class GraphStyles {
       {
         selector: `node.${UnhighlightClass}`,
         style: {
-          opacity: 0.0
+          opacity: OpacityUnhighlight
         }
       },
       {
@@ -894,7 +896,7 @@ export class GraphStyles {
       {
         selector: `edge.${UnhighlightClass}`,
         style: {
-          opacity: 0.0
+          opacity: OpacityUnhighlight
         }
       },
       {
@@ -902,7 +904,7 @@ export class GraphStyles {
         style: {
           'overlay-color': PFColorVals.Gold400,
           'overlay-padding': '7px',
-          'overlay-opacity': 0.3
+          'overlay-opacity': OpacityOverlay
         }
       },
       {
@@ -910,7 +912,7 @@ export class GraphStyles {
         style: {
           'overlay-color': PFColorVals.Purple200,
           'overlay-padding': '7px',
-          'overlay-opacity': 0.3
+          'overlay-opacity': OpacityOverlay
         }
       }
     ];
