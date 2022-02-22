@@ -23,12 +23,3 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
-
-Cypress.Commands.add('selectAllNamespaces', () => {
-  cy.contains('Select Namespaces').click();
-  cy.get('#bulk-select-id').check();
-
-  // Click somewhere outside of the box
-  cy.contains('No namespace is selected').click();
-  cy.contains('Namespace:');
-});
