@@ -23,6 +23,7 @@ import {
 import {
   AceValidations,
   jsYaml,
+  parseHelpAnnotations,
   parseKialiValidations,
   parseLine,
   parseYamlValidations
@@ -50,9 +51,9 @@ import {
 import { dicIstioType } from '../../types/IstioConfigList';
 import { showInMessageCenter } from '../../utils/IstioValidationUtils';
 import { AxiosError } from 'axios';
-import { Annotation } from 'react-ace/types';
 import RefreshButtonContainer from '../../components/Refresh/RefreshButton';
 import IstioConfigOverview from './IstioObjectDetails/IstioConfigOverview';
+import { Annotation } from 'react-ace/types';
 
 // Enables the search box for the ACEeditor
 require('ace-builds/src-noconflict/ext-searchbox');
@@ -481,6 +482,10 @@ class IstioConfigDetailsPage extends React.Component<RouteComponentProps<IstioCo
         editorValidations.annotations = this.state.yamlValidations.annotations;
       }
     }
+
+    const helpAnnotations = parseHelpAnnotations(yamlSource, helpMessages);
+    helpAnnotations.forEach(ha => editorValidations.annotations.push(ha));
+
     const panelContent = (
       <DrawerPanelContent>
         <DrawerHead>
