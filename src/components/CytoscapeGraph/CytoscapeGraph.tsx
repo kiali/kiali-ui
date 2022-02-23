@@ -142,7 +142,7 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
   private userBoxSelected?: Cy.Collection;
   private zoom: number; // the current zoom value, used for checking threshold crossing
   private zoomIgnore: boolean; // used to ignore zoom events when cy sometimes generates 'intermediate' values
-  private zoomThresholds?: number[];
+  private zoomThresholds: number[];
 
   constructor(props: CytoscapeGraphProps) {
     super(props);
@@ -519,7 +519,7 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
 
         // if we are not showing labels (due to zoom level), show contextInfo
         const zoom = cy.zoom();
-        const noLabels = this.zoomThresholds!.some(zoomThresh => {
+        const noLabels = this.zoomThresholds.some(zoomThresh => {
           return zoom <= zoomThresh;
         });
         if (noLabels) {
@@ -593,7 +593,7 @@ export default class CytoscapeGraph extends React.Component<CytoscapeGraphProps>
       const newZoom = cy.zoom();
       this.zoom = newZoom;
 
-      const thresholdCrossed = this.zoomThresholds!.some(zoomThresh => {
+      const thresholdCrossed = this.zoomThresholds.some(zoomThresh => {
         return (newZoom < zoomThresh && oldZoom >= zoomThresh) || (newZoom >= zoomThresh && oldZoom < zoomThresh);
       });
 
