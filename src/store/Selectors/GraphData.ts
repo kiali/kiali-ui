@@ -133,6 +133,18 @@ export const decorateGraphData = (graphData: GraphElements): DecoratedGraphEleme
             decoratedNode.data = { ...propertiesToNumber(protocol.rates), ...decoratedNode.data };
           });
         }
+        // we can do something similar with labels, parse out each to data.label_<key>: <value>
+        // and then set the field undefined because it is not used in the cy element handling
+        if (decoratedNode.data.labels) {
+          const labels = decoratedNode.data.labels;
+          decoratedNode.data.labels = undefined;
+          const prefixedLabels: { [key: string]: string } = {};
+          for (const key in labels) {
+            prefixedLabels[`label_${key}`] = labels[key];
+          }
+          console.log(`PrefixedLabels=${JSON.stringify(prefixedLabels)}`);
+          decoratedNode.data = { ...prefixedLabels, ...decoratedNode.data };
+        }
         // node.aggregate is set like aggregate=aggregateValue, split into distinct fields for the ui to use
         if (!!decoratedNode.data.aggregate) {
           const aggr = decoratedNode.data.aggregate.split('=');
