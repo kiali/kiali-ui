@@ -94,7 +94,12 @@ export const parseHelpAnnotations = (yaml: string, helpMessages: HelpMessage[]):
   let lastPosition = -1;
 
   helpMessages.forEach(hm => {
-    const marker = parseMarker(yaml, lastPosition, hm.objectField.substring(hm.objectField.indexOf('.') + 1), false);
+    const marker = parseMarker(
+      yaml,
+      lastPosition,
+      hm.objectField.substring(hm.objectField.lastIndexOf('.') + 1),
+      false
+    );
 
     const annotation = {
       row: marker.startRow,

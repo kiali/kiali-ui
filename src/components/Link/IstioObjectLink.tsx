@@ -30,13 +30,23 @@ export class ReferenceIstioObjectLink extends React.Component<Props> {
   render() {
     const { name, namespace, type, subType } = this.props;
     const istioType = IstioTypes[type];
+    let showLink = true;
+    let reference = `${namespace}/${name}`;
+
+    if (name === 'mesh') {
+      reference = name;
+      showLink = false;
+    }
 
     return (
       <>
         <PFBadge badge={istioType.badge} position={TooltipPosition.top} />
-        <IstioObjectLink name={name} namespace={namespace} type={type} subType={subType}>
-          {namespace}/{name}
-        </IstioObjectLink>
+        {showLink && (
+          <IstioObjectLink name={name} namespace={namespace} type={type} subType={subType}>
+            {reference}
+          </IstioObjectLink>
+        )}
+        {!showLink && <span>{reference}</span>}
       </>
     );
   }
