@@ -90,6 +90,7 @@ const operands: string[] = [
   'httpin',
   'httpout',
   'idle',
+  'label:',
   'mirroring',
   'mtls',
   'name',
@@ -858,6 +859,11 @@ export class GraphFind extends React.Component<GraphFindProps, GraphFindState> {
         return s ? { target: 'edge', selector: s } : undefined;
       }
       default:
+        // special node operand
+        if (field.startsWith('label:')) {
+          return { target: 'node', selector: `[${CytoscapeGraphUtils.toSafeCyFieldName(field)} ${op} "${val}"]` };
+        }
+
         return this.setError(`Invalid operand [${field}]`, isFind);
     }
   };
@@ -987,6 +993,12 @@ export class GraphFind extends React.Component<GraphFindProps, GraphFindState> {
         return { target: 'edge', selector: isNegation ? `[^${CyEdge.hasTraffic}]` : `[?${CyEdge.hasTraffic}]` };
       }
       default:
+        // special node operand
+        if (field.startsWith('label:')) {
+          const safeFieldName = CytoscapeGraphUtils.toSafeCyFieldName(field);
+          return { target: 'node', selector: isNegation ? `[^${safeFieldName}]` : `[?${safeFieldName}]` };
+        }
+
         return undefined;
     }
   };

@@ -13,6 +13,7 @@ import {
   hasProtocolTraffic
 } from '../../types/Graph';
 import { isIstioNamespace } from '../../config/ServerConfig';
+import { toSafeCyFieldName } from 'components/CytoscapeGraph/CytoscapeGraphUtils';
 
 // When updating the cytoscape graph, the element data expects to have all the changes
 // non-provided values are taken as "this didn't change", similar as setState does.
@@ -140,7 +141,7 @@ export const decorateGraphData = (graphData: GraphElements): DecoratedGraphEleme
           decoratedNode.data.labels = undefined;
           const prefixedLabels: { [key: string]: string } = {};
           for (const key in labels) {
-            prefixedLabels[`label_${key}`] = labels[key];
+            prefixedLabels[toSafeCyFieldName(`label:${key}`)] = labels[key];
           }
           console.log(`PrefixedLabels=${JSON.stringify(prefixedLabels)}`);
           decoratedNode.data = { ...prefixedLabels, ...decoratedNode.data };
