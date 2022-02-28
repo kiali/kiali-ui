@@ -1,7 +1,7 @@
 import { Given } from "cypress-cucumber-preprocessor/steps";
 import { Then } from "cypress-cucumber-preprocessor/steps";
 
-const url = "https://kiali-istio-system.apps.pmdown4.0216-eg3.fw.rhcloud.com"
+const url = "/"
 
 Given('I open Kiali URL', () => {
   cy.visit(url)
