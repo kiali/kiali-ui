@@ -1,4 +1,4 @@
-Feature: Kilai login
+Feature: Kiali login
 
   I want to login to Kiali and see landing page
   
