@@ -11,3 +11,4 @@ Given('I open Kiali URL', () => {
 Then(`I see {string} in the title`, (title) => {
   cy.title().should('include', title)
 })
+//new test case for kiali added 
