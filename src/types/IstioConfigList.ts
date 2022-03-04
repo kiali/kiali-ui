@@ -15,6 +15,7 @@ import {
   WorkloadGroup
 } from './IstioObjects';
 import { ResourcePermissions } from './Permissions';
+import _round from 'lodash/round';
 
 export interface IstioConfigItem {
   namespace: string;
@@ -90,6 +91,14 @@ export const dicIstioType = {
   workloadgroup: 'WorkloadGroup',
   envoyfilter: 'EnvoyFilter'
 };
+
+export function validationKey(name: string, namespace?: string): string {
+  if (namespace != undefined) {
+    return name + '.' + namespace;
+  } else {
+    return name;
+  }
+}
 
 const includeName = (name: string, names: string[]) => {
   for (let i = 0; i < names.length; i++) {
@@ -178,7 +187,6 @@ export const toIstioItems = (istioConfigList: IstioConfigList): IstioConfigItem[
     }
 
     entries.forEach(entry => {
-      const fqdn = entry.metadata.name + '.' + entry.metadata.namespace;
       const item = {
         namespace: istioConfigList.namespace.name,
         type: typeName,
@@ -186,7 +194,7 @@ export const toIstioItems = (istioConfigList: IstioConfigList): IstioConfigItem[
         creationTimestamp: entry.metadata.creationTimestamp,
         resourceVersion: entry.metadata.resourceVersion,
         validation: hasValidations(typeName, entry.metadata.name, entry.metadata.namespace)
-          ? istioConfigList.validations[typeName][fqdn]
+          ? istioConfigList.validations[typeName][validationKey(entry.metadata.name, entry.metadata.namespace)]
           : undefined
       };
 
@@ -200,21 +208,21 @@ export const toIstioItems = (istioConfigList: IstioConfigList): IstioConfigItem[
 
 export const vsToIstioItems = (vss: VirtualService[], validations: Validations): IstioConfigItem[] => {
   const istioItems: IstioConfigItem[] = [];
-  const hasValidations = (fqdn: string) => validations.virtualservice && validations.virtualservice[fqdn];
+  const hasValidations = (vKey: string) => validations.virtualservice && validations.virtualservice[vKey];
 
   const typeNameProto = dicIstioType['virtualservices']; // ex. serviceEntries -> ServiceEntry
   const typeName = typeNameProto.toLowerCase(); // ex. ServiceEntry -> serviceentry
   const entryName = typeNameProto.charAt(0).toLowerCase() + typeNameProto.slice(1);
 
   vss.forEach(vs => {
-    const fqdn = vs.metadata.name + '.' + vs.metadata.namespace;
+    const vKey = validationKey(vs.metadata.name, vs.metadata.namespace);
     const item = {
       namespace: vs.metadata.namespace || '',
       type: typeName,
       name: vs.metadata.name,
       creationTimestamp: vs.metadata.creationTimestamp,
       resourceVersion: vs.metadata.resourceVersion,
-      validation: hasValidations(fqdn) ? validations.virtualservice[fqdn] : undefined
+      validation: hasValidations(vKey) ? validations.virtualservice[vKey] : undefined
     };
     item[entryName] = vs;
     istioItems.push(item);
@@ -224,21 +232,21 @@ export const vsToIstioItems = (vss: VirtualService[], validations: Validations):
 
 export const drToIstioItems = (drs: DestinationRule[], validations: Validations): IstioConfigItem[] => {
   const istioItems: IstioConfigItem[] = [];
-  const hasValidations = (fqdn: string) => validations.destinationrule && validations.destinationrule[fqdn];
+  const hasValidations = (vKey: string) => validations.destinationrule && validations.destinationrule[vKey];
 
   const typeNameProto = dicIstioType['destinationrules']; // ex. serviceEntries -> ServiceEntry
   const typeName = typeNameProto.toLowerCase(); // ex. ServiceEntry -> serviceentry
   const entryName = typeNameProto.charAt(0).toLowerCase() + typeNameProto.slice(1);
 
   drs.forEach(dr => {
-    const fqdn = dr.metadata.name + '.' + dr.metadata.namespace;
+    const vKey = validationKey(dr.metadata.name, dr.metadata.namespace);
     const item = {
       namespace: dr.metadata.namespace || '',
       type: typeName,
       name: dr.metadata.name,
       creationTimestamp: dr.metadata.creationTimestamp,
       resourceVersion: dr.metadata.resourceVersion,
-      validation: hasValidations(fqdn) ? validations.destinationrule[fqdn] : undefined
+      validation: hasValidations(vKey) ? validations.destinationrule[vKey] : undefined
     };
     item[entryName] = dr;
     istioItems.push(item);
@@ -248,7 +256,7 @@ export const drToIstioItems = (drs: DestinationRule[], validations: Validations)
 
 export const gwToIstioItems = (gws: Gateway[], vss: VirtualService[], validations: Validations): IstioConfigItem[] => {
   const istioItems: IstioConfigItem[] = [];
-  const hasValidations = (fqdn: string) => validations.gateway && validations.gateway[fqdn];
+  const hasValidations = (vKey: string) => validations.gateway && validations.gateway[vKey];
   const vsGateways = new Set();
 
   const typeNameProto = dicIstioType['gateways']; // ex. serviceEntries -> ServiceEntry
@@ -267,14 +275,14 @@ export const gwToIstioItems = (gws: Gateway[], vss: VirtualService[], validation
 
   gws.forEach(gw => {
     if (vsGateways.has(gw.metadata.namespace + '/' + gw.metadata.name)) {
-      const fqdn = gw.metadata.name + '.' + gw.metadata.namespace;
+      const vKey = validationKey(gw.metadata.name, gw.metadata.namespace);
       const item = {
         namespace: gw.metadata.namespace || '',
         type: typeName,
         name: gw.metadata.name,
         creationTimestamp: gw.metadata.creationTimestamp,
         resourceVersion: gw.metadata.resourceVersion,
-        validation: hasValidations(fqdn) ? validations.gateway[fqdn] : undefined
+        validation: hasValidations(vKey) ? validations.gateway[vKey] : undefined
       };
       item[entryName] = gw;
       istioItems.push(item);
@@ -285,21 +293,21 @@ export const gwToIstioItems = (gws: Gateway[], vss: VirtualService[], validation
 
 export const seToIstioItems = (see: ServiceEntry[], validations: Validations): IstioConfigItem[] => {
   const istioItems: IstioConfigItem[] = [];
-  const hasValidations = (fqdn: string) => validations.serviceentry && validations.serviceentry[fqdn];
+  const hasValidations = (vKey: string) => validations.serviceentry && validations.serviceentry[vKey];
 
   const typeNameProto = dicIstioType['serviceentries']; // ex. serviceEntries -> ServiceEntry
   const typeName = typeNameProto.toLowerCase(); // ex. ServiceEntry -> serviceentry
   const entryName = typeNameProto.charAt(0).toLowerCase() + typeNameProto.slice(1);
 
   see.forEach(se => {
-    const fqdn = se.metadata.name + '.' + se.metadata.namespace;
+    const vKey = validationKey(se.metadata.name, se.metadata.namespace);
     const item = {
       namespace: se.metadata.namespace || '',
       type: typeName,
       name: se.metadata.name,
       creationTimestamp: se.metadata.creationTimestamp,
       resourceVersion: se.metadata.resourceVersion,
-      validation: hasValidations(fqdn) ? validations.serviceentry[fqdn] : undefined
+      validation: hasValidations(vKey) ? validations.serviceentry[vKey] : undefined
     };
     item[entryName] = se;
     istioItems.push(item);
