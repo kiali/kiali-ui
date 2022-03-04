@@ -15,7 +15,6 @@ import {
   WorkloadGroup
 } from './IstioObjects';
 import { ResourcePermissions } from './Permissions';
-import _round from 'lodash/round';
 
 export interface IstioConfigItem {
   namespace: string;
