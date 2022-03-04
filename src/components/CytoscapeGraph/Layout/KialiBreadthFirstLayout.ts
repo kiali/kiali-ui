@@ -203,6 +203,7 @@ export default class KialiBreadFirstLayout {
 
       var posX = 0;
       var posY = 0;
+      var splitOverflow = depths.length - 1;
       // Iterate per levels (skipping 0 that is reserved)
       for (i = 1; i < depths.length; i++) {
         var level = depths[i];
@@ -212,9 +213,11 @@ export default class KialiBreadFirstLayout {
         var isOverflow = false;
         if (level.length >= depths.length * 2) {
           isOverflow = true;
+          // Special case where there is one single row (i.e. no edges)
+          if (splitOverflow === 1) {
+            splitOverflow = Math.round(Math.sqrt(level.length));
+          }
         }
-
-        console.log('isOverflow: ' + isOverflow);
 
         // Iterate per row
         // SplitJ is an index to manage the overflow of the lines
@@ -226,7 +229,7 @@ export default class KialiBreadFirstLayout {
             lineMaxH = lbb.h;
           }
 
-          if (isOverflow && splitJ > depths.length - 1) {
+          if (isOverflow && splitJ > splitOverflow) {
             // Reset the posX position
             posX = 0;
             // Increment the posY for the current splitted line
