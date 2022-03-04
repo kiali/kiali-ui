@@ -165,7 +165,7 @@ export const toIstioItems = (istioConfigList: IstioConfigList): IstioConfigItem[
   const istioItems: IstioConfigItem[] = [];
 
   const hasValidations = (type: string, name: string, namespace: string) =>
-    istioConfigList.validations[type] && istioConfigList.validations[type][name + '.' + namespace];
+    istioConfigList.validations[type] && istioConfigList.validations[type][validationKey(name, namespace)];
 
   const nonItems = ['validations', 'permissions', 'namespace'];
 
