@@ -93,7 +93,7 @@ export const dicIstioType = {
 };
 
 export function validationKey(name: string, namespace?: string): string {
-  if (namespace != undefined) {
+  if (namespace !== undefined) {
     return name + '.' + namespace;
   } else {
     return name;
