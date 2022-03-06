@@ -666,7 +666,7 @@ export class GraphStyles {
       return `${trimFixed((num / 1000.0).toFixed(2))}s`;
     };
 
-    // This due to us never having figured out why a tiny fraction of what-we-expect-to-be-numbers
+    // This is due to us never having figured out why a tiny fraction of what-we-expect-to-be-numbers
     // are in fact strings.  We don't know if our conversion in GraphData.ts has a flaw, or whether
     // something else happens post-conversion.
     const safeNum = (num: any): number => {
