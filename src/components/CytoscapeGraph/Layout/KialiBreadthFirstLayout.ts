@@ -29,6 +29,7 @@ const defaults = {
   } // transform a given node position. Useful for changing flow direction in discrete layouts
 };
 
+// Helper functions to add breadthfirst level info into the cytospace model
 const getInfo = ele => ele.scratch('breadthfirst');
 const setInfo = (ele, obj) => ele.scratch('breadthfirst', obj);
 
@@ -53,7 +54,8 @@ export default class KialiBreadFirstLayout {
     var options = this.options;
 
     // Calculate roots from targets
-    // node.roots() doesn't work with componse nodes
+    // node.roots() doesn't work with compose nodes
+    // It calculates the "roots" from the edges
     var targetIds = eles.edges().map(e => e.target().id());
     var roots = nodes.filter(n => !targetIds.includes(n.id()));
 
@@ -75,20 +77,20 @@ export default class KialiBreadFirstLayout {
       });
     };
 
-    // find the depths of the nodes
+    // Using Cytoscape algorithm to perform a breadthfirst search for the graph
+    // Annotate the nodes with the custom level
     graph.bfs({
       roots: roots,
       directed: true,
       visit: function (node, _edge, _pNode, _i, depth) {
         let ele = node[0];
         let id = ele.id();
-
         addToDepth(ele, depth);
         foundByBfs[id] = true;
       }
     });
 
-    // check for nodes not found by bfs
+    // Check for nodes not found by bfs (i.e. no edges, iddle nodes)
     var orphanNodes: any = [];
     for (var i = 0; i < nodes.length; i++) {
       var ele = nodes[i];
@@ -100,8 +102,7 @@ export default class KialiBreadFirstLayout {
       }
     }
 
-    // assign the nodes a depth and index
-
+    // Assign the nodes a depth and index
     var assignDepthsAt = function (i) {
       var eles = depths[i];
 
@@ -157,7 +158,8 @@ export default class KialiBreadFirstLayout {
       return aName.localeCompare(bName);
     };
 
-    // sort each level to make connected nodes closer
+    // Sort each level by name
+    // This loop can be optimized in the future to identify "closer" nodes
     for (i = 0; i < depths.length; i++) {
       // Sort elements by name in each row
       depths[i].sort(sortNameFn);
@@ -169,15 +171,14 @@ export default class KialiBreadFirstLayout {
     for (i = 0; i < orphanNodes.length; i++) {
       orphanDepth.push(orphanNodes[i]);
     }
-    depths.unshift(orphanDepth);
+    if (depths.length > 0 && orphanDepth.length > 0) {
+      depths[0].unshift(...orphanDepth);
+    }
 
     assignDepths();
 
     // Precaltulated positions per level and index
-    // It will calculate
-    var layoutPositions: any = [
-      [] // Depth 0 is reserved
-    ];
+    var layoutPositions: any = [];
 
     if (depths.length > 0) {
       // Init the max width and height per level/row
@@ -203,20 +204,20 @@ export default class KialiBreadFirstLayout {
 
       var posX = 0;
       var posY = 0;
-      var splitOverflow = depths.length - 1;
-      // Iterate per levels (skipping 0 that is reserved)
-      for (i = 1; i < depths.length; i++) {
+      var splitOverflow = depths.length;
+      // Iterate per levels
+      for (i = 0; i < depths.length; i++) {
         var level = depths[i];
         var positions: any = [];
 
-        // Overflow ?
+        // Overflow:
+        // this is the key advantagge of this algorithm, to split a long row in multiple-rows for the same level.
+        // The logic is pretty basic, it overflows a line when it's len(row) > 2 x len(depth).
+        // This heuristic tries to present in mini-grids the line that tend to work better on large scenarios.
         var isOverflow = false;
         if (level.length >= depths.length * 2) {
           isOverflow = true;
-          // Special case where there is one single row (i.e. no edges)
-          if (splitOverflow === 1) {
-            splitOverflow = Math.round(Math.sqrt(level.length));
-          }
+          splitOverflow = Math.round(Math.sqrt(level.length));
         }
 
         // Iterate per row
