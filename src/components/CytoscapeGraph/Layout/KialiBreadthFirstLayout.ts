@@ -134,6 +134,8 @@ export default class KialiBreadFirstLayout {
       // Use id as default
       var aName = a.id();
       var bName = b.id();
+      var aNs = a.data('namespace') ? a.data('namespace') : '';
+      var bNs = b.data('namespace') ? b.data('namespace') : '';
 
       if (a.data('workload')) {
         aName = a.data('workload');
@@ -141,8 +143,6 @@ export default class KialiBreadFirstLayout {
         aName = a.data('service');
       } else if (a.data('app')) {
         aName = a.data('app');
-      } else if (a.data('namespace')) {
-        aName = a.data('namespace');
       }
 
       if (b.data('workload')) {
@@ -151,9 +151,11 @@ export default class KialiBreadFirstLayout {
         bName = b.data('service');
       } else if (b.data('app')) {
         bName = b.data('app');
-      } else if (b.data('namespace')) {
-        bName = b.data('namespace');
       }
+
+      // Including namespace in the id comparison
+      aName = aNs + '.' + aName;
+      bName = bNs + '.' + bName;
 
       return aName.localeCompare(bName);
     };
