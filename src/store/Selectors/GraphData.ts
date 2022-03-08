@@ -143,7 +143,6 @@ export const decorateGraphData = (graphData: GraphElements): DecoratedGraphEleme
           for (const key in labels) {
             prefixedLabels[toSafeCyFieldName(`label:${key}`)] = labels[key];
           }
-          console.log(`PrefixedLabels=${JSON.stringify(prefixedLabels)}`);
           decoratedNode.data = { ...prefixedLabels, ...decoratedNode.data };
         }
         // node.aggregate is set like aggregate=aggregateValue, split into distinct fields for the ui to use
