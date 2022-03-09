@@ -14,7 +14,8 @@ const defaults = {
   padding: 30, // padding on fit
   spacingFactor: 1, // positive spacing factor, larger => more space between nodes (N.B. n/a if causes overlap)
   boundingBox: undefined, // constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
-  avoidOverlap: true, // prevents node overlap, may overflow boundingBox if not enough space
+  avoidOverlap: true, // Not used, this algorithm always tries to avoid the overlap of the nodes
+  avoidOverlapPadding: 10, // extra spacing around nodes when avoidOverlap: true
   nodeDimensionsIncludeLabels: false, // Excludes the label when calculating node bounding boxes for the layout algorithm
   animate: false, // whether to transition the node positions
   animationDuration: 500, // duration of animation in ms if enabled
@@ -256,7 +257,7 @@ export default class KialiBreadFirstLayout {
             x: posX,
             y: posY
           };
-          posX += maxHWPerDepth[i].maxw;
+          posX += maxHWPerDepth[i].maxw + this.options.avoidOverlapPadding;
           positions.push(pos);
         }
         posX = 0;

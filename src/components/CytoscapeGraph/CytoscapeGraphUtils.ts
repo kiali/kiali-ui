@@ -91,7 +91,7 @@ export const CyNode = {
 };
 
 export const ZoomOptions = {
-  fitPadding: 25,
+  fitPadding: 40,
   maxZoom: 2.5
 };
 
