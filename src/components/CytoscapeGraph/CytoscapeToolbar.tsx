@@ -30,7 +30,6 @@ import { KialiGridGraph } from './graphs/KialiGridGraph';
 import { KialiConcentricGraph } from './graphs/KialiConcentricGraph';
 import { KialiBreadthFirstGraph } from './graphs/KialiBreadthFirstGraph';
 
-
 type ReduxProps = {
   edgeMode: EdgeMode;
   boxByNamespace: boolean;
@@ -89,6 +88,11 @@ export class CytoscapeToolbar extends React.PureComponent<CytoscapeToolbarProps,
     }
 
     this.state = { allowGrab: false };
+  }
+
+  componentDidMount() {
+    // Toggle drag once when component is initialized
+    this.toggleDrag();
   }
 
   componentDidUpdate() {
