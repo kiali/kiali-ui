@@ -9,6 +9,7 @@ interface IstioConfigReferencesProps {
   objectReferences: ObjectReference[];
   serviceReferences: ServiceReference[];
   workloadReferences: WorkloadReference[];
+  isValid: boolean | undefined;
 }
 
 class IstioConfigReferences extends React.Component<IstioConfigReferencesProps> {

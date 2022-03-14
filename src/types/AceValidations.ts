@@ -109,7 +109,6 @@ export const parseHelpAnnotations = (yaml: string, helpMessages: HelpMessage[]):
     };
 
     if (marker.position !== -1) {
-      lastPosition = marker.position;
       annotations.push(annotation);
     }
   });

@@ -130,13 +130,16 @@ class IstioConfigOverview extends React.Component<IstioConfigOverviewProps> {
           </StackItem>
         )}
 
-        <StackItem>
-          <IstioConfigReferences
-            objectReferences={this.props.objectReferences}
-            serviceReferences={this.props.serviceReferences}
-            workloadReferences={this.props.workloadReferences}
-          />
-        </StackItem>
+        {this.props.istioValidations?.valid && (
+          <StackItem>
+            <IstioConfigReferences
+              objectReferences={this.props.objectReferences}
+              serviceReferences={this.props.serviceReferences}
+              workloadReferences={this.props.workloadReferences}
+              isValid={this.props.istioValidations?.valid}
+            />
+          </StackItem>
+        )}
 
         {this.props.helpMessages && this.props.helpMessages.length > 0 && (
           <StackItem>
