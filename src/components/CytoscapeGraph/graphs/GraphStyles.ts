@@ -123,22 +123,21 @@ const contentWithBadges = style({
 });
 
 const hostsClass = style({
-  borderTop: `1px solid ${PFColors.Black600}`,
-  textAlign: 'initial',
-  marginTop: '0.5em',
-  paddingTop: '0.5em',
-  display: 'block',
   $nest: {
     '& div:last-child': {
       display: 'none'
     },
     '&:hover div:last-child': {
       display: 'block'
-    },
-    '&:hover div:first-child': {
-      display: 'none'
     }
   }
+});
+
+const hostsList = style({
+  textAlign: 'initial',
+  marginTop: 2,
+  paddingTop: 2,
+  borderTop: `1px solid ${PFColors.Black600}`
 });
 
 const labelDefault = style({
@@ -173,7 +172,7 @@ export class GraphStyles {
     EdgeColorFailure = PFColorVals.Danger;
     EdgeColorTCPWithTraffic = PFColorVals.Blue600;
     EdgeTextOutlineColor = PFColorVals.White;
-    NodeColorBorder = PFColorVals.Black400;
+    NodeColorBorder = PFColorVals.Black500;
     NodeColorBorderBox = PFColorVals.Black600;
     NodeColorBorderDegraded = PFColorVals.Warning;
     NodeColorBorderFailure = PFColorVals.Danger;
@@ -181,7 +180,7 @@ export class GraphStyles {
     NodeColorBorderSelected = PFColorVals.Blue300;
     NodeColorFill = PFColorVals.White;
     NodeColorFillBoxApp = PFColorVals.White;
-    NodeColorFillBoxCluster = PFColorVals.Black200;
+    NodeColorFillBoxCluster = PFColorVals.Black300;
     NodeColorFillBoxNamespace = PFColorVals.Black100;
     NodeColorFillHover = PFColorVals.Blue50;
     NodeColorFillHoverDegraded = '#fdf2e5'; // roughly an Orange50 if it were defined
@@ -381,7 +380,7 @@ export class GraphStyles {
     }
 
     const contentText = content.join('<br/>');
-    const contentClasses = hasBadges && !noBadge ? `${contentDefault} ${contentWithBadges}` : `${contentDefault}`;
+    let contentClasses = hasBadges && !noBadge ? `${contentDefault} ${contentWithBadges}` : `${contentDefault}`;
 
     // The final label...
     let fontSize = settings.fontLabel;
@@ -435,12 +434,14 @@ export class GraphStyles {
             : `${hosts.length - config.graph.maxHosts} more hosts...`
         );
       }
-      htmlHosts = `<div class="${hostsClass}"><div>${hosts.length} ${
-        hosts.length === 1 ? 'host' : 'hosts'
-      }</div><div>${hostsToShow.join('<br />')}</div></div>`;
+      htmlHosts = `<div class="${hostsList}">${hostsToShow.join('<br />')}</div>`;
     }
 
-    const contentSpan = `<div class="${contentClasses}" style="${contentStyle}"><div>${contentText}</div>${htmlHosts}</div></div>`;
+    if (hosts.length > 0) {
+      contentClasses = `${contentClasses} ${hostsClass}`;
+    }
+
+    const contentSpan = `<div class="${contentClasses}" style="${contentStyle}"><div>${contentText}</div>${htmlHosts}</div>`;
     return `<div class="${labelDefault}" style="${labelStyle}">${badges}${contentSpan}</div>`;
   }
 
