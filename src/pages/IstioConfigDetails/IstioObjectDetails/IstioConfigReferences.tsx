@@ -13,6 +13,27 @@ interface IstioConfigReferencesProps {
 }
 
 class IstioConfigReferences extends React.Component<IstioConfigReferencesProps> {
+  objectReferencesExists = (): boolean => {
+    if (this.props.objectReferences && this.props.objectReferences.length > 0) {
+      return true;
+    }
+    return false;
+  };
+
+  serviceReferencesExists = (): boolean => {
+    if (this.props.serviceReferences && this.props.serviceReferences.length > 0) {
+      return true;
+    }
+    return false;
+  };
+
+  workloadReferencesExists = (): boolean => {
+    if (this.props.workloadReferences && this.props.workloadReferences.length > 0) {
+      return true;
+    }
+    return false;
+  };
+
   render() {
     return (
       <Stack>
@@ -21,10 +42,10 @@ class IstioConfigReferences extends React.Component<IstioConfigReferencesProps> 
             References
           </Title>
         </StackItem>
-        {!this.props.objectReferences && !this.props.serviceReferences && !this.props.workloadReferences && (
+        {!this.objectReferencesExists() && !this.serviceReferencesExists() && !this.workloadReferencesExists() && (
           <StackItem>No references found for this object.</StackItem>
         )}
-        {this.props.serviceReferences &&
+        {this.serviceReferencesExists() &&
           this.props.serviceReferences.map(reference => {
             return (
               <StackItem>
@@ -32,7 +53,7 @@ class IstioConfigReferences extends React.Component<IstioConfigReferencesProps> 
               </StackItem>
             );
           })}
-        {this.props.workloadReferences &&
+        {this.workloadReferencesExists() &&
           this.props.workloadReferences.map(reference => {
             return (
               <StackItem>
@@ -40,7 +61,7 @@ class IstioConfigReferences extends React.Component<IstioConfigReferencesProps> 
               </StackItem>
             );
           })}
-        {this.props.objectReferences &&
+        {this.objectReferencesExists() &&
           this.props.objectReferences.map(reference => {
             return (
               <StackItem>
