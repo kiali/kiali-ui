@@ -69,7 +69,8 @@ class WorkloadDetails extends React.Component<WorkloadDetailsPageProps, Workload
       this.props.match.params.namespace !== prevProps.match.params.namespace ||
       this.props.match.params.workload !== prevProps.match.params.workload ||
       this.props.lastRefreshAt !== prevProps.lastRefreshAt ||
-      currentTab !== this.state.currentTab
+      currentTab !== this.state.currentTab ||
+      this.props.duration !== prevProps.duration
     ) {
       if (currentTab === 'info' || currentTab === 'logs' || currentTab === 'envoy') {
         this.fetchWorkload();

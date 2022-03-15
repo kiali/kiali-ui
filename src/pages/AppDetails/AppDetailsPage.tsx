@@ -67,7 +67,8 @@ class AppDetails extends React.Component<AppDetailsProps, AppDetailsState> {
       this.props.match.params.namespace !== prevProps.match.params.namespace ||
       this.props.match.params.app !== prevProps.match.params.app ||
       this.props.lastRefreshAt !== prevProps.lastRefreshAt ||
-      currentTab !== this.state.currentTab
+      currentTab !== this.state.currentTab ||
+      this.props.duration !== prevProps.duration
     ) {
       if (currentTab === 'info') {
         this.fetchApp();
