@@ -96,7 +96,7 @@ export interface ObjectValidation {
   objectType: string;
   valid: boolean;
   checks: ObjectCheck[];
-  references?: References;
+  references?: ObjectReference[];
 }
 
 export interface ObjectCheck {

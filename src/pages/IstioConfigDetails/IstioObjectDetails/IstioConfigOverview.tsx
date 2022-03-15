@@ -19,6 +19,7 @@ import { style } from 'typestyle';
 import { getIstioObject, getReconciliationCondition } from 'utils/IstioConfigUtils';
 import IstioConfigHelp from './IstioConfigHelp';
 import IstioConfigReferences from './IstioConfigReferences';
+import IstioConfigValidationReferences from './IstioConfigValidationReferences';
 import IstioStatusMessageList from './IstioStatusMessageList';
 
 interface IstioConfigOverviewProps {
@@ -127,6 +128,12 @@ class IstioConfigOverview extends React.Component<IstioConfigOverviewProps> {
         {this.props.statusMessages && this.props.statusMessages.length > 0 && (
           <StackItem>
             <IstioStatusMessageList messages={this.props.statusMessages} />
+          </StackItem>
+        )}
+
+        {!this.props.istioValidations?.valid && this.props.istioValidations?.references && (
+          <StackItem>
+            <IstioConfigValidationReferences objectReferences={this.props.istioValidations.references} />
           </StackItem>
         )}
 
