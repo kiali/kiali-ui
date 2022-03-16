@@ -100,8 +100,8 @@ export default class GraphDataSource {
   private graphElements: GraphElements;
   private promiseRegistry: PromisesRegistry;
   private decoratedData = createSelector(
-    (graphData: {graphElements: GraphElements, graphDuration: number}) => graphData.graphElements,
-    (graphData: {graphElements: GraphElements, graphDuration: number}) => graphData.graphDuration,
+    (graphData: { graphElements: GraphElements; graphDuration: number }) => graphData.graphElements,
+    (graphData: { graphElements: GraphElements; graphDuration: number }) => graphData.graphDuration,
     (graphData, duration) => decorateGraphData(graphData, duration)
   );
 
@@ -152,8 +152,7 @@ export default class GraphDataSource {
       duration: fetchParams.duration + 's',
       graphType: fetchParams.graphType,
       includeIdleEdges: fetchParams.showIdleEdges,
-      injectServiceNodes: fetchParams.injectServiceNodes,
-      includeHealth: fetchParams.includeHealth
+      injectServiceNodes: fetchParams.injectServiceNodes
     };
 
     const boxBy: string[] = [];
@@ -175,7 +174,11 @@ export default class GraphDataSource {
     }
 
     // Some appenders are expensive so only specify an appender if needed.
-    let appenders: AppenderString = 'deadNode,istio,healthConfig,serviceEntry,sidecarsCheck,workloadEntry';
+    let appenders: AppenderString = 'deadNode,istio,serviceEntry,sidecarsCheck,workloadEntry';
+
+    if (fetchParams.includeHealth) {
+      appenders += ',health';
+    }
 
     if (fetchParams.showOperationNodes) {
       appenders += ',aggregateNode';
