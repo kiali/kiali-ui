@@ -24,7 +24,6 @@ module.exports = (on, config) => {
       }
     }
 
-    config.baseUrl = config.env.BASEURL || config.baseUrl
     config.env.auth_strategy = await getAuthStrategy(config.baseUrl)
     return await config
   }
