@@ -286,7 +286,7 @@ class IstioConfigDetailsPage extends React.Component<RouteComponentProps<IstioCo
     jsYaml.safeLoadAll(this.state.yamlModified, (objectModified: object) => {
       const jsonPatch = JSON.stringify(
         mergeJsonPatch(objectModified, getIstioObject(this.state.istioObjectDetails))
-      ).replace(new RegExp(',null', 'g'), '');
+      ).replace(new RegExp('"(,null)+]', 'g'), '"]');
       API.updateIstioConfigDetail(
         this.props.match.params.namespace,
         this.props.match.params.objectType,
