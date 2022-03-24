@@ -4,6 +4,9 @@
 toc::[]
 = Kiali UI
 
+The UI  has been moved to https://github.com/kiali/kiali/tree/master/frontend#kiali-ui
+This repo will remain to support versions <= 1.48.
+
 == Introduction
 
 A UI for the Kiali Istio Observability Project
