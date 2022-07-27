@@ -1,0 +1,25 @@
+name: Create/update tag
+on:
+  push:
+    branch: "main"
+jobs:
+  initialize:
+    name: Initialize
+    runs-on: ubuntu-20.04
+    steps:    
+      - name: Check out code
+        uses: actions/checkout@v3       
+      - name: Determine release version
+        run: |
+          BRANCH_VERSION=$(grep '"version":' package.json | sed -e "s/\s*\"version\":\s\"//" -e "s/\",//")
+          RELEASE_VERSION=$(echo $BRANCH_VERSION | awk -F. -v OFS=. 'NF==1{print ++$NF}; NF>1{if(length($NF+1)>length($NF))$(NF-1)++; $NF=sprintf("%0*d", length($NF), ($NF+1)%(10^length($NF))); print}')
+          echo "::set-output name=RELEASE_VERSION::$RELEASE_VERSION"
+      - name: Set version to release
+        run: |
+          jq -r '.version |= "${RELEASE_VERSION:1}"' package.json > package.json.tmp
+          mv package.json.tmp package.json   
+      - name: Create tag
+        run: |
+          git add package.json
+          git commit -m "Release $RELEASE_VERSION"
+          git push origin $(git rev-parse HEAD):refs/tags/$RELEASE_VERSION
